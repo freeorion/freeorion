@@ -1,6 +1,6 @@
 Français
 
-#This is the French String Table file for FreeOrion. (= eng_svn6004) (contrôler diff, 5657 5982)
+#This is the French String Table file for FreeOrion. (^= eng_svn6069) (contrôler diff, 5657 5982)
 #Translation by alchemy, shivu and zareif.
 
 #################
@@ -68,7 +68,7 @@ OBSERVER
 Observateur
 
 MODERATOR
-Moderateur
+Modérateur
 
 NO_PLAYER
 Aucun
@@ -174,7 +174,7 @@ FAILED
 <rgba 255 0 0 255>(ÉCHOUÉ)</rgba>
 
 ALL_OF
-Chacun d'eux:
+Prérequis:
 
 ANY_OF
 N'importe lequel:
@@ -264,89 +264,89 @@ SD_MARK_A8B
 Modèle VIII B
 
 SD_MARK_B_ROBOTIC1
-Robotic I
+Robotique I
 SD_MARK_B_ROBOTIC1_DESC
 Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_B_ROBOTIC2
-Robotic II
+Robotique II
 SD_MARK_B_ROBOTIC2_DESC
 Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_B_ROBOTIC3
-Robotic III
+Robotique III
 SD_MARK_B_ROBOTIC3_DESC
 Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_B_ROBOTIC4
-Robotic IV
+Robotique IV
 SD_MARK_B_ROBOTIC4_DESC
 Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_A_ORGANIC1
-Organic I
+Organique I
 SD_MARK_A_ORGANIC1_DESC
 Coque organique avec un armement primaire laser.
 
 SD_MARK_A_ORGANIC2
-Organic II
+Organique II
 SD_MARK_A_ORGANIC2_DESC
 Coque organique avec un armement laser.
 
 SD_MARK_A_ORGANIC3
-Organic III
+Organique III
 SD_MARK_A_ORGANIC3_DESC
 Coque organique avec un armement laser.
 
 SD_MARK_A_ORGANIC4
-Organic IV
+Organique IV
 SD_MARK_A_ORGANIC4_DESC
 Coque organique avec un armement laser.
 
 SD_MARK_B_ORGANIC1
-Organic V
+Organique V
 SD_MARK_B_ORGANIC1_DESC
 Coque organique avec un armement primaire plasma. 
 
 SD_MARK_C_ENDO1
-Endomorphique I
+Endomorphe I
 SD_MARK_C_ENDO1_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO2
-Endomorphique II
+Endomorphe II
 SD_MARK_C_ENDO2_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO3
-Endomorphique III
+Endomorphe III
 SD_MARK_C_ENDO3_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO4
-Endomorphique IV
+Endomorphe IV
 SD_MARK_C_ENDO4_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO5
-Endomorphique V
+Endomorphe V
 SD_MARK_C_ENDO5_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO6
-Endomorphique VI
+Endomorphe VI
 SD_MARK_C_ENDO6_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO7
-Endomorphique VII
+Endomorphe VII
 SD_MARK_C_ENDO7_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur Endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_MARK_C_ENDO8
-Endomorphique VIII
+Endomorphe VIII
 SD_ENDO8_DESC
-Croiseur endomorphique avancé avec blindage et armement lourd pour faire le sale boulot.
+Croiseur endomorphe avancé avec blindage et armement lourd pour faire le sale boulot.
 
 SD_GRAVITATING1
 Gravitating I
@@ -393,24 +393,24 @@ SM_MONSTER
 Monstre
 
 SM_KRILL_1
-Small Krill Swarm
+Essaim de petit krill de l'espace
 SM_KRILL_1_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Les krill de l'espace sont de petits organismes vaguement insectoïde qui trouvent leur nourriture sur la poussière et les roches loin de tout puits de gravité. Individuellement simple, les krills communiquent via une lumière cohérente, permettant à l'essaim de coordonner et de calculer ses trajectoires de déplacements. Bien que normalement pas agressifs, c'eat par leur nombre qu'ils sont un danger pour la navigation, et bloquent le réapprovisionnement. La grande quantité de nourriture à faible G trouvé sur une ceinture d'astéroïdes, fournit au krill les conditions idéales pour se multiplier rapidement.'''
 
 SM_KRILL_2
-Medium Krill Swarm
+Essaim de krill de l'espace moyen
 SM_KRILL_2_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Les krill de l'espace sont de petits organismes vaguement insectoïde qui trouvent leur nourriture sur la poussière et les roches loin de tout puits de gravité. Individuellement simple, les krills communiquent via une lumière cohérente, permettant à l'essaim de coordonner et de calculer ses trajectoires de déplacements. Bien que normalement pas agressifs, c'eat par leur nombre qu'ils sont un danger pour la navigation, et bloquent le réapprovisionnement. La grande quantité de nourriture à faible G trouvé sur une ceinture d'astéroïdes, fournit au krill les conditions idéales pour se multiplier rapidement.'''
 
 SM_KRILL_3
-Large Krill Swarm
+Essaim de grand krill de l'espace
 SM_KRILL_3_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Les krill de l'espace sont de petits organismes vaguement insectoïde qui trouvent leur nourriture sur la poussière et les roches loin de tout puits de gravité. Individuellement simple, les krills communiquent via une lumière cohérente, permettant à l'essaim de coordonner et de calculer ses trajectoires de déplacements. Quand ils sont en assez grand nombre, ils commencent à devenir agressif envers navires. La grande quantité de nourriture à faible G trouvé sur une ceinture d'astéroïdes, fournit au krill les conditions idéales pour se multiplier rapidement.'''
 
 SM_KRILL_4
-Plague of Krill
+Fléau des krill de l'espace
 SM_KRILL_4_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Les krill de l'espace sont de petits organismes vaguement insectoïde qui trouvent leur nourriture sur la poussière et les roches loin de tout puits de gravité. Individuellement simple, les krills communiquent via une lumière cohérente, permettant à l'essaim de coordonner et de calculer ses trajectoires de déplacements. Les comportements du krill changent radicalement quand une certaine population critique est atteinte - quelque part vers les 10aines de millions. Le Krill normalement fugitif, devient agressif, attaque les navires et détruit les structures orbitales. La grande quantité de nourriture à faible G trouvé sur une ceinture d'astéroïdes, fournit au krill les conditions idéales pour se multiplier rapidement.'''
 
 SM_TREE
 Dyson Forest
@@ -445,7 +445,7 @@ Built in some long-forgotten war to defend long-vanished builders, amazingly the
 SM_GUARD_1
 Factionnaire
 SM_GUARD_1_DESC
-Les factionnaires veillent jalousement sur les choses de moindre importance.
+Les factionnaires veillent décontractés sur des choses de moindre importance.
 
 SM_GUARD_2
 Sentinelle
@@ -463,57 +463,57 @@ SM_KRAKEN_1_DESC
 In the larval form, a kraken is a cautious and harmless type of space-bourn fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
 
 SM_KRAKEN_2
-Kraken
+Pieuvre
 SM_KRAKEN_2_DESC
 Un formidable monstre de l'espace de poids moyen.
 
 SM_KRAKEN_3
-Great Kraken
+Grande Pieuvre
 SM_KRAKEN_3_DESC
 Un formidable monstre de l'espace de poids moyen.
 
 SM_BLACK_KRAKEN
-Black Kraken
+Pieuvre noire
 SM_BLACK_KRAKEN_DESC
 Un puissant monstre de l'espace d'apparence contre nature.
 
 SM_SNOWFLAKE_1
-Small Snowflake
+Petit flocon de neige
 SM_SNOWFLAKE_1_DESC
 Un formidable monstre de l'espace de poids léger.
 
 SM_SNOWFLAKE_2
-Snowflake
+Flocon de neige
 SM_SNOWFLAKE_2_DESC
 Un formidable monstre de l'espace de poids léger.
 
 SM_SNOWFLAKE_3
-Large Snowflake
+Grand flocon de neige
 SM_SNOWFLAKE_3_DESC
 Un formidable monstre de l'espace de poids léger.
 
 SM_PSIONIC_SNOWFLAKE
-Psionic Snowflake
+Flocon de neige psionique
 SM_PSIONIC_SNOWFLAKE_DESC
-A monster with the power to neutralize the minds of organic beings.
+A monster with the power to neutralize the minds of organic beingsêtres organiques.
 
 SM_JUGGERNAUT_1
-Small Juggernaut
+Petit mastodonde
 SM_JUGGERNAUT_1_DESC
 Un formidable monstre de l'espace de poids lourd.
 
 SM_JUGGERNAUT_2
-Juggernaut
+Mastodonde
 SM_JUGGERNAUT_2_DESC
 Un formidable monstre de l'espace de poids lourd.
 
 SM_JUGGERNAUT_3
-Large Juggernaut
+Grand mastodonde
 SM_JUGGERNAUT_3_DESC
 Un formidable monstre de l'espace de poids lourd.
 
 SM_BLOATED_JUGGERNAUT
-Bloated Juggernaut
+Mastodonde boursouflé
 SM_BLOATED_JUGGERNAUT_DESC
 Un monstre de l'espace massif mais d'allure maladive.
 
@@ -548,9 +548,9 @@ SM_DAMPENING_CLOUD_DESC
 '''A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of fuel in a matter of seconds.'''
 
 SM_ACIREMA_GUARD
-Acirema Guard Ship
+Vaisseau de protection Acirema
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema guards the system.
+Un vaisseau armé, sans équipage, construit par les Acirema pour défendre le Système.
 
 SM_EXP_OUTPOST
 Experimentor Outpost Ship
@@ -572,6 +572,11 @@ Tempête ionique
 FLD_ION_STORM_DESC
 Tourbillon magnétique de particules relativistes chargées qui peut interférer avec les capteurs et endommager les vaisseaux et les planètes.
 
+FLD_MOLECULAR_CLOUD
+Molecular Cloud
+
+FLD_MOLECULAR_CLOUD_DESC
+Diffuse cloud of complex molecules that disrupts ship shielding.
 
 ##############################
 # Predefined Starting Fleets #
@@ -1587,7 +1592,7 @@ OPTIONS_CHAT_HIDE
 Délai avant dissimulation du chat
 
 OPTIONS_GALAXY_MAP
-Carte Galactique
+Carte galactique
 
 OPTIONS_DESCRIPTIONS
 Description du contenu
@@ -1683,10 +1688,10 @@ OPTIONS_FLEET_SUPPLY_LINE_WIDTH
 Largeur de ligne d'approvisionnement de flotte
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
-Fleet supply line dot spacing
+Espacement du pointillé des lignes d'approvisionnement de la flotte
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
-Fleet supply line dot rate
+Fréquence du pointillé des lignes d'approvisionnement de la flotte
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Couleur par défaut des liaisons spatiales
@@ -1872,10 +1877,10 @@ OPTIONS_PROGRESS_BAR_COLOR
 Arrière plan
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
-Fond
+Barette
 
 OPTIONS_COMBAT_ENABLE_GLOW
-Éclats
+Éclat
 
 OPTIONS_COMBAT_ENABLE_SKYBOX
 Skybox
@@ -2141,7 +2146,7 @@ TT_SHIP_HULL
 Vaisseau <i>%1%</i> Coque <i>%2%</i>
 
 TT_SHIP_PART
-Vaisseau <i>%1%</i> Partie <i>%2%</i>
+Vaisseau <i>%1%</i> Élément <i>%2%</i>
 
 TT_SPECIAL
 Spécial <i>%2%</i>
@@ -2282,37 +2287,37 @@ FW_FLEET_SPEED_SUMMARY
 Vitesse de la flotte - est égale a la vitesse minimale des vaissaeux de la flotte.
 
 FW_FLEET_SHIELD_SUMMARY
-Boucliers de la flotte - est égal au total des boucliers des vaissaeux de c
+Boucliers de la flotte - est égal au total des boucliers des vaissaeux de la flotte.
 
 FW_FLEET_STRUCTURE_SUMMARY
-Structures de la flotte - est égal à la structure totale de vaissaeux de la flotte.
+Structures de la flotte - est égal à la structure totale des vaissaeux de la flotte.
 
 FW_FLEET_DAMAGE_SUMMARY
-Endommagement de la flotte - est égal à l'endommagement total de la flotte.
+Dommages de la flotte - est égal aux dommages total que la flotte occasionne.
 
 FW_FLEET_COUNT_SUMMARY
-Compte de la flotte - est égal au nombre total de vaissaeux de la flotte.
+Décompte de la flotte - est égal au nombre total de vaissaeux de la flotte.
 
 FW_SPLIT_DAMAGED_FLEET
 Écarter les vaisseaux endommagés de la flotte
 
 FW_SPLIT_UNFUELED_FLEET
-Split Unfueled Ships From Fleet
+Écarter les vaisseaux en panne sèche de la flotte
 
 FW_SPLIT_FLEET
 Scinder la flotte
 
 ORDER_SHIP_SCRAP
-Abandonner le vaisseau
+Envoyer le vaisseau à la casse
 
 ORDER_FLEET_SCRAP
-Abandonner les vaisseaux
+Envoyer les vaisseaux à la casse
 
 ORDER_CANCEL_SHIP_SCRAP
-Annuler l'abandon du vaisseau
+Annuler l'envoi du vaisseau à la casse
 
 ORDER_CANCEL_FLEET_SCRAP
-Annuler l'abandon des vaisseaux
+Annuler l'envoi des vaisseaux à la casse
 
 ORDER_FLEET_EXPLORE
 Explore
@@ -2326,7 +2331,7 @@ Stopper l'exploration
 ###############
 
 MOD_NONE
-aucun
+Pas d'action de la part du modérateur
 
 MOD_CREATE_PLANET
 Ajouter planète
@@ -2340,8 +2345,11 @@ Détruit
 MOD_SET_OWNER
 Set Owner
 
-MOD_STARLANE
+MOD_ADD_STARLANE
 Ajouter liaisons spatiales
+
+MOD_REMOVE_STARLANE
+Ôter liaisons spatiales
 
 ###############
 #  Diplomacy  #
@@ -2410,22 +2418,22 @@ TECH_WND_TYPE_REFINEMENTS
 Amélioration
 
 TECH_WND_STATUS_COMPLETED
-Recherches acquises
+Acquis
 
 TECH_WND_STATUS_RESEARCHABLE
 Découvrable
 
 TECH_WND_STATUS_LOCKED
-Locked
+Verrouillé
 
 TECH_WND_UNRESEARCHABLE
-Not Researchable
+Indécouvrable
 
 TECH_WND_ENQUEUED
-Enqueued
+En file d'attente
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-Unresearched Prerequisites: 
+Conditions préalables non documentées: 
 
 TECH_WND_LIST_VIEW
 Vue liste
@@ -2441,10 +2449,10 @@ Débloque
 
 TECH_WND_PROGRESS
 '''%1% / %2% RP
-+ %3% / %4% RP/turn'''
++ %3% / %4% RP/tour'''
 
 TECH_WND_ETA
-%1% turns left
+%1% tours restant
 
 
 #######################
@@ -2464,7 +2472,7 @@ PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
 Projets sous-financés
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projets en attente
+Projets en file d'attente
 
 
 ###############
@@ -2525,7 +2533,7 @@ PRODUCTION_DETAIL_ADD_TO_QUEUE
 Ajouter à la file
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
-Centrer sur la construction
+Centre en construction
 
 PRODUCTION_QUEUE_PROMPT
 Double-clic sur les objets productibles pour les mettre sur la file d'attente de la production.
@@ -2579,7 +2587,7 @@ DESIGN_NO_PART
 Aucun
 
 DESIGN_WND_STARTS
-Pour démarrer des conceptions
+Pour démarrer une conception
 
 DESIGN_WND_HULLS
 Coques vides
@@ -2600,7 +2608,7 @@ DESIGN_WND_MAIN_PANEL_TITLE
 Détails de la conception
 
 DESIGN_WND_DESIGN_NAME
-Nom de la conception
+Nom
 
 DESIGN_WND_DESIGN_DESCRIPTION
 Description
@@ -2626,12 +2634,12 @@ ENC_SPECIES_PLANET_TYPE_SUITABILITY
 %1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
-'''%1% is suitable for colonization by these species.  
+'''%1% est apte à être colonisée par cette espèce.  
 
 '''
 
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
-'''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off. 
+'''%1% n'est pas apte à être colonisée par cette espèce. Des tentatives de colonisation vont soit échouer soit éventuellement dépérir. 
 
 '''
 
@@ -2661,13 +2669,13 @@ ENC_SHIP_DESIGN
 Conception de vaisseau
 
 SHIPS_OF_DESIGN
-Vaisseaux bâtis selon cette conception: 
+Vaisseaux de cette conception: 
 
 NO_SHIPS_OF_DESIGN
-Pas de vaisseaux de cette conception connus.
+Pas de vaisseaux de cette conception connus
 
 ENC_INCOMPETE_SHIP_DESIGN
-Conseption de vaisseau incomplète.
+Conseption de vaisseau incomplète
 
 ENC_EMPIRE
 Empire
@@ -2893,7 +2901,7 @@ PROTECTION_FOCUS_TEXT
 '''La focalisation sur la protection signifie qu'une planète est entièrement concentrée sur sa défense. Les [[encyclopedia TROOP_TITLE]] de [[encyclopedia DEFENSE_TITLE]] et les [[encyclopedia SHIELDS_TITLE]] s'y consacre entièrement.'''
 
 INDUSTRY_TITLE
-Industry
+Industrie
 INDUSTRY_TEXT
 '''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
 
@@ -2904,7 +2912,7 @@ The project at the top of the queue is given PPs first.  Any remaining PP are th
 '''
 
 RESEARCH_TITLE
-Research
+Recherche
 RESEARCH_TEXT
 '''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it.  For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
 The tech at the top of the queue is given RPs first.  Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
@@ -2938,7 +2946,7 @@ Planetary barrier shields: Act more like some kind of planetary armor. Their str
 Both space ships and planets have a Shields meter.'''
 
 STEALTH_TITLE
-Stealth
+Furtivité
 STEALTH_TEXT
 '''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
 
@@ -2952,7 +2960,7 @@ DETECTION_TEXT
 Empires have a Detection Strength meter.'''
 
 DETECTION_RANGE_TITLE
-Detection Range
+Portée de détection
 DETECTION_RANGE_TEXT
 '''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
@@ -3018,7 +3026,7 @@ La mesure approvisionnement d'une planète représente le nombre de liaisons spa
 FLEET_UPKEEP_TITLE
 Entretient des flottes
 FLEET_UPKEEP_TEXT
-'''Le coût d'une flotte se monte à plus que la somme des coûts de tous ses vaisseaux. Cela est dû au fait que les coûts de gestion de tous ces vaisseaux y sont inclus. Lorsque de nouveau vaisseaux sont produit, le coût de la coque augmente de 5% pour chaque vaisseau déja propriété de l'empire.'''
+'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses vaisseaux réunis, dû au fait que les coûts opérationnels et de gestion de tous ces vaisseaux y sont inclus. Lorsque de nouveau vaisseaux sont produit, le coût des vaisseaux augmente de 1% pour chaque vaisseau dont l'empire est propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] et [[shippart CO_OUTPOST_POD]] par contre, augmentent de 6% pour chaque planète que l'empire possède.'''
 
 EVACUATION_TITLE
 Évacuation
@@ -3159,10 +3167,10 @@ COLUMNS
 Colonnes
 
 COLLAPSE_ALL
-Annule tout
+Replier
 
 EXPAND_ALL
-Expanser tout
+Expanser
 
 ####################
 ## Filters Dialog ##
@@ -3248,7 +3256,7 @@ FILTERS
 Filtres
 
 SITREP_SHIP_BUILT
-Un %shipdesign% baptisé '%ship%' a été produit dans le système %system%.
+Un %shipdesign% nommé '%ship%' a été produit dans le système %system%.
 SITREP_SHIP_BUILT_LABEL
 Vaisseau produit
 
@@ -3270,7 +3278,7 @@ Technologie découverte
 SITREP_COMBAT_SYSTEM
 Une bataille s'est déroulée dans le système %system%.
 SITREP_COMBAT_SYSTEM_LABEL
-Combat effectué
+Combat dans système
 COMBAT
 Combat
 
@@ -3280,7 +3288,7 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Un %shipdesign% baptisé '%ship%' de %empire% a été détruit dans le système %system%.
+Un %shipdesign% nommé '%ship%' de %empire% a été détruit dans le système %system%.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Vaisseau impérial détruit
 
@@ -3325,7 +3333,7 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Un %shipdesign% baptisé '%ship%' de %empire% a été endommagé dans le système %system%.
+Un %shipdesign% nommé '%ship%' de %empire% a été endommagé dans le système %system%.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Vaisseau impérial endommagé
 
@@ -3367,7 +3375,7 @@ Planète colonisée
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La %fleet% est arrivée dans le système %system%.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Flotte var. arrivée à 
+Flotte var. est arrivée
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 %fleet% est arrivée à %system%.
@@ -3377,7 +3385,7 @@ Une flotte de monstres est arrivée
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 %empire%: %fleet% est arrivée à %system%.
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Une flotte est arrivée
+La propre flotte est arrivée
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 %empire%: %fleet% est arrivée à %system%.
@@ -3430,9 +3438,9 @@ EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-'%ship%' was repaired by %building% on %planet%.
+'%ship%' a été réparé en %building% sur %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Drydock Repair
+Réparation en cale sèche
 
 EFFECT_MONSTER_SPAWNING
 Un %predefinedshipdesign% a frayé dans le système %system%!
@@ -3450,7 +3458,7 @@ EFFECT_TERRAFORM_LABEL
 Terraforme
 
 EFFECT_STARVATION
-Famine struck %planet%.
+La famine a frappé %planet%.
 EFFECT_STARVATION_LABEL
 Famine
 
@@ -3472,7 +3480,7 @@ Derelict Minerals
 EFFECT_DERELICT_MAP
 Des informations sur la région de %system% ont été trouvées sur une épave abandonnée.
 EFFECT_DERELICT_MAP_LABEL
-Carte d'épaves
+Carte d'épave
 
 EFFECT_DERELICT_FUEL
 Les vaisseaux ont été réapprovisionnés grace à des résidus de carburant trouvé sur une épave abandonnée à %system%.
@@ -3480,14 +3488,14 @@ EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
-%system% a perdu sa population des suites d'une attaque biologique!
+%system% a perdu de sa population des suites d'une attaque biologique!
 EFFECT_BIOWEAPON_LABEL
-Bioweapon Attack
+Attaque par armes biologiques
 
 EFFECT_EXOBOT
-An Exobot colony ship has been built at %planet%.
+Une colonie Exobots a été construite à %planet%.
 EFFECT_EXOBOT_LABEL
-Exobot Ship
+Vaisseau Exobot
 
 EFFECT_EVACUEES
 Evacuees have settled at %planet%.
@@ -4235,7 +4243,7 @@ The entire Abaddonnian species lives in a dictatorship ruled by a sentient artif
 SP_ACIREMA
 Acirema
 SP_ACIREMA_DESC
-'''A race with nearly limitless power, that cannot survive in this universe.
+'''Une race d'une puissance pratiquement illimité, qui ne peut pas survivre dans cet univers.
 Préfére les planètes irradiées.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
@@ -4262,7 +4270,7 @@ They can't stay here long enough to actually move to another planet and still su
 SP_OURBOOLS
 Ourbools
 SP_OURBOOLS_DESC
-'''Giant blind swimmers who "see" gravitation.
+'''Nageurs aveugles geants qui "voit" la gravitation.
 Préfére les planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -4724,7 +4732,7 @@ centre de production
 OBJ_SYSTEM
 système
 OBJ_FIELD
-field
+plage
 
 
 # StarTypes
@@ -4831,13 +4839,13 @@ Furtivité
 FOCUS_BIOTERROR
 Terreur biologique
 FOCUS_STARGATE_SEND
-Stargate Send
+Stargate émission
 FOCUS_STARGATE_SEND_DESC
-Send ships in the system through the Stargate
+Envoyer des vaisseaux dans le système par le Stargate
 FOCUS_STARGATE_RECEIVE
-Stargate Receive
+Stargate réception
 FOCUS_STARGATE_RECEIVE_DESC
-Open the Stargate to ships being sent from elsewhere
+Ouvrir le Stargate pour recevoir des vaisseaux envoyés d'ailleurs
 FOCUS_PLANET_DRIVE
 Entraînement de planète
 FOCUS_DISTORTION
@@ -4911,7 +4919,7 @@ troupes
 METER_REBEL_TROOPS
 troupes rebelles
 METER_SUPPLY
-provision
+approvisionnement
 METER_STEALTH
 furtivité
 METER_DETECTION
@@ -4958,7 +4966,7 @@ ALIGN_SOCIAL_CONTROL_DESC
 Degré auquel une population est surveillée, limitée et manipulée.
 
 ALIGN_ENVIRONMENT_MODIFICATION
-Environment Modification
+Changement de l'environment
 
 ALIGN_ENVIRONMENT_MODIFICATION_DESC
 Use of terraforming or other large-scale 
@@ -4978,13 +4986,13 @@ Utilisation de sensibilité artificielle et d'automatisation
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-soi-même
+propre
 AFFIL_ENEMY
 ennemi
 AFFIL_ALLY
 allié
 AFFIL_ANY
-n'importe lequel
+chaque
 
 
 # UnlockableItemTypes
@@ -5082,6 +5090,8 @@ PC_BATTLE_SPEED
 Vitesse de combat
 PC_STARLANE_SPEED
 Vitesse liaisons spatiales
+PC_GENERAL
+General
 
 
 #############################################################
@@ -5101,7 +5111,7 @@ DESC_VAR_FLEET
 flotte
 
 DESC_VAR_SOURCE
-source
+primaire
 
 DESC_VAR_TARGET
 Objectif
@@ -5122,7 +5132,7 @@ DESC_VAR_SIZEASDOUBLE
 taille de la planète
 
 DESC_VAR_PLANETTYPE
-type de la planète
+type de planète
 
 DESC_VAR_NEXTBETTERPLANETTYPE
 next better planet type for planet's species
@@ -5302,7 +5312,7 @@ DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE1
-%1%'s %2%
+%1% %2%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE2
 %1%'s %2%'s %3%
@@ -5471,7 +5481,7 @@ DESC_CREATE_SYSTEM_TYPE
 Creates a new system of star type %1%
 
 DESC_CREATE_SYSTEM
-Creates a new system
+Créer un nouveau système
 
 
 # Conditions
@@ -5480,10 +5490,10 @@ DESC_ALL
  dans l'univers
 
 DESC_ALL_NOT
- not in the universe
+ pas dans l'univers
 
 DESC_EMPIRE_AFFILIATION_SELF
- qui appartient à l'empire
+ qui appartient à l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
  qui n'appartient pas à l'empire %1%
@@ -5543,10 +5553,10 @@ DESC_ARMED_NOT
  that is not an armed ship
 
 DESC_TYPE
- qui est une %1%
+ que ce soit une %1%
 
 DESC_TYPE_NOT
- qui n'est pas une %1%
+ que ce soit pas une %1%
 
 DESC_BUILDING
  qui est une construction %1%
@@ -5681,7 +5691,7 @@ DESC_PRODUCED_BY_EMPIRE_NOT
  that was not produced by the %1% empire
 
 DESC_METER_VALUE_CURRENT
- qui a une %1% actuelle comprise entre %2% et %3%
+ qui a un(e) %1% actuel(le) compris(e) entre %2% et %3%
 
 DESC_METER_VALUE_CURRENT_NOT
  qui n'a pas une %1% actuelle comprise entre %2% et %3%
@@ -5747,13 +5757,13 @@ DESC_STATIONARY_NOT
  that is moving
 
 DESC_CAN_COLONIZE
- with a species that can colonize
+ être une espèce capable de coloniser
 
 DESC_CAN_COLONIZE_NOT
  without a species that can colonize
 
 DESC_CAN_PRODUCE_SHIPS
- with a species that can produce ships
+ une espèce pouvant produire des vaisseaux
 
 DESC_CAN_PRODUCE_SHIPS_NOT
  without a species that can produce ships
@@ -5849,22 +5859,22 @@ DESC_OBJECT_ID_NOT
  that is not the object with id %1%
 
 DESC_OWNER_HAS_TECH
- qui appartient à un empire qui a la technologie %1%
+ qui appartient à un empire qui maîtrise la technologie %1%
 
 DESC_OWNER_HAS_TECH_NOT
- ce qui n'appartient pas à un empire qui a la technologie %1%
+ ce qui n'appartient pas à un empire qui maîtrise la technologie %1%
 
 DESC_OWNER_HAS_BUILDING_TYPE
  construction débloquée pour l'empire
 
 DESC_OWNER_HAS_BUILDING_TYPE_NOT
- construction pas débloquée pour l'empire
+ construction non débloquée pour l'empire
 
 DESC_OWNER_HAS_SHIP_DESIGN
- conception vaisseau débloquée pour l'empire
+ conception de vaisseau débloquée pour l'empire
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
- conception vaisseau pas débloquée pour l'empire
+ conception de vaisseau non débloquée pour l'empire
 
 DESC_NUMBER
  s'il y a entre %1% et %2% objets%3%
@@ -5873,10 +5883,10 @@ DESC_NUMBER_NOT
  s'il n'y pas entre %1% et %2% objets%3%
 
 DESC_HAS_TAG
- that is %1%
+ c'est %1%
 
 DESC_HAS_TAG_NOT
- that is not %1%
+ ce n'est pas %1%
 
 
 
@@ -5885,7 +5895,7 @@ DESC_HAS_TAG_NOT
 #############################################################
 
 LEARNING_CATEGORY
-Connaissance
+Développement
 PRODUCTION_CATEGORY
 Production
 CONSTRUCTION_CATEGORY
@@ -5899,7 +5909,7 @@ Vaisseaux
 DEFENSE_CATEGORY
 Défense
 SPY_CATEGORY
-Espionage
+Renseignement
 
 
 #############################################################
@@ -5910,10 +5920,10 @@ THEORY_SHORT_DESC
 Pré-requis théorique
 
 LRN_PHYS_BRAIN
-Cartographie Cérébral
+Cartographie cérébrale
 
 LRN_PHYS_BRAIN_DESC
-Les structures et leurs fonctions dans le cerveau sont déterminés. Les interactions électrochimiques et la nature quantique de la pensée et la mémoire sont comprises.  Avec la compréhension des fonctions cérébrales, le renforcement et la transformation de celles-ci devient possible, et donne naissance à de nouvelles idées sur les limites de la pensée, de son expression, et de son remplacement.
+Les structures et leurs fonctions dans le cerveau sont déterminés. Les interactions électrochimiques et la nature quantique de la pensée et la mémorisation sont comprises.  Avec la compréhension des fonctions cérébrales, le renforcement et la transformation de celles-ci devient possible, et donne naissance à de nouvelles idées sur les limites de la pensée, de son expression, et de son remplacement.
 
 LRN_ALGO_ELEGANCE
 L'élégance algorithmique
@@ -6042,14 +6052,14 @@ GRO_PLANET_ECOL_DESC
 L'agriculture et la médecine peuvent drastiquement augmenter la survie, rendant l'accroissement de population exponentiel pendant un certain temps. Eventuellement, de nouvelles limites à la croissance apparaissent dans les ressources de la planète, et le réseau interconnecté de la vie qui supporte cela. Comprendre l'écologie et ses interactions sur le stress permettent au système d'être soutenu et ses benefices récoltés pour les générations à venir.
 
 GRO_GENETIC_ENG
-Génie Génétique
+Génie génétique
 
 GRO_GENETIC_ENG_DESC
 '''The palette of genetics is as varied as the forms of life from which it borrows. Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature. As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created. Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 #La palette génétique est aussi variée que les formes de vies dont elle est issue. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes pour créer des organismes transgéniques avec des combinaisons de caractères n'existant pas ou n'étant pas possible dans la nature. Aussi, les gènes peuvent être modifiés avant d'etre réinsérés, en altérant directement les bases, permettant de créer des gènes entièrement nouveaux. Les techniques sont limités, cependant, à des petites modifications de gènes existants qui sont disponibles pour des études.
 
 CON_ENV_ENCAPSUL
-Encapsulation environnementale
+Encapsulage de l'environnement
 
 CON_ENV_ENCAPSUL_DESC
 '''Permets de placer des stations inhabitées sur des planètes de types inhabitables, y compris les astéroïdes et les géantes gazeuses. Beaucoups de types de constructions ne peuvent pas remplacer les avant-postes. Les avant-postes sont meilleur marché et comme ils ne produisent pas rien, ils leurs sera donnés la préférence comme voie facile à la revendication d'un territiore.'''
@@ -6321,7 +6331,7 @@ By installing a massive null gravity generator at a planet's core, it becomes po
 By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down. The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections. Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas. Such versatility permits great new functional designs for social, manufacturing or other uses.'''
 
 CON_GAL_INFRA
-Infrastructure Galactique
+Infrastructure galactique
 
 CON_GAL_INFRA_DESC
 '''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
@@ -6361,7 +6371,7 @@ The primary limiting factors on a planets population capacity are environmental 
 Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design. The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor. As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.'''
 
 SHP_GAL_EXPLO
-Exploration Galactique 
+Exploration galactique 
 
 SHP_GAL_EXPLO_DESC
 La découverte du voyage interstellaire par liaisons spatiales inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
@@ -6518,7 +6528,7 @@ SHP_SOLAR_CONT_DESC
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
 SPY_ROOT_DECEPTION
-Deception
+Tromperie
 SPY_ROOT_DECEPTION_DESC
 '''The art of deception is not natural to every species, but the ability to hide the truth can be most useful.'''
 
@@ -6562,10 +6572,10 @@ CONSTRUCTION_SHORT_DESC
 Améliore l'infrastructure
 
 SUPPLY_SHORT_DESC
-Améliore les fournitures
+Améliore l'approvisionnement
 
 DEFENSE_SHORT_DESC
-Améliore la défense planètaire
+Améliore la défense planétaire
 
 TROOPS_SHORT_DESC
 Améliore les troupes
@@ -6836,21 +6846,21 @@ SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET_1
-Planetary Defense Network 1
+Réseau de défense planétaire 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 5.
+'''Augmente max [[encyclopedia DEFENSE_TITLE]] sur toutes les planètes de 5.
 
-With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
+Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - et de nouveaux ennemis. En plaçant plusieurs bases de défense armés en orbite autour d'une planète, il est possible de donner à cette planète une capacités défensives sans qu'il soit nécessité d'utiliser des navires.'''
 
 DEF_DEFENSE_NET_2
-Planetary Defense Network 2
+Réseau de défense planétaire 2
 
 DEF_DEFENSE_NET_2_DESC
 '''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15, cumulative with [[tech DEF_DEFENSE_NET_1]].'''
 
 DEF_DEFENSE_NET_3
-Planetary Defense Network 3
+Réseau de défense planétaire 3
 
 DEF_DEFENSE_NET_3_DESC
 '''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 25, cumulative with prerequisite defense network techs.'''
@@ -6930,25 +6940,25 @@ DEF_ROOT_DEFENSE_DESC
 Le concepte de 'propre défense' est à la base de biens des cheminements de 'avance technologique.'''
 
 DEF_GARRISON_1
-Garnison planètaire 1
+Garnison planétaire 1
 
 DEF_GARRISON_1_DESC
 Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 5.
 
 DEF_GARRISON_2
-Garnison planètaire 2
+Garnison planétaire 2
 
 DEF_GARRISON_2_DESC
 Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 10.
 
 DEF_GARRISON_3
-Garnison planètaire 3
+Garnison planétaire 3
 
 DEF_GARRISON_3_DESC
 Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 15.
 
 DEF_GARRISON_4
-Garnison planètaire 4
+Garnison planétaire 4
 
 DEF_GARRISON_4_DESC
 Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 20.
@@ -7168,7 +7178,7 @@ SPY_DETECT_3_DESC
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
 SPY_DETECT_4
-Capteurs
+Scanner optique
 
 SPY_DETECT_4_DESC
 Unlocks the Sensors ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
@@ -7181,7 +7191,7 @@ The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] 
 
 
 SPY_STEALTH_1
-Electromagnetic Damper
+Amortisseur électromagné tique 
 
 SPY_STEALTH_1_DESC
 Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
@@ -7433,7 +7443,7 @@ Archives culturelles
 BLD_CULTURE_ARCHIVES_DESC
 '''Augment l'objectif de [[encyclopedia RESEARCH_TITLE]] de 5, l'objectif [[encyclopedia INDUSTRY_TITLE]] par la population de la planète.
 
-Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planètaire.'''
+Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planétaire.'''
 
 BLD_IMPERIAL_PALACE
 Palais Impérial 
@@ -7511,12 +7521,12 @@ BLD_SHIPYARD_ORG_ORB_INC_DESC
 A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
-Cellular Growth Chamber
+Chambre de croissance cellulaire
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
+'''C'est une amélioration du [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] et permet le développement des [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s et [[shiphull SH_BIOADAPTIVE]]s. La présence de cette amélioration et de la [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] sur la même planète sont nécessaire au développ des [[shiphull SH_ENDOSYMBIOTIC]] et [[shiphull SH_SENTIENT]].
 
-A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
+Une amélioration du chantier naval spécialement prévu pour augmenter la taille des organismes monocellulaires à des proportions vraiment énormes.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
@@ -7838,7 +7848,7 @@ BLD_COLONY_BASE
 Base colonisatrice
 
 BLD_COLONY_BASE_DESC
-Creates a Colony Base ship which can be used to colonize another planet in the same system. Can only be built on a colony with a Population of 3 or more.
+Crée un vaisseau Base colonisatrice permettant de coloniser une autre planète de ce même système. Peut seulement être construit sur des planètes dont la population atteind 3 ou plus.
 
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
@@ -7862,37 +7872,37 @@ Vitesse de combat: %3%
 Structure: %4%'''
 
 PART_DESC_CAPACITY
-Capacity: %1%
+Capacité: %1%
 
 PART_DESC_STRENGTH
-Strength: %1%
+Puissance: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Attack Damage: %1%'''
+'''Attaque Dommages: %1%'''
 
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
 # Range: %3%
 
 PART_DESC_LR_STATS
-'''Damage: %1%
-Rate of Fire: %2% missiles/turn
-Range: %3%
-Missile Speed: %4%
-Missile Structure: %5%
+'''Dommages: %1%
+Cadence de tir: %2% missiles/tour
+Portée: %3%
+Missile vitesse: %4%
+Missile structure: %5%
 Missile [[encyclopedia STEALTH_TITLE]]: %6%
-Capacity: %7% missiles'''
+Capacité: %7% missiles'''
 
 PART_DESC_FIGHTER_STATS
-'''Fighter Type: %1%
-Fighter Anti-Fighter Damage: %3%
-Fighter Anti-Ship Damage: %2%
-Fighter Launch Rate: %4% fighters/turn
-Fighter Speed: %5%
-Fighter Structure: %6%
-Fighter [[encyclopedia STEALTH_TITLE]]: %7%
-Fighter Detection: %8%
-Capacity: %9% fighters'''
+'''Chasseur type: %1%
+Chasseur Anti-Chasseur Dommages: %3%
+Chasseur Anti-Vaisseaux Dommages: %2%
+Chasseur cadence de lancement: %4% fighters/turn
+Chasseur vitesse: %5%
+Chasseur Structure: %6%
+Chasseur [[encyclopedia STEALTH_TITLE]]: %7%
+Chasseur détection: %8%
+Capacité: %9% fighters'''
 
 
 #############################################################
@@ -7923,22 +7933,22 @@ SR_WEAPON_1_4_DESC
 SR_WEAPON_2_1
 Laser 1
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver.'''
+'''Le Laser, une arme pour vaisseaux bien plus puissante que le propulseur de masse.'''
 
 SR_WEAPON_2_2
 Laser 2
 SR_WEAPON_2_2_DESC
-'''Laser, refined to level 2.'''
+'''Laser, reconditionné au niveau 2.'''
 
 SR_WEAPON_2_3
 Laser 3
 SR_WEAPON_2_3_DESC
-'''Laser, refined to level 3.'''
+'''Laser, reconditionné au niveau 3.'''
 
 SR_WEAPON_2_4
 Laser 4
 SR_WEAPON_2_4_DESC
-'''Laser, refined to level 4.'''
+'''Laser, reconditionné au niveau 4.'''
 
 SR_WEAPON_3_1
 Plasma Cannon 1
@@ -8005,10 +8015,10 @@ SR_WEAPON_4_DESC
 Ultimate short range weapon
 
 PD_PULSE_LASER
-Pulse Laser
+Laser à impulsions
 
 PD_PULSE_LASER_DESC
-Short range, high rate of fire
+Courte portée, haute cadence de tir
 
 PD_PHASOR
 Phasor
@@ -8282,7 +8292,7 @@ CO_COLONY_POD
 Module de colonisation
 
 CO_COLONY_POD_DESC
-'''Installation de base pour colons afin de survivre le voyage vers une nouvelle planète. Permet aux vaisseaux de coloniser de nouveaux mondes.
+'''Installation de base pour colons afin de survivre les premiers jours sur une nouvelle planète. Permet aux vaisseaux de coloniser de nouveaux mondes.
 
 Toutes les classes de vaisseau colonisateur requièrent de leur planète d'origine d'avoir une population d'au moins trois.'''
 
@@ -8583,7 +8593,7 @@ Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_EN
 SH_BASIC_SMALL
 Petite coque de base
 SH_BASIC_SMALL_DESC
-'''Une petite coque de base de vaisseau interstellaire. Est capable de faire un saut supplémentaire comparé à d' autres coques de base.
+'''Une petite coque de base de vaisseau interstellaire. Comparé aux autres coques de base, elle est capable de faire un saut supplémentaire.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -8867,10 +8877,10 @@ STANDARD_CONSTRUCTION_LABEL
 '''%1% [[encyclopedia INFRASTRUCTURE_TITLE]] moyenne'''
 
 STANDARD_COLONY_SUPPLY_LABEL
-'''%2% Average Colony Supply'''
+'''%2% Approvisionnement moyen des colonies'''
 
 STANDARD_OUTPOST_SUPPLY_LABEL
-'''%2% Average Outpost Supply'''
+'''%2% Approvisionnement moyen des avant-poste'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Bon environnement'''
@@ -8888,7 +8898,7 @@ ENV_ENCAPSUL_LABEL
 '''%1% Encapsulation de l'environnement'''
 
 SELF_SUSTAINING_LABEL
-'''Autosuffisant--------------'''
+'''Autosuffisant'''
 
 TUNNELS_LABEL
 '''Subterranean Bonus'''
