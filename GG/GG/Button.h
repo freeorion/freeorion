@@ -72,7 +72,7 @@ public:
     const SubTexture& RolloverGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
     mutable ClickedSignalType LeftClickedSignal; ///< The left clicked signal object for this Button
-    mutable ClickedSignalType RightClickedSignal;///< The left clicked signal object for this Button
+    mutable ClickedSignalType RightClickedSignal;///< The right clicked signal object for this Button
     //@}
 
     /** \name Mutators */ ///@{
