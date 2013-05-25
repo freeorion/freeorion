@@ -66,6 +66,10 @@ private:
     void            EmpireSelected(GG::DropDownList::iterator it);
     void            CreateStarlaneClicked();
 
+    StarType        StarTypeFromIndex(std::size_t i) const;
+    PlanetType      PlanetTypeFromIndex(std::size_t i) const;
+    int             EmpireIDFromIndex(std::size_t i) const;
+
     bool                    m_actions_enabled;
     ModeratorActionSetting  m_selected_action;
     GG::Button*             m_no_action_button;

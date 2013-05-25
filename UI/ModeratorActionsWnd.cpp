@@ -69,7 +69,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
                                              disc_texture, style, GG::Flags<GG::WndFlag>()));
         m_star_type_drop->Insert(row);
     }
-    m_star_type_drop->Select(m_star_type_drop->begin());
+    m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
     GG::Connect(m_star_type_drop->SelChangedSignal,     &ModeratorActionsWnd::StarTypeSelected,     this);
 
     // button for create planet and droplist to select planet type to create
@@ -91,7 +91,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
                                              texture, style, GG::Flags<GG::WndFlag>()));
         m_planet_type_drop->Insert(row);
     }
-    m_planet_type_drop->Select(m_planet_type_drop->begin());
+    m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
     GG::Connect(m_planet_type_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetTypeSelected,   this);
 
     // button for destroying object
@@ -195,13 +195,13 @@ ModeratorActionsWnd::ModeratorActionSetting ModeratorActionsWnd::SelectedAction(
 { return m_selected_action; }
 
 PlanetType ModeratorActionsWnd::SelectedPlanetType() const
-{ return PT_SWAMP; }
+{ return PlanetTypeFromIndex(m_planet_type_drop->CurrentItemIndex()); }
 
 StarType ModeratorActionsWnd::SelectedStarType() const
-{ return STAR_BLUE; }
+{ return StarTypeFromIndex(m_star_type_drop->CurrentItemIndex()); }
 
 int ModeratorActionsWnd::SelectedEmpire() const
-{ return ALL_EMPIRES; }
+{ return EmpireIDFromIndex(m_empire_drop->CurrentItemIndex()); }
 
 void ModeratorActionsWnd::DoLayout() {
     GG::X left = GG::X0 + PAD;
@@ -266,3 +266,28 @@ void ModeratorActionsWnd::EnableActions(bool enable/* = true*/) {
 void ModeratorActionsWnd::CloseClicked()
 { ClosingSignal(); }
 
+StarType ModeratorActionsWnd::StarTypeFromIndex(std::size_t i) const {
+    if (i == -1)
+        return STAR_BLUE;
+    if (i >= NUM_STAR_TYPES)
+        return STAR_BLUE;
+    return StarType(i);     // assumes first enum and first index are value 0, and that items in list are in same order as enum values
+}
+
+PlanetType ModeratorActionsWnd::PlanetTypeFromIndex(std::size_t i) const {
+    if (i == -1)
+        return PT_SWAMP;
+    if (i > NUM_PLANET_TYPES)
+        return PT_SWAMP;
+    return PlanetType(i);   // assumes first enum and first index are value 0, and that items in list are in same order as enum values
+}
+
+int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
+    if (i == -1)
+        return ALL_EMPIRES;
+    if (i > static_cast<unsigned int>(Empires().NumEmpires()))
+        return ALL_EMPIRES;
+    EmpireManager::const_iterator it = Empires().begin();
+    std::advance(it, i);
+    return it->first;
+}
