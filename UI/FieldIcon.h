@@ -19,15 +19,6 @@ namespace GG {
     associated with it. */
 class FieldIcon : public GG::Control {
 public:
-    //! \name Signal Types //!@{
-    typedef boost::signal<void (int)>   MouseEnteringSignalType;        //!< emitted when the user moves the cursor over the icon; returns the object id
-    typedef boost::signal<void (int)>   MouseLeavingSignalType;         //!< emitted when the user moves the cursor off of the icon; returns the object id
-    typedef boost::signal<void (int)>   LeftClickedSignalType;          //!< emitted when the user left clicks the icon; returns the objectID
-    typedef boost::signal<void (int)>   RightClickedSignalType;         //!< emitted when the user right clicks the icon; returns the objectID
-    typedef boost::signal<void (int)>   LeftDoubleClickedSignalType;    //!< emitted when the user left double-clicks the icon; returns the object id
-    typedef boost::signal<void (int)>   RightDoubleClickedSignalType;   //!< emitted when the user left double-clicks the icon; returns the object id
-    //!@}
-
     //! \name Structors //!@{
     FieldIcon(GG::X x, GG::Y y, int field_id);                  //!< basid ctor
     ~FieldIcon();                                               //!< dtor
@@ -55,12 +46,12 @@ public:
 
     void            SetSelected(bool selected = true);   //!< shows/hides the selection indicator over this field
 
-    mutable MouseEnteringSignalType         MouseEnteringSignal;
-    mutable MouseLeavingSignalType          MouseLeavingSignal;
-    mutable LeftClickedSignalType           LeftClickedSignal;
-    mutable RightClickedSignalType          RightClickedSignal;
-    mutable LeftDoubleClickedSignalType     LeftDoubleClickedSignal;
-    mutable RightDoubleClickedSignalType    RightDoubleClickedSignal;
+    mutable boost::signal<void (int)>   MouseEnteringSignal;
+    mutable boost::signal<void (int)>   MouseLeavingSignal;
+    mutable boost::signal<void (int)>   LeftClickedSignal;
+    mutable boost::signal<void (int)>   RightClickedSignal;
+    mutable boost::signal<void (int)>   LeftDoubleClickedSignal;
+    mutable boost::signal<void (int)>   RightDoubleClickedSignal;
     //!@}
 
 private:

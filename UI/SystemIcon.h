@@ -31,32 +31,21 @@ public:
   * UniverseObject associated with it. */
 class SystemIcon : public GG::Control {
 public:
-    //! \name Signal Types //!@{
-    typedef boost::signal<void (int)>   MouseEnteringSignalType;        //!< emitted when the user moves the cursor over the icon; returns the object id
-    typedef boost::signal<void (int)>   MouseLeavingSignalType;         //!< emitted when the user moves the cursor off of the icon; returns the object id
-    typedef boost::signal<void (int)>   LeftClickedSignalType;          //!< emitted when the user left clicks the icon; returns the objectID
-    typedef boost::signal<void (int)>   RightClickedSignalType;         //!< emitted when the user right clicks the icon; returns the objectID
-    typedef boost::signal<void (int)>   LeftDoubleClickedSignalType;    //!< emitted when the user left double-clicks the icon; returns the object id
-    typedef boost::signal<void (int)>   RightDoubleClickedSignalType;   //!< emitted when the user left double-clicks the icon; returns the object id
-    typedef boost::signal<void (FleetButton&, bool)>  FleetButtonClickedSignalType;   //!< emitted when one of the fleet buttons on this icon is clicked
-    //!@}
-
     //! \name Structors //!@{
     SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);       //!< construct from a universe ID at specified size and position
     ~SystemIcon();                                              //!< dtor
     //!@}
 
     //! \name Accessors //!@{
-    int                 SystemID() const;                           //!< returns ID of system this icon represents
+    int             SystemID() const;                           //!< returns ID of system this icon represents
 
     const boost::shared_ptr<GG::Texture>& DiscTexture() const;      //!< returns the solid star disc texture
     const boost::shared_ptr<GG::Texture>& HaloTexture() const;      //!< returns the transparent star halo texture
     const boost::shared_ptr<GG::Texture>& TinyTexture() const;      //!< returns the alternate texture shown when icon very small
 
-    virtual bool        InWindow(const GG::Pt& pt) const;       //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
-    GG::Pt              NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
-    int                 EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
-
+    virtual bool    InWindow(const GG::Pt& pt) const;       //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
+    GG::Pt          NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
+    int             EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
     //!@}
 
     //! \name Mutators //!@{
@@ -82,12 +71,12 @@ public:
     void            ShowName();                     //!< enables the system name text
     void            HideName();                     //!< disables the system name text
 
-    mutable MouseEnteringSignalType         MouseEnteringSignal;
-    mutable MouseLeavingSignalType          MouseLeavingSignal;
-    mutable LeftClickedSignalType           LeftClickedSignal;
-    mutable RightClickedSignalType          RightClickedSignal;
-    mutable LeftDoubleClickedSignalType     LeftDoubleClickedSignal;
-    mutable RightDoubleClickedSignalType    RightDoubleClickedSignal;
+    mutable boost::signal<void (int)>   MouseEnteringSignal;
+    mutable boost::signal<void (int)>   MouseLeavingSignal;
+    mutable boost::signal<void (int)>   LeftClickedSignal;
+    mutable boost::signal<void (int)>   RightClickedSignal;
+    mutable boost::signal<void (int)>   LeftDoubleClickedSignal;
+    mutable boost::signal<void (int)>   RightDoubleClickedSignal;
     //!@}
 
 private:

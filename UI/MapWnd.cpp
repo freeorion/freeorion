@@ -3382,7 +3382,8 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
+            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
     }
 
@@ -3417,7 +3418,8 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
+            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
     }
 
@@ -3453,7 +3455,8 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
+            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
     }
 
@@ -3801,8 +3804,8 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
     }
 }
 
-void MapWnd::FleetButtonClicked(const FleetButton* fleet_btn) {
-    //std::cout << "MapWnd::FleetButtonClicked" << std::endl;
+void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
+    //std::cout << "MapWnd::FleetButtonLeftClicked" << std::endl;
     if (!fleet_btn)
         return;
 
@@ -3826,7 +3829,7 @@ void MapWnd::FleetButtonClicked(const FleetButton* fleet_btn) {
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
     int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
-        //std::cout << "FleetButtonClicked found open fleetwnd for fleet" << std::endl;
+        //std::cout << "FleetButtonLeftClicked found open fleetwnd for fleet" << std::endl;
         // there is already FleetWnd for this button open.
 
         // check which fleet(s) is/are selected in the button's FleetWnd
@@ -3837,7 +3840,7 @@ void MapWnd::FleetButtonClicked(const FleetButton* fleet_btn) {
         if (selected_fleet_ids.size() == 1)
             already_selected_fleet_id = *(selected_fleet_ids.begin());
     } else {
-        //std::cout << "FleetButtonClicked did not find open fleetwnd for fleet" << std::endl;
+        //std::cout << "FleetButtonLeftClicked did not find open fleetwnd for fleet" << std::endl;
     }
 
 
@@ -3885,6 +3888,9 @@ void MapWnd::FleetButtonClicked(const FleetButton* fleet_btn) {
     if (fleet_to_select_id != INVALID_OBJECT_ID)
         SelectFleet(fleet_to_select_id);
 }
+
+void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn)
+{}
 
 void MapWnd::SelectedFleetsChanged() {
     // get selected fleets

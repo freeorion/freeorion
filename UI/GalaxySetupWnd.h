@@ -22,16 +22,6 @@ class GalaxySetupPanel : public GG::Control {
 public:
     static const GG::X DEFAULT_WIDTH;
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>                               SettingsChangedSignalType; ///< emitted when the any of the settings controls changes
-    typedef boost::signal<void (boost::shared_ptr<GG::Texture>)> ImageChangedSignalType;    ///< emitted when the galaxy preview image changes
-    //@}
-
-    /** \name Slot Types */ //@{
-    typedef SettingsChangedSignalType::slot_type SettingsChangedSlotType; ///< type of functor(s) invoked on a SettingsChangedSignalType
-    typedef ImageChangedSignalType::slot_type    ImageChangedSlotType;    ///< type of functor(s) invoked on a ImageChangedSignalType
-    //@}
-
     /** \name Structors*/ //!@{
     GalaxySetupPanel(GG::X x, GG::Y y, GG::X w = DEFAULT_WIDTH);
     //!@}
@@ -50,8 +40,9 @@ public:
     
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
-    mutable SettingsChangedSignalType SettingsChangedSignal;        ///< the settings changed signal object for this GalaxySetupPanel
-    mutable ImageChangedSignalType    ImageChangedSignal;           ///< the image changed signal object for this GalaxySetupPanel
+    mutable boost::signal<void ()>  SettingsChangedSignal;          //!< the settings changed signal object for this GalaxySetupPanel
+    mutable boost::signal<void (boost::shared_ptr<GG::Texture>)>
+                                    ImageChangedSignal;             //!< the image changed signal object for this GalaxySetupPanel
     //!@}
 
     /** \name Mutators*/ //!@{

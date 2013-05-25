@@ -55,19 +55,6 @@ struct LaneEndpoints {
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd {
 public:
-    //! \name Signal Types //!@{
-    typedef boost::signal<void (int)>       SystemLeftClickedSignalType;        //!< emitted when the user left-clicks a star system
-    typedef boost::signal<void (int)>       SystemRightClickedSignalType;       //!< emitted when the user right-clicks a star system
-    typedef boost::signal<void (int)>       SystemBrowsedSignalType;            //!< emitted when the user moves the mouse over a star system
-    typedef boost::signal<void (double)>    ZoomedSignalType;                   //!< emitted when the map zoom factor is changed
-    //!@}
-
-    //! \name Slot Types //!@{
-    typedef SystemLeftClickedSignalType::slot_type  SystemLeftClickedSlotType;  //!< type of functor invoked when the user left-clicks a star system
-    typedef SystemRightClickedSignalType::slot_type SystemRightClickedSlotType; //!< type of functor invoked when the user right-clicks a star system
-    typedef SystemBrowsedSignalType::slot_type      SystemBrowsedSlotType;      //!< type of functor invoked when the user moves the mouse over a star system
-    //!@}
-
     //! \name Structors //!@{
     MapWnd();    //!< default ctor
     ~MapWnd();   //!< default dtor
@@ -122,10 +109,10 @@ public:
     void            ShowSystemNames();                                      //!< enables the system name text
     void            HideSystemNames();                                      //!< disables the system name text
 
-    mutable SystemLeftClickedSignalType     SystemLeftClickedSignal;
-    mutable SystemRightClickedSignalType    SystemRightClickedSignal;
-    mutable SystemBrowsedSignalType         SystemBrowsedSignal;
-    mutable ZoomedSignalType                ZoomedSignal;
+    mutable boost::signal<void (int)>       SystemLeftClickedSignal;
+    mutable boost::signal<void (int)>       SystemRightClickedSignal;
+    mutable boost::signal<void (int)>       SystemBrowsedSignal;
+    mutable boost::signal<void (double)>    ZoomedSignal;
 
     void            CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
     void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
@@ -280,7 +267,8 @@ private:
 
     void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
 
-    void            FleetButtonClicked(const FleetButton* fleet_btn);
+    void            FleetButtonLeftClicked(const FleetButton* fleet_btn);
+    void            FleetButtonRightClicked(const FleetButton* fleet_btn);
 
     void            UniverseObjectDeleted(const UniverseObject *obj);
 

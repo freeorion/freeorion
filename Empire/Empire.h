@@ -65,10 +65,6 @@ struct ResearchQueue {
     /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> ResearchQueueChangedSignalType;    ///< emitted when something is added to, removed from or altered on the queue
-    //@}
-
     /** \name Structors */ //@{
     ResearchQueue(int empire_id) :
         m_projects_in_progress(0),
@@ -120,7 +116,7 @@ struct ResearchQueue {
       * none exists. */
     iterator        UnderfundedProject();
 
-    mutable ResearchQueueChangedSignalType ResearchQueueChangedSignal;
+    mutable boost::signal<void ()> ResearchQueueChangedSignal;
     //@}
 
 private:
@@ -185,10 +181,6 @@ struct ProductionQueue {
     /** The const ProductionQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> ProductionQueueChangedSignalType;    ///< emitted when something is added to, removed from or altered on the queue
-    //@}
-
     /** \name Structors */ //@{
     ProductionQueue(int empire_id); ///< Basic ctor.
     //@}
@@ -247,7 +239,7 @@ struct ProductionQueue {
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
     iterator                        UnderfundedProject();
 
-    mutable ProductionQueueChangedSignalType ProductionQueueChangedSignal;
+    mutable boost::signal<void ()> ProductionQueueChangedSignal;
     //@}
 
 private:
