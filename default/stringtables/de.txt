@@ -1,6 +1,6 @@
 Deutsch
 
-#This is the German String Table file for FreeOrion (= svn6027)
+#This is the German String Table file for FreeOrion (^= svn6069)
 #Übersetzung von Martin Wuttke [thesilentone], Markus Sinner [kroddn] und shivu
 
 #################
@@ -286,7 +286,7 @@ Schlachtkreuzer mit schweren Waffen und Panzerung um die Drecksarbeit zu erledig
 SD_MARK_A_ORGANIC1
 Organisch I
 SD_MARK_A_ORGANIC1_DESC
-Organischer Rumpf mit vorläufige Laser Bewaffnung
+Organischer Rumpf mit grund Laser Bewaffnung
 
 SD_MARK_A_ORGANIC2
 Organisch II
@@ -306,7 +306,7 @@ Organischer Rumpf mit Laser Bewaffnung
 SD_MARK_B_ORGANIC1
 Organisch V
 SD_MARK_B_ORGANIC1_DESC
-Organischer Rumpf mit vorläufige Plasma Bewaffnung.
+Organischer Rumpf mit grund Plasma Bewaffnung.
 
 SD_MARK_C_ENDO1
 Endomorph I
@@ -351,7 +351,7 @@ Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die 
 SD_GRAVITATING1
 Gravitating I
 SD_GRAVITATING1_DESC
-Massive state-of-art warship armed and protected with the latest technology. Priced accordingly.
+Massive top Kriegsschiff bewaffnet und panzeret mit der letzte Technologie. Preis entsprechend.
 
 SD_COLONY_SHIP
 Kolonieschiff
@@ -393,24 +393,24 @@ SM_MONSTER
 Monster
 
 SM_KRILL_1
-Small Krill Swarm
+Schwarm kleine Krill
 SM_KRILL_1_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Obwohl in der Regel nicht aggressiv, wird ihr Zahl eine Gefahr für die Schifffahrt, und Blockiert den Nachschub. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
 
 SM_KRILL_2
-Medium Krill Swarm
+Schwarm mittleren Krill
 SM_KRILL_2_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Obwohl in der Regel nicht aggressiv, wird ihr Zahl eine Gefahr für die Schifffahrt, und Blockiert den Nachschub. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
 
 SM_KRILL_3
-Large Krill Swarm
+Schwarm grossen Krill
 SM_KRILL_3_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Wenn in genugend grossen Anzahl, fangen sie an sich gegen Schiffe aggressiv zu zeigen. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
 
 SM_KRILL_4
-Plague of Krill
+Krillplage
 SM_KRILL_4_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Das Krill Verhalten ändert sich radikal, wenn eine bestimmte kritische Bevölkerung erreicht ist - irgendwo in den 10er von Millionen. Der normalerweise flüchtige Krill, wird aggressiv, greift die Schiffe an und zerstört die orbitalen Strukturen. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
 
 SM_TREE
 Dyson Forest
@@ -465,57 +465,57 @@ In the larval form, a kraken is a cautious and harmless type of space-bourn faun
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-A formidable medium-weight space monster.
+Ein gewaltiger mittelgewicht Weltraummonster.
 
 SM_KRAKEN_3
-Great Kraken
+Großen Kraken
 SM_KRAKEN_3_DESC
-A formidable medium-weight space monster.
+Ein gewaltiger mittelgewicht Weltraummonster.
 
 SM_BLACK_KRAKEN
-Black Kraken
+Schwazen Kraken
 SM_BLACK_KRAKEN_DESC
-A powerful, unnatural-seeming space monster.
+Ein mächtiger, unnatürlich wirkenden Weltraummonster.
 
 SM_SNOWFLAKE_1
-Small Snowflake
+Kleiner Schneeflocke
 SM_SNOWFLAKE_1_DESC
-A formidable light-weight space monster.
+Ein gewaltiger leichtgewicht Weltraummonster.
 
 SM_SNOWFLAKE_2
-Snowflake
+Schneeflocke
 SM_SNOWFLAKE_2_DESC
-A formidable light-weight space monster.
+Ein gewaltiger leichtgewicht Weltraummonster.
 
 SM_SNOWFLAKE_3
-Large Snowflake
+Großen Schneeflocke
 SM_SNOWFLAKE_3_DESC
-A formidable light-weight space monster.
+Ein gewaltiger leichtgewicht Weltraummonster.
 
 SM_PSIONIC_SNOWFLAKE
-Psionic Snowflake
+Psionischen Schneeflocke
 SM_PSIONIC_SNOWFLAKE_DESC
-A monster with the power to neutralize the minds of organic beings.
+Ein Monster der die Kraft besitzt den Verstand von organischen Wesen zu neutralisieren.
 
 SM_JUGGERNAUT_1
-Small Juggernaut
+Kleinen Koloss
 SM_JUGGERNAUT_1_DESC
-A formidable heavy-weight space monster.
+Ein gewaltiger schwergewicht Weltraummonster.
 
 SM_JUGGERNAUT_2
-Juggernaut
+Koloss
 SM_JUGGERNAUT_2_DESC
-A formidable heavy-weight space monster.
+Ein gewaltiger schwergewicht Weltraummonster.
 
 SM_JUGGERNAUT_3
-Large Juggernaut
+Großen Koloss
 SM_JUGGERNAUT_3_DESC
-A formidable heavy-weight space monster.
+Ein gewaltiger schwergewicht Weltraummonster.
 
 SM_BLOATED_JUGGERNAUT
-Bloated Juggernaut
+Aufgeblähten Koloss
 SM_BLOATED_JUGGERNAUT_DESC
-A massive, sickly-looking space monster.
+Ein massiv aber krankhaft Aussenden Schwergewicht Weltraummonster.
 
 SM_CLOUD
 Space Cloud
@@ -548,9 +548,9 @@ SM_DAMPENING_CLOUD_DESC
 '''A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of fuel in a matter of seconds.'''
 
 SM_ACIREMA_GUARD
-Acirema Guard Ship
+Acirema Schutzschiff
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema guards the system.
+Ein, von den Acirema's gebaut, unbemanntes bewaffnetes Schiff zur bewachung des Systems.
 
 SM_EXP_OUTPOST
 Experimentor Outpost Ship
@@ -567,7 +567,7 @@ A fearsome space monster with the power to destroy entire star systems.
 ##########
 
 FLD_ION_STORM
-Ionen Sturm
+Ionensturm
 
 FLD_ION_STORM_DESC
 Magnetischen Wirbel von relativistisch geladene Teilschen die mit Sensoren interferieren kann und Schiffe und Planete beeinträchtigen.
@@ -632,7 +632,7 @@ UNKNOWN_EMPIRE
 Unbekanntes Imperium
 
 LAST_OPPONENT_DEFEATED_VICTORY
-Your last opponent has been defeated and you are victorious!
+Ihr letzter Gegner ist besiegt, sie sind der Sieger!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 The server received invalid client save data. Some may be ignored.
@@ -2331,7 +2331,7 @@ Stop Erkundung
 ###############
 
 MOD_NONE
-Keiner
+Keine Handlung des Noderators
 
 MOD_CREATE_PLANET
 Planet hinzufügen
@@ -2345,8 +2345,11 @@ Zerstöre
 MOD_SET_OWNER
 Set Owner
 
-MOD_STARLANE
+MOD_ADD_STARLANE
 Sternenstrasse hinzufügen
+
+MOD_REMOVE_STARLANE
+Sternenstrasse entfernen
 
 ###############
 #  Diplomacy  #
@@ -2929,7 +2932,7 @@ INFRASTRUCTURE_TEXT
 DEFENSE_TITLE
 Verteidigung
 DEFENSE_TEXT
-'''The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the Damage value of a space ship.'''
+'''Das Verteidigungsmass eines Planetes wird durch die Stärke der Boden zu Weltraum installierten Waffen. It's comparable to the Damage value of a space ship.'''
 
 SHIELDS_TITLE
 Schield
@@ -3003,17 +3006,17 @@ SELF_SUSTAINING_SPECIES_TEXT
 '''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
 
 TELEPATHIC_TITLE
-Telepathy
+Telepathie
 TELEPATHY_TEXT
-'''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].'''
+'''Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.'''
 
 FUEL_TITLE
-Fuel
+Triebstoff
 FUEL_TEXT
-'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+'''Triebstoff erlaubt Schiffe entlang der Sternenstrasse zu reisen. Für jede Sternstrasse verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternenstrasse reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstrasse ist.'''
 
 SUPPLY_TITLE
-Supply
+Versorgung
 SUPPLY_TEXT
 '''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
 
@@ -3021,9 +3024,9 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 
 
 FLEET_UPKEEP_TITLE
-Fleet Upkeep
+Flotten Unterhalt
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
+'''Die Unterhaltskosten einer Flotte sind mehr als die summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im besitzt des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im besitzt des Imperiums.'''
 
 EVACUATION_TITLE
 Evakuierung
@@ -3397,7 +3400,7 @@ Imperium ausgeloescht
 SITREP_VICTORY
 %empire% %text%
 SITREP_VICTORY_LABEL
-Victory
+Sieg
 
 SITREP_VICTORY_DESTRUCTION
 At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
@@ -3435,9 +3438,9 @@ EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-%ship% was repaired by %building% on %planet%.
+%ship% ist im %building% auf %planet% repariert worden.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Drydock Repair
+Trockendockreparatur
 
 EFFECT_MONSTER_SPAWNING
 A %predefinedshipdesign% was spawned in %system%!
@@ -3450,14 +3453,14 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia Terraform
 
 EFFECT_TERRAFORM
-%planet% has been terraformed.
+%planet% wurde Terraformiert.
 EFFECT_TERRAFORM_LABEL
 Terraform
 
 EFFECT_STARVATION
-Famine struck %planet%.
+Hungersnot hat %planet% getroffen.
 EFFECT_STARVATION_LABEL
-Famine
+Hungersnot
 
 EFFECT_TAME_MONSTER_HATCHED
 A tamed %predefinedshipdesign% is ready for service at %planet%.
@@ -3480,19 +3483,19 @@ EFFECT_DERELICT_MAP_LABEL
 Karte aus eines Wrackes
 
 EFFECT_DERELICT_FUEL
-Ships were refueled from the residual supply found in an abandoned derelict at %system%.
+Schiffe sind durch restlichen Triebstoff von verlassene Wracks auf %system% aufgetankt worden.
 EFFECT_DERELICT_FUEL_LABEL
-Derelict Fuel
+Triebstoff aus Wrack
 
 EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack!
+%system% hat einiges von seiner Bevölkerung durch einen Biologischen Angrif verloren!
 EFFECT_BIOWEAPON_LABEL
-Bioweapon Attack
+Biowaffen Angrif
 
 EFFECT_EXOBOT
-An Exobot colony ship has been built at %planet%.
+An Exobot colony ship has been built atEine Exobotskolonie wurde auf %planet% errichtet.
 EFFECT_EXOBOT_LABEL
-Exobot Ship
+Exobotschiff
 
 EFFECT_EVACUEES
 Evacuees have settled at %planet%.
@@ -3548,30 +3551,30 @@ UNKNOWN_PLANET
 Unbekannter Planet
 
 CANNOT_PRODUCE_SHIPS
-Cannot Produce Ships
+Kann keine Schiffe produzieren
 
 CAN_PRODUCE_SHIPS
-Can Produce Ships
+Kann Schiffe produzieren
 
 CANNNOT_COLONIZE
-Cannot Colonize Planets
+Kann keine Planeten kolonisieren
 
 CAN_COLONIZE
-Can Colonize Planets
+Kann Planeten kolonisieren
 
 OCCUPIED_PLANETS
-Occupied Planets:
+Besetzte Planeten:
 
 ENVIRONMENTAL_PREFERENCES
-Environmental Preferences:
+Umwelt Präferenzen:
 
 ### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
 
 SP_HUMAN
 Menschen
 SP_HUMAN_DESC
-'''Mostly Harmless. All average stats for testing purposes.
-Prefer Terran planets.
+'''Meistens harmlos. Testet gerne alle Planeten von mittlerem Aussehen.
+Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3584,8 +3587,8 @@ Prefer Terran planets.
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_DESC
-'''Three-tentacled, aquatic Nautiloid.
-Prefer Ocean planets.
+'''Besitzt drei Tentakel, aquatischen Nautilus.
+Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3612,7 +3615,7 @@ SP_GYSACHE
 Gysache
 SP_GYSACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -3638,7 +3641,7 @@ SP_CHATO
 Chato
 SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
-Prefer Toxic planets.
+Bevorzugt toxische Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3660,7 +3663,7 @@ SP_TRITH
 Trith
 SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
-Prefer Desert planets.
+Bevorzugt wüstenhafte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3685,7 +3688,7 @@ SP_HHHOH
 Hhhoh
 SP_HHHOH_DESC
 '''Huge, slow, multi-trunked Mammoths.
-Prefer Tundra planets.
+Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3708,7 +3711,7 @@ SP_EAXAW
 Eaxaw
 SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
-Prefer Terran planets.
+Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3732,7 +3735,7 @@ SP_DERTHREAN
 Derthrean
 SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
-Prefer Toxic planets.
+Bevorzugt toxische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3749,7 +3752,7 @@ SP_LAENFA
 Laenfa
 SP_LAENFA_DESC
 '''Sneaky, telepathic, sentient vines.
-Prefer Ocean Planets.
+Bevorzugt ozeanische Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3772,7 +3775,7 @@ SP_TAEGHIRUS
 Tae Ghirus
 SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -3793,7 +3796,7 @@ SP_MUURSH
 Mu Ursh
 SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
-Prefer Desert planets.
+Bevorzugt wüstenhafte Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3808,7 +3811,7 @@ SP_GEORGE
 George
 SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
-Prefers Tundra planets.
+Bevorzugt Tundra Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -3830,7 +3833,7 @@ SP_CRAY
 Cray
 SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
-Prefer Barren planets.
+Bevorzugt unfruchtbare Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -3854,7 +3857,7 @@ SP_ETTY
 Etty
 SP_ETTY_DESC
 '''Cybernetic plants.
-Prefer Desert planets.
+Bevorzugt wüstenhafte Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -3882,7 +3885,7 @@ SP_CYNOS
 Cynos
 SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -3909,7 +3912,7 @@ SP_PHINNERT
 Phinnert
 SP_PHINNERT_DESC
 '''Flying Monkeys.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3932,7 +3935,7 @@ SP_EGASSEM
 Egassem
 SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
-Prefer Inferno planets.
+Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[ULTIMATE_INDUSTRY]]
@@ -3956,7 +3959,7 @@ SP_SSLITH
 Sslith
 SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
-Prefer Tundra planets.
+Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -3978,7 +3981,7 @@ SP_FIFTYSEVEN
 Fifty-seven
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4005,7 +4008,7 @@ SP_SETINON
 Setinon
 SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
-Prefer Swamp planets.
+Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4031,7 +4034,7 @@ SP_NYMNMN
 Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
-Prefer Desert planets.
+Bevorzugt wüstenhafte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4049,7 +4052,7 @@ SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
-Prefers Barren planets.
+Bevorzugt unfruchtbare Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4064,7 +4067,7 @@ SP_RAAAGH
 Raaagh
 SP_RAAAGH_DESC
 '''Highly territorial felinoids.
-Prefer Terran planets.
+Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4090,7 +4093,7 @@ SP_BEIGEGOO
 Beige Goo
 SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
-Prefers Radiated planets.
+Bevorzugt verstrahlte Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -4106,7 +4109,7 @@ SP_SILEXIAN
 Silexian
 SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
-Prefer Terran planets.
+Bevorzugt erdähnliche Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4132,7 +4135,7 @@ SP_KOBUNTURA
 Kobuntura
 SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
-Prefer Barren planets.
+Bevorzugt unfruchtbare Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -4153,7 +4156,7 @@ SP_UGMORS
 Ugmors
 SP_UGMORS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
-Prefer Inferno planets.
+Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4180,7 +4183,7 @@ SP_GISGUFGTHRIM
 '''Gis Guf Gthrim'''
 SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
-Prefer Toxic planets.
+Bevorzugt toxische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4196,7 +4199,7 @@ SP_HIDDENGARDENER
 Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends its plant food from beneath
-Prefers Terran planets
+Bevorzugt erdähnliche Planeten
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_STEALTH]]
@@ -4219,7 +4222,7 @@ SP_ABADDONI
 Abaddoni
 SP_ABADDONI_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
-Prefers Inferno planets.
+Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4240,8 +4243,8 @@ The entire Abaddonnian species lives in a dictatorship ruled by a sentient artif
 SP_ACIREMA
 Acirema
 SP_ACIREMA_DESC
-'''A race with nearly limitless power, that cannot survive in this universe.
-Prefers Radiated planets.
+'''Eine Rasse von nahezu unbegrenzte Kraft, das in diesem Universum nicht überleben kann.
+Bevorzugt verstrahlte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -4267,8 +4270,8 @@ They can't stay here long enough to actually move to another planet and still su
 SP_OURBOOLS
 Ourbools
 SP_OURBOOLS_DESC
-'''Giant blind swimmers who "see" gravitation.
-Prefer Ocean planets.
+'''Riesige Blinde Schwimmer die, die Schwerkraft "sehen" können.
+Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4298,7 +4301,7 @@ SP_VOLP
 Volp-Uglush
 SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
-Prefer Barren planets.
+Bevorzugt unfruchtbare Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4323,7 +4326,7 @@ SP_FURTHEST
 Furthest
 SP_FURTHEST_DESC
 '''Paranoid three-headed, triped herbivores
-Prefer Tundra planets.
+Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4773,9 +4776,9 @@ verstrahlt
 PT_BARREN
 unfruchtbar
 PT_TUNDRA
-arktisch
+tundra
 PT_DESERT
-Wüste
+wüstenhaft
 PT_TERRAN
 erdähnlich
 PT_OCEAN
@@ -4811,11 +4814,11 @@ Gasriese
 PE_UNINHABITABLE
 unbewohnbar
 PE_HOSTILE
-schrecklich
+feindlich
 PE_POOR
 armseelig
 PE_ADEQUATE
-angemessen
+adäquat
 PE_GOOD
 gut
 
@@ -6649,7 +6652,7 @@ EXOBOT_SHORT_DESC
 Builds Exobot Citizens
 
 STARLANE_SPEED_SHORT_DESC
-Increases Sternenstrasse Schnelligkeit
+Steigert die Sternenstrassegeschwindigkeit
 
 CON_ORBITAL_CON
 Orbital Construction
@@ -6864,24 +6867,21 @@ SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET_1
-'''Planetare Verteidigungs-
-netz 1'''
+Planetare Verteidigungs- netz 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 5.
+'''Erhöht das max [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5.
 
-With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
+Mit der galaktischen Erkundung trift die Möglichkeit, neue Rassen zu entdecken zu - und auch neue Feinde. Indem mehrere bewaffnete Verteidigung Basen in einer Umlaufbahn um den Planeten platziert werden, ist es möglich ihr einer defensiven Fähigkeiten zu geben, ohne die Notwendigkeit Schiffe dafür zu benützen.'''
 
 DEF_DEFENSE_NET_2
-'''Planetare Verteidigungs-
-netz 2'''
+Planetare Verteidigungs- netz 2
 
 DEF_DEFENSE_NET_2_DESC
 '''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15, cumulative with [[tech DEF_DEFENSE_NET_1]].'''
 
 DEF_DEFENSE_NET_3
-'''Planetare Verteidigungs-
-netz 3'''
+Planetare Verteidigungs- netz 3
 
 DEF_DEFENSE_NET_3_DESC
 '''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 25, cumulative with prerequisite defense network techs.'''
@@ -7040,7 +7040,7 @@ SHP_WEAPON_1_4_DESC
 SHP_WEAPON_2_1
 Laser 1
 SHP_WEAPON_2_1_DESC
-'''Entsperrt den Laser, eine leistungsfähigere Schiffs Waffe als Massetreiber.'''
+'''Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als den Massetreiber.'''
 
 SHP_WEAPON_2_2
 Laser 2
@@ -7058,24 +7058,24 @@ SHP_WEAPON_2_4_DESC
 '''Verbessert den Laser auf Stufe 4.'''
 
 SHP_WEAPON_3_1
-Plasma Cannon 1
+Plasmakanone 1
 SHP_WEAPON_3_1_DESC
-'''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
+'''Entsperrt den Plasmakanone, eine leistungsfähigere Schiffswaffe als den Laser.'''
 
 SHP_WEAPON_3_2
-Plasma Cannon 2
+Plasmakanone 2
 SHP_WEAPON_3_2_DESC
-'''Refines Plasma Cannon to level 2.'''
+'''Verbessert die Plasmakanone auf Stufe 2.'''
 
 SHP_WEAPON_3_3
-Plasma Cannon 3
+Plasmakanone 3
 SHP_WEAPON_3_3_DESC
-'''Refines Plasma Cannon to level 3.'''
+'''Verbessert die Plasmakanone auf Stufe 3.'''
 
 SHP_WEAPON_3_4
-Plasma Cannon 4
+Plasmakanone 4
 SHP_WEAPON_3_4_DESC
-'''Refines Plasma Cannon to level 4.'''
+'''Verbessert die Plasmakanone auf Stufe 4.'''
 
 SHP_WEAPON_4_1
 Death Ray 1
@@ -7116,10 +7116,10 @@ SHP_WEAPON_4_DESC
 A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
 
 SHP_PULSE_LASER
-Pulse Laser
+Impulslaser
 
 SHP_PULSE_LASER_DESC
-Unlocks Pulse Laser ship part.
+Entsperrt das Schiffsteil Impulslaser.
 
 SHP_PHASOR
 Phasor
@@ -7211,8 +7211,7 @@ The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] 
 
 
 SPY_STEALTH_1
-'''Elektromagneti
-scher Dämpfer'''
+Elektromagneti scher Dämpfer
 
 SPY_STEALTH_1_DESC
 Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
@@ -7542,12 +7541,12 @@ BLD_SHIPYARD_ORG_ORB_INC_DESC
 A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
-Cellular Growth Chamber
+Zellwachstum Kammer
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
+'''Das ist eine verbesserung vom [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und ermöglicht die Entwicklung von [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s und [[shiphull SH_BIOADAPTIVE]]s. Das Vorhandensein dieser Verbesserung und die [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] gleicher mass auf dem Planet erlaubt die Entwickelung des [[shiphull SH_ENDOSYMBIOTIC]] und [[shiphull SH_SENTIENT]].
 
-A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
+Eine Werft Verbesserung die darauf Zielt, die Größe von einzelligen Organismen, um wirklich massiven Proportionen zu erhöhen.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
@@ -7939,22 +7938,22 @@ SR_WEAPON_1_4_DESC
 SR_WEAPON_2_1
 Laser 1
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver.'''
+'''Der Laser, eine viel leistungsfähigere Schiffswaffe als den Massetreiber.'''
 
 SR_WEAPON_2_2
 Laser 2
 SR_WEAPON_2_2_DESC
-'''Laser, refined to level 2.'''
+'''Laser, auf Stufe 2 verbessert.'''
 
 SR_WEAPON_2_3
 Laser 3
 SR_WEAPON_2_3_DESC
-'''Laser, refined to level 3.'''
+'''Laser, auf Stufe 3 verbessert.'''
 
 SR_WEAPON_2_4
 Laser 4
 SR_WEAPON_2_4_DESC
-'''Laser, refined to level 4.'''
+'''Laser, auf Stufe 4 verbessert.'''
 
 SR_WEAPON_3_1
 Plasma Cannon 1
@@ -8021,10 +8020,10 @@ SR_WEAPON_4_DESC
 Ultimate short range weapon
 
 PD_PULSE_LASER
-Pulse Laser
+Impulslaser
 
 PD_PULSE_LASER_DESC
-Short range, high rate of fire
+Kurze Reichweite, hohe Feuerrate
 
 PD_PHASOR
 Phasor
@@ -8160,13 +8159,13 @@ FU_DEUTERIUM_TANK
 Deuterium-Tank
 
 FU_DEUTERIUM_TANK_DESC
-Small increase to ship range by increasing fuel capacity. Bulky and vulnerable to weapons fire.
+Kleine Steigerung von Schiffsreichweite durch erweiterung der Triebstoffkapazität. Sperrig und verletzlich durch Waffenschüsse.
 
 FU_ANTIMATTER_TANK
 Antimaterien-Tank
 
 FU_ANTIMATTER_TANK_DESC
-Moderate increase to ship range by increasing fuel capacity. Compact and low mass.
+Moderate Steigerung von Schiffsreichweite durch erweiterung der Triebstoffkapazität. Kompact und niedrige Masse.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
