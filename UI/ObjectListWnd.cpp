@@ -878,13 +878,19 @@ namespace {
         } else if (obj->ObjectType() == OBJ_PLANET) {
             if (const Planet* planet = universe_object_cast<const Planet*>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
-
         } else if (obj->ObjectType() == OBJ_BUILDING) {
             const Building* building = universe_object_cast<const Building*>(obj);
             if (building)
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
             else
                 retval.push_back(ClientUI::BuildingIcon(""));   // default building icon
+        } else if (obj->ObjectType() == OBJ_FIELD) {
+            const Field* field = universe_object_cast<const Field*>(obj);
+            if (field) {
+                const FieldType* field_type = GetFieldType(field->FieldTypeName());
+                if (field_type)
+                    retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / field_type->Graphic(), true));
+            }
         }
         if (retval.empty())
             retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
