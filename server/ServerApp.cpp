@@ -39,6 +39,7 @@
 
 namespace fs = boost::filesystem;
 
+void Seed(unsigned int seed);
 
 ////////////////////////////////////////////////
 // PlayerSaveGameData
@@ -2345,6 +2346,7 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
     // execute all effects and update meters prior to production, research, etc.
+    Seed(CurrentTurn());
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
