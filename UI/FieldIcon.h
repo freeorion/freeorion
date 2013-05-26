@@ -32,6 +32,9 @@ public:
     //!@}
 
     //! \name Mutators //!@{
+    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Refresh();
     virtual void    Render();

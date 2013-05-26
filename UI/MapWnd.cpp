@@ -2041,8 +2041,9 @@ void MapWnd::InitTurnRendering() {
     m_fleet_lines.clear();
     ClearProjectedFleetMovementLines();
 
-
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     const ObjectMap& objects = Objects();
 
     // remove old system icons
@@ -2095,11 +2096,14 @@ void MapWnd::InitTurnRendering() {
         const Field* field = *fld_it;
         int fld_id = field->ID();
 
-        // skip known destroyed objects
+        // skip known destroyed and stale fields
         if (this_client_known_destroyed_objects.find(fld_id) != this_client_known_destroyed_objects.end())
             continue;
-        if (field->GetVisibility(HumanClientApp::GetApp()->EmpireID()) <= VIS_NO_VISIBILITY)
+        if (this_client_stale_object_info.find(fld_id) != this_client_stale_object_info.end())
             continue;
+        // don't skip not visible but not stale fields; still expect these to be where last seen, or near there
+        //if (field->GetVisibility(client_empire_id) <= VIS_NO_VISIBILITY)
+        //    continue;
 
         // create new system icon
         FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, fld_id);
@@ -2317,10 +2321,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-    const Empire* this_client_empire = Empires().Lookup(empire_id);
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const Empire* this_client_empire = Empires().Lookup(client_empire_id);
     std::set<int> underAllocResSys;
 
     std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs

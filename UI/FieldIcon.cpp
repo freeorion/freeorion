@@ -63,6 +63,15 @@ int FieldIcon::FieldID() const
 const boost::shared_ptr<GG::Texture>& FieldIcon::FieldTexture() const
 { return m_texture; }
 
+void FieldIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void FieldIcon::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void FieldIcon::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 

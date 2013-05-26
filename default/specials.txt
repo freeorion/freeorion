@@ -1,6 +1,39 @@
 include "shared_macros.txt"
 
 Special
+    name = "STARSPAWN_NEBULA_SPECIAL"
+    description = "STARSPAWN_NEBULA_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        System
+        Star type = NoStar
+        Not Contains Planet
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.5
+            stackinggroup = "NEBULA_SPAWN"
+            effects = [
+                CreateField type = "FLD_NEBULA_1"
+                    x = Source.X y = Source.Y size = Random(40,120)
+                RemoveSpecial "STARSPAWN_NEBULA_SPECIAL"
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "NEBULA_SPAWN"
+            effects = [
+                CreateField type = "FLD_NEBULA_2"
+                    x = Source.X y = Source.Y size = Random(40,120)
+                RemoveSpecial "STARSPAWN_NEBULA_SPECIAL"
+            ]
+        ]
+    graphic = "nebulae/nebula9.png"
+
+Special
     name = "ECCENTRIC_ORBIT_SPECIAL"
     description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
     stealth = 0

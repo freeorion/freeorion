@@ -1590,6 +1590,14 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     int new_field_id = GetNewObjectID();
     GetUniverse().InsertID(field, new_field_id);
+
+    // if target is a system, and location matches system location, can put
+    // field into system
+    System* system = universe_object_cast<System*>(target);
+    if (!system)
+        return;
+    if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
+        system->Insert(field);
 }
 
 std::string CreateField::Description() const {

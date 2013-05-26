@@ -578,6 +578,18 @@ Molecular Cloud
 FLD_MOLECULAR_CLOUD_DESC
 Diffuse cloud of complex molecules that disrupts ship shielding.
 
+FLD_NEBULA_1
+Nebula
+
+FLD_NEBULA_1_DESC
+Cloud of hydrogen gas that could collapse and form a new star.
+
+FLD_NEBULA_2
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_2_DESC
+[[FLD_NEBULA_1_DESC]]
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
