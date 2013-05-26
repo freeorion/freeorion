@@ -125,7 +125,7 @@ namespace {
         }
     }
 
-    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
+    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> >& players) {
         // load default empire names
         static std::list<std::string> empire_names;
         if (empire_names.empty())
@@ -332,6 +332,7 @@ MPLobby::MPLobby(my_context c) :
     const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(server.m_networking.HostPlayerID()));
 
     int host_id = server.m_networking.HostPlayerID();
+    ClockSeed();
 
     // create player setup data for host, and store in list
     m_lobby_data->m_players.push_back(std::make_pair(host_id, PlayerSetupData()));
