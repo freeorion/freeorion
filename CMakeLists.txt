@@ -99,7 +99,7 @@ if (Subversion_FOUND AND (
     Subversion_WC_INFO("${CMAKE_SOURCE_DIR}" FreeOrion)
 endif ()
 configure_file(
-    ${CMAKE_SOURCE_DIR}/cmake/Version.cpp.in
+    ${CMAKE_SOURCE_DIR}/util/Version.cpp.in
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 

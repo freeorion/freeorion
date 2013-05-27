@@ -4,14 +4,15 @@ import os
 import subprocess as sp
 from string import Template
 
-if 4 != len(sys.argv):
+if 3 != len(sys.argv):
     print "ERROR: invalid parameters."
-    print "make_versioncpp.py <project rootdir> <build system name> <outfile>"
+    print "make_versioncpp.py <project rootdir> <build system name>"
     quit()
 
 os.chdir(sys.argv[1])
 build_sys = sys.argv[2]
-outfile = sys.argv[3]
+infile = 'util/Version.cpp.in'
+outfile = 'util/Version.cpp'
 
 version = "0.4.2"
 wc_rev = "???"
@@ -39,12 +40,14 @@ if wc_rev == "???" and os.path.exists(outfile):
 	quit()
 
 try:
-    template_file = open('cmake/Version.cpp.in')
+    template_file = open(infile)
     template = Template(template_file.read())
     template_file.close()
 except:
-    print "WARNING: Can't access cmake/Version.cpp.in, %s not updated!" % outfile
+    print "WARNING: Can't access %s, %s not updated!" % (infile, outfile)
     quit()
+
+print "Writing file: %s" % outfile
 
 version_cpp = open(outfile, "w")
 version_cpp.write(template.substitute(

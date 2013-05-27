@@ -108,6 +108,7 @@
 		34F0E429113F497500A10EED /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */; };
+		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
@@ -186,7 +187,6 @@
 		47103C1B0CF04E5900A7DF2B /* Networking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA60CEF565700A7DF2B /* Networking.cpp */; };
 		47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1E0A98A3F900DA9C21 /* Directories.cpp */; };
-		47103C3C0CF0524200A7DF2B /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471032080CEF625900A7DF2B /* Version.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
@@ -1914,7 +1914,7 @@
 		34C4495A118271590071E09A /* SerializePathingEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializePathingEngine.cpp; sourceTree = "<group>"; };
 		34C4495B118271590071E09A /* SerializeUniverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeUniverse.cpp; sourceTree = "<group>"; };
 		34C4495C118271590071E09A /* SerializeUniverseExports.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerializeUniverseExports.ipp; sourceTree = "<group>"; };
-		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Version.cpp.in; sourceTree = "<group>"; };
+		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 4; path = Version.cpp.in; sourceTree = "<group>"; };
 		34C9B34311DA2E95003695F4 /* ClrConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClrConstants.cpp; sourceTree = "<group>"; };
 		34C9B34711DA2ECA003695F4 /* ClrConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClrConstants.h; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -1928,6 +1928,7 @@
 		34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
 		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
+		3A1BF3EA1748875200812237 /* Version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Version.cpp; path = ../util/Version.cpp; sourceTree = SOURCE_ROOT; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
@@ -2068,7 +2069,6 @@
 		4710304A0CEF569900A7DF2B /* SaveLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveLoad.h; sourceTree = "<group>"; };
 		4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoPanels.cpp; sourceTree = "<group>"; };
 		4710311E0CEF60AA00A7DF2B /* InfoPanels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanels.h; sourceTree = "<group>"; };
-		471032080CEF625900A7DF2B /* Version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Version.cpp; sourceTree = "<group>"; };
 		471032380CEF6A7600A7DF2B /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogg.framework; sourceTree = "<group>"; };
 		4710323F0CEF6A8B00A7DF2B /* vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vorbis.framework; sourceTree = "<group>"; };
 		471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FreeOrion.icns; sourceTree = "<group>"; };
@@ -2597,7 +2597,6 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
-		829C75D21689CF5B005881B4 /* Version.template */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 4; path = Version.template; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
 		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
 		82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaParser.cpp; sourceTree = "<group>"; };
@@ -2807,8 +2806,6 @@
 			isa = PBXGroup;
 			children = (
 				471D59B00A988A2A00DA9C21 /* FreeOrion */,
-				829C75D21689CF5B005881B4 /* Version.template */,
-				471032080CEF625900A7DF2B /* Version.cpp */,
 				34B9EBEE0F5E1F7F005BF6A4 /* Config.h */,
 			);
 			name = Source;
@@ -4331,7 +4328,6 @@
 				34C4495A118271590071E09A /* SerializePathingEngine.cpp */,
 				34C4495B118271590071E09A /* SerializeUniverse.cpp */,
 				34C4495C118271590071E09A /* SerializeUniverseExports.ipp */,
-				34C4495D118271590071E09A /* Version.cpp.in */,
 				471D5D180A98A3F900DA9C21 /* AppInterface.cpp */,
 				471D5D190A98A3F900DA9C21 /* AppInterface.h */,
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
@@ -4363,6 +4359,8 @@
 				471D5D380A98A3F900DA9C21 /* VarText.cpp */,
 				471D5D390A98A3F900DA9C21 /* VarText.h */,
 				471D5D3B0A98A3F900DA9C21 /* Version.h */,
+				34C4495D118271590071E09A /* Version.cpp.in */,
+				3A1BF3EA1748875200812237 /* Version.cpp */,
 				471D5D3C0A98A3F900DA9C21 /* XMLDoc.cpp */,
 				471D5D3D0A98A3F900DA9C21 /* XMLDoc.h */,
 				471D5D3E0A98A3F900DA9C21 /* XMLObjectFactory.h */,
@@ -5656,7 +5654,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode 3\" \"${SRCROOT}/Version.cpp\"\nfi";
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode 3\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5714,7 +5712,6 @@
 				47103C1B0CF04E5900A7DF2B /* Networking.cpp in Sources */,
 				47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */,
 				47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */,
-				47103C3C0CF0524200A7DF2B /* Version.cpp in Sources */,
 				478417760CF058B100BE4710 /* Process.cpp in Sources */,
 				34B9F92C0F634A03005BF6A4 /* CombatFighter.cpp in Sources */,
 				34B9F92D0F634A03005BF6A4 /* CombatShip.cpp in Sources */,
@@ -5728,6 +5725,7 @@
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
 				822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */,
+				3A1BF3EB1748875300812237 /* Version.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

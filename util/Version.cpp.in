@@ -1,7 +1,10 @@
 #include "Version.h"
 
+namespace {
+    static const std::string retval = "v${FreeOrion_VERSION} [SVN ${FreeOrion_WC_REVISION}] ${FreeOrion_BUILDSYS}";
+}
+
 const std::string& FreeOrionVersionString()
 {
-    static const std::string retval = "%(freeorion_version)s%(freeorion_repository_revision)s";
     return retval;
 }
