@@ -91,21 +91,11 @@ namespace {
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
-            tags
-                =  -(
-                        parse::label(Tags_name)
-                    >>  (
-                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
-                            |   tok.string [ push_back(_r1, _1) ]
-                        )
-                    )
-                ;
-
             common_params
                 =   parse::label(BuildCost_name)    > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_name)    > int_value_ref     [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
-                >   tags(_d)
+                >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   -(
                         parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
@@ -130,7 +120,6 @@ namespace {
             producible.name("Producible or Unproducible");
             slots.name("mountable slot types");
             location.name("Location");
-            tags.name("Tags");
             common_params.name("Part Hull Common Params");
             part_type.name("Part");
 
@@ -139,7 +128,6 @@ namespace {
             debug(producible);
             debug(slots);
             debug(location);
-            debug(tags);
             debug(common_params);
             debug(part_type);
 #endif
@@ -170,12 +158,6 @@ namespace {
             void (Condition::ConditionBase*&),
             parse::skipper_type
         > location_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<std::string>&),
-            parse::skipper_type
-        > tags_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -214,7 +196,6 @@ namespace {
         part_type_prefix_rule           part_type_prefix;
         producible_rule                 producible;
         location_rule                   location;
-        tags_rule                       tags;
         part_hull_common_params_rule    common_params;
         slots_rule                      slots;
         part_type_rule                  part_type;

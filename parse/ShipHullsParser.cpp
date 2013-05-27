@@ -109,21 +109,11 @@ namespace {
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
-            tags
-                =  -(
-                        parse::label(Tags_name)
-                    >>  (
-                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
-                            |   tok.string [ push_back(_r1, _1) ]
-                        )
-                    )
-                ;
-
             common_params
                 =   parse::label(BuildCost_name)    > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_name)    > int_value_ref     [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
-                >   tags(_d)
+                >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   -(
                         parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
@@ -151,7 +141,6 @@ namespace {
             slot.name("Slot");
             slots.name("Slots");
             location.name("Location");
-            tags.name("Tags");
             common_params.name("Part Hull Common Params");
             hull.name("Hull");
 
@@ -163,7 +152,6 @@ namespace {
             debug(slot);
             debug(slots);
             debug(location);
-            debug(tags);
             debug(common_params);
             debug(hull);
 #endif
@@ -232,12 +220,6 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::vector<std::string>&),
-            parse::skipper_type
-        > tags_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
             PartHullCommonParams (),
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
@@ -275,7 +257,6 @@ namespace {
         slot_rule                       slot;
         slots_rule                      slots;
         location_rule                   location;
-        tags_rule                       tags;
         part_hull_common_params_rule    common_params;
         hull_rule                       hull;
         art_rule                        art;

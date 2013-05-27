@@ -73,16 +73,6 @@ namespace {
                 |    eps [ _val = true ]
                 ;
 
-            tags
-                =  -(
-                        parse::label(Tags_name)
-                    >>  (
-                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
-                            |   tok.string [ push_back(_r1, _1) ]
-                        )
-                    )
-                ;
-
             building_type
                 =    building_prefix(_a, _b)
                 >    parse::label(BuildCost_name)               > double_value_ref [ _c = _1 ]
@@ -92,7 +82,7 @@ namespace {
                             parse::label(CaptureResult_name)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
                         |   eps [ _f = CR_CAPTURE ]
                      )
-                >    tags(_g)
+                >    parse::detail::tags_parser()(_g)
                 >    parse::label(Location_name)                > parse::detail::condition_parser [ _h = _1 ]
                 >    parse::label(EffectsGroups_name)           > -parse::detail::effects_group_parser() [ _i = _1 ]
                 >    parse::label(Icon_name)                    > tok.string
@@ -105,13 +95,11 @@ namespace {
 
             building_prefix.name("BuildingType");
             producible.name("Producible or Unproducible");
-            tags.name("Tags");
             building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
             debug(building_prefix);
             debug(producible);
-            debug(tags);
             debug(building_type);
 #endif
 
@@ -129,12 +117,6 @@ namespace {
             bool (),
             parse::skipper_type
         > producible_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<std::string>&),
-            parse::skipper_type
-        > tags_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -161,7 +143,6 @@ namespace {
 
         building_prefix_rule    building_prefix;
         producible_rule         producible;
-        tags_rule               tags;
         building_type_rule      building_type;
         start_rule              start;
     };

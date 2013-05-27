@@ -94,16 +94,6 @@ namespace {
                 =    parse::label(Environments_name) >> environment_map [ _r1 = _1 ]
                 ;
 
-            tags
-                =  -(
-                        parse::label(Tags_name)
-                    >>  (
-                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
-                            |   tok.string [ push_back(_r1, _1) ]
-                        )
-                    )
-                ;
-
             species_params
                 =   ((tok.Playable_ [ _a = true ]) | eps)
                 >   ((tok.Native_ [ _b = true ]) | eps)
@@ -117,7 +107,7 @@ namespace {
                 >    parse::label(Name_name)        > tok.string [ _a = _1 ]
                 >    parse::label(Description_name) > tok.string [ _b = _1 ]
                 >    species_params [ _c = _1]
-                >    tags(_d)
+                >    parse::detail::tags_parser()(_d)
                 >   -foci(_e)
                 >   -effects(_f)
                 >   -environments(_g)
@@ -135,7 +125,6 @@ namespace {
             environment_map_element.name("Type = <type> Environment = <env>");
             environment_map.name("Environments");
             environments.name("Environments");
-            tags.name("Tags");
             species_params.name("Species Flags");
             species.name("Species");
             start.name("start");
@@ -147,7 +136,6 @@ namespace {
             debug(environment_map_element);
             debug(environment_map);
             debug(environments);
-            debug(tags);
             debug(species_params);
             debug(species);
             debug(start);
@@ -200,12 +188,6 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::vector<std::string>&),
-            parse::skipper_type
-        > tags_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
             SpeciesParams (),
             qi::locals<
                 bool,
@@ -243,7 +225,6 @@ namespace {
         environment_map_element_rule    environment_map_element;
         environment_map_rule            environment_map;
         environments_rule               environments;
-        tags_rule                       tags;
         species_params_rule             species_params;
         species_rule                    species;
         start_rule                      start;

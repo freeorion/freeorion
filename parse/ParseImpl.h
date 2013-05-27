@@ -16,6 +16,14 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
 
     typedef boost::spirit::qi::rule<
+        parse::token_iterator,
+        void (std::vector<std::string>&),
+        parse::skipper_type
+    > tags_rule;
+    tags_rule& tags_parser();
+
+
+    typedef boost::spirit::qi::rule<
         token_iterator,
         std::vector<boost::shared_ptr<const Effect::EffectsGroup> > (),
         skipper_type

@@ -28,6 +28,34 @@ namespace std {
 #endif
 
 namespace {
+    struct tags_rules {
+        tags_rules() {
+            const parse::lexer& tok = parse::lexer::instance();
+
+            qi::_1_type _1;
+            qi::_r1_type _r1;
+            using phoenix::push_back;
+
+            start
+                =  -(
+                        parse::label(Tags_name)
+                    >>  (
+                            ('[' > +tok.string [ push_back(_r1, _1) ] > ']')
+                            |   tok.string [ push_back(_r1, _1) ]
+                        )
+                    )
+                ;
+
+            start.name("Tags");
+
+#if DEBUG_PARSERS
+            debug(start);
+#endif
+        }
+
+        parse::detail::tags_rule start;
+    };
+
     struct effects_group_rules {
         effects_group_rules() {
             const parse::lexer& tok = parse::lexer::instance();
@@ -423,6 +451,11 @@ namespace parse {
     }
 
     namespace detail {
+        tags_rule& tags_parser() {
+            static tags_rules rules;
+            return rules.start;
+        }
+
         effects_group_rule& effects_group_parser() {
             static effects_group_rules rules;
             return rules.start;

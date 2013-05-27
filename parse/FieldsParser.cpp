@@ -57,7 +57,7 @@ namespace {
                 >   parse::label(Name_name)                 >> tok.string [ _a = _1 ]
                 >   parse::label(Description_name)          >> tok.string [ _b = _1 ]
                 >   parse::label(Stealth_name)              >> parse::double_ [ _c = _1]
-                >   tags(_d)
+                >   parse::detail::tags_parser()(_d)
                 //>   -(
                 //        parse::label(Location_name)         >> parse::detail::condition_parser [ _e = _1 ]
                 //     )
@@ -67,36 +67,18 @@ namespace {
                 >    parse::label(Graphic_name) >> tok.string [ insert(_r1, new_<FieldType>(_a, _b, _c, _d,/* _e, */_f, _1)) ]
                 ;
 
-            tags
-                =  -(
-                        parse::label(Tags_name)
-                    >>  (
-                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
-                            |   tok.string [ push_back(_r1, _1) ]
-                        )
-                    )
-                ;
-
             start
                 =   +field(_r1)
                 ;
 
             field.name("FieldType");
-            tags.name("Tags");
 
 #if DEBUG_PARSERS
-            debug(tags);
             debug(field);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<std::string>&),
-            parse::skipper_type
-        > tags_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -118,7 +100,6 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        tags_rule           tags;
         field_rule          field;
         start_rule          start;
     };
