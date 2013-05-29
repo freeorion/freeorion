@@ -5,6 +5,7 @@
 #include "Enums.h"
 #include "Predicates.h"
 #include "ValueRef.h"
+#include "Meter.h"
 #include "../parse/Parse.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
