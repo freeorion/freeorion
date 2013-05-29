@@ -581,76 +581,15 @@ MapWnd::MapWnd() :
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
-    // system-view side panel
-    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
-    GG::GUI::GetGUI()->Register(m_side_panel);
-
-    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
-    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
-
-    // not strictly necessary, as in principle whenever any ResourceCenter
-    // changes, all meter estimates and resource pools should / could be
-    // updated.  however, this is a convenience to limit the updates to
-    // what is actually being shown in the sidepanel right now, which is
-    // useful since most ResourceCenter changes will be due to focus
-    // changes on the sidepanel, and most differences in meter estimates
-    // and resource pools due to this will be in the same system
-    GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
-
-    // situation report window
-    m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
-    GG::GUI::GetGUI()->Register(m_sitrep_panel);
-    m_sitrep_panel->Hide();
-
-    // encyclpedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
-    GG::GUI::GetGUI()->Register(m_pedia_panel);
-    m_pedia_panel->Hide();
-
-    // objects list
-    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
-    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
-    GG::GUI::GetGUI()->Register(m_object_list_wnd);
-    m_object_list_wnd->Hide();
-
-    // moderator actions
-    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
-    GG::GUI::GetGUI()->Register(m_moderator_wnd);
-    m_moderator_wnd->Hide();
-
-    // research window
-    m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
-    m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_research_wnd);
-    m_research_wnd->Hide();
-
-    // production window
-    m_production_wnd = new ProductionWnd(AppWidth(), AppHeight() - m_toolbar->Height());
-    m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_production_wnd);
-    m_production_wnd->Hide();
-    GG::Connect(m_production_wnd->SystemSelectedSignal,     &MapWnd::SelectSystem, this);
-    GG::Connect(m_production_wnd->PlanetSelectedSignal,     &MapWnd::SelectPlanet, this);
-
-    // design window
-    m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
-    m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_design_wnd);
-    m_design_wnd->Hide();
-
-
+    //////////////////////////////
+    // Toolbar buttons and icons
+    //////////////////////////////
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    const GG::X BUTTON_TOTAL_MARGIN(12);
-
 
     // turn button
     // determine size from the text that will go into the button, using a test year string
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + BUTTON_TOTAL_MARGIN;
+    GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + GG::X(12);
     // create button using determined width
     m_turn_update = new CUITurnButton(GG::X0, GG::Y0, button_width, turn_button_longest_reasonable_text);
     GG::Connect(m_turn_update->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
@@ -659,32 +598,6 @@ MapWnd::MapWnd() :
     // FPS indicator
     m_FPS = new FPSIndicator(GG::X0, GG::Y0);
     m_FPS->Hide();
-
-
-    // Zoom scale line
-    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + TOOLBAR_HEIGHT,
-                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
-    GG::GUI::GetGUI()->Register(m_scale_line);
-    m_scale_line->Update(ZoomFactor());
-    m_scale_line->Hide();
-
-
-    // Zoom slider
-    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
-              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = new CUISlider<double>(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
-                                  GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-                                  ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
-    m_zoom_slider->SlideTo(m_zoom_steps_in);
-    GG::GUI::GetGUI()->Register(m_zoom_slider);
-    m_zoom_slider->Hide();
-
-
-    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
-    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
-
-
-    // Subscreen / Menu buttons (placed right to left)
 
 
     // Menu button
@@ -884,8 +797,11 @@ MapWnd::MapWnd() :
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
 
-    m_menu_showing = false;
 
+
+    /////////////////////////////////////
+    // place buttons / icons on toolbar
+    /////////////////////////////////////
     int layout_column(0);
 
     layout->SetMinimumColumnWidth(layout_column, m_turn_update->Width());
@@ -975,11 +891,107 @@ MapWnd::MapWnd() :
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
 
+
+    ///////////////////
+    // Map sub-windows
+    ///////////////////
+
+    // system-view side panel
+    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
+    GG::GUI::GetGUI()->Register(m_side_panel);
+
+    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
+    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
+
+    // not strictly necessary, as in principle whenever any ResourceCenter
+    // changes, all meter estimates and resource pools should / could be
+    // updated.  however, this is a convenience to limit the updates to
+    // what is actually being shown in the sidepanel right now, which is
+    // useful since most ResourceCenter changes will be due to focus
+    // changes on the sidepanel, and most differences in meter estimates
+    // and resource pools due to this will be in the same system
+    GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
+
+    // situation report window
+    m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
+    GG::GUI::GetGUI()->Register(m_sitrep_panel);
+    m_sitrep_panel->Hide();
+
+    // encyclpedia panel
+    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
+    GG::GUI::GetGUI()->Register(m_pedia_panel);
+    m_pedia_panel->Hide();
+
+    // objects list
+    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
+    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
+    GG::GUI::GetGUI()->Register(m_object_list_wnd);
+    m_object_list_wnd->Hide();
+
+    // moderator actions
+    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
+    GG::GUI::GetGUI()->Register(m_moderator_wnd);
+    m_moderator_wnd->Hide();
+
+    // research window
+    m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_research_wnd);
+    m_research_wnd->Hide();
+
+    // production window
+    m_production_wnd = new ProductionWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_production_wnd);
+    m_production_wnd->Hide();
+    GG::Connect(m_production_wnd->SystemSelectedSignal,     &MapWnd::SelectSystem, this);
+    GG::Connect(m_production_wnd->PlanetSelectedSignal,     &MapWnd::SelectPlanet, this);
+
+    // design window
+    m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
+    m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_design_wnd);
+    m_design_wnd->Hide();
+
+
+
+    ///////////////////
+    // Misc other stuff on map screen
+    ///////////////////
+
+    // scale line
+    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
+                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
+    GG::GUI::GetGUI()->Register(m_scale_line);
+    m_scale_line->Update(ZoomFactor());
+    m_scale_line->Hide();
+
+    // Zoom slider
+    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
+              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
+    m_zoom_slider = new CUISlider<double>(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+                                  GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
+                                  ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_slider->SlideTo(m_zoom_steps_in);
+    GG::GUI::GetGUI()->Register(m_zoom_slider);
+    m_zoom_slider->Hide();
+    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
+
+
+
     //clear background images
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
 
 
+    //////////////////
+    // General Gamestate response signals
+    //////////////////
     Connect(ClientApp::GetApp()->EmpireEliminatedSignal,
             &MapWnd::HandleEmpireElimination,   this);
     Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndChangedSignal,
@@ -4477,20 +4489,22 @@ bool MapWnd::ToggleDesign() {
 }
 
 bool MapWnd::ShowMenu() {
-    if (!m_menu_showing) {
-        ClearProjectedFleetMovementLines();
-        m_menu_showing = true;
+    if (m_menu_showing)
+        return true;
 
-        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
-        m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+    ClearProjectedFleetMovementLines();
+    m_menu_showing = true;
 
-        InGameMenu menu;
-        menu.Run();
-        m_menu_showing = false;
+    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
 
-        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
-        m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
-    }
+    InGameMenu menu;
+    menu.Run();
+    m_menu_showing = false;
+
+    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+
     return true;
 }
 

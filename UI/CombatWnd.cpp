@@ -1958,17 +1958,19 @@ bool CombatWnd::EndTurn() {
 }
 
 bool CombatWnd::ShowMenu() {
-    if (!m_menu_showing) {
-        m_menu_showing = true;
+    if (m_menu_showing)
+        return true;
+
+    m_menu_showing = true;
 #if 0 // TODO: Use the full in-game menu when the code is a bit more developed.
-        InGameMenu menu;
-        menu.Run();
+    InGameMenu menu;
+    menu.Run();
 #else
-        OptionsWnd options_wnd;
-        options_wnd.Run();
+    OptionsWnd options_wnd;
+    options_wnd.Run();
 #endif
-        m_menu_showing = false;
-    }
+    m_menu_showing = false;
+
     return true;
 }
 
