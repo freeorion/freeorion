@@ -38,7 +38,7 @@ const std::string& UserString(const std::string& str);
 #define UserStringNop(key) key
 
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
-boost::format FlexibleFormat(const std::string &string_to_format);
+boost::format FlexibleFormat(const std::string& string_to_format);
 
 /** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
     symbol for 5000. */

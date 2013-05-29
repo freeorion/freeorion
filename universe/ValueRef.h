@@ -2,21 +2,20 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
-#include "Condition.h"
 #include "Names.h"
-#include "../util/MultiplayerCommon.h"
+#include "Condition.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/any.hpp>
+#include <boost/format.hpp>
 
-#include <string>
-#include <vector>
 #include <map>
 
 class UniverseObject;
-namespace boost {
-    class any;
-}
+
+const std::string& UserString(const std::string& str);
+boost::format FlexibleFormat(const std::string& string_to_format);
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
