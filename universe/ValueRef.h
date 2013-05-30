@@ -11,6 +11,7 @@
 #include <boost/format.hpp>
 
 #include <map>
+#include <set>
 
 class UniverseObject;
 
