@@ -115,17 +115,29 @@ void FieldIcon::Refresh() {
 void FieldIcon::Render()
 {}
 
-void FieldIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ if (!Disabled()) LeftClickedSignal(m_field_id); }
+void FieldIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    if (!Disabled())
+        LeftClickedSignal(m_field_id);
+    ForwardEventToParent();
+}
 
-void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ if (!Disabled()) RightClickedSignal(m_field_id); }
+void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    if (!Disabled())
+        RightClickedSignal(m_field_id);
+    ForwardEventToParent();
+}
 
-void FieldIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ if (!Disabled()) LeftDoubleClickedSignal(m_field_id); }
+void FieldIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    if (!Disabled())
+        LeftDoubleClickedSignal(m_field_id);
+    ForwardEventToParent();
+}
 
-void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ if (!Disabled()) RightDoubleClickedSignal(m_field_id); }
+void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    if (!Disabled())
+        RightDoubleClickedSignal(m_field_id);
+    ForwardEventToParent();
+}
 
 void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     ForwardEventToParent();
