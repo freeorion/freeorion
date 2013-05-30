@@ -2299,7 +2299,11 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
              laneIt!= universe_object_cast<System*>(objMap.Object(sysID))->end_lanes(); laneIt++)
         {
             int newSys = laneIt->first;
-            //Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers         ==> GetLeastJumps, considering lane/WH to system "<< newSys;
+            std::pair<int, int> lane_forward = std::make_pair(sysID, newSys);
+            std::pair<int, int> lane_backward = std::make_pair(newSys, sysID);
+            // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted. if not, skip this lane
+            if (supplylanes.find(lane_forward) == supplylanes.end() && supplylanes.find(lane_backward) == supplylanes.end())
+                continue;
             if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
                 ancestor[newSys] = sysID;
                 if (newSys==endSys) {
