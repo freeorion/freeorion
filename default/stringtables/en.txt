@@ -3449,6 +3449,11 @@ Ancient Ruins in %planet% have revealed %tech%.
 EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
+EFFECT_CONC_CAMP_COMLETE
+Ethnic cleansing at %planet% is complete.
+EFFECT_CONC_CAMP_COMLETE_LABEL
+Ethnic Cleansing
+
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% was repaired by %building% on %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL

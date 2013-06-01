@@ -331,6 +331,8 @@
     (Species)                                   \
     (Speed)                                     \
     (Spread)                                    \
+    (SqrRoot)                                   \
+    (Squared)                                   \
     (StackingGroup)                             \
     (Star)                                      \
     (StarlaneSpeed)                             \

@@ -933,6 +933,20 @@ BuildingType
             ]
             effects = AddSpecial "CONC_CAMP_MASTER_SPECIAL"
         EffectsGroup
+            scope = Source
+            activation =    ContainedBy And [
+                                Object Source.PlanetID
+                                Population high = 0
+                            ]
+            effects = [
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_CONC_CAMP_COMLETE"
+                    icon = "icons/building/concentration-camp.png"
+                    parameters = tag = "planet" data = Source.PlanetID
+                    empire = Source.Owner
+                ]
+        EffectsGroup
             scope = And [
                 Contains Source
                 PopulationCenter
@@ -943,7 +957,7 @@ BuildingType
                 HasSpecial "CONC_CAMP_MASTER_SPECIAL"
             ]
             effects = [
-                SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) - 3*(1+(Target.Population/50)-(2*(1-Target.Population/50)*(1-Target.Population/50)))
+                SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - SqrRoot(Squared(101+Target.TargetPopulation-2*Value)-4*(Value*(Value-1-Target.TargetPopulation)-3*100)))
                 SetIndustry Target.TargetIndustry
             ]
         EffectsGroup
@@ -1386,6 +1400,9 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_EVACUATION"
+        Not Contains Building "BLD_CONC_CAMP"
+        Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+        Enqueued type = Building name = "BLD_CONC_CAMP" high = 0
         TargetPopulation low = 1
     ]
     effectsgroups = [
@@ -1419,8 +1436,8 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            effects = [
-                SetPopulation Target.Population - 2
+            effects = [ //complicated population formula necessary to actually peg pop reduction at -2, not just 2 less growth than it would have been
+                SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - SqrRoot(Squared(101+Target.TargetPopulation-2*Value)-4*(Value*(Value-1-Target.TargetPopulation)-2*100)))
                 SetIndustry Value = 0
                 SetTargetIndustry Value = 0
                 SetResearch Value = 0
@@ -1431,9 +1448,13 @@ BuildingType
             scope = Source
             activation = OR [
                 NOT OwnedBy TheEmpire Source.Owner
-                ContainedBy And [
-                    Object Source.PlanetID
-                    Population high = 0
+                ContainedBy Or [
+                    And [
+                        Object Source.PlanetID
+                        Population high = 0
+                    ]
+                    Contains Building "BLD_CONC_CAMP"
+                    HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
                 ]
             ]
             effects = Destroy

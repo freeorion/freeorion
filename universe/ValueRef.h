@@ -1210,6 +1210,10 @@ std::string ValueRef::Operation<T>::Description() const
         return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
     if (m_op_type == RANDOM_UNIFORM)
         return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+    if (m_op_type == SQUARE_ROOT)
+        return "sqr_root(" + m_operand1->Description() + ")";
+    if (m_op_type == SQUARED)
+        return "squared(" + m_operand1->Description() + ")";
     //Logger().debugStream() << "Operation is not a function";
 
 
@@ -1297,7 +1301,11 @@ std::string ValueRef::Operation<T>::Dump() const
         return "max(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
     if (m_op_type == RANDOM_UNIFORM)
         return "random(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
-
+    if (m_op_type == SQUARE_ROOT)
+        return "sqr_root(" + m_operand1->Dump() + ")";
+    if (m_op_type == SQUARED)
+        return "squared(" + m_operand1->Dump() + ")";
+    
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
