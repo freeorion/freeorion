@@ -2053,8 +2053,6 @@
 		47102F9F0CEF562700A7DF2B /* AIInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInterface.h; sourceTree = "<group>"; };
 		47102FA00CEF562700A7DF2B /* PythonAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonAI.cpp; sourceTree = "<group>"; };
 		47102FA10CEF562700A7DF2B /* PythonAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonAI.h; sourceTree = "<group>"; };
-		47102FA20CEF562700A7DF2B /* ReferenceAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReferenceAI.cpp; sourceTree = "<group>"; };
-		47102FA30CEF562700A7DF2B /* ReferenceAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferenceAI.h; sourceTree = "<group>"; };
 		47102FA40CEF565700A7DF2B /* MessageQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageQueue.cpp; sourceTree = "<group>"; };
 		47102FA50CEF565700A7DF2B /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
 		47102FA60CEF565700A7DF2B /* Networking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Networking.cpp; sourceTree = "<group>"; };
@@ -3956,8 +3954,6 @@
 				47102F9F0CEF562700A7DF2B /* AIInterface.h */,
 				47102FA00CEF562700A7DF2B /* PythonAI.cpp */,
 				47102FA10CEF562700A7DF2B /* PythonAI.h */,
-				47102FA20CEF562700A7DF2B /* ReferenceAI.cpp */,
-				47102FA30CEF562700A7DF2B /* ReferenceAI.h */,
 			);
 			path = AI;
 			sourceTree = "<group>";

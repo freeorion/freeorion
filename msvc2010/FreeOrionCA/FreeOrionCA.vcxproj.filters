@@ -68,9 +68,6 @@
     <ClInclude Include="..\..\AI\PythonAI.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\AI\ReferenceAI.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\ClientApp.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
@@ -253,9 +250,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\AI\ReferenceAI.cpp">
-      <Filter>Source Files\AI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\client\ClientApp.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
