@@ -15,7 +15,7 @@ include "shared_macros.txt"
 Species
     name = "SP_ABADDONI"
     description = "SP_ABADDONI_DESC"
-    gameplaydescription = "SP_ABADDONI_GAMEPLAY_DESC"
+    gameplay_description = "SP_ABADDONI_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -51,7 +51,7 @@ Species
 Species
     name = "SP_ACIREMA"
     description = "SP_ACIREMA_DESC"
-    gameplaydescription = "SP_ACIREMA_GAMEPLAY_DESC"
+    gameplay_description = "SP_ACIREMA_GAMEPLAY_DESC"
     Native
     CanProduceShips
     
@@ -121,7 +121,7 @@ Species
 Species
     name = "SP_BEIGEGOO"
     description = "SP_BEIGEGOO_DESC"
-    gameplaydescription = "SP_BEIGEGOO_GAMEPLAY_DESC"
+    gameplay_description = "SP_BEIGEGOO_GAMEPLAY_DESC"
     Native
     
     Tags = "ROBOTIC"
@@ -156,7 +156,7 @@ Species
 Species
     name = "SP_CHATO"
     description = "SP_CHATO_DESC"
-    gameplaydescription = "SP_CHATO_GAMEPLAY_DESC"
+    gameplay_description = "SP_CHATO_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -192,7 +192,7 @@ Species
 Species
     name = "SP_CRAY"
     description = "SP_CRAY_DESC"
-    gameplaydescription = "SP_CRAY_GAMEPLAY_DESC"
+    gameplay_description = "SP_CRAY_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -228,7 +228,7 @@ Species
 Species
     name = "SP_CYNOS"
     description = "SP_CYNOS_DESC"
-    gameplaydescription = "SP_CYNOS_GAMEPLAY_DESC"
+    gameplay_description = "SP_CYNOS_GAMEPLAY_DESC"
     Native
     CanProduceShips
 
@@ -262,7 +262,7 @@ Species
 Species
     name = "SP_DERTHREAN"
     description = "SP_DERTHREAN_DESC"
-    gameplaydescription = "SP_DERTHREAN_GAMEPLAY_DESC"
+    gameplay_description = "SP_DERTHREAN_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -297,7 +297,7 @@ Species
 Species
     name = "SP_EAXAW"
     description = "SP_EAXAW_DESC"
-    gameplaydescription = "SP_EAXAW_GAMEPLAY_DESC"
+    gameplay_description = "SP_EAXAW_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -335,7 +335,7 @@ Species
 Species
     name = "SP_EGASSEM"
     description = "SP_EGASSEM_DESC"
-    gameplaydescription = "SP_EGASSEM_GAMEPLAY_DESC"
+    gameplay_description = "SP_EGASSEM_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -371,7 +371,7 @@ Species
 Species
     name = "SP_ETTY"
     description = "SP_ETTY_DESC"
-    gameplaydescription = "SP_ETTY_GAMEPLAY_DESC"
+    gameplay_description = "SP_ETTY_GAMEPLAY_DESC"
     Playable
     //Native
     CanProduceShips
@@ -413,7 +413,7 @@ Species
 Species
     name = "SP_EXOBOT"
     description = "SP_EXOBOT_DESC"
-    gameplaydescription = "SP_EXOBOT_GAMEPLAY_DESC"
+    gameplay_description = "SP_EXOBOT_GAMEPLAY_DESC"
     CanProduceShips
     CanColonize
     
@@ -459,7 +459,7 @@ Species
 Species
     name = "SP_EXPERIMENTOR"
     description = "SP_EXPERIMENTOR_DESC"
-    gameplaydescription = "SP_EXPERIMENTOR_GAMEPLAY_DESC"
+    gameplay_description = "SP_EXPERIMENTOR_GAMEPLAY_DESC"
 
     tags = "SELF_SUSTAINING"
     
@@ -494,7 +494,7 @@ Species
 Species
     name = "SP_FIFTYSEVEN"
     description = "SP_FIFTYSEVEN_DESC"
-    gameplaydescription = "SP_FIFTYSEVEN_GAMEPLAY_DESC"
+    gameplay_description = "SP_FIFTYSEVEN_GAMEPLAY_DESC"
     Native
 
     tags = "ORGANIC"
@@ -527,7 +527,7 @@ Species
 Species
     name = "SP_FURTHEST"
     description = "SP_FURTHEST_DESC"
-    gameplaydescription = "SP_FURTHEST_GAMEPLAY_DESC"
+    gameplay_description = "SP_FURTHEST_GAMEPLAY_DESC"
     Native
     
     //CanColonize
@@ -565,7 +565,7 @@ Species
 Species
     name = "SP_GEORGE"
     description = "SP_GEORGE_DESC"
-    gameplaydescription = "SP_GEORGE_GAMEPLAY_DESC"
+    gameplay_description = "SP_GEORGE_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -600,7 +600,7 @@ Species
 Species
     name = "SP_GISGUFGTHRIM"
     description = "SP_GISGUFGTHRIM_DESC"
-    gameplaydescription = "SP_GISGUFGTHRIM_GAMEPLAY_DESC"
+    gameplay_description = "SP_GISGUFGTHRIM_GAMEPLAY_DESC"
     Native
     CanProduceShips
 
@@ -634,7 +634,7 @@ Species
 Species
     name = "SP_GYSACHE"
     description = "SP_GYSACHE_DESC"
-    gameplaydescription = "SP_GYSACHE_GAMEPLAY_DESC"
+    gameplay_description = "SP_GYSACHE_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -670,7 +670,7 @@ Species
 Species
     name = "SP_HHHOH"
     description = "SP_HHHOH_DESC"
-    gameplaydescription = "SP_HHHOH_GAMEPLAY_DESC"
+    gameplay_description = "SP_HHHOH_GAMEPLAY_DESC"
     //Playable
     Native
     CanProduceShips
@@ -709,7 +709,7 @@ Species
 Species
     name = "SP_HUMAN"
     description = "SP_HUMAN_DESC"
-    gameplaydescription = "SP_HUMAN_GAMEPLAY_DESC"
+    gameplay_description = "SP_HUMAN_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -745,7 +745,7 @@ Species
 Species
     name = "SP_KOBUNTURA"
     description = "SP_KOBUNTURA_DESC"
-    gameplaydescription = "SP_KOBUNTURA_GAMEPLAY_DESC"
+    gameplay_description = "SP_KOBUNTURA_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -780,7 +780,7 @@ Species
 Species
     name = "SP_LAENFA"
     description = "SP_LAENFA_DESC"
-    gameplaydescription = "SP_LAENFA_GAMEPLAY_DESC"
+    gameplay_description = "SP_LAENFA_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -819,7 +819,7 @@ Species
 Species
     name = "SP_MUURSH"
     description = "SP_MUURSH_DESC"
-    gameplaydescription = "SP_MUURSH_GAMEPLAY_DESC"
+    gameplay_description = "SP_MUURSH_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -856,7 +856,7 @@ Species
 Species
     name = "SP_NYMNMN"
     description = "SP_NYMNMN_DESC"
-    gameplaydescription = "SP_NYMNMN_GAMEPLAY_DESC"
+    gameplay_description = "SP_NYMNMN_GAMEPLAY_DESC"
     Native
     
     tags = "SELF_SUSTAINING"
@@ -892,7 +892,7 @@ Species
 Species
     name = "SP_OURBOOLS"
     description = "SP_OURBOOLS_DESC"
-    gameplaydescription = "SP_OURBOOLS_GAMEPLAY_DESC"
+    gameplay_description = "SP_OURBOOLS_GAMEPLAY_DESC"
     Native
 
     tags = "ORGANIC"
@@ -927,7 +927,7 @@ Species
 Species
     name = "SP_PHINNERT"
     description = "SP_PHINNERT_DESC"
-    gameplaydescription = "SP_PHINNERT_GAMEPLAY_DESC"
+    gameplay_description = "SP_PHINNERT_GAMEPLAY_DESC"
     Native
     
     //CanColonize
@@ -962,7 +962,7 @@ Species
 Species
     name = "SP_RAAAGH"
     description = "SP_RAAAGH_DESC"
-    gameplaydescription = "SP_RAAAGH_GAMEPLAY_DESC"
+    gameplay_description = "SP_RAAAGH_GAMEPLAY_DESC"
     Native
 
     tags = "ORGANIC"
@@ -995,7 +995,7 @@ Species
 Species
     name = "SP_SCYLIOR"
     description = "SP_SCYLIOR_DESC"
-    gameplaydescription = "SP_SCYLIOR_GAMEPLAY_DESC"
+    gameplay_description = "SP_SCYLIOR_GAMEPLAY_DESC"
     //Playable
     Native
     CanProduceShips
@@ -1032,7 +1032,7 @@ Species
 Species
     name = "SP_SETINON"
     description = "SP_SETINON_DESC"
-    gameplaydescription = "SP_SETINON_GAMEPLAY_DESC"
+    gameplay_description = "SP_SETINON_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -1069,7 +1069,7 @@ Species
 Species
     name = "SP_SILEXIAN"
     description = "SP_SILEXIAN_DESC"
-    gameplaydescription = "SP_SILEXIAN_GAMEPLAY_DESC"
+    gameplay_description = "SP_SILEXIAN_GAMEPLAY_DESC"
     Native
     
     //CanColonize
@@ -1104,7 +1104,7 @@ Species
 Species
     name = "SP_SSLITH"
     description = "SP_SSLITH_DESC"
-    gameplaydescription = "SP_SSLITH_GAMEPLAY_DESC"
+    gameplay_description = "SP_SSLITH_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -1139,7 +1139,7 @@ Species
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
-    gameplaydescription = "SP_SUPER_TEST_GAMEPLAY_DESC"
+    gameplay_description = "SP_SUPER_TEST_GAMEPLAY_DESC"
     // Playable
     CanProduceShips
     CanColonize
@@ -1188,7 +1188,7 @@ Species
 Species
     name = "SP_TAEGHIRUS"
     description = "SP_TAEGHIRUS_DESC"
-    gameplaydescription = "SP_TAEGHIRUS_GAMEPLAY_DESC"
+    gameplay_description = "SP_TAEGHIRUS_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -1223,7 +1223,7 @@ Species
 Species
     name = "SP_TRENCHERS"
     description = "SP_TRENCHERS_DESC"
-    gameplaydescription = "SP_TRENCHERS_GAMEPLAY_DESC"
+    gameplay_description = "SP_TRENCHERS_GAMEPLAY_DESC"
     Native
     
     Tags = "ROBOTIC"
@@ -1256,7 +1256,7 @@ Species
 Species
     name = "SP_TRITH"
     description = "SP_TRITH_DESC"
-    gameplaydescription = "SP_TRITH_GAMEPLAY_DESC"
+    gameplay_description = "SP_TRITH_GAMEPLAY_DESC"
     Playable
     CanProduceShips
     CanColonize
@@ -1295,7 +1295,7 @@ Species
 Species
     name = "SP_UGMORS"
     description = "SP_UGMORS_DESC"
-    gameplaydescription = "SP_UGMORS_GAMEPLAY_DESC"
+    gameplay_description = "SP_UGMORS_GAMEPLAY_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -1330,7 +1330,7 @@ Species
 Species
     name = "SP_VOLP"
     description = "SP_VOLP_DESC"
-    gameplaydescription = "SP_VOLP_GAMEPLAY_DESC"
+    gameplay_description = "SP_VOLP_GAMEPLAY_DESC"
     Native
 
     tags = "LITHIC"
@@ -1366,7 +1366,7 @@ Species
 Species
     name = "SP_HIDDENGARDENER"
     description = "SP_HIDDENGARDENER_DESC"
-    gameplaydescription = "SP_HIDDENGARDENER_GAMEPLAY_DESC"
+    gameplay_description = "SP_HIDDENGARDENER_GAMEPLAY_DESC"
     Native
 
     tags = "ORGANIC"

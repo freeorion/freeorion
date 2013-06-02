@@ -107,7 +107,7 @@ namespace {
                 =    tok.Species_
                 >    parse::label(Name_name)                > tok.string [ _a = _1 ]
                 >    parse::label(Description_name)         > tok.string [ _b = _1 ]
-                >    parse::label(GameplayDescription_name) > tok.string [ _h = _1 ]
+                >    parse::label(Gameplay_Description_name) > tok.string [ _h = _1 ]
                 >    species_params [ _c = _1]
                 >    parse::detail::tags_parser()(_d)
                 >   -foci(_e)
