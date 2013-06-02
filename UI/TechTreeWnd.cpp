@@ -36,9 +36,9 @@ namespace {
     const int   MAIN_PANEL_CORNER_RADIUS = 8;
     const float ARC_THICKNESS = 3.0;
     GG::X   TechPanelWidth()
-    { return GG::X(ClientUI::Pts()*18); }
+    { return GG::X(ClientUI::Pts()*20); }
     GG::Y   TechPanelHeight()
-    { return GG::Y(ClientUI::Pts()*5); }
+    { return GG::Y(ClientUI::Pts()*6); }
 
 
 
@@ -357,9 +357,13 @@ public:
     void HideStatus(TechStatus status);
     void ShowTech(const std::string& tech_name);
     void CenterOnTech(const std::string& tech_name);
-    void DoZoom(const GG::Pt & p) const;
+    void DoZoom(const GG::Pt &pt) const;
     void UndoZoom() const;
-    GG::Pt Convert(const GG::Pt & p) const;
+
+    // Converts between screen coordinates and virtual coordiantes
+    // doing the inverse or same transformation as DoZoom does with gl calls
+    GG::Pt ConvertPtScreenToZoomed(const GG::Pt& pt) const;
+    GG::Pt ConvertPtZoomedToScreen(const GG::Pt& pt) const;
     //@}
 
 private:
@@ -459,10 +463,10 @@ public:
 
 private:
     const std::string&              m_tech_name;
+    std::string                     m_name_text;
+    std::string                     m_eta_text;
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
-    GG::TextControl*                m_tech_name_text;
-    GG::TextControl*                m_eta_text;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
     bool                            m_browse_highlight;
@@ -474,10 +478,10 @@ private:
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
     GG::Wnd(GG::X0, GG::Y0, TechPanelWidth(), TechPanelHeight(), GG::INTERACTIVE),
     m_tech_name(tech_name),
+    m_name_text(),
+    m_eta_text(),
     m_layout_panel(panel),
     m_icon(0),
-    m_tech_name_text(0),
-    m_eta_text(0),
     m_colour(GG::CLR_GRAY),
     m_status(TS_RESEARCHABLE),
     m_browse_highlight(false),
@@ -485,33 +489,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_eta(-1),
     m_enqueued(false)
 {
-    //const Tech* tech = GetTech(m_tech_name);
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
-
-    //REMARK: do not use AttachChild but add child->Render() to method render,
-    //        as the component is zoomed tech icon
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
                                    ClientUI::TechIcon(m_tech_name),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-
-    // tech name text
-    const int PAD = 8;
-    GG::X text_left(GG::X(GRAPHIC_SIZE) + PAD);
-    GG::Y text_top(0);
-    GG::X text_width(TechPanelWidth() - text_left);
-    GG::Y text_height(TechPanelHeight());
-    m_tech_name_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
-                                               "", font, ClientUI::TextColor(),
-                                               GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
-
-    text_left += text_width*3/4;
-    text_width = text_width/2;
-    text_top += text_height*7/8;
-    text_height = text_height/4;
-    m_eta_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
-                                               "", font, ClientUI::TextColor(),
-                                               GG::FORMAT_VCENTER | GG::FORMAT_CENTER);
+    // intentionally not attaching as child; TechPanel::Render calls m_icon->Render() instead.
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -522,24 +504,27 @@ int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 { return ClientUI::Pts() * 3 / 2; }
 
 bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
-    const GG::Pt p = m_layout_panel->Convert(pt) - UpperLeft();
-    //return GG::Wnd::InWindow(p - UpperLeft());
-    const int PAD = 8;
-    return m_icon->InWindow(p) || m_tech_name_text->InWindow(p + GG::Pt(GG::X(PAD), GG::Y0));   // shift right so clicking in gap between icon and text doesn't miss the panel
+    const GG::Pt p = m_layout_panel->ConvertPtScreenToZoomed(pt) - UpperLeft();
+    if (m_icon->InWindow(p))
+        return true;
+    return GG::Pt(GG::X0, GG::Y0) <= p && p < GG::Pt(TechPanelWidth(), TechPanelHeight());
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     const int PAD = 8;
+    GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
+    GG::Y text_top(0);
+    GG::X text_width(TechPanelWidth() - text_left);
+    GG::Y text_height(TechPanelHeight());
+
+    GG::Pt ul = GG::Pt(text_left, text_top);
+    GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height);
 
     m_layout_panel->DoZoom(UpperLeft());
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
-
-    //GG::Pt ul(m_icon->Width() + PAD/2, GG::Y0);
-    GG::Pt ul = m_tech_name_text->UpperLeft() - GG::Pt(GG::X(PAD/2), GG::Y0);
-    GG::Pt lr = m_tech_name_text->LowerRight();
 
     // black out dependency lines under panel
     glColor(GG::CLR_BLACK);
@@ -550,10 +535,35 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
 
     // tech name
-    glEnable(GL_TEXTURE_2D);
-    if (FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
-        m_tech_name_text->Render();
-    glDisable(GL_TEXTURE_2D);
+    int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
+    if (font_pts > 10) {
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
+        GG::Pt text_ul = ul + GG::Pt(GG::X(4), GG::Y0);
+        GG::Pt text_lr = lr - GG::Pt(GG::X(PAD + 4), GG::Y0);
+
+        glEnable(GL_TEXTURE_2D);
+
+        std::vector<GG::Font::LineData> line_data;
+        font->DetermineLines(m_name_text, GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT,
+                             lr.x - ul.x, line_data);
+
+        // render background offset from actual text location
+        glColor(GG::CLR_BLACK);
+        font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        // render actual text
+        glColor(ClientUI::TextColor());
+        font->RenderText(text_ul, text_lr, m_name_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+
+        glDisable(GL_TEXTURE_2D);
+    }
 
     // panel border
     GG::Clr border_colour;
@@ -577,8 +587,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         // nothing!
     }
 
-    // ETA background
-    if (m_eta != -1  &&  FontSize() * m_layout_panel->Scale() > 10) {
+    // ETA background and text
+    if (m_eta != -1  &&  font_pts > 10) {
         GG::Pt panel_size = lr - ul;
         GG::Pt eta_ul = ul + GG::Pt(panel_size.x*3/4, panel_size.y*3/4) - GG::Pt(GG::X(2), GG::Y(2));
         GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
@@ -587,6 +597,31 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         CircleArc(eta_ul, eta_lr, 0, 6.28, true);
         glColor(border_colour);
         CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
+
+        glEnable(GL_TEXTURE_2D);
+
+        std::vector<GG::Font::LineData> line_data;
+        font->DetermineLines(m_eta_text, GG::FORMAT_VCENTER | GG::FORMAT_CENTER,
+                             eta_lr.x - eta_ul.x, line_data);
+
+        // render background offset from actual text location
+        glColor(GG::CLR_BLACK);
+        font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        // render actual text
+        glColor(ClientUI::TextColor());
+        font->RenderText(eta_ul, eta_lr, m_eta_text,
+                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+
+        glDisable(GL_TEXTURE_2D);
     }
 
     // box around whole panel to indicate enqueue
@@ -603,9 +638,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_TEXTURE_2D);
 
     m_icon->Render();
-
-    if (m_eta != -1  &&  FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
-        m_eta_text->Render();
 
     m_layout_panel->UndoZoom();
 }
@@ -740,13 +772,11 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         const ResearchQueue& queue = empire->GetResearchQueue();
         ResearchQueue::const_iterator queue_it = queue.find(m_tech_name);
         if (queue_it != queue.end()) {
-            //double progress = empire->ResearchProgress(tech_name);
-            //double total_cost = tech->ResearchCost(empire_id);
-            //double allocation = queue_it->allocated_rp;
-            //double max_allocation = tech->PerTurnCost(empire_id);
             m_eta = queue_it->turns_left;
             if (m_eta != -1)
-                m_eta_text->SetText(boost::lexical_cast<std::string>(m_eta));
+                m_eta_text = boost::lexical_cast<std::string>(m_eta);
+            else
+                m_eta_text.clear();
         }
     }
 
@@ -767,7 +797,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     }
     m_icon->SetColor(icon_colour);
 
-    m_tech_name_text->SetText(UserString(m_tech_name));
+    m_name_text = UserString(m_tech_name);
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
@@ -1047,7 +1077,7 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
     GG::SignalScroll(*m_vscroll, true);
 }
 
-void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt& p) const {
+void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt& pt) const {
     glPushMatrix();
     //center to panel
     glTranslated(Value(Width()/2.0), Value(Height()/2.0), 0);
@@ -1055,23 +1085,33 @@ void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt& p) const {
     glScaled(m_scale, m_scale, 1);
     //translate to actual scroll position
     glTranslated(-m_scroll_position_x, -m_scroll_position_y, 0);
-    glTranslated(Value(p.x), Value(p.y), 0);
+    glTranslated(Value(pt.x), Value(pt.y), 0);
 }
 
 void TechTreeWnd::LayoutPanel::UndoZoom() const
 { glPopMatrix(); }
 
-GG::Pt TechTreeWnd::LayoutPanel::Convert(const GG::Pt & p) const {
-    // Converts screen coordinate into virtual coordiante
-    // doing the inverse transformation as DoZoom in the same order
-    double x = Value(p.x);
-    double y = Value(p.y);
+GG::Pt TechTreeWnd::LayoutPanel::ConvertPtScreenToZoomed(const GG::Pt& pt) const {
+    double x = Value(pt.x);
+    double y = Value(pt.y);
     x -= Value(Width()/2.0);
     y -= Value(Height()/2.0);
     x /= m_scale;
     y /= m_scale;
     x += m_scroll_position_x;
     y += m_scroll_position_y;
+    return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
+}
+
+GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(const GG::Pt& pt) const {
+    double x = Value(pt.x);
+    double y = Value(pt.y);
+    x -= m_scroll_position_x;
+    y -= m_scroll_position_y;
+    x *= m_scale;
+    y *= m_scale;
+    x += Value(Width()/2.0);
+    y += Value(Height()/2.0);
     return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
 }
 
