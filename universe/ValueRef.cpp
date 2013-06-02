@@ -818,16 +818,6 @@ namespace ValueRef {
                 break;
             }
 
-            case SQUARE_ROOT: {
-                return std::sqrt(std::max(0.0,m_operand1->Eval(context)));
-                break;
-            }
-
-            case SQUARED: {
-                return std::pow(m_operand1->Eval(context),2);
-                break;
-            }
-
             default:
                 throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
                 break;

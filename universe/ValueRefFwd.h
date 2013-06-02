@@ -49,9 +49,7 @@ namespace ValueRef {
         COSINE,
         MINIMUM,
         MAXIMUM,
-        RANDOM_UNIFORM,
-        SQUARE_ROOT,
-        SQUARED
+        RANDOM_UNIFORM
     };
     template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }
