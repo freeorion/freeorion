@@ -57,9 +57,8 @@ const std::string& AIBase::GetSaveStateString() {
     return default_state_string;
 }
 
-void AIBase::SetAggression(int aggr){
-    m_aggression = aggr;
-}
+void AIBase::SetAggression(int aggr)
+{ m_aggression = aggr; }
 
 
 //////////////////////////////////
@@ -152,12 +151,15 @@ namespace AIInterface {
         return player_ids;
     }
 
-    bool PlayerIsAI(int player_id) {
-        return false;   // TODO: implement this
-    }
+    bool PlayerIsAI(int player_id)
+    { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::CLIENT_TYPE_AI_PLAYER; }
 
     bool PlayerIsHost(int player_id) {
-        return false;   // TODO: implement this
+        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
+        std::map<int, PlayerInfo>::const_iterator it = players.find(player_id);
+        if (it == players.end())
+            return false;
+        return it->second.host;
     }
 
     const Universe& GetUniverse()
