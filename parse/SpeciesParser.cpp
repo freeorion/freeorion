@@ -51,6 +51,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_h_type _h;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -104,15 +105,16 @@ namespace {
 
             species
                 =    tok.Species_
-                >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                >    parse::label(Description_name) > tok.string [ _b = _1 ]
+                >    parse::label(Name_name)                > tok.string [ _a = _1 ]
+                >    parse::label(Description_name)         > tok.string [ _b = _1 ]
+                >    parse::label(GameplayDescription_name) > tok.string [ _h = _1 ]
                 >    species_params [ _c = _1]
                 >    parse::detail::tags_parser()(_d)
                 >   -foci(_e)
                 >   -effects(_f)
                 >   -environments(_g)
                 >    parse::label(Graphic_name) > tok.string
-                     [ insert_species(_r1, new_<Species>(_a, _b, _e, _g, _f, _c, _d, _1)) ]
+                     [ insert_species(_r1, new_<Species>(_a, _b, _h, _e, _g, _f, _c, _d, _1)) ]
                 ;
 
             start
@@ -208,7 +210,8 @@ namespace {
                 std::vector<std::string>,
                 std::vector<FocusType>,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                std::map<PlanetType, PlanetEnvironment>
+                std::map<PlanetType, PlanetEnvironment>,
+                std::string
             >,
             parse::skipper_type
         > species_rule;

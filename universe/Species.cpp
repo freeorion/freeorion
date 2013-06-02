@@ -69,6 +69,7 @@ std::string Species::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "GameplayDescription = \"" + m_gameplay_description + "\"\n";
     if (m_playable)
         retval += DumpIndent() + "Playable\n";
     if (m_native)

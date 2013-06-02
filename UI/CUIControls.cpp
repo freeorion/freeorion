@@ -1012,7 +1012,7 @@ namespace {
             SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
                 new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
                                       UserString(species->Name()),
-                                      UserString(species->Description()))
+                                      UserString(species->GameplayDescription()))
                                      )
                             );
         }

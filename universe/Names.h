@@ -111,6 +111,7 @@
     (Focus)                                     \
     (FocusType)                                 \
     (Fuel)                                      \
+    (GameplayDescription)                       \
     (GasGiant)                                  \
     (General)                                   \
     (GenerateSitrepMessage)                     \
