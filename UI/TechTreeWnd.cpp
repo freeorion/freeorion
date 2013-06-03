@@ -544,23 +544,22 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         glEnable(GL_TEXTURE_2D);
 
         std::vector<GG::Font::LineData> line_data;
-        font->DetermineLines(m_name_text, GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT,
-                             lr.x - ul.x, line_data);
+        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT;
+        font->DetermineLines(m_name_text, line_format, lr.x - ul.x, line_data);
 
         // render background offset from actual text location
         glColor(GG::CLR_BLACK);
         font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         // render actual text
         glColor(ClientUI::TextColor());
-        font->RenderText(text_ul, text_lr, m_name_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(text_ul, text_lr, m_name_text, line_format, &line_data);
 
         glDisable(GL_TEXTURE_2D);
     }
@@ -603,23 +602,23 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         glEnable(GL_TEXTURE_2D);
 
         std::vector<GG::Font::LineData> line_data;
-        font->DetermineLines(m_eta_text, GG::FORMAT_VCENTER | GG::FORMAT_CENTER,
-                             eta_lr.x - eta_ul.x, line_data);
+        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_VCENTER | GG::FORMAT_VCENTER;
+        font->DetermineLines(m_eta_text, line_format, eta_lr.x - eta_ul.x, line_data);
 
+        line_format = GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT;
         // render background offset from actual text location
         glColor(GG::CLR_BLACK);
         font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+                         line_format, &line_data);
         // render actual text
         glColor(ClientUI::TextColor());
-        font->RenderText(eta_ul, eta_lr, m_eta_text,
-                         GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT, &line_data);
+        font->RenderText(eta_ul, eta_lr, m_eta_text, line_format, &line_data);
 
         glDisable(GL_TEXTURE_2D);
     }
