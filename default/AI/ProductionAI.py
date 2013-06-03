@@ -999,20 +999,30 @@ def generateProductionOrders():
         tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
         cInd=planet.currentMeterValue(fo.meterType.industry)
         cPop = planet.currentMeterValue(fo.meterType.population)
-        if (cPop < 23) or cPop < 0.8*tPop:  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+        if (cPop <= 35) or (cPop < 0.8*tPop) or ( (planet.speciesName not in ColonisationAI.empireColonizers) and cPop < 50 ):  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
             for bldg in planet.buildingIDs:
                 if universe.getObject(bldg).buildingTypeName  == bldName:
                     res=fo.issueScrapOrder( bldg)
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
-        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 32) :
+        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 36) :
             if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
                 #continue
                 pass  # now that focus setting takes these into account, probably works ok to have conc camp
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-            if (cPop >=0.95*tPop):# and cInd < 1.5* tInd:
+            if (cPop >=0.95*tPop) and( (planet.speciesName in ColonisationAI.empireColonizers) or cPop >= 50 ):#
                 if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                    #if planet.focus not in [ EnumsAI.AIFocusType.FOCUS_INDUSTRY ]:
-                    #     fo.issueChangeFocusOrder(pid, EnumsAI.AIFocusType.FOCUS_INDUSTRY)
+                    if planet.focus in [ EnumsAI.AIFocusType.FOCUS_INDUSTRY ]:
+                        if cInd >= tInd+cPop:
+                            continue
+                    else:
+                        oldFocus=planet.focus
+                        fo.issueChangeFocusOrder(pid, EnumsAI.AIFocusType.FOCUS_INDUSTRY)
+                        universe.updateMeterEstimates([pid])
+                        tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
+                        if cInd >= tInd+cPop:
+                            fo.issueChangeFocusOrder(pid, oldFocus)
+                            universe.updateMeterEstimates([pid])
+                            continue
                     res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
                     print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
                     if res: 
