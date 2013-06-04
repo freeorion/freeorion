@@ -1,6 +1,6 @@
 Deutsch
 
-#This is the German String Table file for FreeOrion (^= svn6069)
+#This is the German String Table file for FreeOrion (^= en_svn6098)
 #Übersetzung von Martin Wuttke [thesilentone], Markus Sinner [kroddn] und shivu
 
 #################
@@ -349,7 +349,7 @@ SD_ENDO8_DESC
 Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_GRAVITATING1
-Gravitating I
+Gravitierender I
 SD_GRAVITATING1_DESC
 Massive top Kriegsschiff bewaffnet und panzeret mit der letzte Technologie. Preis entsprechend.
 
@@ -413,29 +413,29 @@ SM_KRILL_4_DESC
 '''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Das Krill Verhalten ändert sich radikal, wenn eine bestimmte kritische Bevölkerung erreicht ist - irgendwo in den 10er von Millionen. Der normalerweise flüchtige Krill, wird aggressiv, greift die Schiffe an und zerstört die orbitalen Strukturen. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
 
 SM_TREE
-Dyson Forest
+Dyson Wald
 SM_TREE_DESC
 '''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the star-lanes to colonize other stars.'''
 
 SM_SEED
-Dyson Seed
+Dyson Samen
 SM_SEED_DESC
 Dyson Forests intermittently produce a star-lane capable seed, sent away to found a new forest around other stars.
 
 SM_FLOATER
-Floater
+Schwimmer
 SM_FLOATER_DESC
-Gas-filled bulbous sac drifting through space.
+Gasgefüllt Knollartiger Beutel der im Weltraum umhertreibt.
 
 SM_DRAGON
-Vacuum Dragon
+Vakuum Drachen
 SM_DRAGON_DESC
-Terrifying giant monster that prowls space for prey.
+Erschreckendes riesen Monster, das im Raum auf Beutezug umherschleicht.
 
 SM_DRONE
-Drone
+Drohne
 SM_DRONE_DESC
-'''Tool of a forgotten war, the Drone Fighter still fulfills its original purpose: mindlessly attacking any ships in range.'''
+'''Werkzeug eines vergessenen Krieges, der Drone-Kämpfer erfüllt immer noch seinen ursprünglichen Zweck: gedankenlos Schiffe angreifen die in Reichweite sind.'''
 
 SM_DRONE_FACTORY
 Drone Factory
@@ -573,10 +573,22 @@ FLD_ION_STORM_DESC
 Magnetischen Wirbel von relativistisch geladene Teilschen die mit Sensoren interferieren kann und Schiffe und Planete beeinträchtigen.
 
 FLD_MOLECULAR_CLOUD
-Molecular Cloud
+Molekularvolke
 
 FLD_MOLECULAR_CLOUD_DESC
-Diffuse cloud of complex molecules that disrupts ship shielding.
+Diffuse Volke von komplexen molekulen die das Schield der Schiffe stören kann.
+
+FLD_NEBULA_1
+Nebel
+
+FLD_NEBULA_1_DESC
+Wasserstoff Gasvolke die kollabieren kann und einen neuen Stern bilden.
+
+FLD_NEBULA_2
+[[FLD_NEBULA_1]]
+
+FLD_NEBULA_2_DESC
+[[FLD_NEBULA_1_DESC]]
 
 ##############################
 # Predefined Starting Fleets #
@@ -1414,7 +1426,7 @@ Hoch
 GSETUP_YOUNG
 Jung
 GSETUP_MATURE
-Reif
+Erwachsen
 GSETUP_ANCIENT
 Alt
 
@@ -2953,11 +2965,11 @@ STEALTH_TEXT
 Space ships, buildings, specials, systems and planets have a Stealth meter.'''
 
 DETECTION_TITLE
-Detection Strength
+Erkennung Stärke
 DETECTION_TEXT
-'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its Detection Strength and are within [[encyclopedia DETECTION_RANGE_TITLE]] of a controlled space ship or planet.
+'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[Enzyklopädie STEALTH_TITLE]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[Enzyklopädie DETECTION_RANGE_TITLE]] eines Raumschiffes oder Planeten befindet.
 
-Empires have a Detection Strength meter.'''
+Imperien haben eines Erkennungsstärke Mass.'''
 
 DETECTION_RANGE_TITLE
 Erkennungsreichweite
@@ -3107,7 +3119,7 @@ TURN_PROGRESS_PHASE_ORDERS
 Führe Befehle aus
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
-Colonization, Invasion, and Scrapping
+Kolonisation, Invasion, und Verschrottung
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Lade und entpacke neue Spielzustände
@@ -3204,10 +3216,10 @@ CONDITION_STATIONARY
 Stehend
 
 CONDITION_CANCOLONIZE
-Species Can Colonize
+Spezies kann Kolonisieren
 
 CONDITION_CANPRODUCESHIPS
-Species Can Produce Ships
+Spezies kann Schiffe herstellen
 
 CONDITION_HOMEWORLD
 Heimatwelt
@@ -3219,19 +3231,19 @@ CONDITION_HASTAG
 Has Tag
 
 CONDITION_SPECIES
-Species Name
+Speziesname
 
 CONDITION_PLANETSIZE
-Planet Grösse
+Planeten Größe
 
 CONDITION_PLANETTYPE
-Planet Typ
+Planeten Typ
 
 CONDITION_FOCUSTYPE
-FoKus Einstellung
+Fokus Einstellung
 
 CONDITION_STARTYPE
-Stern Typ
+Sternentyp
 
 CONDITION_METERVALUE
 Object Property Value
@@ -3328,17 +3340,17 @@ SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Unowned Building Destroyed
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
-An object was damaged at %system%.
+Ein Objekt wurde in %system% beschädigt.
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
-Object Damaged
+Objekt beschädigt
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-The %empire% %shipdesign% '%ship%' was damaged at %system%.
+Das %empire% %shipdesign% '%ship%' wurde in %system% beschädigt.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Empire Ship Damaged
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-A %shipdesign% was damaged at %system%.
+Ein %shipdesign% wurde in %system% beschädigt.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Unowned Ship Damaged
 
@@ -3436,6 +3448,11 @@ EFFECT_ANCIENT_TECH
 Ancient Ruins in %planet% have revealed %tech%.
 EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
+
+EFFECT_CONC_CAMP_COMLETE
+Ethnic cleansing at %planet% is complete.
+EFFECT_CONC_CAMP_COMLETE_LABEL
+Ethnic Cleansing
 
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% ist im %building% auf %planet% repariert worden.
@@ -3572,7 +3589,7 @@ Umwelt Präferenzen:
 
 SP_HUMAN
 Menschen
-SP_HUMAN_DESC
+SP_HUMAN_GAMEPLAY_DESC
 '''Meistens harmlos. Testet gerne alle Planeten von mittlerem Aussehen.
 Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3584,9 +3601,12 @@ Bevorzugt erdähnliche Planeten.
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
+SP_HUMAN_DESC
+''''''
+
 SP_SCYLIOR
 Scylior
-SP_SCYLIOR_DESC
+SP_SCYLIOR_GAMEPLAY_DESC
 '''Besitzt drei Tentakel, aquatischen Nautilus.
 Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3596,8 +3616,10 @@ Bevorzugt ozeanische Planeten.
 
 [[GOOD_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+'''
 
-Description:
+SP_SCYLIOR_DESC
+'''Description:
 Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
 
 Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
@@ -3613,7 +3635,7 @@ Millennia ago an expedition of the precursors discovered the Mind controlling th
 
 SP_GYSACHE
 Gysache
-SP_GYSACHE_DESC
+SP_GYSACHE_GAMEPLAY_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3623,8 +3645,10 @@ Bevorzugt sumpfige Planeten.
 
 [[GOOD_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+'''
 
-The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+SP_GYSACHE_DESC
+'''The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
 
 Description:
 The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
@@ -3639,7 +3663,7 @@ Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide.
 
 SP_CHATO
 Chato
-SP_CHATO_DESC
+SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Bevorzugt toxische Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -3651,8 +3675,10 @@ Bevorzugt toxische Planeten.
 [[BAD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+'''
 
-Description:
+SP_CHATO_DESC
+'''Description:
 The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
 
 Social Structure:
@@ -3661,7 +3687,7 @@ In Chato'matou society, age is the most important factor as they are nearly immo
 
 SP_TRITH
 Trith
-SP_TRITH_DESC
+SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Bevorzugt wüstenhafte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -3676,8 +3702,10 @@ Bevorzugt wüstenhafte Planeten.
 [[GOOD_STEALTH]]
 
 [[NARROW_EP]]
+'''
 
-Description:
+SP_TRITH_DESC
+'''Description:
 The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
 
 Social Structure:
@@ -3686,7 +3714,7 @@ The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind)
 
 SP_HHHOH
 Hhhoh
-SP_HHHOH_DESC
+SP_HHHOH_GAMEPLAY_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3698,8 +3726,10 @@ Bevorzugt Tundra Planeten.
 [[GREAT_GROUND_TROOPS]]
         
 [[GOOD_WEAPONS]]
+'''
 
-Description:
+SP_HHHOH_DESC
+'''Description:
 Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
 Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
 
@@ -3709,7 +3739,7 @@ Hhhoh's describe themselves as social pragmatists. Elders are very much revered,
 
 SP_EAXAW
 Eaxaw
-SP_EAXAW_DESC
+SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic agressive worms.
 Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3720,8 +3750,10 @@ Bevorzugt erdähnliche Planeten.
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
 [[ULTIMATE_WEAPONS]]
+'''
 
-Description:
+SP_EAXAW_DESC
+'''Description:
 The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
 
 Social Structure:
@@ -3733,15 +3765,17 @@ A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworl
 
 SP_DERTHREAN
 Derthrean
-SP_DERTHREAN_DESC
+SP_DERTHREAN_GAMEPLAY_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Bevorzugt toxische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+'''
 
-Description:
+SP_DERTHREAN_DESC
+'''Description:
 The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
 
 Social Structure:
@@ -3750,7 +3784,7 @@ The Derthrean are a sharply divided race, split by the legacy of their forebears
 
 SP_LAENFA
 Laenfa
-SP_LAENFA_DESC
+SP_LAENFA_GAMEPLAY_DESC
 '''Sneaky, telepathic, sentient vines.
 Bevorzugt ozeanische Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -3763,8 +3797,10 @@ Bevorzugt ozeanische Planeten.
 
 [[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
+'''
 
-Description:
+SP_LAENFA_DESC
+'''Description:
 The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
 
 Social Structure:
@@ -3773,7 +3809,7 @@ The Laenfa have a unified culture due to their telepathy, but as their ability t
 
 SP_TAEGHIRUS
 Tae Ghirus
-SP_TAEGHIRUS_DESC
+SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -3783,8 +3819,10 @@ Bevorzugt sumpfige Planeten.
         
 [[BAD_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+'''
 
-Description:
+SP_TAEGHIRUS_DESC
+'''Description:
 The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
 
 Social Structure:
@@ -3794,7 +3832,7 @@ The Tae Ghirus are very social and cooperative to make up for their weak bodies.
 
 SP_MUURSH
 Mu Ursh
-SP_MUURSH_DESC
+SP_MUURSH_GAMEPLAY_DESC
 '''Militantly peaceful herbivores.
 Bevorzugt wüstenhafte Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3806,10 +3844,12 @@ Bevorzugt wüstenhafte Planeten.
 [[GREAT_GROUND_TROOPS]]
 '''
 
+SP_MUURSH_DESC
+''''''
 
 SP_GEORGE
 George
-SP_GEORGE_DESC
+SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Bevorzugt Tundra Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -3821,8 +3861,10 @@ Bevorzugt Tundra Planeten.
 [[AVERAGE_GROUND_TROOPS]]
 
 [[BROAD_EP]]
+'''
 
-George is a single telepathic entity that consists of multiple mobile telepathic units. 
+SP_GEORGE_DESC
+'''George is a single telepathic entity that consists of multiple mobile telepathic units. 
 
 Description:
 The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
@@ -3831,7 +3873,7 @@ The units that make up George look like 2.5 m long, 0.5 m tall centipedes except
 
 SP_CRAY
 Cray
-SP_CRAY_DESC
+SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Bevorzugt unfruchtbare Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -3843,8 +3885,10 @@ Bevorzugt unfruchtbare Planeten.
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+'''
 
-Description:
+SP_CRAY_DESC
+'''Description:
 The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
 
 Social Structure:
@@ -3855,7 +3899,7 @@ Day to day decisions run on an extremely complex web of favors, all Cray will ha
 
 SP_ETTY
 Etty
-SP_ETTY_DESC
+SP_ETTY_GAMEPLAY_DESC
 '''Cybernetic plants.
 Bevorzugt wüstenhafte Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -3870,8 +3914,10 @@ Bevorzugt wüstenhafte Planeten.
         
 [[BAD_DETECTION]]
 [[GOOD_STEALTH]]
+'''
 
-Description:
+SP_ETTY_DESC
+'''Description:
 Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong sent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
 
 The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
@@ -3883,7 +3929,7 @@ The Etty are exceedingly polite and strictly honor all contracts and agreements.
 
 SP_CYNOS
 Cynos
-SP_CYNOS_DESC
+SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -3895,8 +3941,10 @@ Bevorzugt sumpfige Planeten.
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+'''
 
-Description:
+SP_CYNOS_DESC
+'''Description:
 The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
 
 A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. 
@@ -3910,7 +3958,7 @@ Neither can the Cynos reproduce without their mother plants, nor can they bring 
 
 SP_PHINNERT
 Phinnert
-SP_PHINNERT_DESC
+SP_PHINNERT_GAMEPLAY_DESC
 '''Flying Monkeys.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3920,8 +3968,10 @@ Bevorzugt sumpfige Planeten.
                 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+'''
 
-Description:
+SP_PHINNERT_DESC
+'''Description:
 Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile flyers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
 
 Social Structure:
@@ -3933,7 +3983,7 @@ Their planet has low gravity and a very thick atmosphere. Its composition is uni
 
 SP_EGASSEM
 Egassem
-SP_EGASSEM_DESC
+SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -3944,8 +3994,10 @@ Bevorzugt vulkanische Planeten.
 [[BAD_POPULATION]]
 [[GREAT_GROUND_TROOPS]]
 [[NARROW_EP]]
+'''
 
-Description:
+SP_EGASSEM_DESC
+'''Description:
 Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
 
 Social Structure:
@@ -3957,7 +4009,7 @@ A world wracked with tidal and geological heating, as well as the more conventio
 
 SP_SSLITH
 Sslith
-SP_SSLITH_DESC
+SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -3969,8 +4021,10 @@ Bevorzugt Tundra Planeten.
 [[BAD_GROUND_TROOPS]]
         
 [[NARROW_EP]]
+'''
 
-Description:
+SP_SSLITH_DESC
+'''Description:
 In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
 
 Social Structure:
@@ -3979,7 +4033,7 @@ The Sslith are organized into groups called Pnacra which serve as independent go
 
 SP_FIFTYSEVEN
 Fifty-seven
-SP_FIFTYSEVEN_DESC
+SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3989,8 +4043,10 @@ Bevorzugt sumpfige Planeten.
         
 [[BAD_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+'''
 
-Biology:
+SP_FIFTYSEVEN_DESC
+'''Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
 
 Personality:
@@ -4006,7 +4062,7 @@ The Fifty-Seven are in constant contact with most of the rest of their species, 
 
 SP_SETINON
 Setinon
-SP_SETINON_DESC
+SP_SETINON_GAMEPLAY_DESC
 '''Individualistic sentient microscopic cells.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4018,8 +4074,10 @@ Bevorzugt sumpfige Planeten.
 [[NO_GROUND_TROOPS]]  
         
 [[GREAT_STEALTH]]
+'''
 
-Description:
+SP_SETINON_DESC
+'''Description:
 The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub subcompartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
 
 Social Structure:
@@ -4032,7 +4090,7 @@ A swamp world with a dense atmosphere and fairly dense biosphere.
 
 SP_NYMNMN
 Nymnmn
-SP_NYMNMN_DESC
+SP_NYMNMN_GAMEPLAY_DESC
 '''Planet-wide sapient magnetic waveforms.
 Bevorzugt wüstenhafte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
@@ -4047,10 +4105,12 @@ Bevorzugt wüstenhafte Planeten.
 [[GOOD_STEALTH]]
 '''
 
+SP_NYMNMN_DESC
+''''''
 
 SP_TRENCHERS
 Trenchers
-SP_TRENCHERS_DESC
+SP_TRENCHERS_GAMEPLAY_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Bevorzugt unfruchtbare Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -4062,10 +4122,12 @@ Bevorzugt unfruchtbare Planeten.
 [[BAD_GROUND_TROOPS]]
 '''
 
+SP_TRENCHERS_DESC
+''''''
 
 SP_RAAAGH
 Raaagh
-SP_RAAAGH_DESC
+SP_RAAAGH_GAMEPLAY_DESC
 '''Highly territorial felinoids.
 Bevorzugt erdähnliche Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4075,8 +4137,10 @@ Bevorzugt erdähnliche Planeten.
                 
 [[AVERAGE_POPULATION]]
 [[ULTIMATE_GROUND_TROOPS]]
+'''
 
-The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+SP_RAAAGH_DESC
+'''The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
 Personality:
 Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
@@ -4091,7 +4155,7 @@ There's not bit of land big enough for an individual Raaagh to live on that hasn
 
 SP_BEIGEGOO
 Beige Goo
-SP_BEIGEGOO_DESC
+SP_BEIGEGOO_GAMEPLAY_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Bevorzugt verstrahlte Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -4101,13 +4165,15 @@ Bevorzugt verstrahlte Planeten.
         
 [[GOOD_POPULATION]]
 [[GREAT_GROUND_TROOPS]]
+'''
 
-The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+SP_BEIGEGOO_DESC
+'''The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
 
 SP_SILEXIAN
 Silexian
-SP_SILEXIAN_DESC
+SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
 Bevorzugt erdähnliche Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -4117,8 +4183,10 @@ Bevorzugt erdähnliche Planeten.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+'''
 
-The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
+SP_SILEXIAN_DESC
+'''The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
 
 Description:
 As each type of Silexian is customized for a specific task, there are variations in appearance. The majority of Silexians however, share many similar features: They are wholly artificial robotic beings made primarily of metals. They have an antennae used for short range radio communication, advanced tactile sensors as well as wide-frequency photon detectors.
@@ -4133,7 +4201,7 @@ The Silexians were created by the Caretakers in order to increase the efficiency
 
 SP_KOBUNTURA
 Kobuntura
-SP_KOBUNTURA_DESC
+SP_KOBUNTURA_GAMEPLAY_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Bevorzugt unfruchtbare Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
@@ -4143,18 +4211,19 @@ Bevorzugt unfruchtbare Planeten.
         
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+'''
 
-Description:
+SP_KOBUNTURA_DESC
+'''Description:
 A Kobuntura is composed of trillions of magnetic dust particles. Their dense core of vibrating molecules generates a magnetic field which manipulates a less dense cloud of particles orbiting it in complex patterns. Kobuntura can directly detect and manipulate objects on the outer reaches of their particle clouds, but can indirectly detect, manipulate and communicate with objects and individuals much further away using there magnetic fields. The primary method of locomotion involves interaction with the planet’s magnetic field. Whenever a Kobuntura moves, there is a small chance that the movement will magnetize and agitate the surrounding dust particles to a sufficient extent to trigger a chain reaction which causes a new fully matured Kobuntura to form in a matter of seconds.
 
 Social Structure:
 The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
 '''
 
-
 SP_UGMORS
 Ugmors
-SP_UGMORS_DESC
+SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -4164,8 +4233,10 @@ Bevorzugt vulkanische Planeten.
         
 [[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
+'''
 
-The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
+SP_UGMORS_DESC
+'''The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
 
 Social Structure:
 The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
@@ -4181,7 +4252,7 @@ The Ugmors home world is a rockey planet that rotates very quickly, (once every 
 
 SP_GISGUFGTHRIM
 '''Gis Guf Gthrim'''
-SP_GISGUFGTHRIM_DESC
+SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Bevorzugt toxische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4191,13 +4262,15 @@ Bevorzugt toxische Planeten.
         
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+'''
 
-Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+SP_GISGUFGTHRIM_DESC
+'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
 SP_HIDDENGARDENER
 Hidden Gardener
-SP_HIDDENGARDENER_DESC
+SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Bevorzugt erdähnliche Planeten
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4208,8 +4281,10 @@ Bevorzugt erdähnliche Planeten
 [[NO_RESEARCH]]
 
 [[NO_GROUND_TROOPS]]
+'''
 
-The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
+SP_HIDDENGARDENER_DESC
+'''The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
 
 Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
 
@@ -4220,7 +4295,7 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 
 SP_ABADDONI
 Abaddoni
-SP_ABADDONI_DESC
+SP_ABADDONI_GAMEPLAY_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -4230,19 +4305,21 @@ Bevorzugt vulkanische Planeten.
                 
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+'''
 
-Description:
+SP_ABADDONI_DESC
+'''Description:
 Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
 At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
 
 Social Structure:
-The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This KI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
+The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
 '''
 
 
 SP_ACIREMA
 Acirema
-SP_ACIREMA_DESC
+SP_ACIREMA_GAMEPLAY_DESC
 '''Eine Rasse von nahezu unbegrenzte Kraft, das in diesem Universum nicht überleben kann.
 Bevorzugt verstrahlte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
@@ -4252,8 +4329,10 @@ Bevorzugt verstrahlte Planeten.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+'''
 
-Description
+SP_ACIREMA_DESC
+'''Description
 An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
 
 As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
@@ -4269,7 +4348,7 @@ They can't stay here long enough to actually move to another planet and still su
 
 SP_OURBOOLS
 Ourbools
-SP_OURBOOLS_DESC
+SP_OURBOOLS_GAMEPLAY_DESC
 '''Riesige Blinde Schwimmer die, die Schwerkraft "sehen" können.
 Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4281,9 +4360,10 @@ Bevorzugt ozeanische Planeten.
 [[AVERAGE_GROUND_TROOPS]]
         
 [[ULTIMATE_DETECTION]]
+'''
 
-
-Biology:
+SP_OURBOOLS_DESC
+'''Biology:
 A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
 
 Personality:
@@ -4299,7 +4379,7 @@ The Ourbools find their sense of position via the regular movements of the 23 mo
 
 SP_VOLP
 Volp-Uglush
-SP_VOLP_DESC
+SP_VOLP_GAMEPLAY_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Bevorzugt unfruchtbare Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -4309,8 +4389,10 @@ Bevorzugt unfruchtbare Planeten.
         
 [[GOOD_POPULATION]]        
 [[AVERAGE_GROUND_TROOPS]]
+'''
 
-Description:
+SP_VOLP_DESC
+'''Description:
 The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
 The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
 They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of indivudually taking on various large battle engines, the chaos of combat is not their most effective environment.
@@ -4324,7 +4406,7 @@ Volp-Uglush are now to integrated and ingrown. They now totally lack the indepen
 
 SP_FURTHEST
 Furthest
-SP_FURTHEST_DESC
+SP_FURTHEST_GAMEPLAY_DESC
 '''Paranoid three-headed, triped herbivores
 Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4337,8 +4419,10 @@ Bevorzugt Tundra Planeten.
         
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
+'''
 
-Biology:
+SP_FURTHEST_DESC
+'''Biology:
 The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
 
 Name:
@@ -4353,7 +4437,7 @@ The Furthest generally consider space travel far too dangerous for a sane being,
 
 SP_EXOBOT
 Exobot
-SP_EXOBOT_DESC
+SP_EXOBOT_GAMEPLAY_DESC
 '''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -4362,14 +4446,15 @@ SP_EXOBOT_DESC
         
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
-
-While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
 
+SP_EXOBOT_DESC
+'''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''
 
 SP_EXPERIMENTOR
 Experimentor
-SP_EXPERIMENTOR_DESC
+SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Precursor mad scientists
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -4381,13 +4466,15 @@ SP_EXPERIMENTOR_DESC
         
 [[ULTIMATE_STEALTH]]
 [[ULTIMATE_DETECTION]]
+'''
 
-The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
+SP_EXPERIMENTOR_DESC
+'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
 
 
 SP_SUPER_TEST
 Super Testers
-SP_SUPER_TEST_DESC
+SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
@@ -4402,6 +4489,8 @@ SP_SUPER_TEST_DESC
 [[ULTIMATE_WEAPONS]]
 '''
 
+SP_SUPER_TEST_DESC
+''''''
 
 
 
@@ -8630,72 +8719,72 @@ SH_COLONY_BASE_DESC
 Ein Rumpf konzipiert zum gründen einer Kolonie auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
 
 SH_FLOATER_BODY
-Weak Body
+Gebrechlichen Körper
 
 SH_FLOATER_BODY_DESC
-Small frail body that is unable to withstand significant damage.
+Kleiner gebrechlichen Körper, der keine nennenswerten Schäden standhält.
 
 SH_TREE_BODY
-Immobile Body
+Immobilen Körper
 
 SH_TREE_BODY_DESC
-Rigid tree-like body that is unable to move between systems.
+Starrer baumförmigen Körper, der nicht in der Lage ist, sich zwischen den Systemen zu bewegen.
 
 SH_STRONG_MONSTER_BODY
-Strong Body
+Kräftigen Körper
 
 SH_STRONG_MONSTER_BODY_DESC
-Large strong body with fearsome natural weapons and strong natural armor.
+Großen starken Körper mit furchterregenden natürlichen Waffen und starke natürliche Rüstung.
 
 SH_GUARD_MONSTER_BODY
-Guard Hull
+Wache Rumpf
 SH_GUARD_MONSTER_BODY_DESC
-A Strong Hull for Guardian Class Monsters
+Ein starker Rumpf für Monsters der Wächterklasse.
 
 SH_KRILL_1_BODY
-Krill Body 1
+Krillkörper 1
 SH_KRILL_1_BODY_DESC
-Krill Body 1
+Krillkörper 1
 
 SH_KRILL_2_BODY
-Krill Body 2
+Krillkörper 2
 SH_KRILL_2_BODY_DESC
-Krill Body 2
+Krillkörper 2
 
 SH_KRILL_3_BODY
-Krill Body 3
+Krillkörper 3
 SH_KRILL_3_BODY_DESC
-Krill Body 3
+Krillkörper 3
 
 SH_KRILL_4_BODY
-Krill Body 4
+Krillkörper 4
 SH_KRILL_4_BODY_DESC
-Krill Body 4
+Krillkörper 4
 
 SH_DRONE_BODY
-Drone Hull
+Drohnenrumpf
 SH_DRONE_BODY_DESC
-Drone Hull
+Drohnenrumpf
 
 SH_IMMOBILE_FACTORY
-Drone Factory
+Drohnenfabrik
 SH_IMMOBILE_FACTORY_DESC
-Drone Factory
+Drohnenfabrik
 
 SH_KRAKEN_1_BODY
 Larval Kraken Body
 SH_KRAKEN_1_BODY_DESC
-A formidable medium-weight space monster.
+Ein gewaltiger mittelgewicht Weltraummonster.
 
 SH_KRAKEN_2_BODY
 Kraken Body
 SH_KRAKEN_2_BODY_DESC
-A formidable medium-weight space monster.
+Ein gewaltiger mittelgewicht Weltraummonster.
 
 SH_KRAKEN_3_BODY
 Great Kraken Body
 SH_KRAKEN_3_BODY_DESC
-A formidable medium-weight space monster.
+Ein gewaltiger mittelgewicht Weltraummonster.
 
 SH_BLACK_KRAKEN_BODY
 Black Kraken Body
