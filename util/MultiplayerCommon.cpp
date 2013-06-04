@@ -23,8 +23,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/xtime.hpp>
 
 
 const std::string MP_SAVE_FILE_EXTENSION = ".mps";
@@ -419,25 +417,6 @@ std::string RomanNumber(unsigned int n) {
 
 const std::string& Language()
 { return GetStringTable().Language(); }
-
-#ifndef FREEORION_WIN32
-void Sleep(int ms)
-{
-    boost::xtime t;
-#if BOOST_VERSION >= 105000
-    boost::xtime_get(&t, boost::TIME_UTC_);
-#else /* BOOST_VERSION >= 105000 */
-    boost::xtime_get(&t, boost::TIME_UTC);
-#endif /* BOOST_VERSION >= 105000 */
-    int ns_sum = t.nsec + ms * 1000000;
-    const int NANOSECONDS_PER_SECOND = 1000000000;
-    int delta_secs = ns_sum / NANOSECONDS_PER_SECOND;
-    int nanosecs = ns_sum % NANOSECONDS_PER_SECOND;
-    t.sec += delta_secs;
-    t.nsec = nanosecs;
-    boost::thread::sleep(t);
-}
-#endif
 
 
 /////////////////////////////////////////////////////

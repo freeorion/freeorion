@@ -47,11 +47,6 @@ std::string RomanNumber(unsigned int n);
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
 
-#ifndef FREEORION_WIN32
-/** Puts the calling thread to sleep for \a ms milliseconds. */
-void Sleep(int ms);
-#endif
-
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData {
     /** \name Structors */ //@{

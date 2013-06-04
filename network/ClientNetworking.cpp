@@ -223,7 +223,8 @@ bool ClientNetworking::ConnectToLocalHostServer(
 void ClientNetworking::DisconnectFromServer() {
     if (Connected())
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    Sleep(1000); // HACK! wait a bit for the disconnect to occur
+    // HACK! wait a bit for the disconnect to occur
+    boost::this_thread::sleep(boost::posix_time::seconds(1));
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {

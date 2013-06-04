@@ -84,7 +84,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               Universe& universe, EmpireManager& empire_manager,
               SpeciesManager& species_manager, CombatLogManager& combat_log_manager)
 {
-    //Sleep(5000);
+    //boost::this_thread::sleep(boost::posix_time::seconds(5));
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())

@@ -123,7 +123,7 @@ void AIClientApp::Run() {
             Networking().GetMessage(msg);
             HandleMessage(msg);
         } else {
-            Sleep(250);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(250));
         }
     }
 }

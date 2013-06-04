@@ -168,15 +168,15 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_argument): " << e.what() << std::endl;
-        Sleep(3000);
+        boost::this_thread::sleep(boost::posix_time::seconds(3));
         return 1;
     } catch (const std::runtime_error& e) {
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
-        Sleep(3000);
+        boost::this_thread::sleep(boost::posix_time::seconds(3));
         return 1;
     } catch (const std::exception& e) {
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
-        Sleep(3000);
+        boost::this_thread::sleep(boost::posix_time::seconds(3));
         return 1;
     } catch (...) {
         std::cerr << "main() caught unknown exception." << std::endl;

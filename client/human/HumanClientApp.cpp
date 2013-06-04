@@ -549,7 +549,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         // end any currently-playing game before loading new one
         if (m_game_started) {
             EndGame();
-            Sleep(3000);    // delay to make sure old game is fully cleaned up before attempting to start a new one
+            // delay to make sure old game is fully cleaned up before attempting to start a new one
+            boost::this_thread::sleep(boost::posix_time::seconds(3));
         } else {
             Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
         }

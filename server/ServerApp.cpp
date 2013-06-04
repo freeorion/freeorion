@@ -28,6 +28,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/thread/thread.hpp>
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -261,7 +262,8 @@ void ServerApp::CleanupAIs() {
     }
 
     if (ai_connection_lingering)
-        Sleep(1000);    // time for AIs to react?
+        // time for AIs to react?
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
 
     Logger().debugStream() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
     try {
@@ -2623,7 +2625,8 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //    return;
 
 
-    //Sleep(1000); // time for elimination messages to propegate
+    // time for elimination messages to propegate
+    //boost::this_thread::sleep(boost::posix_time::seconds(1));
 
 
     //// inform all players of eliminations

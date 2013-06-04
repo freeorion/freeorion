@@ -6,6 +6,7 @@
 #include <GG/SignalsAndSlots.h>
 
 #include <boost/iterator/filter_iterator.hpp>
+#include <boost/thread/thread.hpp>
 
 
 using boost::asio::ip::tcp;
@@ -185,7 +186,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         if (m_new_connection) {
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
-            Sleep(500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset)
