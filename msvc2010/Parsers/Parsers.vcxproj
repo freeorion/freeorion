@@ -96,9 +96,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\GG\src\adobe\memory.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
     <ClCompile Include="..\..\parse\AlignmentsParser.cpp" />
     <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser.cpp" />
