@@ -123,7 +123,6 @@ set(freeorion_SOURCES
 set(freeorion_LINK_LIBS
     core
     parse
-    log4cpp
     pagedgeometry
     GiGi
     GiGiOgre

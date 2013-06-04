@@ -26,8 +26,6 @@ add_executable(freeoriond
 target_link_libraries(freeoriond
     core
     parse
-    log4cpp
-    GiGi # needed for adobe name_t implementation
     ${CMAKE_THREAD_LIBS_INIT}
 )
 

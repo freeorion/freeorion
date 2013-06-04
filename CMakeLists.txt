@@ -186,10 +186,11 @@ add_library(core STATIC
 )
 
 target_link_libraries(core
-    ${GIGI_GIGI_LIBRARY}
     ${Boost_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
+    log4cpp
+    GiGi # needed for adobe name_t implementation
 )
 
 add_library(parse STATIC

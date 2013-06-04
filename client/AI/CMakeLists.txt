@@ -25,8 +25,6 @@ add_definitions(-DFREEORION_BUILD_AI)
 set(freeorionca_LINK_LIBS
     core
     parse
-    log4cpp
-    GiGi # needed for adobe name_t implementation
     ${PYTHON_LIBRARIES}
 )
 
