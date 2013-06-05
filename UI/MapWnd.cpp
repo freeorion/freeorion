@@ -1142,6 +1142,56 @@ void MapWnd::RenderFields() {
         if (texture)
             texture->OrthoBlit(ul, lr);
     }
+
+    // scanlines?
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (m_scanline_shader &&
+        empire_id != ALL_EMPIRES &&
+        GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    {
+        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+        Universe& universe = GetUniverse();
+
+        glPushMatrix();
+        glLoadIdentity();
+        const double TWO_PI = 2.0*3.14159;
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(1.5f);
+        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
+        m_scanline_shader->Use();
+        m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+
+        for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
+             it != m_field_icons.end(); ++it)
+        {
+            if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) > VIS_BASIC_VISIBILITY)
+                continue;
+
+            const FieldIcon* icon = it->second;
+            const int ARC_SIZE = Value(icon->Width());
+
+            GG::Pt ul = icon->UpperLeft(), lr = icon->LowerRight();
+            GG::Pt size = lr - ul;
+            GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+            GG::Pt middle = ul + half_size;
+
+            GG::Pt circle_size = GG::Pt(static_cast<GG::X>(ARC_SIZE),
+                                        static_cast<GG::Y>(ARC_SIZE));
+            GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
+            GG::Pt circle_ul = middle - circle_half_size;
+            GG::Pt circle_lr = circle_ul + circle_size;
+            CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
+        }
+
+        m_scanline_shader->stopUse();
+        glDisable(GL_LINE_SMOOTH);
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+        glLineWidth(1.0f);
+    }
+
     glPopMatrix();
 }
 
