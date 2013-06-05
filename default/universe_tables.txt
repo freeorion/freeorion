@@ -77,9 +77,9 @@ NoStar                          -30    -30     -30     -30          -30     -30 
 <4x8>
 UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
 NoneUnused                      0       0       0       0       0       0       0           0
-Young                           10      20      0       0       0       0       0           60
-Mature                          -5       0      10      20      0       10      10          40
-Ancient                         -20      -10    0       10      20      20      20          20
+Young                           10      20      0       0       0       0       0           50
+Mature                          -5       0      10      20      0       10      10          30
+Ancient                         -20      -10    0       10      20      20      20          10
 
 <1x8>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar

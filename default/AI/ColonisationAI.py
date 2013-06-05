@@ -654,6 +654,25 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     else: #colonization mission
         if not species:
             return 0
+        popTagMod = 1.0
+        indTagMod = 1.0
+        resTagMod = 1.0
+        AITags=""
+        for tag in [tag1 for tag1 in tagList if "AI_TAG" in tag1]:
+            tagParts = tag.split('_')
+            tagType = tagParts[3]
+            AITags +=  " AI_TAG: %s "%tag
+            grade = {'NO':0.0, 'BAD':0.5,  'GOOD':1.5,  'GREAT':2.0,  'ULTIMATE':4.0 }.get(tagParts[2],  1.0)
+            if tagType == "POPULATION": 
+                popTagMod = {'BAD':0.75,  'GOOD':1.25}.get(tagParts[2],  1.0)
+            elif tagType =="INDUSTRY":
+                indTagMod = grade
+            elif tagType =="RESEARCH":
+                resTagMod = grade
+        
+        if AITags != "":
+            print "Species %s has AITags %s"%(specName,  AITags)
+        
         retval += fixedRes
         retval += colonyStarBonus
         asteroidBonus=0
@@ -761,8 +780,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         if popSizeMod > 0:
             popSizeMod += conditionalPopSizeMod
 
-        popSize = planetSize * popSizeMod
-        detail.append("baseMaxPop size*psm %d * %d = %d"%(planetSize,  popSizeMod,  popSize) )
+        popSize = planetSize * popSizeMod * popTagMod
+        detail.append("baseMaxPop size*psm %d * %d * %.2f = %d"%(planetSize,  popSizeMod, popTagMod,   popSize) )
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             popSize -= 4
@@ -774,8 +793,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 miningBonus+=1
         
         proSingVal = [0, 4][(len( claimedStars.get(fo.starType.blackHole,  [])) > 0)]
-        basePopInd=0.2
-        indMult=1
+        basePopInd=0.2 
+        indMult=1 * max( indTagMod,  0.5*(indTagMod+resTagMod) ) #TODO: repport an actual calc for research value
         indTechMap={    "GRO_ENERGY_META":  0.5, 
                                             "PRO_ROBOTIC_PROD":0.4, 
                                             "PRO_FUSION_GEN":       1.0, 
