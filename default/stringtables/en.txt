@@ -2016,6 +2016,12 @@ Census
 MAP_POPULATION_COUNT
 %1%: %2%
 
+CENSUS_SPECIES_HEADER
+Species
+
+CENSUS_TAG_HEADER
+Characteristics
+
 MAP_DETECTION_TITLE
 Empire Detection
 
@@ -9078,6 +9084,20 @@ FOCUS_PROTECTION_LABEL
 ####                       T A G S                       ####
 #############################################################
 
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
+## in Census popup, and specifies order in which they will be displayed.
+## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
+## since those won't be displayed in the census anyway.  
+
+## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
+CENSUS_TAG_ORDER
+'''LITHIC
+ORGANIC
+PHOTOTROPHIC
+ROBOTIC
+SELF_SUSTAINING
+TELEPATHIC'''
+##STYLISH  // add to tag order list if ever this tag is given a function
 
 ANTIQUATED
 Antiquated

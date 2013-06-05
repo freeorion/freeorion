@@ -26,6 +26,11 @@
 #include <GG/StaticGraphic.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
 
 #include <boost/lexical_cast.hpp>
 
@@ -2268,25 +2273,33 @@ void TextBrowseWnd::Render() {
 /////////////////////////////////////
 class CensusRowPanel : public GG::Control {
 public:
-    CensusRowPanel(GG::X w, GG::Y h, const std::string& species, double species_census) :
-        Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>())
+    CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
+        Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+        m_icon(0),
+        m_name(0),
+        m_census_val(0)
     {
+        m_show_icon = show_icon;
         SetChildClippingMode(ClipToClient);
 
-        boost::shared_ptr<GG::Texture> texture = ClientUI::SpeciesIcon(species);
-        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                       texture, GG::GRAPHIC_FITGRAPHIC);
-        AttachChild(m_icon);
+        if (m_show_icon) {
+            boost::shared_ptr<GG::Texture> texture = ClientUI::SpeciesIcon(name);
+            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                            texture, GG::GRAPHIC_FITGRAPHIC);
+            AttachChild(m_icon);
+        }
 
-        m_species_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(species),
+        m_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(name),
             ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
-        AttachChild(m_species_name);
+        AttachChild(m_name);
 
-        int num_digits = species_census < 10 ? 2 : 3; // this allows the decimal point to line up when there number above and below 10.
-        m_species_census = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                               DoubleToString(species_census, num_digits, false),
+        int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
+        num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
+        num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
+        m_census_val = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                               DoubleToString(census_val, num_digits, false),
                                                ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
-        AttachChild(m_species_census);
+        AttachChild(m_census_val);
 
         DoLayout();
     }
@@ -2303,19 +2316,21 @@ private:
         GG::Y top(GG::Y0);
         GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
 
-        m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + MeterIconSize().x, bottom));
+        if (m_show_icon)
+            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + MeterIconSize().x, bottom));
         left += MeterIconSize().x + GG::X(EDGE_PAD);
 
-        m_species_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_NAME_WIDTH, bottom));
+        m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_NAME_WIDTH, bottom));
         left += SPECIES_NAME_WIDTH;
 
-        m_species_census->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
+        m_census_val->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
         left += SPECIES_CENSUS_WIDTH;
     }
 
     GG::StaticGraphic*  m_icon;
-    GG::TextControl*    m_species_name;
-    GG::TextControl*    m_species_census;
+    GG::TextControl*    m_name;
+    GG::TextControl*    m_census_val;
+    bool                m_show_icon;
 };
 
 
@@ -2323,26 +2338,39 @@ private:
 //         CensusBrowseWnd         //
 /////////////////////////////////////
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
-                                 const std::map<std::string, float>& population_counts) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
-{
+                                 const std::map<std::string, float>& population_counts, const std::map<std::string, float>& tag_counts) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1),
+    m_title_text(0),
+    m_species_text(0),
+    m_list(0),
+    m_tags_text(0),
+    m_tags_list(0)
+    {
     //const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(ClientUI::Pts()-1);
     const GG::Y ROW_HEIGHT(MeterIconSize().y);
-
+    const GG::Y HALF_HEIGHT(GG::Y(int(ClientUI::Pts()/2)));
+    
     GG::Y top = GG::Y0;
 
     m_row_height = GG::Y(MeterIconSize().y);
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y,
+    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y,
                                        BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, font_bold,
                                        ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_title_text);
 
+    top += ROW_HEIGHT;
+    m_species_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y,
+                                         BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT, UserString("CENSUS_SPECIES_HEADER"), font,
+                                       ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+    AttachChild(m_species_text);
 
-    m_list = new CUIListBox(m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
+    top += ROW_HEIGHT+HALF_HEIGHT;
+    m_list = new CUIListBox(m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
     m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
@@ -2357,19 +2385,60 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
          it != population_counts.end(); ++it)
     { counts_species.insert(std::make_pair(it->second, it->first)); }
 
-    // add rows
+    // add species rows
     for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
          it != counts_species.rend(); ++it)
     {
-        GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Row");
-        row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first));
+        GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Species Row");
+        row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
         top += m_row_height;
     }
+    top += (EDGE_PAD*3);
+    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top - 2* ROW_HEIGHT - HALF_HEIGHT));
 
-    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*3)));
-    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*3)));
+    GG::Y top2 = top;
+    m_tags_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y,
+                                      BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT, UserString("CENSUS_TAG_HEADER"), font,
+                                      ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+    AttachChild(m_tags_text);
+    
+    top2 += ROW_HEIGHT + HALF_HEIGHT;
+    m_tags_list = new CUIListBox(m_offset.x, top2 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
+    m_tags_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
+    m_tags_list->SetInteriorColor(ClientUI::WndColor());
+    // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
+    m_tags_list->SetNumCols(1);
+    m_tags_list->SetColWidth(0, GG::X0);
+    m_tags_list->LockColWidths();
+    AttachChild(m_tags_list);
+
+    // determine tag order
+    //Logger().debugStream() << "Census Tag Order: " << UserString("CENSUS_TAG_ORDER");
+    std::istringstream tag_stream(UserString("CENSUS_TAG_ORDER"));
+    std::vector<std::string> tag_order;
+    std::copy(std::istream_iterator<std::string>(tag_stream), 
+        std::istream_iterator<std::string>(),
+        std::back_inserter<std::vector<std::string> >(tag_order));
+
+    // add tags/characteristics rows
+    //for (std::map<std::string, float>::const_iterator it = tag_counts.begin(); it != tag_counts.end(); ++it) {
+    for (std::vector<std::string>::iterator it = tag_order.begin(); it != tag_order.end(); ++it) {
+        //Logger().debugStream() << "Census checking for tag '"<< *it <<"'";
+        std::map<std::string, float>::const_iterator it2 = tag_counts.find(*it);
+        if (it2 != tag_counts.end()) {
+            GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
+            row->push_back(new CensusRowPanel(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
+            m_tags_list->Insert(row);
+            row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
+            top2 += m_row_height;
+        }
+    }
+
+    m_tags_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
+
+    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2  + (EDGE_PAD*3)));
 }
 
 bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {

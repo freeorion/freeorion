@@ -411,14 +411,17 @@ private:
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
 class CensusBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts);
+    CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts, const std::map<std::string, float>& tag_counts);
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
     void            DoLayout();
 
 private:
     GG::TextControl*    m_title_text;
+    GG::TextControl*    m_species_text;
     CUIListBox*         m_list;
+    GG::TextControl*    m_tags_text;
+    CUIListBox*         m_tags_list;
     GG::Pt              m_offset;
     GG::Y               m_row_height;
 

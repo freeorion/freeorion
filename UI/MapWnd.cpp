@@ -33,6 +33,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
@@ -4644,6 +4645,7 @@ void MapWnd::RefreshPopulationIndicator() {
 
     const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
     std::map<std::string, float> population_counts;
+    std::map<std::string, float> tag_counts;
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
@@ -4656,12 +4658,19 @@ void MapWnd::RefreshPopulationIndicator() {
         const std::string& species_name = pc->SpeciesName();
         if (species_name.empty())
             continue;
-
-        population_counts[species_name] += pc->CurrentMeterValue(METER_POPULATION);
+        float this_pop = pc->CurrentMeterValue(METER_POPULATION);
+        population_counts[species_name] += this_pop;
+        if (const Species* species = GetSpecies(species_name) ) {
+            const std::vector<std::string>& tags = species->Tags();
+            for (std::vector<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++) {
+                if (tag_it->compare(0,7, "AI_TAG_") != 0)
+                    tag_counts[*tag_it] += this_pop;
+            }
+        }
     }
 
     m_population->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts)));
+        new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts)));
 }
 
 void MapWnd::UpdateMetersAndResourcePools() {
