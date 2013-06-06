@@ -200,9 +200,6 @@
     <ClInclude Include="..\..\util\XMLDoc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\XMLObjectFactory.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\StringTable.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>

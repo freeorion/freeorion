@@ -2227,7 +2227,6 @@
 		471D5D3B0A98A3F900DA9C21 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		471D5D3C0A98A3F900DA9C21 /* XMLDoc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDoc.cpp; sourceTree = "<group>"; };
 		471D5D3D0A98A3F900DA9C21 /* XMLDoc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLDoc.h; sourceTree = "<group>"; };
-		471D5D3E0A98A3F900DA9C21 /* XMLObjectFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLObjectFactory.h; sourceTree = "<group>"; };
 		471D5D440A98A46000DA9C21 /* freeoriond */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeoriond; sourceTree = BUILT_PRODUCTS_DIR; };
 		471D650C0A98B4C100DA9C21 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = /System/Library/Frameworks/OpenAL.framework; sourceTree = "<absolute>"; };
 		471D650D0A98B4C100DA9C21 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
@@ -4359,7 +4358,6 @@
 				3A1BF3EA1748875200812237 /* Version.cpp */,
 				471D5D3C0A98A3F900DA9C21 /* XMLDoc.cpp */,
 				471D5D3D0A98A3F900DA9C21 /* XMLDoc.h */,
-				471D5D3E0A98A3F900DA9C21 /* XMLObjectFactory.h */,
 			);
 			path = util;
 			sourceTree = "<group>";

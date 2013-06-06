@@ -148,7 +148,6 @@
     <ClInclude Include="..\..\util\VarText.h" />
     <ClInclude Include="..\..\util\Version.h" />
     <ClInclude Include="..\..\util\XMLDoc.h" />
-    <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
