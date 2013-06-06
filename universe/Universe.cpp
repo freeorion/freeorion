@@ -1818,6 +1818,72 @@ namespace {
         }
     }
 
+    /** sets visibility of field objects for empires based on input locations
+      * and stealth of fields in supplied ObjectMap and input empire detection
+      * ranges at locations. the rules for detection of fields are more
+      * permissive than other object types, so a special function for them is
+      * needed in addition to SetEmpireObjectVisibilitiesFromRanges(...) */
+    void SetEmpireFieldVisibilitiesFromRanges(
+        const std::map<int, std::map<std::pair<double, double>, float> >&
+            empire_location_detection_ranges,
+        const ObjectMap& objects)
+    {
+        std::vector<const Field*> fields = objects.FindObjects<Field>();
+        Universe& universe = GetUniverse();
+
+        for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
+             detecting_empire_it = empire_location_detection_ranges.begin();
+             detecting_empire_it != empire_location_detection_ranges.end();
+             ++detecting_empire_it)
+        {
+            int detecting_empire_id = detecting_empire_it->first;
+            double detection_strength = 0.0;
+            const Empire* empire = Empires().Lookup(detecting_empire_id);
+            if (!empire)
+                continue;
+            const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+            if (!meter)
+                continue;
+            detection_strength = meter->Current();
+
+            // get empire's locations of detection ranges
+            const std::map<std::pair<double, double>, float>& detector_position_ranges =
+                detecting_empire_it->second;
+
+            // for each field, try to find a detector position in range for this empire
+            for (ObjectMap::const_iterator<Field> field_it = objects.const_begin<Field>();
+                 field_it != objects.const_end<Field>(); ++field_it)
+            {
+                const Field* field = *field_it;
+                if (field->GetMeter(METER_STEALTH)->Current() > detection_strength)
+                    continue;
+                double field_size = field->GetMeter(METER_SIZE)->Current();
+                const std::pair<double, double> object_pos(field->X(), field->Y());
+
+                // search through detector positions until one is found in range
+                for (std::map<std::pair<double, double>, float>::const_iterator
+                     detector_position_it = detector_position_ranges.begin();
+                     detector_position_it != detector_position_ranges.end();
+                     ++detector_position_it)
+                {
+                    // check range for this detector location, for field of this
+                    // size, against distance between field and detector
+                    float detector_range = detector_position_it->second;
+                    const std::pair<double, double>& detector_pos = detector_position_it->first;
+                    double x_dist = detector_pos.first - object_pos.first;
+                    double y_dist = detector_pos.second - object_pos.second;
+                    double dist = std::sqrt(x_dist*x_dist + y_dist*y_dist);
+                    double effective_dist = dist - field_size;
+                    if (effective_dist > detector_range)
+                        continue;   // object out of range
+
+                    universe.SetEmpireObjectVisibility(detecting_empire_id, field->ID(),
+                                                       VIS_PARTIAL_VISIBILITY);
+                }
+            }
+        }
+    }
+
     /** sets visibility of objects for empires based on input locations of
       * potentially detectable objects (if in range) and and input empire
       * detection ranges at locations. */
@@ -2237,6 +2303,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
     SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
                                           empire_position_potentially_detectable_objects);
+    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, Objects());
 
     SetSameSystemPlanetsVisible(Objects());
 
