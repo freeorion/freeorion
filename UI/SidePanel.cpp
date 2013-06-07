@@ -2387,9 +2387,8 @@ void SidePanel::Refresh() {
 }
 
 void SidePanel::RefreshImpl() {
-    //std::cout << "SidePanel::RefreshImpl" << std::endl;
+    ScopedTimer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
-
 
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
@@ -2414,29 +2413,32 @@ void SidePanel::RefreshImpl() {
 
 
     // populate droplist of system names
-    int system_names_in_droplist = 0;
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
     {
-        int sys_id = sys_it->ID();
+        ScopedTimer("SidePanel::RefreshImpl droplist population", true);
+        int system_names_in_droplist = 0;
+        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+             sys_it != Objects().const_end<System>(); ++sys_it)
+        {
+            int sys_id = sys_it->ID();
 
-        if (sys_it->Name().empty() && sys_id != s_system_id)
-            continue;   // skip rows for systems that aren't known to this client, except the selected system
+            if (sys_it->Name().empty() && sys_id != s_system_id)
+                continue;   // skip rows for systems that aren't known to this client, except the selected system
 
-        GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));
-        ++system_names_in_droplist;
+            GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));
+            ++system_names_in_droplist;
 
-        if (sys_id == s_system_id)
-            m_system_name->Select(latest_it);
+            if (sys_id == s_system_id)
+                m_system_name->Select(latest_it);
+        }
+
+
+        // set dropheight.  shrink to fit a small number, but cap at a reasonable max
+        const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+        const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
+        const int TOTAL_LISTBOX_MARGIN = 4;
+        GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+        m_system_name->SetDropHeight(drop_height);
     }
-
-    // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-    const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-    const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
-    const int TOTAL_LISTBOX_MARGIN = 4;
-    GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_system_name->SetDropHeight(drop_height);
-
 
     // (re)create top right star graphic
     boost::shared_ptr<GG::Texture> graphic =

@@ -765,6 +765,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
                         std::map<int, PlayerInfo>& players)
 {
     try {
+        ScopedTimer timer("Turn Update Unpacking", true);
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         GetUniverse().EncodingEmpire() = empire_id;

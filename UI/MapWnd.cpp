@@ -1931,41 +1931,19 @@ void MapWnd::InitTurn() {
     // population is available for currently uncolonized planets
     UpdateMeterEstimates();
 
-
     GetUniverse().ApplyAppearanceEffects();
-
-
-    boost::timer timer;
-
-    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-
-    //// get ids of not-destroyed systems known to this empire.
-    //std::set<int> this_client_known_systems;
-    //std::vector<int> all_system_ids = Objects().FindObjectIDs<System>();
-    //for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it)
-    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-    //        this_client_known_systems.insert(*it);
-
-    //// get ids of all not-destroyed objects known to this empire.
-    //std::set<int> this_client_known_objects;
-    //std::vector<int> all_object_ids = Objects().FindObjectIDs();
-    //for (std::vector<int>::const_iterator it = all_object_ids.begin(); it != all_object_ids.end(); ++it)
-    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-    //        this_client_known_objects.insert(*it);
-
-    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems and visible objects time: " << (timer.elapsed() * 1000.0);
-
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
-
 
     // connect system fleet add and remove signals
     std::vector<const System*> systems = objects.FindObjects<System>();
     for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System *system = *it;
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal,   &MapWnd::FleetAddedOrRemoved,   this));
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal,    &MapWnd::FleetAddedOrRemoved,   this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal,
+                                                                     &MapWnd::FleetAddedOrRemoved,   this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal,
+                                                                     &MapWnd::FleetAddedOrRemoved,   this));
     }
 
     RefreshFleetSignals();
@@ -1980,7 +1958,8 @@ void MapWnd::InitTurn() {
     // are there any sitreps to show?
     if (m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
-        ShowSitRep();
+        if (!m_design_wnd->Visible() && !m_research_wnd->Visible() && !m_production_wnd->Visible())
+            ShowSitRep();
     }
 
     if (m_object_list_wnd->Visible())
@@ -2015,12 +1994,10 @@ void MapWnd::InitTurn() {
     RefreshSliders();
 
 
-    timer.restart();
+    boost::timer timer;
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePools();
-
-
-    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
+    Logger().debugStream() << "MapWnd::InitTurn updating resource pools time: " << (timer.elapsed() * 1000.0);
 
 
     timer.restart();
@@ -2051,16 +2028,19 @@ void MapWnd::InitTurn() {
         CenterOnMapCoord(0.0, 0.0);
     }
 
+    timer.restart();
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
     RefreshTradeResourceIndicator();
     RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
+    Logger().debugStream() << "MapWnd::InitTurn indicators refresh time: " << (timer.elapsed() * 1000.0);
 
+    timer.restart();
     FleetUIManager::GetFleetUIManager().RefreshAll();
-
     DispatchFleetsExploring();
+    Logger().debugStream() << "MapWnd::InitTurn fleet UI refresh and exploring dispatch time: " << (timer.elapsed() * 1000.0);
 
     HumanClientApp* app = HumanClientApp::GetApp();
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
