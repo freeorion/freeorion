@@ -1129,12 +1129,26 @@ void MapWnd::RenderStarfields() {
 }
 
 void MapWnd::RenderFields() {
+    // render fields in 3 steps:
+    // 1) not visible field textures
+    // 2) scanlines on not visible fields
+    // 3) visible field textures
+
+    const Universe& universe = GetUniverse();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
     glLoadIdentity();
     glColor(GG::CLR_WHITE);
+
+    // draw not visible fields first
     for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
          it != m_field_icons.end(); ++it)
     {
+        if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) > VIS_BASIC_VISIBILITY)
+            continue;
+
         const FieldIcon* icon = it->second;
         GG::Pt ul = icon->UpperLeft();
         GG::Pt lr = icon->LowerRight();
@@ -1143,24 +1157,13 @@ void MapWnd::RenderFields() {
             texture->OrthoBlit(ul, lr);
     }
 
-    // scanlines?
-
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    // if possible, draw scanlines for not visible fields
     if (m_scanline_shader &&
         empire_id != ALL_EMPIRES &&
         GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-        Universe& universe = GetUniverse();
-
-        glPushMatrix();
-        glLoadIdentity();
-        const double TWO_PI = 2.0*3.14159;
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
-        glLineWidth(1.5f);
-        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
         m_scanline_shader->Use();
+        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
         m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
 
         for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
@@ -1171,8 +1174,10 @@ void MapWnd::RenderFields() {
 
             const FieldIcon* icon = it->second;
             const int ARC_SIZE = Value(icon->Width());
+            const double TWO_PI = 2.0*3.14159;
+            GG::Pt ul = icon->UpperLeft();
+            GG::Pt lr = icon->LowerRight();
 
-            GG::Pt ul = icon->UpperLeft(), lr = icon->LowerRight();
             GG::Pt size = lr - ul;
             GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
             GG::Pt middle = ul + half_size;
@@ -1182,14 +1187,26 @@ void MapWnd::RenderFields() {
             GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
+
             CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
         }
 
         m_scanline_shader->stopUse();
-        glDisable(GL_LINE_SMOOTH);
-        glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
-        glLineWidth(1.0f);
+    }
+
+    // draw visible fields over top without scanline shader
+    for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
+         it != m_field_icons.end(); ++it)
+    {
+        if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY)
+            continue;
+
+        const FieldIcon* icon = it->second;
+        GG::Pt ul = icon->UpperLeft();
+        GG::Pt lr = icon->LowerRight();
+        boost::shared_ptr<GG::Texture> texture = icon->FieldTexture();
+        if (texture)
+            texture->OrthoBlit(ul, lr);
     }
 
     glPopMatrix();
