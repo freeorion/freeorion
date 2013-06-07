@@ -110,7 +110,6 @@ set(freeorion_SOURCES
     ../../UI/SidePanel.cpp
     ../../UI/SitRepPanel.cpp
     ../../UI/Sound.cpp
-    ../../UI/StringTable.cpp
     ../../UI/SystemIcon.cpp
     ../../UI/TechTreeWnd.cpp
     ../../UI/TechTreeLayout.cpp

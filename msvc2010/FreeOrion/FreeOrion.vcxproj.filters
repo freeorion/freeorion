@@ -210,9 +210,6 @@
     <ClInclude Include="..\..\UI\Sound.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\StringTable.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\SystemIcon.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>

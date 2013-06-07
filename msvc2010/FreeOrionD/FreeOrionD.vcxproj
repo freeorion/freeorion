@@ -104,7 +104,6 @@
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
     <ClInclude Include="..\..\server\ServerFSM.h" />
-    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />

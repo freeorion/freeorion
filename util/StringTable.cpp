@@ -1,8 +1,6 @@
 #include "StringTable.h"
 
 #include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/Directories.h"
 
 #include <GG/utf8/checked.h>
 

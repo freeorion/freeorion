@@ -217,8 +217,8 @@
     <ClInclude Include="..\..\Empire\Diplomacy.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\StringTable.h">
-      <Filter>Header Files\UI</Filter>
+    <ClInclude Include="..\..\util\StringTable.h">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
@@ -363,8 +363,8 @@
     <ClCompile Include="..\..\universe\UniverseObject.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\StringTable.cpp">
-      <Filter>Source Files\UI</Filter>
+    <ClCompile Include="..\..\util\StringTable.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\Diplomacy.cpp">
       <Filter>Source Files\Empire</Filter>

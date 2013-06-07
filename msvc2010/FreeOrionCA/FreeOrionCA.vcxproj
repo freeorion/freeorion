@@ -109,7 +109,6 @@
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\python\PythonSetWrapper.h" />
     <ClInclude Include="..\..\python\PythonWrappers.h" />
-    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />

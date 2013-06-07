@@ -152,7 +152,6 @@
     <ClInclude Include="..\..\UI\SidePanel.h" />
     <ClInclude Include="..\..\UI\SitRepPanel.h" />
     <ClInclude Include="..\..\UI\Sound.h" />
-    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\UI\SystemIcon.h" />
     <ClInclude Include="..\..\UI\TechTreeLayout.h" />
     <ClInclude Include="..\..\UI\TechTreeWnd.h" />

@@ -138,7 +138,6 @@ add_library(core STATIC
     network/Message.cpp
     network/MessageQueue.cpp
     network/Networking.cpp
-    UI/StringTable.cpp
     universe/Building.cpp
     universe/Condition.cpp
     universe/Effect.cpp
@@ -179,6 +178,7 @@ add_library(core STATIC
     util/SerializePathingEngine.cpp
     util/SerializeUniverse.cpp
     util/SitRepEntry.cpp
+    util/StringTable.cpp
     util/binreloc.c
     util/Directories.cpp
     util/XMLDoc.cpp

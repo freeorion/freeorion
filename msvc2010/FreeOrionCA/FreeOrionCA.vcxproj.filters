@@ -218,9 +218,6 @@
     <ClInclude Include="..\..\universe\Meter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\StringTable.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\PythonSetWrapper.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>

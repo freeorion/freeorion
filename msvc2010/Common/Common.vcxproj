@@ -134,7 +134,6 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
@@ -177,6 +176,7 @@
     <ClInclude Include="..\..\util\Random.h" />
     <ClInclude Include="..\..\util\Serialize.h" />
     <ClInclude Include="..\..\util\SitRepEntry.h" />
+    <ClInclude Include="..\..\util\StringTable.h" />
     <ClInclude Include="..\..\util\VarText.h" />
     <ClInclude Include="..\..\util\Version.h" />
     <ClInclude Include="..\..\util\XMLDoc.h" />
@@ -203,7 +203,7 @@
     <ClCompile Include="..\..\OpenSteer\source\SimpleVehicle.cpp" />
     <ClCompile Include="..\..\OpenSteer\source\Vec3.cpp" />
     <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp" />
-    <ClCompile Include="..\..\UI\StringTable.cpp" />
+    <ClCompile Include="..\..\util\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
     <ClCompile Include="..\..\universe\Condition.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />

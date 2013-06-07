@@ -2,8 +2,8 @@
 
 #include "OptionsDB.h"
 #include "Obstacle.h"
+#include "StringTable.h"
 #include "../combat/AsteroidBeltObstacle.h"
-#include "../UI/StringTable.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 #include "../util/Math.h"
