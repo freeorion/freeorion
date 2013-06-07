@@ -2034,6 +2034,14 @@ Hull
             effects = [
                 CreateShip "SM_KRAKEN_2" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/kraken-2.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_KRAKEN_2"
+                    ]
+                    empire = Source.Owner
             ]
         [[WEAK_VISION]]
     ]
@@ -2071,6 +2079,14 @@ Hull
             effects = [
                 CreateShip "SM_KRAKEN_3" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/kraken-3.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_KRAKEN_3"
+                    ]
+                    empire = Source.Owner
             ]
         [[GOOD_VISION]]
     ]
@@ -2149,6 +2165,14 @@ Hull
             effects = [
                 CreateShip "SM_SNOWFLAKE_2" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/snowflake-2.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_2"
+                    ]
+                    empire = Source.Owner
             ]
         [[EXCELLENT_VISION]]
     ]
@@ -2186,6 +2210,14 @@ Hull
             effects = [
                 CreateShip "SM_SNOWFLAKE_3" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/snowflake-3.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_3"
+                    ]
+                    empire = Source.Owner
             ]
         [[EXCELLENT_VISION]]
     ]
@@ -2263,6 +2295,14 @@ Hull
             effects = [
                 CreateShip "SM_JUGGERNAUT_2" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/juggernaut-2.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_JUGGERNAUT_2"
+                    ]
+                    empire = Source.Owner
             ]
         [[GOOD_VISION]]
     ]
@@ -2300,6 +2340,14 @@ Hull
             effects = [
                 CreateShip "SM_JUGGERNAUT_3" Source.Owner
                 Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/juggernaut-3.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_JUGGERNAUT_3"
+                    ]
+                    empire = Source.Owner
             ]
             
         [[GOOD_VISION]]

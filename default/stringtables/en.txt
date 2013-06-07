@@ -3490,6 +3490,11 @@ A tamed %predefinedshipdesign% is ready for service at %planet%.
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Monster Hatched
 
+EFFECT_TAME_MONSTER_MATURED
+A tame monster has matured into a more formidable %predefinedshipdesign% in the %system% system.
+EFFECT_TAME_MONSTER_MATURED_LABEL
+Monster Matured
+
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
