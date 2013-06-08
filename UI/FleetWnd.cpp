@@ -159,6 +159,7 @@ namespace {
             return;
 
         ScopedTimer timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
+        Sound::TempUISoundDisabler sound_disabler;
 
         // get system where new fleet is to be created.
         int first_ship_id = ship_ids.front();
@@ -322,9 +323,13 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
     FleetWnd* retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags);
 
     m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal,  &FleetUIManager::FleetWndClosing,   this);
-    GG::Connect(retval->ClickedSignal,  &FleetUIManager::FleetWndClicked,   this);
+    GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,   this);
+    GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,   this);
+    GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
+    GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
+
     GG::GUI::GetGUI()->Register(retval);
+
     return retval;
 }
 
@@ -337,9 +342,13 @@ FleetWnd* FleetUIManager::NewFleetWnd(int system_id, int empire_id,
     FleetWnd* retval = new FleetWnd(system_id, empire_id, m_order_issuing_enabled, selected_fleet_id, flags);
 
     m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal,  &FleetUIManager::FleetWndClosing,   this);
-    GG::Connect(retval->ClickedSignal,  &FleetUIManager::FleetWndClicked,   this);
+    GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,           this);
+    GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,           this);
+    GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
+    GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
+
     GG::GUI::GetGUI()->Register(retval);
+
     return retval;
 }
 
@@ -2544,9 +2553,9 @@ void FleetWnd::Refresh() {
             this->SetSelectedFleets(fleet_id_set);
         }
     }
-    
+
     SetStatIconValues();
-    
+
     RefreshStateChangedSignals();
 }
 
@@ -2810,11 +2819,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     Fleet* fleet = GetFleet(FleetInRow(it));
-    if (!fleet || !fleet->OwnedBy(empire_id))
+    if (!fleet)
         return;
 
-    const System* system = GetSystem(fleet->SystemID());    // may be null
+    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
+        FleetRightClickedSignal(fleet->ID());  // response handled in MapWnd
+        return;
+    }
 
+    const System* system = GetSystem(fleet->SystemID());    // may be null
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
     // find damaged ships
@@ -2840,33 +2854,73 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     GG::MenuItem menu_contents;
 
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
-    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) && !ClientPlayerIsModerator())
+    if (system
+        && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())
+        && !ClientPlayerIsModerator()
+        && fleet->OwnedBy(empire_id))
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),        7, false, false));
-    else if(system && !ClientPlayerIsModerator())
+    }
+    else if (system
+             && !ClientPlayerIsModerator()
+             && fleet->OwnedBy(empire_id))
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
+    }
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
-    if (system && ship_ids_set.size() > 1 && !damaged_ship_ids.empty() && damaged_ship_ids.size() != ship_ids_set.size())
+    if (system
+        && ship_ids_set.size() > 1
+        && !damaged_ship_ids.empty()
+        && damaged_ship_ids.size() != ship_ids_set.size()
+        && (fleet->OwnedBy(empire_id)
+            || ClientPlayerIsModerator())
+       )
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     2, false, false));
+    }
 
     // Split unfueled ships - need some, but not all, ships unfueled, and need to be in a system
-    if (system && ship_ids_set.size() > 1 && unfueled_ship_ids.size() > 0 && unfueled_ship_ids.size() < ship_ids_set.size())
+    if (system
+        && ship_ids_set.size() > 1
+        && unfueled_ship_ids.size() > 0
+        && unfueled_ship_ids.size() < ship_ids_set.size()
+        && (fleet->OwnedBy(empire_id)
+            || ClientPlayerIsModerator())
+       )
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    3, false, false));
+    }
 
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
-    if (system && ship_ids_set.size() > 1)
+    if (system
+        && ship_ids_set.size() > 1
+        && (fleet->OwnedBy(empire_id)
+            || ClientPlayerIsModerator())
+       )
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             4, false, false));
+    }
 
     // Rename fleet
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                         1, false, false));
 
     // add a fleet popup command to order all ships in the fleet scrapped
-    if (system && fleet->HasShipsWithoutScrapOrders() && !ClientPlayerIsModerator())
+    if (system
+        && fleet->HasShipsWithoutScrapOrders()
+        && !ClientPlayerIsModerator()
+        && fleet->OwnedBy(empire_id))
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          5, false, false));
+    }
 
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
-    if (system && fleet->HasShipsOrderedScrapped() && !ClientPlayerIsModerator())
+    if (system
+        && fleet->HasShipsOrderedScrapped()
+        && !ClientPlayerIsModerator())
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   6, false, false));
+    }
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());

@@ -235,7 +235,7 @@ void ModeratorActionsWnd::RemoveStarlane() {
     DetachChild(m_empire_drop);
 }
 
-ModeratorActionsWnd::ModeratorActionSetting ModeratorActionsWnd::SelectedAction() const
+ModeratorActionSetting ModeratorActionsWnd::SelectedAction() const
 { return m_selected_action; }
 
 PlanetType ModeratorActionsWnd::SelectedPlanetType() const

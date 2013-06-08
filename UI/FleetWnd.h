@@ -53,9 +53,11 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()> ActiveFleetWndChangedSignal;                 //!< emitted when the selected FleetWnd changes
-    mutable boost::signal<void ()> ActiveFleetWndSelectedFleetsChangedSignal;   //!< emitted when the selected fleets in the active FleetWnd change
-    mutable boost::signal<void ()> ActiveFleetWndSelectedShipsChangedSignal;    //!< emitted when the selected ships in the active FleetWnd change
+    mutable boost::signal<void ()>      ActiveFleetWndChangedSignal;                //!< emitted when the selected FleetWnd changes
+    mutable boost::signal<void ()>      ActiveFleetWndSelectedFleetsChangedSignal;  //!< emitted when the selected fleets in the active FleetWnd change
+    mutable boost::signal<void ()>      ActiveFleetWndSelectedShipsChangedSignal;   //!< emitted when the selected ships in the active FleetWnd change
+    mutable boost::signal<void (int)>   FleetRightClickedSignal;                    //!< emitted when a fleet is right-clicked
+    mutable boost::signal<void (int)>   ShipRightClickedSignal;                     //!< emitted when a ship is right-clicked
 
     static FleetUIManager& GetFleetUIManager();
 
@@ -106,6 +108,8 @@ public:
     mutable boost::signal<void ()>          SelectedFleetsChangedSignal;
     mutable boost::signal<void ()>          SelectedShipsChangedSignal;
     mutable boost::signal<void (FleetWnd*)> ClickedSignal;
+    mutable boost::signal<void (int)>       FleetRightClickedSignal;
+    mutable boost::signal<void (int)>       ShipRightClickedSignal;
 
 protected:
     //! \name Mutators //@{

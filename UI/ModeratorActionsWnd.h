@@ -17,17 +17,6 @@ namespace GG {
 
 class ModeratorActionsWnd : public CUIWnd {
 public:
-    /** Used for tracking what moderator action is set */
-    enum ModeratorActionSetting {
-        MAS_NoAction,
-        MAS_Destroy,
-        MAS_SetOwner,
-        MAS_AddStarlane,
-        MAS_RemoveStarlane,
-        MAS_CreateSystem,
-        MAS_CreatePlanet
-    };
-
     //! \name Structors //!@{
     ModeratorActionsWnd(GG::X w, GG::Y h);
     //!@}

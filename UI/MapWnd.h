@@ -81,6 +81,10 @@ public:
       * production screen */
     bool                        InProductionViewMode() const;
 
+    /** returns the currently set moderator action in this MapWnd's
+      * ModeratorActionsWnd. */
+    ModeratorActionSetting      GetModeratorActionSetting() const;
+
     /** returns the position on the screen that corresponds to the specified
       * universe X and Y coordinates. */
     GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
@@ -271,6 +275,11 @@ private:
 
     void            FleetButtonLeftClicked(const FleetButton* fleet_btn);
     void            FleetButtonRightClicked(const FleetButton* fleet_btn);
+    void            FleetRightClicked(int fleet_id);
+    void            FleetsRightClicked(const std::vector<int>& fleet_ids);
+
+    void            ShipRightClicked(int ship_id);
+    void            ShipsRightClicked(const std::vector<int>& ship_ids);
 
     void            UniverseObjectDeleted(const UniverseObject *obj);
 

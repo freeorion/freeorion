@@ -641,5 +641,16 @@ enum EffectsCauseType {
     ECT_SHIP_HULL
 };
 
+/** Used for tracking what moderator action is set */
+enum ModeratorActionSetting {
+    MAS_NoAction,
+    MAS_Destroy,
+    MAS_SetOwner,
+    MAS_AddStarlane,
+    MAS_RemoveStarlane,
+    MAS_CreateSystem,
+    MAS_CreatePlanet
+};
+
 
 #endif // _Enums_h_

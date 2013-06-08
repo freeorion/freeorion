@@ -1001,6 +1001,10 @@ MapWnd::MapWnd() :
             &MapWnd::SelectedFleetsChanged,     this);
     Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedShipsChangedSignal,
             &MapWnd::SelectedShipsChanged,      this);
+    Connect(FleetUIManager::GetFleetUIManager().FleetRightClickedSignal,
+            &MapWnd::FleetRightClicked,         this);
+    Connect(FleetUIManager::GetFleetUIManager().ShipRightClickedSignal,
+            &MapWnd::ShipRightClicked,          this);
 
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->TypingSignal,
             &MapWnd::DisableAlphaNumAccels,     this);
@@ -1055,6 +1059,9 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
 
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
+
+ModeratorActionSetting MapWnd::GetModeratorActionSetting() const
+{ return m_moderator_wnd->SelectedAction(); }
 
 void MapWnd::Render() {
     // HACK! This is placed here so we can be sure it is executed frequently
@@ -1780,7 +1787,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // if in moderator mode, treat as moderator action click
     if (ClientPlayerIsModerator()) {
         // only supported action on empty map location at present is creating a system
-        if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_CreateSystem) {
+        if (m_moderator_wnd->SelectedAction() == MAS_CreateSystem) {
             ClientNetworking& net = HumanClientApp::GetApp()->Networking();
             std::pair<double, double> u_pos = this->UniversePositionFromScreenCoords(pt);
             StarType star_type = m_moderator_wnd->SelectedStarType();
@@ -3736,11 +3743,11 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
 
 void MapWnd::FieldRightClicked(int field_id) {
     if (ClientPlayerIsModerator()) {
-        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+        ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
         int player_id = HumanClientApp::GetApp()->PlayerID();
 
-        if (mas == ModeratorActionsWnd::MAS_Destroy) {
+        if (mas == MAS_Destroy) {
             net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::DestroyUniverseObject(field_id)));
         }
@@ -3764,27 +3771,27 @@ void MapWnd::SystemLeftClicked(int system_id) {
 
 void MapWnd::SystemRightClicked(int system_id) {
     if (ClientPlayerIsModerator()) {
-        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+        ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
         int player_id = HumanClientApp::GetApp()->PlayerID();
 
-        if (mas == ModeratorActionsWnd::MAS_Destroy) {
+        if (mas == MAS_Destroy) {
             net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::DestroyUniverseObject(system_id)));
 
-        } else if (mas == ModeratorActionsWnd::MAS_CreatePlanet) {
+        } else if (mas == MAS_CreatePlanet) {
             net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::CreatePlanet(system_id, m_moderator_wnd->SelectedPlanetType(),
                                         m_moderator_wnd->SelectedPlanetSize())));
 
-        } else if (mas == ModeratorActionsWnd::MAS_AddStarlane) {
+        } else if (mas == MAS_AddStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (GetSystem(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(player_id,
                     Moderator::AddStarlane(system_id, selected_system_id)));
             }
 
-        } else if (mas == ModeratorActionsWnd::MAS_RemoveStarlane) {
+        } else if (mas == MAS_RemoveStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (GetSystem(selected_system_id)) {
                 net.SendMessage(ModeratorActionMessage(player_id,
@@ -3974,18 +3981,61 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
         return;
     }
 
-    if (ClientPlayerIsModerator()) {
-        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-        int player_id = HumanClientApp::GetApp()->PlayerID();
+    FleetsRightClicked(btn_fleets);
+}
 
-        if (mas == ModeratorActionsWnd::MAS_Destroy) {
-            for (std::vector<int>::const_iterator it = btn_fleets.begin();
-                 it != btn_fleets.end(); ++it)
-            {
-                net.SendMessage(ModeratorActionMessage(player_id,
-                    Moderator::DestroyUniverseObject(*it)));
-            }
+void MapWnd::FleetRightClicked(int fleet_id) {
+    if (fleet_id == INVALID_OBJECT_ID)
+        return;
+    std::vector<int> fleet_ids;
+    fleet_ids.push_back(fleet_id);
+    FleetsRightClicked(fleet_ids);
+}
+
+void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
+    if (fleet_ids.empty())
+        return;
+    if (!ClientPlayerIsModerator())
+        return;
+
+    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    if (mas == MAS_Destroy) {
+        for (std::vector<int>::const_iterator it = fleet_ids.begin();
+                it != fleet_ids.end(); ++it)
+        {
+            net.SendMessage(ModeratorActionMessage(player_id,
+                Moderator::DestroyUniverseObject(*it)));
+        }
+    }
+}
+
+void MapWnd::ShipRightClicked(int ship_id) {
+    if (ship_id == INVALID_OBJECT_ID)
+        return;
+    std::vector<int> ship_ids;
+    ship_ids.push_back(ship_id);
+    FleetsRightClicked(ship_ids);
+}
+
+void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
+    if (ship_ids.empty())
+        return;
+    if (!ClientPlayerIsModerator())
+        return;
+
+    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    if (mas == MAS_Destroy) {
+        for (std::vector<int>::const_iterator it = ship_ids.begin();
+                it != ship_ids.end(); ++it)
+        {
+            net.SendMessage(ModeratorActionMessage(player_id,
+                Moderator::DestroyUniverseObject(*it)));
         }
     }
 }
