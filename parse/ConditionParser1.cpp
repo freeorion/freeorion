@@ -28,9 +28,6 @@ namespace {
                 parse::value_ref_parser<int>();
 
             qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
             qi::_a_type _a;
             qi::_val_type _val;
             qi::eps_type eps;

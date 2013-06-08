@@ -49,7 +49,6 @@ namespace {
             qi::_g_type _g;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
-            //qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
 

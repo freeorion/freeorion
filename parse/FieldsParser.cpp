@@ -46,11 +46,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_r1_type _r1;
-            //qi::_r2_type _r2;
-            //qi::_val_type _val;
-            qi::eps_type eps;
             using phoenix::new_;
-            using phoenix::push_back;
 
             field
                 =   tok.FieldType_

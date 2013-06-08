@@ -11,7 +11,6 @@ namespace {
             qi::_val_type _val;
             using phoenix::new_;
             using phoenix::push_back;
-            using phoenix::static_cast_;
 
             const parse::lexer& tok = parse::lexer::instance();
 

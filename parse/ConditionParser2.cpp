@@ -20,9 +20,6 @@ namespace {
             const parse::value_ref_parser_rule<int>::type& int_value_ref = parse::value_ref_parser<int>();
 
             qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
             qi::_a_type _a; // intref
             qi::_b_type _b; // intref
             qi::_c_type _c; // intref

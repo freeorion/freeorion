@@ -52,10 +52,7 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_r1_type _r1;
-            qi::_r1_type _r2;
             using phoenix::construct;
-            using phoenix::clear;
-            qi::eps_type eps;
 
             int_pair
                 =   tok.int_ [ _a = _1 ] >> tok.int_ [ _b = _1 ]

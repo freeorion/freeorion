@@ -59,7 +59,6 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
-            using phoenix::push_back;
 
             building_prefix
                 =    tok.BuildingType_

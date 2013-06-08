@@ -29,7 +29,6 @@ namespace {
             qi::_b_type _b;
             qi::_r1_type _r1;
             using phoenix::construct;
-            using phoenix::new_;
             using phoenix::push_back;
 
             alignment

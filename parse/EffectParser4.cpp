@@ -16,15 +16,9 @@ namespace {
     struct effect_parser_rules_4 {
         effect_parser_rules_4() {
             qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -104,16 +98,6 @@ namespace {
                         >>  parse::label(Y_name)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
                         )
                     )
-                ;
-
-            string_and_string_ref // TODO: Try to make this simpler.
-                =    parse::label(Tag_name)  >> tok.string [ _a = _1 ]
-                >>   parse::label(Data_name) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
-                ;
-
-            string_and_string_ref_vector
-                =    '[' >> *string_and_string_ref [ push_back(_val, _1) ] >> ']'
-                |    string_and_string_ref [ push_back(_val, _1) ]
                 ;
 
             start
@@ -199,21 +183,6 @@ namespace {
             parse::skipper_type
         > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            string_and_string_ref_pair (),
-            qi::locals<std::string>, // TODO: Consider making this an adobe::name_t, and removing the quotes in the script source files.
-            parse::skipper_type
-        > string_and_string_ref_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            std::vector<string_and_string_ref_pair> (),
-            parse::skipper_type
-        > string_and_string_ref_vector_rule;
-
         create_planet_rule                  create_planet;
         parse::effect_parser_rule           create_building;
         string_and_intref_and_intref_rule   create_ship_1;
@@ -222,8 +191,6 @@ namespace {
         string_and_intref_and_intref_rule   create_ship_4;
         string_and_doubleref_rule           create_field;
         create_system_rule                  create_system;
-        string_and_string_ref_rule          string_and_string_ref;
-        string_and_string_ref_vector_rule   string_and_string_ref_vector;
         parse::effect_parser_rule           start;
     };
 }

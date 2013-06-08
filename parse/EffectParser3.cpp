@@ -16,20 +16,10 @@ namespace {
     struct effect_parser_rules_3 {
         effect_parser_rules_3() {
             qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
             qi::_a_type _a;
             qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_r1_type _r1;
             qi::_val_type _val;
-            qi::eps_type eps;
             using phoenix::new_;
-            using phoenix::construct;
-            using phoenix::push_back;
 
             const parse::lexer& tok =                                                       parse::lexer::instance();
 

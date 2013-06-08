@@ -41,7 +41,6 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::clear;
-            using phoenix::new_;
             using phoenix::push_back;
 
             monster_fleet_plan_prefix
