@@ -41,6 +41,7 @@
 namespace {
     const int       EDGE_PAD(3);
     const double    TWO_PI(2.0*3.1415926536);
+    std::map<std::pair<int,int>,float>          colony_projections;
 
     void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
     void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
@@ -1083,8 +1084,11 @@ namespace {
         double colony_ship_capacity = 0.0;
 
         design = ship->Design();
-        if (design)
+        if (design) {
             colony_ship_capacity = design->ColonyCapacity();
+            if (ship->CanColonize() && colony_ship_capacity==0)
+                return true;
+        }
 
         if (const Species* colony_ship_species = GetSpecies(ship->SpeciesName())) {
             PlanetEnvironment planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet_type);
@@ -1156,7 +1160,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return INVALID_OBJECT_ID;
-    const Planet* target_planet = GetPlanet(target_planet_id);
+    Planet* target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
@@ -1192,12 +1196,50 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     if (capable_and_available_colony_ships.size() == 1)
         return (*capable_and_available_colony_ships.begin())->ID();
 
-    // TODO: have more than one ship capable and available to colonize.
+    // have more than one ship capable and available to colonize.
     // pick the "best" one.
+    std::string orig_species = target_planet->SpeciesName(); //should be just ""
+    int orig_owner = target_planet->Owner();
+    target_planet->SetOwner(empire_id);
+    int best_ship = INVALID_OBJECT_ID;
+    float best_capacity = -999;
+    bool changed_planet = false;
 
-    Logger().debugStream() << "Autoselected colony ship " << (*capable_and_available_colony_ships.begin())->ID() << " for planet " << target_planet->Name();
+    GetUniverse().InhibitUniverseObjectSignals(true);
+    for (std::vector<const Ship*>::const_iterator ship_it = capable_and_available_colony_ships.begin();
+         ship_it != capable_and_available_colony_ships.end(); ship_it++)
+         {
+             int ship_id = (*ship_it)->ID();
+             double planet_capacity = -999;
+             std::pair<int,int> this_pair = std::make_pair<int,int>(ship_id, target_planet_id);
+             std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
+             if (pair_it != colony_projections.end()) {
+                 planet_capacity = pair_it->second;
+             } else {
+                 changed_planet = true;
+                 target_planet->SetSpecies((*ship_it)->SpeciesName());
+                 GetUniverse().UpdateMeterEstimates(target_planet_id);
+                 const Species* species = GetSpecies((*ship_it)->SpeciesName());
+                 PlanetEnvironment planet_environment = PE_UNINHABITABLE;
+                 if (species)
+                     planet_environment = species->GetPlanetEnvironment(target_planet->Type());
+                 planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : target_planet->CurrentMeterValue(METER_TARGET_POPULATION));
+                 colony_projections[this_pair] = planet_capacity;
+             }
+             if (planet_capacity > best_capacity) {
+                 best_capacity = planet_capacity;
+                 best_ship = ship_id;
+             }
+         }
+         if (changed_planet) {
+             target_planet->SetOwner(orig_owner);
+             target_planet->SetSpecies(orig_species);
+             GetUniverse().UpdateMeterEstimates(target_planet_id);
+             Logger().debugStream() << "Autoselected colony ship " << best_ship << " for planet " << target_planet->Name();
+         }
+         GetUniverse().InhibitUniverseObjectSignals(false);
 
-    return (*capable_and_available_colony_ships.begin())->ID();
+         return best_ship;
 }
 
 std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
@@ -1248,7 +1290,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    const Planet* planet = GetPlanet(m_planet_id);
+    Planet* planet = GetPlanet(m_planet_id);
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1321,7 +1363,6 @@ void SidePanel::PlanetPanel::Refresh() {
     PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
-    double planet_capacity = planet->CurrentMeterValue(METER_TARGET_POPULATION);
 
 
     // calculate truth tables for planet colonization and invasion
@@ -1388,8 +1429,32 @@ void SidePanel::PlanetPanel::Refresh() {
         // hide everything
 
     } else if (can_colonize) {
-        // show colonize button
+        // show colonize button; in case the chosen colony ship is not actually selected, but has been chosen by 
+        // AutomaticallyChosenColonyShip, determine what population capacity to put on the conolnize buttone by
+        // temporarily setting ownership (for tech) and species of the planet, reading the target population,
+        // then setting the planet back as it was.  The results are cached for the duration of the turn 
+        // in the colony_projections map.
         AttachChild(m_colonize_button);
+        double planet_capacity;
+        std::pair<int,int> this_pair = std::make_pair<int,int>(selected_colony_ship->ID(), m_planet_id);
+        std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
+        if (pair_it != colony_projections.end()) {
+            planet_capacity = pair_it->second;
+        } else {
+            GetUniverse().InhibitUniverseObjectSignals(true);
+            std::string orig_species = planet->SpeciesName(); //should be just ""
+            int orig_owner = planet->Owner();
+            planet->SetOwner(client_empire_id);
+            planet->SetSpecies(colony_ship_species_name);
+            GetUniverse().UpdateMeterEstimates(m_planet_id);
+            planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
+            planet->SetOwner(orig_owner);
+            planet->SetSpecies(orig_species);
+            GetUniverse().UpdateMeterEstimates(m_planet_id);
+            colony_projections[this_pair] = planet_capacity;
+            GetUniverse().InhibitUniverseObjectSignals(false);
+        }
+
         std::string colonize_text;
         if (colony_ship_capacity > 0.0) {
             std::string initial_pop = DoubleToString(colony_ship_capacity, 2, false);
@@ -2353,6 +2418,9 @@ void SidePanel::Refresh() {
         it->second.disconnect();
     s_fleet_state_change_signals.clear();
 
+    // clear any previous colony projections
+    colony_projections.clear();
+
 
     // refresh individual panels' contents
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
@@ -2692,3 +2760,4 @@ void SidePanel::EnableSelection(bool enable/* = true*/)
 
 void SidePanel::EnableOrderIssuing(bool enable/* = true*/)
 { m_planet_panel_container->EnableOrderIssuing(enable); }
+

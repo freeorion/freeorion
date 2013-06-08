@@ -587,21 +587,21 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
                                         ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false);
     AttachChild(m_research_stat);
 
-    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                     ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
-    AttachChild(m_trade_stat);
-
     m_construction_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
                                             ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false);
     AttachChild(m_construction_stat);
+
+    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                     ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
+    AttachChild(m_trade_stat);
 
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
     meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
     meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
-    meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
     meters.push_back(std::make_pair(METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
+    meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
@@ -655,11 +655,12 @@ void ResourcePanel::DoExpandCollapseLayout() {
         if (res) {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
+            // add a slight offest to the sorting key to control order in case of ties
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(),     m_industry_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(),     m_research_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue()+0.0003,     m_industry_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue()+0.0002,     m_research_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),        m_trade_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue(), m_construction_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue()+0.0001, m_construction_stat));
 
             // position and reattach icons to be shown
             int n = 0;
