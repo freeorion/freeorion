@@ -1959,6 +1959,7 @@ public:
     void            EnableOrderIssuing(bool enabled = true);
 
     mutable boost::signal<void (const ShipsListBox::SelectionSet&)> SelectedShipsChangedSignal; ///< emitted when the set of selected ships changes
+    mutable boost::signal<void (int)>                               ShipRightClickedSignal;
 
 private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
@@ -2169,6 +2170,12 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!ship)
         return;
 
+    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
+        ShipRightClickedSignal(ship->ID());  // response handled in MapWnd
+        return;
+    }
+
     const ShipDesign* design = GetShipDesign(ship->DesignID()); // may be null
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
@@ -2181,8 +2188,11 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
     }
 
-    if (ship->OwnedBy(client_empire_id))
+    if (ship->OwnedBy(client_empire_id)
+        || ClientPlayerIsModerator())
+    {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
+    }
 
     if (!ClientPlayerIsModerator() && !ship->OrderedScrapped() && ship->OwnedBy(client_empire_id)) {
         // create popup menu with "Scrap" option
@@ -2316,7 +2326,7 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     // add fleet aggregate stat icons
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-    
+
     // stat icon for fleet count
     StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                             FleetCountIcon(), 0, 0, false);
@@ -2324,7 +2334,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(COUNT_STAT_STRING));
     AttachChild(icon);
-    
+
     // stat icon for fleet damage
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              DamageIcon(), 0, 0, false);
@@ -2332,7 +2342,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(DAMAGE_STAT_STRING));
     AttachChild(icon);
-    
+
     // stat icon for fleet structure
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
@@ -2340,7 +2350,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(STRUCTURE_STAT_STRING));
     AttachChild(icon);
-    
+
     // stat icon for fleet shields
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
@@ -2364,6 +2374,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // create fleet detail panel
     m_fleet_detail_panel = new FleetDetailPanel(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
     GG::Connect(m_fleet_detail_panel->SelectedShipsChangedSignal,   &FleetWnd::ShipSelectionChanged,    this);
+    GG::Connect(m_fleet_detail_panel->ShipRightClickedSignal,       ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
 
     // determine fleets to show and populate list

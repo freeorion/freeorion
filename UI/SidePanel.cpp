@@ -440,6 +440,9 @@ namespace {
         }
         return retval;
     }
+
+    bool ClientPlayerIsModerator()
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
 
 
@@ -473,9 +476,11 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)>               LClickedSignal;     ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
+    mutable boost::signal<void (int)>               LeftClickedSignal;  ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
+    mutable boost::signal<void (int)>               RightClickedSignal; ///< emitted when the planet panel is right clicked by the user.  returns the id of the clicked planet
     mutable boost::signal<void ()>                  ResizedSignal;      ///< emitted when resized, so external container can redo layout
     mutable boost::signal<void (const std::string&)>FocusChangedSignal; ///< emitted when focus is changed
+    mutable boost::signal<void (int)>               BuildingRightClickedSignal;
 
 private:
     void                    DoLayout();
@@ -544,12 +549,14 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when an enabled planet panel is clicked by the user
+    mutable boost::signal<void (int)> PlanetSelectedSignal;     ///< emitted when an enabled planet panel is clicked by the user
+    mutable boost::signal<void (int)> PlanetRightClickedSignal; ///< emitted when a planet panel is right-clicked
+    mutable boost::signal<void (int)> BuildingRightClickedSignal;
 
 private:
     void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
-    void            PlanetPanelClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
+    void            PlanetLeftClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
     void            DoPanelsLayout(GG::Y top);          //!< repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
     void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
     void            DoLayout();
@@ -892,6 +899,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_buildings_panel = new BuildingsPanel(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_buildings_panel->BuildingRightClickedSignal,  BuildingRightClickedSignal);
 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
@@ -1613,7 +1621,7 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const {
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     //std::cout << "SidePanel::PlanetPanel::LClick m_planet_id: " << m_planet_id << std::endl;
     if (!Disabled())
-        LClickedSignal(m_planet_id);
+        LeftClickedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -1621,6 +1629,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     if (!planet)
         return;
 
+    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
+        RightClickedSignal(planet->ID());  // response handled in MapWnd
+        return;
+    }
 
     GG::MenuItem menu_contents;
     if (planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) && m_order_issuing_enabled )
@@ -1630,9 +1643,8 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
 
-    if (popup.Run())
-        switch (popup.MenuID())
-        {
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
         case 1:
         { // rename planet
             std::string plt_name = planet->Name();
@@ -1651,6 +1663,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         }
         default:
         break;
+        }
     }
 }
 
@@ -2056,8 +2069,10 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), it->second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
-        GG::Connect(m_planet_panels.back()->LClickedSignal, &SidePanel::PlanetPanelContainer::PlanetPanelClicked,   this);
-        GG::Connect(m_planet_panels.back()->ResizedSignal,  &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
+        GG::Connect(m_planet_panels.back()->LeftClickedSignal,          &SidePanel::PlanetPanelContainer::PlanetLeftClicked,   this);
+        GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
+        GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
+        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
     }
 
     // reset scroll when resetting planets to ensure new set of planets won't be stuck scrolled up out of view
@@ -2191,8 +2206,8 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     }
 }
 
-void SidePanel::PlanetPanelContainer::PlanetPanelClicked(int planet_id) {
-    //Logger().debugStream() << "SidePanel::PlanetPanelContainer::PlanetPanelClicked(" << planet_id << ")";
+void SidePanel::PlanetPanelContainer::PlanetLeftClicked(int planet_id) {
+    //Logger().debugStream() << "SidePanel::PlanetPanelContainer::PlanetLeftClicked(" << planet_id << ")";
     PlanetSelectedSignal(planet_id);
 }
 
@@ -2238,6 +2253,8 @@ std::set<boost::signals::connection>        SidePanel::s_system_connections;
 std::map<int, boost::signals::connection>   SidePanel::s_fleet_state_change_signals;
 boost::signal<void ()>                      SidePanel::ResourceCenterChangedSignal;
 boost::signal<void (int)>                   SidePanel::PlanetSelectedSignal;
+boost::signal<void (int)>                   SidePanel::PlanetRightClickedSignal;
+boost::signal<void (int)>                   SidePanel::BuildingRightClickedSignal;
 boost::signal<void (int)>                   SidePanel::SystemSelectedSignal;
 
 
@@ -2292,10 +2309,12 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     AttachChild(m_system_resource_summary);
 
 
-    GG::Connect(m_system_name->SelChangedSignal,                &SidePanel::SystemSelectionChanged, this);
-    GG::Connect(m_button_prev->LeftClickedSignal,               &SidePanel::PrevButtonClicked,      this);
-    GG::Connect(m_button_next->LeftClickedSignal,               &SidePanel::NextButtonClicked,      this);
-    GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected,         this);
+    GG::Connect(m_system_name->SelChangedSignal,                        &SidePanel::SystemSelectionChanged, this);
+    GG::Connect(m_button_prev->LeftClickedSignal,                       &SidePanel::PrevButtonClicked,      this);
+    GG::Connect(m_button_next->LeftClickedSignal,                       &SidePanel::NextButtonClicked,      this);
+    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,         &SidePanel::PlanetSelected,         this);
+    GG::Connect(m_planet_panel_container->PlanetRightClickedSignal,     PlanetRightClickedSignal);
+    GG::Connect(m_planet_panel_container->BuildingRightClickedSignal,   BuildingRightClickedSignal);
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));

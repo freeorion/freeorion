@@ -19,6 +19,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "ShaderProgram.h"
+#include "MapWnd.h"
 #include "Sound.h"
 
 #include <GG/DrawUtil.h>
@@ -247,7 +248,8 @@ namespace {
         bool                    m_initialized;
     };
 
-
+    bool ClientPlayerIsModerator()
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
 
 /////////////////////////////////////
@@ -1671,6 +1673,8 @@ void BuildingsPanel::Update() {
 
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), object_id);
         m_building_indicators.push_back(ind);
+
+        GG::Connect(ind->RightClickedSignal,    BuildingRightClickedSignal);
     }
 
     // get in-progress buildings
@@ -1981,7 +1985,16 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     Building* building = GetBuilding(m_building_id);
-    if (!building || !building->OwnedBy(empire_id) || !m_order_issuing_enabled) {
+    if (!building)
+        return;
+
+    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
+        RightClickedSignal(m_building_id);  // response handled in MapWnd
+        return;
+    }
+
+    if (!building->OwnedBy(empire_id) || !m_order_issuing_enabled) {
         return;
     }
 

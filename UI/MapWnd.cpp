@@ -901,8 +901,10 @@ MapWnd::MapWnd() :
     m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
     GG::GUI::GetGUI()->Register(m_side_panel);
 
-    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
-    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
+    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
+    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet,          this);
+    GG::Connect(SidePanel::PlanetRightClickedSignal,        &MapWnd::PlanetRightClicked,    this);
+    GG::Connect(SidePanel::BuildingRightClickedSignal,      &MapWnd::BuildingRightClicked,  this);
 
     // not strictly necessary, as in principle whenever any ResourceCenter
     // changes, all meter estimates and resource pools should / could be
@@ -2071,6 +2073,8 @@ void MapWnd::MidTurnUpdate() {
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
+
+    FleetUIManager::GetFleetUIManager().RefreshAll();
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
     if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
@@ -3822,6 +3826,38 @@ void MapWnd::MouseEnteringSystem(int system_id) {
 
 void MapWnd::MouseLeavingSystem(int system_id)
 { MouseEnteringSystem(INVALID_OBJECT_ID); }
+
+void MapWnd::PlanetRightClicked(int planet_id) {
+    if (planet_id == INVALID_OBJECT_ID)
+        return;
+    if (!ClientPlayerIsModerator())
+        return;
+
+    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    if (mas == MAS_Destroy) {
+        net.SendMessage(ModeratorActionMessage(player_id,
+            Moderator::DestroyUniverseObject(planet_id)));
+    }
+}
+
+void MapWnd::BuildingRightClicked(int building_id) {
+    if (building_id == INVALID_OBJECT_ID)
+        return;
+    if (!ClientPlayerIsModerator())
+        return;
+
+    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    if (mas == MAS_Destroy) {
+        net.SendMessage(ModeratorActionMessage(player_id,
+            Moderator::DestroyUniverseObject(building_id)));
+    }
+}
 
 void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())

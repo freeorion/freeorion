@@ -271,6 +271,9 @@ private:
     void            MouseEnteringSystem(int system_id);
     void            MouseLeavingSystem(int system_id);
 
+    void            PlanetRightClicked(int planet_id);
+    void            BuildingRightClicked(int building_id);
+
     void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
 
     void            FleetButtonLeftClicked(const FleetButton* fleet_btn);

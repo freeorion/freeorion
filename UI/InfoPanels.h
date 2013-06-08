@@ -203,7 +203,8 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    mutable boost::signal<void ()>      ExpandCollapseSignal;
+    mutable boost::signal<void (int)>   BuildingRightClickedSignal;
 
 private:
     void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
@@ -241,6 +242,8 @@ public:
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void            EnableOrderIssuing(bool enable = true);
     //@}
+
+    mutable boost::signal<void (int)>   RightClickedSignal;
 
 private:
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;
