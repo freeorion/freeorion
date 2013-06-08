@@ -1828,7 +1828,6 @@ namespace {
             empire_location_detection_ranges,
         const ObjectMap& objects)
     {
-        std::vector<const Field*> fields = objects.FindObjects<Field>();
         Universe& universe = GetUniverse();
 
         for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
