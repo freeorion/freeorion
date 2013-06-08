@@ -2075,6 +2075,7 @@ void MapWnd::MidTurnUpdate() {
     InitTurnRendering();
 
     FleetUIManager::GetFleetUIManager().RefreshAll();
+    SidePanel::Refresh();
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
     if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
