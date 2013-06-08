@@ -1715,10 +1715,18 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
-
     // create popup menu with object commands in it
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
+
+    const UniverseObject* obj = GetUniverseObject(object_id);
+    //Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
+    if (!obj)
+        return;
+
+    UniverseObjectType type = obj->ObjectType();
+    if (type == OBJ_PLANET)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
 
     // moderator actions...
     if (moderator) {
@@ -1733,6 +1741,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         switch (popup.MenuID()) {
         case 1: {
             ObjectDumpSignal(object_id);
+            break;
+        }
+        case 2: {
+            ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id);
             break;
         }
         case 10: {
