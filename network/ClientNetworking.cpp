@@ -356,8 +356,8 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error,
     if (error) {
         throw boost::system::system_error(error);
     } else {
-        assert(bytes_transferred <= HEADER_SIZE);
-        if (bytes_transferred == HEADER_SIZE) {
+        assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
+        if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
             BufferToHeader(m_incoming_header.c_array(), m_incoming_message);
             m_incoming_message.Resize(m_incoming_header[4]);
             boost::asio::async_read(

@@ -319,25 +319,25 @@ void ModeratorActionsWnd::CloseClicked()
 { ClosingSignal(); }
 
 StarType ModeratorActionsWnd::StarTypeFromIndex(std::size_t i) const {
-    if (i == -1 || i >= NUM_STAR_TYPES)
+    if (i == static_cast<std::size_t>(-1) || i >= NUM_STAR_TYPES)
         return STAR_BLUE;
     return StarType(i);     // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetType ModeratorActionsWnd::PlanetTypeFromIndex(std::size_t i) const {
-    if (i == -1 || i >= NUM_PLANET_TYPES)
+    if (i == static_cast<std::size_t>(-1) || i >= NUM_PLANET_TYPES)
         return PT_SWAMP;
     return PlanetType(i);   // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
-    if (i == -1 || i + 1 >= NUM_PLANET_SIZES)
+    if (i == static_cast<std::size_t>(-1) || i + 1 >= NUM_PLANET_SIZES)
         return SZ_MEDIUM;
     return PlanetSize(i + 1);// enum index 0 is NO_WORLD, but don't put that into the list, so have to add 1 to all the list indices
 }
 
 int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
-    if (i == -1)
+    if (i == static_cast<std::size_t>(-1))
         return ALL_EMPIRES;
     if (i > static_cast<unsigned int>(Empires().NumEmpires()))
         return ALL_EMPIRES;
