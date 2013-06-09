@@ -1,9 +1,8 @@
 #include "PopCenter.h"
 
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 #include "Planet.h"
 
 #include <algorithm>

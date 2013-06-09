@@ -1,6 +1,6 @@
 #include <string>
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 #include <boost/python.hpp>
 

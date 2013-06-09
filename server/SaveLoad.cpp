@@ -10,6 +10,8 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"

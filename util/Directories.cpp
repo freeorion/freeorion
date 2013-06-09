@@ -364,3 +364,15 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
     }
     return retval;
 }
+
+std::string PathString(const fs::path& path) {
+#ifndef FREEORION_WIN32
+    return path.string();
+#else
+    fs::path::string_type native_string = path.native();
+    std::string retval;
+    utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+    return retval;
+#endif
+}
+

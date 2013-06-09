@@ -1,4 +1,3 @@
-#include "AppInterface.h"
 
 #ifdef FREEORION_BUILD_SERVER
 # include "../server/ServerApp.h"
@@ -18,6 +17,7 @@
 #include "../universe/Building.h"
 #include "../universe/Field.h"
 
+#include "Logger.h"
 #include "OptionsDB.h"
 
 #include <boost/timer.hpp>
@@ -126,9 +126,6 @@ Building* GetBuilding(int object_id)
 
 Building* GetEmpireKnownBuilding(int object_id, int empire_id)
 { return GetEmpireKnownObject<Building>(object_id, empire_id); }
-
-log4cpp::Category& Logger()
-{ return log4cpp::Category::getRoot(); }
 
 class ScopedTimer::ScopedTimerImpl {
 public:

@@ -1,7 +1,6 @@
 #include "CombatSystem.h"
 
 #include "../universe/Universe.h"
-#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Predicates.h"
@@ -13,8 +12,8 @@
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 
+#include "../util/Logger.h"
 #include "../util/Random.h"
-#include "../util/AppInterface.h"
 
 #include "../server/ServerApp.h"
 #include "../network/Message.h"

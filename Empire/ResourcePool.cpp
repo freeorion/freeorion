@@ -5,7 +5,7 @@
 #include "../universe/ObjectMap.h"
 #include "../universe/Planet.h"
 #include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/Logger.h"
 
 //////////////////////////////////////////////////
 // ResourcePool

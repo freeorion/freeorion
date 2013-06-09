@@ -1,7 +1,6 @@
 #include "ServerNetworking.h"
 
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/Logger.h"
 
 #include <GG/SignalsAndSlots.h>
 

@@ -1,5 +1,5 @@
 #include "Sound.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 
 #ifdef FREEORION_MACOSX

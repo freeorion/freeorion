@@ -3,7 +3,8 @@
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Message.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/Serialize.h"
 
 #include <GG/Layout.h>

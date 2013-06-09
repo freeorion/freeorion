@@ -1,11 +1,12 @@
 #include "VarText.h"
 
 #include "../universe/Universe.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "AppInterface.h"
-#include "MultiplayerCommon.h"
+#include "i18n.h"
+#include "Logger.h"
 
 #ifdef FREEORION_BUILD_SERVER
 # include "../server/ServerApp.h"

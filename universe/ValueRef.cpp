@@ -3,6 +3,7 @@
 #include "Building.h"
 #include "Fleet.h"
 #include "Ship.h"
+#include "ShipDesign.h"
 #include "Planet.h"
 #include "Species.h"
 #include "System.h"
@@ -11,8 +12,8 @@
 #include "Condition.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
+#include "../util/Logger.h"
 
 #include <GG/adobe/closed_hash.hpp>
 

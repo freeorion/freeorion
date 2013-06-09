@@ -8,8 +8,7 @@
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
-#include "../universe/Universe.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/Logger.h"
 
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>

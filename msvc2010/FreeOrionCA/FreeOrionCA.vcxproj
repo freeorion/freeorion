@@ -141,6 +141,8 @@
     <ClInclude Include="..\..\util\GZStream.h" />
     <ClInclude Include="..\..\util\Math.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
+    <ClInclude Include="..\..\util\i18n.h" />
+    <ClInclude Include="..\..\util\Logger.h" />
     <ClInclude Include="..\..\util\OptionsDB.h" />
     <ClInclude Include="..\..\util\OptionValidators.h" />
     <ClInclude Include="..\..\util\Order.h" />

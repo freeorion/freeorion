@@ -7,6 +7,8 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../util/AppInterface.h"
+#include "../util/i18n.h"
 #include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"

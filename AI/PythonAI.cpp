@@ -1,9 +1,8 @@
 #include "PythonAI.h"
 
 #include "../universe/Universe.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"

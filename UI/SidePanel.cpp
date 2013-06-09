@@ -20,6 +20,8 @@
 #include "../universe/Species.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/XMLDoc.h"

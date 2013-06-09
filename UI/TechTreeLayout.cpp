@@ -1,6 +1,6 @@
 #include "TechTreeLayout.h"
-#include "../util/AppInterface.h"
-//#include "../util/MultiplayerCommon.h" // needed for debug UserString calls...
+//#include "../util/i18n.h" // needed for debug UserString calls...
+#include "../util/Logger.h"
 #include <algorithm>
 
 namespace  {

@@ -1,7 +1,6 @@
 #include "Process.h"
 
-#include "AppInterface.h"
-#include "MultiplayerCommon.h"
+#include "Logger.h"
 
 #include <stdexcept>
 

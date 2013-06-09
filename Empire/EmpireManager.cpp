@@ -2,8 +2,11 @@
 
 #include "Empire.h"
 #include "../universe/Planet.h"
-#include "../util/AppInterface.h"
+#include "../util/Directories.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <boost/filesystem/fstream.hpp>
 
 namespace {
     std::pair<int, int> DiploKey(int id1, int ind2)
@@ -281,3 +284,35 @@ void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int
             messages.insert(*it);
     }
 }
+
+const std::vector<GG::Clr>& EmpireColors() {
+    static std::vector<GG::Clr> colors;
+    if (colors.empty()) {
+        XMLDoc doc;
+
+        std::string file_name = "empire_colors.xml";
+
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+        if (ifs) {
+            doc.ReadDoc(ifs);
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return colors;
+        }
+
+        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+            colors.push_back(XMLToClr(doc.root_node.Child(i)));
+        }
+    }
+    if (colors.empty()) {
+        colors.push_back(GG::Clr(  0, 255,   0, 255));
+        colors.push_back(GG::Clr(  0,   0, 255, 255));
+        colors.push_back(GG::Clr(255,   0,   0, 255));
+        colors.push_back(GG::Clr(  0, 255, 255, 255));
+        colors.push_back(GG::Clr(255, 255,   0, 255));
+        colors.push_back(GG::Clr(255,   0, 255, 255));
+    }
+    return colors;
+}
+

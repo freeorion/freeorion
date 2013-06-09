@@ -1,9 +1,9 @@
 #include "DesignWnd.h"
 
-#include "../util/AppInterface.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
-#include "../util/MultiplayerCommon.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
+#include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>

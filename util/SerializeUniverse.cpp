@@ -1,5 +1,6 @@
 #include "Serialize.h"
 
+#include "Logger.h"
 #include "Serialize.ipp"
 
 #include "../universe/Building.h"

@@ -10,8 +10,8 @@
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
-#include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 
 #include <boost/filesystem/fstream.hpp>
 

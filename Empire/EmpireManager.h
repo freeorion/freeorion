@@ -13,6 +13,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 class Empire;
 
@@ -111,5 +112,8 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** The colors that are available for use for empires in the game. */
+const std::vector<GG::Clr>& EmpireColors();
 
 #endif // _EmpireManager_h_

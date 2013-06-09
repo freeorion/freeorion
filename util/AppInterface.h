@@ -2,7 +2,6 @@
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 
-#include <log4cpp/Category.hh>
 #include <string>
 
 #if defined(_MSC_VER) && defined(int64_t)
@@ -51,9 +50,6 @@ Fleet* GetFleet(int object_id);
 Fleet* GetEmpireKnownFleet(int object_id, int empire_id);
 Building* GetBuilding(int object_id);
 Building* GetEmpireKnownBuilding(int object_id, int empire_id);
-
-/** Accessor for the App's logger */
-log4cpp::Category& Logger();
 
 /** Wrapper for boost::timer that outputs time during which this object
   * existed.  Created in the scope of a function, and passed the appropriate

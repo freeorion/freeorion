@@ -1,17 +1,13 @@
 #include "AIClientApp.h"
 
 #include "../../AI/PythonAI.h"
+#include "../../util/Logger.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
 #include "../../network/Message.h"
 #include "../util/Random.h"
-
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
 
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
@@ -53,18 +49,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
         m_max_aggression = boost::lexical_cast<int>(args.at(2));
     }
 
-    // a platform-independent way to erase the old log
-    std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());
-    temp.close();
-
-    // establish debug logging
-    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", AICLIENT_LOG_FILENAME);
-    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p AI : %m%n");
-    appender->setLayout(layout);
-    Logger().setAdditivity(false);  // make appender the only appender used...
-    Logger().setAppender(appender);
-    Logger().setAdditivity(true);   // ...but allow the addition of others later
+    InitLogger(AICLIENT_LOG_FILENAME, "%d %p AI : %m%n");
     Logger().setPriority(log4cpp::Priority::DEBUG);
     Logger().debug(PlayerName() + " logger initialized.");
 }

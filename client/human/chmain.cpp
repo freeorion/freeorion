@@ -9,9 +9,10 @@
 #include "../../parse/Parse.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
+#include "../../util/Logger.h"
 #include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
-#include "../../util/MultiplayerCommon.h"
+#include "../../util/i18n.h"
 #include "../../UI/EntityRenderer.h"
 
 #include <OgreCamera.h>

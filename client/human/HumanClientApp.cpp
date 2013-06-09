@@ -18,7 +18,7 @@
 #include "../../UI/Sound.h"
 #include "../../network/Message.h"
 #include "../../network/Networking.h"
-#include "../../util/MultiplayerCommon.h"
+#include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
 #include "../../util/Serialize.h"
@@ -33,9 +33,6 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
-
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
 
 #include <OgreRoot.h>
 #include <OgreVector3.h>
@@ -157,17 +154,6 @@ namespace {
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
-
-    std::string PathString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-        return path.string();
-#else
-        fs::path::string_type native_string = path.native();
-        std::string retval;
-        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
-        return retval;
-#endif
-    }
 }
 
 HumanClientApp::HumanClientApp(Ogre::Root* root,
@@ -194,17 +180,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
-    // a platform-independent way to erase the old log
-    std::ofstream temp(HUMAN_CLIENT_LOG_FILENAME.c_str());
-    temp.close();
-
-    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", HUMAN_CLIENT_LOG_FILENAME);
-    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p Client : %m%n");
-    appender->setLayout(layout);
-    Logger().setAdditivity(false);  // make appender the only appender used...
-    Logger().setAppender(appender);
-    Logger().setAdditivity(true);   // ...but allow the addition of others later
+    InitLogger(HUMAN_CLIENT_LOG_FILENAME, "%d %p Client : %m%n");
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());

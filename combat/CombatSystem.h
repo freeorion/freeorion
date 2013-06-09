@@ -3,6 +3,7 @@
 #define _CombatSystem_h_
 
 #include "../universe/Universe.h"
+#include "../util/AppInterface.h"
 
 struct AttackEvent {
     AttackEvent() :

@@ -3,7 +3,7 @@
 #define _HumanClientFSM_h_
 
 #include "../ClientFSMEvents.h"
-#include "../../util/AppInterface.h"
+#include "../../util/Logger.h"
 
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/deferral.hpp>

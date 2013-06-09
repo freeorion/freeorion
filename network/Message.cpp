@@ -5,7 +5,7 @@
 #include "../combat/CombatLogManager.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
 #include "../universe/Meter.h"

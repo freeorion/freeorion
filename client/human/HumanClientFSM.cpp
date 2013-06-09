@@ -5,6 +5,7 @@
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
 #include "../../network/Networking.h"
+#include "../../util/i18n.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../UI/ChatWnd.h"
 #include "../../UI/PlayerListWnd.h"

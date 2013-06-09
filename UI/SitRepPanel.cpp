@@ -4,9 +4,11 @@
 #include "LinkText.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
 

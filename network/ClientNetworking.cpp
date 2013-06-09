@@ -3,7 +3,7 @@
 #include "ClientNetworking.h"
 
 #include "Networking.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/algorithm/string/predicate.hpp>

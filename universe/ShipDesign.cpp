@@ -1,9 +1,8 @@
 #include "ShipDesign.h"
 
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -14,6 +13,7 @@
 #include "Species.h"
 #include "ValueRef.h"
 
+#include <cfloat>
 #include <boost/filesystem/fstream.hpp>
 
 std::string DumpIndent();

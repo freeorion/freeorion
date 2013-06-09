@@ -7,8 +7,6 @@
 
 class AIBase;
 
-namespace log4cpp {class Category;}
-
 /** the application framework for an AI player FreeOrion client.*/
 class AIClientApp : public ClientApp {
 public:

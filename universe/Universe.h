@@ -4,7 +4,6 @@
 
 #include "Effect.h"
 #include "ObjectMap.h"
-#include "../util/AppInterface.h"
 
 #include <boost/signal.hpp>
 #include <boost/unordered_map.hpp>

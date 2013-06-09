@@ -2,9 +2,10 @@
 
 #include "../parse/Parse.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"

@@ -1,6 +1,6 @@
 #include "CUIDrawUtil.h"
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 #include <GG/DrawUtil.h>
 

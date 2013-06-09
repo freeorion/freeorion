@@ -11,6 +11,7 @@
 #include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../util/Logger.h"
 
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>

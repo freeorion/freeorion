@@ -13,7 +13,7 @@
 #include "../universe/Building.h"
 #include "../universe/Species.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
 

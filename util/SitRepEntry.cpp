@@ -1,6 +1,6 @@
 #include "SitRepEntry.h"
 
-#include "MultiplayerCommon.h"
+#include "i18n.h"
 #include "../universe/Predicates.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"

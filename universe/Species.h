@@ -6,6 +6,8 @@
 #include "Universe.h"
 #include "Condition.h"
 
+#include "../util/AppInterface.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/iterator/filter_iterator.hpp>

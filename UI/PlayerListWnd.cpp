@@ -5,6 +5,8 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 

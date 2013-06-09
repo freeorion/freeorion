@@ -1,7 +1,7 @@
 #include "LinkText.h"
 
 #include "ClientUI.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/VarText.h"
 
 #include <GG/DrawUtil.h>

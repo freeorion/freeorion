@@ -15,6 +15,8 @@
 #include "../universe/Species.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
@@ -30,13 +32,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/thread/thread.hpp>
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
-
 #include <ctime>
-#include <sstream>
 
 namespace fs = boost::filesystem;
 
@@ -102,17 +98,7 @@ ServerApp::ServerApp() :
 
     const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
-    // a platform-independent way to erase the old log
-    std::ofstream temp(SERVER_LOG_FILENAME.c_str());
-    temp.close();
-
-    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", SERVER_LOG_FILENAME);
-    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p Server : %m%n");
-    appender->setLayout(layout);
-    Logger().setAdditivity(false);  // make appender the only appender used...
-    Logger().setAppender(appender);
-    Logger().setAdditivity(true);   // ...but allow the addition of others later
+    InitLogger(SERVER_LOG_FILENAME, "%d %p Server : %m%n");
     Logger().setPriority(log4cpp::Priority::DEBUG);
 
     m_fsm->initiate();

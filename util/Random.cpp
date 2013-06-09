@@ -1,7 +1,5 @@
 #include "Random.h"
 
-#include "MultiplayerCommon.h"
-
 
 namespace {
     GeneratorType gen; // the one random number generator driving the distributions below

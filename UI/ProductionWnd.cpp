@@ -1,6 +1,6 @@
 #include "ProductionWnd.h"
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "BuildDesignatorWnd.h"
 #include "ClientUI.h"
@@ -8,9 +8,10 @@
 #include "QueueListBox.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../universe/Building.h"
+#include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>

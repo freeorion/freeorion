@@ -1,7 +1,5 @@
 #include "DataTable.h"
 
-#include "MultiplayerCommon.h"
-
 #include <boost/spirit/include/classic.hpp>
 #include <boost/spirit/include/classic_for.hpp>
 

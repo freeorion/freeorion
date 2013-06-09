@@ -168,6 +168,8 @@
     <ClInclude Include="..\..\util\Math.h" />
     <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
+    <ClInclude Include="..\..\util\i18n.h" />
+    <ClInclude Include="..\..\util\Logger.h" />
     <ClInclude Include="..\..\util\OptionsDB.h" />
     <ClInclude Include="..\..\util\OptionValidators.h" />
     <ClInclude Include="..\..\util\Order.h" />
@@ -233,6 +235,8 @@
     <ClCompile Include="..\..\util\Math.cpp" />
     <ClCompile Include="..\..\util\ModeratorAction.cpp" />
     <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
+    <ClCompile Include="..\..\util\i18n.cpp" />
+    <ClCompile Include="..\..\util\Logger.cpp" />
     <ClCompile Include="..\..\util\OptionsDB.cpp" />
     <ClCompile Include="..\..\util\Order.cpp" />
     <ClCompile Include="..\..\util\OrderSet.cpp" />

@@ -1,6 +1,6 @@
 #include "Condition.h"
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/Random.h"
 #include "UniverseObject.h"
 #include "Building.h"

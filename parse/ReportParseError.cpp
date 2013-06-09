@@ -1,6 +1,6 @@
 #include "ReportParseError.h"
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/tuple/tuple.hpp>

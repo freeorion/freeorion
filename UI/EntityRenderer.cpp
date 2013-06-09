@@ -16,7 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "../UI/ClientUI.h"
 #include "../util/Directories.h"
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 #include <OgreCamera.h>
 #include <OgreEntity.h>

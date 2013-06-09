@@ -12,6 +12,8 @@
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
 #include "../universe/Building.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 

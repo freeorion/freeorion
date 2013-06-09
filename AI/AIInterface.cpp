@@ -12,6 +12,7 @@
 #include "../universe/Tech.h"
 #include "../Empire/Empire.h"
 
+#include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 

@@ -9,13 +9,12 @@
 #include "PlayerListWnd.h"
 #include "MultiplayerLobbyWnd.h"
 #include "Sound.h"
-#include "../util/AppInterface.h"
 
 #undef int64_t
 
 #include "../util/Random.h"
 #include "../util/Directories.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
@@ -33,11 +32,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
-
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
 
 #include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/predicate.hpp>

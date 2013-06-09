@@ -6,7 +6,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "Sound.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 

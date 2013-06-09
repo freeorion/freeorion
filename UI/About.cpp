@@ -4,8 +4,8 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
 
 #include <GG/GUI.h>
 #include <GG/Clr.h>

@@ -1,8 +1,8 @@
 #include "OptionsDB.h"
 
-#include "MultiplayerCommon.h"
+#include "i18n.h"
+#include "Logger.h"
 #include "OptionValidators.h"
-#include "AppInterface.h"
 
 #include <iostream>
 #include <stdexcept>

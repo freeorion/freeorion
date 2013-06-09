@@ -45,6 +45,9 @@ const boost::filesystem::path GetConfigPath();
   * the directory "save" within the user directory. */
 const boost::filesystem::path GetSaveDir();
 
+/** Returns a canonical utf-8 string from the given filesystem path. */
+std::string PathString(const boost::filesystem::path& path);
+
 #ifdef FREEORION_MACOSX
 /** This function returns the Python home directory from where it is embedded
   * within the Mac OS X application bundle */

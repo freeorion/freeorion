@@ -163,6 +163,7 @@ add_library(core STATIC
     universe/ValueRef.cpp
     util/DataTable.cpp
     util/GZStream.cpp
+    util/Logger.cpp
     util/Math.cpp
     util/ModeratorAction.cpp
     util/MultiplayerCommon.cpp
@@ -181,6 +182,7 @@ add_library(core STATIC
     util/StringTable.cpp
     util/binreloc.c
     util/Directories.cpp
+    util/i18n.cpp
     util/XMLDoc.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )

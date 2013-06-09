@@ -1,6 +1,6 @@
 #include "Effect.h"
 
-#include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"
 #include "../Empire/EmpireManager.h"

@@ -29,7 +29,7 @@ namespace GG {
 
 class CombatCamera;
 class EntityRenderer;
-class CombatData;
+struct CombatData;
 struct CombatSetupGroup;
 class CombatSetupWnd;
 class CUIButton;

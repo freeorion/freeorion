@@ -3,10 +3,11 @@
 #include "Ship.h"
 #include "System.h"
 #include "Predicates.h"
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../universe/ShipDesign.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>

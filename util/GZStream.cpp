@@ -30,8 +30,6 @@
 
 #include "GZStream.h"
 
-#include "MultiplayerCommon.h"
-
 #include <iostream>
 #include <cstring>
 

@@ -7,8 +7,6 @@
 
 #include <GG/Clr.h>
 
-#include <boost/format.hpp>
-
 #include <set>
 #include <vector>
 
@@ -19,33 +17,11 @@ class XMLElement;
 extern const std::string MP_SAVE_FILE_EXTENSION;
 extern const std::string SP_SAVE_FILE_EXTENSION;
 
-/** The colors that are available for use for empires in the game. */
-const std::vector<GG::Clr>& EmpireColors();
-
 /** Returns an XML representation of a GG::Clr object. */
 XMLElement ClrToXML(const GG::Clr& clr);
 
 /** Returns a GG::Clr object constructed from its XML representation. */
 GG::Clr XMLToClr(const XMLElement& clr);
-
-/** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
-int PriorityValue(const std::string& name);
-
-/** Returns a language-specific string for the key-string \a str */
-const std::string& UserString(const std::string& str);
-
-/** Placeholder for non local translations, evaluates to a non operation */
-#define UserStringNop(key) key
-
-/** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
-boost::format FlexibleFormat(const std::string& string_to_format);
-
-/** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
-    symbol for 5000. */
-std::string RomanNumber(unsigned int n);
-
-/** Returns the language of the StringTable currently in use */
-const std::string& Language();
 
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData {

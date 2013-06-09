@@ -3,6 +3,7 @@
 #include "../../parse/Parse.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
+#include "../../util/Logger.h"
 
 #include <GG/utf8/checked.h>
 

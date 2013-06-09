@@ -1,7 +1,7 @@
 #include "UniverseObject.h"
 
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "Meter.h"
 #include "System.h"
 #include "Special.h"

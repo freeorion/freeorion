@@ -2,8 +2,7 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/AppInterface.h"
+#include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"

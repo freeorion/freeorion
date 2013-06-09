@@ -2,17 +2,15 @@
 
 #include "OptionsDB.h"
 #include "Obstacle.h"
-#include "StringTable.h"
 #include "../combat/AsteroidBeltObstacle.h"
-#include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/Math.h"
 #include "../util/Random.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
-
-#include <log4cpp/Priority.hh>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -31,17 +29,6 @@ const std::string SP_SAVE_FILE_EXTENSION = ".sav";
 namespace fs = boost::filesystem;
 
 namespace {
-    std::string PathString(const fs::path& path) {
-#ifndef FREEORION_WIN32
-        return path.string();
-#else
-        fs::path::string_type native_string = path.native();
-        std::string retval;
-        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
-        return retval;
-#endif
-    }
-
     // command-line options
     void AddOptions(OptionsDB& db) {
         db.Add<std::string>("resource-dir",         UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathString(GetRootDataDir() / "default"));
@@ -53,29 +40,6 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const double TWO_PI = 8.0 * std::atan(1.0);
-
-    std::string GetDefaultStringTableFileName()
-    { return PathString(GetResourceDir() / "stringtables" / "en.txt"); }
-
-    std::string GetStringTableFileName() {
-        std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
-        if (option_filename.empty())
-            return GetDefaultStringTableFileName();
-        else
-            return option_filename;
-    }
-
-    const StringTable_& GetStringTable() {
-        static std::auto_ptr<StringTable_> string_table(
-            new StringTable_(GetStringTableFileName()));
-        return *string_table;
-    }
-
-    const StringTable_& GetDefaultStringTable() {
-        static std::auto_ptr<StringTable_> default_string_table(
-            new StringTable_(GetDefaultStringTableFileName()));
-        return *default_string_table;
-    }
 
     std::string ClrToString(GG::Clr clr) {
         unsigned int r = static_cast<int>(clr.r);
@@ -265,37 +229,6 @@ namespace {
 /////////////////////////////////////////////////////
 // Free Function(s)
 /////////////////////////////////////////////////////
-const std::vector<GG::Clr>& EmpireColors() {
-    static std::vector<GG::Clr> colors;
-    if (colors.empty()) {
-        XMLDoc doc;
-
-        std::string file_name = "empire_colors.xml";
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            doc.ReadDoc(ifs);
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-            return colors;
-        }
-
-        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-            colors.push_back(XMLToClr(doc.root_node.Child(i)));
-        }
-    }
-    if (colors.empty()) {
-        colors.push_back(GG::Clr(  0, 255,   0, 255));
-        colors.push_back(GG::Clr(  0,   0, 255, 255));
-        colors.push_back(GG::Clr(255,   0,   0, 255));
-        colors.push_back(GG::Clr(  0, 255, 255, 255));
-        colors.push_back(GG::Clr(255, 255,   0, 255));
-        colors.push_back(GG::Clr(255,   0, 255, 255));
-    }
-    return colors;
-}
-
 XMLElement ClrToXML(const GG::Clr& clr) {
     XMLElement retval("GG::Clr");
     retval.AppendChild(XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
@@ -343,80 +276,6 @@ GG::Clr XMLToClr(const XMLElement& clr) {
     }
     return retval;
 }
-
-int PriorityValue(const std::string& name) {
-    static std::map<std::string, int> priority_map;
-    static bool init = false;
-    if (!init) {
-        using namespace log4cpp;
-        priority_map["FATAL"] = Priority::FATAL;
-        priority_map["EMERG"] = Priority::EMERG;
-        priority_map["ALERT"] = Priority::ALERT;
-        priority_map["CRIT"] = Priority::CRIT;
-        priority_map["ERROR"] = Priority::ERROR;
-        priority_map["WARN"] = Priority::WARN;
-        priority_map["NOTICE"] = Priority::NOTICE;
-        priority_map["INFO"] = Priority::INFO;
-        priority_map["DEBUG"] = Priority::DEBUG;
-        priority_map["NOTSET"] = Priority::NOTSET;
-    }
-    return priority_map[name];
-}
-
-const std::string& UserString(const std::string& str) {
-    const StringTable_& string_table = GetStringTable();
-    if (string_table.StringExists(str))
-        return GetStringTable().String(str);
-    else
-        return GetDefaultStringTable().String(str);
-}
-
-boost::format FlexibleFormat(const std::string &string_to_format) {
-    try {
-        boost::format retval(string_to_format);
-        retval.exceptions(boost::io::no_error_bits);
-        return retval;
-    } catch (const std::exception& e) {
-        Logger().errorStream() << "FlexibleFormat caught exception when formatting: " << e.what();
-    }
-    boost::format retval(UserString("ERROR"));
-    retval.exceptions(boost::io::no_error_bits);
-    return retval;
-}
-
-std::string RomanNumber(unsigned int n) {
-    //letter pattern (N) and the associated values (V)
-    static const std::string  N[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-    static const unsigned int V[] = {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
-    unsigned int remainder = n; //remainder of the number to be written
-    int i = 0;                  //pattern index
-    std::string retval = "";;
-    if (n == 0) return "";      //the romans didn't know there is a zero, read a book about history of the zero if you want to know more
-                                //Roman numbers are written using patterns, you chosse the highest pattern lower that the number
-                                //write it down, and substract it's value until you reach zero.
-
-    // safety check to avoid very long loops
-    if (n > 10000)
-        return "!";
-
-    //we start with the highest pattern and reduce the size every time it doesn't fit
-    while (remainder > 0) {
-        //check if number is larger than the actual pattern value
-        if (remainder >= V[i]) {
-            //write pattern down
-            retval += N[i];
-            //reduce number
-            remainder -= V[i];
-        } else {
-            //we need the next pattern
-            i++;
-        }
-    }
-    return retval;
-}
-
-const std::string& Language()
-{ return GetStringTable().Language(); }
 
 
 /////////////////////////////////////////////////////

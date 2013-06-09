@@ -7,8 +7,9 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/Math.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>

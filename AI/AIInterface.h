@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class CombatData;
+struct CombatData;
 class Empire;
 class Tech;
 class DiplomaticMessage;

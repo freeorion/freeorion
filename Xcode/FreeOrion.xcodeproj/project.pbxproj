@@ -109,6 +109,8 @@
 		34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */; };
 		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
+		3A5105541748D68B00DC258B /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105521748D68B00DC258B /* i18n.cpp */; };
+		3A5105571748D6A700DC258B /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258B /* Logger.cpp */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
@@ -1929,6 +1931,10 @@
 		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
 		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
 		3A1BF3EA1748875200812237 /* Version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Version.cpp; path = ../util/Version.cpp; sourceTree = SOURCE_ROOT; };
+		3A5105521748D68B00DC258B /* i18n.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i18n.cpp; sourceTree = "<group>"; };
+		3A5105531748D68B00DC258B /* i18n.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i18n.h; sourceTree = "<group>"; };
+		3A5105551748D6A600DC258B /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		3A5105561748D6A700DC258B /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
@@ -4309,6 +4315,10 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				3A5105521748D68B00DC258B /* i18n.cpp */,
+				3A5105531748D68B00DC258B /* i18n.h */,
+				3A5105551748D6A600DC258B /* Logger.cpp */,
+				3A5105561748D6A700DC258B /* Logger.h */,
 				82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
@@ -5720,6 +5730,8 @@
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
 				822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */,
 				3A1BF3EB1748875300812237 /* Version.cpp in Sources */,
+				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
+				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

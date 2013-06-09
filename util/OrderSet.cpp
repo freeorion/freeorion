@@ -2,9 +2,6 @@
 
 #include "Order.h"
 
-#include "../util/MultiplayerCommon.h"
-
-
 
 OrderSet::OrderSet()
 {}

@@ -1,7 +1,7 @@
 #include "Ship.h"
 
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"

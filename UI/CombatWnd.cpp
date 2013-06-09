@@ -16,6 +16,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"

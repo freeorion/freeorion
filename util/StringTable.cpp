@@ -1,6 +1,6 @@
 #include "StringTable.h"
 
-#include "../util/AppInterface.h"
+#include "Logger.h"
 
 #include <GG/utf8/checked.h>
 

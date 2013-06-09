@@ -1,7 +1,8 @@
 #include "MarkupBox.h"
 
 #include "CUIControls.h"
-#include "../util/AppInterface.h"
+
+#include "../util/Logger.h"
 
 #include <GG/StaticGraphic.h>
 #include <GG/MultiEdit.h>

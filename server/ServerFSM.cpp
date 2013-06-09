@@ -9,6 +9,8 @@
 #include "../network/ServerNetworking.h"
 #include "../network/Message.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/OptionsDB.h"

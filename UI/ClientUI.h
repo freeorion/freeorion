@@ -36,9 +36,6 @@ namespace GG {
     class SubTexture;
     class Texture;
 }
-namespace log4cpp {
-    class Category;
-}
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.

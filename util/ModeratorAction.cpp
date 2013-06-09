@@ -1,11 +1,11 @@
 #include "ModeratorAction.h"
 
-#include "AppInterface.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/serialization/export.hpp>

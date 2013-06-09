@@ -2,11 +2,11 @@
 
 #include "Effect.h"
 #include "../parse/Parse.h"
+#include "../universe/UniverseObject.h"
 #include "../universe/ObjectMap.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "ValueRef.h"

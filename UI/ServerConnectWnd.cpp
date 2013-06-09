@@ -3,7 +3,8 @@
 #include "ClientUI.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 

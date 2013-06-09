@@ -1,10 +1,11 @@
 #include "Universe.h"
 
-#include "../util/AppInterface.h"
 #include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"

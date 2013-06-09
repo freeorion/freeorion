@@ -1,8 +1,9 @@
 #include "OptionsWnd.h"
 
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
 
 #include "ClientUI.h"
 #include "CUISpin.h"
