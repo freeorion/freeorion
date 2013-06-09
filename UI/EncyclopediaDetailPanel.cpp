@@ -129,20 +129,23 @@ namespace {
                     sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_SHIP") {
-            std::vector<const Ship*> ships = objects.FindObjects<Ship>();
-            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                const Ship* ship = *ship_it;
-                const std::string& ship_name = ship->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(ship_name,  LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
+            for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
+                 ship_it != objects.const_end<Ship>(); ++ship_it)
+            {
+                const std::string& ship_name = ship_it->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(ship_name,
+                    LinkTaggedIDText(VarText::SHIP_ID_TAG, ship_it->ID(), ship_name) + "  "));
             }
 
         } else if (dir_name == "ENC_MONSTER") {
             // monster objects
-            std::vector<const Ship*> ships = objects.FindObjects<Ship>();
             std::vector<const Ship*> monsters;
-            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it)
-                if ((*ship_it)->IsMonster())
+            for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
+                 ship_it != objects.const_end<Ship>(); ++ship_it)
+            {
+                if (ship_it->IsMonster())
                     monsters.push_back(*ship_it);
+            }
             if (!monsters.empty()) {
                 retval += UserString("MONSTER_OBJECTS");
                 for (std::vector<const Ship*>::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it) {
@@ -161,35 +164,39 @@ namespace {
                     sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_FLEET") {
-            std::vector<const Fleet*> fleets = objects.FindObjects<Fleet>();
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-                const Fleet* fleet = *fleet_it;
-                const std::string& flt_name = fleet->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(flt_name,  LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  "));
+            for (ObjectMap::const_iterator<Fleet> fleet_it = objects.const_begin<Fleet>();
+                 fleet_it != objects.const_end<Fleet>(); ++fleet_it)
+            {
+                const std::string& flt_name = fleet_it->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(flt_name,
+                    LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet_it->ID(), flt_name) + "  "));
             }
 
         } else if (dir_name == "ENC_PLANET") {
-            std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-            for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-                const Planet* planet = *planet_it;
-                const std::string& plt_name = planet->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(plt_name,  LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  "));
+            for (ObjectMap::const_iterator<Planet> planet_it = objects.const_begin<Planet>();
+                 planet_it != objects.const_end<Planet>(); ++planet_it)
+            {
+                const std::string& plt_name = planet_it->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(plt_name,
+                    LinkTaggedIDText(VarText::PLANET_ID_TAG, planet_it->ID(), plt_name) + "  "));
             }
 
         } else if (dir_name == "ENC_BUILDING") {
-            std::vector<const Building*> buildings = objects.FindObjects<Building>();
-            for (std::vector<const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                const Building* building = *building_it;
-                const std::string& bld_name = building->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(bld_name,  LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  "));
+            for (ObjectMap::const_iterator<Building> building_it = objects.const_begin<Building>();
+                 building_it != objects.const_end<Building>(); ++building_it)
+            {
+                const std::string& bld_name = building_it->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(bld_name,
+                    LinkTaggedIDText(VarText::BUILDING_ID_TAG, building_it->ID(), bld_name) + "  "));
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
-            std::vector<const System*> systems = objects.FindObjects<System>();
-            for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
-                const System* system = *system_it;
-                const std::string& sys_name = system->ApparentName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(sys_name,  LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  "));
+            for (ObjectMap::const_iterator<System> system_it = objects.const_begin<System>();
+                 system_it != objects.const_end<System>(); ++system_it)
+            {
+                const std::string& sys_name = system_it->ApparentName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(sys_name,
+                    LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system_it->ID(), sys_name) + "  "));
             }
 
         } else {
