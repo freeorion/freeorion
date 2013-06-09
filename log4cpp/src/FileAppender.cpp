@@ -4,6 +4,8 @@
  * Copyright 2000, LifeLine Networks BV (www.lifeline.nl). All rights reserved.
  * Copyright 2000, Bastiaan Bakker. All rights reserved.
  *
+ * 14 Jan 2013: Added safety check in FileAppender::_append
+ *
  * See the COPYING file for the terms of usage and distribution.
  */
 
