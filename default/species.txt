@@ -3047,7 +3047,7 @@ GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_22"
+        GiveEmpireTech name = "SHP_WEAPON_2_2"
         
         EffectsGroup
             scope = AND [
