@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6.4)
 
-set(CMAKE_VERBOSE_MAKEFILE false)
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 
 ########################################
