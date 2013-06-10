@@ -186,7 +186,7 @@ private:
     void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);         ///< re-estimates meter values of specified objects
     void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
     void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
-    void            ProductionUpdate();
+
     /** contains information necessary to render a single fleet movement line on the main map. also
       * contains cached infromation */
     struct MovementLineData {

@@ -1888,11 +1888,6 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
-void MapWnd::ProductionUpdate() {
-    SidePanel::Update();
-    MidTurnUpdate();
-}
-
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
@@ -1990,13 +1985,13 @@ void MapWnd::InitTurn() {
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     if (this_client_empire) {
-        GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
-        GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
-        GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
-        GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::ProductionUpdate,                  this, 1);
-        GG::Connect(this_client_empire->GetResearchQueue().ResearchQueueChangedSignal,      &MapWnd::RefreshResearchResourceIndicator,  this);
+        GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this);
+        GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this);
+        GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this);
+        GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this);
         GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::RefreshIndustryResourceIndicator,  this);
+        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::InitStarlaneRenderingBuffers,      this);  // so lane colouring to indicate wasted PP is updated
+        GG::Connect(this_client_empire->GetResearchQueue().ResearchQueueChangedSignal,      &MapWnd::RefreshResearchResourceIndicator,  this);
     }
 
     m_toolbar->Show();
@@ -4998,11 +4993,11 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 void MapWnd::UpdateEmpireResourcePools() {
     //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
-       update, they emit ChangeSignal, which is connected to MapWnd::Refresh???ResourceIndicator, which
-       updates the empire resource pool indicators of the MapWnd. */
+    /* Recalculate stockpile, available, production, predicted change of
+     * resources.  When resource pools update, they emit ChangeSignal, which is
+     * connected to MapWnd::Refresh???ResourceIndicator, which updates the
+     * empire resource pool indicators of the MapWnd. */
     empire->UpdateResourcePools();
-    MidTurnUpdate();
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
     SidePanel::Update();
@@ -5023,7 +5018,7 @@ bool MapWnd::ZoomToHomeSystem() {
 
 bool MapWnd::ZoomToPrevOwnedSystem() {
     // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
-    std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
+    std::vector<int> vec = Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
     if (it == vec.end()) {
         m_current_owned_system = vec.empty() ? INVALID_OBJECT_ID : vec.back();
