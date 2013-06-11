@@ -106,6 +106,7 @@ configure_file(
 # Build common code library            #
 ########################################
 set(BUILD_SDL_DRIVER CACHE INTERNAL "Disable building of SDL driver." FORCE)
+set(BUILD_ADAM_SUPPORT CACHE INTERNAL "Enables building of Adobe Adam bindings." FORCE)
 add_subdirectory(GG)
 
 include_directories(${CMAKE_SOURCE_DIR} GG log4cpp OpenSteer/include)

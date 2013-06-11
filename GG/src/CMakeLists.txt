@@ -2,86 +2,49 @@ cmake_minimum_required(VERSION 2.6)
 
 message("-- Configuring GiGi")
 
-set(GiGi_SOURCES
+if (BUILD_ADAM_SUPPORT)
+    set(GiGi_Adam_SOURCES
+        AdamDlg.cpp
+        AdamGlue.cpp
+        AdamParser.cpp
+        ExpressionParser.cpp
+        ExpressionWriter.cpp
+        Lexer.cpp
+        ReportParseError.cpp
 
-    AdamDlg.cpp
-    AdamGlue.cpp
-    AdamParser.cpp
-    AlignmentFlags.cpp
-    Base.cpp
-    BrowseInfoWnd.cpp
-    Button.cpp
-    ClrConstants.cpp
-    Control.cpp
-    Cursor.cpp
-    DrawUtil.cpp
-    DropDownList.cpp
-    DynamicGraphic.cpp
-    Edit.cpp
-    EventPump.cpp
-    EveParser.cpp
-    EveLayout.cpp
-    ExpressionParser.cpp
-    ExpressionWriter.cpp
-    Font.cpp
-    GroupBox.cpp
-    GUI.cpp
-    Layout.cpp
-    Lexer.cpp
-    ListBox.cpp
-    Menu.cpp
-    MultiEdit.cpp
-    PluginInterface.cpp
-    PtRect.cpp
-    ReportParseError.cpp
-    Scroll.cpp
-    StaticGraphic.cpp
-    StyleFactory.cpp
-    TabWnd.cpp
-    TextControl.cpp
-    Texture.cpp
-    Timer.cpp
-    UnicodeCharsets.cpp
-    Wnd.cpp
-    WndEvent.cpp
-    ZList.cpp
-
-    dialogs/ColorDlg.cpp
-    dialogs/FileDlg.cpp
-    dialogs/ThreeButtonDlg.cpp
-
-    adobe/adam.cpp
-    adobe/adam_evaluate.cpp
-    adobe/adam_parser.cpp
-    adobe/any_regular.cpp
-    adobe/basic_sheet.cpp
-    adobe/eve.cpp
-    adobe/eve_evaluate.cpp
-    adobe/eve_parser.cpp
-    adobe/expression_filter.cpp
-    adobe/expression_parser.cpp
-    adobe/iomanip.cpp
-    adobe/iomanip_asl_cel.cpp
-    adobe/istream.cpp
-    adobe/keyboard.cpp
-    adobe/lex_shared.cpp
-    adobe/lex_stream.cpp
-    adobe/localization.cpp
-    adobe/memory.cpp
-    adobe/name.cpp
-    adobe/parser_shared.cpp
-    adobe/string.cpp
-    adobe/string_pool.cpp
-    adobe/token.cpp
-    adobe/typeinfo.cpp
-    adobe/virtual_machine.cpp
-    adobe/future/widgets/sources/virtual_machine_extension.cpp
-    adobe/future/widgets/sources/widget_tokens.cpp
-)
+        adobe/adam.cpp
+        adobe/adam_evaluate.cpp
+        adobe/adam_parser.cpp
+        adobe/any_regular.cpp
+        adobe/basic_sheet.cpp
+        adobe/expression_filter.cpp
+        adobe/expression_parser.cpp
+        adobe/iomanip.cpp
+        adobe/iomanip_asl_cel.cpp
+        adobe/istream.cpp
+        adobe/keyboard.cpp
+        adobe/lex_shared.cpp
+        adobe/lex_stream.cpp
+        adobe/localization.cpp
+        adobe/memory.cpp
+        adobe/parser_shared.cpp
+        adobe/token.cpp
+        adobe/typeinfo.cpp
+        adobe/virtual_machine.cpp
+        adobe/future/widgets/sources/virtual_machine_extension.cpp
+        adobe/future/widgets/sources/widget_tokens.cpp
+    )
+endif ()
 
 if (BUILD_EXPERIMENTAL_EVE_SUPPORT)
-    list(APPEND GiGi_SOURCES
+    set(GiGi_Eve_SOURCES
+        EveParser.cpp
+        EveLayout.cpp
         EveGlue.cpp
+
+        adobe/eve.cpp
+        adobe/eve_evaluate.cpp
+        adobe/eve_parser.cpp
 
         adobe/future/widgets/sources/edit_number.cpp
         adobe/future/widgets/sources/panel_factory.cpp
@@ -183,7 +146,51 @@ if (WIN32)
     endif ()
 endif ()
 
-add_library(GiGi ${GiGi_SOURCES})
+add_library(GiGi
+    AlignmentFlags.cpp
+    Base.cpp
+    BrowseInfoWnd.cpp
+    Button.cpp
+    ClrConstants.cpp
+    Control.cpp
+    Cursor.cpp
+    DrawUtil.cpp
+    DropDownList.cpp
+    DynamicGraphic.cpp
+    Edit.cpp
+    EventPump.cpp
+    Font.cpp
+    GroupBox.cpp
+    GUI.cpp
+    Layout.cpp
+    ListBox.cpp
+    Menu.cpp
+    MultiEdit.cpp
+    PluginInterface.cpp
+    PtRect.cpp
+    Scroll.cpp
+    StaticGraphic.cpp
+    StyleFactory.cpp
+    TabWnd.cpp
+    TextControl.cpp
+    Texture.cpp
+    Timer.cpp
+    UnicodeCharsets.cpp
+    Wnd.cpp
+    WndEvent.cpp
+    ZList.cpp
+
+    dialogs/ColorDlg.cpp
+    dialogs/FileDlg.cpp
+    dialogs/ThreeButtonDlg.cpp
+
+    adobe/name.cpp
+    adobe/memory.cpp
+    adobe/string_pool.cpp
+
+    ${GiGi_Adam_SOURCES}
+    ${GiGi_Eve_SOURCES}
+)
 
 if (USE_STATIC_LIBS)
     set_target_properties(GiGi

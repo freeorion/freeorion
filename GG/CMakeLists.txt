@@ -20,7 +20,8 @@ set(MINIMUM_BOOST_COMPONENTS date_time filesystem signals system thread)
 
 option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
-option(BUILD_EXPERIMENTAL_EVE_SUPPORT "Enables building of experimental Adobe Eve bindings." OFF)
+option(BUILD_ADAM_SUPPORT "Enables building of Adobe Adam bindings." OFF)
+cmake_dependent_option(BUILD_EXPERIMENTAL_EVE_SUPPORT "Enables building of experimental Adobe Eve bindings." OFF BUILD_ADAM_SUPPORT OFF)
 
 cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
 
