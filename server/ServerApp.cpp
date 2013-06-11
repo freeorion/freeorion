@@ -1605,7 +1605,7 @@ namespace {
 
 
             // update system ownership after combat.  may be necessary if the
-            // combat caused planets to change ownership.  Also update fleet movement blockade restrictions
+            // combat caused planets to change ownership.
             if (System* system = GetSystem(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
@@ -1613,21 +1613,6 @@ namespace {
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
                      empire_it != combat_info.empire_ids.end(); ++empire_it)
                 { universe.EmpireKnownObjects(*empire_it).CopyObject(system, ALL_EMPIRES); }
-
-                //update fleet movement blockade restrictions
-                std::map<int,bool> empires_blockaded;
-                std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
-                for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
-                    Fleet* fleet = GetFleet(*fleet_it);
-                    if (!fleet || fleet->ArrivalStarlane() == combat_info.system_id)
-                        continue;
-                    if (empires_blockaded.find(fleet->Owner()) == empires_blockaded.end())
-                        empires_blockaded[ fleet->Owner() ] = fleet->BlockadedAtSystem(combat_info.system_id, false);
-                    if (!empires_blockaded[ fleet->Owner() ]) {
-                        fleet->SetArrivalStarlane(combat_info.system_id);
-                        fleet->CalculateRoute(); //TODO: double check if this is still necessary
-                    }
-                }
             }
         }
     }
@@ -2300,6 +2285,43 @@ void ServerApp::ProcessCombats() {
     CleanupSystemCombatInfo(combats);
 }
 
+void ServerApp::UpdateMonsterTravelRestrictions() {
+    //std::vector<Fleet*> all_fleets =  m_universe.Objects().FindObjects<Fleet>;
+    const std::vector<System*> systems =  m_universe.Objects().FindObjects<System>();
+    for (std::vector<System*>::const_iterator sys_it = systems.begin(); sys_it!=systems.end(); sys_it++) {
+        const System* system = *sys_it;
+        std::vector<int> fleet_ids =  system->FindObjectIDs<Fleet>();
+        bool unrestricted_monsters_present = false;
+        bool unrestricted_empires_present = false;
+        std::vector<int> restricted_monsters;
+        for (std::vector<int>::iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); fleet_it++) {
+            const Fleet* fleet = GetFleet(*fleet_it);
+            // will not require visibility for empires to block clearing of monster travel restrictions
+            // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
+            // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
+            // before you, or be in cahoots with someone who did.
+            bool unrestricted = (fleet->ArrivalStarlane() == system->ID()) && fleet->Aggressive() && fleet->HasArmedShips() ;
+            if (fleet->Unowned()) {
+                if (unrestricted)
+                    unrestricted_monsters_present = true;
+                else
+                    restricted_monsters.push_back(*fleet_it);
+            } else if (unrestricted) {
+                unrestricted_empires_present = true;
+            }
+        }
+        if (unrestricted_monsters_present || !unrestricted_empires_present) {
+            for (std::vector<int>::iterator monster_it = restricted_monsters.begin(); 
+                 monster_it != restricted_monsters.end(); monster_it++) 
+            {
+                Fleet* monster_fleet = GetFleet(*monster_it);
+                // even if it was a diff test that made monster restricted, we will set arrival lane
+                monster_fleet->SetArrivalStarlane(monster_fleet->SystemID()); 
+            }
+        }
+    }
+}
+
 void ServerApp::PostCombatProcessTurns() {
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
@@ -2358,6 +2380,16 @@ void ServerApp::PostCombatProcessTurns() {
         empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+    }
+
+    UpdateMonsterTravelRestrictions();
+    // now update travel restrictions for empire fleets
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        if (!empires.Eliminated(it->first)) {
+            Empire* empire = it->second;
+            empire->UpdateAvailableLanes();
+            empire->UpdateUnobstructedFleets();  // must be done after *all* noneliminated empires have updated their unobstructed systems
+        }
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {

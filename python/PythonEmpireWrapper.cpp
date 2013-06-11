@@ -85,7 +85,7 @@ namespace {
         std::set<IntPair > laneset;
         std::vector<IntPair>  retval;
         try {
-            laneset = empire.SupplyOstructedStarlaneTraversals();
+            laneset = empire.SupplyObstructedStarlaneTraversals();
             for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
             {retval.push_back(*it); }
             return retval;
@@ -295,7 +295,7 @@ namespace FreeOrionPython {
                                                         return_internal_reference<>(),
                                                         boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
-            //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyOstructedStarlaneTraversals,   return_value_policy<return_by_value>()))   
+            //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyObstructedStarlaneTraversals,   return_value_policy<return_by_value>()))   
             .def("obstructedStarlanes",             make_function(obstructedStarlanesFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<IntPair>, const Empire&>()

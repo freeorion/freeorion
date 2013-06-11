@@ -426,6 +426,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     if (empire) {
         unobstructed = empire->SupplyUnobstructedSystems();
         calc_s_flag = true;
+        //s_flag = ((first_node.object_id != INVALID_OBJECT_ID) && unobstructed.find(first_node.object_id)==unobstructed.end());
     }
 
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
@@ -452,7 +453,6 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
             // if this node is later in the path, prev_sys_id should have been set in previous loop iteration
         }
 
-
         // skip invalid line segments
         if (prev_sys_id == next_sys_id || next_sys_id == INVALID_OBJECT_ID || prev_sys_id == INVALID_OBJECT_ID)
             continue;
@@ -477,9 +477,9 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
 
         // 3) Add points for line segment to list of Vertices
-        bool b_flag = path_it->post_blockade;
+        bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag && 
-            ((path_it->object_id != INVALID_OBJECT_ID) && unobstructed.find(path_it->object_id)==unobstructed.end()));
+            ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
         vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
         vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
 
@@ -2596,8 +2596,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         GG::Clr eclr= this_client_empire->Color();
                         lane_colour = GG::DarkColor( GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
-                    /*if ((this_client_empire->SupplyOstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyOstructedStarlaneTraversals().end()) ||
-                        (this_client_empire->SupplyOstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyOstructedStarlaneTraversals().end()) ||
+                    /*if ((this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                        (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
                     if (resGroupCores[ memberToPool[start_system->ID()]] != resGroupCores[ memberToPool[dest_system->ID()]])
@@ -2619,7 +2619,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
                     Empire* empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyOstructedStarlaneTraversals();
+                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyObstructedStarlaneTraversals();
 
                     // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
@@ -3025,7 +3025,8 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    if (const Empire* empire = Empires().Lookup(fleet->Owner()))
+    const Empire* empire = Empires().Lookup(fleet->Owner());
+    if (empire)
         line_colour = empire->Color();
     else if (fleet->Unowned() && fleet->HasMonsters())
         line_colour = GG::CLR_RED;
@@ -3033,16 +3034,24 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     // create and store line
     std::list<int> route(fleet->TravelRoute());
     std::list<MovePathNode> path = fleet->MovePath(route, true);
-    if (!route.empty() && fleet->SystemID() == route.front() && fleet->BlockadedAtSystem(route.front())) { //adjust ETAs if necessary
-    //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-        std::list<int>::iterator route_it = ++route.begin();
-        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
-        //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
-        if (route_it != route.end() && *route_it != fleet->ArrivalStarlane()) {
-            for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
-                Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << it->object_id <<
-                                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
-                it->eta++;
+    std::list<int>::iterator route_it = route.begin();
+    if (!route.empty() && (++route_it) != route.end()) {
+        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() << 
+        //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
+        if (fleet->SystemID() == route.front() && fleet->BlockadedAtSystem(route.front(), *route_it)) { //adjust ETAs if necessary
+            //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
+            //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
+            if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  || 
+                (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it)) ) )
+            {
+                for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
+                    //Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << it->object_id <<
+                    //                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
+                    it->eta++;
+                }
+            } else {
+                //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
             }
         }
     }
@@ -3065,6 +3074,8 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         RemoveProjectedFleetMovementLine(fleet_id);
         return;
     }
+    //std::cout << "creating projected fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
+    const Empire* empire = Empires().Lookup(fleet->Owner());
 
     // get move path to show.  if there isn't one, show nothing
     std::list<MovePathNode> path = fleet->MovePath(travel_route, true);
@@ -3073,24 +3084,27 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         RemoveProjectedFleetMovementLine(fleet_id);
         return;
     }
-
-    if (!travel_route.empty() && fleet->SystemID()==travel_route.front() && fleet->BlockadedAtSystem(travel_route.front())) {
-        //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-        std::list<int>::const_iterator route_it = ++travel_route.begin();
-        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
-        //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
-        if (route_it != travel_route.end() && *route_it != fleet->ArrivalStarlane()) {
-            for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
-                Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << it->object_id <<
-                                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
-                it->eta++;
+    std::list<int>::const_iterator route_it = travel_route.begin();
+    if (!travel_route.empty() && (++route_it) != travel_route.end()) {
+        if (fleet->SystemID() == travel_route.front() && fleet->BlockadedAtSystem(travel_route.front(), *route_it)) { //adjust ETAs if necessary
+            //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
+            //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
+            if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) || 
+                (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it))))
+            {
+                for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
+                    //Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << it->object_id <<
+                    //                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
+                    it->eta++;
+                }
             }
         }
     }
-        
+
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    if (const Empire* empire = Empires().Lookup(fleet->Owner()))
+    if (empire)
         line_colour = empire->Color();
 
     // create and store line

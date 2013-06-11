@@ -130,9 +130,11 @@ std::string Fleet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << ( m_aggressive ? " agressive" : " passive")
+       << " cur system: " << SystemID()
        << " moving to: " << m_moving_to
        << " prev system: " << m_prev_system
        << " next system: " << m_next_system
+       << " arrival lane: " << m_arrival_starlane
        << " ships: ";
     for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end();) {
         int ship_id = *it;
@@ -241,8 +243,12 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     bool isPostBlockade=false;
     if (cur_system) {
-        if (flag_blockades && next_system->ID() != m_arrival_starlane) {
-            if (BlockadedAtSystem(cur_system->ID())){
+        //Logger().debugStream() << "Fleet::MovePath starting in system "<< SystemID();
+        if (flag_blockades && next_system->ID() != m_arrival_starlane && 
+            (unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end())) 
+        {
+            //Logger().debugStream() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
+            if (BlockadedAtSystem(cur_system->ID(), next_system->ID())){
                 // blockade debug logging
                 //Logger().debugStream() <<   "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID() <<
                 //                            ") blockaded for fleet " << this->Name();
@@ -364,17 +370,23 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             //Logger().debugStream() << " ... arrived at system: " << cur_system->Name();
 
 
-            bool clearExit = cur_system->ID() == m_arrival_starlane; //just half the test for the moment
+            bool clear_exit = cur_system->ID() == m_arrival_starlane; //just part of the test for the moment
             // attempt to get next system on route, to update next system.  if new current
             // system is the end of the route, abort.
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
                 next_system = GetEmpireKnownSystem(*route_it, owner);
-                clearExit = clearExit || (next_system && next_system->ID() == m_arrival_starlane);
+                if (next_system) {
+                    //Logger().debugStream() << "Fleet::MovePath checking unrestriced lane travel";
+                    clear_exit = clear_exit || (next_system && next_system->ID() == m_arrival_starlane) ||
+                    (empire && empire->UnrestrictedLaneTravel(cur_system->ID(), next_system->ID()));
+                }
             }
-            if (flag_blockades && !clearExit) {
-                if (BlockadedAtSystem(cur_system->ID(), false)) {
+            if (flag_blockades && !clear_exit) {
+                //Logger().debugStream() <<   "Fleet::MovePath checking blockades at system "<<cur_system->Name() << " ("<<cur_system->ID() <<
+                //                            ") for fleet " << this->Name() <<" travelling to system "<< (*route_it);
+                if (BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                     // blockade debug logging
                     //Logger().debugStream() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                     //                            ") blockaded for fleet " << this->Name();
@@ -399,9 +411,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // if new position is an obstructed system, must end turn here
         // on client side, if have stale info on cur_system it may appear blockaded even if not actually obstructed,
         // and so will force a stop in that situation
-        if ((cur_system && unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end()) ||
-            (cur_system && BlockadedAtSystem(cur_system->ID())) )
-        {
+        if (cur_system && (unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end())) {
             turn_dist_remaining = 0.0;
             end_turn_at_cur_position = true;
         }
@@ -450,6 +460,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                            (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                            (next_system ? next_system->ID() : INVALID_OBJECT_ID), isPostBlockade);
     retval.push_back(final_pos);
+    //Logger().debugStream() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" is complete";
 
     return retval;
 }
@@ -630,6 +641,7 @@ UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Fleet* const>(this)); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
+    //Logger().debugStream() << "Fleet::SetRoute() ";
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
 
@@ -648,6 +660,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     m_travel_distance = 0.0;
     for (std::list<int>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it) {
         std::list<int>::const_iterator next_it = it;    ++next_it;
+        //Logger().debugStream() << "Fleet::SetRoute() new route has system id " << *it;
 
         if (next_it == m_travel_route.end())
             break;  // current system is the last on the route, so don't need to add any additional distance.
@@ -674,7 +687,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     if (SystemID() != INVALID_OBJECT_ID && SystemID() == m_travel_route.back()) {
         m_moving_to = INVALID_OBJECT_ID;
         m_next_system = INVALID_OBJECT_ID;
-        m_prev_system = INVALID_OBJECT_ID;
+        //m_prev_system = INVALID_OBJECT_ID;
 
     } else {
         // if we're already moving, add in the distance from where we are to the first system in the route
@@ -805,6 +818,9 @@ void Fleet::MovementPhase() {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
     Empire* empire = Empires().Lookup(this->Owner());
+    std::set<int> supply_unobstructed_systems;
+    if (empire)
+        supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(), empire->SupplyUnobstructedSystems().end());
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
@@ -826,29 +842,37 @@ void Fleet::MovementPhase() {
     if (next_it != move_path.end())
         ++next_it;
 
+    //Logger().debugStream() << "Fleet::MovementPhase for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at system ("<<SystemID()<<")";
 
     // is the ship stuck in a system for a whole turn?
     if (current_system) {
         ///update m_arrival_starlane if no blockade, if needed
         // blockade debug logging
         //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at current_system " << current_system->Name() << "("<<SystemID()<<")";
-        if (!BlockadedAtSystem(SystemID()) && m_arrival_starlane != SystemID() ) {
-            //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at current_system " << current_system->Name() << "("<<SystemID()<<")";
-            m_arrival_starlane = SystemID();//allows departure via any starlane
+        if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
+                //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at current_system " << current_system->Name() << "("<<SystemID()<<")";
+                m_arrival_starlane = SystemID();//allows departure via any starlane
         }
-
         // in a system.  if there is no system after the current one in the
         // path, or the current and next nodes have the same system id, that
         // is an actual system,  or if blockaded from intended path, then won't be moving this turn.
-        if ((next_it == move_path.end()) ||
-            ((m_arrival_starlane != SystemID()) && ( (next_it->object_id != INVALID_OBJECT_ID && next_it->object_id != m_arrival_starlane) ||
-            (next_it->lane_end_id != INVALID_OBJECT_ID && next_it->lane_end_id != m_arrival_starlane) ) ) ||
-            (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) )
-        {
-            if ((m_arrival_starlane != SystemID()) && (m_arrival_starlane != next_it->lane_end_id)) {
-                //Logger().debugStream() << "Fleet::MovementPhase delaying Fleet "<< ID() << " at system " << current_system->Name() <<
-                //        "("<<SystemID()<<") with next system id " << next_it->object_id << " and m_arrival_starlane "<< m_arrival_starlane;
+        bool stopped = false;
+        if (next_it == move_path.end()) {
+            stopped = true;
+        } else if (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) {
+            stopped = true;
+            //Logger().debugStream() << "Fleet::MovementPhase stopping due to doubled system at start of path";
+        } else if (m_arrival_starlane != SystemID()) {
+            int next_sys_id;
+            if (next_it->object_id != INVALID_OBJECT_ID) {
+                next_sys_id = next_it->object_id;
+            } else {
+                next_sys_id = next_it->lane_end_id;
             }
+            stopped = BlockadedAtSystem(SystemID(), next_sys_id);
+        }
+
+        if (stopped) {
             // fuel regeneration for ships in stationary fleet
             if (this->FinalDestinationID() == INVALID_OBJECT_ID ||
                 this->FinalDestinationID() == this->SystemID())
@@ -862,6 +886,9 @@ void Fleet::MovementPhase() {
                 }
             }
             return;
+        } else {
+            m_arrival_starlane = SystemID();
+            m_prev_system = SystemID();
         }
     }
 
@@ -893,8 +920,10 @@ void Fleet::MovementPhase() {
 
         if (system) {
             // node is a system.  explore system for all owners of this fleet
-            if (empire)
+            if (empire) {
                 empire->AddExploredSystem(it->object_id);
+                empire->RecordPendingLaneUpdate(it->object_id, m_prev_system);  // specifies the lane from it->object_id back to m_prev_system is available
+            }
 
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
@@ -917,7 +946,7 @@ void Fleet::MovementPhase() {
                 current_system = system;
                 // blockade debug logging
                 //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at next stop node system " << current_system->Name() << "("<<SystemID()<<")";
-                if (!BlockadedAtSystem(system->SystemID())) {
+                if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
                     m_arrival_starlane = SystemID();//allows departure via any starlane
                     //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at (next stop node) system " << system->Name() << "("<<system->ID()<<")";
                 }
@@ -1129,27 +1158,41 @@ void Fleet::CalculateRoute() const {
     }
 }
 
-bool Fleet::BlockadedAtSystem(int systemID, bool preCombat) const {
+bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     /** If a newly arrived fleet joins a non-blockaded fleet of the same empire (perhaps should include allies?)
      * already at the system, the newly arrived fleet will not be blockaded.  Additionally, 
      * since fleets are blockade-checked at movement phase and also postcombat, the following tests mean
      * that post-compbat, this fleet will be blockaded iff it was blockaded pre-combat AND there are armed 
-     * aggressive enemies surviving in system post-combat which can detect this fleet **/
+     * aggressive enemies surviving in system post-combat which can detect this fleet.  Fleets arriving at the
+     * same time do not blockade each other. Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) 
+     * is used as a proxy for order of arrival -- if an enemy has unrestricted l*ane access and you don't, 
+     * they must have arrived before you, or be in cahoots with someone who did. */
 
-    return false; 
-    /*
-
-    if (m_arrival_starlane == systemID) {
-        Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << systemID << ")";
+    if (m_arrival_starlane == start_system_id) {
+        //Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
         return false;
     }
+    bool not_yet_in_system = SystemID() != start_system_id;
 
     // find which empires have blockading aggressive armed ships in system; fleets that just arrived do not 
     // blockade by themselves, but may reinforce a preexisting blockade, and may possibly contribute to detection
-    System* current_system = GetSystem(systemID);
+    System* current_system = GetSystem(start_system_id);
     if (!current_system) {
-        Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << systemID << ") but can't retrieve system copy";
+        Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;
+    }
+
+    EmpireManager& manager = Empires();
+    const Empire* empire = manager.Lookup(this->Owner());
+    if (empire) {  
+        std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
+        if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
+            return false;
+        if (empire->UnrestrictedLaneTravel(start_system_id, dest_system_id)) {
+            return false;
+        } else {
+            //Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
+        }
     }
 
     float lowestShipStealth = 99999;
@@ -1160,8 +1203,6 @@ bool Fleet::BlockadedAtSystem(int systemID, bool preCombat) const {
     }
 
     std::vector<int> system_fleet_ids = current_system->FindObjectIDs<Fleet>();
-    Logger().debugStream() <<   "Fleet::BlockadedAtSystem fleet " << ID() << " considers system " << current_system->Name() << " (" <<
-                                systemID << ") with " << system_fleet_ids.size() << " total fleets apparently present" ;
 
     float monsterDetection = 0;
     for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
@@ -1169,99 +1210,43 @@ bool Fleet::BlockadedAtSystem(int systemID, bool preCombat) const {
         if (!fleet->Unowned())
             continue;
         for (std::set<int>::const_iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ++ship_it) {
-            const Ship* ship = GetShip(*ship_it);
-            if ((ship) && ship->CurrentMeterValue(METER_DETECTION) >= monsterDetection)
-                monsterDetection = ship->CurrentMeterValue(METER_DETECTION);
+            if (const Ship* ship = GetShip(*ship_it)){
+                float curDetect = ship->CurrentMeterValue(METER_DETECTION);
+                if (curDetect >= monsterDetection)
+                    monsterDetection = curDetect;
+            }
         }
     }
 
     bool canBeBlockaded = false;
-    int tryingToLeave = 0;
-    int othersPresent = 0;
-    int nonaggressive = 0;
-    int unarmed = 0;
-    int newArrival = 0;
-    int notAtWar = 0;
-    int cantSee = 0;
-    int blockadedBy = INVALID_OBJECT_ID;
-    EmpireManager& manager = Empires();
     for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
         const Fleet* fleet = GetFleet(*fleet_it);
-        if (!fleet)
+        if (!fleet || (fleet->NextSystemID() != INVALID_OBJECT_ID)) //fleets trying to leave this turn can't blockade pre-combat.
             continue;
-        bool justArrived = fleet->ArrivedThisTurn() && (this->Unowned() || (fleet->Name() != "" ) || // Name() != "" iff current app is server, or owner client
-            (GetUniverse().GetObjectVisibilityByEmpire(*fleet_it, this->Owner()) >= VIS_BASIC_VISIBILITY ) ); //keep consistent with Fleet::Copy()
-        int empireDetection = 0;
-        if (!fleet->Unowned()) {
-            empireDetection = manager.Lookup(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current();
-        } else {
-            empireDetection = monsterDetection;
-        }
-        if ( preCombat && (fleet->NextSystemID() != INVALID_OBJECT_ID) ) { //fleets trying to leave this turn can't blockade pre-combat.
-            if (fleet->Owner() != this->Owner()) {
-                Logger().debugStream() << "Fleet::BlockadedAtSystem other fleet " << fleet->ID() << " trying to leave to system (" << fleet->NextSystemID()<<")";
-                tryingToLeave++;
-                othersPresent++;
-            }
-            continue;
-        }
+        bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
         if  (fleet->Owner() == this->Owner()) {
-            if (fleet->m_arrival_starlane == systemID) { // perhaps should consider allies 
-                Logger().debugStream() <<   "Fleet::BlockadedAtSystem Fleet "<< ID() << " not blockaded at system " << current_system->Name() <<
-                                            "(" << systemID << ") due to non-blockaded fleet (" << fleet->ID() << ") already present";
+            if (unrestricted)  // perhaps should consider allies 
                 return false;
-            }
             continue;
         }
-        bool diplo = ( Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR );
-        bool canSee = empireDetection >= lowestShipStealth;
-        Logger().debugStream() <<   "Fleet::BlockadedAtSystem ... considering Fleet " << ID() << "noting other Fleet "<< fleet->ID() <<
-                                    ", aggression " << fleet->Aggressive() << ", armed " << fleet->HasArmedShips() << ", justArrived " << 
-                                    fleet->ArrivedThisTurn() << ", apparently just_arrived " << justArrived << ", diplo-war " << 
-                                    diplo << ", canSee " << canSee;
-        if (!canSee)
-            Logger().debugStream() <<   "Fleet::BlockadedAtSystem ... other fleet w/ detection " << empireDetection << 
-                                        " can't see this fleet w/ stealth " << lowestShipStealth;
-
-        othersPresent++;
-        if ((fleet->Aggressive() || fleet->Unowned() ) && fleet->HasArmedShips()  && (!preCombat || !justArrived)) {
-            if ((this->Unowned() || fleet->Unowned() || ( Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR )) && canSee ) {
-                canBeBlockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
-                blockadedBy = (*fleet_it);
-            } else if( !this->Unowned() && !fleet->Unowned() && 
-                ( Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) != DIPLO_WAR ) ) 
-            {
-                notAtWar++;
-            } else if ( !canSee ) {
-                cantSee++;
-            }
-        } else if (!(fleet->Aggressive() || fleet->Unowned())) {
-            nonaggressive++;
-        } else if (!fleet->HasArmedShips()) {
-            unarmed ++;
-        } else if ( (preCombat && justArrived)) {
-            newArrival++;
+        bool can_see;
+        if (!fleet->Unowned()) {
+            can_see = (manager.Lookup(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
+        } else {
+            can_see = (monsterDetection >= lowestShipStealth);
         }
+        bool at_war = Unowned() || fleet->Unowned() || Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR ;
+        bool aggressive = (fleet->Aggressive() || fleet->Unowned() );
+
+        if (aggressive && fleet->HasArmedShips() && at_war && can_see && (unrestricted || not_yet_in_system))
+            canBeBlockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
     }
     if (canBeBlockaded) {
-        int blocker_vis = int( GetUniverse().GetObjectVisibilityByEmpire(blockadedBy, this->Owner()) );
-        Logger().debugStream() << "Fleet::BlockadedAtSystem Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< 
-            " blockaded at system " << current_system->Name() << "("<<systemID<<") by enemy fleet ("<< (blockadedBy) << 
-            ") for which this fleet has visibility("<<blocker_vis<<"), next travel destinatino is system (" << NextSystemID();
         return true;
     }
-    if (othersPresent||tryingToLeave) {
-        Logger().debugStream() << "Fleet::BlockadedAtSystem precombat (" << preCombat << ") Fleet " << ID() << " with m_arrival_lane " << 
-                m_arrival_starlane << " not blockaded at system " << current_system->Name() << "(" << systemID << ") despite " << 
-                othersPresent << " other fleets present, " << nonaggressive << " nonaggressive, " << unarmed << " unarmed, " << 
-                newArrival << " new arrivals, " << notAtWar << " not at war, " << cantSee << " can't see present fleet, " <<
-                tryingToLeave << " trying to leave system pre-combat.";
-    } else {
-        Logger().debugStream() << "Fleet::BlockadedAtSystem Fleet "<< ID() << " finds system " << current_system->Name() << " empty";
-    }
     return false;
-    */
-}
+
+} 
 
 double Fleet::Speed() const {
     if (m_ships.empty())

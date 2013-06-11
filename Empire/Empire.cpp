@@ -1474,6 +1474,22 @@ void Empire::UpdateSystemSupplyRanges() {
     UpdateSystemSupplyRanges(known_objects_set);
 }
 
+void Empire::UpdateUnobstructedFleets() {
+    const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    for (std::set<int>::const_iterator sys_it = m_supply_unobstructed_systems.begin(); sys_it != m_supply_unobstructed_systems.end(); ++sys_it) {
+        const System* system = GetSystem(*sys_it);
+        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); fleet_it++) {
+            if (known_destroyed_objects.find(*fleet_it) == known_destroyed_objects.end()) {
+                if (Fleet* fleet = GetFleet(*fleet_it) ) {
+                    if (fleet->OwnedBy(m_id))
+                        fleet->SetArrivalStarlane(*sys_it);
+                }
+            }
+        }
+    }
+}
+
 void Empire::UpdateSupplyUnobstructedSystems() {
     Universe& universe = GetUniverse();
 
@@ -1506,9 +1522,21 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     const std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    // find systems that contain friendly fleets or objects that can block supply
+    // find systems that contain fleets that can either maintaining supply or block supply
+    // to affect supply in either manner a fleet must be armed & aggressive, & must be not 
+    // trying to depart the systme.  Qualifying enemy fleets will blockade if no friendly fleets
+    // are present, or if the friendly fleets were already blockade-restricted and the enemy
+    // fleets were not (meaning that the enemy fleets were continuing an existing blockade)
+    // Friendly fleets can preserve available starlane accesss even if they are trying to leave the system
+
+    // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
+    // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
+    // before you, or be in cahoots with someone who did.
     std::set<int> systems_containing_friendly_fleets;
+    std::set<int> systems_with_lane_preserving_fleets;
+    std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
+    std::set<int> unrestricted_obstruction_systems;
     for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* fleet = *it;
         int system_id = fleet->SystemID();
@@ -1516,16 +1544,28 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             continue;   // not in a system, so can't affect system obstruction
         } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
-        } else if (fleet->OwnedBy(m_id) && fleet->HasArmedShips() && fleet->Aggressive()) {
-            systems_containing_friendly_fleets.insert(system_id);
-        } else if (fleet->HasArmedShips() && fleet->Aggressive()) {
-            int fleet_owner = fleet->Owner();
-            if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR)
-                systems_containing_obstructing_objects.insert(system_id);
+        }
+        if (fleet->HasArmedShips() && fleet->Aggressive()) {
+            if (fleet->OwnedBy(m_id)) {
+                if (fleet->NextSystemID()==INVALID_OBJECT_ID) {
+                    systems_containing_friendly_fleets.insert(system_id);
+                    if (fleet->ArrivalStarlane()==system_id)
+                        unrestricted_friendly_systems.insert(system_id);
+                } else {
+                    systems_with_lane_preserving_fleets.insert(system_id);
+                }
+            } else if (fleet->NextSystemID()==INVALID_OBJECT_ID) {
+                int fleet_owner = fleet->Owner();
+                if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
+                    systems_containing_obstructing_objects.insert(system_id);
+                    if (fleet->ArrivalStarlane()==system_id)
+                        unrestricted_obstruction_systems.insert(system_id);
+                }
+            }
         }
     }
 
-    // check each potential supplyable system for whether it can propegate supply.
+    // check each potential supplyable system for whether it can propagate supply.
     for (std::set<int>::const_iterator known_systems_it = known_systems.begin(); known_systems_it != known_systems.end(); ++known_systems_it) {
         int sys_id = *known_systems_it;
 
@@ -1533,20 +1573,58 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) == systems_with_at_least_partial_visibility_at_some_point.end())
             continue;
 
-        // if system is explored, then whether it can propegate supply depends
+        // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships are in the system
 
-        if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()) {
-            // if there are friendly ships, supply can propegate
+        if (unrestricted_friendly_systems.find(sys_id) != unrestricted_friendly_systems.end()) 
+        {
+            // if there are unrestricted friendly ships, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
+        } else if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()) {
+            if (unrestricted_obstruction_systems.find(sys_id) == unrestricted_obstruction_systems.end()) {
+                // if there are (previously) restricted friendly ships, and no unrestricted enemy fleets, supply can propagate
+                m_supply_unobstructed_systems.insert(sys_id);
+            }
         } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
             // if there are no friendly ships and no enemy ships, supply can propegate
             m_supply_unobstructed_systems.insert(sys_id);
-        }
-        // otherwise, system contains no friendly fleets but does contain an
+        } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
+        // otherwise, if system contains no friendly fleets capable of maintaining lane access but does contain an
         // unfriendly fleet, so it is obstructed, so isn't included in the
-        // unobstructed systems set
+        // unobstructed systems set.  Furthermore, this empire's available 
+        // system exit lanes for this system are cleared
+            if (!m_available_system_exit_lanes[sys_id].empty()) {
+                //Logger().debugStream() << "Empire::UpdateSupplyUnobstructedSystems clearing available lanes for system ("<<sys_id<<"); available lanes were:";
+                //for (std::set<int>::iterator lane_it = m_available_system_exit_lanes[sys_id].begin(); lane_it != m_available_system_exit_lanes[sys_id].end(); lane_it++)
+                //    Logger().debugStream() << "...... "<< *lane_it;
+                m_available_system_exit_lanes[sys_id].clear();
+            }
+        }
     }
+}
+
+void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
+    if (m_supply_unobstructed_systems.find(start_system_id) == m_supply_unobstructed_systems.end()) {
+        //Logger().debugStream() << "Empire::UpdateAvailableLane for system ("<< start_system_id <<") adding lane to ("<<dest_system_id <<")";
+        m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
+    } else { // if the system is unobstructed, mark all its lanes as avilable
+        //Logger().debugStream() << "Empire::UpdateAvailableLane for system ("<< start_system_id <<") adding all lanes";
+        const System* system = GetSystem(start_system_id);
+        for (System::const_lane_iterator lane_it = system->begin_lanes(); lane_it != system->end_lanes(); lane_it++) {
+            m_pending_system_exit_lanes[start_system_id].insert(lane_it->first); // will add both starlanes and wormholes
+            //Logger().debugStream() << "..... lane "<< lane_it->first;
+        }
+    }
+}
+
+void Empire::UpdateAvailableLanes() {
+    for (std::map<int, std::set<int> >::iterator sys_it = m_pending_system_exit_lanes.begin(); 
+         sys_it != m_pending_system_exit_lanes.end(); sys_it++)
+    {
+        m_available_system_exit_lanes[sys_it->first].insert(sys_it->second.begin(), sys_it->second.end());
+        sys_it->second.clear();
+    }
+    m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
 }
 
 void Empire::UpdateSupply()
@@ -1761,7 +1839,7 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 const std::set<std::pair<int, int> >& Empire::SupplyStarlaneTraversals() const
 { return m_supply_starlane_traversals; }
 
-const std::set<std::pair<int, int> >& Empire::SupplyOstructedStarlaneTraversals() const
+const std::set<std::pair<int, int> >& Empire::SupplyObstructedStarlaneTraversals() const
 { return m_supply_starlane_obstructed_traversals; }
 
 const std::set<int>& Empire::FleetSupplyableSystemIDs() const
@@ -1772,6 +1850,15 @@ bool Empire::SystemHasFleetSupply(int system_id) const {
         return false;
     if (m_fleet_supplyable_system_ids.find(system_id) != m_fleet_supplyable_system_ids.end())
         return true;
+    return false;
+}
+
+const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const {
+    std::map<int, std::set<int> >::const_iterator find_it = m_available_system_exit_lanes.find(start_system_id);
+    if (find_it != m_available_system_exit_lanes.end() ) {
+        if (find_it->second.find(dest_system_id) != find_it->second.end())
+            return true;
+    }
     return false;
 }
 

@@ -109,6 +109,10 @@ public:
       * updating the universe after the results are available. */
     void    ProcessCombats();
 
+    /** Used post combat, to selectively clear the m_arrival_starlane flag of monsters
+     *  so that they can impose blockades */
+    void UpdateMonsterTravelRestrictions();
+
     /** Determines resource and supply distribution pathes and connections,
       * updates research, production, trade spending,
       * does population growth, updates current turn number, checks for

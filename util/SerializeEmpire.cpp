@@ -93,6 +93,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
         & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
         & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
+        & BOOST_SERIALIZATION_NVP(m_available_system_exit_lanes)
         & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
         & BOOST_SERIALIZATION_NVP(m_resource_supply_groups);
 

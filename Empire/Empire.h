@@ -349,7 +349,7 @@ public:
     /** Returns set of directed starlane traversals along which supply could
       * flow for this empire, but which can't due to some obstruction in one
       * of the systems. */
-    const std::set<std::pair<int, int> >&   SupplyOstructedStarlaneTraversals() const;
+    const std::set<std::pair<int, int> >&   SupplyObstructedStarlaneTraversals() const;
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
@@ -357,6 +357,8 @@ public:
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups of this empire. */
     bool                                    SystemHasFleetSupply(int system_id) const;
+    /** Returns true if the start system is known to this empire and travel to the dest system is not restricted by blockade */
+    const bool                              UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const;
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
     const std::set<std::set<int> >&         ResourceSupplyGroups() const;
@@ -470,6 +472,13 @@ public:
     /** Calculates systems that can propegate supply using this empire's own /
       * internal list of explored systems. */
     void        UpdateSupplyUnobstructedSystems();
+    /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not blockaded post-combat 
+     *  must be done after *all* noneliminated empires have updated their unobstructed systems* */
+    void        UpdateUnobstructedFleets();
+    /** Records, in a list of pending updates, the start_system exit lane to the specified destination as accessible to this empire*/
+    void        RecordPendingLaneUpdate(int start_system_id, int dest_system_id);
+    /** Processes all the pending lane access updates.  This is managed as a two step process to avoid order-of-processing issues. */
+    void        UpdateAvailableLanes();
     /** Calculates systems at which fleets of this empire can be supplied, and
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so, using the indicated \a starlanes but subject
@@ -590,6 +599,8 @@ private:
     std::set<int>                   m_supply_unobstructed_systems;          ///< ids of system that don't block supply from flowing
     std::set<std::pair<int, int> >  m_supply_starlane_traversals;           ///< ordered pairs of system ids between which a starlane runs that can be used to convey resources between systems
     std::set<std::pair<int, int> >  m_supply_starlane_obstructed_traversals;///< ordered pairs of system ids between which a starlane could be used to convey resources between system, but is not because something is obstructing the resource flow.  That is, the resource flow isn't limited by range, but by something blocking its flow.
+    std::map<int, std::set<int> >   m_available_system_exit_lanes;          ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
+    std::map<int, std::set<int> >   m_pending_system_exit_lanes;            ///< pending updates to m_available_system_exit_lanes
     std::set<int>                   m_fleet_supplyable_system_ids;          ///< ids of systems where fleets can remain for a turn to be resupplied.
     std::set<std::set<int> >        m_resource_supply_groups;               ///< sets of system ids that are connected by supply lines and are able to share resources between systems or between objects in systems
 
