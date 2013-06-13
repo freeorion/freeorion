@@ -1,6 +1,7 @@
 #include "EncyclopediaDetailPanel.h"
 
 #include "CUIControls.h"
+#include "../universe/Condition.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
 #include "../universe/ShipDesign.h"

@@ -4,7 +4,6 @@
 
 #include "Enums.h"
 #include "Universe.h"
-#include "Condition.h"
 
 #include "../util/AppInterface.h"
 
@@ -17,6 +16,9 @@
 #include <map>
 #include <set>
 
+namespace Condition {
+    struct ConditionBase;
+}
 namespace Effect {
     class EffectsGroup;
 }
@@ -39,12 +41,7 @@ public:
     {}
     /** basic ctor */
     FocusType(const std::string& name, const std::string& description,
-              const Condition::ConditionBase* location, const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_location(location),
-        m_graphic(graphic)
-    {}
+              const Condition::ConditionBase* location, const std::string& graphic);
     //@}
 
     /** \name Accessors */ //@{

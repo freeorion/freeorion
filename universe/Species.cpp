@@ -18,6 +18,14 @@ extern int g_indent;
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////
+FocusType::FocusType(const std::string& name, const std::string& description,
+                     const Condition::ConditionBase* location, const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_location(location),
+    m_graphic(graphic)
+{}
+
 std::string FocusType::Dump() const {
     std::string retval = DumpIndent() + "FocusType\n";
     ++g_indent;
