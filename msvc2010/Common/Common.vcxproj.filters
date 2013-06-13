@@ -238,6 +238,9 @@
     <ClInclude Include="..\..\combat\CombatLogManager.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\ScopedTimer.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -437,6 +440,9 @@
     </ClCompile>
     <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
       <Filter>Source Files\adobe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\ScopedTimer.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,6 +32,7 @@
 #include "../util/Order.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
+#include "../util/ScopedTimer.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"

@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
+#include "../util/ScopedTimer.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"

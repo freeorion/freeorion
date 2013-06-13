@@ -14,6 +14,7 @@
 #include "../universe/Species.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
+#include "../util/ScopedTimer.h"
 #ifdef FREEORION_BUILD_SERVER
 #  include "../server/ServerApp.h"
 #endif

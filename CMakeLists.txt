@@ -177,6 +177,7 @@ add_library(core STATIC
     util/SerializeOrderSet.cpp
     util/SerializePathingEngine.cpp
     util/SerializeUniverse.cpp
+    util/ScopedTimer.cpp
     util/SitRepEntry.cpp
     util/StringTable.cpp
     util/binreloc.c

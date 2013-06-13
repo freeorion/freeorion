@@ -4,6 +4,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/ScopedTimer.h"
 #include "../util/Random.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"

@@ -11,6 +11,7 @@
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"

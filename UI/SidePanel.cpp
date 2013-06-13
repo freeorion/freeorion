@@ -27,6 +27,7 @@
 #include "../util/XMLDoc.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
+#include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
