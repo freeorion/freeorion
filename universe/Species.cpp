@@ -10,11 +10,6 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-std::string DumpIndent();
-
-extern int g_indent;
-
-
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////

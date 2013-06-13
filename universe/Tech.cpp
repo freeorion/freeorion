@@ -14,10 +14,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-std::string DumpIndent();
-
-extern int g_indent;
-
 namespace {
     const bool CHEAP_AND_FAST_TECH_RESEARCH = false;    // makes all techs cost 1 RP and take 1 turn to research
 }

@@ -321,11 +321,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** A function that returns the correct amount of spacing for the current
-  * indentation level during a dump.  Note that this function is used by
-  * several units (Condition.cpp, Effect.cpp, etc.), not just this one. */
-std::string DumpIndent();
-
 namespace ValueRef {
     std::string ReconstructName(const std::vector<adobe::name_t>& property_name,
                                 ReferenceType ref_type);

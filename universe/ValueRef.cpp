@@ -20,8 +20,6 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-int g_indent = 0;
-
 namespace {
     const UniverseObject* FollowReference(std::vector<adobe::name_t>::const_iterator first,
                                           std::vector<adobe::name_t>::const_iterator last,
@@ -906,6 +904,3 @@ namespace ValueRef {
         }
     }
 }
-
-std::string DumpIndent()
-{ return std::string(g_indent * 4, ' '); }

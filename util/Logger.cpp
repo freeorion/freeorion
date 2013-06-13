@@ -7,6 +7,11 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+int g_indent = 0;
+
+std::string DumpIndent()
+{ return std::string(g_indent * 4, ' '); }
+
 void InitLogger(const std::string& logFile, const std::string& pattern)
 {
     // a platform-independent way to erase the old log

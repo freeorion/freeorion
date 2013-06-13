@@ -11,6 +11,12 @@ void InitLogger(const std::string& logFile, const std::string& pattern);
 /** Accessor for the App's logger */
 log4cpp::Category& Logger();
 
+extern int g_indent;
+
+/** A function that returns the correct amount of spacing for the current
+  * indentation level during a dump. */
+std::string DumpIndent();
+
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
 int PriorityValue(const std::string& name);
 

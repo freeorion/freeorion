@@ -15,10 +15,6 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-std::string DumpIndent();
-
-extern int g_indent;
-
 namespace {
     boost::shared_ptr<const Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
