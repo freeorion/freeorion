@@ -221,20 +221,20 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
 
 // explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
-void System::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE& ar, const unsigned int version);
+void System::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version);
 
 // explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
-void System::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE& ar, const unsigned int version);
+void System::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version);
 
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe)
+void Serialize(freeorion_oarchive& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>& objects)
+void Serialize(freeorion_oarchive& oa, const std::map<int, UniverseObject*>& objects)
 { oa << BOOST_SERIALIZATION_NVP(objects); }
 
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe)
+void Deserialize(freeorion_iarchive& ia, Universe& universe)
 { ia >> BOOST_SERIALIZATION_NVP(universe); }
 
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& objects)
+void Deserialize(freeorion_iarchive& ia, std::map<int, UniverseObject*>& objects)
 { ia >> BOOST_SERIALIZATION_NVP(objects); }

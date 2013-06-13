@@ -21,8 +21,8 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ai_aggr);
 }
 
-template void GalaxySetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void GalaxySetupData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void GalaxySetupData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void GalaxySetupData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
@@ -33,8 +33,8 @@ void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_players);
 }
 
-template void SinglePlayerSetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void SinglePlayerSetupData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void SinglePlayerSetupData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void SinglePlayerSetupData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
@@ -45,8 +45,8 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(fleets_exploring);
 }
 
-template void SaveGameUIData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void SaveGameUIData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void SaveGameUIData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void SaveGameUIData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
@@ -57,8 +57,8 @@ void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_color);
 }
 
-template void SaveGameEmpireData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void SaveGameEmpireData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void SaveGameEmpireData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void SaveGameEmpireData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
@@ -71,8 +71,8 @@ void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_client_type);
 }
 
-template void PlayerSetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void PlayerSetupData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void PlayerSetupData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void PlayerSetupData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
@@ -85,8 +85,8 @@ void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
 }
 
-template void MultiplayerLobbyData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void MultiplayerLobbyData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void MultiplayerLobbyData::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void MultiplayerLobbyData::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void PlayerInfo::serialize(Archive& ar, const unsigned int version)
@@ -97,8 +97,8 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(host);
 }
 
-template void PlayerInfo::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void PlayerInfo::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void PlayerInfo::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void PlayerInfo::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void CombatData::save(Archive & ar, const unsigned int version) const
@@ -120,8 +120,8 @@ void CombatData::load(Archive & ar, const unsigned int version)
     PathingEngine::s_combat_universe = 0;
 }
 
-template void CombatData::save<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int) const;
-template void CombatData::load<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void CombatData::save<freeorion_oarchive>(freeorion_oarchive&, const unsigned int) const;
+template void CombatData::load<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void CombatSetupRegion::serialize(Archive & ar, const unsigned int version)
@@ -136,8 +136,8 @@ void CombatSetupRegion::serialize(Archive & ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_theta_end);
 }
 
-template void CombatSetupRegion::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void CombatSetupRegion::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void CombatSetupRegion::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void CombatSetupRegion::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void CombatSetupGroup::serialize(Archive & ar, const unsigned int version)
@@ -147,5 +147,5 @@ void CombatSetupGroup::serialize(Archive & ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_allow);
 }
 
-template void CombatSetupGroup::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void CombatSetupGroup::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void CombatSetupGroup::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void CombatSetupGroup::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);

@@ -18,8 +18,8 @@ template <class Archive>
 void Moderator::ModeratorAction::serialize(Archive& ar, const unsigned int version)
 {}
 
-template void Moderator::ModeratorAction::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::ModeratorAction::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::ModeratorAction::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::ModeratorAction::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::DestroyUniverseObject::serialize(Archive& ar, const unsigned int version)
@@ -28,8 +28,8 @@ void Moderator::DestroyUniverseObject::serialize(Archive& ar, const unsigned int
         & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
-template void Moderator::DestroyUniverseObject::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::DestroyUniverseObject::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::DestroyUniverseObject::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::DestroyUniverseObject::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::SetOwner::serialize(Archive& ar, const unsigned int version)
@@ -39,8 +39,8 @@ void Moderator::SetOwner::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_owner_empire_id);
 }
 
-template void Moderator::SetOwner::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::SetOwner::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::SetOwner::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::SetOwner::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::AddStarlane::serialize(Archive& ar, const unsigned int version)
@@ -50,8 +50,8 @@ void Moderator::AddStarlane::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_id_2);
 }
 
-template void Moderator::AddStarlane::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::AddStarlane::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::AddStarlane::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::AddStarlane::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::RemoveStarlane::serialize(Archive& ar, const unsigned int version)
@@ -61,8 +61,8 @@ void Moderator::RemoveStarlane::serialize(Archive& ar, const unsigned int versio
         & BOOST_SERIALIZATION_NVP(m_id_2);
 }
 
-template void Moderator::RemoveStarlane::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::RemoveStarlane::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::RemoveStarlane::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::RemoveStarlane::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::CreateSystem::serialize(Archive& ar, const unsigned int version)
@@ -73,8 +73,8 @@ void Moderator::CreateSystem::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_star_type);
 }
 
-template void Moderator::CreateSystem::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::CreateSystem::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::CreateSystem::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::CreateSystem::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Moderator::CreatePlanet::serialize(Archive& ar, const unsigned int version)
@@ -85,5 +85,5 @@ void Moderator::CreatePlanet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_planet_size);
 }
 
-template void Moderator::CreatePlanet::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Moderator::CreatePlanet::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Moderator::CreatePlanet::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Moderator::CreatePlanet::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);

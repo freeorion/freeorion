@@ -8,13 +8,13 @@
 #if FREEORION_BINARY_SERIALIZATION
 #  include <boost/archive/binary_iarchive.hpp>
 #  include <boost/archive/binary_oarchive.hpp>
-#  define FREEORION_IARCHIVE_TYPE boost::archive::binary_iarchive
-#  define FREEORION_OARCHIVE_TYPE boost::archive::binary_oarchive
+typedef boost::archive::binary_iarchive freeorion_iarchive;
+typedef boost::archive::binary_oarchive freeorion_oarchive;
 #else
 #  include <boost/archive/xml_iarchive.hpp>
 #  include <boost/archive/xml_oarchive.hpp>
-#  define FREEORION_IARCHIVE_TYPE boost::archive::xml_iarchive
-#  define FREEORION_OARCHIVE_TYPE boost::archive::xml_oarchive
+typedef boost::archive::xml_iarchive freeorion_iarchive;
+typedef boost::archive::xml_oarchive freeorion_oarchive;
 #endif
 
 #include <map>
@@ -28,27 +28,27 @@ class UniverseObject;
 // architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
 
 /** Serializes \a universe to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe);
+void Serialize(freeorion_oarchive& oa, const Universe& universe);
 
 /** Serializes \a object_map to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>& objects);
+void Serialize(freeorion_oarchive& oa, const std::map<int, UniverseObject*>& objects);
 
 /** Serializes \a order_set to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set);
+void Serialize(freeorion_oarchive& oa, const OrderSet& order_set);
 
 /** Serializes \a pathing_engine to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine);
+void Serialize(freeorion_oarchive& oa, const PathingEngine& pathing_engine);
 
 /** Deserializes \a universe from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe);
+void Deserialize(freeorion_iarchive& ia, Universe& universe);
 
 /** Serializes \a object_map from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& objects);
+void Deserialize(freeorion_iarchive& ia, std::map<int, UniverseObject*>& objects);
 
 /** Deserializes \a order_set from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set);
+void Deserialize(freeorion_iarchive& ia, OrderSet& order_set);
 
 /** Deserializes \a pathing_engine from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, PathingEngine& pathing_engine);
+void Deserialize(freeorion_iarchive& ia, PathingEngine& pathing_engine);
 
 #endif // _Serialize_h_

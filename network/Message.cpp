@@ -244,7 +244,7 @@ void HeaderToBuffer(const Message& message, int* header_buf) {
 Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(problem)
            << BOOST_SERIALIZATION_NVP(fatal);
     }
@@ -254,7 +254,7 @@ Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
 Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(problem)
            << BOOST_SERIALIZATION_NVP(fatal);
     }
@@ -264,7 +264,7 @@ Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = t
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(setup_data);
     }
     return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
@@ -276,7 +276,7 @@ Message HostMPGameMessage(const std::string& host_player_name)
 Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(player_name)
            << BOOST_SERIALIZATION_NVP(client_type);
     }
@@ -296,7 +296,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
@@ -321,7 +321,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
@@ -353,7 +353,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
@@ -388,7 +388,7 @@ Message JoinAckMessage(int player_id)
 Message TurnOrdersMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         Serialize(oa, orders);
     }
     return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
@@ -397,7 +397,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders) {
 Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(phase_id);
     }
     return Message(Message::TURN_PROGRESS, Networking::INVALID_PLAYER_ID, player_id, os.str());
@@ -406,7 +406,7 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id) 
 Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(about_player_id)
            << BOOST_SERIALIZATION_NVP(player_status);
     }
@@ -420,7 +420,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(current_turn)
            << BOOST_SERIALIZATION_NVP(empires)
@@ -435,7 +435,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
 Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         GetUniverse().EncodingEmpire() = empire_id;
         Serialize(oa, universe);
     }
@@ -445,7 +445,7 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         Serialize(oa, orders);
         bool ui_data_available = true;
         bool save_state_string_available = false;
@@ -459,7 +459,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         Serialize(oa, orders);
         bool ui_data_available = false;
         bool save_state_string_available = true;
@@ -473,7 +473,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::str
 Message ClientSaveDataMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         Serialize(oa, orders);
         bool ui_data_available = false;
         bool save_state_string_available = false;
@@ -514,7 +514,7 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
 Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << diplo_message;
     }
     return Message(Message::DIPLOMACY, sender, receiver, os.str());
@@ -523,7 +523,7 @@ Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& dipl
 Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
            << BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
            << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
@@ -536,7 +536,7 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(victory_or_defeat)
            << BOOST_SERIALIZATION_NVP(reason_string)
            << BOOST_SERIALIZATION_NVP(empire_id);
@@ -547,7 +547,7 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(empire_name);
     }
@@ -559,7 +559,7 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(reason)
            << BOOST_SERIALIZATION_NVP(reason_player_name);
     }
@@ -570,7 +570,7 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
     std::ostringstream os;
     {
         const Moderator::ModeratorAction* mod_action = &action;
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(mod_action);
     }
     return Message(Message::MODERATOR_ACTION, sender, Networking::INVALID_PLAYER_ID, os.str());
@@ -582,7 +582,7 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
 Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
     return Message(Message::LOBBY_UPDATE, sender, Networking::INVALID_PLAYER_ID, os.str());
@@ -591,7 +591,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
 Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
     return Message(Message::LOBBY_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
@@ -613,7 +613,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id,
 {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data)
            << BOOST_SERIALIZATION_NVP(setup_groups)
@@ -625,7 +625,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id,
 Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data);
     }
@@ -638,7 +638,7 @@ Message ServerCombatEndMessage(int receiver)
 Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders) {
     std::ostringstream os;
     {
-        FREEORION_OARCHIVE_TYPE oa(os);
+        freeorion_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(combat_orders);
     }
     return Message(Message::COMBAT_TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
@@ -650,7 +650,7 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(problem)
            >> BOOST_SERIALIZATION_NVP(fatal);
     } catch (const std::exception& err) {
@@ -665,7 +665,7 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(lobby_data);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
@@ -686,7 +686,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(single_player_game)
            >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(current_turn);
@@ -734,7 +734,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_name)
            >> BOOST_SERIALIZATION_NVP(client_type);
     } catch (const std::exception& err) {
@@ -749,7 +749,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
 void ExtractMessageData(const Message& msg, OrderSet& orders) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         Deserialize(ia, orders);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
@@ -768,7 +768,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
     try {
         ScopedTimer timer("Turn Update Unpacking", true);
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         GetUniverse().EncodingEmpire() = empire_id;
         ia >> BOOST_SERIALIZATION_NVP(current_turn)
            >> BOOST_SERIALIZATION_NVP(empires)
@@ -790,7 +790,7 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
         ScopedTimer timer("Mid Turn Update Unpacking", true);
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         GetUniverse().EncodingEmpire() = empire_id;
         Deserialize(ia, universe);
     } catch (const std::exception& err) {
@@ -808,7 +808,7 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         Deserialize(ia, orders);
         ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
         if (ui_data_available)
@@ -830,7 +830,7 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(phase_id);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
@@ -844,7 +844,7 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
 void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(about_player_id)
            >> BOOST_SERIALIZATION_NVP(status);
     } catch (const std::exception& err) {
@@ -859,7 +859,7 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(setup_data);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
@@ -875,7 +875,7 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(reason)
            >> BOOST_SERIALIZATION_NVP(reason_player_name);
     } catch (const std::exception& err) {
@@ -890,7 +890,7 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
 void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(mod_action);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
@@ -903,7 +903,7 @@ void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_act
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(empire_name);
     } catch (const std::exception& err) {
@@ -918,7 +918,7 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
 void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(diplo_message);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
@@ -932,7 +932,7 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
 void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
            >> BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
            >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
@@ -950,7 +950,7 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(victory_or_defeat)
            >> BOOST_SERIALIZATION_NVP(reason_string)
            >> BOOST_SERIALIZATION_NVP(empire_id);
@@ -970,7 +970,7 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(combat_data)
            >> BOOST_SERIALIZATION_NVP(setup_groups)
            >> BOOST_SERIALIZATION_NVP(foreign_designs);
@@ -987,7 +987,7 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
 void ExtractMessageData(const Message& msg, CombatOrderSet& order_set) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(order_set);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatOrderSet& "
@@ -1001,7 +1001,7 @@ void ExtractMessageData(const Message& msg, CombatOrderSet& order_set) {
 void ExtractMessageData(const Message& msg, CombatData& combat_data) {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(combat_data);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
@@ -1017,7 +1017,7 @@ void ExtractMessageData(const Message& msg, System*& system,
 {
     try {
         std::istringstream is(msg.Text());
-        FREEORION_IARCHIVE_TYPE ia(is);
+        freeorion_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(system);
         Deserialize(ia, combat_universe);
     } catch (const std::exception& err) {

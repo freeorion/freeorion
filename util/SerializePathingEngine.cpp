@@ -150,8 +150,8 @@ void PathingEngine::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine)
+void Serialize(freeorion_oarchive& oa, const PathingEngine& pathing_engine)
 { oa << BOOST_SERIALIZATION_NVP(pathing_engine); }
 
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, PathingEngine& pathing_engine)
+void Deserialize(freeorion_iarchive& ia, PathingEngine& pathing_engine)
 { ia >> BOOST_SERIALIZATION_NVP(pathing_engine); }

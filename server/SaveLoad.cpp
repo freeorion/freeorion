@@ -67,7 +67,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         if (!ofs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        FREEORION_OARCHIVE_TYPE oa(ofs);
+        freeorion_oarchive oa(ofs);
         oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
@@ -112,7 +112,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-        FREEORION_IARCHIVE_TYPE ia(ifs);
+        freeorion_iarchive ia(ifs);
         Logger().debugStream() << "LoadGame : Reading Server Save Game Data";
         ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
         Logger().debugStream() << "LoadGame : Reading Player Save Game Data";
@@ -150,7 +150,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-        FREEORION_IARCHIVE_TYPE ia(ifs);
+        freeorion_iarchive ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
         // skipping additional deserialization which is not needed for this function
@@ -177,7 +177,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-        FREEORION_IARCHIVE_TYPE ia(ifs);
+        freeorion_iarchive ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);

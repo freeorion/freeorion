@@ -160,10 +160,10 @@ void AggressiveOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_aggression);
 }
 
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
+void Serialize(freeorion_oarchive& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
 
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set)
+void Deserialize(freeorion_iarchive& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
 
 
@@ -179,8 +179,8 @@ void ShipMission::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_target);
 }
 
-template void ShipMission::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ShipMission::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ShipMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ShipMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void FighterMission::serialize(Archive& ar, const unsigned int version)
@@ -190,8 +190,8 @@ void FighterMission::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_target);
 }
 
-template void FighterMission::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void FighterMission::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void FighterMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void FighterMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void CombatOrder::serialize(Archive& ar, const unsigned int version)
@@ -209,5 +209,5 @@ void CombatOrder::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template void CombatOrder::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void CombatOrder::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void CombatOrder::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void CombatOrder::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);

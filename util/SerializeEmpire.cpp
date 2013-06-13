@@ -16,8 +16,8 @@ void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(turns_left);
 }
 
-template void ResearchQueue::Element::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ResearchQueue::Element::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ResearchQueue::Element::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ResearchQueue::Element::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void ResearchQueue::serialize(Archive& ar, const unsigned int version)
@@ -28,8 +28,8 @@ void ResearchQueue::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template void ResearchQueue::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ResearchQueue::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ResearchQueue::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ResearchQueue::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int version)
@@ -39,8 +39,8 @@ void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int 
         & BOOST_SERIALIZATION_NVP(design_id);
 }
 
-template void ProductionQueue::ProductionItem::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ProductionQueue::ProductionItem::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ProductionQueue::ProductionItem::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ProductionQueue::ProductionItem::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version)
@@ -58,8 +58,8 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
 }
 
-template void ProductionQueue::Element::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ProductionQueue::Element::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ProductionQueue::Element::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ProductionQueue::Element::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void ProductionQueue::serialize(Archive& ar, const unsigned int version)
@@ -70,8 +70,8 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
-template void ProductionQueue::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void ProductionQueue::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void ProductionQueue::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void ProductionQueue::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void Empire::serialize(Archive& ar, const unsigned int version)
@@ -112,8 +112,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template void Empire::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void Empire::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void Empire::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void Empire::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void EmpireManager::serialize(Archive& ar, const unsigned int version)
@@ -135,8 +135,8 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         m_diplomatic_messages = messages;
 }
 
-template void EmpireManager::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void EmpireManager::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void EmpireManager::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void EmpireManager::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
 template <class Archive>
 void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
@@ -146,6 +146,6 @@ void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
-template void DiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void DiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+template void DiplomaticMessage::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
+template void DiplomaticMessage::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
