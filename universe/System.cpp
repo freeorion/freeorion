@@ -191,22 +191,30 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     if (m_star == STAR_NONE) {
         // determine if there are any planets in the system
-        const ObjectMap& objects = GetUniverse().EmpireKnownObjects(empire_id);
-        std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-        bool system_has_planets = false;
-        for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-            if ((*it)->SystemID() == this->ID()) {
-                system_has_planets = true;
-                break;
-            }
-        }
+        //const ObjectMap& objects = GetUniverse().EmpireKnownObjects(empire_id);
+        //std::vector<const Planet*> planets = objects.FindObjects<Planet>();
 
-        if (system_has_planets)
+        // It's unclear why this loop below did not work, but it did not.  Someday would be nice to figure out why.
+        bool system_has_planets = false;
+        //for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        //    if ((*it)->SystemID() == this->ID()) {
+        //        Logger().debugStream() << "System::ApparentName(" << ID() << "), named "<< m_name << ", has planet " << (*it)->Name();
+        //        system_has_planets = true;
+        //        break;
+        //    }
+        //}
+        std::vector<int> planetIDs = FindObjectIDs<Planet>();
+        //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), named "<< m_name << ", has a total of "<< planetIDs.size() << " planets";
+
+        if (system_has_planets || planetIDs.size() > 0 ) {
             return this->PublicName(empire_id);
-        else if (blank_unexplored_and_none)
+            //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< this->PublicName(empire_id);
+        } else if (blank_unexplored_and_none) {
+            //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
             return EMPTY_STRING;
-        else
-            return UserString("EMPTY_SPACE");
+        }
+        //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< UserString("EMPTY_SPACE");
+        return UserString("EMPTY_SPACE");
     }
 
     return this->PublicName(empire_id);
