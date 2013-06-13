@@ -3,6 +3,7 @@
 #include "Fleet.h"
 #include "Planet.h"
 #include "Predicates.h"
+#include "Universe.h"
 
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"

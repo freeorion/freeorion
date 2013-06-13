@@ -10,6 +10,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"

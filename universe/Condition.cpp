@@ -3,6 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "UniverseObject.h"
+#include "Universe.h"
 #include "Building.h"
 #include "Fleet.h"
 #include "Ship.h"

@@ -8,6 +8,7 @@
 #include "Species.h"
 #include "System.h"
 #include "Field.h"
+#include "Universe.h"
 #include "UniverseObject.h"
 #include "Condition.h"
 #include "../Empire/EmpireManager.h"

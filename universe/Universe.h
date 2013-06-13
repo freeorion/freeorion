@@ -2,7 +2,7 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#include "Effect.h"
+#include "Enums.h"
 #include "ObjectMap.h"
 
 #include <boost/signal.hpp>
@@ -32,6 +32,17 @@ class System;
 namespace Condition {
     struct ConditionBase;
     typedef std::vector<const UniverseObject*> ObjectSet;
+}
+
+namespace Effect {
+    struct AccountingInfo;
+    struct TargetsAndCause;
+    struct SourcedEffectsGroup;
+    class EffectsGroup;
+    typedef std::vector<UniverseObject*> TargetSet;
+    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
+    typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
 }
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the

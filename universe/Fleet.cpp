@@ -1,5 +1,6 @@
 #include "Fleet.h"
 
+#include "Universe.h"
 #include "Ship.h"
 #include "System.h"
 #include "Predicates.h"

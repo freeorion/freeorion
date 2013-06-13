@@ -7,6 +7,7 @@
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/Fleet.h"
+#include "../universe/Universe.h"
 
 SitRepEntry::SitRepEntry() :
     VarText(),

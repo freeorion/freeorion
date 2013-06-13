@@ -10,6 +10,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"
+#include "../universe/Universe.h"
 
 BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
