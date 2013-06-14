@@ -1239,22 +1239,21 @@ public:
         m_object_change_connections.clear();
     }
 
-    bool            ObjectShown(int object_id, UniverseObjectType type, bool assume_visible_without_checking = false) {
-        if (object_id == INVALID_OBJECT_ID)
-            return false;
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
-        const UniverseObject* obj = GetUniverseObject(object_id);
+    bool            ObjectShown(const UniverseObject* obj, bool assume_visible_without_checking = false) {
         if (!obj)
             return false;
 
         if (!m_filter_condition->Eval(obj))
             return false;
 
+        int object_id = obj->ID();
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        UniverseObjectType type = obj->ObjectType();
+
         if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).find(object_id) != GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).end())
             return m_visibilities[type].find(SHOW_DESTROYED) != m_visibilities[type].end();
 
-        if (assume_visible_without_checking || GetUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id))
+        if (assume_visible_without_checking || GetUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
             return m_visibilities[type].find(SHOW_VISIBLE) != m_visibilities[type].end();
 
         return m_visibilities[type].find(SHOW_PREVIOUSLY_VISIBLE) != m_visibilities[type].end();
@@ -1278,32 +1277,24 @@ public:
             std::set<int>                   fields;
 
             for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-                int object_id = it->ID();
                 const UniverseObject* obj = *it;
+                if (!ObjectShown(obj))
+                    continue;
+
+                int object_id = it->ID();
 
                 if (obj->ObjectType() == OBJ_SYSTEM) {
-                    if (ObjectShown(object_id, OBJ_SYSTEM, true))
-                        systems.insert(object_id);
-
+                    systems.insert(object_id);
                 } else if (obj->ObjectType() == OBJ_FIELD) {
-                    if (ObjectShown(object_id, OBJ_FIELD, true))
-                        fields.insert(object_id);
-
+                    fields.insert(object_id);
                 } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_FLEET, true))
-                        system_fleets[fleet->SystemID()].insert(object_id);
-
+                    system_fleets[fleet->SystemID()].insert(object_id);
                 } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_SHIP, true))
-                        fleet_ships[ship->FleetID()].insert(object_id);
-
+                    fleet_ships[ship->FleetID()].insert(object_id);
                 } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_PLANET, true))
-                        system_planets[planet->SystemID()].insert(object_id);
-
+                    system_planets[planet->SystemID()].insert(object_id);
                 } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_BUILDING, true))
-                        planet_buildings[building->PlanetID()].insert(object_id);
+                    planet_buildings[building->PlanetID()].insert(object_id);
                 }
             }
 
