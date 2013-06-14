@@ -8,6 +8,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
@@ -217,6 +218,35 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     if (Archive::is_loading::value)
         BuildStatCaches();
+}
+
+// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
+template
+void SpeciesManager::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version);
+
+// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
+template
+void SpeciesManager::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version);
+
+template <class Archive>
+void SpeciesManager::serialize(Archive& ar, const unsigned int version)
+{
+    // Don't need to send all the data about species, as this is derived from
+    // content data files in species.txt that should be available to any
+    // client or server.  Instead, just need to send the gamestate portion of
+    // species: their homeworlds in the current game
+
+    std::map<std::string, std::set<int> > species_homeworlds_map;
+
+    if (Archive::is_saving::value) {
+        species_homeworlds_map = GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+
+    if (Archive::is_loading::value) {
+        SetSpeciesHomeworlds(species_homeworlds_map);
+    }
 }
 
 // explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.

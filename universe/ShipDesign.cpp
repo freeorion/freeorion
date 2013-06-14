@@ -11,6 +11,7 @@
 #include "Planet.h"
 #include "Predicates.h"
 #include "Species.h"
+#include "Universe.h"
 #include "ValueRef.h"
 
 #include <cfloat>
