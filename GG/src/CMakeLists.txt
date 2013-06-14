@@ -126,6 +126,14 @@ if (BUILD_EXPERIMENTAL_EVE_SUPPORT)
     )
 endif ()
 
+if (BUILD_PLUGIN_SUPPORT)
+    set (GiGi_Plugin_SOURCES
+        PluginInterface.cpp
+    )
+
+    list(APPEND GiGi_LINK_LIBS libtdl)
+endif ()
+
 set(GiGi_LINK_LIBS ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES})
 if (USE_DEVIL)
     list(APPEND GiGi_LINK_LIBS ${IL_LIBRARY} ${ILUT_LIBRARY})
@@ -169,7 +177,6 @@ add_library(GiGi
     ListBox.cpp
     Menu.cpp
     MultiEdit.cpp
-    PluginInterface.cpp
     PtRect.cpp
     Scroll.cpp
     StaticGraphic.cpp
@@ -189,6 +196,7 @@ add_library(GiGi
 
     ${GiGi_Adam_SOURCES}
     ${GiGi_Eve_SOURCES}
+    ${GiGi_Plugin_SOURCES}
 )
 
 if (USE_STATIC_LIBS)
@@ -198,7 +206,7 @@ if (USE_STATIC_LIBS)
     )
 endif ()
 
-target_link_libraries(GiGi ltdl ${GiGi_LINK_LIBS})
+target_link_libraries(GiGi ${GiGi_LINK_LIBS})
 
 # Installation of this library variant
 if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
