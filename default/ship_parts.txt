@@ -202,7 +202,7 @@ Part
     ROF = 1
     range = 60
     mountableSlotTypes = External
-    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-3.png"

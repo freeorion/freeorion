@@ -421,6 +421,7 @@
 		8230806414A880B500C1BC15 /* libConditionParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8230803F14A87FFB00C1BC15 /* libConditionParser.a */; };
 		8230806714A880C900C1BC15 /* libConditionParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8230803F14A87FFB00C1BC15 /* libConditionParser.a */; };
 		8230806A14A880DA00C1BC15 /* libConditionParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8230803F14A87FFB00C1BC15 /* libConditionParser.a */; };
+		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
 		8243E08C147EEAC800636C9E /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		8243E08D147EEAC800636C9E /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
@@ -2426,6 +2427,8 @@
 		822EB0FD170832240083EB38 /* CombatLogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatLogManager.cpp; sourceTree = "<group>"; };
 		822EB0FE170832240083EB38 /* CombatLogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatLogManager.h; sourceTree = "<group>"; };
 		8230803F14A87FFB00C1BC15 /* libConditionParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libConditionParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedTimer.cpp; sourceTree = "<group>"; };
+		8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedTimer.h; sourceTree = "<group>"; };
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
 		824C0B7C15F61C45002081C2 /* libboost_chrono.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_chrono.a; sourceTree = "<group>"; };
@@ -4315,6 +4318,8 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */,
+				8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */,
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
@@ -5732,6 +5737,7 @@
 				3A1BF3EB1748875300812237 /* Version.cpp in Sources */,
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
 				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
+				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
