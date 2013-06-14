@@ -27,7 +27,10 @@ if (BUILD_ADAM_SUPPORT)
         adobe/lex_stream.cpp
         adobe/localization.cpp
         adobe/memory.cpp
+        adobe/name.cpp
         adobe/parser_shared.cpp
+        adobe/string.cpp
+        adobe/string_pool.cpp
         adobe/token.cpp
         adobe/typeinfo.cpp
         adobe/virtual_machine.cpp
@@ -183,10 +186,6 @@ add_library(GiGi
     dialogs/ColorDlg.cpp
     dialogs/FileDlg.cpp
     dialogs/ThreeButtonDlg.cpp
-
-    adobe/name.cpp
-    adobe/memory.cpp
-    adobe/string_pool.cpp
 
     ${GiGi_Adam_SOURCES}
     ${GiGi_Eve_SOURCES}

@@ -184,6 +184,9 @@ add_library(freeorioncommon
     util/Directories.cpp
     util/i18n.cpp
     util/XMLDoc.cpp
+    GG/src/adobe/memory.cpp
+    GG/src/adobe/name.cpp
+    GG/src/adobe/string_pool.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
@@ -192,7 +195,6 @@ target_link_libraries(freeorioncommon
     ${ZLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
     log4cpp
-    GiGi # needed for adobe name_t implementation
 )
 
 add_library(freeorionparse
