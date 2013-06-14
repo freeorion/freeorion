@@ -197,70 +197,17 @@ target_link_libraries(freeorioncommon
     log4cpp
 )
 
-add_library(freeorionparse
-    parse/Lexer.cpp
-    parse/ReportParseError.cpp
-    parse/Int.cpp
-    parse/Double.cpp
-    parse/Label.cpp
-    parse/EnumParser.cpp
-    parse/IntValueRefParser.cpp
-    parse/DoubleValueRefParser.cpp
-    parse/StringValueRefParser.cpp
-    parse/PlanetSizeValueRefParser.cpp
-    parse/PlanetTypeValueRefParser.cpp
-    parse/PlanetEnvironmentValueRefParser.cpp
-    parse/UniverseObjectTypeValueRefParser.cpp
-    parse/StarTypeValueRefParser.cpp
-    parse/ConditionParser.cpp
-    parse/ConditionParser1.cpp
-    parse/ConditionParser2.cpp
-    parse/ConditionParser3.cpp
-    parse/ConditionParser4.cpp
-    parse/EffectParser.cpp
-    parse/EffectParser1.cpp
-    parse/EffectParser2.cpp
-    parse/EffectParser3.cpp
-    parse/EffectParser4.cpp
-    parse/FieldsParser.cpp
-    parse/Parse.cpp
-    parse/BuildingsParser.cpp
-    parse/SpecialsParser.cpp
-    parse/SpeciesParser.cpp
-    parse/TechsParser.cpp
-    parse/ItemsParser.cpp
-    parse/ShipPartsParser.cpp
-    parse/ShipPartStatsParser.cpp
-    parse/ShipHullsParser.cpp
-    parse/ShipDesignsParser.cpp
-    parse/FleetPlansParser.cpp
-    parse/MonsterFleetPlansParser.cpp
-    parse/AlignmentsParser.cpp
-    parse/EncyclopediaParser.cpp
-    parse/KeymapParser.cpp
-)
-
-set_target_properties(freeorionparse
-    PROPERTIES
-    COMPILE_DEFINITIONS NDEBUG
-    COMPILE_FLAGS -O3
-)
-
 ########################################
 # Recurse Into Sources                 #
 ########################################
 add_subdirectory(log4cpp)
 add_subdirectory(PagedGeometry)
+add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
 
 option(BUILD_PARSER_TESTS "Controls generation of parser unit tests." OFF)
-
-if (BUILD_PARSER_TESTS)
-    enable_testing()
-    add_subdirectory(parse)
-endif ()
 
 ########################################
 # Win32 SDK-only steps                 #
