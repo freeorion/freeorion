@@ -23,8 +23,8 @@ endif ()
 add_definitions(-DFREEORION_BUILD_AI)
 
 set(freeorionca_LINK_LIBS
-    core
-    parse
+    freeorioncommon
+    freeorionparse
     ${PYTHON_LIBRARIES}
 )
 

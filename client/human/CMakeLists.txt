@@ -120,8 +120,8 @@ set(freeorion_SOURCES
 )
 
 set(freeorion_LINK_LIBS
-    core
-    parse
+    freeorioncommon
+    freeorionparse
     pagedgeometry
     GiGi
     GiGiOgre

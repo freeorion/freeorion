@@ -24,8 +24,8 @@ add_executable(freeoriond
 )
 
 target_link_libraries(freeoriond
-    core
-    parse
+    freeorioncommon
+    freeorionparse
     ${CMAKE_THREAD_LIBS_INIT}
 )
 

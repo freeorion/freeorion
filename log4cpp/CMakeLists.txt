@@ -29,3 +29,10 @@ endif ()
 
 add_library(log4cpp STATIC ${log4cpp_SOURCES})
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set_target_properties(log4cpp
+        PROPERTIES
+        COMPILE_FLAGS "-fPIC"
+    )
+endif ()
+

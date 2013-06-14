@@ -327,6 +327,12 @@ extern const int TEMPORARY_OBJECT_ID    = -2; // the ID number assigned to tempo
 // TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
 extern const int MAX_ID                 = 2000000000;
 
+////////////////////////////////////////
+// MonsterFleetPlan                   //
+////////////////////////////////////////
+MonsterFleetPlan::~MonsterFleetPlan()
+{ delete m_location; }
+
 
 /////////////////////////////////////////////
 // struct Universe::GraphImpl

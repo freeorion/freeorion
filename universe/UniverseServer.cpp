@@ -23,7 +23,6 @@
 #include "Predicates.h"
 #include "Special.h"
 #include "Species.h"
-#include "Condition.h"
 #include "ValueRef.h"
 
 #include <boost/algorithm/string/classification.hpp>
@@ -733,12 +732,6 @@ const std::string& FleetPlan::Name() const {
     else
         return m_name;
 }
-
-////////////////////////////////////////
-// FleetPlan                          //
-////////////////////////////////////////
-MonsterFleetPlan::~MonsterFleetPlan()
-{ delete m_location; }
 
 //////////////////////
 // FleetPlanManager //

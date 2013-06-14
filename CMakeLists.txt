@@ -117,7 +117,7 @@ if (FREEORION_RELEASE)
     add_definitions(-DFREEORION_RELEASE)
 endif ()
 
-add_library(core STATIC
+add_library(freeorioncommon
     combat/CombatOrder.cpp
     combat/AsteroidBeltObstacle.cpp
     combat/CombatFighter.cpp
@@ -187,7 +187,7 @@ add_library(core STATIC
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
-target_link_libraries(core
+target_link_libraries(freeorioncommon
     ${Boost_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
@@ -195,7 +195,7 @@ target_link_libraries(core
     GiGi # needed for adobe name_t implementation
 )
 
-add_library(parse STATIC
+add_library(freeorionparse
     parse/Lexer.cpp
     parse/ReportParseError.cpp
     parse/Int.cpp
@@ -238,7 +238,7 @@ add_library(parse STATIC
     parse/KeymapParser.cpp
 )
 
-set_target_properties(parse
+set_target_properties(freeorionparse
     PROPERTIES
     COMPILE_DEFINITIONS NDEBUG
     COMPILE_FLAGS -O3
