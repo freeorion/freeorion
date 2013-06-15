@@ -144,8 +144,6 @@ boost::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) 
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
 }
 
-
-
 boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {
@@ -486,8 +484,9 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const GG::X PANEL_WIDTH(355);
+    const GG::X PANEL_WIDTH(345);
     const GG::Y PANEL_HEIGHT(160);
+    const GG::X PLAYER_LIST_PANEL_WIDTH(424);
 }
 
 
@@ -504,8 +503,8 @@ ClientUI::ClientUI() :
 {
     s_the_UI = this;
 
-    m_message_wnd =             new MessageWnd(GG::X0,      GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,  PANEL_WIDTH,    PANEL_HEIGHT);
-    m_player_list_wnd =         new PlayerListWnd(GG::X0,   m_message_wnd->UpperLeft().y - PANEL_HEIGHT,    PANEL_WIDTH,    PANEL_HEIGHT);
+    m_message_wnd =             new MessageWnd(GG::X0,                           GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PANEL_WIDTH,             PANEL_HEIGHT);
+    m_player_list_wnd =         new PlayerListWnd(m_message_wnd->LowerRight().x, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();

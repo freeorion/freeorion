@@ -9,6 +9,8 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
 
 #include <GG/DrawUtil.h>
 
@@ -27,7 +29,12 @@ namespace {
     boost::shared_ptr<GG::Texture> CombatIcon()     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png"); }
     boost::shared_ptr<GG::Texture> WarIcon()        { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png"); }
     boost::shared_ptr<GG::Texture> PeaceIcon()      { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png"); }
+    boost::shared_ptr<GG::Texture> DeadIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png"); }
     boost::shared_ptr<GG::Texture> UnknownIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png"); }
+    boost::shared_ptr<GG::Texture> ShipIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
+    boost::shared_ptr<GG::Texture> ProductionIcon() { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }
+    boost::shared_ptr<GG::Texture> ResearchIcon()   { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png"); }
+
 
     ////////////////////////////////////////////////
     // PlayerDataPanel
@@ -39,8 +46,12 @@ namespace {
         PlayerDataPanel(GG::X w, GG::Y h, int player_id) :
             Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
             m_player_id(player_id),
-            m_player_name_text(0),
+            //m_player_name_text(0),
             m_empire_name_text(0),
+            m_empire_ship_text(0),
+            m_empire_planet_text(0),
+            m_empire_production_text(0),
+            m_empire_research_text(0),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
             m_player_status(Message::WAITING),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
@@ -49,15 +60,35 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
 
-            m_player_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_player_name_text);
+            //m_player_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
+            //                                         ClientUI::GetFont(), ClientUI::TextColor(),
+            //                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            //AttachChild(m_player_name_text);
 
             m_empire_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
                                                      ClientUI::GetFont(), ClientUI::TextColor(),
                                                      GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             AttachChild(m_empire_name_text);
+
+            m_empire_ship_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
+                                                     ClientUI::GetFont(), ClientUI::TextColor(),
+                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_empire_ship_text);
+
+            m_empire_planet_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
+                                                     ClientUI::GetFont(), ClientUI::TextColor(),
+                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_empire_planet_text);
+
+            m_empire_production_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
+                                                     ClientUI::GetFont(), ClientUI::TextColor(),
+                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_empire_production_text);
+
+            m_empire_research_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
+                                                     ClientUI::GetFont(), ClientUI::TextColor(),
+                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_empire_research_text);
 
             DoLayout();
             Update();
@@ -86,6 +117,16 @@ namespace {
 
             GG::Pt ICON_SIZE = GG::Pt(GG::X(IconSize()), GG::Y(IconSize()));
 
+
+            ShipIcon()->OrthoBlit(UpperLeft() + m_ship_icon_ul, UpperLeft() + m_ship_icon_ul+ ICON_SIZE);
+
+            //ClientUI::PlanetIcon(favored_planet_type)->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
+            ClientUI::PlanetIcon(PT_TERRAN)->OrthoBlit(UpperLeft() + m_planet_icon_ul , UpperLeft() + m_planet_icon_ul + ICON_SIZE);
+
+            ProductionIcon()->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
+            ResearchIcon()->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
+
+
             const ClientApp* app = ClientApp::GetApp();
             if (!app) {
                 Logger().errorStream() << "PlayerDataPanel::Render couldn't get client app!";
@@ -111,9 +152,9 @@ namespace {
 
             // render player type icon
             switch (m_player_type) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(   UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(      UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(    UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(       UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit( UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             default:    break;
             }
@@ -164,11 +205,76 @@ namespace {
                     m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
             }
 
-            m_player_name_text->SetTextColor(empire_color);
-            m_player_name_text->SetText(player_info.name);
+            //m_player_name_text->SetTextColor(empire_color);
+            //m_player_name_text->SetText(player_info.name);
 
             m_empire_name_text->SetTextColor(empire_color);
             m_empire_name_text->SetText(empire_name);
+
+            const ObjectMap& objects = Objects();
+            double empires_ship_count = 0.0;
+            double empires_planet_count = 0.0;
+            double empires_production_points = 0.0;
+            double empires_research_points = 0.0;
+
+            const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+            const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
+            for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>(); ship_it != objects.const_end<Ship>(); ++ship_it) {
+                const Ship* ship = *ship_it;
+                if (empire) {
+                    if (ship->Owner() == empire->EmpireID() 
+                        && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end()
+                        && this_client_stale_object_info.find(ship->ID()) == this_client_stale_object_info.end()) {
+                            empires_ship_count += 1;
+                    }
+                }
+            }
+
+            for (ObjectMap::const_iterator<Planet> planet_it = objects.const_begin<Planet>(); planet_it != objects.const_end<Planet>(); ++planet_it) {
+                const Planet* planet = *planet_it;
+                if (empire) {
+                    if (planet->Owner() == empire->EmpireID()) {
+                        empires_planet_count      += 1;
+                        empires_production_points += planet->InitialMeterValue(METER_INDUSTRY);
+                        empires_research_points   += planet->InitialMeterValue(METER_RESEARCH);
+                    }
+                }
+            }
+
+            std::string ship_text;
+            std::string planet_text;
+            std::string production_text;
+            std::string research_text;
+
+            if (empires_ship_count == 0.0 ) {
+                ship_text       = UserString("NOTHING_VALUE_SYMBOL");
+            } else {
+                ship_text       = DoubleToString(empires_ship_count, 2, false);
+            }
+
+            if (empires_planet_count == 0.0 ) {
+                planet_text     = UserString("NOTHING_VALUE_SYMBOL");
+            } else {
+                planet_text     = DoubleToString(empires_planet_count, 2, false);
+            }
+
+            if (empires_production_points == 0.0 ) {
+                production_text = UserString("NOTHING_VALUE_SYMBOL");
+            } else {
+                production_text = DoubleToString(empires_production_points, 2, false);
+            }
+
+            if (empires_research_points == 0.0 ) {
+                research_text   = UserString("NOTHING_VALUE_SYMBOL");
+            } else {
+                research_text   = DoubleToString(empires_research_points, 2, false);
+            }
+
+            m_empire_ship_text->SetText(ship_text);
+            m_empire_planet_text->SetText(planet_text);
+            m_empire_production_text->SetText(production_text);
+            m_empire_research_text->SetText(research_text);
 
             m_player_type = player_info.client_type;
             m_host = player_info.host;
@@ -181,8 +287,13 @@ namespace {
         int             IconSize() const   { return Value(Height()) - 2; }
 
         void            DoLayout() {
-            const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts() * 17/2);
-            const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts() * 18/2);
+            const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts()       * 10);
+            const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts()       * 10);
+            const GG::X EMPIRE_SHIP_WIDTH(ClientUI::Pts()       * 16/5);
+            const GG::X EMPIRE_PLANET_WIDTH(ClientUI::Pts()     * 16/5);
+            const GG::X EMPIRE_PRODUCTION_WIDTH(ClientUI::Pts() * 16/5);
+            const GG::X EMPIRE_RESEARCH_WIDTH(ClientUI::Pts()   * 16/5);
+
 
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);
@@ -192,11 +303,35 @@ namespace {
             m_diplo_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
-            m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
-            left += PLAYER_NAME_WIDTH;
+            //m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
+            //left += PLAYER_NAME_WIDTH;
 
             m_empire_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_NAME_WIDTH, bottom));
             left += EMPIRE_NAME_WIDTH;
+
+            m_ship_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_ship_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_SHIP_WIDTH, bottom));
+            left += EMPIRE_SHIP_WIDTH;
+
+            m_planet_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_planet_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PLANET_WIDTH, bottom));
+            left += EMPIRE_PLANET_WIDTH;
+
+            m_production_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_production_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PRODUCTION_WIDTH, bottom));
+            left += EMPIRE_PRODUCTION_WIDTH;
+
+            m_research_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_research_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_RESEARCH_WIDTH, bottom));
+            left += EMPIRE_RESEARCH_WIDTH;
 
             m_player_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
@@ -209,10 +344,18 @@ namespace {
         }
 
         int                     m_player_id;
-        GG::TextControl*        m_player_name_text;
-        GG::TextControl*        m_empire_name_text;
+        //GG::TextControl*        m_player_name_text;
+        GG::TextControl*        m_empire_name_text;        
+        GG::TextControl*        m_empire_ship_text;
+        GG::TextControl*        m_empire_planet_text;
+        GG::TextControl*        m_empire_production_text;
+        GG::TextControl*        m_empire_research_text;
 
         GG::Pt                  m_diplo_status_icon_ul;
+        GG::Pt                  m_ship_icon_ul;
+        GG::Pt                  m_planet_icon_ul;
+        GG::Pt                  m_production_icon_ul;
+        GG::Pt                  m_research_icon_ul;
         GG::Pt                  m_player_status_icon_ul;
         GG::Pt                  m_player_type_icon_ul;
         GG::Pt                  m_host_icon_ul;

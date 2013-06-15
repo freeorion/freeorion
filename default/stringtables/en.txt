@@ -88,8 +88,17 @@ Rename
 ENTER_NEW_NAME
 Enter new name
 
+NOTHING_VALUE_SYMBOL
+--
+
 UNKNOWN_VALUE_SYMBOL
 ?
+
+UNKNOWN_VALUE_SYMBOL_2
+???
+
+UNCERTAIN_VALUE
+%1%(?)
 
 ERROR
 ERROR
@@ -4923,15 +4932,15 @@ invalid focus type
 FOCUS_GROWTH
 Growth
 FOCUS_INDUSTRY
-industry
+Industry
 FOCUS_MINING
-mining
+Mining
 FOCUS_HEAVY_MINING
 Heavy Mining
 FOCUS_RESEARCH
-research
+Research
 FOCUS_TRADE
-trade
+Trade
 FOCUS_LOGISTICS
 Logistics
 FOCUS_STEALTH
