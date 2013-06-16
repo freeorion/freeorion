@@ -528,11 +528,11 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     // black out dependency lines under panel
     glColor(GG::CLR_BLACK);
-    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
+    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
 
     // background of panel
     glColor(m_colour);
-    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
+    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
 
     // tech name
     int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
@@ -569,12 +569,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     if (m_browse_highlight) {
         border_colour = GG::CLR_WHITE;
         glColor(border_colour);
-        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
     } else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
         border_colour = m_colour;
         border_colour.a = 255;
         glColor(border_colour);
-        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
     } else {
         border_colour = m_colour;
         border_colour.a = 127;
@@ -602,10 +602,9 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         glEnable(GL_TEXTURE_2D);
 
         std::vector<GG::Font::LineData> line_data;
-        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_VCENTER | GG::FORMAT_VCENTER;
+        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_VCENTER | GG::FORMAT_CENTER;
         font->DetermineLines(m_eta_text, line_format, eta_lr.x - eta_ul.x, line_data);
 
-        line_format = GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT;
         // render background offset from actual text location
         glColor(GG::CLR_BLACK);
         font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
