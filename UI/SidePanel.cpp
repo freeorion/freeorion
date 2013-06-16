@@ -18,6 +18,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Building.h"
 #include "../universe/Species.h"
+#include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -1186,15 +1187,15 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     PlanetType target_planet_type = target_planet->Type();
 
-    const ObjectMap& objects = Objects();
-    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+    //const ObjectMap& objects = Objects();
+    std::vector<int> ships = system->FindObjectIDs<Ship>();
     std::vector<const Ship*> capable_and_available_colony_ships;
     capable_and_available_colony_ships.reserve(ships.size());
 
     // get all ships that can colonize and that are free to do so in the
     // specified planet'ssystem and that can colonize the requested planet
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
+    for (std::vector<int>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = GetShip(*it);
         if (!AvailableToColonize(ship, system_id, empire_id))
             continue;
         if (!CanColonizePlanetType(ship, target_planet_type))
