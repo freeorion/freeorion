@@ -724,13 +724,13 @@ namespace {
               : XMLElement();
     }
 
-    void        GetAsteroidTextures(int planet_id, std::vector<boost::shared_ptr<GG::Texture> > &textures) {
-        const int NUM_ASTEROID_SETS = 3;
-        const int NUM_IMAGES_PER_SET = 256;
-        const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
-
-        for (int i = 0; i < NUM_IMAGES_PER_SET; ++i)
-            textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / "asteroids" / boost::io::str(boost::format("asteroids%d_%03d.png") % SET % i)));
+    const std::vector<boost::shared_ptr<GG::Texture> >& GetAsteroidTextures() {
+        static std::vector<boost::shared_ptr<GG::Texture> > retval;
+        if (retval.empty()) {
+            retval = ClientUI::GetClientUI()->GetPrefixedTextures(
+                ClientUI::ArtDir() / "planets" / "asteroids", "asteroids1_", false);
+        }
+        return retval;
     }
 
     const std::string EMPTY_STRING;
@@ -1021,8 +1021,9 @@ void SidePanel::PlanetPanel::CheckDisplayPlanets() {
     m_rotating_planet_graphic = 0;
 
     if (planet->Type() == PT_ASTEROIDS) {
-        std::vector<boost::shared_ptr<GG::Texture> > textures;
-        GetAsteroidTextures(m_planet_id, textures);
+        const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetAsteroidTextures();
+        if (textures.empty())
+            return;
         GG::X texture_width = textures[0]->DefaultWidth();
         GG::Y texture_height = textures[0]->DefaultHeight();
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
