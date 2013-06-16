@@ -161,7 +161,6 @@ public:
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
-
     void            SetFleetExploring(const int fleet_id);
     void            StopFleetExploring(const int fleet_id);
     bool            IsFleetExploring(const int fleet_id);

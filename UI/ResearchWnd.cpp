@@ -196,15 +196,17 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
 
-    m_queue_lb = new QueueListBox(GG::X(2), m_research_info_panel->LowerRight().y,
-                                  m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(),
-                                  "RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
+    m_queue_lb = new QueueListBox(GG::X(2),
+                                  m_research_info_panel->Height(),
+                                  m_research_info_panel->Width() - 4,
+                                  ClientSize().y - 4 - m_research_info_panel->Height(),
+                                  "RESEARCH_QUEUE_ROW",
+                                  UserString("RESEARCH_QUEUE_PROMPT"));
     GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
-    m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width(), GG::Y0));
 
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
     GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
@@ -215,10 +217,30 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     AttachChild(m_tech_tree_wnd);
 
     SetChildClippingMode(ClipToClient);
+
+    DoLayout();
 }
 
 ResearchWnd::~ResearchWnd()
 { m_empire_connection.disconnect(); }
+
+void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Wnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        DoLayout();
+}
+
+void ResearchWnd::DoLayout() {
+    GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height())/* - UpperLeft()*/;
+    GG::Pt queue_size = GG::Pt(m_research_info_panel->Width() - 4,
+                               ClientSize().y - 4 - m_research_info_panel->Height());
+    m_queue_lb->SizeMove(queue_ul, queue_ul + queue_size);
+
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
+    GG::Pt tech_tree_wnd_ul = GG::Pt(m_research_info_panel->Width(), GG::Y0);
+    m_tech_tree_wnd->SizeMove(tech_tree_wnd_ul, tech_tree_wnd_ul + tech_tree_wnd_size);
+}
 
 void ResearchWnd::Refresh() {
     // useful at start of turn or when loading empire from save.

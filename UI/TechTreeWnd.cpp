@@ -344,6 +344,7 @@ public:
 
     //! \name Mutators //@{
     virtual void Render();
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void Update();  ///< update indicated \a tech panel or all panels if \a tech_name is an empty string, without redoing layout
     void Clear();                               ///< remove all tech panels
@@ -391,7 +392,10 @@ private:
         mutable boost::signal<void (const GG::Pt&)> ButtonUpSignal;
     };
 
-    void Layout(bool keep_position);
+    void Layout(bool keep_position);    // lays out tech panels
+
+    void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
+
     bool TechVisible(const std::string& tech_name);
     void DrawArc(DependencyArcsMap::const_iterator it, const GG::Clr& color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
@@ -824,27 +828,21 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_scale = 1.0; //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = new LayoutSurface();
-    m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), GG::Y0, GG::X(ClientUI::ScrollWidth()),
-                              h - ClientUI::ScrollWidth(), GG::VERTICAL);
-    m_hscroll = new CUIScroll(GG::X0, h - ClientUI::ScrollWidth(), w - ClientUI::ScrollWidth(),
-                              GG::Y(ClientUI::ScrollWidth()), GG::HORIZONTAL);
 
-    const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
-    const int ZBOFFSET = ClientUI::ScrollWidth() / 2;
-    const GG::Y TOP = UpperLeft().y;
-    const GG::X LEFT = UpperLeft().x;
+    m_vscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
+    m_hscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
 
-    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), GG::Y(ZBOFFSET),
-                                     ZBSIZE, "+", font, ClientUI::WndColor(), ClientUI::CtrlBorderColor(),
-                                     1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
-
-    m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - LEFT,
-                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP,
-                                      ZBSIZE, "-", font, ClientUI::WndColor(),
+    m_zoom_in_button = new CUIButton(GG::X1, GG::Y1, ZBSIZE, "+", font, ClientUI::WndColor(),
+                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
+                                     GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_out_button = new CUIButton(GG::X1, GG::Y1, ZBSIZE, "-", font, ClientUI::WndColor(),
                                       ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
                                       GG::INTERACTIVE | GG::ONTOP);
+
+    DoLayout();
 
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
@@ -868,7 +866,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     for (std::vector<std::string>::const_iterator it = categories.begin(); it != categories.end(); ++it)
         m_categories_shown.insert(*it);
 
-    // show all statuses
+    // show statuses
     m_tech_statuses_shown.clear();
     //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
@@ -972,6 +970,34 @@ void TechTreeWnd::LayoutPanel::Render() {
     UndoZoom();
     GG::GUI::RenderWindow(m_vscroll);
     GG::GUI::RenderWindow(m_hscroll);
+}
+
+void TechTreeWnd::LayoutPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Wnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        DoLayout();
+}
+
+void TechTreeWnd::LayoutPanel::DoLayout() {
+    const int SCRLWDTH = ClientUI::ScrollWidth();
+
+    GG::Pt vscroll_ul = GG::Pt(Width() - SCRLWDTH, GG::Y0);
+    GG::Pt vscroll_lr = GG::Pt(Width(), Height() - SCRLWDTH);
+    m_vscroll->SizeMove(vscroll_ul, vscroll_lr);
+
+    GG::Pt hscroll_ul = GG::Pt(GG::X0, Height() - SCRLWDTH);
+    GG::Pt hscroll_lr = GG::Pt(Width() - SCRLWDTH, Height());
+    m_hscroll->SizeMove(hscroll_ul, hscroll_lr);
+
+    const int ZBOFFSET = ClientUI::ScrollWidth() / 2;
+    const GG::Y TOP = UpperLeft().y;
+    const GG::X LEFT = UpperLeft().x;
+
+    GG::Pt button_ul = GG::Pt(Width() - m_zoom_in_button->Width() - ZBOFFSET - SCRLWDTH, GG::Y(ZBOFFSET));
+    m_zoom_in_button->MoveTo(button_ul);
+    button_ul += GG::Pt(GG::X0, m_zoom_in_button->Height() + ZBOFFSET);
+    m_zoom_out_button->MoveTo(button_ul);
 }
 
 void TechTreeWnd::LayoutPanel::Update()
@@ -1714,6 +1740,13 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
 TechTreeWnd::~TechTreeWnd() {
     delete m_tech_list;
     delete m_layout_panel;
+}
+
+void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Wnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        m_layout_panel->Resize(this->Size());
 }
 
 double TechTreeWnd::Scale() const

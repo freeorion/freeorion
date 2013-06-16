@@ -1032,8 +1032,12 @@ MapWnd::~MapWnd() {
     delete m_design_wnd;
 }
 
-void MapWnd::DoLayout()
-{ m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT)); }
+void MapWnd::DoLayout() {
+    m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
+    m_research_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+    m_production_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+    m_design_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+}
 
 GG::Pt MapWnd::ClientUpperLeft() const
 { return UpperLeft() + GG::Pt(AppWidth(), AppHeight()); }

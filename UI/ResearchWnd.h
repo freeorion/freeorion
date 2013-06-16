@@ -12,8 +12,7 @@ class TechTreeWnd;
 class ProductionInfoPanel;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
-class ResearchWnd : public GG::Wnd
-{
+class ResearchWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     ResearchWnd(GG::X w, GG::Y h);
@@ -21,6 +20,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
     void    Refresh();
     void    Reset();
     void    Update();
@@ -36,6 +37,7 @@ public:
     //@}
 
 private:
+    void    DoLayout();
     void    ResearchQueueChangedSlot();
     void    UpdateQueue();
     void    UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)

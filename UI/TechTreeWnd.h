@@ -29,28 +29,29 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void                    Update();
-    void                    Clear();
-    void                    Reset();
-    void                    SetScale(double scale);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Update();
+    void            Clear();
+    void            Reset();
+    void            SetScale(double scale);
 
-    void                    ShowCategory(const std::string& category);
-    void                    ShowAllCategories();
-    void                    HideCategory(const std::string& category);
-    void                    HideAllCategories();
-    void                    ToggleCategory(const std::string& category);
-    void                    ToggleAllCategories();
+    void            ShowCategory(const std::string& category);
+    void            ShowAllCategories();
+    void            HideCategory(const std::string& category);
+    void            HideAllCategories();
+    void            ToggleCategory(const std::string& category);
+    void            ToggleAllCategories();
 
-    void                    ShowStatus(const TechStatus status);
-    void                    HideStatus(const TechStatus status);
-    void                    ToggleStatus(const TechStatus status);
+    void            ShowStatus(const TechStatus status);
+    void            HideStatus(const TechStatus status);
+    void            ToggleStatus(const TechStatus status);
 
-    void                    ShowTreeView();
-    void                    ShowListView();
+    void            ShowTreeView();
+    void            ShowListView();
 
-    void                    CenterOnTech(const std::string& tech_name);
-    void                    SetEncyclopediaTech(const std::string& tech_name);
-    void                    SelectTech(const std::string& tech_name);
+    void            CenterOnTech(const std::string& tech_name);
+    void            SetEncyclopediaTech(const std::string& tech_name);
+    void            SelectTech(const std::string& tech_name);
     //@}
 
     mutable TechSignalType          TechBrowsedSignal;
@@ -62,11 +63,11 @@ private:
     class LayoutPanel;
     class TechListBox;
 
-    void                    TechBrowsedSlot(const std::string& tech_name);
-    void                    TechClickedSlot(const std::string& tech_name,
-                                            const GG::Flags<GG::ModKey>& modkeys);
-    void                    TechDoubleClickedSlot(const std::string& tech_name,
-                                                  const GG::Flags<GG::ModKey>& modkeys);
+    void    TechBrowsedSlot(const std::string& tech_name);
+    void    TechClickedSlot(const std::string& tech_name,
+                            const GG::Flags<GG::ModKey>& modkeys);
+    void    TechDoubleClickedSlot(const std::string& tech_name,
+                                  const GG::Flags<GG::ModKey>& modkeys);
 
     TechTreeControls*           m_tech_tree_controls;
     EncyclopediaDetailPanel*    m_enc_detail_panel;
