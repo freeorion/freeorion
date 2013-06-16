@@ -508,6 +508,24 @@ bool ProductionWnd::InWindow(const GG::Pt& pt) const
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 { return m_production_info_panel->InClient(pt) || m_queue_lb->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
+void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Wnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        DoLayout();
+}
+
+void ProductionWnd::DoLayout() {
+    GG::Pt queue_ul = GG::Pt(GG::X(2), m_production_info_panel->Height());
+    GG::Pt queue_size = GG::Pt(m_production_info_panel->Width() - 4,
+                               ClientSize().y - 4 - m_production_info_panel->Height());
+    m_queue_lb->SizeMove(queue_ul, queue_ul + queue_size);
+
+    GG::Pt build_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y0);
+    GG::Pt build_wnd_ul = GG::Pt(m_production_info_panel->Width(), GG::Y0);
+    m_build_designator_wnd->SizeMove(build_wnd_ul, build_wnd_ul + build_wnd_size);
+}
+
 void ProductionWnd::Render()
 {}
 

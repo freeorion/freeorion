@@ -23,6 +23,7 @@ public:
     /** \name Mutators */ //@{
     virtual bool    InWindow(const GG::Pt& pt) const;
     virtual bool    InClient(const GG::Pt& pt) const;
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void            Render();
 
@@ -61,8 +62,9 @@ public:
     mutable boost::signal<void (int)>       SystemSelectedSignal;   ///< emitted when the user changes the selected system in the production screen
     mutable boost::signal<void (int)>       PlanetSelectedSignal;   ///< emitted when the user changes the selected planet in the production screen
     mutable boost::signal<void (int,int)>RowQuantChangedSignal;           ///
-    
+
 private:
+    void    DoLayout();
     void    ProductionQueueChangedSlot();
     void    UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
     void    UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)

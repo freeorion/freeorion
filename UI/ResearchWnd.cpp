@@ -232,7 +232,7 @@ void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ResearchWnd::DoLayout() {
-    GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height())/* - UpperLeft()*/;
+    GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_research_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_research_info_panel->Height());
     m_queue_lb->SizeMove(queue_ul, queue_ul + queue_size);

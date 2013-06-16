@@ -39,12 +39,6 @@
     <Filter Include="Source Files\universe">
       <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\UI">
-      <UniqueIdentifier>{2c0697bd-b739-459f-8520-f33b04d59489}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\UI">
-      <UniqueIdentifier>{0df88b25-adf3-4851-9a3a-14ecdae99954}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\OpenSteer">
       <UniqueIdentifier>{7a608bd5-e5d6-4505-97fa-c108824ad463}</UniqueIdentifier>
     </Filter>
