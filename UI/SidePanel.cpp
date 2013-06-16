@@ -1213,7 +1213,6 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     // pick the "best" one.
     std::string orig_species = target_planet->SpeciesName(); //should be just ""
     int orig_owner = target_planet->Owner();
-    target_planet->SetOwner(empire_id);
     int best_ship = INVALID_OBJECT_ID;
     float best_capacity = -999;
     bool changed_planet = false;
@@ -1230,6 +1229,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                  planet_capacity = pair_it->second;
              } else {
                  changed_planet = true;
+                 target_planet->SetOwner(empire_id);
                  target_planet->SetSpecies((*ship_it)->SpeciesName());
                  GetUniverse().UpdateMeterEstimates(target_planet_id);
                  const Species* species = GetSpecies((*ship_it)->SpeciesName());
