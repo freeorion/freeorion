@@ -40,8 +40,13 @@
 #include <boost/system/system_error.hpp>
 
 #include <string>
+#include <algorithm>
 
 const Tech* GetTech(const std::string& name);
+
+bool FNComp(const boost::shared_ptr<GG::Texture> t1, const boost::shared_ptr<GG::Texture> t2) {
+    return t1 && t2 && t1->Filename() < t2->Filename();
+}
 
 namespace fs = boost::filesystem;
 
@@ -861,6 +866,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
             }
         }
         rand_int.reset(new SmallIntDistType(SmallIntDist(0, textures.size() - 1)));
+        std::sort(textures.begin(), textures.end(), FNComp);
     }
     return prefixed_textures_it->second;
 }
