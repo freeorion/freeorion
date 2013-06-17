@@ -380,7 +380,7 @@ BuildingType
     ]
     effectsgroups = [
         EffectsGroup
-            scope = WithinDistance 0 Source
+            scope = WithinDistance 0.00001 Source
             stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
             effects = SetStealth Value - 30
             
