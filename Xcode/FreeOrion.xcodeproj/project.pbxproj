@@ -76,8 +76,6 @@
 		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
 		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
 		34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346BCA5F0FF6E6A200582E3D /* Cocoa.framework */; };
-		34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
-		34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
 		34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
 		34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */; };
 		34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4BE0FFFD2DB00500F40 /* chmain.mm */; };
@@ -153,6 +151,22 @@
 		3A7604BE1749B2FF00363653 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		3A7604C41749B39300363653 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		3A7604CB1749B48200363653 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
+		3ABEAB3A1749BFE000E34912 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821CB90915F8C15A00D48537 /* liblog4cpp.a */; };
+		3ABEAB3B1749BFED00E34912 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
+		3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
+		3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
+		3ABEAB421749C2B200E34912 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
+		3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		3ABEAB741749C36200E34912 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
+		3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
+		3ABEAB801749C51B00E34912 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
+		3ABEAB871749C72000E34912 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
+		3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
+		3ABEAB971749C93400E34912 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		3ABEAB9C1749C96400E34912 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		3ABEABA11749C9CA00E34912 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
+		3ABEABA41749D05700E34912 /* freeorionparse.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
+		3ABEABA51749D05E00E34912 /* freeorioncommon.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
@@ -232,7 +246,6 @@
 		47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1E0A98A3F900DA9C21 /* Directories.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
-		471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA50A98A3F900DA9C21 /* About.cpp */; };
 		471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA70A98A3F900DA9C21 /* BuildDesignatorWnd.cpp */; };
 		471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA90A98A3F900DA9C21 /* ClientUI.cpp */; };
@@ -262,14 +275,12 @@
 		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
 		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
 		471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
-		471FEFB30A9A629800C36AA3 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */; };
 		471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5C0A98A3F900DA9C21 /* camain.cpp */; };
-		478417700CF0581A00BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
-		478417730CF0589200BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
+		478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
+		478417730CF0589200BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		478417760CF058B100BE4710 /* Process.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D300A98A3F900DA9C21 /* Process.cpp */; };
-		478417770CF058C900BE4710 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
-		4784177A0CF058F000BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
+		4784177A0CF058F000BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		478418DF0CF059D700BE4710 /* ClientNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FAA0CEF566200A7DF2B /* ClientNetworking.cpp */; };
 		478418E00CF059DC00BE4710 /* ClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5D0A98A3F900DA9C21 /* ClientApp.cpp */; };
 		478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 478417B10CF0592E00BE4710 /* libClientCommon.a */; };
@@ -335,9 +346,6 @@
 		821CC21715F8C3C600D48537 /* SyslogAppender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821CC1EA15F8C3C600D48537 /* SyslogAppender.cpp */; };
 		821CC21815F8C3C600D48537 /* TimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821CC1EB15F8C3C600D48537 /* TimeStamp.cpp */; };
 		821CC21915F8C3C600D48537 /* TriggeringEventEvaluatorFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821CC1EC15F8C3C600D48537 /* TriggeringEventEvaluatorFactory.cpp */; };
-		821CC21B15F8C7BD00D48537 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821CB90915F8C15A00D48537 /* liblog4cpp.a */; };
-		821CC21C15F8C7BE00D48537 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821CB90915F8C15A00D48537 /* liblog4cpp.a */; };
-		821CC21D15F8C7BE00D48537 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821CB90915F8C15A00D48537 /* liblog4cpp.a */; };
 		82271C8615F8ABEE0063179C /* MacHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C6D15F8ABEE0063179C /* MacHelpers.cpp */; };
 		82271C8815F8ABEE0063179C /* MacInputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C6F15F8ABEE0063179C /* MacInputManager.cpp */; };
 		82271C8915F8ABEE0063179C /* MacJoyStick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C7015F8ABEE0063179C /* MacJoyStick.cpp */; };
@@ -356,12 +364,6 @@
 		8243E08C147EEAC800636C9E /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		8243E08D147EEAC800636C9E /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
-		824C0B7D15F61E4D002081C2 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
-		824C0B7E15F61E63002081C2 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
-		824C0BAA15F61EC0002081C2 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
-		824C0BAB15F61EC0002081C2 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
-		824C0BAC15F61EF3002081C2 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
-		824C0BAD15F61EF3002081C2 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
@@ -375,33 +377,15 @@
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
 		82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BEB657159853B300B024CB /* Diplomacy.cpp */; };
 		82C07470149DE72D00E76876 /* Parse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F1147E3B1B00B840A5 /* Parse.cpp */; };
-		82C07479149DE7CE00E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
-		82C0747C149DE80300E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
-		82C0747F149DE83000E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
+		82C07479149DE7CE00E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
+		82C0747C149DE80300E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
+		82C0747F149DE83000E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
-		9E632AE413AD24C8003D1874 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
-		9E632AE513AD24C8003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
-		9E632AE613AD24C8003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
-		9E632AE713AD24C8003D1874 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
-		9E632AE813AD24C8003D1874 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
-		9E632AE913AD24C8003D1874 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
-		9E632AEA13AD24C8003D1874 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
-		9E632AEB13AD24D1003D1874 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
-		9E632AEE13AD24D1003D1874 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
-		9E632AEF13AD24D1003D1874 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
-		9E632AF013AD24D1003D1874 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
-		9E632AF113AD24D1003D1874 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
 		9EEEEA7013ACB3430085B1A0 /* ogre_plugins.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
 		9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */; };
-		9EEEEA7A13ACB91A0085B1A0 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
-		9EEEEA7B13ACB91A0085B1A0 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
-		9EEEEA7D13ACB91A0085B1A0 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
-		9EEEEA7E13ACB91A0085B1A0 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
-		9EEEEA7F13ACB91A0085B1A0 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
-		9EEEEA8013ACB91A0085B1A0 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -432,6 +416,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 821CB8F515F8C15A00D48537;
 			remoteInfo = log4cpp;
+		};
+		3ABEAB1E1749BDF100E34912 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 47103BE10CF04D8800A7DF2B;
+			remoteInfo = Common;
 		};
 		471D65480A98B73C00DA9C21 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -560,7 +551,9 @@
 			files = (
 				3402EB6F0F5A348B00DF6FE7 /* libBulletCollision.dylib in Copy Shared Libraries */,
 				3402EB700F5A348B00DF6FE7 /* libBulletDynamics.dylib in Copy Shared Libraries */,
+				3ABEABA51749D05E00E34912 /* freeorioncommon.dylib in Copy Shared Libraries */,
 				3402EB710F5A348B00DF6FE7 /* libLinearMath.dylib in Copy Shared Libraries */,
+				3ABEABA41749D05700E34912 /* freeorionparse.dylib in Copy Shared Libraries */,
 			);
 			name = "Copy Shared Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1385,7 +1378,7 @@
 		471032380CEF6A7600A7DF2B /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogg.framework; sourceTree = "<group>"; };
 		4710323F0CEF6A8B00A7DF2B /* vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vorbis.framework; sourceTree = "<group>"; };
 		471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FreeOrion.icns; sourceTree = "<group>"; };
-		47103BE20CF04D8800A7DF2B /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = freeorioncommon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		471D5A300A988D5700DA9C21 /* libGG.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGG.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AIClientApp.cpp; sourceTree = "<group>"; };
 		471D5C5B0A98A3F900DA9C21 /* AIClientApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AIClientApp.h; sourceTree = "<group>"; };
@@ -1890,7 +1883,7 @@
 		82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaParser.cpp; sourceTree = "<group>"; };
 		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
 		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
-		82C07438149DE46200E76876 /* libParse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libParse.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		82C07438149DE46200E76876 /* freeorionparse.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = freeorionparse.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeModeratorAction.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
@@ -1907,23 +1900,37 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3ABEAB361749BF8A00E34912 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3ABEAB3B1749BFED00E34912 /* freeorioncommon.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3ABEAB391749BFDB00E34912 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3ABEAB421749C2B200E34912 /* CoreFoundation.framework in Frameworks */,
+				3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */,
+				3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */,
+				3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */,
+				3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */,
+				3ABEAB741749C36200E34912 /* libboost_system.a in Frameworks */,
+				3ABEAB801749C51B00E34912 /* libboost_thread.a in Frameworks */,
+				3ABEAB3A1749BFE000E34912 /* liblog4cpp.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		471D5D420A98A46000DA9C21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */,
-				824C0B7D15F61E4D002081C2 /* libboost_chrono.a in Frameworks */,
-				824C0B7E15F61E63002081C2 /* libboost_date_time.a in Frameworks */,
-				9E632AE413AD24C8003D1874 /* libboost_filesystem.a in Frameworks */,
-				9E632AE513AD24C8003D1874 /* libboost_python.a in Frameworks */,
-				9E632AE713AD24C8003D1874 /* libboost_serialization.a in Frameworks */,
-				9E632AE813AD24C8003D1874 /* libboost_signals.a in Frameworks */,
-				9E632AE913AD24C8003D1874 /* libboost_system.a in Frameworks */,
-				9E632AEA13AD24C8003D1874 /* libboost_thread.a in Frameworks */,
-				821CC21B15F8C7BD00D48537 /* liblog4cpp.a in Frameworks */,
-				478417730CF0589200BE4710 /* libCommon.a in Frameworks */,
-				9E632AE613AD24C8003D1874 /* libboost_regex.a in Frameworks */,
-				82C0747C149DE80300E76876 /* libParse.a in Frameworks */,
+				3ABEAB971749C93400E34912 /* libboost_signals.a in Frameworks */,
+				3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */,
+				478417730CF0589200BE4710 /* freeorioncommon.dylib in Frameworks */,
+				82C0747C149DE80300E76876 /* freeorionparse.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1932,20 +1939,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				34F0E429113F497500A10EED /* Python.framework in Frameworks */,
-				34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */,
-				824C0BAC15F61EF3002081C2 /* libboost_chrono.a in Frameworks */,
-				824C0BAD15F61EF3002081C2 /* libboost_date_time.a in Frameworks */,
-				9E632AEB13AD24D1003D1874 /* libboost_filesystem.a in Frameworks */,
 				9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */,
-				9E632AEE13AD24D1003D1874 /* libboost_serialization.a in Frameworks */,
-				9E632AEF13AD24D1003D1874 /* libboost_signals.a in Frameworks */,
-				9E632AF013AD24D1003D1874 /* libboost_system.a in Frameworks */,
-				9E632AF113AD24D1003D1874 /* libboost_thread.a in Frameworks */,
-				821CC21D15F8C7BE00D48537 /* liblog4cpp.a in Frameworks */,
+				3ABEABA11749C9CA00E34912 /* libboost_thread.a in Frameworks */,
 				478418EF0CF05A5600BE4710 /* libClientCommon.a in Frameworks */,
-				4784177A0CF058F000BE4710 /* libCommon.a in Frameworks */,
+				4784177A0CF058F000BE4710 /* freeorioncommon.dylib in Frameworks */,
 				9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */,
-				82C0747F149DE83000E76876 /* libParse.a in Frameworks */,
+				82C0747F149DE83000E76876 /* freeorionparse.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1956,22 +1955,14 @@
 				828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */,
 				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
 				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
-				824C0BAA15F61EC0002081C2 /* libboost_chrono.a in Frameworks */,
-				824C0BAB15F61EC0002081C2 /* libboost_date_time.a in Frameworks */,
-				9EEEEA7A13ACB91A0085B1A0 /* libboost_filesystem.a in Frameworks */,
-				9EEEEA7B13ACB91A0085B1A0 /* libboost_python.a in Frameworks */,
-				9EEEEA7D13ACB91A0085B1A0 /* libboost_serialization.a in Frameworks */,
-				9EEEEA7E13ACB91A0085B1A0 /* libboost_signals.a in Frameworks */,
-				9EEEEA7F13ACB91A0085B1A0 /* libboost_system.a in Frameworks */,
-				9EEEEA8013ACB91A0085B1A0 /* libboost_thread.a in Frameworks */,
+				3ABEAB9C1749C96400E34912 /* libboost_signals.a in Frameworks */,
 				34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */,
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
 				34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */,
 				47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */,
-				821CC21C15F8C7BE00D48537 /* liblog4cpp.a in Frameworks */,
 				478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */,
-				478417700CF0581A00BE4710 /* libCommon.a in Frameworks */,
+				478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */,
 				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
 				82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */,
 				471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */,
@@ -1983,7 +1974,7 @@
 				34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */,
 				34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */,
 				34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */,
-				82C07479149DE7CE00E76876 /* libParse.a in Frameworks */,
+				82C07479149DE7CE00E76876 /* freeorionparse.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2018,11 +2009,11 @@
 				471D5A300A988D5700DA9C21 /* libGG.a */,
 				471D5D440A98A46000DA9C21 /* freeoriond */,
 				471FEFD70A9A629800C36AA3 /* freeorionca */,
-				47103BE20CF04D8800A7DF2B /* libCommon.a */,
+				47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */,
 				478417B10CF0592E00BE4710 /* libClientCommon.a */,
 				47B615BF0CF099BD00318761 /* libFREEALUT.a */,
 				3402E25D0F5A317400DF6FE7 /* FreeOrion.app */,
-				82C07438149DE46200E76876 /* libParse.a */,
+				82C07438149DE46200E76876 /* freeorionparse.dylib */,
 				82271C3A15F8AB900063179C /* libOIS.a */,
 				821CB90915F8C15A00D48537 /* liblog4cpp.a */,
 			);
@@ -4064,6 +4055,7 @@
 			buildConfigurationList = 47103BE30CF04DC700A7DF2B /* Build configuration list for PBXNativeTarget "Common" */;
 			buildPhases = (
 				47103BDF0CF04D8800A7DF2B /* Sources */,
+				3ABEAB391749BFDB00E34912 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4072,8 +4064,8 @@
 			);
 			name = Common;
 			productName = Common;
-			productReference = 47103BE20CF04D8800A7DF2B /* libCommon.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		471D5A2F0A988D5700DA9C21 /* GG */ = {
 			isa = PBXNativeTarget;
@@ -4193,15 +4185,17 @@
 			buildConfigurationList = 82C07434149DE46200E76876 /* Build configuration list for PBXNativeTarget "Parse" */;
 			buildPhases = (
 				82C073D9149DE46200E76876 /* Sources */,
+				3ABEAB361749BF8A00E34912 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3ABEAB1F1749BDF100E34912 /* PBXTargetDependency */,
 			);
 			name = Parse;
 			productName = Common;
-			productReference = 82C07438149DE46200E76876 /* libParse.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = 82C07438149DE46200E76876 /* freeorionparse.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		8DD76F620486A84900D96B5E /* FreeOrionClient */ = {
 			isa = PBXNativeTarget;
@@ -4344,6 +4338,7 @@
 				47103C0A0CF04E5900A7DF2B /* ShipDesign.cpp in Sources */,
 				47103C0B0CF04E5900A7DF2B /* Special.cpp in Sources */,
 				47103C0C0CF04E5900A7DF2B /* System.cpp in Sources */,
+				3ABEAB871749C72000E34912 /* Universe.cpp in Sources */,
 				47103C0D0CF04E5900A7DF2B /* Tech.cpp in Sources */,
 				47103C100CF04E5900A7DF2B /* UniverseObject.cpp in Sources */,
 				47103C110CF04E5900A7DF2B /* ValueRef.cpp in Sources */,
@@ -4428,7 +4423,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				47FAB64D0A98D83B00F0AF3F /* AppInterface.cpp in Sources */,
-				478417770CF058C900BE4710 /* Universe.cpp in Sources */,
 				47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */,
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
@@ -4446,7 +4440,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */,
-				471FEFB30A9A629800C36AA3 /* Universe.cpp in Sources */,
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
 				471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */,
 				471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */,
@@ -4612,7 +4605,6 @@
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */,
-				471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */,
 				471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */,
 				471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
@@ -4694,6 +4686,11 @@
 			isa = PBXTargetDependency;
 			target = 821CB8F515F8C15A00D48537 /* log4cpp */;
 			targetProxy = 3A7604B81749B25A00363653 /* PBXContainerItemProxy */;
+		};
+		3ABEAB1F1749BDF100E34912 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 47103BE10CF04D8800A7DF2B /* Common */;
+			targetProxy = 3ABEAB1E1749BDF100E34912 /* PBXContainerItemProxy */;
 		};
 		471D65490A98B73C00DA9C21 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4807,8 +4804,8 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -4852,7 +4849,12 @@
 		47103BE40CF04DC700A7DF2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -4946,8 +4948,8 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -4994,7 +4996,8 @@
 		8218682D14A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Test;
@@ -5002,7 +5005,12 @@
 		8218682E14A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Test;
@@ -5110,8 +5118,8 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -5158,7 +5166,8 @@
 		8218683D14AA28BE009441B8 /* Release_10_5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Release_10_5;
@@ -5166,7 +5175,12 @@
 		8218683E14AA28BE009441B8 /* Release_10_5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Release_10_5;
@@ -5274,8 +5288,8 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -5322,7 +5336,8 @@
 		8219A98E14AAFFC300EEE387 /* Release_LLVM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Release_LLVM;
@@ -5330,7 +5345,12 @@
 		8219A99D14AAFFC300EEE387 /* Release_LLVM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Release_LLVM;
@@ -5540,7 +5560,8 @@
 		8221B242160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -5548,7 +5569,12 @@
 		8221B251160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -5764,7 +5790,8 @@
 		8263A0DD16DDFC9400A2AACD /* Test_GCC42 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Test_GCC42;
@@ -5772,7 +5799,12 @@
 		8263A0EC16DDFC9400A2AACD /* Test_GCC42 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Common;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = freeorioncommon;
 				ZERO_LINK = NO;
 			};
 			name = Test_GCC42;
@@ -5897,7 +5929,8 @@
 		82C07435149DE46200E76876 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Parse;
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
