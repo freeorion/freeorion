@@ -3818,8 +3818,26 @@ void MapWnd::SystemRightClicked(int system_id) {
                 net.SendMessage(ModeratorActionMessage(player_id,
                     Moderator::RemoveStarlane(system_id, selected_system_id)));
             }
+        } else if (mas == MAS_SetOwner) {
+            int empire_id = m_moderator_wnd->SelectedEmpire();
+            const System* system = GetSystem(system_id);
+            if (!system)
+                return;
+            std::vector<int> object_ids = system->FindObjectIDs();
+
+            for (std::vector<int>::const_iterator it = object_ids.begin();
+                 it != object_ids.end(); ++it)
+            {
+                const UniverseObject* obj = GetUniverseObject(*it);
+                if (!obj)
+                    continue;
+                UniverseObjectType obj_type = obj->ObjectType();
+                if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
+                    net.SendMessage(ModeratorActionMessage(player_id,
+                    Moderator::SetOwner(*it, empire_id)));
+                }
+            }
         }
-        return;
     }
 
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
