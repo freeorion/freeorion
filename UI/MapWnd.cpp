@@ -3857,6 +3857,10 @@ void MapWnd::PlanetRightClicked(int planet_id) {
     if (mas == MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(player_id,
             Moderator::DestroyUniverseObject(planet_id)));
+    } else if (mas == MAS_SetOwner) {
+        int empire_id = m_moderator_wnd->SelectedEmpire();
+        net.SendMessage(ModeratorActionMessage(player_id,
+            Moderator::SetOwner(planet_id, empire_id)));
     }
 }
 
@@ -3873,6 +3877,10 @@ void MapWnd::BuildingRightClicked(int building_id) {
     if (mas == MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(player_id,
             Moderator::DestroyUniverseObject(building_id)));
+    } else if (mas == MAS_SetOwner) {
+        int empire_id = m_moderator_wnd->SelectedEmpire();
+        net.SendMessage(ModeratorActionMessage(player_id,
+            Moderator::SetOwner(building_id, empire_id)));
     }
 }
 
@@ -4057,10 +4065,18 @@ void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
 
     if (mas == MAS_Destroy) {
         for (std::vector<int>::const_iterator it = fleet_ids.begin();
-                it != fleet_ids.end(); ++it)
+             it != fleet_ids.end(); ++it)
         {
             net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::DestroyUniverseObject(*it)));
+        }
+    } else if (mas == MAS_SetOwner) {
+        int empire_id = m_moderator_wnd->SelectedEmpire();
+        for (std::vector<int>::const_iterator it = fleet_ids.begin();
+             it != fleet_ids.end(); ++it)
+        {
+            net.SendMessage(ModeratorActionMessage(player_id,
+                Moderator::SetOwner(*it, empire_id)));
         }
     }
 }
@@ -4070,7 +4086,7 @@ void MapWnd::ShipRightClicked(int ship_id) {
         return;
     std::vector<int> ship_ids;
     ship_ids.push_back(ship_id);
-    FleetsRightClicked(ship_ids);
+    ShipsRightClicked(ship_ids);
 }
 
 void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
@@ -4089,6 +4105,14 @@ void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
         {
             net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::DestroyUniverseObject(*it)));
+        }
+    } else if (mas == MAS_SetOwner) {
+        int empire_id = m_moderator_wnd->SelectedEmpire();
+        for (std::vector<int>::const_iterator it = ship_ids.begin();
+             it != ship_ids.end(); ++it)
+        {
+            net.SendMessage(ModeratorActionMessage(player_id,
+                Moderator::SetOwner(*it, empire_id)));
         }
     }
 }

@@ -97,9 +97,6 @@ UNKNOWN_VALUE_SYMBOL
 UNKNOWN_VALUE_SYMBOL_2
 ???
 
-UNCERTAIN_VALUE
-%1%(?)
-
 ERROR
 ERROR
 
@@ -190,6 +187,9 @@ Any Of:
 
 DUMP
 Debug Data Dump
+
+UNOWNED
+Unowned
 
 ###########################
 # Predefined Ship Designs #

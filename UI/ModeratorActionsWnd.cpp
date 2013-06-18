@@ -131,6 +131,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     GG::Connect(m_set_owner_button->LeftClickedSignal,      &ModeratorActionsWnd::SetOwnerClicked,      this);
     m_empire_drop = new CUIDropDownList(GG::X0, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
+    m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
     GG::Connect(m_empire_drop->SelChangedSignal,        &ModeratorActionsWnd::EmpireSelected,       this);
 
@@ -307,13 +308,18 @@ void ModeratorActionsWnd::Refresh() {
         row->push_back(new GG::TextControl(GG::X0, GG::Y0, empire->Name(), font, empire->Color()));
         m_empire_drop->Insert(row);
     }
+
+    // no empire / monsters
+    GG::DropDownList::Row* row = new GG::DropDownList::Row();
+    row->push_back(new GG::TextControl(GG::X0, GG::Y0, UserString("UNOWNED"), font, GG::CLR_RED));
+    m_empire_drop->Insert(row);
+
     if (!m_empire_drop->Empty())
         m_empire_drop->Select(m_empire_drop->begin());
 }
 
-void ModeratorActionsWnd::EnableActions(bool enable/* = true*/) {
-    m_actions_enabled = enable;
-}
+void ModeratorActionsWnd::EnableActions(bool enable/* = true*/)
+{ m_actions_enabled = enable; }
 
 void ModeratorActionsWnd::CloseClicked()
 { ClosingSignal(); }
@@ -337,10 +343,9 @@ PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
 }
 
 int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
-    if (i == static_cast<std::size_t>(-1))
-        return ALL_EMPIRES;
-    if (i > static_cast<unsigned int>(Empires().NumEmpires()))
-        return ALL_EMPIRES;
+    if (i == static_cast<std::size_t>(-1) ||
+        i >= static_cast<std::size_t>(Empires().NumEmpires()))
+    { return ALL_EMPIRES; }
     EmpireManager::const_iterator it = Empires().begin();
     std::advance(it, i);
     return it->first;
