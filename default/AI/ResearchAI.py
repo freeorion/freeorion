@@ -6,6 +6,7 @@ import AIstate
 import traceback
 import sys
 import ColonisationAI
+import random
 
 inProgressTechs={}
 
@@ -64,7 +65,7 @@ def generateResearchOrders():
                     CO_idx = researchQueueList.index( "CON_ORBITAL_CON")
                     res=fo.issueEnqueueTechOrder("SPY_DETECT_2", CO_idx+1)
                 print "Empire has poor colony/outpost prospects,  so attempted to fast-track %s,  got result %d"%("CON_ORBITAL_CON", res)
-        
+    
     gotGGG = empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete
     gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
     gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
@@ -100,7 +101,8 @@ def generateResearchOrders():
                 print "Error: can't retrieve tech ",  element.tech
                 continue
             missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in completedTechs]
-            unlockedItems = [(uli.name,  uli.type) for uli in thisTech.unlockedItems]
+            #unlockedItems = [(uli.name,  uli.type) for uli in thisTech.unlockedItems]
+            unlockedItems = [uli.name for uli in thisTech.unlockedItems]
             if not missingPrereqs:
                 print "    %25s  allocated %6.2f RP -- unlockable items: %s "%(element.tech,  element.allocation,  unlockedItems)
             else:
@@ -160,6 +162,13 @@ def generateResearchOrders():
                 if   ccTech not in researchQueueList[:insertIdx+1]  and  empire.getTechStatus(ccTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(ccTech, insertIdx)
                     print "Empire is very aggressive,  so attempted to fast-track %s,  got result %d"%(ccTech, res)
+                    
+        if (random.random() <= 0.5) and ( "SHP_WEAPON_2_1" in researchQueueList) : # somewhat prioritize a couple defensive techs
+            idx = researchQueueList.index( "SHP_WEAPON_2_1")
+            for def_tech in ["DEF_PLAN_BARRIER_SHLD_1", "DEF_DEFENSE_NET_2" ]:
+                res=fo.issueEnqueueTechOrder(def_tech, idx)
+                print "Empire feeling defensive today,  so attempted to fast-track %s,  got result %d"%(def_tech, res)
+
         print""
         
         generateDefaultResearchOrders()

@@ -372,7 +372,8 @@ def getColonyFleets():
     print ""
     print "Settleable Colony Planets (score,species) | ID | Name | Specials:"
     for ID, score in sortedPlanets:
-        print "   %15s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
+        if score > 0.5:
+            print "   %15s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
     sortedPlanets = [(ID, score) for ID, score in sortedPlanets if score[0] > 0]
@@ -391,7 +392,8 @@ def getColonyFleets():
 
     print "Settleable Outpost PlanetIDs:"
     for ID, score in sortedOutposts:
-        print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
+        if score > 0.5:
+            print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
     sortedOutposts = [(ID, score) for ID, score in sortedOutposts if score[0] > 0]
@@ -439,10 +441,10 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
     origDetail = detail
     planetValues = {}
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
-        print "\n=========\nAssigning Outpost Values\n========="
+        #print "\n=========\nAssigning Outpost Values\n========="
         trySpecies = [ "" ]
     elif species is not None:
-        print "\n=========\nAssigning Colony Values\n========="
+        #print "\n=========\nAssigning Colony Values\n========="
         if isinstance(species,  str):
             trySpecies = [species]
         elif isinstance(species,  list):
@@ -450,7 +452,7 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
         else:
             trySpecies = [species.name]
     else:
-        print "\n=========\nAssigning Colony Values\n========="
+        #print "\n=========\nAssigning Colony Values\n========="
         trySpecies = list(  empireColonizers  )
     for planetID in planetIDs:
         pv = []
@@ -464,7 +466,7 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
                 planetValues[planetID] = allSorted
             else:
                 planetValues[planetID] = best[0][:2]
-                print best[0][2]
+                #print best[0][2]
     return planetValues
 
 def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = []):
@@ -670,8 +672,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             elif tagType =="RESEARCH":
                 resTagMod = grade
         
-        if AITags != "":
-            print "Species %s has AITags %s"%(specName,  AITags)
+        #if AITags != "":
+        #    print "Species %s has AITags %s"%(specName,  AITags)
         
         retval += fixedRes
         retval += colonyStarBonus

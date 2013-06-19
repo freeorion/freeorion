@@ -262,6 +262,8 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is3,  if1],  "",  model)    for iw in [2, 3, 4] ]
         nb =  designNameBases[3]+"4g-%1x"
         newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
+        nb =  designNameBases[3]+"4h-%1x"
+        newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is5,  if1],  "",  model)    for iw in [2, 3, 4] ]
     else:
         nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
         #newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  15) ]
@@ -277,28 +279,32 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(1, iw+4),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar4] + [ is4,  if1, if1],  "",  model)    for iw in [4] ]
         newMarkDesigns += [ (nb%(2, iw+4),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw+8),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar5] + [ is3,  if1, if1],  "",  model)    for iw in [4] ]
         newMarkDesigns += [ (nb%(3, iw+4),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar5] + [ is4,  if1, if1],  "",  model)    for iw in [4] ]
         newMarkDesigns += [ (nb%(4, iw+4),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw+8),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
 
         nb,  hull =  designNameBases[5]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
         newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb%iw]+5*[""] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb2%iw]+5*[""] + [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  [srb2%iw]+3*[""] +2*[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  [srb2%iw]+4*[""] +[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
         nb,  hull =  designNameBases[6]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +2*[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb3%iw]+4*[""] +[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +2*[ar3]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
         newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  3*[srb3%iw]+3*[ar3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  2*[srb3%iw]+1*[""]+3*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  2*[srb3%iw]+1*[""]+3*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb3%iw]+2*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb3%iw]+2*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
         nb,  hull =  designNameBases[7]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb4%iw]+1*[""]+3*[ar3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  2*[srb4%iw]+1*[""]+3*[ar4]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  3*[srb4%iw]+0*[""]+3*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  3*[srb4%iw]+0*[""]+3*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
 
-        if foAI.foAIstate.aggression >fo.aggression.typical: 
+        if False and foAI.foAIstate.aggression >fo.aggression.typical: 
             hull =  "SH_SENTIENT"
             for cld in [2, 3]:
                 nb =  designNameBases[8]+"-%%1xa%1d-%%1x"%cld
@@ -603,6 +609,8 @@ def generateProductionOrders():
                     buildLoc= pids[-1]
                     res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", buildLoc)
                     print "Enqueueing BLD_SHIPYARD_BASE at planet %d (%s) for colonizer species %s, with result %d"%(buildLoc, universe.getPlanet(buildLoc).name,  specName,   res)
+                    if res:
+                        break # only start at most one new shipyard per species per turn
         for pid in ColonisationAI.empireSpecies.get(specName, []): 
             planet=universe.getPlanet(pid)
             if planet:

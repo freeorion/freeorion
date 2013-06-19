@@ -152,7 +152,8 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
             preVis = "an interior system"
         else:
             preVis = "an unknown system"
-        print "*** system ID %d ( %s ) ; previously %s, new visibility_turns vector is %s "%(curSystemID, sysName, preVis,   [turn for turn in universe.getVisibilityTurns(curSystemID,  empireID)])
+        if fo.currentTurn() < 50:
+            print "*** system ID %d ( %s ) ; previously %s, new visibility_turns vector is %s "%(curSystemID, sysName, preVis,   [turn for turn in universe.getVisibilityTurns(curSystemID,  empireID)])
         statusStr = "*** system ID %d  ( %s ) ; "%(curSystemID, sysName)
         isVisible = ( universe.getVisibilityTurns(curSystemID,  empireID)[fo.visibility.partial] > 0 ) # more precisely, this means HAS BEEN visible
         #print "previous visTurns result: %s"% ([val for val in universe.getVisibilityTurns(curSystemID,  empireID)],  )
@@ -175,7 +176,8 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
                 sysStatus['neighbors']=sysNeighbors
             neighbors=sysStatus['neighbors'].keys()
             sysPlanets=sysStatus.get('planets', {})
-            print "    previously knew of system %d planets %s"%(curSystemID,  sysPlanets.keys())
+            if fo.currentTurn() < 50:
+                print "    previously knew of system %d planets %s"%(curSystemID,  sysPlanets.keys())
             if system:
                 for planet in system.planetIDs:
                     targPop=sysPlanets.setdefault(planet, {}).setdefault('targetPop',0)
@@ -184,14 +186,17 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
                     if planetObj:
                         newPop=planetObj.currentMeterValue(fo.meterType.targetPopulation)
                         if newPop != sysPlanets[planet]['targetPop']:
-                            print "  * updating targetPop of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  newPop,  sysPlanets[planet]['targetPop'])
+                            if fo.currentTurn() < 50:
+                                print "  * updating targetPop of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  newPop,  sysPlanets[planet]['targetPop'])
                         troops = planetObj.currentMeterValue(fo.meterType.troops)
                         if troops != sysPlanets[planet].get('troops', 0):
-                            print "  * updating troops of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  troops,  sysPlanets[planet]['troops'])
+                            if fo.currentTurn() < 50:
+                                print "  * updating troops of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  troops,  sysPlanets[planet]['troops'])
                         sysPlanets[planet]['targetPop']= newPop
                         sysPlanets[planet]['troops']= troops
                 sysStatus['planets']=sysPlanets
-            print "    now know of system %d planets %s"%(curSystemID,  sysPlanets.keys())
+            if fo.currentTurn() < 50:
+                print "    now know of system %d planets %s"%(curSystemID,  sysPlanets.keys())
             foAI.foAIstate.systemStatus[curSystemID]=sysStatus
             #neighbors = list(  universe.getImmediateNeighbors(curSystemID,  empireID) )   #imNeighbors
             #if set(neighbors) != set(neighbors2):
@@ -204,8 +209,9 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
                     if  (sysID not in graphFlags) and (sysID not in foAI.foAIstate.visInteriorSystemIDs ):
                         foAI.foAIstate.visBorderSystemIDs[sysID] = 1
                         explorationList.append(sysID)
-        print statusStr
-        print "----------------------------------------------------------"
+        if fo.currentTurn() < 50:
+            print statusStr
+            print "----------------------------------------------------------"
 
 
 def updateExploredSystems():

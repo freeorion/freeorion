@@ -114,9 +114,10 @@ class AIstate(object):
         invasionTargets[:]=[]
         
         ExplorationAI.graphFlags.clear()
-        print "-------------------------------------------------"
-        print "Border Exploration Update"
-        print "-------------------------------------------------"
+        if fo.currentTurn() < 50:
+            print "-------------------------------------------------"
+            print "Border Exploration Update"
+            print "-------------------------------------------------"
         for sysID in list(self.visBorderSystemIDs):
             ExplorationAI.followVisSystemConnections(sysID,  self.origHomeSystemID)
         newlyExplored = ExplorationAI.updateExploredSystems()
@@ -175,6 +176,8 @@ class AIstate(object):
             del self.__fleetRoleByID[fleetID]
 
     def reportSystemThreats(self, sysIDList=None):
+        if fo.currentTurn() >= 50:
+            return
         universe = fo.getUniverse()
         if sysIDList is None:
             sysIDList = sorted( universe.systemIDs )# will normally look at this, the list of all known systems

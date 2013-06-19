@@ -390,12 +390,13 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
     print "Unclassifyable Fleets  : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVALID))
 
-    print ""
-    print "Explored systems  :"
-    printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
-    print "Unexplored systems:"
-    printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
-    print ""
+    if fo.currentTurn() <50:
+        print ""
+        print "Explored systems  :"
+        printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
+        print "Unexplored systems:"
+        printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+        print ""
 
     explorationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
     if len( explorationAIFleetMissions) >0:

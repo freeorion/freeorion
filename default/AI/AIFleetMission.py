@@ -260,7 +260,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         #for aiFleetOrder2 in self.getAIFleetOrders():
         #    print "\t\t %s"%aiFleetOrder2
         for aiFleetOrder in self.getAIFleetOrders():
-            print "   %s"%(aiFleetOrder)
+            #print "   %s"%(aiFleetOrder)
             clearAll=False
             if aiFleetOrder.getAIFleetOrderType() in [EnumsAI.AIFleetOrderType.ORDER_COLONISE,  EnumsAI.AIFleetOrderType.ORDER_OUTPOST]:#TODO: invasion?
                 universe=fo.getUniverse()
@@ -273,6 +273,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 elif not planet.unowned:
                         clearAll =True
                 if clearAll:
+                    print "   %s"%(aiFleetOrder)
                     print "Fleet %d had a target planet that is no longer valid for this mission; aborting."%(self.getAITargetID() )
                     self.clearAIFleetOrders()
                     self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
