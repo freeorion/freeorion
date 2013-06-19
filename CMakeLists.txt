@@ -184,6 +184,7 @@ add_library(freeorioncommon
     util/binreloc.c
     util/Directories.cpp
     util/i18n.cpp
+    util/VarText.cpp
     util/XMLDoc.cpp
     GG/src/adobe/memory.cpp
     GG/src/adobe/name.cpp

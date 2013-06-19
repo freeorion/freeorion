@@ -19,7 +19,6 @@ add_executable(freeoriond
     ../server/dmain.cpp
     ../universe/UniverseServer.cpp
     ../util/AppInterface.cpp
-    ../util/VarText.cpp
     ../combat/CombatSystem.cpp
 )
 

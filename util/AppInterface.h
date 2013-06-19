@@ -51,6 +51,9 @@ Fleet* GetEmpireKnownFleet(int object_id, int empire_id);
 Building* GetBuilding(int object_id);
 Building* GetEmpireKnownBuilding(int object_id, int empire_id);
 
+/** Returns the object name of the universe object. This can be apperant object
+ * name, if the application isn't supposed to see the real object name. */
+std::string GetVisibleObjectName(const UniverseObject* object);
 
 /** Returns a new object ID from the server */
 int GetNewObjectID();

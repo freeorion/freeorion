@@ -79,6 +79,25 @@ UniverseObject* GetEmpireKnownObject(int object_id, int empire_id) {
 #endif
 }
 
+std::string GetVisibleObjectName(const UniverseObject* object)
+{
+    if(NULL == object)
+    {
+        Logger().errorStream() << "GetVisibleObjectName: expected non null object pointer.";
+        return std::string();
+    }
+
+#ifdef FREEORION_BUILD_SERVER
+    std::string name_text = object->Name();
+#else
+    int client_empire_id = ClientApp::GetApp()->EmpireID();
+    std::string name_text = object->PublicName(client_empire_id);
+    if (const System* system = universe_object_cast<const System*>(object))
+        name_text = system->ApparentName(client_empire_id);
+#endif
+    return name_text;
+}
+
 template <class T>
 T* GetUniverseObject(int object_id)
 {

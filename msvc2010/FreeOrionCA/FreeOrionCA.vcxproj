@@ -169,7 +169,6 @@
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
-    <ClCompile Include="..\..\util\VarText.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

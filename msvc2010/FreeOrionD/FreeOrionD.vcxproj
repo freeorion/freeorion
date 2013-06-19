@@ -161,7 +161,6 @@
     <ClCompile Include="..\..\universe\UniverseServer.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
-    <ClCompile Include="..\..\util\VarText.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -535,9 +535,6 @@
     <ClCompile Include="..\..\util\Process.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\VarText.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\ObjectListWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>

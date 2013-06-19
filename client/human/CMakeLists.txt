@@ -116,7 +116,6 @@ set(freeorion_SOURCES
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
     ../../util/AppInterface.cpp
-    ../../util/VarText.cpp
 )
 
 set(freeorion_LINK_LIBS

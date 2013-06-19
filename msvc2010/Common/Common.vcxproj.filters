@@ -294,6 +294,9 @@
     <ClCompile Include="..\..\util\SitRepEntry.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\VarText.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\util\XMLDoc.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>

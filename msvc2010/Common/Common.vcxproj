@@ -251,6 +251,7 @@
     <ClCompile Include="..\..\util\SerializeUniverse.cpp" />
     <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
+    <ClCompile Include="..\..\util\VarText.cpp" />
     <ClCompile Include="..\..\util\Version.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,16 +8,6 @@
 #include "i18n.h"
 #include "Logger.h"
 
-#ifdef FREEORION_BUILD_SERVER
-# include "../server/ServerApp.h"
-#else
-# ifdef FREEORION_BUILD_HUMAN
-#  include "../client/human/HumanClientApp.h"
-# else
-#  include "../client/AI/AIClientApp.h"
-# endif
-#endif
-
 #include <boost/spirit/include/classic.hpp>
 
 // Forward declarations
@@ -99,14 +89,7 @@ namespace {
                     return;
                 }
 
-#ifdef FREEORION_BUILD_SERVER
-                std::string name_text = obj->Name();
-#else
-                int client_empire_id = ClientApp::GetApp()->EmpireID();
-                std::string name_text = obj->PublicName(client_empire_id);
-                if (const System* system = universe_object_cast<const System*>(obj))
-                    name_text = system->ApparentName(client_empire_id);
-#endif
+                std::string name_text = GetVisibleObjectName(obj);
                 m_str += open_tag + name_text + close_tag;
 
             // combat log

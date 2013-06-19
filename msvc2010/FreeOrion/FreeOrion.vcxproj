@@ -267,7 +267,6 @@
     <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
-    <ClCompile Include="..\..\util\VarText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FreeOrion.rc">

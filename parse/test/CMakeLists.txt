@@ -16,7 +16,6 @@ add_executable(parser_test
     ../../universe/UniverseServer.cpp
     ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
-    ../../util/VarText.cpp
     test.cpp
     lexer_test_rules.cpp
 )
