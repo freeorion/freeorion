@@ -2944,7 +2944,12 @@ PROTECTION_FOCUS_DEFENSE
 BAD_DETECTION
 '''EffectsGroup
             scope = Source
+            activation = Not Ship
             effects = SetDetection Value -20
+    EffectsGroup
+            scope = Source
+            activation = Ship
+            effects = SetDetection Value -9
 '''
 
 GOOD_DETECTION
