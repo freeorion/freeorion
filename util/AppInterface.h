@@ -2,11 +2,7 @@
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 
-#include <string>
-
-#if defined(_MSC_VER) && defined(int64_t)
-#undef int64_t
-#endif
+#include "../universe/Universe.h"
 
 class EmpireManager;
 class Universe;
@@ -18,58 +14,6 @@ class Ship;
 class Fleet;
 class Building;
 class Field;
-
-/** Accessor for the App's empire manager */
-EmpireManager& Empires();
-
-/** Accessor for the App's universe object */
-Universe& GetUniverse();
-
-/** Accessor for all (on server) or all known (on client) objects ObjectMap */
-ObjectMap& Objects();
-
-/** Accessor for known objects of specified empire. */
-ObjectMap& EmpireKnownObjects(int empire_id);
-
-/** Accessor for individual objects. */
-UniverseObject* GetUniverseObject(int object_id);
-UniverseObject* GetEmpireKnownObject(int object_id, int empire_id);
-Planet* GetPlanet(int object_id);
-Planet* GetEmpireKnownPlanet(int object_id, int empire_id);
-System* GetSystem(int object_id);
-System* GetEmpireKnownSystem(int object_id, int empire_id);
-Field* GetField(int object_id);
-Field* GetEmpireKnownField(int object_id, int empire_id);
-Ship* GetShip(int object_id);
-Ship* GetEmpireKnownShip(int object_id, int empire_id);
-Fleet* GetFleet(int object_id);
-Fleet* GetEmpireKnownFleet(int object_id, int empire_id);
-Building* GetBuilding(int object_id);
-Building* GetEmpireKnownBuilding(int object_id, int empire_id);
-
-/** Returns the object name of the universe object. This can be apperant object
- * name, if the application isn't supposed to see the real object name. */
-std::string GetVisibleObjectName(const UniverseObject* object);
-
-/** Returns a new object ID from the server */
-int GetNewObjectID();
-
-/** Returns a new object ID from the server */
-int GetNewDesignID();
-
-/** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN during galaxy setup, or is
-    INVALID_GAME_TURN at other times */
-int CurrentTurn();
-
-// sentinel values returned by CurrentTurn().  Can't be an enum since CurrentGameTurn() needs to return an integer
-// game turn number
-extern const int INVALID_GAME_TURN;     ///< returned by CurrentGameTurn if a game is not currently in progress or being set up.
-extern const int BEFORE_FIRST_TURN;     ///< returned by CurrentGameTurn if the galaxy is currently being set up
-extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly larger than any real turn number that might come up
-
-/* add additional accessors here for app specific things
-   that are needed for both the server and the client, but for which
-   access will vary and requires an #ifdef */
 
 class IApp {
 public:
@@ -109,5 +53,88 @@ private:
     const IApp& operator=(const IApp&); // disabled
     IApp(const IApp&); // disabled
 };
+
+/** Accessor for the App's empire manager */
+inline EmpireManager& Empires()
+{ return IApp::GetApp()->Empires(); }
+
+/** Accessor for the App's universe object */
+inline Universe& GetUniverse()
+{ return IApp::GetApp()->GetUniverse(); }
+
+/** Accessor for all (on server) or all known (on client) objects ObjectMap */
+inline ObjectMap& Objects()
+{ return IApp::GetApp()->GetUniverse().Objects(); }
+
+/** Accessor for known objects of specified empire. */
+inline ObjectMap& EmpireKnownObjects(int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id); }
+
+/** Accessor for individual objects. */
+inline UniverseObject* GetUniverseObject(int object_id)
+{ return IApp::GetApp()->GetUniverseObject(object_id); }
+
+inline UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObject(object_id, empire_id); }
+
+inline Planet* GetPlanet(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<Planet>(object_id); }
+
+inline Planet* GetEmpireKnownPlanet(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Planet>(object_id); }
+
+inline System* GetSystem(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<System>(object_id); }
+
+inline System* GetEmpireKnownSystem(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<System>(object_id); }
+
+inline Field* GetField(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<Field>(object_id); }
+
+inline Field* GetEmpireKnownField(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Field>(object_id); }
+
+inline Ship* GetShip(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<Ship>(object_id); }
+
+inline Ship* GetEmpireKnownShip(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Ship>(object_id); }
+
+inline Fleet* GetFleet(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<Fleet>(object_id); }
+
+inline Fleet* GetEmpireKnownFleet(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Fleet>(object_id); }
+
+inline Building* GetBuilding(int object_id)
+{ return IApp::GetApp()->GetUniverse().Objects().Object<Building>(object_id); }
+
+inline Building* GetEmpireKnownBuilding(int object_id, int empire_id)
+{ return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Building>(object_id); }
+
+/** Returns the object name of the universe object. This can be apperant object
+ * name, if the application isn't supposed to see the real object name. */
+inline std::string GetVisibleObjectName(const UniverseObject* object)
+{ return IApp::GetApp()->GetVisibleObjectName(object); }
+
+/** Returns a new object ID from the server */
+inline int GetNewObjectID()
+{ return IApp::GetApp()->GetNewObjectID(); }
+
+/** Returns a new object ID from the server */
+inline int GetNewDesignID()
+{ return IApp::GetApp()->GetNewDesignID(); }
+
+/** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN during galaxy setup, or is
+    INVALID_GAME_TURN at other times */
+inline int CurrentTurn()
+{ return IApp::GetApp()->CurrentTurn(); }
+
+// sentinel values returned by CurrentTurn().  Can't be an enum since CurrentGameTurn() needs to return an integer
+// game turn number
+extern const int INVALID_GAME_TURN;     ///< returned by CurrentGameTurn if a game is not currently in progress or being set up.
+extern const int BEFORE_FIRST_TURN;     ///< returned by CurrentGameTurn if the galaxy is currently being set up
+extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly larger than any real turn number that might come up
 
 #endif // _AppInterface_h_
