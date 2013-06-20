@@ -159,7 +159,6 @@
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
     <ClCompile Include="..\..\universe\UniverseServer.cpp" />
-    <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

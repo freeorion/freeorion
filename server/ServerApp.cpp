@@ -78,10 +78,8 @@ ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std
 ////////////////////////////////////////////////
 // ServerApp
 ////////////////////////////////////////////////
-// static member(s)
-ServerApp*  ServerApp::s_app = 0;
-
 ServerApp::ServerApp() :
+    IApp(),
     m_current_combat(0),
     m_networking(m_io_service,
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
@@ -91,11 +89,6 @@ ServerApp::ServerApp() :
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false)
 {
-    if (s_app)
-        throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
-
-    s_app = this;
-
     const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
     InitLogger(SERVER_LOG_FILENAME, "%d %p Server : %m%n");
@@ -207,19 +200,43 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 }
 
 ServerApp* ServerApp::GetApp()
-{ return s_app; }
+{ return static_cast<ServerApp*>(s_app); }
 
 Universe& ServerApp::GetUniverse()
-{ return s_app->m_universe; }
+{ return m_universe; }
 
 EmpireManager& ServerApp::Empires()
-{ return s_app->m_empires; }
+{ return m_empires; }
 
 CombatData* ServerApp::CurrentCombat()
-{ return s_app->m_current_combat; }
+{ return m_current_combat; }
+
+UniverseObject* ServerApp::GetUniverseObject(int object_id)
+{ return m_universe.Objects().Object(object_id); }
+
+ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
+{ return m_universe.EmpireKnownObjects(empire_id); }
+
+UniverseObject* ServerApp::EmpireKnownObject(int object_id, int empire_id)
+{ return m_universe.EmpireKnownObjects(empire_id).Object(object_id); }
 
 ServerNetworking& ServerApp::Networking()
-{ return s_app->m_networking; }
+{ return m_networking; }
+
+std::string ServerApp::GetVisibleObjectName(const UniverseObject* object) {
+    if(!object) {
+        Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
+        return std::string();
+    }
+
+    return object->Name();
+}
+
+int ServerApp::GetNewObjectID()
+{ return m_universe.GenerateObjectID(); }
+
+int ServerApp::GetNewDesignID()
+{ return m_universe.GenerateDesignID(); }
 
 void ServerApp::Run() {
     Logger().debugStream() << "FreeOrion server waiting for network events";

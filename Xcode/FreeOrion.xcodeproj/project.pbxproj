@@ -106,6 +106,7 @@
 		34F0E429113F497500A10EED /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */; };
+		3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
 		3A5105541748D68B00DC258B /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105521748D68B00DC258B /* i18n.cpp */; };
 		3A5105571748D6A700DC258B /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258B /* Logger.cpp */; };
@@ -245,7 +246,6 @@
 		47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1E0A98A3F900DA9C21 /* Directories.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
-		471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA50A98A3F900DA9C21 /* About.cpp */; };
 		471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA70A98A3F900DA9C21 /* BuildDesignatorWnd.cpp */; };
 		471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA90A98A3F900DA9C21 /* ClientUI.cpp */; };
@@ -274,7 +274,6 @@
 		471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */; };
 		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
 		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
-		471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */; };
 		471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5C0A98A3F900DA9C21 /* camain.cpp */; };
 		478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
@@ -297,7 +296,6 @@
 		47B616150CF09ADC00318761 /* alutVersion.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616090CF09ADC00318761 /* alutVersion.c */; };
 		47B616160CF09ADC00318761 /* alutWaveform.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B6160A0CF09ADC00318761 /* alutWaveform.c */; };
 		47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47B615BF0CF099BD00318761 /* libFREEALUT.a */; };
-		47FAB64D0A98D83B00F0AF3F /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
 		82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */; };
@@ -4046,6 +4044,7 @@
 				3A7604BE1749B2FF00363653 /* name.cpp in Sources */,
 				3A7604C41749B39300363653 /* memory.cpp in Sources */,
 				3A7604CB1749B48200363653 /* string_pool.cpp in Sources */,
+				3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */,
 				34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */,
 				34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */,
 				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
@@ -4168,7 +4167,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47FAB64D0A98D83B00F0AF3F /* AppInterface.cpp in Sources */,
 				47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */,
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
@@ -4185,7 +4183,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */,
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
 				471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */,
 				471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */,
@@ -4350,7 +4347,6 @@
 				34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
-				471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */,
 				471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */,
 				471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,

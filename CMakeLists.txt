@@ -161,6 +161,7 @@ add_library(freeorioncommon
     universe/Universe.cpp
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
+    util/AppInterface.cpp
     util/DataTable.cpp
     util/GZStream.cpp
     util/Logger.cpp

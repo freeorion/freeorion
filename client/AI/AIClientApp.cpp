@@ -24,18 +24,11 @@ class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
 // static member(s)
-AIClientApp*  AIClientApp::s_app = 0;
-
 AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     m_AI(0),
     m_player_name(""),
     m_max_aggression(0)
 {
-    if (s_app)
-        throw std::runtime_error("Attempted to construct a second instance of singleton class AIClientApp");
-
-    s_app = this;
-
     if (args.size() < 2) {
         std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
         Exit(1);
@@ -68,7 +61,7 @@ void AIClientApp::Exit(int code) {
 }
 
 AIClientApp* AIClientApp::GetApp()
-{ return s_app; }
+{ return static_cast<AIClientApp*>(s_app); }
 
 const AIBase* AIClientApp::GetAI()
 { return m_AI; }

@@ -15,7 +15,6 @@ add_executable(parser_test
     ../../server/ServerFSM.cpp
     ../../universe/UniverseServer.cpp
     ../../universe/Universe.cpp
-    ../../util/AppInterface.cpp
     test.cpp
     lexer_test_rules.cpp
 )

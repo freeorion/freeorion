@@ -31,11 +31,7 @@ ObjectMap& Objects();
 /** Accessor for known objects of specified empire. */
 ObjectMap& EmpireKnownObjects(int empire_id);
 
-/** Accessor for individual objects.  These are all implemented as separate
-  * functions to avoid needing template code in header, as the template code
-  * also needs to have implementation-dependent #ifdef code in it which would
-  * make the header code not buildable in a common library used by different
-  * implementations (ie. server vs. clients). */
+/** Accessor for individual objects. */
 UniverseObject* GetUniverseObject(int object_id);
 UniverseObject* GetEmpireKnownObject(int object_id, int empire_id);
 Planet* GetPlanet(int object_id);
@@ -74,5 +70,44 @@ extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly la
 /* add additional accessors here for app specific things
    that are needed for both the server and the client, but for which
    access will vary and requires an #ifdef */
+
+class IApp {
+public:
+    virtual ~IApp();
+
+    static IApp*      GetApp(); ///< returns a IApp pointer to the singleton instance of the app
+
+    virtual Universe& GetUniverse() = 0;  ///< returns applications copy of Universe
+
+    virtual EmpireManager& Empires() = 0; ///< returns the set of known Empires for this application
+
+    virtual UniverseObject* GetUniverseObject(int object_id) = 0;
+
+    /** Accessor for known objects of specified empire. */
+    virtual ObjectMap& EmpireKnownObjects(int empire_id) = 0;
+
+    virtual UniverseObject* EmpireKnownObject(int object_id, int empire_id) = 0;
+
+    virtual std::string GetVisibleObjectName(const UniverseObject* object) = 0;
+
+    /** returns a universe object ID which can be used for new objects.
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
+    virtual int GetNewObjectID() = 0;
+
+    /** returns a design ID which can be used for a new design to uniquely identify it.
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
+    virtual int GetNewDesignID() = 0;
+
+    virtual int CurrentTurn() const = 0;        ///< returns the current game turn
+
+protected:
+    IApp();
+
+    static IApp* s_app; ///< a IApp pointer to the singleton instance of the app
+
+private:
+    const IApp& operator=(const IApp&); // disabled
+    IApp(const IApp&); // disabled
+};
 
 #endif // _AppInterface_h_

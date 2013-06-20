@@ -265,7 +265,6 @@
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
     <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
-    <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
   <ItemGroup>

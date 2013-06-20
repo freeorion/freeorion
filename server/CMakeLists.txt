@@ -18,7 +18,6 @@ add_executable(freeoriond
     ../server/ServerFSM.cpp
     ../server/dmain.cpp
     ../universe/UniverseServer.cpp
-    ../util/AppInterface.cpp
     ../combat/CombatSystem.cpp
 )
 

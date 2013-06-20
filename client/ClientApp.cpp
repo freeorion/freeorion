@@ -1,20 +1,19 @@
 #include "ClientApp.h"
 
 #include "../combat/CombatOrder.h"
+#include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Networking.h"
 
 #include <stdexcept>
 
-
-// static member(s)
-ClientApp* ClientApp::s_app = 0;
-
 ClientApp::ClientApp() :
+    IApp(),
     m_universe(),
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
@@ -22,10 +21,6 @@ ClientApp::ClientApp() :
 #ifdef FREEORION_BUILD_HUMAN
     EmpireEliminatedSignal.connect(boost::bind(&Universe::HandleEmpireElimination, &m_universe, _1));
 #endif
-
-    if (s_app)
-        throw std::runtime_error("Attempted to construct a second instance of ClientApp");
-    s_app = this;
 }
 
 ClientApp::~ClientApp()
@@ -40,11 +35,29 @@ int ClientApp::EmpireID() const
 int ClientApp::CurrentTurn() const
 { return m_current_turn; }
 
-const Universe& ClientApp::GetUniverse() const
+Universe& ClientApp::GetUniverse()
 { return m_universe; }
 
-const EmpireManager& ClientApp::Empires() const
+EmpireManager& ClientApp::Empires()
 { return m_empires; }
+
+UniverseObject* ClientApp::GetUniverseObject(int object_id) {
+    // attempt to get live / up to date / mutable object
+    UniverseObject* obj = GetUniverse().Objects().Object(object_id);
+    // if not up to date info, use latest known out of date info about object
+    if (!obj)
+        obj = EmpireKnownObjects(m_empire_id).Object(object_id);
+    return obj;
+}
+
+ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
+    if (empire_id == ALL_EMPIRES || empire_id == m_empire_id)
+        return m_universe.Objects();
+    return m_universe.EmpireKnownObjects(empire_id); // should be empty as of this writing, as other empires' known objects aren't sent to clients
+}
+
+UniverseObject* ClientApp::EmpireKnownObject(int object_id, int empire_id)
+{ return GetUniverseObject(object_id); }
 
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }
@@ -98,12 +111,6 @@ void ClientApp::StartCombatTurn() {
     m_combat_orders.clear();
 }
 
-Universe& ClientApp::GetUniverse()
-{ return m_universe; }
-
-EmpireManager& ClientApp::Empires()
-{ return m_empires; }
-
 OrderSet& ClientApp::Orders()
 { return m_orders; }
 
@@ -113,13 +120,25 @@ CombatOrderSet& ClientApp::CombatOrders()
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }
 
+std::string ClientApp::GetVisibleObjectName(const UniverseObject* object) {
+    if (!object) {
+        Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
+        return std::string();
+    }
+
+    std::string name_text = object->PublicName(m_empire_id);
+    if (const System* system = universe_object_cast<const System*>(object))
+        name_text = system->ApparentName(m_empire_id);
+
+    return name_text;
+}
+
 int ClientApp::GetNewObjectID() {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();
-    if (text.empty()) {
+    if (text.empty())
         throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
-    }
     return boost::lexical_cast<int>(text);
 }
 
@@ -127,14 +146,13 @@ int ClientApp::GetNewDesignID() {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();
-    if (text.empty()) {
+    if (text.empty())
         throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
-    }
     return boost::lexical_cast<int>(text);
 }
 
 ClientApp* ClientApp::GetApp()
-{ return s_app; }
+{ return static_cast<ClientApp*>(s_app); }
 
 void ClientApp::SetEmpireID(int id)
 { m_empire_id = id; }

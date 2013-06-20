@@ -231,6 +231,7 @@
     <ClCompile Include="..\..\universe\Universe.cpp" />
     <ClCompile Include="..\..\universe\UniverseObject.cpp" />
     <ClCompile Include="..\..\universe\ValueRef.cpp" />
+    <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\DataTable.cpp" />
     <ClCompile Include="..\..\util\Directories.cpp" />
     <ClCompile Include="..\..\util\GZStream.cpp" />

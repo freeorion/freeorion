@@ -115,7 +115,6 @@ set(freeorion_SOURCES
     ../../UI/TechTreeLayout.cpp
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
-    ../../util/AppInterface.cpp
 )
 
 set(freeorion_LINK_LIBS

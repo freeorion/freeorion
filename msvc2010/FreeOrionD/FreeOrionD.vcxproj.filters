@@ -143,9 +143,6 @@
     <ClInclude Include="..\..\server\SaveLoad.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\AppInterface.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\binreloc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

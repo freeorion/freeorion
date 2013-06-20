@@ -6,6 +6,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
+#include "../util/AppInterface.h"
 
 #include <set>
 #include <vector>
@@ -52,7 +53,7 @@ private:
 };
 
 /** the application framework class for the FreeOrion server. */
-class ServerApp {
+class ServerApp : public IApp {
 public:
     /** \name Structors */ //@{
     ServerApp();
@@ -154,10 +155,24 @@ public:
     //@}
 
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
-    static Universe&            GetUniverse();    ///< returns server's copy of Universe
-    static EmpireManager&       Empires();        ///< returns the server's copy of the Empires
-    static CombatData*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
-    static ServerNetworking&    Networking();     ///< returns the networking object for the server
+    Universe&                   GetUniverse();    ///< returns server's copy of Universe
+    EmpireManager&              Empires();        ///< returns the server's copy of the Empires
+    UniverseObject*             GetUniverseObject(int object_id);
+    ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
+    UniverseObject*             EmpireKnownObject(int object_id, int empire_id);
+
+    CombatData*                 CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
+    ServerNetworking&           Networking();     ///< returns the networking object for the server
+
+    std::string                 GetVisibleObjectName(const UniverseObject* object);
+
+    /** returns a universe object ID which can be used for new objects.
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
+    int                         GetNewObjectID();
+
+    /** returns a design ID which can be used for a new design to uniquely identify it.
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
+    int                         GetNewDesignID();
 
 private:
     const ServerApp& operator=(const ServerApp&); // disabled
@@ -231,7 +246,6 @@ private:
     std::map<int, CombatOrderSet*>          m_combat_turn_sequence;
     std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
     std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
-    static ServerApp*                       s_app;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.

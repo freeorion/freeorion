@@ -6,6 +6,7 @@
 #include "../network/ClientNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
+#include "../util/AppInterface.h"
 
 /** The abstract base class for the application framework classes AIClientApp
   * and HumanClientApp.  The static functions are designed to give both types
@@ -13,7 +14,7 @@
   * in either type of client app to handle Messages and gain access to the data
   * structures common to both apps, without worrying about which type of app the
   * code is being run in.*/
-class ClientApp {
+class ClientApp : public IApp {
 public:
     /** \name Structors */ //@{
     ClientApp();
@@ -30,8 +31,7 @@ public:
     const std::map<int, PlayerInfo>& Players() const; ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
     //@}
 
-    const Universe&         GetUniverse() const; ///< returns client's local copy of Universe
-    const EmpireManager&    Empires() const;     ///< returns the set of known Empires
+    Universe&               GetUniverse();       ///< returns client's local copy of Universe
     const OrderSet&         Orders() const;      ///< returns Order set for this client's player
     const CombatOrderSet&   CombatOrders() const;///< returns CombatOrder set for this client's player
     const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
@@ -45,8 +45,10 @@ public:
     virtual void            SendCombatSetup();  ///< encodes and sends combat setup orders message
     virtual void            StartCombatTurn();  ///< encodes combat order sets and sends combat turn orders message
 
-    Universe&                   GetUniverse();  ///< returns client's local copy of Universe
     EmpireManager&              Empires();      ///< returns the set of known Empires
+    UniverseObject*             GetUniverseObject(int object_id);
+    ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
+    UniverseObject*             EmpireKnownObject(int object_id, int empire_id);
     OrderSet&                   Orders();       ///< returns Order set for this client's player
     CombatOrderSet&             CombatOrders(); ///< returns CombatOrder set for this client's player
     ClientNetworking&           Networking();   ///< returns the networking object for this client's player
@@ -55,6 +57,8 @@ public:
     void SetEmpireID(int id);                   ///< sets the empire ID of this client
     void SetCurrentTurn(int turn);              ///< sets the current game turn
     void SetSinglePlayerGame(bool sp = true);   ///< sets whether the current game is single player (sp = true) or multiplayer (sp = false)
+
+    std::string             GetVisibleObjectName(const UniverseObject* object);
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
@@ -84,8 +88,6 @@ protected:
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
     ClientApp(const ClientApp&); // disabled
-
-    static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
 };
 
 #endif // _ClientApp_h_

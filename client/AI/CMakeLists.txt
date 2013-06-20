@@ -47,7 +47,6 @@ add_executable(freeorionca
     ../../python/PythonUniverseWrapper.cpp
     ../../python/PythonEmpireWrapper.cpp
     ../../python/PythonLoggingWrapper.cpp
-    ../../util/AppInterface.cpp
 )
 
 target_link_libraries(freeorionca

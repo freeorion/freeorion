@@ -35,7 +35,6 @@ private:
 
    AIBase*              m_AI;           ///< implementation of AI logic
    std::string          m_player_name;
-   static AIClientApp*  s_app;
    int                  m_max_aggression;
 };
 
