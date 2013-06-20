@@ -196,14 +196,14 @@ bool Ship::HasTag(const std::string& name) const {
     if (design) {
         // check hull for tag
         const HullType* hull = ::GetHullType(design->Hull());
-        if (hull && hull->Tags().count(name)) {
+        if (hull && hull->Tags().count(name))
             return true;
-        }
+
         // check parts for tag
         const std::vector<std::string>& parts = design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
             const PartType* part = GetPartType(*part_it);
-            if(part && part->Tags().count(name))
+            if (part && part->Tags().count(name))
                 return true;
         }
     }
