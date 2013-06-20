@@ -3,7 +3,7 @@ cmake_policy(VERSION 2.6.4)
 
 find_package(OGRE REQUIRED)
 
-include_directories(include ${OGRE_INCLUDE_DIR})
+include_directories(include ${OGRE_INCLUDE_DIRS})
 
 add_library(pagedgeometry STATIC
     source/BatchedGeometry.cpp
