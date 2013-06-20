@@ -83,7 +83,7 @@ namespace {
                 std::string,
                 std::string,
                 double,
-                std::vector<std::string>,
+                std::set<std::string>,
                 Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
             >,

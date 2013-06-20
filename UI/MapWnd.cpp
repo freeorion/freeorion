@@ -4853,8 +4853,8 @@ void MapWnd::RefreshPopulationIndicator() {
         float this_pop = pc->CurrentMeterValue(METER_POPULATION);
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
-            const std::vector<std::string>& tags = species->Tags();
-            for (std::vector<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++) {
+            const std::set<std::string>& tags = species->Tags();
+            for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++) {
                 if (tag_it->compare(0,7, "AI_TAG_") != 0)
                     tag_counts[*tag_it] += this_pop;
             }

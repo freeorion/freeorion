@@ -527,8 +527,7 @@ private:
             for (ObjectMap::const_iterator<> obj_it = known_objects.const_begin();
                  obj_it != known_objects.const_end(); ++obj_it)
             {
-                std::vector<std::string> obj_tags = obj_it->Tags();
-                std::copy(obj_tags.begin(), obj_tags.end(), std::inserter(all_tags, all_tags.end()));
+                all_tags.insert(obj_it->Tags().begin(), obj_it->Tags().end());
             }
 
             GG::ListBox::iterator row_it = m_string_drop->end();

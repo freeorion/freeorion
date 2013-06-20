@@ -17,7 +17,7 @@ namespace parse { namespace detail {
 
     typedef boost::spirit::qi::rule<
         parse::token_iterator,
-        void (std::vector<std::string>&),
+        void (std::set<std::string>&),
         parse::skipper_type
     > tags_rule;
     tags_rule& tags_parser();

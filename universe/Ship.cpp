@@ -166,9 +166,9 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
-std::vector<std::string> Ship::Tags() const {
-    std::set<std::string> compiled_tags;
-    std::vector<std::string> retval;
+std::set<std::string> Ship::Tags() const {
+    std::set<std::string> retval;
+
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (!design)
         return retval;
@@ -176,9 +176,7 @@ std::vector<std::string> Ship::Tags() const {
     const HullType* hull = ::GetHullType(design->Hull());
     if (!hull)
         return retval;
-    const std::vector<std::string>& hull_tags = hull->Tags();
-    for (std::vector<std::string>::const_iterator it = hull_tags.begin(); it != hull_tags.end(); ++it)
-        compiled_tags.insert(*it);
+    retval.insert(hull->Tags().begin(), hull->Tags().end());
 
     const std::vector<std::string>& parts = design->Parts();
     if (parts.empty())
@@ -186,13 +184,9 @@ std::vector<std::string> Ship::Tags() const {
 
     for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
         if (const PartType* part = GetPartType(*part_it)) {
-            const std::vector<std::string>& part_tags = part->Tags();
-            for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it)
-                compiled_tags.insert(*it);
+            retval.insert(part->Tags().begin(), part->Tags().end());
         }
     }
-
-    std::copy(compiled_tags.begin(), compiled_tags.end(), std::back_inserter(retval));
 
     return retval;
 }
@@ -202,33 +196,21 @@ bool Ship::HasTag(const std::string& name) const {
     if (design) {
         // check hull for tag
         const HullType* hull = ::GetHullType(design->Hull());
-        if (hull) {
-            const std::vector<std::string>& hull_tags = hull->Tags();
-            for (std::vector<std::string>::const_iterator it = hull_tags.begin(); it != hull_tags.end(); ++it)
-                if (*it == name)
-                    return true;
+        if (hull && hull->Tags().count(name)) {
+            return true;
         }
         // check parts for tag
         const std::vector<std::string>& parts = design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-            if (const PartType* part = GetPartType(*part_it)) {
-                const std::vector<std::string>& part_tags = part->Tags();
-                for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it) {
-                    //Logger().debugStream() << "part tag: " << *it;
-                    if (*it == name)
-                        return true;
-                }
-            }
+            const PartType* part = GetPartType(*part_it);
+            if(part && part->Tags().count(name))
+                return true;
         }
     }
     // check species for tag
     const Species* species = GetSpecies(SpeciesName());
-    if (species) {
-        const std::vector<std::string>& tags = species->Tags();
-        for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
-            if (*it == name)
-                return true;
-    }
+    if (species && species->Tags().count(name))
+        return true;
 
     return false;
 }

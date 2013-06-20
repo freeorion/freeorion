@@ -66,7 +66,7 @@ public:
                                 Specials() const;                   ///< returns the names of Specials and the turn on which each was attached to this object
     bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
     int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
-    virtual std::vector<std::string>
+    virtual std::set<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
 

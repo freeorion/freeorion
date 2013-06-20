@@ -154,8 +154,8 @@ int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
     return it->second;
 }
 
-std::vector<std::string> UniverseObject::Tags() const
-{ return std::vector<std::string>(); }
+std::set<std::string> UniverseObject::Tags() const
+{ return std::set<std::string>(); }
 
 bool UniverseObject::HasTag(const std::string& name) const
 { return false; }

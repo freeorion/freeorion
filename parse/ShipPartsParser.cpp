@@ -166,7 +166,7 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<int>*,
                 bool,
-                std::vector<std::string>,
+                std::set<std::string>,
                 Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
             >,

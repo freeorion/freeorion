@@ -92,22 +92,17 @@ void Field::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
-std::vector<std::string> Field::Tags() const {
+std::set<std::string> Field::Tags() const {
     const FieldType* type = GetFieldType(m_type_name);
     if (!type)
-        return std::vector<std::string>();
+        return std::set<std::string>();
     return type->Tags();
 }
 
 bool Field::HasTag(const std::string& name) const {
     const FieldType* type = GetFieldType(m_type_name);
-    if (!type)
-        return false;
-    const std::vector<std::string>& tags = type->Tags();
-    for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
-        if (*it == name)
-            return true;
-    return false;
+
+    return type && type->Tags().count(name);
 }
 
 const std::string& Field::TypeName() const
@@ -162,7 +157,7 @@ void Field::ClampMeters() {
 // FieldType                                   //
 /////////////////////////////////////////////////
 FieldType::FieldType(const std::string& name, const std::string& description,
-                     double stealth, const std::vector<std::string>& tags,
+                     double stealth, const std::set<std::string>& tags,
                      //const Condition::ConditionBase* location,
                      const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                      const std::string& graphic) :

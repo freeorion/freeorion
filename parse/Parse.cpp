@@ -33,14 +33,14 @@ namespace {
 
             qi::_1_type _1;
             qi::_r1_type _r1;
-            using phoenix::push_back;
+            using phoenix::insert;
 
             start
                 =  -(
                         parse::label(Tags_name)
                     >>  (
-                            ('[' > +tok.string [ push_back(_r1, _1) ] > ']')
-                            |   tok.string [ push_back(_r1, _1) ]
+                            ('[' > +tok.string [ insert(_r1, _1) ] > ']')
+                            |   tok.string [ insert(_r1, _1) ]
                         )
                     )
                 ;

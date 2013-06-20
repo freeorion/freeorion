@@ -92,7 +92,7 @@ public:
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
             const SpeciesParams& params,
-            const std::vector<std::string>& tags,
+            const std::set<std::string>& tags,
             const std::string& graphic) :
         m_name(name),
         m_description(description),
@@ -124,7 +124,7 @@ public:
     bool                            Native() const           { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const      { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const  { return m_can_produce_ships; } ///< returns whether this species can produce ships
-    const std::vector<std::string>& Tags() const             { return m_tags; }
+    const std::set<std::string>& Tags() const                { return m_tags; }
     const std::string&              Graphic() const          { return m_graphic; }           ///< returns the name of the grapic file for this species
     //@}
 
@@ -147,7 +147,7 @@ private:
     bool                                    m_native;
     bool                                    m_can_colonize;
     bool                                    m_can_produce_ships;
-    std::vector<std::string>                m_tags;
+    std::set<std::string>                   m_tags;
     std::string                             m_graphic;
 };
 

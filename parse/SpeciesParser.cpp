@@ -207,7 +207,7 @@ namespace {
                 std::string,
                 std::string,
                 SpeciesParams,
-                std::vector<std::string>,
+                std::set<std::string>,
                 std::vector<FocusType>,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                 std::map<PlanetType, PlanetEnvironment>,

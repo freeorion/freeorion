@@ -160,22 +160,17 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
-std::vector<std::string> Planet::Tags() const {
+std::set<std::string> Planet::Tags() const {
     const Species* species = GetSpecies(SpeciesName());
     if (!species)
-        return std::vector<std::string>();
+        return std::set<std::string>();
     return species->Tags();
 }
 
 bool Planet::HasTag(const std::string& name) const {
     const Species* species = GetSpecies(SpeciesName());
-    if (!species)
-        return false;
-    const std::vector<std::string>& tags = species->Tags();
-    for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
-        if (*it == name)
-            return true;
-    return false;
+
+    return species && species->Tags().count(name);
 }
 
 const std::string& Planet::TypeName() const

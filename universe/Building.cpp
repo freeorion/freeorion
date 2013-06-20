@@ -83,22 +83,17 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
-std::vector<std::string> Building::Tags() const {
+std::set<std::string> Building::Tags() const {
     const BuildingType* type = ::GetBuildingType(m_building_type);
     if (!type)
-        return std::vector<std::string>();
+        return std::set<std::string>();
     return type->Tags();
 }
 
 bool Building::HasTag(const std::string& name) const {
     const BuildingType* type = GetBuildingType(m_building_type);
-    if (!type)
-        return false;
-    const std::vector<std::string>& tags = type->Tags();
-    for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
-        if (*it == name)
-            return true;
-    return false;
+
+    return type && type->Tags().count(name);
 }
 
 const std::string& Building::TypeName() const
@@ -175,7 +170,7 @@ std::string BuildingType::Dump() const {
             retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
             retval += DumpIndent() + "tags = [ ";
-            for (std::vector<std::string>::const_iterator tag_it = m_tags.begin();
+            for (std::set<std::string>::const_iterator tag_it = m_tags.begin();
                  tag_it != m_tags.end(); ++tag_it)
             { retval += "\"" + *tag_it + "\" "; }
             retval += " ]\n";

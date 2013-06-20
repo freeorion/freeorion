@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
@@ -137,7 +138,7 @@ struct PartHullCommonParams {
     PartHullCommonParams(const ValueRef::ValueRefBase<double>* production_cost_,
                          const ValueRef::ValueRefBase<int>* production_time_,
                          bool producible_,
-                         const std::vector<std::string>& tags_,
+                         const std::set<std::string>& tags_,
                          const Condition::ConditionBase* location_,
                          const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_,
                          const std::string& icon_) :
@@ -152,7 +153,7 @@ struct PartHullCommonParams {
     const ValueRef::ValueRefBase<double>*   production_cost;
     const ValueRef::ValueRefBase<int>*      production_time;
     bool                                    producible;
-    std::vector<std::string>                tags;
+    std::set<std::string>                   tags;
     const Condition::ConditionBase*         location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             effects;
@@ -207,7 +208,7 @@ public:
     double                  ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
-    const std::vector<std::string>& Tags() const    { return m_tags; }
+    const std::set<std::string>& Tags() const    { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                                                           ///< returns the EffectsGroups that encapsulate the effects this part has
@@ -225,7 +226,7 @@ private:
     const ValueRef::ValueRefBase<int>*      m_production_time;
     bool                                    m_producible;
     std::vector<ShipSlotType>               m_mountable_slot_types;
-    std::vector<std::string>                m_tags;
+    std::set<std::string>                   m_tags;
     const Condition::ConditionBase*         m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             m_effects;
@@ -419,7 +420,7 @@ public:
     unsigned int        NumSlots(ShipSlotType slot_type) const;                 ///< returns number of of slots of indicated type in hull
     const std::vector<Slot>&    Slots() const   { return m_slots; }             ///< returns vector of slots in hull
 
-    const std::vector<std::string>& Tags() const{ return m_tags; }
+    const std::set<std::string>& Tags() const   { return m_tags; }
 
     const Condition::ConditionBase* Location() const
     { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
@@ -444,7 +445,7 @@ private:
     const ValueRef::ValueRefBase<int>*      m_production_time;
     bool                                    m_producible;
     std::vector<Slot>                       m_slots;
-    std::vector<std::string>                m_tags;
+    std::set<std::string>                   m_tags;
     const Condition::ConditionBase*         m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             m_effects;

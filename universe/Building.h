@@ -32,7 +32,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual std::vector<std::string>
+    virtual std::set<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
 
@@ -98,7 +98,7 @@ public:
                  const ValueRef::ValueRefBase<int>* production_time,
                  bool producible,
                  CaptureResult capture_result,
-                 const std::vector<std::string>& tags,
+                 const std::set<std::string>& tags,
                  const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& icon) :
@@ -126,7 +126,7 @@ public:
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
     double                          MaintenanceCost() const { return 0.0; }                 ///< returns the number of monetary points required per turn to operate this building
-    const std::vector<std::string>& Tags() const            { return m_tags; }
+    const std::set<std::string>& Tags() const               { return m_tags; }
     const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
@@ -150,7 +150,7 @@ private:
     const ValueRef::ValueRefBase<int>*                          m_production_time;
     bool                                                        m_producible;
     CaptureResult                                               m_capture_result;
-    std::vector<std::string>                                    m_tags;
+    std::set<std::string>                                       m_tags;
     const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_icon;
