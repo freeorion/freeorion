@@ -41,23 +41,21 @@ Universe& ClientApp::GetUniverse()
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 
-UniverseObject* ClientApp::GetUniverseObject(int object_id) {
-    // attempt to get live / up to date / mutable object
-    UniverseObject* obj = GetUniverse().Objects().Object(object_id);
-    // if not up to date info, use latest known out of date info about object
-    if (!obj)
-        obj = EmpireKnownObjects(m_empire_id).Object(object_id);
-    return obj;
-}
+UniverseObject* ClientApp::GetUniverseObject(int object_id)
+{ return GetUniverse().Objects().Object(object_id); }
 
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
-    if (empire_id == ALL_EMPIRES || empire_id == m_empire_id)
-        return m_universe.Objects();
-    return m_universe.EmpireKnownObjects(empire_id); // should be empty as of this writing, as other empires' known objects aren't sent to clients
+    // observers and moderators should have accurate info about what each empire knows
+    if (m_empire_id == ALL_EMPIRES)
+        return m_universe.EmpireKnownObjects(empire_id);    // returns player empire's known universe objects if empire_id == ALL_EMPIRES
+
+    // players controlling empires with visibility limitations only know their
+    // own version of the universe, and should use that
+    return m_universe.Objects();
 }
 
 UniverseObject* ClientApp::EmpireKnownObject(int object_id, int empire_id)
-{ return GetUniverseObject(object_id); }
+{ return EmpireKnownObjects(empire_id).Object(object_id); }
 
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }

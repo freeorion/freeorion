@@ -478,9 +478,8 @@ ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
         return m_objects;
 
     EmpireObjectMap::iterator it = m_empire_latest_known_objects.find(empire_id);
-    if (it != m_empire_latest_known_objects.end()) {
+    if (it != m_empire_latest_known_objects.end())
         return it->second;
-    }
 
     static ObjectMap empty_map;
     empty_map.Clear();
@@ -2890,7 +2889,9 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
     if (encoding_empire == ALL_EMPIRES) {
         // copy all ObjectMaps' contents
-        for (EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it) {
+        for (EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.begin();
+             it != m_empire_latest_known_objects.end(); ++it)
+        {
             int empire_id = it->first;
             const ObjectMap& map = it->second;
             empire_latest_known_objects[empire_id].Copy(map, ALL_EMPIRES);
