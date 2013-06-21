@@ -15,9 +15,6 @@
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
-#ifdef FREEORION_BUILD_SERVER
-#  include "../server/ServerApp.h"
-#endif
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -123,10 +120,6 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 
     if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown) --> ";
-#ifdef FREEORION_BUILD_SERVER
-    else if (msg.SendingPlayer() == ServerApp::GetApp()->Networking().HostPlayerID())
-        os << "(host) --> ";
-#endif
     else
         os << " --> ";
 
@@ -134,10 +127,6 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 
     if (msg.ReceivingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown)";
-#ifdef FREEORION_BUILD_SERVER
-    else if (msg.SendingPlayer() == ServerApp::GetApp()->Networking().HostPlayerID())
-        os << "(host)";
-#endif
 
     os << " \"" << msg.Text() << "\"\n";
 

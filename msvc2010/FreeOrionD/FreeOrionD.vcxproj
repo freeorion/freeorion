@@ -152,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
-    <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />

@@ -403,9 +403,6 @@
     <ClCompile Include="..\..\network\ClientNetworking.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\network\Message.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\ShaderProgram.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>

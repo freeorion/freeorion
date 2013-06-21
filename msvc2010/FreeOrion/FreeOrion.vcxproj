@@ -213,7 +213,6 @@
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\PagedGeometry\source\BatchedGeometry.cpp" />
     <ClCompile Include="..\..\PagedGeometry\source\BatchPage.cpp" />
     <ClCompile Include="..\..\PagedGeometry\source\ImpostorPage.cpp" />

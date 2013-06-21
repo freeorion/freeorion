@@ -200,6 +200,7 @@
     <ClCompile Include="..\..\GG\src\adobe\memory.cpp" />
     <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
     <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
+    <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp" />

@@ -215,16 +215,13 @@
     <ClInclude Include="..\..\universe\Names.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\ServerNetworking.cpp">
       <Filter>Source Files\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\network\Message.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\AppInterface.cpp">
-      <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
       <Filter>Source Files\server</Filter>

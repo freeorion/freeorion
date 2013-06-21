@@ -163,7 +163,6 @@
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />

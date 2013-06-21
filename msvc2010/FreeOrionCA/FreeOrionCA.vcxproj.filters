@@ -259,9 +259,6 @@
     <ClCompile Include="..\..\network\ClientNetworking.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\network\Message.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
