@@ -1888,10 +1888,9 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
     } else {
         // order selected invasion ships to invade planet
-        
         std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
-        if( invasion_ships.empty() ){
+        if (invasion_ships.empty()) {
             std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
