@@ -29,7 +29,7 @@
 #define _GG_ClrConstants_h_
 
 #include <GG/Clr.h>
-
+#include <GG/Export.h>
 
 namespace GG {
 

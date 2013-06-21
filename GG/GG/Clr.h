@@ -29,9 +29,6 @@
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_
 
-#include <GG/Export.h>
-
-
 namespace GG {
 
 /** \brief A simple 32-bit structure that can act as a packed 32-bit unsigned
@@ -42,7 +39,7 @@ namespace GG {
     You should not use literals to initialize Color objects; depending on the
     endian-ness of the machine, 0x00FFFFFF would be transparent white
     (little-endian) or opaque yellow (big-endian).*/
-struct GG_API Clr
+struct Clr
 {
     /** \name Structors */ ///@{
     /** default ctor */

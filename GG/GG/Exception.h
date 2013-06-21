@@ -42,7 +42,7 @@ namespace GG {
     It is based on the std::exception class.  As required by its inheritance
     from std::exceptions not throw other exceptions, the no-throw exception
     specification has been added to every member function. */
-class GG_API ExceptionBase : public std::exception
+class ExceptionBase : public std::exception
 {
 public:
     ExceptionBase() throw() {}                                      ///< default ctor
@@ -59,7 +59,7 @@ private:
 /** Declares a GG exception class.  This should be used to declare GG
     exceptions at namespace scope. */
 #define GG_EXCEPTION( name )                                            \
-    class GG_API name : public ExceptionBase                            \
+    class name : public ExceptionBase                                   \
     {                                                                   \
     public:                                                             \
         name () throw() : ExceptionBase() {}                            \
@@ -84,7 +84,7 @@ private:
     should be used along with GG_ABSTRACT_EXCEPTION to group all exceptions
     from a single GG class under one subhierarchy. */
 #define GG_CONCRETE_EXCEPTION( name, class_name, superclass )           \
-    class GG_API name : public superclass                               \
+    class name : public superclass                                      \
     {                                                                   \
     public:                                                             \
         name () throw() : superclass () {}                              \
