@@ -46,6 +46,7 @@ namespace {
     const int       EDGE_PAD(3);
     const double    TWO_PI(2.0*3.1415926536);
     std::map<std::pair<int,int>,float>          colony_projections;
+    std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
     void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
     void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
@@ -1220,39 +1221,60 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     GetUniverse().InhibitUniverseObjectSignals(true);
     for (std::vector<const Ship*>::const_iterator ship_it = capable_and_available_colony_ships.begin();
          ship_it != capable_and_available_colony_ships.end(); ship_it++)
-         {
-             int ship_id = (*ship_it)->ID();
-             double planet_capacity = -999;
-             std::pair<int,int> this_pair = std::make_pair<int,int>(ship_id, target_planet_id);
-             std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
-             if (pair_it != colony_projections.end()) {
-                 planet_capacity = pair_it->second;
-             } else {
-                 changed_planet = true;
-                 target_planet->SetOwner(empire_id);
-                 target_planet->SetSpecies((*ship_it)->SpeciesName());
-                 GetUniverse().UpdateMeterEstimates(target_planet_id);
-                 const Species* species = GetSpecies((*ship_it)->SpeciesName());
-                 PlanetEnvironment planet_environment = PE_UNINHABITABLE;
-                 if (species)
-                     planet_environment = species->GetPlanetEnvironment(target_planet->Type());
-                 planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : target_planet->CurrentMeterValue(METER_TARGET_POPULATION));
-                 colony_projections[this_pair] = planet_capacity;
-             }
-             if (planet_capacity > best_capacity) {
-                 best_capacity = planet_capacity;
-                 best_ship = ship_id;
-             }
-         }
-         if (changed_planet) {
-             target_planet->SetOwner(orig_owner);
-             target_planet->SetSpecies(orig_species);
-             GetUniverse().UpdateMeterEstimates(target_planet_id);
-             Logger().debugStream() << "Autoselected colony ship " << best_ship << " for planet " << target_planet->Name();
-         }
-         GetUniverse().InhibitUniverseObjectSignals(false);
+    {
+        const Ship* ship = *ship_it;
+        if (!ship)
+            continue;
+        int ship_id = ship->ID();
+        double planet_capacity = -999;
+        std::pair<int,int> this_pair = std::make_pair<int,int>(ship_id, target_planet_id);
+        std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
+        if (pair_it != colony_projections.end()) {
+            planet_capacity = pair_it->second;
+        } else {
+            double colony_ship_capacity = 0.0;
+            std::string ship_species_name;
+            const ShipDesign* design = ship->Design();
+            if (!design)
+                continue;
+            colony_ship_capacity = design->ColonyCapacity();
+            if (colony_ship_capacity > 0.0 ) {
+                ship_species_name = ship->SpeciesName();
+                std::pair<std::string,int> spec_pair = std::make_pair<std::string,int>(ship_species_name, target_planet_id);
+                std::map<std::pair<std::string,int>,float>::iterator spec_pair_it = species_colony_projections.find(spec_pair);
+                if (spec_pair_it != species_colony_projections.end()) {
+                    planet_capacity = spec_pair_it->second;
+                } else {
+                    const Species* species = GetSpecies(ship_species_name);
+                    PlanetEnvironment planet_environment = PE_UNINHABITABLE;
+                    if (species)
+                        planet_environment = species->GetPlanetEnvironment(target_planet->Type());
+                    if (planet_environment != PE_UNINHABITABLE) {
+                        changed_planet = true;
+                        target_planet->SetOwner(empire_id);
+                        target_planet->SetSpecies(ship_species_name);
+                        GetUniverse().UpdateMeterEstimates(target_planet_id);
+                        planet_capacity = target_planet->CurrentMeterValue(METER_TARGET_POPULATION);
+                    }
+                    species_colony_projections[spec_pair] = planet_capacity;
+                }
+            }
+            colony_projections[this_pair] = planet_capacity;
+        }
+        if (planet_capacity > best_capacity) {
+            best_capacity = planet_capacity;
+            best_ship = ship_id;
+        }
+    }
+    if (changed_planet) {
+        target_planet->SetOwner(orig_owner);
+        target_planet->SetSpecies(orig_species);
+        GetUniverse().UpdateMeterEstimates(target_planet_id);
+        Logger().debugStream() << "Autoselected colony ship " << best_ship << " for planet " << target_planet->Name();
+    }
+    GetUniverse().InhibitUniverseObjectSignals(false);
 
-         return best_ship;
+    return best_ship;
 }
 
 std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
@@ -1388,7 +1410,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colony_ship_capacity == 0.0));
+    bool can_colonize =     selected_colony_ship && (colonizable  && colony_ship_capacity > 0.0 || (outpostable && colony_ship_capacity == 0.0));
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
@@ -1453,6 +1475,9 @@ void SidePanel::PlanetPanel::Refresh() {
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
+        } else if (colony_ship_capacity==0.0) {
+            planet_capacity = 0.0;
+            colony_projections[this_pair] = planet_capacity;
         } else {
             GetUniverse().InhibitUniverseObjectSignals(true);
             std::string orig_species = planet->SpeciesName(); //should be just ""
@@ -2443,6 +2468,7 @@ void SidePanel::Refresh() {
 
     // clear any previous colony projections
     colony_projections.clear();
+    species_colony_projections.clear();
 
 
     // refresh individual panels' contents
