@@ -1654,6 +1654,7 @@ Tech
                 WithinDistance 50 And [
                     Planet
                     OwnedBy TheEmpire Source.Owner
+                    StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
                 ]
             ]
         effects = SetStarlaneSpeed Value + 20
