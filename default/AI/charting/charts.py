@@ -71,12 +71,19 @@ empires=[]
 empireColors={}
 playerName="Player"
 
+logfiles=sorted(glob(dataDir+os.sep+"A*.log"))
+A1log = glob(dataDir+os.sep+"AI_1.log")
+
+
 if not os.path.exists(dataDir+os.sep+"freeorion.log"):
     print "can't find freeorion.log"
+elif  A1log and ( A1log[0] in logfiles ) and  (   os.path.getmtime(dataDir+os.sep+"freeorion.log")   <  os.path.getmtime(A1log[0]) -300 ):
+    print "freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped"
 else:
     data,  details = parseFile(dataDir+os.sep+"freeorion.log",  False)
-    allData[playerName]=data
-    empireColors[playerName]=details['color']
+    if len(data.get('PP', [])) > 0:
+        allData[playerName]=data
+        empireColors[playerName]=details['color']
 
 logfiles=sorted(glob(dataDir+os.sep+"A*.log"))
 A1log = glob(dataDir+os.sep+"AI_1.log")
@@ -131,7 +138,7 @@ for plotType in doPlotTypes:
                 ymin = min(ymin, thisMin)
             ymax = max(ymax, max(adata))
             if not turns:
-                turns = adata.get('turnsP',  [])
+                turns = data.get('turnsP',  [])
 
     if not turns:
         if len(allData)==0:

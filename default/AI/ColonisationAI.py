@@ -224,7 +224,7 @@ def getColonyFleets():
             if  (AIFocusType.FOCUS_MINING in planet.availableFoci): 
                 fo.issueChangeFocusOrder(pID, AIFocusType.FOCUS_MINING)
                 print "Changing focus of newly acquired planet ID %d : %s  to mining "%(pID,  planet.name )
-        empireSpecies[pSpecName] = empireSpecies.get(pSpecName,  [])+[pID]
+        empireSpecies.setdefault(pSpecName,  []).append(pID)
     print "\n"+"Empire species roster:"
     for specName in empireSpecies:
         thisSpec=fo.getSpecies(specName)
