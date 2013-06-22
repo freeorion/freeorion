@@ -3471,7 +3471,6 @@ void MapWnd::RefreshFleetButtons() {
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
-            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
             GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
@@ -3507,7 +3506,6 @@ void MapWnd::RefreshFleetButtons() {
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
-            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
             GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
@@ -3544,7 +3542,6 @@ void MapWnd::RefreshFleetButtons() {
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
-            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
             GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
         }
