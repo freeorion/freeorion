@@ -727,6 +727,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             return -9999
         popSizeMod=0
         conditionalPopSizeMod=0
+        postPopSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
         detail.append("EnvironPopSizeMod(%d)"%popSizeMod)
         if "SELF_SUSTAINING" in tagList:
@@ -746,20 +747,23 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         for gTech,  gKey in [ ("GRO_SYMBIOTIC_BIO", "symBio"), 
                                                         ("GRO_XENO_GENETICS", "xenoGen"), 
                                                         ("GRO_XENO_HYBRID", "xenoHyb"), 
-                                                        ("GRO_CYBORG", "cyborg"), 
-                                                        ("CON_NDIM_STRUC", "ndim"), 
-                                                        ("CON_ORBITAL_HAB", "orbit") ]:
+                                                        ("GRO_CYBORG", "cyborg") ]:
             if empire.getTechStatus(gTech) == fo.techStatus.complete:
                 popSizeMod += popSizeModMap[gKey][planetEnv]
                 detail.append("%s_PSM(%d)"%(gKey,  popSizeModMap[gKey][planetEnv]))
+        for gTech,  gKey in [ ("CON_NDIM_STRUC", "ndim"), 
+                                                        ("CON_ORBITAL_HAB", "orbit") ]:
+            if empire.getTechStatus(gTech) == fo.techStatus.complete:
+                conditionalPopSizeMod += popSizeModMap[gKey][planetEnv]
+                detail.append("%s_PSM(%d)"%(gKey,  popSizeModMap[gKey][planetEnv]))
 
-        if "GAIA_SPECIAL" in planet.specials:
-            popSizeMod += 3
+        if "GAIA_SPECIAL" in planet.specials and species.name!="SP_EXOBOT": #exobots can't ever get to good environ so no gaiai bonus, for others we'll assume they'll get there
+            conditionalPopSizeMod += 3
             detail.append("Gaia_PSM(3)")
 
         for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
             if special in planetSpecials:
-                popSizeMod -= 1
+                postPopSizeMod -= 1
                 detail.append("%s_PSM(-1)"%special)
 
         applicableBoosts=set([])
@@ -777,10 +781,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         
         nBoosts = len(applicableBoosts)
         if nBoosts:
-            popSizeMod += nBoosts
+            conditionalPopSizeMod += nBoosts
             detail.append("boosts_PSM(%d from %s)"%(nBoosts, applicableBoosts))
-        if popSizeMod > 0:
+        if popSizeMod >= 0:
             popSizeMod += conditionalPopSizeMod
+        popSizeMod += postPopSizeMod
+        
+        if planetID in species.homeworlds:  #TODO: check for homeworld growth focus
+            popSizeMod+=2
 
         popSize = planetSize * popSizeMod * popTagMod
         detail.append("baseMaxPop size*psm %d * %d * %.2f = %d"%(planetSize,  popSizeMod, popTagMod,   popSize) )
@@ -803,7 +811,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                                             "PRO_INDUSTRY_CENTER_I": 1, 
                                             "PRO_INDUSTRY_CENTER_II":1, 
                                             "PRO_INDUSTRY_CENTER_III":1, 
-                                            "PRO_SOL_ORB_GEN":  2.0,   #assumes will build a gen at a blue/white star
+                                            "PRO_SOL_ORB_GEN":  2.0,   #TODO don't assume will build a gen at a blue/white star
                                             "PRO_SINGULAR_GEN": proSingVal, 
                                             }
                                             

@@ -162,7 +162,8 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
         universe = fo.getUniverse()
         fleetA = universe.getFleet(fleetA_ID)
         sysID=fleetA.systemID
-        if not fleetA:
+        fleetB = universe.getFleet(fleetB_ID)
+        if not fleetA or not fleetB:
             return 0
         success = True
         initRating = foAI.foAIstate.getRating(fleetA_ID)
@@ -170,9 +171,18 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
         transferredRating = 0
         transferredAttack=0
         transferredHealth=0
+        BHasMonster=False
+        for shipID in fleetB.shipIDs:
+            thisShip=universe.getShip(shipID)
+            if (not thisShip):
+               continue
+            if  thisShip.isMonster:
+                BHasMonster = True
+                break
         for shipID in fleetA.shipIDs:
             thisShip=universe.getShip(shipID)
-            if not thisShip: continue  
+            if (not thisShip) or  ( thisShip.isMonster != BHasMonster ) : 
+                continue  
             stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
             thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
             if (remainingRating['attack'] -stats['attack'])*(remainingRating['health'] -( stats['structure'] + stats['shields'] ))  < leaveRating:

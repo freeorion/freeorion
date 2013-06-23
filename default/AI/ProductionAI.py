@@ -750,7 +750,7 @@ def generateProductionOrders():
                                 colonizerLocChoices.append(sysID)
                                 needYard[sysID] = pid
                         else:
-                            if pid in (ColonisationAI.empireColonizers[thisSpec]+queuedShipyardLocs):
+                            if pid in (ColonisationAI.empireShipBuilders.get(thisSpec, [])+queuedShipyardLocs):
                                 builderLocChoices.insert(0, sysID)
                             else:
                                 builderLocChoices.append(sysID)
