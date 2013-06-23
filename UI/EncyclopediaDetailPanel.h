@@ -11,6 +11,7 @@ class HullType;
 class BuildingType;
 class Special;
 class Species;
+class FieldType;
 class UniverseObject;
 class Empire;
 class ShipDesign;
@@ -58,6 +59,8 @@ public:
     void            SetItem(const Special* special);
     void            SetSpecies(const std::string& species_name);
     void            SetItem(const Species* species);
+    void            SetFieldType(const std::string& field_type_name);
+    void            SetItem(const FieldType* field_type);
     void            SetObject(int object_id);
     void            SetObject(const std::string& object_id);
     void            SetItem(const UniverseObject* obj);

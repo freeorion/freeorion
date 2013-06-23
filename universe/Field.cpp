@@ -248,8 +248,8 @@ FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-FieldTypeManager& FieldTypeManager()
+FieldTypeManager& GetFieldTypeManager()
 { return FieldTypeManager::GetFieldTypeManager(); }
 
 const FieldType* GetFieldType(const std::string& name)
-{ return FieldTypeManager().GetFieldType(name); }
+{ return FieldTypeManager::GetFieldTypeManager().GetFieldType(name); }

@@ -3,12 +3,14 @@
 #include "ClientUI.h"
 #include "../universe/Field.h"
 #include "../util/AppInterface.h"
+#include "../util/i18n.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
+#include <GG/Menu.h>
 
 namespace {
     const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
@@ -124,7 +126,25 @@ void FieldIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         RightClickedSignal(m_field_id);
-    ForwardEventToParent();
+
+    GG::MenuItem menu_contents;
+
+    const Field* field = GetField(m_field_id);
+    if (!field)
+        return;
+    const std::string& field_type_name = field->FieldTypeName();
+    if (field_type_name.empty())
+        return;
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(field_type_name));
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+
+    if (!popup.Run() || popup.MenuID() != 1)
+        return;
+
+    ClientUI::GetClientUI()->ZoomToFieldType(field_type_name);
 }
 
 void FieldIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -140,26 +160,22 @@ void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    ForwardEventToParent();
-
-    //// indicate mouseover
-    //if (m_mouseover_indicator) {
-    //    AttachChild(m_mouseover_indicator);
-    //    MoveChildUp(m_mouseover_indicator);
-    //} else if (m_mouseover_indicator) {
-    //    DetachChild(m_mouseover_indicator);
-    //}
-    //MouseEnteringSignal(m_field_id);
+    // indicate mouseover
+    if (m_mouseover_indicator) {
+        AttachChild(m_mouseover_indicator);
+        MoveChildUp(m_mouseover_indicator);
+    } else if (m_mouseover_indicator) {
+        DetachChild(m_mouseover_indicator);
+    }
+    MouseEnteringSignal(m_field_id);
 }
 
 void FieldIcon::MouseLeave() {
-    ForwardEventToParent();
+    // un-indicate mouseover
+    if (m_mouseover_indicator)
+        DetachChild(m_mouseover_indicator);
 
-    //// un-indicate mouseover
-    //if (m_mouseover_indicator)
-    //    DetachChild(m_mouseover_indicator);
-
-    //MouseLeavingSignal(m_field_id);
+    MouseLeavingSignal(m_field_id);
 }
 
 void FieldIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)

@@ -83,6 +83,7 @@ public:
     bool    ZoomToShipHull(const std::string& hull_name);              //!< Opens the design screen and presents a description of the given hull type
     bool    ZoomToShipPart(const std::string& part_name);              //!< Opens the design screen and presents a description of the given part type
     bool    ZoomToSpecies(const std::string& species_name);            //!< Opens the ??? screen and presents a description of the given species
+    bool    ZoomToFieldType(const std::string& field_type_name);       //!< Opens the ??? screen and presents a description of the given field type
 
     bool    ZoomToShipDesign(int design_id);                           //!< Opens the design screen and presents a description of the given ship design
     bool    ZoomToEmpire(int empire_id);                               //!< Opens the ??? screen and presents a description of the given empire

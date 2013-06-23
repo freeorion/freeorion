@@ -2801,6 +2801,12 @@ void MapWnd::ShowSpecies(const std::string& species_name) {
     m_pedia_panel->SetSpecies(species_name);
 }
 
+void MapWnd::ShowFieldType(const std::string& field_type_name) {
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetFieldType(field_type_name);
+}
+
 void MapWnd::ShowEmpire(int empire_id) {
     if (!m_pedia_panel->Visible())
         TogglePedia();

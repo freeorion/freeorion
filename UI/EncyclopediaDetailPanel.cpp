@@ -12,6 +12,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/Field.h"
 #include "../universe/Effect.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -73,6 +74,7 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING_TYPE"),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIAL"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("END_FIELD_TYPE"),     LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD_TYPE") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_EMPIRE"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),    LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n"));
@@ -81,6 +83,7 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),       LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n"));
 
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
@@ -119,6 +122,11 @@ namespace {
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
                 sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n"));
+
+        } else if (dir_name == "ENC_FIELD_TYPE") {
+            const FieldTypeManager& fields_manager = GetFieldTypeManager();
+            for (FieldTypeManager::iterator it = fields_manager.begin(); it != fields_manager.end(); ++it)
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::FIELD_TYPE_TAG, it->first) + "\n"));
 
         } else if (dir_name == "ENC_EMPIRE") {
             const EmpireManager& empire_manager = Empires();
@@ -199,6 +207,15 @@ namespace {
                 const std::string& sys_name = system_it->ApparentName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(sys_name,
                     LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system_it->ID(), sys_name) + "  "));
+            }
+
+        } else if (dir_name == "ENC_FIELD") {
+            for (ObjectMap::const_iterator<Field> field_it = objects.const_begin<Field>();
+                 field_it != objects.const_end<Field>(); ++field_it)
+            {
+                const std::string& field_name = field_it->Name();
+                sorted_entries_list.insert(std::make_pair(field_name,
+                    LinkTaggedIDText(VarText::SYSTEM_ID_TAG, field_it->ID(), field_name) + "  "));
             }
 
         } else {
@@ -1555,6 +1572,12 @@ void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
     AddItem("ENC_SPECIES", species_name);
 }
 
+void EncyclopediaDetailPanel::SetFieldType(const std::string& field_type_name) {
+    if (m_items_it != m_items.end() && field_type_name == m_items_it->second)
+        return;
+    AddItem("ENC_FIELD_TYPE", field_type_name);
+}
+
 void EncyclopediaDetailPanel::SetObject(int object_id) {
     int current_item_id = INVALID_OBJECT_ID;
     if (m_items_it != m_items.end()) {
@@ -1646,6 +1669,9 @@ void EncyclopediaDetailPanel::SetItem(const Special* special)
 
 void EncyclopediaDetailPanel::SetItem(const Species* species)
 { SetSpecies(species ? species->Name() : EMPTY_STRING); }
+
+void EncyclopediaDetailPanel::SetItem(const FieldType* field_type)
+{ SetFieldType(field_type ? field_type->Name() : EMPTY_STRING); }
 
 void EncyclopediaDetailPanel::SetItem(const UniverseObject* obj)
 { SetObject(obj ? obj->ID() : INVALID_OBJECT_ID); }

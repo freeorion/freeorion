@@ -80,7 +80,7 @@ FieldType
                 Star type = NoStar
             ]            
             effects =
-                SetSize Value + Random(-0.5, 0.3)
+                SetSize Value + Random(-0.8, 0.3)
 
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
@@ -89,7 +89,7 @@ FieldType
                 Star type = NoStar
             ]            
             effects =
-                SetSize Value + Random(-0.5, 0)
+                SetSize Value + Random(-0.8, 0)
         
         EffectsGroup    // spawn new star when small enough
             scope = Object id = Source.SystemID

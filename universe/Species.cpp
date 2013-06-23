@@ -394,4 +394,4 @@ SpeciesManager& GetSpeciesManager()
 { return SpeciesManager::GetSpeciesManager(); }
 
 const Species* GetSpecies(const std::string& name)
-{ return GetSpeciesManager().GetSpecies(name); }
+{ return SpeciesManager::GetSpeciesManager().GetSpecies(name); }

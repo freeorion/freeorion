@@ -245,6 +245,7 @@ const std::string VarText::SYSTEM_ID_TAG = "system";
 const std::string VarText::SHIP_ID_TAG = "ship";
 const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
+const std::string VarText::FIELD_ID_TAG = "field";
 
 const std::string VarText::COMBAT_ID_TAG = "combat";
 
@@ -258,6 +259,7 @@ const std::string VarText::SPECIAL_TAG = "special";
 const std::string VarText::SHIP_HULL_TAG = "shiphull";
 const std::string VarText::SHIP_PART_TAG = "shippart";
 const std::string VarText::SPECIES_TAG = "species";
+const std::string VarText::FIELD_TYPE_TAG = "fieldtype";
 
 
 VarText::VarText() :

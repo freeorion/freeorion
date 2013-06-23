@@ -24,6 +24,7 @@
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/Field.h"
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 
@@ -717,6 +718,13 @@ bool ClientUI::ZoomToSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
         return false;
     m_map_wnd->ShowSpecies(species_name);
+    return true;
+}
+
+bool ClientUI::ZoomToFieldType(const std::string& field_type_name) {
+    if (!GetFieldType(field_type_name))
+        return false;
+    m_map_wnd->ShowFieldType(field_type_name);
     return true;
 }
 

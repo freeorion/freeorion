@@ -63,7 +63,6 @@ public:
         m_name(""),
         m_description(""),
         m_stealth(0.0),
-        //m_location(0),
         m_effects(0),
         m_graphic("")
     {}
@@ -71,7 +70,6 @@ public:
     /** basic ctor */
     FieldType(const std::string& name, const std::string& description,
               double stealth, const std::set<std::string>& tags,
-//              const Condition::ConditionBase* location,
               const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
               const std::string& graphic);
     ~FieldType(); ///< dtor
@@ -83,7 +81,6 @@ public:
     std::string                     Dump() const;                                       ///< returns a data file format representation of this object
     double                          Stealth() const         { return m_stealth; }       ///< returns stealth of field type
     const std::set<std::string>&    Tags() const            { return m_tags; }
-//    const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects of this FieldType
     const std::string&              Graphic() const         { return m_graphic; }       ///< returns the name of the grapic file for this field type
@@ -94,7 +91,6 @@ private:
     std::string                                                 m_description;
     double                                                      m_stealth;
     std::set<std::string>                                       m_tags;
-//    const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;
 };

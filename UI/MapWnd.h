@@ -131,6 +131,7 @@ public:
     void            ShowShipDesign(int design_id);                          //!< brings up the production screen and displays info about the buildtype \a type_name
     void            ShowSpecial(const std::string& special_name);           //!< brings up encyclopedia panel and displays info about the special with name \a special_name
     void            ShowSpecies(const std::string& species_name);           //!< brings up encyclopedia panel and displays info about the species with name \a species_name
+    void            ShowFieldType(const std::string& field_type_name);      //!< brings up encyclopedia panel and displays info about the field type with name \a field_type_name
     void            ShowEmpire(int empire_id);                              //!< brings up encyclopedia panel and displays info about the empire with id \a empire_id
     void            ShowEncyclopediaEntry(const std::string& str);          //!< brings up encyclopedia panel and displays info about the specified string \a str
 

@@ -52,6 +52,7 @@ public:
     static const std::string SHIP_ID_TAG;
     static const std::string FLEET_ID_TAG;
     static const std::string BUILDING_ID_TAG;
+    static const std::string FIELD_ID_TAG;
 
     static const std::string COMBAT_ID_TAG;
 
@@ -65,6 +66,7 @@ public:
     static const std::string SHIP_HULL_TAG;
     static const std::string SHIP_PART_TAG;
     static const std::string SPECIES_TAG;
+    static const std::string FIELD_TYPE_TAG;
 
 protected:
     /** Combines the template with the variables contained in object to
