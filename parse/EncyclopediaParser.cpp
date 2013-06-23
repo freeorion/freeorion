@@ -1,6 +1,7 @@
+#include "Label.h"
+#include "Parse.h"
 #include "ParseImpl.h"
 
-#include "Label.h"
 #include "../UI/Encyclopedia.h"
 
 #include <boost/spirit/home/phoenix.hpp>

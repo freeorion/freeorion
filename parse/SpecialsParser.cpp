@@ -1,8 +1,9 @@
+#include "ConditionParserImpl.h"
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
+#include "Parse.h"
 #include "ParseImpl.h"
-#include "ConditionParserImpl.h"
 #include "../universe/Special.h"
 
 #include <boost/spirit/home/phoenix.hpp>

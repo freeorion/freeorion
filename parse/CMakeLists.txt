@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6.4)
 
-add_definitions(-DNDEBUG)
+add_definitions(-DNDEBUG -DFREEORION_BUILD_PARSE)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -O3")
 endif ()
 
 add_library(freeorionparse

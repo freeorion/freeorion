@@ -1,12 +1,14 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
+#include "ConditionParserImpl.h"
 #include "Double.h"
 #include "EnumParser.h"
 #include "Label.h"
-#include "ValueRefParser.h"
-#include "ConditionParserImpl.h"
+#include "Parse.h"
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
+
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
 

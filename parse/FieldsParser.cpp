@@ -1,6 +1,8 @@
 #include "Double.h"
 #include "Label.h"
+#include "Parse.h"
 #include "ParseImpl.h"
+
 #include "../universe/Condition.h"
 #include "../universe/Field.h"
 

@@ -4532,6 +4532,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -4560,10 +4561,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -4676,6 +4673,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -4703,10 +4701,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -4739,6 +4733,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -4845,6 +4843,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -4873,10 +4872,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.5;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -4909,6 +4904,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -5015,6 +5014,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -5043,10 +5043,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -5078,7 +5074,18 @@
 		8219A98E14AAFFC300EEE387 /* Release_LLVM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
+					OGRE_GUI_GLX,
+					FREEORION_MACOSX,
+					__MACOSX__,
+					NDEBUG,
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -5221,6 +5228,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -5249,10 +5257,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -5303,6 +5307,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -5445,6 +5453,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					FREEORION_BUILD_PARSE,
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
@@ -5472,10 +5481,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=default",
-				);
 				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -5533,6 +5538,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -5672,6 +5681,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};

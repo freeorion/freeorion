@@ -2,6 +2,7 @@
 #include "EnumParser.h"
 #include "ValueRefParser.h"
 #include "ParseImpl.h"
+#include "Parse.h"
 #include "../universe/Species.h"
 
 #include <boost/spirit/home/phoenix.hpp>

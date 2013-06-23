@@ -1,12 +1,13 @@
-#include "ParseImpl.h"
-
+#include "ConditionParserImpl.h"
 #include "Double.h"
 #include "EffectParser.h"
 #include "EnumParser.h"
-#include "ConditionParserImpl.h"
 #include "Int.h"
 #include "Label.h"
+#include "Parse.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
+
 #include "../universe/Effect.h"
 #include "../util/Logger.h"
 

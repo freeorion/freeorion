@@ -1,10 +1,12 @@
+#include "ConditionParserImpl.h"
 #include "Double.h"
+#include "EnumParser.h"
 #include "Int.h"
 #include "Label.h"
-#include "EnumParser.h"
-#include "ValueRefParser.h"
-#include "ConditionParserImpl.h"
+#include "Parse.h"
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
+
 #include "../universe/Building.h"
 
 #include <boost/spirit/home/phoenix.hpp>

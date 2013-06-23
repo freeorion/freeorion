@@ -1,7 +1,8 @@
-#include "ParseImpl.h"
+#include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
-#include "ConditionParserImpl.h"
+#include "Parse.h"
+#include "ParseImpl.h"
 #include "../universe/Species.h"
 
 #include <boost/spirit/home/phoenix.hpp>

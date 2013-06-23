@@ -1,5 +1,6 @@
-#include "ParseImpl.h"
 #include "Label.h"
+#include "Parse.h"
+#include "ParseImpl.h"
 
 #include "../universe/ShipDesign.h"
 
