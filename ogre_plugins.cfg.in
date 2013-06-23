@@ -1,7 +1,7 @@
 # Ogre 3D engine plugins to load
 
 # Plugin folder
-PluginFolder=.
+PluginFolder=${OGRE_PLUGIN_DIR_REL}
 
 # Plugins
 Plugin=RenderSystem_GL

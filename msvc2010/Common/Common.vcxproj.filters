@@ -56,6 +56,9 @@
     <None Include="..\..\cmake\make_versioncpp.py">
       <Filter>Source Files\cmake</Filter>
     </None>
+    <None Include="..\..\cmake\make_ogre_plugins.py">
+      <Filter>Source Files\cmake</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\network\Message.h">
@@ -451,6 +454,9 @@
   <ItemGroup>
     <CustomBuild Include="..\..\util\Version.cpp.in">
       <Filter>Source Files\util</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
+      <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

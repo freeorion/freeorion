@@ -85,6 +85,12 @@ else()
     message(FATAL_ERROR "OpenGL library not found.")
 endif()
 
+find_package(OGRE)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
+    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
+)
 
 find_package(Subversion)
 set(FreeOrion_WC_REVISION ???)

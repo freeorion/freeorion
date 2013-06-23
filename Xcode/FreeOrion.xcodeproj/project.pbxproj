@@ -7,15 +7,16 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		829C76351689EFD4005881B4 /* INIT */ = {
+		829C76351689EFD4005881B4 /* Configure */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "INIT" */;
+			buildConfigurationList = 829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "Configure" */;
 			buildPhases = (
-				829C76341689EFD4005881B4 /* Make Version.cpp */,
+				829C76341689EFD4005881B4 /* Version.cpp */,
+				3A01FCCC174A20DD00EC9110 /* ogre_plugins.cfg */,
 			);
 			dependencies = (
 			);
-			name = INIT;
+			name = Configure;
 			productName = INIT;
 		};
 /* End PBXAggregateTarget section */
@@ -107,6 +108,7 @@
 		34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */; };
 		3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
+		3A01FCFE174A2B2300EC9110 /* ogre_plugins.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 3A01FCFD174A2B1600EC9110 /* ogre_plugins.cfg */; };
 		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
 		3A5105541748D68B00DC258B /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105521748D68B00DC258B /* i18n.cpp */; };
 		3A5105571748D6A700DC258B /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258B /* Logger.cpp */; };
@@ -382,7 +384,6 @@
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
-		9EEEEA7013ACB3430085B1A0 /* ogre_plugins.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
 		9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */; };
 /* End PBXBuildFile section */
 
@@ -587,8 +588,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				3A01FCFE174A2B2300EC9110 /* ogre_plugins.cfg in Copy Ogre, OIS config files */,
 				9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Ogre, OIS config files */,
-				9EEEEA7013ACB3430085B1A0 /* ogre_plugins.cfg in Copy Ogre, OIS config files */,
 			);
 			name = "Copy Ogre, OIS config files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -658,7 +659,6 @@
 		346D87EC0FC5F5B00095593E /* Missile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Missile.h; sourceTree = "<group>"; };
 		346D87ED0FC5F6080095593E /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		346D87EE0FC5F6080095593E /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
-		3484E98E0F59A04D0083041E /* ogre_plugins.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ogre_plugins.cfg; sourceTree = "<group>"; };
 		348D0F5B1194D6230034C679 /* EntityRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityRenderer.cpp; sourceTree = "<group>"; };
 		348D0F5C1194D6230034C679 /* EntityRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityRenderer.h; sourceTree = "<group>"; };
 		349724D70F49C9220015C864 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogre.framework; sourceTree = "<group>"; };
@@ -1123,6 +1123,7 @@
 		34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
 		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Python.framework; sourceTree = "<group>"; };
+		3A01FCFD174A2B1600EC9110 /* ogre_plugins.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ogre_plugins.cfg; path = ../ogre_plugins.cfg; sourceTree = SOURCE_ROOT; };
 		3A1BF3EA1748875200812237 /* Version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Version.cpp; path = ../util/Version.cpp; sourceTree = SOURCE_ROOT; };
 		3A5105521748D68B00DC258B /* i18n.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i18n.cpp; sourceTree = "<group>"; };
 		3A5105531748D68B00DC258B /* i18n.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i18n.h; sourceTree = "<group>"; };
@@ -1896,6 +1897,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				3A01FCFD174A2B1600EC9110 /* ogre_plugins.cfg */,
 				8DD76F6C0486A84900D96B5E /* FreeOrion */,
 				471D5A300A988D5700DA9C21 /* libGG.a */,
 				471D5D440A98A46000DA9C21 /* freeoriond */,
@@ -1993,7 +1995,6 @@
 				8273F49415DD7724000F6A09 /* changelog.txt */,
 				9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */,
 				34DD943911360BFA00265AF9 /* main.nib */,
-				3484E98E0F59A04D0083041E /* ogre_plugins.cfg */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				479036420B04CA23001FEF7B /* default */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
@@ -3989,7 +3990,7 @@
 				..,
 			);
 			targets = (
-				829C76351689EFD4005881B4 /* INIT */,
+				829C76351689EFD4005881B4 /* Configure */,
 				47B615BE0CF099BD00318761 /* FREEALUT */,
 				471D5A2F0A988D5700DA9C21 /* GG */,
 				82271BF715F8AB900063179C /* OIS */,
@@ -4020,14 +4021,30 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		829C76341689EFD4005881B4 /* Make Version.cpp */ = {
+		3A01FCCC174A20DD00EC9110 /* ogre_plugins.cfg */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/../ogre_plugins.cfg.in",
 			);
-			name = "Make Version.cpp";
+			name = ogre_plugins.cfg;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_ogre_plugins.py\" \"${SRCROOT}/..\"\nfi";
+		};
+		829C76341689EFD4005881B4 /* Version.cpp */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../util/Version.cpp.in",
+			);
+			name = Version.cpp;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4481,7 +4498,7 @@
 		};
 		829C763F1689F0EA005881B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 829C76351689EFD4005881B4 /* INIT */;
+			target = 829C76351689EFD4005881B4 /* Configure */;
 			targetProxy = 829C763E1689F0EA005881B4 /* PBXContainerItemProxy */;
 		};
 		82C07478149DE7AC00E76876 /* PBXTargetDependency */ = {
@@ -5854,7 +5871,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
 		};
-		829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "INIT" */ = {
+		829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "Configure" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				829C76361689EFD4005881B4 /* Debug */,
