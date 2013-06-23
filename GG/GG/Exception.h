@@ -72,7 +72,7 @@ private:
     This should be used along with GG_CONCRETE_EXCEPTION to group all
     exceptions from a single GG class under one subhierarchy. */
 #define GG_ABSTRACT_EXCEPTION( name )                                   \
-    class GG_API name : public ExceptionBase                            \
+    class name : public ExceptionBase                                   \
     {                                                                   \
     public:                                                             \
         name () throw() : ExceptionBase() {}                            \
