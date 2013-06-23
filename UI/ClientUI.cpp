@@ -252,6 +252,16 @@ boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
+boost::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_type_name) {
+    const FieldType* type = GetFieldType(field_type_name);
+    std::string texture_name;
+    if (type)
+        texture_name = type->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "fields" / "rainbow_storm.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
 boost::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
     const PartType* part = GetPartType(part_name);
     std::string texture_name;
@@ -606,6 +616,13 @@ bool ClientUI::ZoomToBuilding(int id) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
+    return false;
+}
+
+bool ClientUI::ZoomToField(int id) {
+    //if (const Field* field = GetField(id)) {
+    //  // TODO: implement this
+    //}
     return false;
 }
 

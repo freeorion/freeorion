@@ -32,6 +32,7 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::SHIP_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::FIELD_ID_TAG);
 
         GG::Font::RegisterKnownTag(VarText::COMBAT_ID_TAG);
 
@@ -45,6 +46,7 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
         GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
         GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
+        GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
 
         GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
     }
@@ -248,6 +250,7 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::SHIP_ID_TAG ||
                     tag->tag_name == VarText::FLEET_ID_TAG ||
                     tag->tag_name == VarText::BUILDING_ID_TAG ||
+                    tag->tag_name == VarText::FIELD_ID_TAG ||
                     tag->tag_name == VarText::COMBAT_ID_TAG ||
                     tag->tag_name == VarText::EMPIRE_ID_TAG ||
                     tag->tag_name == VarText::DESIGN_ID_TAG ||
@@ -258,6 +261,7 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::SHIP_HULL_TAG ||
                     tag->tag_name == VarText::SHIP_PART_TAG ||
                     tag->tag_name == VarText::SPECIES_TAG ||
+                    tag->tag_name == VarText::FIELD_TYPE_TAG ||
                     tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG)
                 {
                     link.type = tag->tag_name;

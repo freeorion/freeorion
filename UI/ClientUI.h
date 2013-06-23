@@ -71,6 +71,7 @@ public:
     bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
     bool    ZoomToShip(int id);                                         //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
     bool    ZoomToBuilding(int id);                                     //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToField(int id);                                        //!< Zooms to a particular field on the map
     bool    ZoomToCombatLog(int id);                                    //!< Opens combat log for indicated combat
 
     void    ZoomToSystem(const System* system);                         //!< Zooms to a particular system on the galaxy map
@@ -182,6 +183,7 @@ public:
     static boost::shared_ptr<GG::Texture>   TechIcon(const std::string& tech_name);
     static boost::shared_ptr<GG::Texture>   SpecialIcon(const std::string& special_name);
     static boost::shared_ptr<GG::Texture>   SpeciesIcon(const std::string& species_name);
+    static boost::shared_ptr<GG::Texture>   FieldTexture(const std::string& field_type_name);
     static boost::shared_ptr<GG::Texture>   PartIcon(const std::string& part_name);
     static boost::shared_ptr<GG::Texture>   HullTexture(const std::string& hull_name);
     static boost::shared_ptr<GG::Texture>   HullIcon(const std::string& hull_name);

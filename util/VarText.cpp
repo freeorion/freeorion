@@ -15,10 +15,12 @@ class Tech;
 class BuildingType;
 class Special;
 class Species;
+class FieldType;
 const Tech*         GetTech(const std::string& name);
 const BuildingType* GetBuildingType(const std::string& name);
 const Special*      GetSpecial(const std::string& name);
 const Species*      GetSpecies(const std::string& name);
+const FieldType*    GetFieldType(const std::string& name);
 
 namespace {
     const std::string START_VAR("%");
@@ -70,7 +72,8 @@ namespace {
                 token == VarText::SYSTEM_ID_TAG ||
                 token == VarText::SHIP_ID_TAG ||
                 token == VarText::FLEET_ID_TAG ||
-                token == VarText::BUILDING_ID_TAG)
+                token == VarText::BUILDING_ID_TAG ||
+                token == VarText::FIELD_ID_TAG)
             {
                 int object_id = INVALID_OBJECT_ID;
                 try {
@@ -94,15 +97,7 @@ namespace {
 
             // combat log
             } else if (token == VarText::COMBAT_ID_TAG) {
-                //int log_id = -1;    // should not be a valid log id, for default
-                //try {
-                //    log_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-                //} catch (const std::exception&) {
-                //    Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for combat log id.";
-                //    m_str += UserString("ERROR");
-                //    m_valid = false;
-                //    return;
-                //}
+                // combat links always just labelled "Combat"; don't need to look up details
                 m_str += open_tag + UserString("COMBAT") + close_tag;
 
             // technology token
@@ -165,7 +160,17 @@ namespace {
                 }
                 m_str += open_tag + UserString(name) + close_tag;
 
-            // ship design token
+            // field type token
+            } else if (token == VarText::FIELD_TYPE_TAG) {
+                std::string name = token_elem.Attribute("value");
+                if (!GetFieldType(name)) {
+                    m_str += UserString("ERROR");
+                    m_valid = false;
+                    return;
+                }
+                m_str += open_tag + UserString(name) + close_tag;
+
+                // ship design token
             } else if (token == VarText::DESIGN_ID_TAG) {
                 int design_id = ShipDesign::INVALID_DESIGN_ID;
                 try {

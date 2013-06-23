@@ -108,10 +108,7 @@ void FieldIcon::Refresh() {
     const Field* field = GetField(m_field_id);
     if (!field)
         return;
-    const FieldType* type = GetFieldType(field->FieldTypeName());
-    if (!type)
-        return;
-    m_texture = ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic(), true);
+    m_texture = ClientUI::FieldTexture(field->FieldTypeName());
 }
 
 void FieldIcon::Render()
@@ -160,22 +157,22 @@ void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    // indicate mouseover
-    if (m_mouseover_indicator) {
-        AttachChild(m_mouseover_indicator);
-        MoveChildUp(m_mouseover_indicator);
-    } else if (m_mouseover_indicator) {
-        DetachChild(m_mouseover_indicator);
-    }
-    MouseEnteringSignal(m_field_id);
+    //// indicate mouseover
+    //if (m_mouseover_indicator) {
+    //    AttachChild(m_mouseover_indicator);
+    //    MoveChildUp(m_mouseover_indicator);
+    //} else if (m_mouseover_indicator) {
+    //    DetachChild(m_mouseover_indicator);
+    //}
+    //MouseEnteringSignal(m_field_id);
 }
 
 void FieldIcon::MouseLeave() {
-    // un-indicate mouseover
-    if (m_mouseover_indicator)
-        DetachChild(m_mouseover_indicator);
+    //// un-indicate mouseover
+    //if (m_mouseover_indicator)
+    //    DetachChild(m_mouseover_indicator);
 
-    MouseLeavingSignal(m_field_id);
+    //MouseLeavingSignal(m_field_id);
 }
 
 void FieldIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)

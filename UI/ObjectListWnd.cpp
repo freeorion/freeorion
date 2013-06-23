@@ -852,8 +852,7 @@ namespace {
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
-            if (fleet) {
+            if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
                 boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (head_icon)
                     retval.push_back(head_icon);
@@ -862,8 +861,7 @@ namespace {
                     retval.push_back(size_icon);
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
-            const System* system = universe_object_cast<const System*>(obj);
-            if (system) {
+            if (const System* system = universe_object_cast<const System*>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
@@ -879,18 +877,11 @@ namespace {
             if (const Planet* planet = universe_object_cast<const Planet*>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
         } else if (obj->ObjectType() == OBJ_BUILDING) {
-            const Building* building = universe_object_cast<const Building*>(obj);
-            if (building)
+            if (const Building* building = universe_object_cast<const Building*>(obj))
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
-            else
-                retval.push_back(ClientUI::BuildingIcon(""));   // default building icon
         } else if (obj->ObjectType() == OBJ_FIELD) {
-            const Field* field = universe_object_cast<const Field*>(obj);
-            if (field) {
-                const FieldType* field_type = GetFieldType(field->FieldTypeName());
-                if (field_type)
-                    retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / field_type->Graphic(), true));
-            }
+            if (const Field* field = universe_object_cast<const Field*>(obj))
+                retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
         }
         if (retval.empty())
             retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
