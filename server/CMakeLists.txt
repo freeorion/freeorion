@@ -7,6 +7,10 @@ message("-- Configuring freeoriond")
 
 add_definitions(-DFREEORION_BUILD_SERVER)
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+endif ()
+
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
 endif ()

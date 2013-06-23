@@ -64,6 +64,10 @@ include_directories(${CMAKE_SOURCE_DIR}/PagedGeometry/include)
 
 add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+endif ()
+
 set(freeorion_SOURCES
     ../../client/ClientApp.cpp
     ../../client/ClientFSMEvents.cpp

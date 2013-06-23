@@ -4514,6 +4514,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -4617,6 +4618,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -4634,6 +4636,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -4774,6 +4777,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -4791,6 +4795,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -4808,6 +4813,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -4945,6 +4951,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -4962,6 +4969,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -4979,6 +4987,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -5123,6 +5132,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -5140,6 +5150,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -5157,6 +5168,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -5348,6 +5360,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -5365,6 +5378,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -5382,6 +5396,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -5579,6 +5594,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -5596,6 +5612,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -5613,6 +5630,7 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
+				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};

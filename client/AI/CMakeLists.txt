@@ -22,6 +22,10 @@ endif ()
 
 add_definitions(-DFREEORION_BUILD_AI)
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+endif ()
+
 set(freeorionca_LINK_LIBS
     freeorioncommon
     freeorionparse
