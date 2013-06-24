@@ -114,17 +114,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.svn;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\.svn;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring ogre_plugins.cfg</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Configuring ogre_plugins.cfg</Message>
-    </CustomBuild>
     <None Include="..\..\util\Serialize.ipp">
       <FileType>Document</FileType>
     </None>

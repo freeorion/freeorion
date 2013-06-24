@@ -205,6 +205,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico" />
+    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring ogre_plugins.cfg</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Configuring ogre_plugins.cfg</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />

@@ -455,8 +455,5 @@
     <CustomBuild Include="..\..\util\Version.cpp.in">
       <Filter>Source Files\util</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>
