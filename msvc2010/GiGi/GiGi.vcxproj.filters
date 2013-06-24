@@ -65,15 +65,6 @@
     <ClInclude Include="..\..\GG\GG\ZList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\AdamDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\AdamGlue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\AdamParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\AlignmentFlags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -113,25 +104,13 @@
     <ClInclude Include="..\..\GG\GG\Enum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\EveGlue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\EventPump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\EveParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\Exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\Export.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\ExpressionParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\ExpressionWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\Flags.h">
@@ -150,9 +129,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\Layout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\Lexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\ListBox.h">
@@ -222,9 +198,6 @@
       <Filter>Header Files\utf8</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\GroupBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\LexerFwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\GG\GG\ReportParseError.h">
