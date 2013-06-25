@@ -89,7 +89,6 @@
 		34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBE40F5E1EEB005BF6A4 /* SimpleVehicle.cpp */; };
 		34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */; };
 		34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */; };
-		34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */; };
 		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
 		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
 		34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */; };
@@ -4173,7 +4172,6 @@
 				471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */,
 				471024A90CEF3DF100A7DF2B /* PluginInterface.cpp in Sources */,
 				343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */,
-				34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */,
 				8243E08C147EEAC800636C9E /* memory.cpp in Sources */,
 				8243E08D147EEAC800636C9E /* name.cpp in Sources */,
 				8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */,
