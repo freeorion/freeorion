@@ -50,7 +50,7 @@ def parseFile(fileName, AI =True):
                 if AI and not gotSpecies and "CapitalID:" in line:
                     gotSpecies = True
                     details['species'] = line.split("Species:")[1].strip()
-                if AI and not gotName and "CapitalID:" in line:
+                if AI and not gotName and "EmpireID:" in line:
                     gotName=True
                     details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
                 if "Current Output (turn" in line:
