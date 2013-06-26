@@ -9,6 +9,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 
 #include <GG/Button.h>
 #include <GG/Clr.h>
@@ -75,6 +76,7 @@ void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flag
 }
 
 void InGameMenu::Save() {
+    Logger().debugStream() << "InGameMenu::Save";
     const std::string SAVE_GAME_EXTENSION =
         HumanClientApp::GetApp()->SinglePlayerGame() ?
         SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
@@ -83,20 +85,21 @@ void InGameMenu::Save() {
     save_file_types.push_back(std::make_pair(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-#ifdef FREEORION_WIN32
-        std::string path_string = GetSaveDir().string();
-#else
-        boost::filesystem::path::string_type native_path_string = GetSaveDir().native();
-        std::string path_string;
-        utf8::utf16to8(native_path_string.begin(), native_path_string.end(), std::back_inserter(path_string));
-#endif
+        Logger().debugStream() << "... getting save path string";
+        std::string path_string = PathString(GetSaveDir());
+        Logger().debugStream() << "... got save path string: " << path_string;
+
+        Logger().debugStream() << "... running file dialog";
         FileDlg dlg(path_string, "", true, false, save_file_types);
         dlg.Run();
         if (!dlg.Result().empty()) {
+            Logger().debugStream() << "... initiating save";
             HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
             CloseClicked();
+            Logger().debugStream() << "... save done";
         }
     } catch (const std::exception& e) {
+        Logger().errorStream() << "Exception thrown attempting save: " << e.what();
         ClientUI::MessageBox(e.what(), true);
     }
 }
