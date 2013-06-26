@@ -97,7 +97,7 @@ namespace {
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }
-            } catch (const FileDlg::BadInitialDirectory& e) {
+            } catch (const std::exception& e) {
                 ClientUI::MessageBox(e.what(), true);
             }
         }

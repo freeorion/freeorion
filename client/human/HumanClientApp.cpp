@@ -516,7 +516,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
             dlg.Run();
             if (!dlg.Result().empty())
                 filename = *dlg.Result().begin();
-        } catch (const FileDlg::BadInitialDirectory& e) {
+        } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
         }
     }

@@ -96,7 +96,7 @@ void InGameMenu::Save() {
             HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
             CloseClicked();
         }
-    } catch (const FileDlg::BadInitialDirectory& e) {
+    } catch (const std::exception& e) {
         ClientUI::MessageBox(e.what(), true);
     }
 }
