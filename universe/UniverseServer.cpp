@@ -74,8 +74,8 @@ namespace {
     double CalcNewPosNearestNeighbour(const std::pair<double, double>& position,
                                       const std::vector<std::pair<double, double> >& positions)
     {
-        if (positions.size() == 0)
-            return 0.0;
+        if (positions.size() == 0) // means that we are placing the first star, return a max val to not reject placement
+            return 1e6;
 
         unsigned int j;
         double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
@@ -131,9 +131,14 @@ namespace {
             // See if new star is too close to any existing star.
             double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
 
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
+            // If so, we try again or give up.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                    --i; //try again for same star
+                } else {
+                    attempts=0; //give up on this star, move on to next
+                    Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                }
                 continue;
             }
 
@@ -188,9 +193,14 @@ namespace {
             // See if new star is too close to any existing star.
             double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x, y), positions);
 
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
+            // If so, we try again or give up.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                    --i; //try again for same star
+                } else {
+                    attempts=0; //give up on this star, move on to next
+                    Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                }
                 continue;
             }
 
@@ -279,11 +289,14 @@ namespace {
             // See if new star is too close to any existing star.
             double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
 
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION &&
-                attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1)
-            {
-                --i;
+            // If so, we try again or give up.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                    --i; //try again for same star
+                } else {
+                    attempts=0; //give up on this star, move on to next
+                    Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                }
                 continue;
             }
 
@@ -317,9 +330,14 @@ namespace {
             // See if new star is too close to any existing star.
             double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
 
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
+            // If so, we try again or give up.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                    --i; //try again for same star
+                } else {
+                    attempts=0; //give up on this star, move on to next
+                    Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                }
                 continue;
             }
 
@@ -352,9 +370,14 @@ namespace {
             // See if new star is too close to any existing star.
             double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
 
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
+            // If so, we try again or give up.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                    --i; //try again for same star
+                } else {
+                    attempts=0; //give up on this star, move on to next
+                    Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                }
                 continue;
             }
 
@@ -1546,6 +1569,10 @@ void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySe
     // backup in case requested algorithm failed...
     if (positions.empty())
         IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
+
+    if (!positions.empty())
+        size = positions.size();
+    Logger().debugStream() << "Final Galaxy Size " << positions.size();
 
     GenerateStarField(*this, age, positions, adjacency_grid, m_universe_width / ADJACENCY_BOXES);
 
