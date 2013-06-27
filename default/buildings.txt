@@ -383,7 +383,7 @@ BuildingType
             scope = WithinDistance 0.00001 Source
             stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
             effects = SetStealth Value - 30
-            
+
         EffectsGroup
             scope = And [
                 Ship
@@ -558,7 +558,7 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_INDUSTRY"
             ]
-            activation = Not WithinDistance 500 And [
+            activation = Not WithinDistance 200 And [
                 Ship
                 Not Stationary
             ]
