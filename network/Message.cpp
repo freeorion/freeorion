@@ -504,7 +504,7 @@ Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& dipl
     std::ostringstream os;
     {
         freeorion_oarchive oa(os);
-        oa << diplo_message;
+        oa << BOOST_SERIALIZATION_NVP(diplo_message);
     }
     return Message(Message::DIPLOMACY, sender, receiver, os.str());
 }
