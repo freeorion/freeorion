@@ -847,21 +847,24 @@ ShipDesignOrder::ShipDesignOrder() :
     Order(),
     m_design_id(INVALID_OBJECT_ID),
     m_delete_design_from_empire(false),
-    m_create_new_design(false)
+    m_create_new_design(false),
+    m_is_monster(false)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
     m_design_id(existing_design_id_to_remember),
     m_delete_design_from_empire(false),
-    m_create_new_design(false)
+    m_create_new_design(false),
+    m_is_monster(false)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
     m_design_id(design_id_to_erase),
     m_delete_design_from_empire(true),
-    m_create_new_design(false)
+    m_create_new_design(false),
+    m_is_monster(false)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :

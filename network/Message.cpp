@@ -798,13 +798,20 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
     try {
         std::istringstream is(msg.Text());
         freeorion_iarchive ia(is);
+        Logger().debugStream() << "deserializing orders";
         Deserialize(ia, orders);
+        Logger().debugStream() << "checking for ui data";
         ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-        if (ui_data_available)
+        if (ui_data_available) {
+            Logger().debugStream() << "deserializing UI data";
             ia >> BOOST_SERIALIZATION_NVP(ui_data);
+        }
+        Logger().debugStream() << "checking for save state string";
         ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-        if (save_state_string_available)
+        if (save_state_string_available) {
+            Logger().debugStream() << "deserializing save state string";
             ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+        }
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
                                << "bool& ui_data_available, SaveGameUIData& ui_data, "
