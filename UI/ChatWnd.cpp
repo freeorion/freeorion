@@ -335,10 +335,11 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
         return;
     }
 
-    std::string sender_name = player_it->second.name;
+    const std::string& sender_name = player_it->second.name;
+    const int& sender_empire_id = player_it->second.empire_id;
 
     GG::Clr sender_colour(ClientUI::TextColor());
-    if (const Empire* sender_empire = Empires().Lookup(sender_player_id))
+    if (const Empire* sender_empire = Empires().Lookup(sender_empire_id))
         sender_colour = sender_empire->Color();
 
     std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + text + "</rgba>";

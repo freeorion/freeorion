@@ -1062,7 +1062,7 @@ void EncyclopediaDetailPanel::Refresh() {
             return;
         }
 
-        // Building types
+        // Field types
         name = UserString(m_items_it->second);
         texture = ClientUI::FieldTexture(m_items_it->second);
         general_type = UserString("ENC_FIELD_TYPE");

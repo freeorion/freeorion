@@ -189,7 +189,6 @@ namespace {
                 Logger().errorStream() << "PlayerDataPanel::Update couldn't find player with id " << m_player_id;
                 return;
             }
-
             const PlayerInfo& player_info = player_it->second;
 
             // if player has an empire, get its name and colour.  (Some player types might not have empires...)
@@ -223,7 +222,7 @@ namespace {
             for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>(); ship_it != objects.const_end<Ship>(); ++ship_it) {
                 const Ship* ship = *ship_it;
                 if (empire) {
-                    if (ship->Owner() == empire->EmpireID() 
+                    if (ship->Owner() == empire->EmpireID()
                         && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end()
                         && this_client_stale_object_info.find(ship->ID()) == this_client_stale_object_info.end()) {
                             empires_ship_count += 1;
@@ -247,25 +246,25 @@ namespace {
             std::string production_text;
             std::string research_text;
 
-            if (empires_ship_count == 0.0 ) {
+            if (empires_ship_count == 0.0) {
                 ship_text       = UserString("NOTHING_VALUE_SYMBOL");
             } else {
                 ship_text       = DoubleToString(empires_ship_count, 2, false);
             }
 
-            if (empires_planet_count == 0.0 ) {
+            if (empires_planet_count == 0.0) {
                 planet_text     = UserString("NOTHING_VALUE_SYMBOL");
             } else {
                 planet_text     = DoubleToString(empires_planet_count, 2, false);
             }
 
-            if (empires_production_points == 0.0 ) {
+            if (empires_production_points == 0.0) {
                 production_text = UserString("NOTHING_VALUE_SYMBOL");
             } else {
                 production_text = DoubleToString(empires_production_points, 2, false);
             }
 
-            if (empires_research_points == 0.0 ) {
+            if (empires_research_points == 0.0) {
                 research_text   = UserString("NOTHING_VALUE_SYMBOL");
             } else {
                 research_text   = DoubleToString(empires_research_points, 2, false);
@@ -345,7 +344,7 @@ namespace {
 
         int                     m_player_id;
         //GG::TextControl*        m_player_name_text;
-        GG::TextControl*        m_empire_name_text;        
+        GG::TextControl*        m_empire_name_text;
         GG::TextControl*        m_empire_ship_text;
         GG::TextControl*        m_empire_planet_text;
         GG::TextControl*        m_empire_production_text;
@@ -523,7 +522,9 @@ void PlayerListWnd::Refresh() {
 
     const GG::Pt row_size = m_player_list->ListRowSize();
 
-    for (std::map<int, PlayerInfo>::const_iterator player_it = players.begin(); player_it != players.end(); ++player_it) {
+    for (std::map<int, PlayerInfo>::const_iterator player_it = players.begin();
+         player_it != players.end(); ++player_it)
+    {
         int player_id = player_it->first;
         PlayerRow* player_row = new PlayerRow(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
@@ -615,6 +616,7 @@ void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it) {
 }
 
 void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_player_id = PlayerInRow(it);
     if (clicked_player_id == Networking::INVALID_PLAYER_ID)
         return;
@@ -629,17 +631,34 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     int client_empire_id = app->EmpireID();
     if (client_empire_id == ALL_EMPIRES)
         return;
-
     if (clicked_player_id == client_player_id)
         return;
-    const Empire* clicked_empire = Empires().Lookup(clicked_player_id);
-    if (!clicked_empire)
-        return;
-    int clicked_empire_id = clicked_empire->EmpireID();
 
-    DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
-    if (diplo_status == INVALID_DIPLOMATIC_STATUS)
+    // get empire id of clicked player
+    const std::map<int, PlayerInfo>& players = app->Players();
+    std::map<int, PlayerInfo>::const_iterator clicked_player_it = players.find(clicked_player_id);
+    if (clicked_player_it == players.end()) {
+        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked couldn't find player with id " << clicked_player_id;
         return;
+    }
+    const PlayerInfo& clicked_player_info = clicked_player_it->second;
+    int clicked_empire_id = clicked_player_info.empire_id;
+
+    if (clicked_empire_id == ALL_EMPIRES)
+        return;
+    if (!Empires().Lookup(clicked_empire_id)) {
+        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
+                               << clicked_empire_id << " for player " << clicked_player_id
+                               << " but couldn't find such an empire";
+        return;
+    }
+
+    // get diplomatic status between client and clicked empires
+    DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
+    if (diplo_status == INVALID_DIPLOMATIC_STATUS) {
+        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
+        return;
+    }
     DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
 
     // create popup menu with diplomacy options in it

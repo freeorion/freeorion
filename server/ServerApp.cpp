@@ -1381,20 +1381,20 @@ namespace {
         // 1) empires A and B are at war, and
         // 2) a) empires A and B both have fleets in a system, or
         // 2) b) empire A has a fleet and empire B has a planet in a system
-        // 3) empire A's can see the fleet or planet of empire B
+        // 3) empire A can see the fleet or planet of empire B
         // 4) empire A's fleet is set to aggressive
         // 5) empire A's fleet has at least one armed ship <-- only enforced if empire A is 'monster'
         //
         // monster ships are treated as owned by an empire at war with all other empires (may be passive or aggressive)
         // native planets are treated as owned by an empire at war with all other empires
 
-        // what empires have fleets here?
+        // what empires have fleets here? (including monsters as id ALL_EMPIRES)
         std::map<int, std::set<int> > empire_fleets_here;
         GetEmpireFleetsAtSystem(empire_fleets_here, system_id);
         if (empire_fleets_here.empty())
             return false;
 
-        // which empires (including monsters as id ALL_EMPIRES) have aggressive ships here?
+        // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
         for (std::map<int, std::set<int> >::const_iterator empire_it = empire_fleets_here.begin();
              empire_it != empire_fleets_here.end(); ++empire_it)
@@ -1408,7 +1408,9 @@ namespace {
                 if (!fleet)
                     continue;
                 // an unarmed Monster will not trigger combat
-                if ((fleet->Aggressive() || fleet->Unowned()) && (fleet->HasArmedShips() || !fleet->Unowned())  ) {
+                if (  (fleet->Aggressive() || fleet->Unowned())  &&
+                      (fleet->HasArmedShips() || !fleet->Unowned())  )
+                {
                     empires_with_aggressive_fleets_here.insert(empire_id);
                     break;
                 }
@@ -1417,7 +1419,8 @@ namespace {
         if (empires_with_aggressive_fleets_here.empty())
             return false;
 
-        // what empires have planets here?
+        // what empires have planets here?  Unowned planets are included for
+        // ALL_EMPIRES if they have population > 0
         std::map<int, std::set<int> > empire_planets_here;
         GetEmpirePlanetsAtSystem(empire_planets_here, system_id);
         if (empire_planets_here.empty() && empire_fleets_here.size() <= 1)
@@ -1481,8 +1484,8 @@ namespace {
             }
         }
 
-        // is an empire with an aggressive fleet here able to see a fleet of an
-        // empire it is at war with here?
+        // is an empire with an aggressive fleet here able to see a fleet or a
+        // planet of an empire it is at war with here?
         for (std::set<int>::const_iterator empire1_it = empires_with_aggressive_fleets_here.begin();
              empire1_it != empires_with_aggressive_fleets_here.end(); ++empire1_it)
         {
