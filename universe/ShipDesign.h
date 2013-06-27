@@ -16,6 +16,8 @@
 
 #include "Enums.h"
 
+#include "../util/Export.h"
+
 namespace Condition {
     struct ConditionBase;
 }
@@ -25,7 +27,7 @@ namespace Effect {
 class Empire;
 
 /** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part classes. */
-struct DirectFireStats {
+struct FO_COMMON_API DirectFireStats {
     DirectFireStats();
     DirectFireStats(float damage,
                     float ROF,
@@ -48,7 +50,7 @@ struct DirectFireStats {
 };
 
 /** Part stats for the PC_MISSILES part class. */
-struct LRStats {
+struct FO_COMMON_API LRStats {
     LRStats();
     LRStats(float damage,
             float ROF,
@@ -79,7 +81,7 @@ struct LRStats {
 };
 
 /** Part stats for the PC_FIGHTERS part class. */
-struct FighterStats {
+struct FO_COMMON_API FighterStats {
     FighterStats();
     FighterStats(CombatFighterType type,
                  float anti_ship_damage,
@@ -161,7 +163,7 @@ struct PartHullCommonParams {
 };
 
 /** A type of ship part */
-class PartType {
+class FO_COMMON_API PartType {
 public:
     /** \name Structors */ //@{
     PartType() :
@@ -238,7 +240,7 @@ private:
 };
 
 /** Holds FreeOrion ship part types */
-class PartTypeManager {
+class FO_COMMON_API PartTypeManager {
 public:
     typedef std::map<std::string, PartType*>::const_iterator iterator;
 
@@ -266,11 +268,11 @@ private:
 
 
 /** returns the singleton part type manager */
-const PartTypeManager& GetPartTypeManager();
+FO_COMMON_API const PartTypeManager& GetPartTypeManager();
 
 /** Returns the ship PartType specification object with name \a name.  If no
   * such PartType exists, 0 is returned instead. */
-const PartType* GetPartType(const std::string& name);
+FO_COMMON_API const PartType* GetPartType(const std::string& name);
 
 /** Hull stats.  Used by parser due to limits on number of sub-items per
   * parsed main item. */
@@ -314,7 +316,7 @@ struct HullTypeStats {
 /** Specification for the hull, or base, on which ship designs are created by
   * adding parts.  The hull determines some final design characteristics
   * directly, and also determine how many parts can be added to the design. */
-class HullType {
+class FO_COMMON_API HullType {
 public:
     struct Slot {
         Slot() :
@@ -458,7 +460,7 @@ private:
 };
 
 /** Holds FreeOrion hull types */
-class HullTypeManager {
+class FO_COMMON_API HullTypeManager {
 public:
     typedef std::map<std::string, HullType*>::const_iterator iterator;
 
@@ -485,14 +487,14 @@ private:
 };
 
 /** returns the singleton hull type manager */
-const HullTypeManager& GetHullTypeManager();
+FO_COMMON_API const HullTypeManager& GetHullTypeManager();
 
 /** Returns the ship HullType specification object with name \a name.  If no such HullType exists,
   * 0 is returned instead. */
-const HullType* GetHullType(const std::string& name);
+FO_COMMON_API const HullType* GetHullType(const std::string& name);
 
 
-class ShipDesign {
+class FO_COMMON_API ShipDesign {
 public:
     /** \name Structors */ //@{
     ShipDesign();
@@ -652,10 +654,10 @@ private:
 /** Returns the ShipDesign specification object with id \a ship_design_id.  If
   * no such ShipDesign is present in the Universe (because it doesn't exist,
   * or isn't know to this client), 0 is returned instead. */
-const ShipDesign* GetShipDesign(int ship_design_id);
+FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 
-class PredefinedShipDesignManager {
+class FO_COMMON_API PredefinedShipDesignManager {
 public:
     typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
     typedef std::map<std::string, int>::const_iterator generic_iterator;
@@ -711,11 +713,11 @@ private:
 };
 
 /** returns the singleton predefined ship design manager type manager */
-const PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+const FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
 
 /** Returns the predefined ShipDesign with the name \a name.  If no such
   * ship design exists, 0 is returned instead. */
-const ShipDesign* GetPredefinedShipDesign(const std::string& name);
+FO_COMMON_API const ShipDesign* GetPredefinedShipDesign(const std::string& name);
 
 
 // template implementations

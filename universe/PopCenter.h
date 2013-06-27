@@ -6,6 +6,8 @@
 
 #include <boost/serialization/nvp.hpp>
 
+#include "../util/Export.h"
+
 class Meter;
 
 /** The PopCenter class is an abstract base class for anything in the FreeOrion
@@ -14,7 +16,7 @@ class Meter;
   * Planet is the most obvious class to inherit PopCenter, but other classes
   * could be made from it as well (e.g., a ship that is large enough to support
   * population and still travel between systems). */
-class PopCenter {
+class FO_COMMON_API PopCenter {
 public:
     /** \name Structors */ //@{
     PopCenter();                                        ///< default ctor

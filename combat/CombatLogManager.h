@@ -4,7 +4,9 @@
 
 #include "CombatSystem.h"
 
-struct CombatLog {
+#include "../util/Export.h"
+
+struct FO_COMMON_API CombatLog {
     CombatLog();
     CombatLog(const CombatInfo& combat_info);
 
@@ -23,7 +25,7 @@ struct CombatLog {
 
 
 /** Stores and retreives combat logs. */
-class CombatLogManager {
+class FO_COMMON_API CombatLogManager {
 public:
     /** \name Accessors */ //@{
     std::map<int, CombatLog>::const_iterator    begin() const;
@@ -56,14 +58,14 @@ private:
 };
 
 /** returns the singleton combat log manager */
-CombatLogManager&   GetCombatLogManager();
+FO_COMMON_API CombatLogManager&   GetCombatLogManager();
 
 /** Returns the CombatLog with the indicated id, or an empty log if there
   * is no avaiable log with that id. */
-const CombatLog&    GetCombatLog(int log_id);
+FO_COMMON_API const CombatLog&    GetCombatLog(int log_id);
 
 /** Returns true if a CombatLog with the indicated id is available. */
-bool                CombatLogAvailable(int log_id);
+FO_COMMON_API bool                CombatLogAvailable(int log_id);
 
 template <class Archive>
 void CombatLog::serialize(Archive& ar, const unsigned int version)

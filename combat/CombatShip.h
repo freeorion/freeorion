@@ -5,6 +5,7 @@
 #include "CombatObject.h"
 #include "CombatOrder.h"
 #include "../universe/Ship.h"
+#include "../util/Export.h"
 
 #include <list>
 #include <set>
@@ -13,7 +14,7 @@
 struct DirectFireStats;
 struct LRStats;
 
-class CombatShip :
+class FO_COMMON_API CombatShip :
     public CombatObject
 {
 public:

@@ -4,6 +4,7 @@
 
 #include "PathingEngineFwd.h"
 #include "SimpleVehicle.h"
+#include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -11,7 +12,7 @@
 
 class CombatEventListener;
 
-class CombatObject :
+class FO_COMMON_API CombatObject :
     public OpenSteer::SimpleVehicle
 {
 public:

@@ -4,12 +4,14 @@
 
 #include "UniverseObject.h"
 
+#include "../util/Export.h"
+
 namespace Effect {
     class EffectsGroup;
 }
 
 /** a class representing a region of space */
-class Field : public UniverseObject {
+class FO_COMMON_API Field : public UniverseObject {
 public:
     /** \name Structors */ //@{
     Field();                                        ///< default ctor
@@ -55,7 +57,7 @@ private:
 
 
 /** A specification for a type of field. */
-class FieldType {
+class FO_COMMON_API FieldType {
 public:
     /** \name Structors */ //@{
     /** default ctor */
@@ -123,11 +125,11 @@ private:
 };
 
 /** returns the singleton field type manager */
-FieldTypeManager& GetFieldTypeManager();
+FO_COMMON_API FieldTypeManager& GetFieldTypeManager();
 
 /** Returns the BuildingType specification object for a field of
   * type \a name.  If no such FieldType exists, 0 is returned instead. */
-const FieldType* GetFieldType(const std::string& name);
+FO_COMMON_API const FieldType* GetFieldType(const std::string& name);
 
 
 #endif // _Ship_h_

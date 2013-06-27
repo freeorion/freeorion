@@ -7,11 +7,13 @@
 
 #include <list>
 
+#include "../util/Export.h"
+
 
 class Message;
 
 /** A thread-safe message queue.  The entire public interface is guarded with mutex locks. */
-class MessageQueue
+class FO_COMMON_API MessageQueue
 {
 public:
     MessageQueue(boost::mutex& monitor);

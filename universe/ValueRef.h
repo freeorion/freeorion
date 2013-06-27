@@ -4,6 +4,7 @@
 
 #include "Names.h"
 #include "Condition.h"
+#include "../util/Export.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
@@ -134,7 +135,7 @@ private:
 
 /** the constant value leaf ValueRef class. */
 template <class T>
-struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
+struct FO_COMMON_API ValueRef::Constant : public ValueRef::ValueRefBase<T>
 {
     Constant(T value); ///< basic ctor
 
@@ -160,7 +161,7 @@ private:
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from either the \a source or \a target parameters to Eval. */
 template <class T>
-struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
+struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
     Variable(const std::vector<adobe::name_t>& property_name);
 
@@ -193,7 +194,7 @@ private:
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
 template <class T>
-struct ValueRef::Statistic : public ValueRef::Variable<T>
+struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
 {
     Statistic(const std::vector<adobe::name_t>& property_name,
               StatisticType stat_type,
@@ -293,7 +294,7 @@ private:
   * mutiplication, division, or unary negation is performed on the child(ren)
   * of this node, and the result is returned. */
 template <class T>
-struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
+struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
 {
     Operation(OpType op_type, const ValueRefBase<T>* operand1, const ValueRefBase<T>* operand2); ///< binary operation ctor
     Operation(OpType op_type, const ValueRefBase<T>* operand); ///< unary operation ctor
@@ -322,7 +323,7 @@ private:
 };
 
 namespace ValueRef {
-    std::string ReconstructName(const std::vector<adobe::name_t>& property_name,
+    FO_COMMON_API std::string ReconstructName(const std::vector<adobe::name_t>& property_name,
                                 ReferenceType ref_type);
 }
 

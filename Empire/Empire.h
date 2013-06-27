@@ -3,6 +3,7 @@
 #define _Empire_h_
 
 #include <GG/Clr.h>
+#include "../util/Export.h"
 #include "../util/AppInterface.h"
 #include "../util/SitRepEntry.h"
 #include "ResourcePool.h"
@@ -36,7 +37,7 @@ private:
     std::string m_graphic;
 };
 
-struct ResearchQueue {
+struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
         Element() :
@@ -130,7 +131,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-struct ProductionQueue {
+struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
     struct ProductionItem {
         ProductionItem(); ///< default ctor.
@@ -258,7 +259,7 @@ private:
   * server, Empires are managed by a subclass of EmpireManager, and can be
   * accessed from other modules by using the EmpireManager::Lookup() method to
   * obtain a pointer. */
-class Empire {
+class FO_COMMON_API Empire {
 public:
     // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;

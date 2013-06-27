@@ -5,12 +5,14 @@
 #include "PathingEngineFwd.h"
 #include "Vec3.h"
 
+#include "../util/Export.h"
+
 #include <boost/serialization/access.hpp>
 
 #include <vector>
 
 
-struct ShipMission
+struct FO_COMMON_API ShipMission
 {
     /** The missions available to ships.  The notion of "weakest" is
         intentionally left fuzzy.  The weakest target is one that is likely to
@@ -85,7 +87,7 @@ struct ShipMission
     void serialize(Archive& ar, const unsigned int version);
 };
 
-struct FighterMission
+struct FO_COMMON_API FighterMission
 {
     /** The missions available to fighters.  The notion of "weakest" is
         intentionally left fuzzy.  The weakest target is one that is likely to
@@ -151,7 +153,7 @@ struct FighterMission
 /////////////////////////////////////////////////////
 // CombatOrder
 /////////////////////////////////////////////////////
-class CombatOrder
+class FO_COMMON_API CombatOrder
 {
 public:
     enum OrderType

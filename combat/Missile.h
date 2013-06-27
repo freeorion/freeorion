@@ -5,12 +5,13 @@
 #include "PathingEngineFwd.h"
 
 #include "CombatObject.h"
-#include "../../universe/ShipDesign.h"
+#include "../universe/ShipDesign.h"
+#include "../util/Export.h"
 
 
 class Ship;
 
-class Missile :
+class FO_COMMON_API Missile :
     public CombatObject
 {
 public:

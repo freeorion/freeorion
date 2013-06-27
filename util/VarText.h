@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include "Export.h"
+
 /** VarText is a string tagged with variable names which are substituded with
   * actual data at runtime. The variables are stored in a XML element tree.
   * 
@@ -24,7 +26,7 @@
   * An example of VarText implementation are SitReps. They are created by the
   * server which knows nothing about what the final string will look like.
   * ClientUI.cpp ultimately generates a string from the variables. */
-class VarText {
+class FO_COMMON_API VarText {
 public:
     /** \name Structors */ //@{
     VarText();

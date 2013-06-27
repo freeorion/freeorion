@@ -6,6 +6,8 @@
 #include <boost/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include "../util/Export.h"
+
 class Empire;
 class Meter;
 class UniverseObject;
@@ -18,7 +20,7 @@ class UniverseObject;
   * classes could be made from it as well (e.g., a trade-ship or mining vessel,
   * or a non-Planet UniverseObject- and PopCenter- derived object of some
   * sort. */
-class ResourceCenter {
+class FO_COMMON_API ResourceCenter {
 public:
     /** \name Structors */ //@{
     ResourceCenter();                               ///< default ctor

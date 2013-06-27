@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "../util/Export.h"
+
 namespace Effect {
     class EffectsGroup;
 }
@@ -74,10 +76,10 @@ private:
 
 /** Returns the Special object used to represent specials of type \a name.
   * If no such Special exists, 0 is returned instead. */
-const Special* GetSpecial(const std::string& name);
+FO_COMMON_API const Special* GetSpecial(const std::string& name);
 
 /** Returns names of all specials. */
-std::vector<std::string> SpecialNames();
+FO_COMMON_API std::vector<std::string> SpecialNames();
 
 // template implementations
 template <class Archive>

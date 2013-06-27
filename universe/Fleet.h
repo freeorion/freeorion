@@ -4,6 +4,7 @@
 
 #include "UniverseObject.h"
 #include "ObjectMap.h"
+#include "../util/Export.h"
 
 #include <boost/serialization/version.hpp>
 
@@ -27,7 +28,7 @@ struct MovePathNode {
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
-class Fleet : public UniverseObject {
+class FO_COMMON_API Fleet : public UniverseObject {
 public:
     typedef std::set<int>               ShipIDSet;
     typedef ShipIDSet::iterator         iterator;                       ///< an iterator to the ships in the fleet

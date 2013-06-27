@@ -5,6 +5,7 @@
 #include "Enums.h"
 
 #include "../util/AppInterface.h"
+#include "../util/Export.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -28,7 +29,7 @@ namespace Effect {
   * target has a particular focus.  By this method, techs or buildings or
   * species can act on planets or other ResourceCenters depending what their
   * focus setting is. */
-class FocusType {
+class FO_COMMON_API FocusType {
 public:
     /** \name Structors */ //@{
     /** default ctor */
@@ -83,7 +84,7 @@ struct SpeciesParams {
   * properties that affect how the object on which they reside functions.
   * Each kind of Species must have a \a unique name string, by which it can be
   * looked up using GetSpecies(). */
-class Species {
+class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
     /** basic ctor */
@@ -153,7 +154,7 @@ private:
 
 
 /** Holds all FreeOrion species.  Types may be looked up by name. */
-class SpeciesManager {
+class FO_COMMON_API SpeciesManager {
 private:
     struct PlayableSpecies
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
@@ -235,10 +236,10 @@ private:
 };
 
 /** returns the singleton species manager */
-SpeciesManager& GetSpeciesManager();
+FO_COMMON_API SpeciesManager& GetSpeciesManager();
 
 /** Returns the Species object used to represent species of type \a name.
   * If no such Species exists, 0 is returned instead. */
-const Species* GetSpecies(const std::string& name);
+FO_COMMON_API const Species* GetSpecies(const std::string& name);
 
 #endif // _Species_h_

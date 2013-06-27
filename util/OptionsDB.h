@@ -2,6 +2,7 @@
 #ifndef _OptionsDB_h_
 #define _OptionsDB_h_
 
+#include "Export.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
 
@@ -23,10 +24,10 @@ typedef void (*OptionsDBFn)(OptionsDB&); ///< the function signature for functio
   * declare a dummy static variable that causes \a function to be registered as
   * a side effect (e.g. at file scope:
   * "bool unused_bool = RegisterOption(&foo)"). */
-bool RegisterOptions(OptionsDBFn function);
+FO_COMMON_API bool RegisterOptions(OptionsDBFn function);
 
 /** returns the single instance of the OptionsDB class */
-OptionsDB& GetOptionsDB();
+FO_COMMON_API OptionsDB& GetOptionsDB();
 
 
 /////////////////////////////////////////////
@@ -95,7 +96,7 @@ OptionsDB& GetOptionsDB();
   * including string-to-type, type-to-string or type-to-type as in the case of
   * Get() calls with the wrong tempate parameter.
   * \see RegisterOptions (for static-time options specification) */
-class OptionsDB
+class FO_COMMON_API OptionsDB
 {
 public:
     /** \name Signal Types */ //@{

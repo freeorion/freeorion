@@ -5,6 +5,7 @@
 #include "CombatFighter.h"
 #include "CombatShip.h"
 #include "PathingEngineFwd.h"
+#include "../util/Export.h"
 
 #ifdef FREEORION_MACOSX
 #  ifdef check
@@ -19,7 +20,7 @@
 
 struct FighterStats;
 
-class PathingEngine
+class FO_COMMON_API PathingEngine
 {
 public:
     typedef boost::ptr_vector<OpenSteer::AbstractObstacle> ObstacleVec;

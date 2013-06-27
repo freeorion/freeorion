@@ -3,6 +3,7 @@
 #define _Moderator_Action_h_
 
 #include "../universe/Enums.h"
+#include "Export.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -28,7 +29,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class DestroyUniverseObject : public ModeratorAction {
+class FO_COMMON_API DestroyUniverseObject : public ModeratorAction {
 public:
     DestroyUniverseObject();
     explicit DestroyUniverseObject(int object_id);
@@ -43,7 +44,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class SetOwner : public ModeratorAction {
+class FO_COMMON_API SetOwner : public ModeratorAction {
 public:
     SetOwner();
     SetOwner(int object_id, int new_owner_empire_id);
@@ -59,7 +60,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class AddStarlane : public ModeratorAction {
+class FO_COMMON_API AddStarlane : public ModeratorAction {
 public:
     AddStarlane();
     AddStarlane(int system_1_id, int system_2_id);
@@ -75,7 +76,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class RemoveStarlane : public ModeratorAction {
+class FO_COMMON_API RemoveStarlane : public ModeratorAction {
 public:
     RemoveStarlane();
     RemoveStarlane(int system_1_id, int system_2_id);
@@ -91,7 +92,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class CreateSystem : public ModeratorAction {
+class FO_COMMON_API CreateSystem : public ModeratorAction {
 public:
     CreateSystem();
     CreateSystem(double x, double y, StarType star_type);
@@ -108,7 +109,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class CreatePlanet : public ModeratorAction {
+class FO_COMMON_API CreatePlanet : public ModeratorAction {
 public:
     CreatePlanet();
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);

@@ -3,6 +3,7 @@
 #define _Order_h_
 
 #include "../universe/Enums.h"
+#include "Export.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -25,7 +26,7 @@ class ShipDesign;
   * to be undone before another order of a similar type can be issued. For
   * example, ColonizeOrder needs to be undoable; otherwise, once the user clicks
   * the colonize button, she is locked in to this decision. */
-class Order {
+class FO_COMMON_API Order {
 public:
     /** \name Structors */ //@{
     Order(); ///< default ctor
@@ -73,7 +74,7 @@ private:
 // RenameOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the renaming of a UniverseObject. */
-class RenameOrder : public Order {
+class FO_COMMON_API RenameOrder : public Order {
 public:
     /** \name Structors */ //@{
     RenameOrder();
@@ -110,7 +111,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents forming a new fleet. 
     Only one of system or position will be used to place the new fleet.*/
-class NewFleetOrder : public Order {
+class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
@@ -151,7 +152,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents fleet movement
     These orders change the current destination of a fleet */
-class FleetMoveOrder : public Order {
+class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
@@ -196,7 +197,7 @@ private:
 /** The Order subclass that represents transfer of ships between existing fleets
   * A FleetTransferOrder is used to transfer ships from one existing fleet to
   * another. */
-class FleetTransferOrder : public Order {
+class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetTransferOrder();
@@ -236,7 +237,7 @@ private:
 // ColonizeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet colonization action*/
-class ColonizeOrder : public Order {
+class FO_COMMON_API ColonizeOrder : public Order {
 public:
     /** \name Structors */ //@{
     ColonizeOrder();
@@ -276,7 +277,7 @@ private:
 // InvadeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet invasion action*/
-class InvadeOrder : public Order {
+class FO_COMMON_API InvadeOrder : public Order {
 public:
     /** \name Structors */ //@{
     InvadeOrder();
@@ -318,7 +319,7 @@ private:
 /** The Order subclass that represents removing an existing fleet that contains
   * no ships. This is mainly a utility order that is issued automatically by the
   * game when the user removes all ships from a fleet. */
-class DeleteFleetOrder : public Order {
+class FO_COMMON_API DeleteFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     DeleteFleetOrder();
@@ -353,7 +354,7 @@ private:
 // ChangeFocusOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents changing a planet focus*/
-class ChangeFocusOrder : public Order {
+class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
@@ -389,7 +390,7 @@ private:
 /** The Order subclass that represents changing an empire's research queue.  The
   * 2-arg ctor removes the named tech from \a empire's queue, whereas the 3-arg
   * ctor places \a tech_name at position \a position in \a empire's research queue. */
-class ResearchQueueOrder : public Order {
+class FO_COMMON_API ResearchQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ResearchQueueOrder();
@@ -418,7 +419,7 @@ private:
   * ctor moves an existing build from its current location at \a index to a new
   * one at \a new_index, and the 2-arg ctor removes the build at \a index from
   * \a empire's queue. */
-class ProductionQueueOrder : public Order {
+class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
@@ -465,7 +466,7 @@ private:
   * universe's catalog of shipdesigns with the passed new design id, and adds
   * this design to the \a empire's set of remembered designs.  The new design
   * must be marked as designed by this \a empire.*/
-class ShipDesignOrder : public Order {
+class FO_COMMON_API ShipDesignOrder : public Order {
 public:
     /** \name Structors */ //@{
     ShipDesignOrder();
@@ -522,7 +523,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the scrapping / recycling / destroying
   * a building or ship owned by an empire. */
-class ScrapOrder : public Order {
+class FO_COMMON_API ScrapOrder : public Order {
 public:
     /** \name Structors */ //@{
     ScrapOrder();
@@ -558,7 +559,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents setting the aggression state of objects
   * controlled by an empire. */
-class AggressiveOrder : public Order {
+class FO_COMMON_API AggressiveOrder : public Order {
 public:
     /** \name Structors */ //@{
     AggressiveOrder();

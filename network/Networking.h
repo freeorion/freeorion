@@ -4,14 +4,15 @@
 
 #include <string>
 
+#include "../util/Export.h"
 
 namespace Networking {
-    extern const std::string DISCOVERY_QUESTION;
-    extern const std::string DISCOVERY_ANSWER;
-    extern const int DISCOVERY_PORT;
-    extern const int MESSAGE_PORT;
-    extern const int SOCKET_LINGER_TIME;
-    extern const int INVALID_PLAYER_ID;
+    FO_COMMON_API extern const std::string DISCOVERY_QUESTION;
+    FO_COMMON_API extern const std::string DISCOVERY_ANSWER;
+    FO_COMMON_API extern const int DISCOVERY_PORT;
+    FO_COMMON_API extern const int MESSAGE_PORT;
+    FO_COMMON_API extern const int SOCKET_LINGER_TIME;
+    FO_COMMON_API extern const int INVALID_PLAYER_ID;
 
     enum ClientType {
         INVALID_CLIENT_TYPE = -1,

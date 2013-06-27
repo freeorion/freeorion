@@ -4,11 +4,13 @@
 
 #include <string>
 
+#include "Export.h"
+
 /** Wrapper for boost::timer that outputs time during which this object
   * existed.  Created in the scope of a function, and passed the appropriate
   * name, it will output to Logger().debugStream() the time elapsed while
   * the function was executing. */
-class ScopedTimer {
+class FO_COMMON_API ScopedTimer {
 public:
     ScopedTimer(const std::string& timed_name, bool always_output = false);
     ~ScopedTimer();

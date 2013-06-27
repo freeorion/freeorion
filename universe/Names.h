@@ -7,6 +7,8 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 
+#include "../util/Export.h"
+
 
 #define NAMES_SEQ_1                             \
     (Abs)                                       \
@@ -383,7 +385,7 @@
     (Y)                                         \
     (Yellow)
 
-#define DECLARE_NAME(r, _, elem) extern adobe::aggregate_name_t BOOST_PP_CAT(elem, _name);
+#define DECLARE_NAME(r, _, elem) extern FO_COMMON_API adobe::aggregate_name_t BOOST_PP_CAT(elem, _name);
 BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_1)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_2)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_3)

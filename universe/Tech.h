@@ -5,6 +5,7 @@
 #include "ValueRefFwd.h"
 
 #include "Enums.h"
+#include "../util/Export.h"
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
@@ -23,7 +24,7 @@ struct ItemSpec;
 
 
 /** encasulates the data for a single FreeOrion technology */
-class Tech {
+class FO_COMMON_API Tech {
 public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
@@ -159,11 +160,11 @@ struct ItemSpec {
     std::string        name;    ///< the exact item this is
 };
 
-bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
+FO_COMMON_API bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
 bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs);
 
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
-struct TechCategory {
+struct FO_COMMON_API TechCategory {
     TechCategory() :
         name(""),
         graphic(""),
@@ -183,7 +184,7 @@ struct TechCategory {
 
 /** holds all FreeOrion techs.  Techs may be looked up by name and by category, and the next researchable techs can be querried,
     given a set of currently-known techs. */
-class TechManager {
+class FO_COMMON_API TechManager {
 public:
     struct CategoryIndex {};
     struct NameIndex {};
@@ -292,12 +293,12 @@ private:
 };
 
 /** returns the singleton tech manager */
-TechManager& GetTechManager();
+FO_COMMON_API TechManager& GetTechManager();
 
 /** returns a pointer to the tech with the name \a name, or 0 if no such tech exists */
-const Tech* GetTech(const std::string& name);
+FO_COMMON_API const Tech* GetTech(const std::string& name);
 
 /** returns a pointer to the tech category with the name \a name, or 0 if no such category exists */
-const TechCategory* GetTechCategory(const std::string& name);
+FO_COMMON_API const TechCategory* GetTechCategory(const std::string& name);
 
 #endif // _Tech_h_

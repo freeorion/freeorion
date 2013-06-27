@@ -4,6 +4,8 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
+#include "Export.h"
+
 
 /** Boost.UBlas-based matrix type. */
 typedef boost::numeric::ublas::matrix<double, boost::numeric::ublas::row_major> Matrix;
@@ -29,16 +31,16 @@ bool PointInPartialEllipse(double x, double y,
                            double theta_end);
 
 /** Returns the inverse of the 4x4 matrix \a m. */
-Matrix Inverse4(const Matrix& m);
+FO_COMMON_API Matrix Inverse4(const Matrix& m);
 
 /** Returns the product of 4x4 Matrix \a m and 3x1 "vector" Matrix \a v. */
-Matrix Matrix4xVector3(const Matrix& m, const Matrix& v);
+FO_COMMON_API Matrix Matrix4xVector3(const Matrix& m, const Matrix& v);
 
 /** Returns whether the ray described by \a ray_origin and \a ray_direction
     intersects the plane described by \a plane_normal and \a plane_point, and
     the distance along the ray of the intersection.  If there was no
     intersection, the distance returned is undefined. */
-std::pair<bool, double> Intersects(double ray_origin[3], double ray_direction[3],
+FO_COMMON_API std::pair<bool, double> Intersects(double ray_origin[3], double ray_direction[3],
                                    double plane_normal[3], double plane_point[3]);
 
 #endif // _Math_h_

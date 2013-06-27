@@ -67,6 +67,7 @@
 #include "AbstractVehicle.h"
 #include "SteerLibrary.h"
 
+#include "../../util/Export.h"
 
 namespace OpenSteer {
 
@@ -83,7 +84,7 @@ namespace OpenSteer {
 
 
     // SimpleVehicle adds concrete vehicle methods to SimpleVehicle_2
-    class SimpleVehicle : public SimpleVehicle_2
+    class FO_COMMON_API SimpleVehicle : public SimpleVehicle_2
     {
     public:
 

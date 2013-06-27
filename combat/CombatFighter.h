@@ -5,8 +5,9 @@
 #include "PathingEngineFwd.h"
 
 #include "CombatObject.h"
-#include "../universe/ShipDesign.h"
 #include "CombatOrder.h"
+#include "../universe/ShipDesign.h"
+#include "../util/Export.h"
 
 #include <list>
 
@@ -52,7 +53,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class CombatFighter :
+class FO_COMMON_API CombatFighter :
     public CombatObject
 {
 public:

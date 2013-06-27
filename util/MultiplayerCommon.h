@@ -4,6 +4,7 @@
 
 #include "../combat/PathingEngine.h"
 #include "../network/Networking.h"
+#include "Export.h"
 
 #include <GG/Clr.h>
 
@@ -14,14 +15,14 @@
 class System;
 class XMLElement;
 
-extern const std::string MP_SAVE_FILE_EXTENSION;
-extern const std::string SP_SAVE_FILE_EXTENSION;
+FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
+FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
 
 /** Returns an XML representation of a GG::Clr object. */
 XMLElement ClrToXML(const GG::Clr& clr);
 
 /** Returns a GG::Clr object constructed from its XML representation. */
-GG::Clr XMLToClr(const XMLElement& clr);
+FO_COMMON_API GG::Clr XMLToClr(const XMLElement& clr);
 
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData {
@@ -59,7 +60,7 @@ private:
 
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
-struct SaveGameUIData {
+struct FO_COMMON_API SaveGameUIData {
     int     map_top;
     int     map_left;
     double  map_zoom_steps_in;
@@ -72,7 +73,7 @@ private:
 };
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
-struct SaveGameEmpireData {
+struct FO_COMMON_API SaveGameEmpireData {
     /** \name Structors */ //@{
     SaveGameEmpireData() :
         m_empire_id(ALL_EMPIRES),
@@ -129,7 +130,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
+bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 
 
@@ -157,7 +158,7 @@ private:
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
-struct MultiplayerLobbyData : public GalaxySetupData {
+struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
         m_new_game(true),
@@ -214,7 +215,7 @@ struct CombatSetupGroup;
 
 /** The state of combat (units, planets, their health, etc.) at the start of a
     round of combat. */
-struct CombatData {
+struct FO_COMMON_API CombatData {
     CombatData() :
         m_combat_turn_number(0),
         m_system(0)
@@ -284,7 +285,7 @@ struct CombatSetupRegion {
 };
 
 /** Returns true iff \a point falls within \a region. */
-bool PointInRegion(double point[2], const CombatSetupRegion& region);
+FO_COMMON_API bool PointInRegion(double point[2], const CombatSetupRegion& region);
 
 /** A group of ships and a description of where they may be placed. */
 struct CombatSetupGroup {

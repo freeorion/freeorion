@@ -3,6 +3,7 @@
 #define _ResourcePool_h_
 
 #include "../universe/Enums.h"
+#include "../util/Export.h"
 
 #include <boost/signal.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -17,7 +18,7 @@ class Empire;
 
 /** The ResourcePool class keeps track of an empire's stockpile and production
   * of a particular resource (eg. research, industry). */
-class ResourcePool {
+class FO_COMMON_API ResourcePool {
 public:
     /** \name Structors */ //@{
     ResourcePool(ResourceType type);
@@ -73,7 +74,7 @@ private:
 };
 
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
-class PopulationPool {
+class FO_COMMON_API PopulationPool {
 public:
     /** \name Structors */ //@{
     PopulationPool();

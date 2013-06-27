@@ -5,7 +5,9 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 
-class DiplomaticMessage {
+#include "../util/Export.h"
+
+class FO_COMMON_API DiplomaticMessage {
 public:
     enum DiplomaticMessageType {
         INVALID_DIPLOMATIC_MESSAGE_TYPE = -1,
@@ -36,9 +38,9 @@ private:
 bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
 bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
 
-DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 
 #endif // _Diplomacy_h_

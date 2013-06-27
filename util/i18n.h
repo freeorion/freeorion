@@ -6,8 +6,10 @@
 
 #include <boost/format.hpp>
 
+#include "Export.h"
+
 /** Returns a language-specific string for the key-string \a str */
-const std::string& UserString(const std::string& str);
+FO_COMMON_API const std::string& UserString(const std::string& str);
 
 /** Placeholder for non local translations, evaluates to a non operation */
 #define UserStringNop(key) key
@@ -16,10 +18,10 @@ const std::string& UserString(const std::string& str);
 const std::string& Language();
 
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
-boost::format FlexibleFormat(const std::string& string_to_format);
+FO_COMMON_API boost::format FlexibleFormat(const std::string& string_to_format);
 
 /** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
     symbol for 5000. */
-std::string RomanNumber(unsigned int n);
+FO_COMMON_API std::string RomanNumber(unsigned int n);
 
 #endif // _I18N_h_

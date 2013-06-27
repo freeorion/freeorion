@@ -5,12 +5,14 @@
 #include "UniverseObject.h"
 #include "Meter.h"
 
+#include "../util/Export.h"
+
 class Fighter;
 class Fleet;
 class ShipDesign;
 
 /** a class representing a single FreeOrion ship*/
-class Ship : public UniverseObject {
+class FO_COMMON_API Ship : public UniverseObject {
 public:
     // map from part type name to (number of parts in the design of that type,
     // number of fighters (or missiles) available of that type) pairs

@@ -4,12 +4,14 @@
 
 #include <log4cpp/Category.hh>
 
+#include "Export.h"
+
 /** Initializes the logging system. Log to the given file.
  * If the file already exists it will be deleted. */
-void InitLogger(const std::string& logFile, const std::string& pattern);
+FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pattern);
 
 /** Accessor for the App's logger */
-log4cpp::Category& Logger();
+FO_COMMON_API log4cpp::Category& Logger();
 
 extern int g_indent;
 
@@ -18,6 +20,6 @@ extern int g_indent;
 std::string DumpIndent();
 
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
-int PriorityValue(const std::string& name);
+FO_COMMON_API int PriorityValue(const std::string& name);
 
 #endif // _Logger_h_

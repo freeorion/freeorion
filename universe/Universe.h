@@ -16,6 +16,8 @@
 #include <string>
 #include <set>
 
+#include "../util/Export.h"
+
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...
 #  undef GetObject
@@ -52,7 +54,7 @@ namespace Effect {
   * it, information about the objects, and information about the objects'
   * relationships to each other.  As well, there are functions that generate
   * and populate new Universe gamestates when new games are started. */
-class Universe {
+class FO_COMMON_API Universe {
 private:
     typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
 
@@ -636,7 +638,7 @@ protected:
 
 /** The combination of a FleetPlan and spawning instructions for start of game
   * monsters. */
-class MonsterFleetPlan : public FleetPlan {
+class FO_COMMON_API MonsterFleetPlan : public FleetPlan {
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,

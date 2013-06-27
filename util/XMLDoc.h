@@ -44,6 +44,8 @@
 #include <string>
 #include <vector>
 
+#include "Export.h"
+
 /** encapsulates an XML element (from a <> tag to a </> tag).  XMLElement is a simplified XML element, 
     consisting only of a tag, a single text string, attributes and child elements.  It is designed to represent 
     C++ objects to allow them to easily be saved to/loaded from disk and serialized to be sent over a network 
@@ -99,7 +101,7 @@
     single concatenated string, as illustrated above.
     This is not the most time- or space-efficient way to organize object data, but it may just be one of the simplest 
     and most easily read. */
-class XMLElement
+class FO_COMMON_API XMLElement
 {
 public:
     typedef std::vector<XMLElement>::iterator                  child_iterator;
@@ -253,7 +255,7 @@ private:
 /** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
     encapsulates an entire XML document.  Each XMLDoc is assumed to take up an entire file, and to contain an arbitrary
     number of XMLElements within its root_node member. */
-class XMLDoc
+class FO_COMMON_API XMLDoc
 {
 public:
     /** \name Structors */ //@{

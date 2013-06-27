@@ -4,8 +4,9 @@
 
 #include "UniverseObject.h"
 
-#include "../util/AppInterface.h"
 #include "Predicates.h"
+#include "../util/AppInterface.h"
+#include "../util/Export.h"
 
 #include <map>
 
@@ -22,7 +23,7 @@ struct UniverseObjectVisitor;
    functions.  Iteration is available over all starlanes and wormholes
    (together), all system objects, all free system objects (those not in an
    orbit), and all objects in a paricular orbit.*/
-class System : public UniverseObject {
+class FO_COMMON_API System : public UniverseObject {
 private:
     typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
 
@@ -208,15 +209,15 @@ private:
 
 /** Returns the radius, in tactical combat units, of a system.  Note that the
     tactical combat map is square. */
-double SystemRadius();
+FO_COMMON_API double SystemRadius();
 
 /** Returns the radius, in tactical combat units, of the star at the center of
     a system. */
-double StarRadius();
+FO_COMMON_API double StarRadius();
 
 /** Returns the radius, in tactical combat units, of orbit \a orbit of a
     system.  \a orbit must be < 10. */
-double OrbitalRadius(unsigned int orbit);
+FO_COMMON_API double OrbitalRadius(unsigned int orbit);
 
 /** Returns the orbital radius, in tactical combat units, of starlane entrance
     ellipses out of a system. */
@@ -224,7 +225,7 @@ double StarlaneEntranceOrbitalRadius();
 
 /** Returns the angular position, in radians, of a starlane entrance ellipses
     out of the system with id \a from_system. */
-double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
+FO_COMMON_API double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
 
 /** Returns the radius, in tactical combat units, of the star-aligned axes of
     starlane entrance ellipses out of a system. */

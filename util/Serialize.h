@@ -3,7 +3,7 @@
 #define _Serialize_h_
 
 // Set this to true to do all serialization using binary archives.  Otherwise, XML archives will be used.
-#define FREEORION_BINARY_SERIALIZATION 1
+#define FREEORION_BINARY_SERIALIZATION 0
 
 #if FREEORION_BINARY_SERIALIZATION
 #  include <boost/archive/binary_iarchive.hpp>
@@ -19,6 +19,8 @@ typedef boost::archive::xml_oarchive freeorion_oarchive;
 
 #include <map>
 
+#include "Export.h"
+
 class OrderSet;
 class PathingEngine;
 class Universe;
@@ -28,7 +30,7 @@ class UniverseObject;
 // architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
 
 /** Serializes \a universe to output archive \a oa. */
-void Serialize(freeorion_oarchive& oa, const Universe& universe);
+FO_COMMON_API void Serialize(freeorion_oarchive& oa, const Universe& universe);
 
 /** Serializes \a object_map to output archive \a oa. */
 void Serialize(freeorion_oarchive& oa, const std::map<int, UniverseObject*>& objects);
@@ -40,7 +42,7 @@ void Serialize(freeorion_oarchive& oa, const OrderSet& order_set);
 void Serialize(freeorion_oarchive& oa, const PathingEngine& pathing_engine);
 
 /** Deserializes \a universe from input archive \a ia. */
-void Deserialize(freeorion_iarchive& ia, Universe& universe);
+FO_COMMON_API void Deserialize(freeorion_iarchive& ia, Universe& universe);
 
 /** Serializes \a object_map from input archive \a ia. */
 void Deserialize(freeorion_iarchive& ia, std::map<int, UniverseObject*>& objects);

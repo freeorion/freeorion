@@ -16,6 +16,8 @@ class Field;
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 
+#include "../util/Export.h"
+
 extern const int ALL_EMPIRES;
 
 /** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
@@ -34,7 +36,7 @@ T1 universe_object_cast(T2 ptr);
     subclasses can override Visit(UniverseObject*) only, and calls to all Visit() overloads will work.  The default return value for
     Visit(UniverseObject*) is 0, so overridding any \a one Visit() method besides this one will ensure that only UniverseObjects
     of a single subclass are recognized by the visitor. */
-struct UniverseObjectVisitor {
+struct FO_COMMON_API UniverseObjectVisitor {
     virtual UniverseObject* Visit(UniverseObject* obj) const;
     virtual UniverseObject* Visit(Building* obj) const;
     virtual UniverseObject* Visit(Fleet* obj) const;
@@ -56,7 +58,7 @@ struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
 /** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
     If the given empire is -1, all orderd moving fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
-struct StationaryFleetVisitor : UniverseObjectVisitor
+struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 {
     StationaryFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;
@@ -67,7 +69,7 @@ struct StationaryFleetVisitor : UniverseObjectVisitor
 /** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
     If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
-struct OrderedMovingFleetVisitor : UniverseObjectVisitor
+struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
     OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;
@@ -77,7 +79,7 @@ struct OrderedMovingFleetVisitor : UniverseObjectVisitor
 
 /** returns obj iff \a obj is a moving Fleet belonging to the given empire, and that is moving between systems.  
     If the given empire is -1, all moving fleets will be returned. */
-struct MovingFleetVisitor : UniverseObjectVisitor
+struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 {
     MovingFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;

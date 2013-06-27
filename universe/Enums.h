@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "../util/Export.h"
 
 /* the various major subclasses of UniverseObject */
 enum UniverseObjectType {
@@ -576,16 +577,16 @@ GG_ENUM_STREAM_OUT(ShipSlotType)
 
 /** Returns the equivalent meter type for the given resource type; if no such
   * meter type exists, returns INVALID_METER_TYPE. */
-MeterType ResourceToMeter(ResourceType type);
+FO_COMMON_API MeterType ResourceToMeter(ResourceType type);
 
 /** Returns the equivalent resource type for the given meter type; if no such
   * resource type exists, returns INVALID_RESOURCE_TYPE. */
-ResourceType MeterToResource(MeterType type);
+FO_COMMON_API ResourceType MeterToResource(MeterType type);
 
 /** Returns the target or max meter type that is associated with the given
   * active meter type.  If no associated meter type exists, INVALID_METER_TYPE
   * is returned. */
-MeterType AssociatedMeterType(MeterType meter_type);
+FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
 
 
 extern const int ALL_EMPIRES;

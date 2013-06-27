@@ -3,6 +3,7 @@
 #define _Message_h_
 
 #include "Networking.h"
+#include "../util/Export.h"
 
 #include <boost/shared_array.hpp>
 
@@ -40,17 +41,17 @@ typedef std::vector<CombatOrder> CombatOrderSet;
 typedef std::map<int, ShipDesign*> ShipDesignMap;
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
-void BufferToHeader(const int* header_buf, Message& message);
+FO_COMMON_API void BufferToHeader(const int* header_buf, Message& message);
 
 /** Fills \a header_buf from the relevant portions of \a message. */
-void HeaderToBuffer(const Message& message, int* header_buf);
+FO_COMMON_API void HeaderToBuffer(const Message& message, int* header_buf);
 
 /** Encapsulates a variable-length char buffer containing a message to be passed
   * among the server and one or more clients.  Note that std::string is often
   * thread unsafe on many platforms, so a dynamically allocated char array is
   * used instead.  (It was feared that using another STL container of char might
   * misbehave as well.) */
-class Message {
+class FO_COMMON_API Message {
 public:
     /** Represents the type of the message */
     enum MessageType {
@@ -163,7 +164,7 @@ private:
 bool operator==(const Message& lhs, const Message& rhs);
 bool operator!=(const Message& lhs, const Message& rhs);
 
-void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a rhs.  Does not throw.
+FO_COMMON_API void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a rhs.  Does not throw.
 
 
 ////////////////////////////////////////////////
@@ -171,10 +172,10 @@ void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a 
 ////////////////////////////////////////////////
 
 /** Returns a string representation of \a type. */
-std::string MessageTypeStr(Message::MessageType type);
+FO_COMMON_API std::string MessageTypeStr(Message::MessageType type);
 
 /** Writes \a msg to \a os.  The format of the output is designed for debugging purposes. */
-std::ostream& operator<<(std::ostream& os, const Message& msg);
+FO_COMMON_API std::ostream& operator<<(std::ostream& os, const Message& msg);
 
 
 ////////////////////////////////////////////////
@@ -182,30 +183,30 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 
 /** creates an ERROR_MSG message*/
-Message ErrorMessage(const std::string& problem, bool fatal = true);
-Message ErrorMessage(int player_id, const std::string& problem, bool fatal = true);
+FO_COMMON_API Message ErrorMessage(const std::string& problem, bool fatal = true);
+FO_COMMON_API Message ErrorMessage(int player_id, const std::string& problem, bool fatal = true);
 
 /** creates a HOST_SP_GAME message*/
-Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
+FO_COMMON_API Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
-Message HostMPGameMessage(const std::string& host_player_name);
+FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name and client type are sent in the message.*/
-Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type);
+FO_COMMON_API Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type);
 
 /** creates a HOST_ID message.  The player ID of the host is sent in the message. */
-Message HostIDMessage(int host_player_id);
+FO_COMMON_API Message HostIDMessage(int host_player_id);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe,
                          const SpeciesManager& species, const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes data loaded from a saved game. */
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe,
                          const SpeciesManager& species, const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players, const OrderSet& orders,
@@ -213,7 +214,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes state string loaded from a saved game. */
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe,
                          const SpeciesManager& species, const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players, const OrderSet& orders,
@@ -221,81 +222,81 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
-Message HostSPAckMessage(int player_id);
+FO_COMMON_API Message HostSPAckMessage(int player_id);
 
 /** creates a HOST_MP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
-Message HostMPAckMessage(int player_id);
+FO_COMMON_API Message HostMPAckMessage(int player_id);
 
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of
   * the receiving player.  This message should only be sent by the server.*/
-Message JoinAckMessage(int player_id);
+FO_COMMON_API Message JoinAckMessage(int player_id);
 
 /** creates a TURN_ORDERS message. */
-Message TurnOrdersMessage(int sender, const OrderSet& orders);
+FO_COMMON_API Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
 /** creates a TURN_PROGRESS message. */
-Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id = Networking::INVALID_PLAYER_ID);
+FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id = Networking::INVALID_PLAYER_ID);
 
 /** creates a PLAYER_STATUS message. */
-Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status);
+FO_COMMON_API Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status);
 
 /** creates a TURN_UPDATE message. */
-Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
+FO_COMMON_API Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
                           const Universe& universe, const SpeciesManager& species,
                           const CombatLogManager& combat_logs, const std::map<int, PlayerInfo>& players);
 
 /** create a TURN_PARTIAL_UPDATE message. */
-Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
+FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
+FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
 
 /** creates a CLIENT_SAVE_DATA message, without UI data but with a state string. */
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string);
+FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string);
 
 /** creates a CLIENT_SAVE_DATA message, without UI data and without a state string. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders);
 
 /** creates an REQUEST_NEW_OBJECT_ID message. This message is a synchronous
     message, when sent it will wait for a reply form the server */
-Message RequestNewObjectIDMessage(int sender);
+FO_COMMON_API Message RequestNewObjectIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a
   * client who is waiting for a new object ID */
-Message DispatchObjectIDMessage(int player_id, int new_id);
+FO_COMMON_API Message DispatchObjectIDMessage(int player_id, int new_id);
 
 /** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
     message, when sent it will wait for a reply form the server */
-Message RequestNewDesignIDMessage(int sender);
+FO_COMMON_API Message RequestNewDesignIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a
   * client who is waiting for a new design ID */
-Message DispatchDesignIDMessage(int player_id, int new_id);
+FO_COMMON_API Message DispatchDesignIDMessage(int player_id, int new_id);
 
 /** creates a SAVE_GAME request message.  This message should only be sent by
   * the host player.*/
-Message HostSaveGameMessage(int sender, const std::string& filename);
+FO_COMMON_API Message HostSaveGameMessage(int sender, const std::string& filename);
 
 /** creates a SAVE_GAME data request message.  This message should only be
     sent by the server to get game data from a client.*/
-Message ServerSaveGameMessage(int receiver, bool synchronous_response);
+FO_COMMON_API Message ServerSaveGameMessage(int receiver, bool synchronous_response);
 
 /** creates a PLAYER_CHAT, which is sent to the server, and then from the server
   * to all players, including the originating player.*/
-Message GlobalChatMessage(int sender, const std::string& msg);
+FO_COMMON_API Message GlobalChatMessage(int sender, const std::string& msg);
 
 /** creates a PLAYER_CHAT message, which is sent to the server, and then from
   * the server to a single recipient player */
-Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
+FO_COMMON_API Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
 
 /** creates a DIPLOMACY message, which is sent between players via the server to
   * declare, proposed, or accept / reject diplomatic arrangements or agreements. */
-Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message);
+FO_COMMON_API Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message);
 
 /** creates a DIPLOMATIC_STATUS message, which is sent to players by the server to
   * update them on diplomatic status changes between players. */
-Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
+FO_COMMON_API Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
 
 /** creates a VICTORY_DEFEAT message indicating that the recipient has won the
   * game by meeting a victory condition.
@@ -315,10 +316,10 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
 
 /** creates an END_GAME message used to terminate an active game. */
-Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
+FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
 /** creates a MODERATOR_ACTION message used to implement moderator commands. */
-Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);
+FO_COMMON_API Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);
 
 
 ////////////////////////////////////////////////
@@ -328,94 +329,94 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the 
     server, then to other users.  Clients must send all such updates to the server directly; the server
     will send updates to the other clients as needed.*/
-Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data);
+FO_COMMON_API Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.  
     This message should only be sent by the server.*/
-Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data);
+FO_COMMON_API Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
-Message LobbyChatMessage(int sender, int receiver, const std::string& text);
+FO_COMMON_API Message LobbyChatMessage(int sender, int receiver, const std::string& text);
 
 /** creates an LOBBY_CHAT message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.
     This message should only be sent by the server.*/
-Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
+FO_COMMON_API Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
 
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
-Message StartMPGameMessage(int player_id);
+FO_COMMON_API Message StartMPGameMessage(int player_id);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
-Message ServerCombatStartMessage(int receiver, int empire_id,
+FO_COMMON_API Message ServerCombatStartMessage(int receiver, int empire_id,
                                  const CombatData& combat_data,
                                  const std::vector<CombatSetupGroup>& setup_groups,
                                  const ShipDesignMap& foreign_designs);
 
 /** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
-Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
+FO_COMMON_API Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
 
 /** creates a COMBAT_END message.  This message should only be sent by the server.*/
-Message ServerCombatEndMessage(int receiver);
+FO_COMMON_API Message ServerCombatEndMessage(int receiver);
 
 /** creates a COMBAT_TURN_ORDERS message.*/
-Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders);
+FO_COMMON_API Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders);
 
 
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
 
-void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal);
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal);
 
-void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
+FO_COMMON_API void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
+FO_COMMON_API void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
                         EmpireManager& empires, Universe& universe, SpeciesManager& species,
                         CombatLogManager& combat_logs, std::map<int, PlayerInfo>& players,
                         OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string);
 
-void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type);
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type);
 
-void ExtractMessageData(const Message& msg, OrderSet& orders);
+FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders);
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
+FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
                         Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                         std::map<int, PlayerInfo>& players);
 
-void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
+FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
 
-void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
+FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string);
 
-void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
+FO_COMMON_API void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
-void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
+FO_COMMON_API void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
 
-void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
+FO_COMMON_API void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 
-void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
+FO_COMMON_API void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
-void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& action);
+FO_COMMON_API void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& action);
 
-void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
+FO_COMMON_API void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
-void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
+FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
-void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
+FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
 
-void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
+FO_COMMON_API void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
                         std::string& reason_string, int& empire_id);
 
-void ExtractMessageData(const Message& msg, CombatData& combat_data,
+FO_COMMON_API void ExtractMessageData(const Message& msg, CombatData& combat_data,
                         std::vector<CombatSetupGroup>& setup_groups,
                         ShipDesignMap& foreign_designs);
 
-void ExtractMessageData(const Message& msg, CombatOrderSet& order_set);
+FO_COMMON_API void ExtractMessageData(const Message& msg, CombatOrderSet& order_set);
 
-void ExtractMessageData(const Message& msg, CombatData& combat_data);
+FO_COMMON_API void ExtractMessageData(const Message& msg, CombatData& combat_data);
 
 void ExtractMessageData(const Message& msg, System*& system,
                         std::map<int, UniverseObject*>& combat_universe);

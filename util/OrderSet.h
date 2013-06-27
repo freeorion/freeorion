@@ -10,13 +10,15 @@
 #include <map>
 #include <vector>
 
+#include "Export.h"
+
 class Order;
 
 /** The pointer type used to store Orders in OrderSets. */
 typedef boost::shared_ptr<Order> OrderPtr;
 
 /** a collection of orders that may be searched using arbitrary predicate functions and functors*/
-class OrderSet {
+class FO_COMMON_API OrderSet {
 private:
     typedef std::map<int, OrderPtr> OrderMap;
 

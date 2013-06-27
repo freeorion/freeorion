@@ -8,6 +8,8 @@
 
 #include <boost/serialization/access.hpp>
 
+#include "../util/Export.h"
+
 struct UniverseObjectVisitor;
 
 class UniverseObject;
@@ -20,11 +22,12 @@ class System;
 class Building;
 class Field;
 
-extern const int ALL_EMPIRES;
-extern const int INVALID_OBJECT_ID;
+FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 /** Contains a set of objects that make up a (known or complete) Universe. */
-class ObjectMap {
+class FO_COMMON_API ObjectMap {
 public:
 
     template <class T = UniverseObject>

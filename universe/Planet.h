@@ -7,6 +7,8 @@
 #include "ResourceCenter.h"
 #include "Meter.h"
 
+#include "../util/Export.h"
+
 /** A type that is implicitly convertible to and from double, but which is not
     implicitly convertible among other numeric types. */
 class TypesafeDouble {
@@ -74,7 +76,7 @@ public:
 };
 
 /** a class representing a FreeOrion planet. */
-class Planet :
+class FO_COMMON_API Planet :
     public UniverseObject,
     public PopCenter,
     public ResourceCenter
@@ -218,11 +220,11 @@ private:
 /** Returns the radius, in tactical combat units, of a planet.  Note that 0.0
     is returned for PlanetSize enumerators that have no size, whereas
     PlanetRadius(SZ_MEDIUM) is returned for unknown values. */
-double PlanetRadius(PlanetSize size);
+FO_COMMON_API double PlanetRadius(PlanetSize size);
 
 /** Returns the radius, in tactical combat units, of the tube in which an
     asteroid belt lies. */
-double AsteroidBeltRadius();
+FO_COMMON_API double AsteroidBeltRadius();
 
 #endif // _Planet_h_
 

@@ -30,8 +30,6 @@
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
 
-extern const int TEMPORARY_OBJECT_ID;
-
 namespace {
     const GG::X TEXT_MARGIN_X(3);
     const GG::Y TEXT_MARGIN_Y(3);

@@ -5,6 +5,7 @@
 #include "UniverseObject.h"
 #include "ObjectMap.h"
 #include "ValueRefFwd.h"
+#include "../util/Export.h"
 
 class BuildingType;
 namespace Effect {
@@ -15,7 +16,7 @@ namespace Condition {
 }
 
 /** A Building UniverseObject type. */
-class Building : public UniverseObject {
+class FO_COMMON_API Building : public UniverseObject {
 public:
     /** \name Structors */ //@{
     Building() :
@@ -76,7 +77,7 @@ private:
 /** A specification for a building of a certain type.  Each building type must
   * have a \a unique name string, by which it can be looked up using
   * GetBuildingType(...). */
-class BuildingType {
+class FO_COMMON_API BuildingType {
 public:
     /** \name Structors */ //@{
     /** default ctor */
@@ -187,10 +188,10 @@ private:
 };
 
 /** returns the singleton building type manager */
-BuildingTypeManager& GetBuildingTypeManager();
+FO_COMMON_API BuildingTypeManager& GetBuildingTypeManager();
 
 /** Returns the BuildingType specification object for a building of
   * type \a name.  If no such BuildingType exists, 0 is returned instead. */
-const BuildingType* GetBuildingType(const std::string& name);
+FO_COMMON_API const BuildingType* GetBuildingType(const std::string& name);
 
 #endif // _Building_h_

@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include "Export.h"
+
 // assume Linux environment by default
 #if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX) && !defined(FREEORION_MACOSX))
 #define FREEORION_LINUX
@@ -29,7 +31,7 @@
    one of them *must* be used.  Note that the Win32 version of Process calls TerminateProcess(), and so the killed
    process does minimal cleanup; in particular, it will not terminate any of its child processes and may not release
    DLLs it may be using.*/
-class Process
+class FO_COMMON_API Process
 {
 public:
    /** \name Structors */ //@{

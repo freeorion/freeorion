@@ -4,6 +4,7 @@
 
 #include "../universe/Enums.h"
 #include "Diplomacy.h"
+#include "../util/Export.h"
 
 #include <GG/Clr.h>
 
@@ -17,7 +18,7 @@
 
 class Empire;
 
-struct DiplomaticStatusUpdateInfo {
+struct FO_COMMON_API DiplomaticStatusUpdateInfo {
     DiplomaticStatusUpdateInfo();
     DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status);
     int                 empire1_id;
@@ -26,7 +27,7 @@ struct DiplomaticStatusUpdateInfo {
 };
 
 /** Maintains all of the Empire objects that exist in the application. */
-class EmpireManager {
+class FO_COMMON_API EmpireManager {
 public:
     /// Iterator over Empires
     typedef std::map<int, Empire*>::iterator iterator; 
@@ -114,6 +115,6 @@ private:
 };
 
 /** The colors that are available for use for empires in the game. */
-const std::vector<GG::Clr>& EmpireColors();
+FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();
 
 #endif // _EmpireManager_h_

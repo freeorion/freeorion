@@ -4,6 +4,8 @@
 
 #include <string>
 
-const std::string& FreeOrionVersionString();
+#include "Export.h"
+
+FO_COMMON_API const std::string& FreeOrionVersionString();
 
 #endif
