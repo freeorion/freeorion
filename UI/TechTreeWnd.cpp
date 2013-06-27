@@ -991,8 +991,6 @@ void TechTreeWnd::LayoutPanel::DoLayout() {
     m_hscroll->SizeMove(hscroll_ul, hscroll_lr);
 
     const int ZBOFFSET = ClientUI::ScrollWidth() / 2;
-    const GG::Y TOP = UpperLeft().y;
-    const GG::X LEFT = UpperLeft().x;
 
     GG::Pt button_ul = GG::Pt(Width() - m_zoom_in_button->Width() - ZBOFFSET - SCRLWDTH, GG::Y(ZBOFFSET));
     m_zoom_in_button->MoveTo(button_ul);
@@ -1191,8 +1189,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     m_graph.DoLayout(static_cast<int>(WIDTH + RANK_SEP),
                      static_cast<int>(HEIGHT + NODE_SEP),
                      static_cast<int>(X_MARGIN));
-
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 

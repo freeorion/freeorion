@@ -576,7 +576,6 @@ Ogre::Viewport* HumanClientApp::Viewport()
 { return m_viewport; }
 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     int left(0), top(0);
 
     left = GetOptionsDB().Get<int>("app-left-windowed");

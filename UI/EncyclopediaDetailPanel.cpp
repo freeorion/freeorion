@@ -1065,7 +1065,6 @@ void EncyclopediaDetailPanel::Refresh() {
         // Building types
         name = UserString(m_items_it->second);
         texture = ClientUI::FieldTexture(m_items_it->second);
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
         general_type = UserString("ENC_FIELD_TYPE");
 
         detailed_description += UserString(field_type->Description());

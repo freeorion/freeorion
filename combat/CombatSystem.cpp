@@ -367,8 +367,6 @@ namespace {
         if (attacker_damage)
             damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
-
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
         if (!target_structure) {
             Logger().errorStream() << "couldn't get target structure or shield meter";

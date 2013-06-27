@@ -584,7 +584,7 @@ bool ClientUI::ZoomToPlanet(int id) {
 }
 
 bool ClientUI::ZoomToPlanetPedia(int id) {
-    if (const Planet* planet = GetPlanet(id))
+    if (GetPlanet(id))
         m_map_wnd->ShowPlanet(id);
     return false;
 }
