@@ -130,6 +130,13 @@ Article
     short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "TELEPATHY_TEXT"
     icon = "icons/tech/psionics.png"
+    
+Article
+    name = "XENOPHOBIC_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
+    description = "XENOPHOBIC_SPECIES_TEXT"
+    icon = "icons/sitrep/riot.png"
 
 Article
     name = "TRADE_FOCUS_TITLE"

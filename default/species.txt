@@ -302,7 +302,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = ["ORGANIC" "XENOPHOBIC"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -321,10 +321,17 @@ Species
         
         [[ULTIMATE_WEAPONS]]
         
+        [[XENOPHOBIC_SELF]]        
+        [[XENOPHOBIC_OTHER_BEGIN]]
+                    stackinggroup = "XENOPHOBIC_LABEL_EAXAW_OTHER"
+                    accountinglabel = "XENOPHOBIC_LABEL_EAXAW_OTHER"
+        [[XENOPHOBIC_OTHER_END]]
+        
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -1261,7 +1268,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "SELF_SUSTAINING" "TELEPATHIC" ]
+    tags = [ "SELF_SUSTAINING" "TELEPATHIC" "XENOPHOBIC" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1280,6 +1287,13 @@ Species
         
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
+        
+        [[XENOPHOBIC_SELF]]
+        
+        [[XENOPHOBIC_OTHER_BEGIN]]
+                    stackinggroup = "XENOPHOBIC_LABEL_TRITH_OTHER"
+                    accountinglabel = "XENOPHOBIC_LABEL_TRITH_OTHER"
+        [[XENOPHOBIC_OTHER_END]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -2033,6 +2047,79 @@ GOOD_POPULATION
             activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
             effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
+'''
+
+
+XENOPHOBIC_SELF
+'''  EffectsGroup
+        scope = Source
+        activation = Turn high = 0
+        GiveEmpireTech name = "CON_CONC_CAMP"
+     EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                Number low = 1 high = 999 And [
+                    PopulationCenter
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 5 Source
+                    Not Contains Building "BLD_CONC_CAMP"
+                    Not Species Source.Species
+                    Not TargetPopulation low = 0 high = 0
+                ]
+            ]
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            effects = [ 
+                SetTargetIndustry Value*0.2 - 1
+                SetTargetResearch Value*0.9
+            ]
+     EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                HasTag "SELF_SUSTAINING"
+            ]
+            stackinggroup = "XENOPHOBIC_POP_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            effects = SetTargetPopulation Value* (0.6 + ( 0.4 * ( 0.8^ 
+                Count condition = And [
+                    PopulationCenter
+                    WithinStarlaneJumps 5 Source
+                    VisibleToEmpire Source.Owner
+                    Not Species Source.Species
+                    Not TargetPopulation low = 0 high = 0
+                ]
+                ) ) )
+
+'''
+
+XENOPHOBIC_OTHER_BEGIN
+'''     EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy Source.Owner
+                WithinStarlaneJumps 5 Source  
+                Not Contains Building "BLD_CONC_CAMP"
+                Not Species Source.Species
+                Not TargetPopulation low = 0 high = 0
+            ]
+            activation = And [
+                PopulationCenter
+                Number low = 1 high = 999 And [
+                    PopulationCenter
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 5 Source
+                    Not Contains Building "BLD_CONC_CAMP"
+                    Not Species Source.Species 
+                    Not TargetPopulation low = 0 high = 0                    
+                ]
+            ]
+'''
+
+XENOPHOBIC_OTHER_END
+'''
+            effects = SetTargetIndustry Value*0.2 - 1
 '''
 
 /*

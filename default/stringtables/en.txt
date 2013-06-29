@@ -3040,6 +3040,13 @@ Telepathy
 TELEPATHY_TEXT
 '''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].'''
 
+XENOPHOBIC_SPECIES_TITLE
+Xenophobic
+XENOPHOBIC_SPECIES_TEXT
+'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. 
+
+Xenophobic species start with [[tech CON_CONC_CAMP]].'''
+
 FUEL_TITLE
 Fuel
 FUEL_TEXT
@@ -3713,7 +3720,7 @@ Trith
 SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3765,7 +3772,7 @@ Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic agressive worms.
 Prefer Terran planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -8939,7 +8946,6 @@ BROAD_EP
 NARROW_EP
 '''−	Narrow Planet Tolerance: flourishes on fewer types.'''
 
-
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -9095,7 +9101,14 @@ EXCELLENT_VISION_LABEL
 FOCUS_PROTECTION_LABEL
 '''Protection Focus'''
 
+XENOPHOBIC_LABEL_SELF
+'''Xenophobic Frenzy (other species nearby)'''
 
+XENOPHOBIC_LABEL_TRITH_OTHER
+'''Xenophobic Harassment: Trith'''
+
+XENOPHOBIC_LABEL_EAXAW_OTHER
+'''Xenophobic Harassment: Eaxaw'''
 
 #############################################################
 ####                       T A G S                       ####
