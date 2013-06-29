@@ -1052,12 +1052,12 @@ def generateProductionOrders():
         tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
         cInd=planet.currentMeterValue(fo.meterType.industry)
         cPop = planet.currentMeterValue(fo.meterType.population)
-        if (cPop <= 36) or (cPop < 0.8*tPop) or ( (planet.speciesName not in ColonisationAI.empireColonizers) and cPop < 50 ):  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+        if (cPop <= 32) or (cPop < 0.8*tPop) or ( (planet.speciesName not in ColonisationAI.empireColonizers) and cPop < 50 ):  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
             for bldg in planet.buildingIDs:
                 if universe.getObject(bldg).buildingTypeName  == bldName:
                     res=fo.issueScrapOrder( bldg)
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
-        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 42) :
+        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 36) :
             if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
                 #continue
                 pass  # now that focus setting takes these into account, probably works ok to have conc camp
