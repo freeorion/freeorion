@@ -4274,6 +4274,7 @@ void MapWnd::Cleanup() {
     m_FPS->Hide();
     m_scale_line->Hide();
     m_zoom_slider->Hide();
+    m_sitrep_panel->ShowSitRepsForTurn(INVALID_GAME_TURN);
 }
 
 void MapWnd::Sanitize() {
