@@ -18,11 +18,16 @@ set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
     "Specifies alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost).")
 
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
+option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
 if (BUILD_DEBUG)
     set(BUILD_RELEASE OFF)
 else ()
     set(BUILD_RELEASE ON)
+endif ()
+
+if (BUILD_TESTS)
+    enable_testing()
 endif ()
 
 include(Config)
@@ -216,8 +221,6 @@ add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
-
-option(BUILD_PARSER_TESTS "Controls generation of parser unit tests." OFF)
 
 ########################################
 # Win32 SDK-only steps                 #

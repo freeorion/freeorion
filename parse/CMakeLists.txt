@@ -3,8 +3,10 @@ cmake_policy(VERSION 2.6.4)
 
 add_definitions(-DNDEBUG -DFREEORION_BUILD_PARSE)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -O3")
+if (NOT BUILD_TESTS)
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -O3")
+    endif ()
 endif ()
 
 add_library(freeorionparse
@@ -50,7 +52,6 @@ add_library(freeorionparse
     KeymapParser.cpp
 )
 
-if (BUILD_PARSER_TESTS)
-    enable_testing()
+if (BUILD_TESTS)
     add_subdirectory(test)
 endif ()
