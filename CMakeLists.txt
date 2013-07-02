@@ -205,6 +205,13 @@ add_library(freeorioncommon
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set_source_files_properties(
+        ${CMAKE_BINARY_DIR}/util/Version.cpp
+        COMPILE_FLAGS -I${CMAKE_SOURCE_DIR}/util/
+    )
+endif ()
+
 target_link_libraries(freeorioncommon
     ${Boost_LIBRARIES}
     ${ZLIB_LIBRARIES}
