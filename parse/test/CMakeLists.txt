@@ -38,11 +38,8 @@ macro (add_test_and_data_files name)
     foreach (arg ${ARGN})
         if (EXISTS ${CMAKE_SOURCE_DIR}/parse/test/${arg})
             get_filename_component(filename_without_path ${arg} NAME)
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${arg}
-                           ${CMAKE_CURRENT_BINARY_DIR}/${filename_without_path}
-                           COPYONLY)
             set(suffix ${suffix}-${filename_without_path})
-            set(args "${args};${filename_without_path}")
+            set(args "${args};${CMAKE_CURRENT_SOURCE_DIR}/${filename_without_path}")
         else ()
             set(suffix ${suffix}-${arg})
             set(args "${args};${arg}")
