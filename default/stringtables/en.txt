@@ -3043,7 +3043,7 @@ TELEPATHY_TEXT
 XENOPHOBIC_SPECIES_TITLE
 Xenophobic
 XENOPHOBIC_SPECIES_TEXT
-'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. 
+'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
@@ -7832,6 +7832,12 @@ BLD_CONC_CAMP_DESC
 '''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
+
+BLD_CONC_CAMP_REMNANT
+Concentration Camp Remnants
+
+BLD_CONC_CAMP_REMNANT_DESC
+Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
 
 BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator

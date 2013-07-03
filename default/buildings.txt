@@ -968,6 +968,34 @@ BuildingType
     icon = "icons/building/concentration-camp.png"
 
 BuildingType
+    name = "BLD_CONC_CAMP_REMNANT"
+    description = "BLD_CONC_CAMP_REMNANT_DESC"
+    buildcost = 1
+    buildtime = 1
+    location = NOT ALL
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Contains Source
+                PopulationCenter
+            ]
+            activation = ContainedBy And [
+                PopulationCenter
+                Not Contains Building "BLD_CONC_CAMP"
+            ]
+            effects = SetIndustry Target.TargetIndustry
+        EffectsGroup
+            scope = Source
+            activation =  ContainedBy AND [
+                Not HasSpecial "CONC_CAMP_MASTER_SPECIAL"
+                Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+                Industry High = Source.Planet.TargetIndustry + 2 
+            ]
+            effects = Destroy
+    ]
+    icon = "icons/building/concentration-camp.png"
+
+BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
     buildcost = 250

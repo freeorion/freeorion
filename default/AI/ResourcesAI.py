@@ -213,7 +213,8 @@ def setPlanetResourceFoci(): #+
                 if curFocus == RFocus  or result==1:
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
-            elif  ( ("BLD_CONC_CAMP" in [bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs)] ) or
+            elif  ( ([bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs) if bld.buildingTypeName in 
+                                                ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]] != []  ) or
                              (  [  ccspec  for ccspec in planet.specials if ccspec in [ "CONC_CAMP_MASTER_SPECIAL",  "CONC_CAMP_SLAVE_SPECIAL"  ]  ]  != [] )):
                 if IFocus not in planet.availableFoci:
                     continue
@@ -259,7 +260,7 @@ def setPlanetResourceFoci(): #+
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
             #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
             if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive):
-                if (CR<RR) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1))):
+                if (CR<=RR-1) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1))):
                     curTargetPP += CI -1 #
                     curTargetRP +=  CR+1
                     newFoci[pid] = RFocus

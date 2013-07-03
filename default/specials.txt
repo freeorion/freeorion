@@ -689,7 +689,7 @@ Special
     name = "CONC_CAMP_MASTER_SPECIAL"
     description = "CONC_CAMP_MASTER_SPECIAL_DESC"
     spawnrate = 0.0
-    effectsgroups = 
+    effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Not Contains Building "BLD_CONC_CAMP"
@@ -697,6 +697,14 @@ Special
                 AddSpecial "CONC_CAMP_SLAVE_SPECIAL"
                 RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
             ]
+        EffectsGroup
+            scope = Source
+            activation = AND [ 
+                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building "BLD_CONC_CAMP_REMNANT"
+            ]
+            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+    ]
     graphic = "icons/building/concentration-camp.png"
 
 Special
@@ -709,8 +717,12 @@ Special
                 SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
         EffectsGroup
             scope = Source
-            activation = Industry low = Source.TargetIndustry + Source.Population * 10 * [[INDUSTRY_PER_POP]] - 2 
-            effects = SetIndustry Value - Target.Population * 10 * [[INDUSTRY_PER_POP]]
+            activation = And [
+                PopulationCenter
+                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building "BLD_CONC_CAMP_REMNANT"
+            ]
+            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = OR [
