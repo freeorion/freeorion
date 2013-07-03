@@ -1,6 +1,5 @@
 #include "test.h"
 
-
 struct quote_
 {
     template <typename Arg>
@@ -11,6 +10,19 @@ struct quote_
         { return '"' + arg1 + '"'; }
 };
 const boost::phoenix::function<quote_> quote;
+
+struct remove_
+{
+    template <typename Arg>
+    struct result
+    { typedef void type; };
+
+    void operator()(const adobe::name_t& arg1) const
+        { lexer_test_rules::unchecked_tokens.erase(arg1); }
+};
+const boost::phoenix::function<remove_> do_erase;
+
+std::set<adobe::name_t> lexer_test_rules::unchecked_tokens;
 
 lexer_test_rules::lexer_test_rules()
 {
@@ -23,7 +35,7 @@ lexer_test_rules::lexer_test_rules()
 
     const parse::lexer& tok = parse::lexer::instance();
 
-    lexer = *(lexer_1 | lexer_2 | lexer_3);
+    lexer = *(lexer_1 | lexer_2 | lexer_3 | lexer_4 | lexer_5);
 
     lexer_1
         =  as_string[ tok.bool_ ] [ std::cout << _1 << "\n" ]
@@ -37,23 +49,51 @@ lexer_test_rules::lexer_test_rules()
         |  char_('/') [ std::cout << _1 << "\n" ]
         |  char_('.') [ std::cout << _1 << "\n" ]
         |  char_(',') [ std::cout << _1 << "\n" ]
-        |  char_('(') [ std::cout << _1 << "\n" ]
-        |  char_(')') [ std::cout << _1 << "\n" ]
         ;
 
     lexer_2
         =  char_('[') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n" ]
+#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
         BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
 #undef NAME_TOKEN
         ;
 
     lexer_3
         =  char_(']') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n" ]
+#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
         BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
 #undef NAME_TOKEN
         ;
+
+    lexer_4
+        =  char_('(') [ std::cout << _1 << "\n" ]
+#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
+#undef NAME_TOKEN
+        ;
+
+    lexer_5
+        =  char_(')') [ std::cout << _1 << "\n" ]
+#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
+#undef NAME_TOKEN
+        ;
+
+#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
+#undef NAME_TOKEN
+
+#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
+#undef NAME_TOKEN
+
+#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
+#undef NAME_TOKEN
+
+#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
+        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
+#undef NAME_TOKEN
 
 #define NAME(x)
 // x.name(#x); debug(x)

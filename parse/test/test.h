@@ -19,6 +19,10 @@ struct lexer_test_rules
     test_rule lexer_1;
     test_rule lexer_2;
     test_rule lexer_3;
+    test_rule lexer_4;
+    test_rule lexer_5;
+
+    static std::set<adobe::name_t> unchecked_tokens;
 };
 
 enum test_type {
