@@ -692,7 +692,10 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not Contains Building "BLD_CONC_CAMP"
+            activation = And [
+                Not Contains Building "BLD_CONC_CAMP"
+                Population low = 0.0001
+            ]
             effects = [                
                 AddSpecial "CONC_CAMP_SLAVE_SPECIAL"
                 RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
@@ -702,8 +705,16 @@ Special
             activation = AND [ 
                 Not Contains Building "BLD_CONC_CAMP"
                 Not Contains Building "BLD_CONC_CAMP_REMNANT"
+                Population low = 0.0001
             ]
             effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not Contains Building "BLD_CONC_CAMP"
+                Population high = 0.0001
+            ]
+            effects = RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
     ]
     graphic = "icons/building/concentration-camp.png"
 

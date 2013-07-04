@@ -929,6 +929,7 @@ BuildingType
             activation = ContainedBy And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
+                Population low = 0.0001
                 Not HasSpecial "CONC_CAMP_MASTER_SPECIAL"
             ]
             effects = AddSpecial "CONC_CAMP_MASTER_SPECIAL"
