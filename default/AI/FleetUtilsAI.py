@@ -195,20 +195,23 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
                 transferredRating += thisRating
                 transferredAttack += stats['attack']
                 transferredHealth += ( stats['structure'] + stats['shields'] )
-            print "\t\t\t\t *** attempting transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
+            else:
+                print "\t\t\t\t *** attempted transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
             success = success and thisSuccess
             if needRating !=0 and needRating <=  transferredAttack*transferredHealth:  #transferredRating:
                 break
         fleetA = universe.getFleet(fleetA_ID)
         if (not fleetA) or fleetA.empty  or fleetA_ID in universe.destroyedObjectIDs(fo.empireID()):
-            print "\t\t\t\t\tdeleting fleet info for old fleet %d after transfers into fleet %d"%(fleetA_ID,  fleetB_ID)
+            #print "\t\t\t\t\tdeleting fleet info for old fleet %d after transfers into fleet %d"%(fleetA_ID,  fleetB_ID)
             foAI.foAIstate.deleteFleetInfo(fleetA_ID)
         else:
             newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
             if  success : #and ( newARating==remainingRating) :
-                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+                #print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+                pass
             else:
-                print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+                #print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+                pass
         foAI.foAIstate.updateFleetRating(fleetB_ID)
         return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
 
@@ -324,8 +327,8 @@ def assessFleetRole(fleetID):
         selectedRole= AIFleetMissionType.FLEET_MISSION_MILITARY
     else:
         selectedRole= AIShipRoleType.SHIP_ROLE_INVALID
-    print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
-                                                                               shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
+    #print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
+    #                                                                           shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
     return selectedRole
 
 def assessShipDesignRole(design):
@@ -350,10 +353,10 @@ def assessShipDesignRole(design):
     if design.starlaneSpeed == 0:
         string1 =  "Ship Design %s has partslist %s"%(design.name(False),  [part for part in design.parts])
         if len(design.parts)==0 or  design.parts[0] in [ "SH_DEFENSE_GRID", "SH_DEFLECTOR" ,  "SH_MULTISPEC" ] or (len(design.parts)==1 and design.parts[0]==''):
-            print string1,  "-- classifying as Base Defense"
+            #print string1,  "-- classifying as Base Defense"
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
-            print string1,  "-- classifying as Invalid"
+            #print string1,  "-- classifying as Invalid"
             return AIShipRoleType.SHIP_ROLE_INVALID        
             
     stats = foAI.foAIstate.getDesignStats(design)

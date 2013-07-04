@@ -27,6 +27,7 @@ MFocus = AIFocusType.FOCUS_MINING
 GFocus = AIFocusType.FOCUS_GROWTH
 
 useGrowth = True
+limitAssessments = False
 
 lastFociCheck=[0]
 
@@ -146,7 +147,7 @@ def setPlanetResourceFoci(): #+
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
     freq = min(3,  ( max(5,  currentTurn-120)   )/4.0)**(1.0/3) 
-    if  ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
+    if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
         timer = 6*[time()]
     else:
         lastFociCheck[0]=currentTurn
@@ -211,6 +212,7 @@ def setPlanetResourceFoci(): #+
                     if result == 1:
                         universe.updateMeterEstimates(empirePlanetIDs)
                 if curFocus == RFocus  or result==1:
+                    print "%s focus of planet %s (%d) (with Computronium Moon) at Research Focus"%( ["set",  "left" ][  curFocus == RFocus ] ,  planetMap[pid].name,  pid) 
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
             elif  ( ([bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs) if bld.buildingTypeName in 
@@ -232,6 +234,7 @@ def setPlanetResourceFoci(): #+
                         print ("Error: Failed setting %s for Concentration Camp  planet %s (%d) with species %s and current focus %s, but new planet copy shows %s"%
                                ( newFoci[pid],  planetMap[pid].name,  pid,  planetMap[pid].speciesName, planetMap[pid].focus,  newplanet.focus ))
                 if curFocus == IFocus  or result==1:
+                    print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus"%( ["set",  "left" ][  curFocus == IFocus ] ,  planetMap[pid].name,  pid) 
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
                             
@@ -260,7 +263,7 @@ def setPlanetResourceFoci(): #+
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
             #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
             if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive):
-                if (CR<=RR-1) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1))):
+                if  ( CI > II ) or (   (CR<=RR-1) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1)))):
                     curTargetPP += CI -1 #
                     curTargetRP +=  CR+1
                     newFoci[pid] = RFocus

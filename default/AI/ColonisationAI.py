@@ -45,6 +45,12 @@ popSizeModMap={
                             "gaia":             [ 0,  3,  3,  3,  3 ], 
                             }
 
+nestValMap = {
+              "SNOWFLAKE_NEST_SPECIAL": 5, 
+              "KRAKEN_NEST_SPECIAL":10, 
+              "JUGGERNAUT_NEST_SPECIAL":20, 
+              }
+
 def dictFromMap(map):
     return dict(  [  (el.key(),  el.data() ) for el in map ] )
 def resetCAIGlobals():
@@ -223,8 +229,9 @@ def getColonyFleets():
         if pID not in oldPopCtrs:
             if  (AIFocusType.FOCUS_MINING in planet.availableFoci): 
                 fo.issueChangeFocusOrder(pID, AIFocusType.FOCUS_MINING)
-                print "Changing focus of newly acquired planet ID %d : %s  to mining "%(pID,  planet.name )
-        empireSpecies.setdefault(pSpecName,  []).append(pID)
+                print "Changing focus of newly acquired planet ID %d : %s  to mining "%(pID,  planet.name ) #stale code left as an example; Mining no longer an option
+        if planet.currentMeterValue(fo.meterType.population)>0 :
+            empireSpecies.setdefault(pSpecName,  []).append(pID)
     print "\n"+"Empire species roster:"
     for specName in empireSpecies:
         thisSpec=fo.getSpecies(specName)
@@ -587,9 +594,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
         for special in planetSpecials:
+            nestVal = 0
             if "_NEST_" in special:
-                retval+=5*discountMultiplier*backupFactor # get an outpost on the nest quick
-                detail.append( "%s  %.1f"%(special,  discountMultiplier*5*backupFactor  )  )
+                nestVal = nestValMap.get(special,  5) * discountMultiplier*backupFactor # get an outpost on the nest quick
+                retval+=nestVal
+                detail.append( "%s  %.1f"%(special,  nestVal  )  )
         if   ( planet.size  ==  fo.planetSize.asteroids ): 
             if (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ): 
                 if system:
@@ -1002,7 +1011,7 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
         if thisPlanetID in alreadyTargeted:
             continue
         thisPlanet = universe.getPlanet(thisPlanetID)
-        print "checking pool %s against target %s  current owner %s  targetSpec %s"%(fleetPool,  thisPlanet.name,  thisPlanet.owner,  thisTarget)
+        #print "checking pool %s against target %s  current owner %s  targetSpec %s"%(fleetPool,  thisPlanet.name,  thisPlanet.owner,  thisTarget)
         thisSysID = thisPlanet.systemID
         if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
             print "Skipping colonization of system %s due to Big Monster,  threat %d"%(PlanetUtilsAI.sysNameIDs([thisSysID]),  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])

@@ -1042,28 +1042,55 @@ def generateProductionOrders():
                                             print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                                         break #only initiate max of one new build per turn
 
+    colonyShipMap={}
+    for fid in FleetUtilsAI.getEmpireFleetIDsByRole( EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION):
+        fleet = universe.getFleet(fid)
+        if not fleet: continue
+        for shipID in fleet.shipIDs:
+            thisShip=universe.getShip(shipID)
+            if thisShip and (foAI.foAIstate.getShipRole(thisShip.design.id) ==EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION):
+                colonyShipMap.setdefault( thisShip.speciesName,  []).append(1)
+
     bldName = "BLD_CONC_CAMP"
+    verboseCamp = False
     bldType = fo.getBuildingType(bldName)
     for pid in AIstate.popCtrIDs:
         planet=universe.getPlanet(pid)
         if not planet:
             continue
+        canBuildCamp = bldType.canBeProduced(empire.empireID,  pid)
         tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
         tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
         cInd=planet.currentMeterValue(fo.meterType.industry)
         cPop = planet.currentMeterValue(fo.meterType.population)
-        if (cPop <= 32) or (cPop < 0.8*tPop) or ( (planet.speciesName not in ColonisationAI.empireColonizers) and cPop < 50 ):  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+        popDisqualified = (cPop <= 32) or (cPop < 0.8*tPop)
+        checkedCamp=False
+        builtCamp=False
+        thisSpec = planet.speciesName
+        safetyMarginMet = ( (thisSpec in ColonisationAI.empireColonizers and  ( len(ColonisationAI.empireSpecies.get(thisSpec, [])+colonyShipMap.get(thisSpec, []))>=2 )) or (cPop >= 50 ))
+        if popDisqualified or not safetyMarginMet :  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+            if canBuildCamp:
+                if popDisqualified:
+                    if verboseCamp:
+                        print "Conc Camp disqualified at %s due to low pop: current %.1f  target: %.1f"%(planet.name,  cPop,  tPop)
+                else:
+                    if verboseCamp:
+                        print "Conc Camp disqualified at %s due to safety margin; species %s,  colonizing planets %s,  with %d colony ships"%(planet.name,  planet.speciesName,  ColonisationAI.empireSpecies.get(planet.speciesName, []),  len(colonyShipMap.get(planet.speciesName, [])))
             for bldg in planet.buildingIDs:
                 if universe.getObject(bldg).buildingTypeName  == bldName:
                     res=fo.issueScrapOrder( bldg)
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
-        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 36) :
+        elif foAI.foAIstate.aggression>fo.aggression.typical and canBuildCamp and (tPop >= 36):
+            checkedCamp=True
             if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
                 #continue
                 pass  # now that focus setting takes these into account, probably works ok to have conc camp
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-            if (cPop >=0.95*tPop) and( (planet.speciesName in ColonisationAI.empireColonizers) or cPop >= 50 ):#
-                if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+            if (cPop <0.95*tPop):#
+                if verboseCamp:
+                    print "Conc Camp disqualified at %s due to pop: current %.1f  target: %.1f"%(planet.name,  cPop,  tPop)
+            else:
+                if  pid not in queuedBldLocs:
                     if planet.focus in [ EnumsAI.AIFocusType.FOCUS_INDUSTRY ]:
                         if cInd >= tInd+cPop:
                             continue
@@ -1077,11 +1104,14 @@ def generateProductionOrders():
                             universe.updateMeterEstimates([pid])
                             continue
                     res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    builtCamp = res
                     print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
                     if res: 
                         queuedBldLocs.append(pid)
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-
+        if verboseCamp:
+            print "conc camp status at %s : checkedCamp: %s,  builtCamp: %s"%( planet.name,  canBuildCamp,  builtCamp)
+        
     bldName = "BLD_SCANNING_FACILITY"
     if empire.buildingTypeAvailable(bldName):
         bldType = fo.getBuildingType(bldName)
@@ -1313,7 +1343,7 @@ def generateProductionOrders():
                 del localPriorities[priority] #must be missing a shipyard -- TODO build a shipyard if necessary
                 continue
             bestShips[priority] = [bestShip,  bestDesign,  buildChoices ]
-            print "bestShips[%s] = %s   \t locs from %s"%( EnumsAI.AIPriorityNames[priority],  bestShips[priority] ,  pSet)
+            print "bestShips[%s] = %s   \t locs from %s"%( EnumsAI.AIPriorityNames[priority],  bestDesign.name(False) ,  pSet)
             
         if len(localPriorities)==0:
             print "Alert!! need shipyards in systemSet ",   PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( sorted(pSet))))
