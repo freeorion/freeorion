@@ -2477,8 +2477,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             }
         }
 
-        // fleets that are not visible and that contain no non-stale ships are
-        // stale
+        // fleets that are not visible and that contain no ships or only stale ships are stale
         for (ObjectMap::const_iterator<> obj_it = latest_known_objects.const_begin();
              obj_it != latest_known_objects.const_end(); ++obj_it)
         {
@@ -2491,36 +2490,51 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             if (!fleet)
                 continue;
             int fleet_id = obj_it->ID();
-            // are there any non-stale contained ships?
-            bool non_stale_contained_ship = false;
+
+            // destroyed? not stale
+            if (destroyed_set.find(fleet_id) != destroyed_set.end()) {
+                stale_set.insert(fleet_id);
+                continue;
+            }
+
+            // no ships? -> stale
+            if (fleet->Empty()) {
+                stale_set.insert(fleet_id);
+                continue;
+            }
             const std::set<int>& ship_ids = fleet->ShipIDs();
+
+            bool fleet_stale = true;
+            // check each ship. if any are visible or not visible but not stale,
+            // fleet is not stale
             for (std::set<int>::const_iterator ship_it = ship_ids.begin();
                  ship_it != ship_ids.end(); ++ship_it)
             {
                 int ship_id = *ship_it;
-                // is supposedly contained fleet unknown or not in this fleet?
-                // if not known or not in this fleet, doesn't make fleet non-stale
                 const Ship* ship = latest_known_objects.Object<Ship>(ship_id);
+
+                // if ship doesn't think it's in this fleet, doesn't count.
                 if (!ship || ship->FleetID() != fleet_id)
                     continue;
 
-                // is contained ship visible?  If so, makes fleet non-stale
+                // if ship is destroyed, doesn't count
+                if (destroyed_set.find(ship_id) != destroyed_set.end())
+                    continue;
+
+                // is contained ship visible? If so, fleet is not stale.
                 ObjectVisibilityMap::const_iterator vis_it = vis_map.find(ship_id);
                 if (vis_it != vis_map.end() && vis_it->second > VIS_NO_VISIBILITY) {
-                    non_stale_contained_ship = true;
+                    fleet_stale = false;
                     break;
                 }
 
-                // contained ship is not visible.  if it is also stale, then it
-                // doesn't make fleet non-stale
-                if (stale_set.find(ship_id) != stale_set.end())
-                    continue;
-
-                // ship is not stale, so its fleet non-stale
-                non_stale_contained_ship = true;
-                break;
+                // is contained ship not visible and not stale? if so, fleet is not stale
+                if (stale_set.find(ship_id) == stale_set.end()) {
+                    fleet_stale = false;
+                    break;
+                }
             }
-            if (!non_stale_contained_ship)
+            if (fleet_stale)
                 stale_set.insert(fleet_id);
         }
 
