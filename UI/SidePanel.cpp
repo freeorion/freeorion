@@ -1258,6 +1258,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                     }
                     species_colony_projections[spec_pair] = planet_capacity;
                 }
+            } else {
+                planet_capacity = 0;
             }
             colony_projections[this_pair] = planet_capacity;
         }
