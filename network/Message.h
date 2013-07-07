@@ -89,7 +89,8 @@ public:
         VICTORY_DEFEAT,         ///< sent by server to all clients when one or more players have met victory or defeat conditions
         PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
-        MODERATOR_ACTION        ///< sent by client to server when a moderator edits the universe
+        MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
+        SHUT_DOWN_SERVER        ///< sent by host client to server to kill the server process
     };
 
     enum TurnProgressPhase {
@@ -321,6 +322,8 @@ FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason
 /** creates a MODERATOR_ACTION message used to implement moderator commands. */
 FO_COMMON_API Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);
 
+/** tells server to shut down. */
+FO_COMMON_API Message ShutdownServerMessage(int sender);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors

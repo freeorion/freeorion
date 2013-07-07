@@ -84,7 +84,7 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const unsigned int  SERVER_CONNECT_TIMEOUT = 10000; // in ms
+    const unsigned int  SERVER_CONNECT_TIMEOUT = 4500; // in ms
 
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
@@ -284,6 +284,7 @@ namespace {
 
 void HumanClientApp::StartServer() {
     std::string SERVER_CLIENT_EXE = ServerClientExe();
+    Logger().debugStream() << "HumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
@@ -303,6 +304,7 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::KillServer() {
+    Logger().debugStream() << "HumanClientApp::KillServer()";
     m_server_process.Kill();
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -314,7 +316,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         try {
             StartServer();
         } catch (const std::runtime_error& err) {
-            Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
+            Logger().errorStream() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
@@ -330,7 +332,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     bool failed = false;
     if (quickstart || ended_with_ok) {
         unsigned int start_time = Ticks();
-        while (!m_networking.ConnectToLocalHostServer()) {
+        while (!m_networking.ConnectToLocalHostServer(boost::posix_time::seconds(2))) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
@@ -339,11 +341,11 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         }
 
         if (!failed) {
-            SinglePlayerSetupData setup_data;
+            Logger().debugStream() << "HumanClientApp::NewSinglePlayerGame : Connected to server";
 
+            SinglePlayerSetupData setup_data;
             setup_data.m_new_game = true;
             setup_data.m_filename.clear();  // not used for new game
-
 
             // get values stored in options from previous time game was run or
             // from just having run GalaxySetupWnd
@@ -456,7 +458,7 @@ void HumanClientApp::MultiPlayerGame() {
     }
 
     unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToServer(server_name)) {
+    while (!m_networking.ConnectToServer(server_name, boost::posix_time::seconds(2))) {
         if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
@@ -492,6 +494,8 @@ void HumanClientApp::SaveGame(const std::string& filename) {
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
+    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame";
+
     if (!filename.empty()) {
 #if defined(FREEORION_WIN32)
         boost::filesystem::path::string_type file_name_native;
@@ -521,49 +525,55 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     }
 
-    if (!filename.empty()) {
-        // end any currently-playing game before loading new one
-        if (m_game_started) {
-            EndGame();
-            // delay to make sure old game is fully cleaned up before attempting to start a new one
-            boost::this_thread::sleep(boost::posix_time::seconds(3));
-        } else {
-            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
-        }
-
-        if (!GetOptionsDB().Get<bool>("force-external-server")) {
-            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
-            StartServer();
-        } else {
-            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
-        }
-
-        unsigned int start_time = Ticks();
-        while (!m_networking.ConnectToLocalHostServer()) {
-            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                KillServer();
-                return;
-            }
-        }
-
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() connected to server";
-
-        m_connected = true;
-        m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
-        m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
-        SetEmpireID(ALL_EMPIRES);
-
-        SinglePlayerSetupData setup_data;
-        // leving GalaxySetupData information default / blank : not used when loading a game
-        setup_data.m_new_game = false;
-        setup_data.m_filename = filename;
-        // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
-
-
-        m_networking.SendMessage(HostSPGameMessage(setup_data));
-        m_fsm->process_event(HostSPGameRequested());
+    if (filename.empty()) {
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame has empty filename. Aborting load.";
+        return;
     }
+
+    // end any currently-playing game before loading new one
+    if (m_game_started) {
+        EndGame();
+        // delay to make sure old game is fully cleaned up before attempting to start a new one
+        boost::this_thread::sleep(boost::posix_time::seconds(3));
+    } else {
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
+    }
+
+    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
+        StartServer();
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Server started";
+    } else {
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
+    }
+
+    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
+    unsigned int start_time = Ticks();
+    while (!m_networking.ConnectToLocalHostServer()) {
+        if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+            Logger().errorStream() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+            KillServer();
+            return;
+        }
+    }
+
+    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Connected to server";
+
+    m_connected = true;
+    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    SetEmpireID(ALL_EMPIRES);
+
+    SinglePlayerSetupData setup_data;
+    // leving GalaxySetupData information default / blank : not used when loading a game
+    setup_data.m_new_game = false;
+    setup_data.m_filename = filename;
+    // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
+
+
+    m_networking.SendMessage(HostSPGameMessage(setup_data));
+    m_fsm->process_event(HostSPGameRequested());
 }
 
 Ogre::SceneManager* HumanClientApp::SceneManager()
@@ -880,9 +890,8 @@ void HumanClientApp::HandleWindowClosing()
 
 void HumanClientApp::HandleWindowClose() {
     Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
-    EndGame();
-    //Exit(0);  // want to call Exit here, to cleanly quit, but doing so doesn't work on Win7
-    exit(0);
+    EndGame(true);
+    Exit(0);
 }
 
 void HumanClientApp::HandleFocusChange()
@@ -1021,8 +1030,23 @@ void HumanClientApp::Autosave() {
 void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     Logger().debugStream() << "HumanClientApp::EndGame";
     m_game_started = false;
-    m_networking.DisconnectFromServer();
-    m_server_process.RequestTermination();
+
+    if (m_networking.Connected()) {
+        Logger().debugStream() << "HumanClientApp::EndGame Sending server shutdown message.";
+        m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
+        m_networking.DisconnectFromServer();
+        if (!m_networking.Connected())
+            Logger().debugStream() << "HumanClientApp::EndGame Disconnected from server.";
+        else
+            Logger().errorStream() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
+    }
+
+    if (!m_server_process.Empty()) {
+        Logger().debugStream() << "HumanClientApp::EndGame Terminated server process.";
+        m_server_process.RequestTermination();
+    }
+
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -1060,10 +1084,13 @@ void HumanClientApp::Exit(int code) {
         exit(code);
     } else {
         Logger().debugStream() << "Initiating Exit (code " << code << " - normal termination)";
-#ifdef FREEORION_MACOSX
+
+#if defined(FREEORION_MACOSX)
         // FIXME - terminate is called during the stack unwind if CleanQuit is thrown,
         //  so use exit() for now (this appears to be OS X specific)
         exit(code);
+#elif defined(FREEORION_WIN32)
+        exit(code); // throwing CleanQuit isn't caught anywhere for some reason on Win7
 #else
         throw CleanQuit();
 #endif

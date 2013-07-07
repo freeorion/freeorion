@@ -110,7 +110,8 @@ void ServerApp::operator()()
 { Run(); }
 
 void ServerApp::Exit(int code) {
-    Logger().fatalStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
+    Logger().debugStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
+    CleanupAIs();
     exit(code);
 }
 
@@ -250,7 +251,11 @@ void ServerApp::Run() {
 }
 
 void ServerApp::CleanupAIs() {
+    if (m_ai_client_processes.empty() && m_networking.empty())
+        return;
+
     Logger().debugStream() << "ServerApp::CleanupAIs() telling AIs game is ending";
+
     bool ai_connection_lingering = false;
     try {
         for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
@@ -264,9 +269,11 @@ void ServerApp::CleanupAIs() {
         Logger().errorStream() << "ServerApp::CleanupAIs() exception while sending end game messages";
     }
 
-    if (ai_connection_lingering)
+    if (ai_connection_lingering) {
         // time for AIs to react?
+        Logger().debugStream() << "ServerApp::CleanupAIs() waiting 1 second for AI processes to clean up...";
         boost::this_thread::sleep(boost::posix_time::seconds(1));
+    }
 
     Logger().debugStream() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
     try {
@@ -299,7 +306,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     }
 }
 
-void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID ("
                                << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
@@ -325,10 +332,12 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
 
     // TODO: For prototyping only.
-    case Message::COMBAT_END:               m_fsm->process_event(CombatComplete()); break;
+    case Message::COMBAT_END:               m_fsm->process_event(CombatComplete());         break;
 
     case Message::ERROR_MSG:
     case Message::DEBUG:                    break;
+
+    case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     default:
         Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -337,7 +346,18 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     }
 }
 
-void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_connection) {
+    int player_id = player_connection->PlayerID();
+    bool is_host = m_networking.PlayerIsHost(player_id);
+    if (!is_host) {
+        Logger().debugStream() << "ServerApp::HandleShutdownMessage rejecting shut down message from non-host player";
+        return;
+    }
+    Logger().debugStream() << "ServerApp::HandleShutdownMessage shutting down";
+    Exit(1);
+}
+
+void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;

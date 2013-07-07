@@ -164,6 +164,9 @@ bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
     boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
 {
+    Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to connect to server at "
+                           << ip_address;
+
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
     tcp::resolver::query query(tcp::v4(), ip_address,
@@ -172,13 +175,16 @@ bool ClientNetworking::ConnectToServer(
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;
+
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+            Logger().debugStream() << "tcp::resolver::iterator host_name: " << it->host_name()
+                                   << "  address: " << it->endpoint().address()
+                                   << "  port: " << it->endpoint().port();
+
             m_socket.close();
             boost::asio::deadline_timer timer(m_io_service);
-            if (TRACE_EXECUTION)
-                Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to "
-                                       << "connect to server at " << ip_address;
+
             m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                     &it,
                                                     &timer,
@@ -188,17 +194,23 @@ bool ClientNetworking::ConnectToServer(
             m_cancel_retries = false;
             m_io_service.run();
             m_io_service.reset();
+
             if (Connected()) {
+                Logger().debugStream() << "ClientNetworking::ConnectToServer : connected to server";
                 m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
-                if (TRACE_EXECUTION)
-                    Logger().debugStream() << "ClientNetworking::ConnectToServer : starting "
-                                           << "networking thread";
+                Logger().debugStream() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                 break;
+            } else {
+                Logger().debugStream() << "ClientNetworking::ConnectToServer : no connection yet...";
             }
         }
+        if (!Connected())
+            Logger().debugStream() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
+
     } catch (const std::exception& e) {
-        Logger().errorStream() << "ClientNetworking::ConnectToServer unable to connect to server at " << ip_address << " due to exception: " << e.what();
+        Logger().errorStream() << "ClientNetworking::ConnectToServer unable to connect to server at "
+                               << ip_address << " due to exception: " << e.what();
     }
     return Connected();
 }

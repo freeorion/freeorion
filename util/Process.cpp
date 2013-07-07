@@ -18,21 +18,29 @@ Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
 bool Process::SetLowPriority(bool low) {
     if (m_empty)
         return false;
-    if (m_low_priority != low) {
-        if (m_impl->SetLowPriority(low)) {
-            m_low_priority = low;
-            return true;
-        } else
-            return false;
-    } else
+
+    if (m_low_priority == low)
         return true;
+
+    if (m_impl->SetLowPriority(low)) {
+        m_low_priority = low;
+        return true;
+    }
+
+    return false;
 }
 
-void Process::Kill()
-{ if (m_impl) m_impl->Kill(); }
+void Process::Kill() {
+    if (m_impl)
+        m_impl->Kill();
+    RequestTermination();
+}
 
-void Process::RequestTermination()
-{ m_impl.reset(); }
+void Process::RequestTermination() {
+    m_impl.reset();
+    m_empty = true;
+    m_low_priority = false;
+}
 
 void Process::Free() {
     if (m_impl)
@@ -82,7 +90,7 @@ bool Process::ProcessImpl::SetLowPriority(bool low) {
 }
 
 void Process::ProcessImpl::Kill() {
-    if (!TerminateProcess(m_process_info.hProcess, 0)) {
+    if (m_process_info.hProcess && !TerminateProcess(m_process_info.hProcess, 0)) {
         std::string err_str;
         DWORD err = GetLastError();
         DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
@@ -94,7 +102,7 @@ void Process::ProcessImpl::Kill() {
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error terminating process: " << err_str;
     }
 
-    if (!CloseHandle(m_process_info.hProcess)) {
+    if (m_process_info.hProcess && !CloseHandle(m_process_info.hProcess)) {
         std::string err_str;
         DWORD err = GetLastError();
         DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
@@ -106,7 +114,7 @@ void Process::ProcessImpl::Kill() {
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing process handle: " << err_str;
     }
 
-    if (!CloseHandle(m_process_info.hThread)) {
+    if (m_process_info.hThread && !CloseHandle(m_process_info.hThread)) {
         std::string err_str;
         DWORD err = GetLastError();
         DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
@@ -117,6 +125,9 @@ void Process::ProcessImpl::Kill() {
         }
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing thread handle: " << err_str;
     }
+
+    m_process_info.hProcess = 0;
+    m_process_info.hThread = 0;
 }
 
 #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)

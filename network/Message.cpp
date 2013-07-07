@@ -84,6 +84,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::VICTORY_DEFEAT)
     GG_ENUM_MAP_INSERT(Message::END_GAME)
     GG_ENUM_MAP_INSERT(Message::MODERATOR_ACTION)
+    GG_ENUM_MAP_INSERT(Message::SHUT_DOWN_SERVER)
     GG_ENUM_MAP_END
 }
 
@@ -564,6 +565,10 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
     }
     return Message(Message::MODERATOR_ACTION, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
+
+Message ShutdownServerMessage(int sender)
+{ return Message(Message::SHUT_DOWN_SERVER, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
+
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
