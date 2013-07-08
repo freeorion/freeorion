@@ -1743,7 +1743,7 @@ void MapWnd::RenderVisibilityRadii() {
                       0.0, TWO_PI, true);
         }
         glStencilFunc(GL_GREATER, 0x2, 0xff);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
                       0.0, TWO_PI, false);
