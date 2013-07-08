@@ -1696,7 +1696,7 @@ void MapWnd::RenderVisibilityRadii() {
     {
         if (const Empire* empire = Empires().Lookup(it->first.first)) {
             GG::Clr circle_colour = empire->Color();
-            circle_colour.a = 64;
+            circle_colour.a = 24;
 
             GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
             double radius = it->second*ZoomFactor();
@@ -1736,7 +1736,8 @@ void MapWnd::RenderVisibilityRadii() {
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_INCR, GL_INCR, GL_INCR);
         glStencilFunc(GL_EQUAL, 0x0, 0xff);
-        glColor(it->first);
+        GG::Clr circle_colour = it->first;
+        glColor(circle_colour);
         const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
@@ -1744,6 +1745,8 @@ void MapWnd::RenderVisibilityRadii() {
         }
         glStencilFunc(GL_GREATER, 0x2, 0xff);
         glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+        circle_colour.a = 64;
+        glColor(circle_colour);
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
                       0.0, TWO_PI, false);
