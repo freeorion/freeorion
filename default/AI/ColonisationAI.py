@@ -28,6 +28,7 @@ annexableRing3=set([])
 annexablePlanetIDs=set([])
 curBestMilShipRating = 20
 allColonyOpportunities = {}
+gotRuins=False
 
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
@@ -69,7 +70,7 @@ def resetCAIGlobals():
     allColonyOpportunities.clear()
 
 def getColonyFleets():
-    global  curBestMilShipRating
+    global  curBestMilShipRating,  gotRuins
     
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
     
@@ -186,6 +187,8 @@ def getColonyFleets():
         planet=universe.getPlanet(pid)
         if planet:
             AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
+            if "ANCIENT_RUINS_SPECIAL" in planet.specials:
+                gotRuins = True
     AIstate.empireStars.clear()
     for sysID in AIstate.colonizedSystems:
         system = universe.getSystem(sysID)
@@ -588,11 +591,12 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         fixedRes += discountMultiplier*2*3
         detail.append( "ECCENTRIC_ORBIT_SPECIAL  %.1f"%(discountMultiplier*2*3  )  )
         
-    if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
-        retval += discountMultiplier*20
-        detail.append("Undepleted Ruins %.1f"%discountMultiplier*20)
-        
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
+        
+        if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
+            retval += discountMultiplier*30
+            detail.append("Undepleted Ruins %.1f"%discountMultiplier*30)
+        
         for special in planetSpecials:
             nestVal = 0
             if "_NEST_" in special:
@@ -665,6 +669,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     else: #colonization mission
         if not species:
             return 0
+            
+        if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
+            retval += discountMultiplier*50
+            detail.append("Undepleted Ruins %.1f"%discountMultiplier*50)
+
         popTagMod = 1.0
         indTagMod = 1.0
         resTagMod = 1.0
