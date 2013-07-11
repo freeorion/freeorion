@@ -773,6 +773,9 @@ Sets how fast to render dots for fleet supply lines.
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
 
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
+Sets detection circle transparency.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
@@ -1689,6 +1692,9 @@ Galaxy map stealth threshold slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
+Range circle opacity
 
 OPTIONS_GALAXY_MAP_POPUP
 Galaxy map popup menu

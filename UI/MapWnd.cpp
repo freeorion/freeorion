@@ -136,6 +136,8 @@ namespace {
         db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
 
+        db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),   3,       RangedValidator<int>(0, 8));
+
         db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),               false,      Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -1696,7 +1698,7 @@ void MapWnd::RenderVisibilityRadii() {
     {
         if (const Empire* empire = Empires().Lookup(it->first.first)) {
             GG::Clr circle_colour = empire->Color();
-            circle_colour.a = 24;
+            circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
 
             GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
             double radius = it->second*ZoomFactor();
