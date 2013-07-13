@@ -19,19 +19,19 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 
-def UserString(label,  default=""):
+def UserString(label,  default=None):
     tableString = fo.userString(label)
-    if default == "":
+    if default is None:
         return tableString
-    elif (False):  #implement test for string lookup  not found error
+    elif ( "ERROR: "+label in tableString):  #implement test for string lookup  not found error
         return default
     else:
         return tableString
 
 aggressions={fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",  
              fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
-capitols={fo.aggression.beginner:UserString("AI_CITY_NAMES_BEGINNER"),  fo.aggression.turtle:UserString("AI_CITY_NAMES_TURTLE"), fo.aggression.cautious:UserString("AI_CITY_NAMES_CAUTIOUS"),  
-                    fo.aggression.typical:UserString("AI_CITY_NAMES_TYPICAL"),  fo.aggression.aggressive:UserString("AI_CITY_NAMES_AGGRESSIVE"),  fo.aggression.maniacal:UserString("AI_CITY_NAMES_MANIACAL")}
+capitols={fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),  fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),  
+                    fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 
 # AIstate
 foAIstate = None
