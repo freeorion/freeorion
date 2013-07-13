@@ -3085,12 +3085,24 @@ AI_LEVELS_TEXT
 
 AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
 The current prefixes are:
-Turtle: Citadel
-Cautious: Bastion of the Brave
-Moderate: Haven
-Aggressive: Royal Demesne
-Maniacal: Stairway to Heaven
-There is also a "Beginner Mode" AI level, which has the most handicapping. '''
+
+Beginner: 
+[[AI_CITY_NAMES_BEGINNER]]
+
+Turtle: 
+[[AI_CITY_NAMES_TURTLE]]
+
+Cautious: 
+[[AI_CITY_NAMES_CAUTIOUS]]
+
+Moderate: 
+[[AI_CITY_NAMES_TYPICAL]]
+
+Aggressive: 
+[[AI_CITY_NAMES_AGGRESSIVE]]
+
+Maniacal: 
+[[AI_CITY_NAMES_MANIACAL]]'''
 
 ####################
 # Combat Messages  #
@@ -9167,3 +9179,39 @@ Telepathic
 
 ORBITAL
 Orbital
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+
+### Translator Note: the formatting of city name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level City Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level City Name Lists
+AI_CITY_NAMES_BEGINNER
+'''Ivory Tower
+Nunnery
+Monastery
+Orphanage Planet'''
+
+AI_CITY_NAMES_TURTLE
+'''Citadel
+Prison World'''
+
+AI_CITY_NAMES_CAUTIOUS
+'''Bastion of the Brave,
+Stronghold'''
+
+AI_CITY_NAMES_TYPICAL
+'''Haven
+Free Trade Zone'''
+
+AI_CITY_NAMES_AGGRESSIVE
+'''Royal Demesne
+Imperial Court'''
+
+AI_CITY_NAMES_MANIACAL
+'''Throne of Heaven,
+Glorious Revolutionary Planning Center, '''
+### End of City Names Lists

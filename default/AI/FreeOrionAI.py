@@ -19,11 +19,19 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 
+def UserString(label,  default=""):
+    tableString = fo.userString(label)
+    if default == "":
+        return tableString
+    elif (False):  #implement test for string lookup  not found error
+        return default
+    else:
+        return tableString
 
 aggressions={fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",  
              fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
-capitols={fo.aggression.beginner:"Ivory Tower ",  fo.aggression.turtle:"Citadel ", fo.aggression.cautious:"Bastion of the Brave, ",  fo.aggression.typical:"Haven ",  
-            fo.aggression.aggressive:"Royal Demesne ",  fo.aggression.maniacal:"Throne of Heaven,  "}
+capitols={fo.aggression.beginner:UserString("AI_CITY_NAMES_BEGINNER"),  fo.aggression.turtle:UserString("AI_CITY_NAMES_TURTLE"), fo.aggression.cautious:UserString("AI_CITY_NAMES_CAUTIOUS"),  
+                    fo.aggression.typical:UserString("AI_CITY_NAMES_TYPICAL"),  fo.aggression.aggressive:UserString("AI_CITY_NAMES_AGGRESSIVE"),  fo.aggression.maniacal:UserString("AI_CITY_NAMES_MANIACAL")}
 
 # AIstate
 foAIstate = None
@@ -41,7 +49,7 @@ lastTurnTimestamp=0
 def initFreeOrionAI():
     print "Initialized FreeOrion Python AI"
     print(sys.path)
-
+    
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 def startNewGame(aggression=fo.aggression.aggressive):
@@ -58,7 +66,11 @@ def startNewGame(aggression=fo.aggression.aggressive):
     universe=fo.getUniverse()
     if planetID is not None:
         planet = universe.getPlanet(planetID)
-        fo.issueRenameOrder(planetID,  capitols.get(aggression,  "")+planet.name)
+        newName = random.choice(capitols.get(aggression,  [""]).split('\n')).strip() + " " + planet.name
+        print "Capitol City Names are: ",  capitols
+        print "This Capitol New name is ",  newName
+        res = fo.issueRenameOrder(planetID,  newName)
+        print "Capitol Rename attempt result: %d; planet now named %s"%(res,  planet.name)
     if __timerFile:
         __timerFile.close()
     if ResourcesAI.resourceTimerFile:

@@ -8,6 +8,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../python/PythonSetWrapper.h"
 #include "../python/PythonWrappers.h"
+#include "../util/i18n.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -153,6 +154,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>());
 
     def("doneTurn",                 AIInterface::DoneTurn);
+    def("userString",               make_function(&UserString,        return_value_policy<copy_const_reference>()));
 
 
     //////////////////
