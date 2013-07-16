@@ -77,6 +77,7 @@ Species
         EffectsGroup
             scope = Source
             activation = AND [
+                Planet
                 OR [
                     Turn low = 10 high = 10
                     Turn low = 80 high = 80
