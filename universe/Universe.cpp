@@ -1524,7 +1524,9 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     m_marked_for_victory.clear();
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
-    for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin(); targets_it != targets_causes.end(); ++targets_it) {
+    for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
+         targets_it != targets_causes.end(); ++targets_it)
+    {
         const UniverseObject* source = GetUniverseObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects effgrp (source " +
                                  (source ? source->Name() : "No Source!") +
@@ -1539,7 +1541,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         if (targets.empty())
             continue;
 
-        std::map<std::string, Effect::TargetSet>::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
+        std::map<std::string, Effect::TargetSet>::iterator non_stacking_it =
+            executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin();
                  object_it != non_stacking_it->second.end(); ++object_it)
@@ -1589,9 +1592,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
         if (!effects_group->StackingGroup().empty()) {
             Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
-            for (Effect::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
-                affected_targets.push_back(*object_it);
-            }
+            std::copy(targets.begin(), targets.end(), std::back_inserter(affected_targets));
         }
     }
 

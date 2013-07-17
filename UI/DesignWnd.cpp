@@ -1923,7 +1923,7 @@ bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part) {
     std::pair<int, int> swap_result = FindSlotForPartWithSwapping(part);
     return (FindEmptySlotForPart(part) >= 0 || (swap_result.first >= 0 && swap_result.second >= 0));
 }
-            
+
 bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_number) {
     if (!part || slot_number < 0)
         return false;
