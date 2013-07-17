@@ -67,6 +67,9 @@ public:
     const Meter*                GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
     float                       CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
     float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
+
+    float                       TotalWeaponsDamage() const;
+    std::vector<float>          AllWeaponsDamage() const;
     //@}
 
     /** \name Mutators */ //@{

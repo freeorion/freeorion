@@ -355,11 +355,58 @@ Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
     return retval;
 }
 
-float Ship::CurrentPartMeterValue(MeterType type, const std::string& part_name) const
-{ return 0.0f; }
+float Ship::CurrentPartMeterValue(MeterType type, const std::string& part_name) const {
+    if (const Meter* meter = GetPartMeter(type, part_name))
+        return meter->Current();
+    return 0.0f;
+}
 
-float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) const
-{ return 0.0f; }
+float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) const {
+    if (const Meter* meter = GetPartMeter(type, part_name))
+        return meter->Initial();
+    return 0.0f;
+}
+
+float Ship::TotalWeaponsDamage() const {
+    // sum up all individual weapons' attack strengths
+    float total_attack = 0.0;
+    std::vector<float> all_weapons_damage = AllWeaponsDamage();
+    for (std::vector<float>::iterator it = all_weapons_damage.begin(); it != all_weapons_damage.end(); ++it)
+        total_attack += *it;
+    return total_attack;
+}
+
+std::vector<float> Ship::AllWeaponsDamage() const {
+    std::vector<float> retval;
+
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design)
+        return retval;
+    const std::vector<std::string>& parts = design->Parts();
+
+    // for each weapon part, get its damage meter value
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        const PartType* part = GetPartType(part_name);
+        if (!part)
+            continue;
+        ShipPartClass part_class = part->Class();
+
+        // get the attack power for each weapon part
+        float part_attack = 0.0;
+
+        if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES)
+            part_attack = this->CurrentPartMeterValue(METER_DAMAGE, part_name);
+        else if (part_class == PC_FIGHTERS)
+            part_attack = this->CurrentPartMeterValue(METER_ANTI_SHIP_DAMAGE, part_name);
+
+        if (part_attack > 0.0)
+            retval.push_back(part_attack);
+    }
+    return retval;
+}
 
 void Ship::SetFleetID(int fleet_id) {
     m_fleet_id = fleet_id;
