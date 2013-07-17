@@ -63,7 +63,7 @@ namespace {
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase) {
+    IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase, bool allow_stacking = true) {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -74,9 +74,13 @@ namespace {
                 new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_name)),
                 new ValueRef::Constant<double>(increase)
             );
+        std::string stacking_group = (allow_stacking ? "" :
+            (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)), "", part_name));
+                scope, activation,
+                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)),
+                part_name, stacking_group));
     }
 
     struct DescriptionVisitor : public boost::static_visitor<>
@@ -375,33 +379,33 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
     case PC_SHORT_RANGE:
     case PC_POINT_DEFENSE: {
         const DirectFireStats& stats = boost::get<DirectFireStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage));
-        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF));
-        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
+        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage,     false));
+        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF,        false));
+        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range,      false));
         break;
     }
     case PC_MISSILES: {
         const LRStats& stats = boost::get<LRStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage));
-        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF));
-        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
-        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure));
-        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
+        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage,     false));
+        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF,        false));
+        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range,      false));
+        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed,      false));
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth,    false));
+        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure,  false));
+        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity,   false));
         break;
     }
     case PC_FIGHTERS: {
         const FighterStats& stats = boost::get<FighterStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_ANTI_SHIP_DAMAGE,       m_name, stats.m_anti_ship_damage));
-        m_effects.push_back(IncreaseMeter(METER_ANTI_FIGHTER_DAMAGE,    m_name, stats.m_anti_fighter_damage));
-        m_effects.push_back(IncreaseMeter(METER_LAUNCH_RATE,            m_name, stats.m_launch_rate));
-        m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE,   m_name, stats.m_fighter_weapon_range));
-        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure));    // not METER_MAX_STRUCTURE because this stat sets the initial/max structure of battle-spawned missiles, but doesn't need to track a separate max and actual value itself
-        m_effects.push_back(IncreaseMeter(METER_DETECTION,              m_name, stats.m_detection));
-        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
+        m_effects.push_back(IncreaseMeter(METER_ANTI_SHIP_DAMAGE,       m_name, stats.m_anti_ship_damage,       false));
+        m_effects.push_back(IncreaseMeter(METER_ANTI_FIGHTER_DAMAGE,    m_name, stats.m_anti_fighter_damage,    false));
+        m_effects.push_back(IncreaseMeter(METER_LAUNCH_RATE,            m_name, stats.m_launch_rate,            false));
+        m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE,   m_name, stats.m_fighter_weapon_range,   false));
+        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed,                  false));
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth,                false));
+        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure,              false));    // not METER_MAX_STRUCTURE because this stat sets the initial/max structure of battle-spawned missiles, but doesn't need to track a separate max and actual value itself
+        m_effects.push_back(IncreaseMeter(METER_DETECTION,              m_name, stats.m_detection,              false));
+        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity,               false));
         break;
     }
     case PC_SHIELD:
@@ -435,8 +439,9 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         break;
     }
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
-        m_effects.push_back(*it);
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
+         it != effects.end(); ++it)
+    { m_effects.push_back(*it); }
 }
 
 PartType::~PartType()
