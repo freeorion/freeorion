@@ -735,7 +735,9 @@ void ShipDataPanel::Refresh() {
 
 
     // update stat icon values and browse wnds
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
+         it != m_stat_icons.end(); ++it)
+    {
         //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
         it->second->SetValue(StatValue(it->first));
 
@@ -759,12 +761,8 @@ void ShipDataPanel::Refresh() {
 
 double ShipDataPanel::StatValue(const std::string& stat_name) const {
     if (const Ship* ship = GetShip(m_ship_id)) {
-        if (stat_name == DAMAGE_STAT_STRING) {
-            if (const ShipDesign* design = ship->Design())
-                return design->Attack();
-            else
-                return 0.0;
-        }
+        if (stat_name == DAMAGE_STAT_STRING)
+            return ship->TotalWeaponsDamage();
 
         MeterType meter_type = MeterTypeFromStatString(stat_name);
         //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
@@ -1292,7 +1290,7 @@ void FleetDataPanel::SetStatIconValues() {
         if (const Ship* ship = GetShip(ship_id)) {
             if (const ShipDesign* design = ship->Design()) {
                 ship_count++;
-                damage_tally += design->Attack();
+                damage_tally += ship->TotalWeaponsDamage();
                 structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
                 shield_tally += ship->CurrentMeterValue(METER_SHIELD);
                 fuels.push_back(ship->CurrentMeterValue(METER_FUEL));
@@ -2426,12 +2424,12 @@ void FleetWnd::SetStatIconValues() {
             if (const Ship* ship = GetShip(ship_id)) {
                 if (const ShipDesign* design = ship->Design()) {
                     ship_count++;
-                    damage_tally += design->Attack();
+                    damage_tally += ship->TotalWeaponsDamage();
                     structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
                     shield_tally += ship->CurrentMeterValue(METER_SHIELD);
                 }
             }
-        }        
+        }
     }
     
     for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
@@ -2508,6 +2506,9 @@ void FleetWnd::Refresh() {
             // skip fleets in wrong system
             if (fleet->SystemID() != m_system_id)
                 continue;
+            // skip empty fleets
+            //if (fleet->Empty())
+            //    continue;
 
             // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end() ||
@@ -2667,7 +2668,6 @@ void FleetWnd::AddFleet(int fleet_id) {
         return;
 
     // verify that fleet is consistent
-
     const GG::Pt row_size = m_fleets_lb->ListRowSize();
     FleetRow* row = new FleetRow(fleet_id, GG::X1, row_size.y);
     m_fleets_lb->Insert(row);

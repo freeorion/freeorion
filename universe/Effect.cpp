@@ -329,16 +329,26 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
          effect_it != m_effects.end(); ++effect_it)
     {
         const EffectBase* effect = *effect_it;
-        const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
+        MeterType meter_type = INVALID_METER_TYPE;
+        const Meter* meter = 0;
 
-        // for non-meter effects, can do default batch execute
-        if (!meter_effect) {
+        // for meter effects, need to separately call effect's Execute for each
+        // target and do meter accounting before and after.
+        const SetMeter* set_meter_effect = 0;
+        const SetShipPartMeter* set_ship_part_meter_effect = 0;
+
+        if (set_meter_effect = dynamic_cast<const SetMeter*>(effect)) {
+            meter_type = set_meter_effect->GetMeterType();
+
+        } else if (set_ship_part_meter_effect = dynamic_cast<const SetShipPartMeter*>(effect)) {
+            meter_type = set_ship_part_meter_effect->GetMeterType();
+
+        } else {
+            // for non-meter effects, can do default batch execute
             effect->Execute(source_context, targets);
             continue;
         }
 
-        // for meter effects, need to separately call effect's Execute for each
-        // target and do meter accounting before and after.
 
         // accounting info for this effect on this meter, starting with
         // non-target-dependent info
@@ -348,23 +358,39 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
         info.custom_label =         targets_and_cause.effect_cause.custom_label;
         info.source_id =            source_id;
 
-        MeterType meter_type = meter_effect->GetMeterType();
 
+        // process each target separately to do effect accounting
         for (TargetSet::const_iterator target_it = targets.begin();
              target_it != targets.end(); ++target_it)
         {
             UniverseObject* target = *target_it;
 
-            // record pre-effect meter values
-            const Meter* meter = target->GetMeter(meter_type);
+            // get Meter for this effect and target
+            const Meter* meter = 0;
+
+            if (set_meter_effect) {
+                meter = target->GetMeter(meter_type);
+
+            } else if (set_ship_part_meter_effect) {
+                if (target->ObjectType() != OBJ_SHIP)
+                    continue;   // only ships have ship part meters
+                const Ship* ship = universe_object_cast<const Ship*>(target);
+                if (!ship)
+                    continue;
+                meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
+            }
+
             if (!meter)
                 continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+
+            // record pre-effect meter values...
 
             // accounting info for this effect on this meter of this target
             info.running_meter_total =  meter->Current();
 
             // actually execute effect to modify meter
-            meter_effect->Execute(ScriptingContext(source, target));
+            effect->Execute(ScriptingContext(source, target));
 
             // update for meter change and new total
             info.meter_change = meter->Current() - info.running_meter_total;
@@ -388,16 +414,29 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
              effect_it != m_effects.end(); ++effect_it)
         {
             const EffectBase* effect = *effect_it;
-            const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
-            if (!meter_effect)
-                continue;
+            MeterType meter_type = INVALID_METER_TYPE;
+            const Meter* meter = 0;
 
-            MeterType meter_type = meter_effect->GetMeterType();
-            const Meter* meter = target->GetMeter(meter_type);
+            // only process SetMeter and SetShipPartMeter effects in this function
+
+            if (const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect)) {
+                meter_type = meter_effect->GetMeterType();
+                meter = target->GetMeter(meter_type);
+
+            } else if (const SetShipPartMeter* meter_effect = dynamic_cast<const SetShipPartMeter*>(effect)) {
+                meter_type = meter_effect->GetMeterType();
+                if (target->ObjectType() != OBJ_SHIP)
+                    continue;
+                const Ship* ship = universe_object_cast<const Ship*>(target);
+                if (!ship)
+                    continue;
+                meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
+            }
+
             if (!meter)
                 continue;
 
-            meter_effect->Execute(ScriptingContext(source, target));
+            effect->Execute(ScriptingContext(source, target));
         }
     }
 }
@@ -409,7 +448,8 @@ void EffectsGroup::ExecuteSetEmpireMeter(int source_id, const TargetSet& targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
         UniverseObject* target = *target_it;
 
-        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+        // only process SetEmpireMeter effects in this function
+
         for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
              effect_it != m_effects.end(); ++effect_it)
         {
@@ -437,12 +477,25 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
              effect_it != m_effects.end(); ++effect_it)
         {
             const EffectBase* effect = *effect_it;
-            const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
-            if (!meter_effect)
-                continue;
+            MeterType meter_type = INVALID_METER_TYPE;
+            const Meter* meter = 0;
 
-            MeterType meter_type = meter_effect->GetMeterType();
-            const Meter* meter = target->GetMeter(meter_type);
+            // only process SetMeter and SetShipPartMeter effects in this function
+
+            if (const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect)) {
+                meter_type = meter_effect->GetMeterType();
+                meter = target->GetMeter(meter_type);
+
+            } else if (const SetShipPartMeter* meter_effect = dynamic_cast<const SetShipPartMeter*>(effect)) {
+                meter_type = meter_effect->GetMeterType();
+                if (target->ObjectType() != OBJ_SHIP)
+                    continue;
+                const Ship* ship = universe_object_cast<const Ship*>(target);
+                if (!ship)
+                    continue;
+                meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
+            }
+
             if (!meter)
                 continue;
 
@@ -761,10 +814,15 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    // loop through all parts in the ship design, applying effect to each if appropriate
+    // loop through all part meters in the ship design, applying effect to each if part is appropriate
     const std::vector<std::string>& design_parts = ship->Design()->Parts();
-    for (std::size_t i = 0; i < design_parts.size(); ++i) {
-        const std::string& target_part_name = design_parts[i];
+    std::set<std::string> unique_design_parts;
+    std::copy(design_parts.begin(), design_parts.end(), std::inserter(unique_design_parts, unique_design_parts.begin()));
+
+    for (std::set<std::string>::const_iterator it = unique_design_parts.begin();
+         it != unique_design_parts.end(); ++it)
+    {
+        const std::string& target_part_name = *it;
         if (target_part_name.empty())
             continue;   // slots in a design may be empty... this isn't an error
 

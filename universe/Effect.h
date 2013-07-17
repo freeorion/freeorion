@@ -101,13 +101,16 @@ public:
     void    Execute(int source_id, const TargetSet& targets) const;
     void    Execute(int source_id, const TargetsAndCause& targets_and_cause,
                     AccountingMap& accounting_map) const;
+
     /** execute all SetMeter effects in group.  This is useful for doing meter
       * estimate updates and effect accounting, for which executing non-meter
       * effects is neither needed nor useful. */
     void    ExecuteSetMeter(int source_id, const TargetSet& targets) const;
     void    ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                             AccountingMap& accounting_map) const;
+
     void    ExecuteSetEmpireMeter(int source_id, const TargetSet& targets) const;
+
     /** execute all appearance modifying effects in group. */
     void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 
@@ -216,6 +219,9 @@ public:
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+    const std::string&  GetPartName() const {return m_part_name;}
+    ShipSlotType        GetShipSlotType() const {return m_slot_type;}
+    MeterType           GetMeterType() const {return m_meter;};
 
 private:
     ShipPartClass                         m_part_class;

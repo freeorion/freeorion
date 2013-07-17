@@ -463,14 +463,14 @@ namespace {
     }
 
     struct PartAttackInfo {
-        PartAttackInfo(ShipPartClass c, const std::string& s, double a) :
-            part_class(c),
-            part_type_name(s),
-            part_attack(a)
+        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
+            part_class(part_class_),
+            part_type_name(part_name_),
+            part_attack(part_attack_)
         {}
         ShipPartClass   part_class;
         std::string     part_type_name;
-        double          part_attack;
+        float           part_attack;
     };
 
     std::vector<PartAttackInfo> ShipWeaponsStrengths(const Ship* ship) {
@@ -481,23 +481,27 @@ namespace {
         if (!design)
             return retval;
         const std::vector<std::string>& parts = design->Parts();
-        // check if each part is a weapon
-        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-            const PartType* part = GetPartType(*it);
+
+        // for each weapon part, get its damage meter value
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            const std::string& part_name = *part_it;
+            const PartType* part = GetPartType(part_name);
             if (!part)
                 continue;
+            ShipPartClass part_class = part->Class();
 
-            double part_attack = 0.0;
-            // TODO: base this off meter values, not part stats
-            if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
-                part_attack = boost::get<DirectFireStats>(part->Stats()).m_damage;
-            else if (part->Class() == PC_MISSILES)
-                part_attack = boost::get<LRStats>(part->Stats()).m_damage;
-            else if (part->Class() == PC_FIGHTERS)
-                part_attack = boost::get<FighterStats>(part->Stats()).m_anti_ship_damage;
-            if (part_attack == 0.0)
-                continue;
-            retval.push_back(PartAttackInfo(part->Class(), *it, part_attack));
+            // get the attack power for each weapon part
+            float part_attack = 0.0;
+
+            if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES)
+                part_attack = ship->CurrentPartMeterValue(METER_DAMAGE, part_name);
+            else if (part_class == PC_FIGHTERS)
+                part_attack = ship->CurrentPartMeterValue(METER_ANTI_SHIP_DAMAGE, part_name);
+
+            if (part_attack > 0.0)
+                retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
         }
         return retval;
     }
