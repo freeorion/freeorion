@@ -455,8 +455,7 @@ namespace {
         if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
             return ship->IsArmed();
         } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            return planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
-                   planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
+            return planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
         } else {
             return false;
         }
@@ -753,14 +752,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                 }
 
             } else if (target->ObjectType() == OBJ_PLANET) {
+                if (!ObjectCanAttack(target) && valid_attacker_object_ids.find(target_id)!=valid_attacker_object_ids.end()) {
+                    Logger().debugStream() << "!! Target Planet defenses knocked out, can no longer attack";
+                    // remove disabled planet's ID from lists of valid attackers
+                    valid_attacker_object_ids.erase(target_id);
+                }
                 if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
                 {
-                    Logger().debugStream() << "!! Target Planet is knocked out of battle";
+                    Logger().debugStream() << "!! Target Planet is entirely knocked out of battle";
 
-                    // remove disabled planet's ID from lists of valid attackers and targets
-                    valid_attacker_object_ids.erase(target_id);
+                    // remove disabled planet's ID from lists of valid targets
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
 
                     for (target_vec_it = empire_valid_target_object_ids.begin();
