@@ -1,5 +1,22 @@
 v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+Key Changes:
+
+ ~ New Moderator and Observer player modes
+ 
+ ~ Shields now reduce damage, and all new shield & armor content
+
+ ~ Many fixes and improvements to the AI
+ 
+ ~ Detailed combat log display
+ 
+ ~ Numerous GUI tweakes and improvements
+ 
+ ~ Galaxy Generation is now based on a copy-able random seed
+ 
+ ~ Raised max number of systems to 5000
+
+
 New Features / Improvements:
  ~ Moderator mode
  ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
