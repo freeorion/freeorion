@@ -997,7 +997,7 @@ Species
     
     [[TERRAN_STANDARD_EP]]
     
-    graphic = "icons/species/bipedial-11.png"
+    graphic = "icons/species/raaagh.png"
     
 
 Species
