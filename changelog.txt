@@ -4,7 +4,12 @@ New Features / Improvements:
  ~ Moderator mode
  ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
  ~ Reworked supply block / fleet movement blockade mechanics
- ~ ~ Passage through a system is blocked until all aggressive enemy armed forces are completely defeated (previously movement was only halted for one game turn)
+ ~ ~ Supply blocks and fleet movement blockades have been harmonized to occur in the same situations 
+ ~ ~ Nonstationary ships no longer create blockades / supply-blocks
+ ~ ~ Armed aggressive fleets arriving in a system and then remaining stationary will maintain any supply flow for their empire, and block it against enemies not already having armed aggressive fleets present.
+ ~ ~ If armed aggressive fleets for two enemy empires arrive at a system at the same time, supply maintenance takes precedence over supply blocks -- they will each maintain supply for for their empire, and not block supply for the other, for so long as both sides remain and survive.
+ ~ ~ An empire 'secures' use of a starlane as an exit from a system simply by having a fleet enter that system along that starlane.  If no armed aggressive enemies were already present in the system, then passage through all exiting starlanes is secured for that empire so long as it maintains an armed aggressive fleet presence in that system.
+ ~ ~ Passage of an empire's fleets through 'unsecured' starlanes exiting a blockaded system is blocked until the blockade is completely broken, by defeating all armed aggressive enemy forces present (previously movement was only halted for one game turn); exit along a 'secured' starlane will be allowed after the fleet has halted for at least one turn in the system, even if the blockade is not broken.
  ~ Raised max number of systems to 5000
  ~ Many fixes and improvements to the AI
  ~ Added a configurable random seed value for galaxy generation
@@ -27,6 +32,7 @@ Content:
  ~ Added terraforming reversion building
  ~ Translation updates: Finnish, French, German, Italian, Polish, Spanish
  ~ Tweaks/refinements for Evacuation building
+ ~ Concentration Camps now cause a lingering negative effect on population, of indefinite duration even if the camp is removed.
  ~ Fixed Solar Orbital Generator building description
  ~ Fixes to Psychogenic Domination and System Defense Mines techs
  ~ Corrected description of requirements for the Static Multicellular hull
