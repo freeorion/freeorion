@@ -1,19 +1,104 @@
-v0.4.2 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
- New Features / Improvements:
+New Features / Improvements:
+ ~ Moderator mode
+ ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
+ ~ Reworked supply block / fleet movement blockade mechanics
+ ~ ~ Passage through a system is blocked until all aggressive enemy armed forces are completely defeated (previously movement was only halted for one game turn)
+ ~ Raised max number of systems to 5000
+ ~ Many fixes and improvements to the AI
+ ~ Added a configurable random seed value for galaxy generation
+ ~ Made focus visible on detected planets a player doesn't control
+ ~ Detailed combat log display
 
+Content:
+ ~ Major revision of shields/armor/weapons (due to the new shield mechanics)
+ ~ ~ Added new shield techs and parts
+ ~ ~ Added new armor techs and parts
+ ~ ~ Rearranged tech tree for armor and shield techs
+ ~ ~ ~ Changed starting techs: instead of basic shields players now get basic armor at the start of the game
+ ~ ~ Completely reworked/rebalanced shield, armor and weapon parts stats, tech and build costs
+ ~ ~ Adjusted space monsters accordingly
+ ~ ~ Adjusted a few basic premade/starting ship designs, discarded the rest
+ ~ ~ Adjusted affected species picks accordingly
+ ~ ~ Reduced Acirema ship shield bonus to +1
+ ~ Added new fields, various tweaks/adjustments to fields
+ ~ Added more species write-ups
+ ~ Added terraforming reversion building
+ ~ Translation updates: Finnish, French, German, Italian, Polish, Spanish
+ ~ Tweaks/refinements for Evacuation building
+ ~ Fixed Solar Orbital Generator building description
+ ~ Fixes to Psychogenic Domination and System Defense Mines techs
+ ~ Corrected description of requirements for the Static Multicellular hull
+ ~ Fixed Egassem species description
+ ~ Some tech tree reorganization
+ ~ Various adjustments to techs
+ ~ To avoid confusion removed "can colonize" from species that can't build ships
 
- Content:
+Graphics / GUI:
+ ~ Replaced galaxy map toolbar button text with icons
+ ~ Added detection range circles opacity control to galaxy map options
+ ~ Made tech panels a bit wider
+ ~ Added empire statistics to empires window
+ ~ Sitrep window will not pop up if the design, research or production screens are open
+ ~ Sitrep messages:
+ ~ ~ Added sitrep message when tame monsters mature
+ ~ ~ Added sitrep message upon total population loss from Concentration Camp
+ ~ ~ Added sitrep messages for mines
+ ~ ~ Added sitrep messages for Psychogenic Domination
+ ~ Augmented census popup with tag/characteristic info
+ ~ Reorganization of species description text
+ ~ Planet and field icons in objects list
+ ~ On the ship design screen ship parts are now hidden for which improved/refined parts have become available that are superior in every aspect (so, Laser 2 hides Laser 1 etc.)
+ ~ Added "X" close buttons to objects list and pedia windows
+ ~ Added aggregate fleet stats icons at top of fleet window
+ ~ Moved focus drop box to top level of planet panel, out of the resources subpanel
+ ~ Made shift + single click enqueue a tech
+ ~ Overhaul of research screen
+ ~ ~ Added tooltips
+ ~ ~ ETA and enqueued dependendy indication
+ ~ ~ Grey unresearched tech icons on tree to better distinguish from researched techs
+ ~ ~ Tech panel mouseover and selection indicators
+ ~ ~ Removed tech type buttons on tree filter
+ ~ ~ Added prerequisites and unlocked techs to tech descriptions in pedia
+ ~ ~ CTRL + double click adds tech to top of queue
+ ~ ~ Removed tech navigator
+ ~ ~ Color tweaks
+ ~ Ship stats of a ship design displayed on the ship design screen now take into account effects groups acting on a ship
+ ~ Readjusted fleet window summary bar to show current stat rather than projected next turn values
+ ~ Modified pedia panel "up" button behaviour to always be enabled and to always go directly to the index, regardless of what page the view is currently on
+ ~ Replaced pedia panel button text with arrow icons
+ ~ Tweaked multiplayer default empire names, species and colors selection
 
+Balancing:
+ ~ Reduced required distance to moving ships for Collective Thought Network (from 500 to 200)
+ ~ Species balancing:
+ ~ ~ Having xenophobic species in an empire causes disruption (in form of maluses) for the colonies of the xenophobic species as well as for other colonies near them
+ ~ ~ Xenophobic species get the Concentration Camp tech at the start of the game
+ ~ ~ Reduced Etty detection range malus (from 20 to 9)
+ ~ Increased chance for no star systems
+ ~ Made Gas Giant Generator and Interstellar Lighthouse building bonuses non-stacking
 
- Graphics / GUI:
- 
- 
- Balancing:
+Bugs:
+ ~ Fixed spawning of Acirema guard ships so as to not be triggered by (player owned) Acirema ships
+ ~ Fixed several issues with one click colonize/outpost buttons
+ ~ Fixed issue with empty fleets appearing in-game after their ships have been destroyed
+ ~ Various fixes/adjustments to Concentration Camps
+ ~ Fixed issue that sometimes stars were stacked on top of each other during galaxy generation
+ ~ Fixes for various issues with loading/saving games
+ ~ Restricted speed bonuses granted by Infrastructure Ecology tech and Interstellar Lighthouse building to ignore immobile ships
+ ~ Fixed stealth reducing effect of Interstellar Lighthouse building
+ ~ Fixed tech ETA text misplacement
+ ~ Fixed display of system name for systems that have no star but do have planets
+ ~ Fixed map hotkey issues
+ ~ Fixed issue that production progress stops for ships if their design is deleted
+ ~ Fixed non-working "Cancel Scrapping Ships" order for fleets
+ ~ Fixed issue where planets that lost population and converted to outposts retained their focus setting
+ ~ Fixed some crashes in research screen / tech tree
+ ~ Fixed detection range circle overlap artifacts at high detection ranges
+ ~ Fixed issues with fleet stat calculations
+ ~ Numerous other bug fixes
 
-
- Bugs:
- 
 
 v0.4.2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
