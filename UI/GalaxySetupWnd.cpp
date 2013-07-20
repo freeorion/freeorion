@@ -89,7 +89,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_seed_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_seed_edit->Height()) / 2));
 
     // random seed button
-    m_random = new SettableInWindowCUIButton(2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, row * PANEL_CONTROL_SPACING + 5, GG::X(20), "", font, GG::CLR_WHITE);
+    m_random = new CUIButton(2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, row * PANEL_CONTROL_SPACING + 5, GG::X(20), "", font, GG::CLR_WHITE);
     m_random->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize.png")));
     m_random->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_clicked.png"  )));
     m_random->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_mouseover.png")));
