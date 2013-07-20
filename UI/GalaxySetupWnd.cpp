@@ -57,6 +57,7 @@ const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
 GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/) :
     GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::Flags<GG::WndFlag>()),
     m_seed_edit(0),
+    m_random(0),
     m_stars_spin(0),
     m_galaxy_shapes_list(0),
     m_galaxy_ages_list(0),
@@ -84,8 +85,16 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
     AttachChild(label);
-    m_seed_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, LABELS_WIDTH -30, GetOptionsDB().Get<std::string>("GameSetup.seed"));
     m_seed_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_seed_edit->Height()) / 2));
+
+    // random seed button
+    m_random = new SettableInWindowCUIButton(2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, row * PANEL_CONTROL_SPACING + 5, GG::X(20), "", font, GG::CLR_WHITE);
+    m_random->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize.png")));
+    m_random->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_clicked.png"  )));
+    m_random->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_mouseover.png")));
+    m_random->SetBrowseText(UserString("GSETUP_RANDOM_SEED"));
+    m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // number of stars
     label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -189,6 +198,15 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     Init();
 }
 
+void GalaxySetupPanel::RandomClicked(){
+    char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+    std::string s = "";
+    for (int i = 0; i < 8; ++i) {
+        s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
+    }
+    m_seed_edit->SetText(s);
+}
+
 const std::string& GalaxySetupPanel::GetSeed() const
 { return m_seed_edit->Text(); }
 
@@ -256,6 +274,7 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
 
 void GalaxySetupPanel::Init() {
     AttachChild(m_seed_edit);
+    AttachChild(m_random);
     AttachChild(m_stars_spin);
     AttachChild(m_galaxy_shapes_list);
     AttachChild(m_galaxy_ages_list);
@@ -266,6 +285,7 @@ void GalaxySetupPanel::Init() {
     AttachChild(m_native_freq_list);
     AttachChild(m_ai_aggression_list);
 
+    GG::Connect(m_random->LeftClickedSignal,                &GalaxySetupPanel::RandomClicked,   this);
     GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);

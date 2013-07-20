@@ -55,11 +55,13 @@ public:
 
 private:
     void Init();
+    void RandomClicked();
     void SettingChanged_(int);
     void SettingChanged(GG::ListBox::iterator);
     void ShapeChanged(GG::ListBox::iterator it);
 
     CUIEdit*            m_seed_edit;            //!< The seed used in the generation of the galaxy
+    CUIButton*          m_random;               //!< Random seed button
     CUISpin<int>*       m_stars_spin;           //!< The number of stars to include in the galaxy
     CUIDropDownList*    m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
     CUIDropDownList*    m_galaxy_ages_list;     //!< The possible ages for the galaxy
