@@ -14,7 +14,7 @@ build_sys = sys.argv[2]
 infile = 'util/Version.cpp.in'
 outfile = 'util/Version.cpp'
 
-version = "0.4.2"
+version = "0.4.3"
 wc_rev = "???"
 
 try:
