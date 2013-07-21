@@ -2,7 +2,7 @@ v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:
 
- ~ New Moderator and Observer player modes
+ ~ New Moderator player type for multiplayer
  
  ~ Shields now reduce damage, and all new shield & armor content
 
@@ -16,7 +16,11 @@ Key Changes:
 
 
 New Features / Improvements:
- ~ Moderator mode
+ ~ New Moderator player type for multiplayer
+ ~ ~ Sees the full universe like an observer.
+ ~ ~ Controls the length of turns.
+ ~ ~ Can create and destroy objects, add or remove starlanes, and set ownership of objects.
+ ~ ~ Can be used with no other human players and several AIs to have a more-controlled AI test arena than using observer mode.
  ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
  ~ Reworked supply block / fleet movement blockade mechanics
  ~ ~ Supply blocks and fleet movement blockades have been harmonized to occur in the same situations 
