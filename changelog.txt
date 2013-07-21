@@ -10,11 +10,9 @@ Key Changes:
  
  ~ Detailed combat log display
  
- ~ Numerous GUI tweakes and improvements
+ ~ Numerous GUI tweaks and improvements
  
  ~ Galaxy Generation is now based on a copy-able random seed
- 
- ~ Raised max number of systems to 5000
 
 
 New Features / Improvements:
@@ -22,12 +20,13 @@ New Features / Improvements:
  ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
  ~ Reworked supply block / fleet movement blockade mechanics
  ~ ~ Supply blocks and fleet movement blockades have been harmonized to occur in the same situations 
- ~ ~ Nonstationary ships no longer create blockades / supply-blocks
+ ~ ~ Non-stationary ships no longer create blockades / supply-blocks
  ~ ~ Armed aggressive fleets arriving in a system and then remaining stationary will maintain any supply flow for their empire, and block it against enemies not already having armed aggressive fleets present.
  ~ ~ If armed aggressive fleets for two enemy empires arrive at a system at the same time, supply maintenance takes precedence over supply blocks -- they will each maintain supply for for their empire, and not block supply for the other, for so long as both sides remain and survive.
  ~ ~ An empire 'secures' use of a starlane as an exit from a system simply by having a fleet enter that system along that starlane.  If no armed aggressive enemies were already present in the system, then passage through all exiting starlanes is secured for that empire so long as it maintains an armed aggressive fleet presence in that system.
  ~ ~ Passage of an empire's fleets through 'unsecured' starlanes exiting a blockaded system is blocked until the blockade is completely broken, by defeating all armed aggressive enemy forces present (previously movement was only halted for one game turn); exit along a 'secured' starlane will be allowed after the fleet has halted for at least one turn in the system, even if the blockade is not broken.
  ~ Raised max number of systems to 5000
+ ~ ~ Note FreeOrion is balanced for a galaxy in the low 100s of systems.  Higher numbers make a game increasingly slow and unbalanced.
  ~ Many fixes and improvements to the AI
  ~ Added a configurable random seed value for galaxy generation
  ~ Made focus visible on detected planets a player doesn't control
@@ -41,7 +40,7 @@ Content:
  ~ ~ ~ Changed starting techs: instead of basic shields players now get basic armor at the start of the game
  ~ ~ Completely reworked/rebalanced shield, armor and weapon parts stats, tech and build costs
  ~ ~ Adjusted space monsters accordingly
- ~ ~ Adjusted a few basic premade/starting ship designs, discarded the rest
+ ~ ~ Adjusted a few basic pre-made/starting ship designs, discarded the rest
  ~ ~ Adjusted affected species picks accordingly
  ~ ~ Reduced Acirema ship shield bonus to +1
  ~ Added new fields, various tweaks/adjustments to fields
@@ -79,8 +78,8 @@ Graphics / GUI:
  ~ Made shift + single click enqueue a tech
  ~ Overhaul of research screen
  ~ ~ Added tooltips
- ~ ~ ETA and enqueued dependendy indication
- ~ ~ Grey unresearched tech icons on tree to better distinguish from researched techs
+ ~ ~ ETA and enqueued dependency indication
+ ~ ~ Grey un-researched tech icons on tree to better distinguish from researched techs
  ~ ~ Tech panel mouseover and selection indicators
  ~ ~ Removed tech type buttons on tree filter
  ~ ~ Added prerequisites and unlocked techs to tech descriptions in pedia
@@ -89,7 +88,7 @@ Graphics / GUI:
  ~ ~ Color tweaks
  ~ Ship stats of a ship design displayed on the ship design screen now take into account effects groups acting on a ship
  ~ Readjusted fleet window summary bar to show current stat rather than projected next turn values
- ~ Modified pedia panel "up" button behaviour to always be enabled and to always go directly to the index, regardless of what page the view is currently on
+ ~ Modified pedia panel "up" button behavior to always be enabled and to always go directly to the index, regardless of what page the view is currently on
  ~ Replaced pedia panel button text with arrow icons
  ~ Tweaked multiplayer default empire names, species and colors selection
 
