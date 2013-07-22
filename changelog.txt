@@ -2,8 +2,6 @@ v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:
 
- ~ New Moderator player type for multiplayer
- 
  ~ Shields now reduce damage, and all new shield & armor content
 
  ~ Many fixes and improvements to the AI
@@ -14,13 +12,10 @@ Key Changes:
  
  ~ Galaxy Generation is now based on a copy-able random seed
 
+ ~ New clouds and nebulae on empty systems and moving around the galaxy.
+ 
 
 New Features / Improvements:
- ~ New Moderator player type for multiplayer
- ~ ~ Sees the full universe like an observer.
- ~ ~ Controls the length of turns.
- ~ ~ Can create and destroy objects, add or remove starlanes, and set ownership of objects.
- ~ ~ Can be used with no other human players and several AIs to have a more-controlled AI test arena than using observer mode.
  ~ Fundamental change to ship shield mechanics: ship shields reduce the amount of damage suffered from a hit by a fixed value (determined by the shield strength stat), instead of providing additional structure that regenerates between battles
  ~ Reworked supply block / fleet movement blockade mechanics
  ~ ~ Supply blocks and fleet movement blockades have been harmonized to occur in the same situations 
@@ -29,12 +24,18 @@ New Features / Improvements:
  ~ ~ If armed aggressive fleets for two enemy empires arrive at a system at the same time, supply maintenance takes precedence over supply blocks -- they will each maintain supply for for their empire, and not block supply for the other, for so long as both sides remain and survive.
  ~ ~ An empire 'secures' use of a starlane as an exit from a system simply by having a fleet enter that system along that starlane.  If no armed aggressive enemies were already present in the system, then passage through all exiting starlanes is secured for that empire so long as it maintains an armed aggressive fleet presence in that system.
  ~ ~ Passage of an empire's fleets through 'unsecured' starlanes exiting a blockaded system is blocked until the blockade is completely broken, by defeating all armed aggressive enemy forces present (previously movement was only halted for one game turn); exit along a 'secured' starlane will be allowed after the fleet has halted for at least one turn in the system, even if the blockade is not broken.
- ~ Raised max number of systems to 5000
- ~ ~ Note FreeOrion is balanced for a galaxy in the low 100s of systems.  Higher numbers make a game increasingly slow and unbalanced.
+ ~ Raised max number of systems to 5000 in GUI.
+ ~ ~ Note FreeOrion is balanced for and performs best with a galaxy in the low 100s of systems.  Higher numbers make a game increasingly unbalanced and make rendering performance and turn processing times worse.
  ~ Many fixes and improvements to the AI
  ~ Added a configurable random seed value for galaxy generation
  ~ Made focus visible on detected planets a player doesn't control
  ~ Detailed combat log display
+ ~ New Moderator player type in multiplayer mode
+ ~ ~ Sees the full universe like an observer.
+ ~ ~ Controls the length of turns.
+ ~ ~ Can create and destroy objects, add or remove starlanes, and set ownership of objects.
+ ~ ~ Can be used with no other human players and several AIs to have a more-controlled AI test arena than using observer mode.
+ ~ Made fields visible if any part of them is within detection range, rather than their centre.
 
 Content:
  ~ Major revision of shields/armor/weapons (due to the new shield mechanics)
@@ -47,7 +48,8 @@ Content:
  ~ ~ Adjusted a few basic pre-made/starting ship designs, discarded the rest
  ~ ~ Adjusted affected species picks accordingly
  ~ ~ Reduced Acirema ship shield bonus to +1
- ~ Added new fields, various tweaks/adjustments to fields
+ ~ Added molecular clouds that reduce ship shields, which spawn outside the galaxy and move in
+ ~ Added nebulae that spawn on no-star systems.
  ~ Added more species write-ups
  ~ Added terraforming reversion building
  ~ Translation updates: Finnish, French, German, Italian, Polish, Spanish
@@ -57,14 +59,12 @@ Content:
  ~ Fixes to Psychogenic Domination and System Defense Mines techs
  ~ Corrected description of requirements for the Static Multicellular hull
  ~ Fixed Egassem species description
- ~ Some tech tree reorganization
- ~ Various adjustments to techs
- ~ To avoid confusion removed "can colonize" from species that can't build ships
+ ~ Tech tree reorganization and various adjustments to techs
+ ~ To avoid confusion removed "can colonize" property from species that can't build ships
 
 Graphics / GUI:
  ~ Replaced galaxy map toolbar button text with icons
  ~ Added detection range circles opacity control to galaxy map options
- ~ Made tech panels a bit wider
  ~ Added empire statistics to empires window
  ~ Sitrep window will not pop up if the design, research or production screens are open
  ~ Sitrep messages:
@@ -79,17 +79,16 @@ Graphics / GUI:
  ~ Added "X" close buttons to objects list and pedia windows
  ~ Added aggregate fleet stats icons at top of fleet window
  ~ Moved focus drop box to top level of planet panel, out of the resources subpanel
- ~ Made shift + single click enqueue a tech
- ~ Overhaul of research screen
- ~ ~ Added tooltips
- ~ ~ ETA and enqueued dependency indication
- ~ ~ Grey un-researched tech icons on tree to better distinguish from researched techs
+ ~ Overhauled research screen rendering
+ ~ ~ Rewrote rendering of tech panels.
+ ~ ~ Adding tooltips to tech panels with details that are now not shown on the panel itself.
+ ~ ~ Highlighted enqueued techs on tree.
  ~ ~ Tech panel mouseover and selection indicators
  ~ ~ Removed tech type buttons on tree filter
  ~ ~ Added prerequisites and unlocked techs to tech descriptions in pedia
- ~ ~ CTRL + double click adds tech to top of queue
- ~ ~ Removed tech navigator
- ~ ~ Color tweaks
+ ~ ~ Removed tech navigator. Pedia entry for techs have equivalent links.
+ ~ ~ SHIFT + single click enqueues a tech
+ ~ ~ CTRL + double click enqueues a tech to top of queue
  ~ Ship stats of a ship design displayed on the ship design screen now take into account effects groups acting on a ship
  ~ Readjusted fleet window summary bar to show current stat rather than projected next turn values
  ~ Modified pedia panel "up" button behavior to always be enabled and to always go directly to the index, regardless of what page the view is currently on
@@ -114,7 +113,6 @@ Bugs:
  ~ Fixes for various issues with loading/saving games
  ~ Restricted speed bonuses granted by Infrastructure Ecology tech and Interstellar Lighthouse building to ignore immobile ships
  ~ Fixed stealth reducing effect of Interstellar Lighthouse building
- ~ Fixed tech ETA text misplacement
  ~ Fixed display of system name for systems that have no star but do have planets
  ~ Fixed map hotkey issues
  ~ Fixed issue that production progress stops for ships if their design is deleted
