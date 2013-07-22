@@ -8955,7 +8955,7 @@ GREAT_WEAPONS
 '''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.'''
+'''+++	Starts with [[tech SHP_WEAPON_2_3]] and three additional ships.'''
 
 BAD_POPULATION
 '''−	Bad Population 75%'''
