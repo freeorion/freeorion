@@ -201,6 +201,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
 void GalaxySetupPanel::RandomClicked(){
     char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
     std::string s = "";
+    ClockSeed(); // to ensure we don't always get the same sequence of seeds
     for (int i = 0; i < 8; ++i) {
         s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
     }
