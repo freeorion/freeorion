@@ -94,8 +94,8 @@ ShipDesign
     description = "SD_MARK4_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_WEAPON_2_4"
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_3"
+        "SR_WEAPON_2_3"
         ""
     ]
     icon = ""

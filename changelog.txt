@@ -61,6 +61,9 @@ Content:
  ~ Fixed Egassem species description
  ~ Tech tree reorganization and various adjustments to techs
  ~ To avoid confusion removed "can colonize" property from species that can't build ships
+ ~ Fixed weapon species picks:
+ ~ ~ Grant not only a specific refinement level, but also all preceding techs at the start of the game
+ ~ ~ Lowered weapon tech for ultimate weapons from Laser 4 to Laser 3, adjusted premade ship design "Mark IV" accordingly
 
 Graphics / GUI:
  ~ Replaced galaxy map toolbar button text with icons
