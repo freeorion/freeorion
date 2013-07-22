@@ -8,6 +8,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/SitRepEntry.h"
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
@@ -67,14 +68,39 @@ namespace {
         }
     }
 
-    std::set<std::string> AllSitRepTemplateStrings() {
-        std::set<std::string> retval;
+    std::vector<std::string> OrderedSitrepTemplateStrings() {
+        // determine sitrep order
+        //Logger().debugStream() << "Sitrep Order: " << UserString("SITREP_PRIORITY_ORDER");
+        std::istringstream template_stream(UserString("SITREP_PRIORITY_ORDER"));
+        std::vector<std::string> sitrep_order;
+        std::copy(std::istream_iterator<std::string>(template_stream), 
+                    std::istream_iterator<std::string>(),
+                  std::back_inserter<std::vector<std::string> >(sitrep_order));
+        return sitrep_order;
+    }
+
+    std::vector<std::string> AllSitRepTemplateStrings() {
+        std::set<std::string> template_set;
+        std::vector<std::string> retval;
         Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
         if (!empire)
             return retval;
         for (Empire::SitRepItr sitrep_it = empire->SitRepBegin();
              sitrep_it != empire->SitRepEnd(); ++sitrep_it)
-        { retval.insert(sitrep_it->GetTemplateString()); }
+        { template_set.insert(sitrep_it->GetTemplateString()); }
+        std::vector<std::string> ordered_templates = OrderedSitrepTemplateStrings();
+        // only use those ordered templates actually in the current set of sitrep templates
+        for (std::vector<std::string>::iterator it = ordered_templates.begin(); 
+             it!=ordered_templates.end(); it++) 
+        {
+            if ( (template_set.find(*it) != template_set.end()) && 
+                 (std::find(retval.begin(), retval.end(), *it) == retval.end()) )
+            { retval.push_back(*it); }
+        }
+        //now add the current templates that did not have a specified order
+        for (std::set<std::string>::iterator it = template_set.begin(); it!= template_set.end(); it++)
+            if (std::find(retval.begin(), retval.end(), *it) == retval.end())
+                retval.push_back(*it);
         return retval;
     }
 
@@ -290,14 +316,14 @@ void SitRepPanel::LastClicked() {
 }
 
 void SitRepPanel::FilterClicked() {
-    std::set<std::string> all_templates = AllSitRepTemplateStrings();
+    std::vector<std::string> all_templates = AllSitRepTemplateStrings();
 
     std::map<int, std::string> menu_index_templates;
     std::map<int, bool> menu_index_checked;
     int index = 1;
 
     GG::MenuItem menu_contents;
-    for (std::set<std::string>::const_iterator it = all_templates.begin();
+    for (std::vector<std::string>::const_iterator it = all_templates.begin();
          it != all_templates.end(); ++it, ++index)
     {
         menu_index_templates[index] = *it;
@@ -342,7 +368,8 @@ void SitRepPanel::Update() {
 
     GG::X width = m_sitreps_lb->Width() - 8;
 
-    // loop through sitreps and display
+    std::list<SitRepEntry> currentTurnSitreps;
+    // loop through sitreps and add to current list
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         if (!GetOptionsDB().Get<bool>("verbose-sitrep")) {
             if (!sitrep_it->Validate())
@@ -352,8 +379,32 @@ void SitRepPanel::Update() {
             continue;
         if (m_hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != m_hidden_sitrep_templates.end())
             continue;
-        m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it));
+        currentTurnSitreps.push_back(*sitrep_it);
     }
+    // order sitreps for display
+    std::vector<SitRepEntry> orderedSitreps;
+    std::vector<std::string> ordered_templates = OrderedSitrepTemplateStrings();
+    for (std::vector<std::string>::const_iterator template_it = ordered_templates.begin();
+         template_it != ordered_templates.end(); ++template_it)
+    {
+        for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
+             sitrep_it != currentTurnSitreps.end(); sitrep_it++)
+        {
+            if (sitrep_it->GetTemplateString() == *template_it) {
+                //Logger().debugStream() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
+                orderedSitreps.push_back(*sitrep_it);
+                //Logger().debugStream()<< "deleting above sitrep from currentTurnSitreps";
+                sitrep_it = currentTurnSitreps.erase(sitrep_it);
+            }
+        }
+    }
+    //Logger().debugStream()<< "copying over any remaining currentTurnSitreps, total of " << currentTurnSitreps.size();
+    for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
+         sitrep_it != currentTurnSitreps.end(); sitrep_it++)
+    { orderedSitreps.push_back(*sitrep_it); }
+    for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin(); 
+         sitrep_it != orderedSitreps.end(); sitrep_it++)
+    { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
 
     if (CurrentTurn() >= 1 && m_showing_turn > 1) {
         m_prev_turn_button->Disable(false);

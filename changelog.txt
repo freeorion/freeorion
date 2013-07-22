@@ -10,7 +10,7 @@ Key Changes:
  
  ~ Numerous GUI tweaks and improvements
  
- ~ Galaxy Generation is now based on a copy-able random seed
+ ~ Galaxy Generation is now based on a editable random seed
 
  ~ New clouds and nebulae on empty systems and moving around the galaxy.
  
@@ -75,6 +75,7 @@ Graphics / GUI:
  ~ ~ Added sitrep message upon total population loss from Concentration Camp
  ~ ~ Added sitrep messages for mines
  ~ ~ Added sitrep messages for Psychogenic Domination
+ ~ ~ Reordered sitrep order of presentation; is now customizable via content files
  ~ Augmented census popup with tag/characteristic info
  ~ Reorganization of species description text
  ~ Planet and field icons in objects list
