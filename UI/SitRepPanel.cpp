@@ -394,7 +394,7 @@ void SitRepPanel::Update() {
                 //Logger().debugStream() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
                 orderedSitreps.push_back(*sitrep_it);
                 //Logger().debugStream()<< "deleting above sitrep from currentTurnSitreps";
-                sitrep_it = currentTurnSitreps.erase(sitrep_it);
+                sitrep_it = --currentTurnSitreps.erase(sitrep_it);
             }
         }
     }
