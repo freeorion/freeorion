@@ -390,14 +390,15 @@ def generateAIFleetOrdersForAIFleetMissions():
     "generates fleet orders from targets"
     print("Generating fleet orders")
 
-    print ""
+    # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
+    print "Fleets by Role\n"
     print "Exploration Fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
     print "Colonization Fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
     print "Outpost Fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST))
     print "Attack Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
     print "Defend Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
     print "Invasion Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
-    print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
+    print "Military Fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
     print "Orbital Defense Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE))
     print "Outpost Base Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
@@ -453,11 +454,20 @@ def generateAIFleetOrdersForAIFleetMissions():
 
     militaryAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_MILITARY])
     if len( militaryAIFleetMissions) >0:
-        print "Military targets: "
+        print "General Military targets: "
     else:
-        print "Military targets:  None"
+        print "General Military targets:  None"
     for militaryAIFleetMission in militaryAIFleetMissions:
         print "    " + str(militaryAIFleetMission)
+        
+    secureAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_SECURE])
+    if len( secureAIFleetMissions) >0:
+        print "Secure targets: "
+    else:
+        print "Secure targets:  None"
+    for secureAIFleetMission in secureAIFleetMissions:
+        print "    " + str(secureAIFleetMission)
+        
     orbDefenseAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE])
     if len( orbDefenseAIFleetMissions) >0:
         print "Orbital Defense targets: "

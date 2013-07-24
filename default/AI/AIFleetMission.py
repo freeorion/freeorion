@@ -255,10 +255,10 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
 
         # TODO: priority
         ordersCompleted = True
-        print "Checking orders for fleet %d"%(self.getAITargetID())
-        #print "\t Full Orders are:"
+        print "Checking orders for fleet %d   (on turn %d)"%(self.getAITargetID(),  fo.currentTurn())
+        #print "\t\t\t Full Orders are:"
         #for aiFleetOrder2 in self.getAIFleetOrders():
-        #    print "\t\t %s"%aiFleetOrder2
+        #    print "\t\t\t\t %s"%aiFleetOrder2
         for aiFleetOrder in self.getAIFleetOrders():
             #print "   %s"%(aiFleetOrder)
             clearAll=False
@@ -337,11 +337,22 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                                 print "        source target Ship (%d), species %s,   can%s colonize"%(   shipID,  ship.speciesName,    ["not", ""][ship.canColonize])
                         return  # colonize order must not have completed yet
                 clearAll=True
+                lastSystTarget = -1
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_MILITARY:
+                    lastSystTarget = lastOrder.getTargetAITarget().getTargetID()
                     # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.getAIMissionTypes())  or   # not doing this until decide a way to release from a SECURE mission
-                    if   (lastOrder.getTargetAITarget().getTargetID() in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + 
+                    if   (lastSystTarget in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + 
                                                                                                                                                 AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs))): #consider a secure mission
-                        print "Fleet %d has completed initial stage of its mission to secure system %d, may release a portion of ships"%(self.getAITargetID() ,  lastOrder.getTargetAITarget().getTargetID())
+                        secureType="Unidentified"
+                        if   (lastSystTarget in AIstate.colonyTargetedSystemIDs):
+                            secureType  = "Colony"
+                        elif lastSystTarget in AIstate.outpostTargetedSystemIDs :
+                            secureType  = "Outpost"
+                        elif lastSystTarget in AIstate.invasionTargetedSystemIDs :
+                            secureType  = "Invasion"
+                        elif lastSystTarget in AIstate.blockadeTargetedSystemIDs :
+                            secureType  = "Blockade"
+                        print "Fleet %d has completed initial stage of its mission to secure system %d (targeted for %s), may release a portion of ships"%(self.getAITargetID() ,  lastSystTarget,  secureType)
                         clearAll=False
                 fleetID=self.getAITargetID()
                 fleet=universe.getFleet(fleetID)
@@ -366,7 +377,13 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                             MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
                 else:
                     #TODO: evaluate releasing a smaller portion or none of the ships 
-                    newFleets=FleetUtilsAI.splitFleet(self.getAITargetID() ) #at least first stage of current task is done; release extra ships for potential other deployments
+                    sysStatus = foAI.foAIstate.systemStatus.setdefault(lastSystTarget, {})
+                    newFleets=[]
+                    if (sysStatus.get('totalThreat',  0) == 0):
+                        print "No current threat in target system; releasing a portion of ships."
+                        newFleets=FleetUtilsAI.splitFleet(self.getAITargetID() ) #at least first stage of current task is done; release extra ships for potential other deployments
+                    else:
+                        print "Threat remains in target system; NOT releasing any ships."
                     newMilFleets = []
                     for fleetID in newFleets:
                         if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
@@ -375,7 +392,9 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                                                                                                                             EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
                                                                                                                             EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
                             newMilFleets.append(fleetID)
-                    allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  round="Fleet Reassignment %s"%newMilFleets)
+                    allocations=[]
+                    if newMilFleets:
+                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  round="Fleet Reassignment %s"%newMilFleets)
                     if allocations:
                         MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=newMilFleets,  allocations=allocations)
                         
