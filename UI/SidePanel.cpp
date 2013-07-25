@@ -1614,6 +1614,8 @@ void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
     const Planet* planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
+    colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
+    species_colony_projections.clear();
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
         new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus)));
 }
