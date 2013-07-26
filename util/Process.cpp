@@ -2,6 +2,8 @@
 
 #include "Logger.h"
 
+#include <boost/algorithm/string.hpp>
+
 #include <stdexcept>
 
 Process::Process() :
@@ -10,7 +12,7 @@ Process::Process() :
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_impl(new ProcessImpl(cmd, argv)), 
+    m_impl(new ProcessImpl(cmd, argv)),
     m_empty(false),
     m_low_priority(false)
 {}
@@ -99,6 +101,7 @@ void Process::ProcessImpl::Kill() {
             err_str += buf;
             LocalFree(buf);
         }
+        boost::algorithm::trim(err_str);
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error terminating process: " << err_str;
     }
 
@@ -111,6 +114,7 @@ void Process::ProcessImpl::Kill() {
             err_str += buf;
             LocalFree(buf);
         }
+        boost::algorithm::trim(err_str);
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing process handle: " << err_str;
     }
 
@@ -123,6 +127,7 @@ void Process::ProcessImpl::Kill() {
             err_str += buf;
             LocalFree(buf);
         }
+        boost::algorithm::trim(err_str);
         Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing thread handle: " << err_str;
     }
 
