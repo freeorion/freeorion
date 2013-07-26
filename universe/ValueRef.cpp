@@ -146,7 +146,9 @@ std::string ValueRef::ReconstructName(const std::vector<adobe::name_t>& property
         // don't want to output "Target.Value", so if "Value" is the
         // property name, skip prepending "Target".  Otherwise, prepend
         // target as with other direct object references.
-        if (property_name[0] != Value_name)
+        if (property_name.back() == Value_name)
+            retval = "Value";
+        else
             retval = "Target";
         break;
     }

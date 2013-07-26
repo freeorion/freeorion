@@ -5325,7 +5325,7 @@ DESC_VAR_STARTYPE
 star type
 
 DESC_VAR_VALUE
-previous value for this meter
+previous value
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
