@@ -3,7 +3,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
-#include "Planet.h"
+#include "Meter.h"
 
 #include <algorithm>
 #include <stdexcept>
