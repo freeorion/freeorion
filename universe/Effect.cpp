@@ -970,12 +970,12 @@ std::string SetEmpireMeter::Description() const {
 
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_METER"))
                % empire_str
-               % UserString(lexical_cast<std::string>(m_meter))
+               % UserString(m_meter)
                % value_str);
 }
 
 std::string SetEmpireMeter::Dump() const
-{ return DumpIndent() + "SetEmpireMeter meter = " + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump(); }
+{ return DumpIndent() + "SetEmpireMeter meter = " + m_meter + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump(); }
 
 
 ///////////////////////////////////////////////////////////
