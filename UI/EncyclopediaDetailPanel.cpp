@@ -1259,6 +1259,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         std::string original_planet_species = planet->SpeciesName();
         int original_owner_id = planet->Owner();
+        float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
         name = planet->PublicName(planet_id);
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1300,9 +1301,10 @@ void EncyclopediaDetailPanel::Refresh() {
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
-        std::vector<int> planet_vec(1, planet_id);
 
-        for (std::set<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); it++) {
+        for (std::set<std::string>::const_iterator it = species_names.begin();
+             it != species_names.end(); it++)
+        {
             std::string species_name = *it;
 
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
@@ -1314,60 +1316,39 @@ void EncyclopediaDetailPanel::Refresh() {
             // @see also: MapWnd::UpdateMeterEstimates()
             planet->SetSpecies(species_name);
             planet->SetOwner(empire_id);
-
-            //GetUniverse().UpdateMeterEstimates(planet_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec); //use this instead of simple UpdateMeterEstimates so that clamping is done
+            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
+            GetUniverse().UpdateMeterEstimates(planet_id);
 
             const Species* species = GetSpecies(species_name);
             PlanetEnvironment planet_environment = PE_UNINHABITABLE;
             if (species)
                 planet_environment = species->GetPlanetEnvironment(planet->Type());
 
-            double planet_capacity = 0.0;
-            if (planet_environment != PE_UNINHABITABLE) {
-                planet_capacity = planet->CurrentMeterValue(METER_TARGET_POPULATION);
-                //TODO: use the AccountingInfo below to make a tooltip instead of logging
-                float discrepancy = 0;
-                const Effect::AccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
-                Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(planet_id);
-                if (map_it != effect_accounting_map.end()) {
-                    const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
-                    // is any effect accounting available for this indicator's meter type?
-                    std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(METER_TARGET_POPULATION);
-                    if (meter_it != meter_map.end()) {
-                        const std::vector<Effect::AccountingInfo>& accounts = meter_it->second;
-                        for (std::vector<Effect::AccountingInfo>::const_iterator account_it = accounts.begin();
-                            account_it != accounts.end(); ++account_it)
-                        {
-                            if (account_it->cause_type == ECT_UNKNOWN_CAUSE)
-                                discrepancy += account_it->meter_change;
-                            Logger().debugStream() << planet->Name() << " TargetPop Meter Detail: EffectType"<< account_it->cause_type <<"; main label: "<<
-                            account_it->specific_cause << "; specific label: ("<<account_it->custom_label <<  "); change: "<< account_it->meter_change<<"; running total: "<< 
-                            account_it->running_meter_total;
-                        }
-                    }
-                }
-            }
+            double planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
+
             population_counts[species_name].first = planet_environment;
             population_counts[species_name].second = planet_capacity;
         }
 
         std::multimap<float, std::pair<std::string, PlanetEnvironment> > target_population_species;
-        for (std::map<std::string, std::pair<PlanetEnvironment, float> >::const_iterator it = population_counts.begin();
-            it != population_counts.end(); ++it)
-        { target_population_species.insert(std::make_pair(it->second.second, std::make_pair(it->first, it->second.first))); }
-
+        for (std::map<std::string, std::pair<PlanetEnvironment, float> >::const_iterator
+             it = population_counts.begin(); it != population_counts.end(); ++it)
+        {
+            target_population_species.insert(std::make_pair(
+                it->second.second, std::make_pair(it->first, it->second.first)));
+        }
 
         bool positive_header_placed = false;
         bool negative_header_placed = false;
 
-        for (std::multimap<float, std::pair<std::string, PlanetEnvironment> >::const_reverse_iterator it = target_population_species.rbegin(); it != target_population_species.rend(); it++) {
+        for (std::multimap<float, std::pair<std::string, PlanetEnvironment> >::const_reverse_iterator
+             it = target_population_species.rbegin(); it != target_population_species.rend(); it++)
+        {
             std::string user_species_name = UserString(it->second.first);
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
 
-            while (font->TextExtent(species_name_column1).x < max_species_name_column1_width) {
-                species_name_column1 += "\t";
-            }
+            while (font->TextExtent(species_name_column1).x < max_species_name_column1_width)
+            { species_name_column1 += "\t"; }
 
             if (it->first > 0) {
                 if (!positive_header_placed) {
@@ -1400,8 +1381,8 @@ void EncyclopediaDetailPanel::Refresh() {
 
         planet->SetSpecies(original_planet_species);
         planet->SetOwner(original_owner_id);
-        //GetUniverse().UpdateMeterEstimates(planet_id);
-        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec); //use this instead of simple UpdateMeterEstimates so that clamping is done
+        planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        GetUniverse().UpdateMeterEstimates(planet_id);
 
     } else if (m_items_it->first == COMBAT_LOG) {
         int log_id = boost::lexical_cast<int>(m_items_it->second);
