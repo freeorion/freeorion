@@ -1085,7 +1085,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
             // apply all meters' discrepancies
             std::map<MeterType, double>& meter_map = dis_it->second;
-            for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
+            for (std::map<MeterType, double>::iterator meter_it = meter_map.begin();
+                 meter_it != meter_map.end(); ++meter_it)
+            {
                 MeterType type = meter_it->first;
                 double discrepancy = meter_it->second;
 
@@ -1095,7 +1097,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
                 if (meter) {
                     if (GetOptionsDB().Get<bool>("verbose-logging"))
-                        Logger().debugStream() << "object " << obj_id << " has meter " << type << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                        Logger().debugStream() << "object " << obj_id << " has meter " << type
+                                               << ": discrepancy: " << discrepancy
+                                               << " and : " << meter->Dump();
 
                     meter->AddToCurrent(discrepancy);
 
