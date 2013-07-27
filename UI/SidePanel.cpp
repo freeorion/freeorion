@@ -1214,10 +1214,10 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     // pick the "best" one.
     std::string orig_species = target_planet->SpeciesName(); //should be just ""
     int orig_owner = target_planet->Owner();
+    float orig_initial_target_pop = target_planet->GetMeter(METER_TARGET_POPULATION)->Initial();
     int best_ship = INVALID_OBJECT_ID;
     float best_capacity = -999;
     bool changed_planet = false;
-    std::vector<int> planet_vec(1, target_planet_id);
 
     GetUniverse().InhibitUniverseObjectSignals(true);
     for (std::vector<const Ship*>::const_iterator ship_it = capable_and_available_colony_ships.begin();
@@ -1254,8 +1254,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                         changed_planet = true;
                         target_planet->SetOwner(empire_id);
                         target_planet->SetSpecies(ship_species_name);
-                        //GetUniverse().UpdateMeterEstimates(target_planet_id);
-                        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec); //use this instead of UpdateMeterEstimates so that clamping is done
+                        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
+                        GetUniverse().UpdateMeterEstimates(target_planet_id);
                         planet_capacity = target_planet->CurrentMeterValue(METER_TARGET_POPULATION);
                     }
                     species_colony_projections[spec_pair] = planet_capacity;
@@ -1271,11 +1271,10 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         }
     }
     if (changed_planet) {
-        //Logger().debugStream() << "Autoselected colony ship " << best_ship << " for planet " << target_planet->Name() << "; capacity " << best_capacity;
         target_planet->SetOwner(orig_owner);
         target_planet->SetSpecies(orig_species);
-        //GetUniverse().UpdateMeterEstimates(target_planet_id);
-        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec);  //use this instead of UpdateMeterEstimates so that clamping is done
+        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        GetUniverse().UpdateMeterEstimates(target_planet_id);
     }
     GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -1475,28 +1474,28 @@ void SidePanel::PlanetPanel::Refresh() {
         // then setting the planet back as it was.  The results are cached for the duration of the turn 
         // in the colony_projections map.
         AttachChild(m_colonize_button);
-        double planet_capacity = 0.0;
-        std::vector<int> planet_vec(1, m_planet_id);
+        double planet_capacity;
         std::pair<int,int> this_pair = std::make_pair<int,int>(selected_colony_ship->ID(), m_planet_id);
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
         } else if (colony_ship_capacity==0.0) {
+            planet_capacity = 0.0;
             colony_projections[this_pair] = planet_capacity;
         } else {
             GetUniverse().InhibitUniverseObjectSignals(true);
             std::string orig_species = planet->SpeciesName(); //should be just ""
             int orig_owner = planet->Owner();
+            float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
             planet->SetSpecies(colony_ship_species_name);
-            //GetUniverse().UpdateMeterEstimates(m_planet_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec); //use this instead of UpdateMeterEstimates so that clamping is done
-            if (planet_env_for_colony_species != PE_UNINHABITABLE)
-                planet_capacity = planet->CurrentMeterValue(METER_TARGET_POPULATION);
+            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
+            GetUniverse().UpdateMeterEstimates(m_planet_id);
+            planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
             planet->SetOwner(orig_owner);
             planet->SetSpecies(orig_species);
-            //GetUniverse().UpdateMeterEstimates(m_planet_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_vec); //use this instead of UpdateMeterEstimates so that clamping is done
+            planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+            GetUniverse().UpdateMeterEstimates(m_planet_id);
             colony_projections[this_pair] = planet_capacity;
             GetUniverse().InhibitUniverseObjectSignals(false);
         }
