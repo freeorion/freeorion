@@ -612,7 +612,13 @@ void Planet::Reset() {
 
 void Planet::Depopulate() {
     PopCenter::Depopulate();
-    ResourceCenter::Reset();
+
+    GetMeter(METER_INDUSTRY)->Reset();
+    GetMeter(METER_RESEARCH)->Reset();
+    GetMeter(METER_TRADE)->Reset();
+    GetMeter(METER_CONSTRUCTION)->Reset();
+
+    SetFocus("");
 }
 
 void Planet::Conquer(int conquerer) {
