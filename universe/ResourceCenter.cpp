@@ -108,6 +108,11 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
 }
 
 void ResourceCenter::SetFocus(const std::string& focus) {
+    if (focus.empty()) {
+        m_focus.clear();
+        ResourceCenterChangedSignal();
+        return;
+    }
     std::vector<std::string> avail_foci = AvailableFoci();
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
         m_focus = focus;
