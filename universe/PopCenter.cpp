@@ -125,8 +125,10 @@ void PopCenter::Reset() {
     m_species_name.clear();
 }
 
-void PopCenter::Depopulate()
-{ PopCenter::Reset(); }
+void PopCenter::Depopulate() {
+    GetMeter(METER_POPULATION)->Reset();
+    GetMeter(METER_HAPPINESS)->Reset();
+}
 
 void PopCenter::SetSpecies(const std::string& species_name) {
     const Species* species = GetSpecies(species_name);
