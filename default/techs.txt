@@ -1211,6 +1211,7 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
+                OwnedBy TheEmpire Source.Owner
                 ContainedBy Contains And [
                     Planet type = Asteroids
                     OwnedBy TheEmpire Source.Owner
