@@ -4887,6 +4887,11 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
+STARSPAWN_NEBULA_SPECIAL
+Starspawn Nebula
+STARSPAWN_NEBULA_SPECIAL_DESC
+Systems with this special have a nebula created around them. This nebula may collapse to form a new star.
+
 
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
