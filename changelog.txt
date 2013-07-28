@@ -52,7 +52,7 @@ Content:
  ~ Added nebulae that spawn on no-star systems.
  ~ Added more species write-ups
  ~ Added terraforming reversion building
- ~ Translation updates: Finnish, French, German, Italian, Polish, Spanish
+ ~ Translation updates: Finnish, French, German, Italian, Polish, Spanish, Russian
  ~ Tweaks/refinements for Evacuation building
  ~ Concentration Camps now cause a lingering negative effect on population, of indefinite duration even if the camp is removed.
  ~ Fixed Solar Orbital Generator building description
@@ -125,6 +125,7 @@ Bugs:
  ~ Fixed some crashes in research screen / tech tree
  ~ Fixed detection range circle overlap artifacts at high detection ranges
  ~ Fixed issues with fleet stat calculations
+ ~ Fixed sometimes inaccurate population projections on colonize button and planet suitability report
  ~ Numerous other bug fixes
 
 
