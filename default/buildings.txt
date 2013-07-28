@@ -1152,7 +1152,7 @@ BuildingType
         EffectsGroup
             scope = ContainedBy Contains Source
             activation = Source
-            effects = SetStealth 60
+            effects = SetStealth Value + 1000
     ]
     icon = ""
 
