@@ -4180,29 +4180,6 @@ void MapWnd::SelectedShipsChanged() {
     // refresh meters of planets in currently selected system, as changing selected fleets
     // may have changed which species a planet should have population estimates shown for
 
-    int sidepanel_system_id = SidePanel::SystemID();
-    if (sidepanel_system_id == INVALID_OBJECT_ID)
-        return;
-
-    // todo: update only target population meters
-
-    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-
-    std::vector<int> planets = Objects().FindObjectIDs<Planet>();
-    std::vector<int> system_planets;    system_planets.reserve(16); // arbitrary number big enough for all planets in a system
-    for (std::vector<int>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        if (this_client_known_destroyed_objects.find(*it) != this_client_known_destroyed_objects.end())
-            continue;
-        const Planet* planet = GetPlanet(*it);
-        if (!planet)
-            continue;
-        if (planet->SystemID() != sidepanel_system_id)
-            continue;
-        system_planets.push_back(*it);
-    }
-
-    UpdateMeterEstimates(system_planets);
     SidePanel::Update();
 }
 
@@ -4959,104 +4936,13 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
 }
 
 void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
-    // add this player ownership to all planets in the objects_vec that aren't
-    // currently colonized.  this way, any effects the player knows about that
-    // would act on those planets if the player colonized them include those
-    // planets in their scope.  This lets effects from techs the player knows
-    // alter the max population of planet that is displayed to the player, even
-    // if those effects have a condition that causes them to only act on
-    // planets the player owns (so as to not improve enemy planets if a player
-    // reseraches a tech that should only benefit him/herself)
+    // causes meters to be updated when appropriate, such as after a focus change,
+    // which would affect target meters
 
     Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
     GetUniverse().InhibitUniverseObjectSignals(true);
-
-    std::string             colony_ship_species;
-    // remember which planes are temporarily modified so it can be undone after updating meter estimates
-    std::vector<Planet*>    ownership_modified_planets;
-    std::vector<Planet*>    species_modified_planets;
-
-
-    if (const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID())) {
-        // there is a selected colony ship suitable for the visible system
-        if (ship->CanColonize() && ship->OwnedBy(empire_id) && !ship->SpeciesName().empty()) {
-            // selected ship: exists, is a colony ship, is owned by this client's player
-            //                is in a system, and has a usable species.
-
-            const std::string& species_name = ship->SpeciesName();
-            int ship_system_id = ship->SystemID();
-
-            // get all planets the player knows about that aren't yet colonized
-            // (aren't owned by anyone) and are otherwise valid colonization
-            // targets for the selected ship. Add the current player's ownership
-            // to all, while remembering which planets this is done to (so it
-            // can be undone later)
-            for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-                Planet* planet = GetPlanet(*it);
-                if (!planet ||
-                    (!planet->Unowned() && !planet->OwnedBy(empire_id)) ||
-                    planet->SystemID() != ship_system_id ||
-                    planet->CurrentMeterValue(METER_POPULATION) > 0.0)
-                { continue; }
-
-                PlanetEnvironment planet_env_for_colony_species = planet->EnvironmentForSpecies(species_name);
-                if (planet_env_for_colony_species > PE_GOOD || planet_env_for_colony_species < PE_HOSTILE)
-                    continue;
-
-                if (planet->Unowned()) {
-                    ownership_modified_planets.push_back(planet);
-                    planet->SetOwner(empire_id);
-                }
-                if (planet->SpeciesName().empty()) {
-                    species_modified_planets.push_back(planet);
-                    planet->SetSpecies(species_name);
-                }
-            }
-        }
-    } else if (FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty()) {
-        // no suitable colony ship selected.  instead, for each planet being
-        // updated, attempt to find a colony ship for it, and use that ship's
-        // species for meter estimates.
-        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            Planet* planet = GetPlanet(*it);
-            if (!planet ||
-                (!planet->Unowned() && !planet->OwnedBy(empire_id)) ||
-                planet->CurrentMeterValue(METER_POPULATION) > 0.0)
-            { continue; }
-
-            // attempt to find colony ship for this planet
-            const Ship* ship = GetShip(AutomaticallyChosenColonyShip(*it));
-            if (!ship)
-                continue;
-
-            const std::string& species_name = ship->SpeciesName();
-
-            if (planet->Unowned()) {
-                ownership_modified_planets.push_back(planet);
-                planet->SetOwner(empire_id);
-            }
-            if (planet->SpeciesName().empty()) {
-                species_modified_planets.push_back(planet);
-                planet->SetSpecies(species_name);
-            }
-        }
-    }
-
-
-    // update meter estimates with temporary ownership / species set
     GetUniverse().UpdateMeterEstimates(objects_vec);
-
-
-    // undo any temporary changes from above
-    for (std::vector<Planet*>::iterator it = ownership_modified_planets.begin();
-         it != ownership_modified_planets.end(); ++it)
-    { (*it)->SetOwner(ALL_EMPIRES); }
-    for (std::vector<Planet*>::iterator it = species_modified_planets.begin();
-         it != species_modified_planets.end(); ++it)
-    { (*it)->SetSpecies(""); }
-
     GetUniverse().InhibitUniverseObjectSignals(false);
 }
 
