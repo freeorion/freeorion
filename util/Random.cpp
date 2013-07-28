@@ -1,5 +1,6 @@
 #include "Random.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace {
     GeneratorType gen; // the one random number generator driving the distributions below
@@ -9,8 +10,10 @@ namespace {
 void Seed(unsigned int seed)
 { gen.seed(static_cast<boost::mt19937::result_type>(seed)); }
 
-void ClockSeed()
-{ gen.seed(static_cast<boost::mt19937::result_type>(std::time(0))); }
+void ClockSeed() {
+    boost::posix_time::time_duration diff = boost::posix_time::microsec_clock::local_time().time_of_day();
+    gen.seed(static_cast<boost::mt19937::result_type>(diff.total_milliseconds()));
+}
 
 SmallIntDistType SmallIntDist(int min, int max)
 { return SmallIntDistType(gen, boost::uniform_smallint<>(min, max)); }

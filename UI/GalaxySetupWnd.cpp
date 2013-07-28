@@ -198,14 +198,18 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     Init();
 }
 
-void GalaxySetupPanel::RandomClicked(){
-    char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-    std::string s = "";
+namespace {
+    // set of characters from which to generate random seed that excludes some ambiguous letter/number pairs
+    static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+}
+
+void GalaxySetupPanel::RandomClicked() {
+    std::string s;
     ClockSeed(); // to ensure we don't always get the same sequence of seeds
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i)
         s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
-    }
     m_seed_edit->SetText(s);
+    //std::cout << "GalaxySetupPanel::RandomClicked() new seed: " << s << std::endl;
 }
 
 const std::string& GalaxySetupPanel::GetSeed() const
