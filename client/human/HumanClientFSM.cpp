@@ -59,6 +59,8 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
+    Client().KillServer();
+
     if (GetOptionsDB().Get<bool>("tech-demo"))
         Client().Register(Client().GetClientUI()->GetCombatWnd());
     else {
