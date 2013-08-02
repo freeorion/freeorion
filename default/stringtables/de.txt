@@ -88,6 +88,9 @@ Umbenennen
 ENTER_NEW_NAME
 Neuen Namen eingeben
 
+NOTHING_VALUE_SYMBOL
+--
+
 UNKNOWN_VALUE_SYMBOL
 ?
 
@@ -104,16 +107,16 @@ CHAT_WHISPER
 Flüstern
 
 UP
-^
+Hoch
 
 NEXT
-»
+Nächster
 
 BACK
-«
+Vorheriger
 
 LAST
->|
+Letzter
 
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
@@ -141,7 +144,7 @@ INTERCEPTOR
 Abfangjäger
 
 DEFAULT_EMPIRE_NAME
-Erd Imperium
+Erdimperium
 
 DEFAULT_PLAYER_NAME
 Menschlicher_Spieler
@@ -182,6 +185,9 @@ Irgendein:
 DUMP
 Debug Data Dump
 
+UNOWNED
+Ohne Besitzer
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -191,27 +197,27 @@ SD_SCOUT
 Kundschafter
 
 SD_SCOUT_DESC
-Kleines billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung.
+Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung.
 
 SD_MARK_1
 Typ I
 SD_MARK1_DESC
-Patrouillen Fregatte mit Standard Massetreiber.
+Patrouillenfregatte mit einfachem Massenkatapult.
 
 SD_MARK_2
 Typ II
 SD_MARK2_DESC
-Patrouillen Fregatte mit Verbesserter Massetreiber.
+Patrouillenfregatte mit verbessertem Massenkatapult.
 
 SD_MARK_3
 Typ III
 SD_MARK3_DESC
-Patrouillen Fregatte mit Standard Laser.
+Patrouillenfregatte mit einfachen Laser.
 
 SD_MARK_4
 Typ IV
 SD_MARK4_DESC
-Patrouillen Fregatte mit Verbesserten Laser.
+Patrouillenfregatte mit verbesserten Laser.
 
 SD_MARK_A1
 Typ I
@@ -234,7 +240,7 @@ Typ IV B
 SD_MARK_A5
 Typ V
 SD_MARK5_DESC
-Patrouillen Fregatte mit Standard Laser.
+Patrouillenfregatte mit einfachen Laser.
 
 SD_MARK_A5B
 Typ V B
@@ -242,7 +248,7 @@ Typ V B
 SD_MARK_A6
 Typ VI
 SD_MARK6_DESC
-Patrouillen Fregatte mit Verbessertem Laser.
+Patrouillenfregatte mit verbesserten Laser.
 
 SD_MARK_A6B
 Typ VI B
@@ -250,7 +256,7 @@ Typ VI B
 SD_MARK_A7
 Typ VII
 SD_MARK7_DESC
-Patrouillen Fregatte mit Vorgeschrittenem Laser.
+Patrouillenfregatte mit fortgeschritten Laser.
 
 SD_MARK_A7B
 Typ VII B
@@ -258,7 +264,7 @@ Typ VII B
 SD_MARK_A8
 Typ VIII
 SD_MARK8_DESC
-Patrouillen Fregatte mit Top laser.
+Patrouillenfregatte mit ausgezeichnetem Laser.
 
 SD_MARK_A8B
 Typ VIII B
@@ -266,181 +272,181 @@ Typ VIII B
 SD_MARK_B_ROBOTIC1
 Roboter I
 SD_MARK_B_ROBOTIC1_DESC
-Schlachtkreuzer mit schweren Waffen und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_B_ROBOTIC2
 Roboter II
 SD_MARK_B_ROBOTIC2_DESC
-Schlachtkreuzer mit schweren Waffen und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_B_ROBOTIC3
 Roboter III
 SD_MARK_B_ROBOTIC3_DESC
-Schlachtkreuzer mit schweren Waffen und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_B_ROBOTIC4
 Roboter IV
 SD_MARK_B_ROBOTIC4_DESC
-Schlachtkreuzer mit schweren Waffen und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_A_ORGANIC1
 Organisch I
 SD_MARK_A_ORGANIC1_DESC
-Organischer Rumpf mit grund Laser Bewaffnung
+Organischer Rumpf mit einfacher Laserbewaffnung
 
 SD_MARK_A_ORGANIC2
 Organisch II
 SD_MARK_A_ORGANIC2_DESC
-Organischer Rumpf mit Laser Bewaffnung
+Organischer Rumpf mit Laserbewaffnung
 
 SD_MARK_A_ORGANIC3
 Organisch III
 SD_MARK_A_ORGANIC3_DESC
-Organischer Rumpf mit Laser Bewaffnung
+Organischer Rumpf mit Laserbewaffnung
 
 SD_MARK_A_ORGANIC4
 Organisch IV
 SD_MARK_A_ORGANIC4_DESC
-Organischer Rumpf mit Laser Bewaffnung
+Organischer Rumpf mit Laserbewaffnung
 
 SD_MARK_B_ORGANIC1
 Organisch V
 SD_MARK_B_ORGANIC1_DESC
-Organischer Rumpf mit grund Plasma Bewaffnung.
+Organischer Rumpf mit einfacher Plasmabewaffnung.
 
 SD_MARK_C_ENDO1
 Endomorph I
 SD_MARK_C_ENDO1_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO2
 Endomorph II
 SD_MARK_C_ENDO2_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO3
 Endomorph III
 SD_MARK_C_ENDO3_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO4
 Endomorph IV
 SD_MARK_C_ENDO4_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO5
 Endomorph V
 SD_MARK_C_ENDO5_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO6
 Endomorph VI
 SD_MARK_C_ENDO6_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO7
 Endomorph VII
 SD_MARK_C_ENDO7_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_MARK_C_ENDO8
 Endomorph VIII
 SD_ENDO8_DESC
-Fortgeschrittener endomorph Kreuzer mit schwere Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
+Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
 
 SD_GRAVITATING1
-Gravitierender I
+Gravitierend I
 SD_GRAVITATING1_DESC
-Massive top Kriegsschiff bewaffnet und panzeret mit der letzte Technologie. Preis entsprechend.
+Massives Kriegsschiff bewaffnet und gepanzert mit der neusten Technologie. Preis entsprechend.
 
 SD_COLONY_SHIP
 Kolonieschiff
 
 SD_COLONY_SHIP_DESC
-Gewaltiges unbewaffnetes Schiff fähig dazu Millionen Bürger sicher zum Ort einer neuen Kolonie zu bringen.
+Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Kolonie zu bringen.
 
 SD_OUTPOST_SHIP
 Aussenpostenschiff
 
 SD_OUTPOST_SHIP_DESC
-Unbewaffnetes Schiff fähig einen Aussenposten auf einer unbewohnte Welt zu erstellen.
+Unbewaffnetes Schiff fähig einen Aussenposten auf einer unbewohnbaren Welt zu erstellen.
 
 SD_COLONY_BASE
-Koloniesbase
+Koloniesbasis
 
 SD_COLONY_BASE_DESC
-Unbewaffnetes Schiff fähig eine Kolonie im System wo es erstellt wurde zu gründen.
+Unbewaffnetes Schiff fähig eine Kolonie in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_OUTPOST_BASE
-Aussenpostenbase
+Aussenpostenbasis
 
 SD_OUTPOST_BASE_DESC
-Unbewaffnetes Schiff fähig einen Aussenposten im System wo es erstellt wurde zu erstellen.
+Unbewaffnetes Schiff fähig einen Aussenposten in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_TROOP_SHIP
 Truppentransporter
 
 SD_TROOP_SHIP_DESC
-Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit der Ausrüstung zum einmarschieren auf einen Planeten.
+Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung zur Einnahme eines Planeten.
 
 SD_DRAGON_TOOTH
 Drachenzahn
 
 SD_DRAGON_TOOTH_DESC
-Alter Schiffsentwurf mit fortgeschrittene Waffen und Verteidigungssysteme.
+Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
 
 SM_MONSTER
 Monster
 
 SM_KRILL_1
-Schwarm kleine Krill
+Kleiner Krillschwarm
 SM_KRILL_1_DESC
-'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Obwohl in der Regel nicht aggressiv, wird ihr Zahl eine Gefahr für die Schifffahrt, und Blockiert den Nachschub. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
 
 SM_KRILL_2
-Schwarm mittleren Krill
+Mittlerer Krillschwarm
 SM_KRILL_2_DESC
-'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Obwohl in der Regel nicht aggressiv, wird ihr Zahl eine Gefahr für die Schifffahrt, und Blockiert den Nachschub. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
 
 SM_KRILL_3
-Schwarm grossen Krill
+Großer Krillschwarm
 SM_KRILL_3_DESC
-'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Wenn in genugend grossen Anzahl, fangen sie an sich gegen Schiffe aggressiv zu zeigen. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
 
 SM_KRILL_4
 Krillplage
 SM_KRILL_4_DESC
-'''Raum Krill sind kleine, vage insektoiden Organismen, die auf den Staub und Felsen Futter finden, weg von jedem Gravitationsschacht. Individuell einfach, Krill kommunizieren über kohärentes Licht, so dass der Schwarm zu koordinierte und berechete Flugbahnen kommt. Das Krill Verhalten ändert sich radikal, wenn eine bestimmte kritische Bevölkerung erreicht ist - irgendwo in den 10er von Millionen. Der normalerweise flüchtige Krill, wird aggressiv, greift die Schiffe an und zerstört die orbitalen Strukturen. Die hohe Anzahl von Low-G-Ressourcen in einem Asteroidengürtel bieten Krill mit den perfekten Bedingungen zu schnell vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
 
 SM_TREE
-Dyson Wald
+Dysonwald
 SM_TREE_DESC
-'''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the star-lanes to colonize other stars.'''
+'''Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäume" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.'''
 
 SM_SEED
-Dyson Samen
+Dysonsamen
 SM_SEED_DESC
-Dyson Forests intermittently produce a star-lane capable seed, sent away to found a new forest around other stars.
+Dysonwälder produzieren von Zeit zu Zeit Samen, welche über die Sternenstraßen neue Wälder um andere Sterne gründen können.
 
 SM_FLOATER
 Schwimmer
 SM_FLOATER_DESC
-Gasgefüllt Knollartiger Beutel der im Weltraum umhertreibt.
+Gasgefüllt Knollartiger Beutel, der im Weltraum umhertreibt.
 
 SM_DRAGON
-Vakuum Drachen
+Vakuumdrache
 SM_DRAGON_DESC
-Erschreckendes riesen Monster, das im Raum auf Beutezug umherschleicht.
+Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht.
 
 SM_DRONE
 Drohne
 SM_DRONE_DESC
-'''Werkzeug eines vergessenen Krieges, der Drone-Kämpfer erfüllt immer noch seinen ursprünglichen Zweck: gedankenlos Schiffe angreifen die in Reichweite sind.'''
+'''Als Werkzeug eines vergessenen Krieges erfüllt die Drohnen immer noch seinen ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.'''
 
 SM_DRONE_FACTORY
-Drone Factory
+Drohnenfabrik
 SM_DRONE_FACTORY_DESC
-Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
+In einem lang vergessenen Krieg erbaut um die vor ewigen Zeiten verschwundenen Erbauer zu schützen erfüllt die Drohnenfabrik erstaunlicherweise immer noch ihre Funktion langsam neue Drohnen zu erstellen.
 
 SM_GUARD_1
 Wache
@@ -458,109 +464,108 @@ SM_GUARD_3_DESC
 Aufseher bewachen wichtiges Zeug.
 
 SM_KRAKEN_1
-Larval Kraken
+Krakenlarve
 SM_KRAKEN_1_DESC
-In the larval form, a kraken is a cautious and harmless type of space-bourn fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+In ihrer Larvenform ist der Kraken eine vorsichtige und harmlose Art der im Raum gebornen Fauna. Seine natürliche Beue sind Raumkrillschwärme, welche sie damit reguliert. Aber eine gut genährte Krakenlarve kann sich in eine größere und gefährlichere erwachsene Form weiterentwickeln.
 
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-Ein gewaltiger mittelgewicht Weltraummonster.
+Ein gewaltiges, mittelschweres Weltraummonster.
 
 SM_KRAKEN_3
-Großen Kraken
+Großer Kraken
 SM_KRAKEN_3_DESC
-Ein gewaltiger mittelgewicht Weltraummonster.
+Ein gewaltiges, mittelschweres Weltraummonster.
 
 SM_BLACK_KRAKEN
-Schwazen Kraken
+Schwarzer Kraken
 SM_BLACK_KRAKEN_DESC
-Ein mächtiger, unnatürlich wirkenden Weltraummonster.
+Ein mächtiges, unnatürlich wirkendes Weltraummonster.
 
 SM_SNOWFLAKE_1
 Kleiner Schneeflocke
 SM_SNOWFLAKE_1_DESC
-Ein gewaltiger leichtgewicht Weltraummonster.
+Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_SNOWFLAKE_2
 Schneeflocke
 SM_SNOWFLAKE_2_DESC
-Ein gewaltiger leichtgewicht Weltraummonster.
+Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_SNOWFLAKE_3
 Großen Schneeflocke
 SM_SNOWFLAKE_3_DESC
-Ein gewaltiger leichtgewicht Weltraummonster.
+Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_PSIONIC_SNOWFLAKE
-Psionischen Schneeflocke
+Psionische Schneeflocke
 SM_PSIONIC_SNOWFLAKE_DESC
-Ein Monster der die Kraft besitzt den Verstand von organischen Wesen zu neutralisieren.
+Ein Monster, welches die Kraft besitzt den Verstand von organischen Wesen zu neutralisieren.
 
 SM_JUGGERNAUT_1
-Kleinen Koloss
+Kleiner Koloss
 SM_JUGGERNAUT_1_DESC
-Ein gewaltiger schwergewicht Weltraummonster.
+Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_JUGGERNAUT_2
 Koloss
 SM_JUGGERNAUT_2_DESC
-Ein gewaltiger schwergewicht Weltraummonster.
+Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_JUGGERNAUT_3
-Großen Koloss
+Großer Koloss
 SM_JUGGERNAUT_3_DESC
-Ein gewaltiger schwergewicht Weltraummonster.
+Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_BLOATED_JUGGERNAUT
-Aufgeblähten Koloss
+Aufgeblähter Koloss
 SM_BLOATED_JUGGERNAUT_DESC
-Ein massiv aber krankhaft Aussenden Schwergewicht Weltraummonster.
+Ein massives, aber krankhaft aussehendes schwergewichtes Weltraummonster.
 
 SM_CLOUD
-Space Cloud
+Raumwolke
 SM_CLOUD_DESC
-A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
+Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_ASH
-Space Volcano
-SM_ASH_DESC
-A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
+Weltraumvulkan
+Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_DIM
-Dimensional Drifter
+Dimensionswanderer
 SM_DIM_DESC
-A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
+Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_VOID
 Behemoth of the Void
 SM_VOID_DESC
-A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
+Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_SNAIL
-Asteroid Snail
+Asteroidenschnecke
 SM_SNAIL_DESC
-Feeding upon minerals, the shell of a space snail strongly resembles a normal asteroid making them very hard to detect.
+Die Gehäuse der Asteroidenschnecken ähneln aufgrund ihrer auf Mineralien basiernden Ernährung stark normalen Asteroiden, was das Aufspüren erheblich erschwert.
 
 SM_DAMPENING_CLOUD
-Dampening Cloud
+Dämpfende Wolke
 SM_DAMPENING_CLOUD_DESC
-'''A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of fuel in a matter of seconds.'''
+'''Eine kosmische Wolke aus hochenergetischen elektrischen Partikeln, welche eine Art von Empfindung erlangt hat. Sie wird von Energiefeldern angezogen und entlädt jedes größere Energiepotenzial, was dazu führt das ganze Raumschiffflotten innerhalb von Sekunden ihres Treibstoffes beraubt werden können.'''
 
 SM_ACIREMA_GUARD
-Acirema Schutzschiff
+Acirema Wächterschiff
 SM_ACIREMA_GUARD_DESC
-Ein, von den Acirema's gebaut, unbemanntes bewaffnetes Schiff zur bewachung des Systems.
+Ein unbemanntes bewaffnetes Schiff, welches von den Acirema zur Bewachung des Systems gebaut wurde.
 
 SM_EXP_OUTPOST
-Experimentor Outpost Ship
+Experimentor Aussenpostenschiff
 SM_EXP_OUTPOST_DESC
-An outpost ship constructed by the Experimentors to transport experimental equipment between galaxies.
+Ein Aussenpostenschiff, welches von den Experimentors gebaut wurde um experimentelle Asurüstung zwischen Galaxien zu transportieren.
 
 SM_COSMIC_DRAGON
-Cosmic Dragon
+Kosmischer Drache
 SM_COSMIC_DRAGON_DESC
-A fearsome space monster with the power to destroy entire star systems.
+Ein furchteregendes Weltraummonster mit der Macht ganze Sternensysteme zu zerstören.
 
 ##########
 # Fields #
@@ -570,19 +575,19 @@ FLD_ION_STORM
 Ionensturm
 
 FLD_ION_STORM_DESC
-Magnetischen Wirbel von relativistisch geladene Teilschen die mit Sensoren interferieren kann und Schiffe und Planete beeinträchtigen.
+Magnetischer Wirbel von relativistisch geladene Teilschen welcher die Sensoren einschränken kann und Schiffe und Planete beschädigt.
 
 FLD_MOLECULAR_CLOUD
-Molekularvolke
+Molekularwolke
 
 FLD_MOLECULAR_CLOUD_DESC
-Diffuse Volke von komplexen molekulen die das Schield der Schiffe stören kann.
+Unförmige Wolke aus komplexen Molekülen, welche die Schilde des Schiffe stört.
 
 FLD_NEBULA_1
 Nebel
 
 FLD_NEBULA_1_DESC
-Wasserstoff Gasvolke die kollabieren kann und einen neuen Stern bilden.
+Wolken aus Wasserstoff, die zusammenfallen können und einen neuen Stern bilden.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
@@ -595,29 +600,29 @@ FLD_NEBULA_2_DESC
 ##############################
 
 FN_HOME_FLEET
-Heimat Flotte
+Heimatflotte
 
 FN_BATTLE_FLEET
 Kriegsflotte
 
 FN_SCOUT_FLEET
-Kundschafter Flotte
+Kundschafterflotte
 
 FN_COLONY_FLEET
-Kolonie Flotte
+Kolonieflotte
 
 FN_INVASION_FLEET
-Invasion Flotte
+Invasionflotte
 
 MONSTERS
-Monsters
+Monster
 
 ##########################
 # Status Update Messages #
 ##########################
 
 RETURN_TO_INTRO
-Zurück zum Hauptmenü
+Zum Hauptmenü zurückkehren
 
 SERVER_WONT_START
 Der Server konnte nicht gestartet werden.
@@ -647,37 +652,37 @@ LAST_OPPONENT_DEFEATED_VICTORY
 Ihr letzter Gegner ist geschlagen und Sie sind siegreich!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
-The server received invalid client save data. Some may be ignored.
+Der Server hat ungültige Speicherstanddaten vom Client erhalten. Teile davon können ignoriert werden.
 
 NON_HOST_SAVE_REQUEST_IGNORED
-The server received an invalid save game request from your client. You are not the host, so you cannot save the game.
+Der Server hat eine ungültige Anfrage zum speichern erhalten. Du bist nicht der Host, also kannst du das Spiel nicht speichern.
 
 UNABLE_TO_WRITE_CONFIG_XML
 Fehler beim schreiben der config.xml Datei. Einstellungen konnten nicht gespeichert werden.
 
 UNABLE_TO_READ_CONFIG_XML
-Error when reading config.xml file. Using default options.
+Fehler beim lesen der config.xml Datei. Nutze Standardeinstellungen.
 
 UNABLE_TO_WRITE_SAVE_FILE
-Error when writing save file.
+Fehler beim schreiben des Speicherstandes.
 
 UNABLE_TO_READ_SAVE_FILE
-Error when reading save file.
+Fehler beim lesen des Speicherstandes.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-You do not control an empire and cannot issue orders.
+Du bist nicht Herrscher eines Imperiums und kannst keine Befehle erlassen.
 
 ORDERS_FOR_WRONG_EMPIRE
-Orders were sent for an empire you do not control.
+Es wurden Befehle an ein Imperium gesendet, welches du nicht beherrschst.
 
 SERVER_ALREADY_HOSTING_GAME
-This server is already hosting a game.
+Dieser Server stellt bereits ein Spiel bereit.
 
 SERVER_UNABLE_TO_SELECT_HOST
-The server was unable to select a new host.
+Dieser Server konnte kein neues Spiel bereitstellen.
 
 SERVER_FOUND_NO_ACTIVE_PLAYERS
-Cannot generate game with no active players.
+Kann kein Spiel erstellen ohne aktive Spieler.
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -696,22 +701,22 @@ OPTIONS_DB_GENERATE_CONFIG_XML
 Übernimmt die Standardeinstellungen, die Einstellungen einer bestehenden config.xml Datei und jene aus der Kommandozeile um eine config.xml Datei zu erzeugen. Dies überschreibt die momentane config.xml Datei, falls vorhanden.
 
 OPTIONS_DB_VERSION_STRING
-Tracks the FreeOrion version for which config.xml was generated. Config.xml for different versions will be ignored.
+Speichert die Version von FreeOrion für welche die config.xml erzeugt wurde. Die config.xml anderer Versionen wird ignoriert.
 
 OPTIONS_DB_SOUND_ON
-Enables sound in the game.
+Aktiviert Klänge im Spiel.
 
 OPTIONS_DB_MUSIC_ON
-Enables music in the game.
+Aktiviert Musik im Spiel.
 
 OPTIONS_DB_BG_MUSIC
-Hintergrundmusik abspielen.
+Stellt Hintergrundmusik ein.
 
 OPTIONS_DB_FULLSCREEN
-Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
+Startet das Spiel im Vollbild. Die Einstellung kann sofort übernommen werden oder es kann ein Neustart nötig sein.
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
-Select which monitor to use in fullscreen mode. Primary monitor should be index 0. May require a restart to take effect.
+Wählt aus welcher Monitor für den Vollbildmodus genutzt werden soll. Der Primäre Monitor sollte Index 0 sein. Es kann ein Neustart der Anwendung nötig sein.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
 Verzögerung in Sekunden nach der das Mehrspieler-Chatfenster ausgeblendet wird, wenn nichts geschrieben wurde. Ein Wert von 0 bedeutet, dass das Fenster niemals verschwindet.
@@ -732,19 +737,19 @@ OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Entscheidet ob der Vergrösserungsregler auf der Galaxiekarte angezeigt wird.
 
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
-Toggles whether to show a right-click popup menu on the galaxy map.
+Entscheidet ob ein Kontextmenü in der Galaxiekarte angezeigt werden soll.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte verwenden. Kann bei älteren Grafikkarten Abstürze verursachen.
 
 OPTIONS_DB_STARLANE_THICKNESS
-Setzt die Breite der Sternenstrassen in Pixeln fest.
+Setzt die Breite der Sternenstraßen in Pixeln fest.
 
 OPTIONS_DB_STARLANE_CORE
-width multiplier for empire 'core' Sternenstraßen.
+Breitenmultiplikator für die Hauptsternenstraßen des Imperiums.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Entscheidet ob Sternenstraßen mit der Imperiumsfarbe gefärbt werden, wenn dieses Ressourcen über diese Sternenstraßen tauschen kann.
+Entscheidet ob Sternenstraßen mit der Imperiumsfarbe gefärbt werden solle, wenn dieses Ressourcen über diese Sternenstraßen tauschen kann.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
 Setzt die Grundfarbe in der Sternenstraßen gezeichnet werden.
@@ -795,10 +800,10 @@ OPTIONS_DB_APP_HEIGHT_WINDOWED
 Setzt die vertikale Auflösung des Fenstermodus
 
 OPTIONS_DB_APP_LEFT_WINDOWED
-Sets horizontal position in windowed mode. Relative to primary monitor left.
+Setzt die horizontale Position im Fenstermodus relativ zum primären Monitor.
 
 OPTIONS_DB_APP_TOP_WINDOWED
-Sets vertical position in windowed mode. Relative to primary monitor top.
+Setzt die vertikale Position im Fenstermodus relativ zum primären Monitor.
 
 OPTIONS_DB_COLOR_DEPTH
 Setzt die Farbtiefe in Bits pro Pixel.
@@ -858,7 +863,7 @@ OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
 Klangdatei wird abgespielt, wenn die Maus über eine Flotte bewegt wird.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
-The sound file played when a fleet button is clicked.
+Klangdatei wird abgespielt, wenn Flottenknopf geklickt wird.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
 Die Klangdatei wird abgespielt, wenn die Maus sich über ein Systemsymbol bewegt.
@@ -1002,10 +1007,10 @@ OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Setzt die Größe des Flottenauswahlindikators (relativ zum Flottensymbol).
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-Setzt die Grösse des Systemselektionsinkators (relativ zum System Symbol).
+Setzt die Grösse des Systemauswahlindikators (relativ zum System Symbol).
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Sets the frame rate of animation of system selection indicator.
+Setzt die Drehgeschwindigkeit für die Animationen des Systemauswahlindikator.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Setzt die Größe des Systemsymbols unter dem die besonderen kleinen Symbole mit fester Größe angezeigt werden.
@@ -1029,7 +1034,7 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Setzt die Größe der am kleinsten gezeichneten rotierenden Planeten im Seitenfenster.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
-Sets whether to show rendered planets / asteroids on the side-panel.
+Setzt ob Planeten im Seitenfenster gezeigt werden sollen.
 
 OPTIONS_DB_GAMESETUP_SEED
 '''Die Aussaat wird zur zufälligen Erzeugung der Galaxie verwendet.
@@ -1242,13 +1247,13 @@ INTRO_BTN_QUICK_START
 Schnellstart
 
 INTRO_BTN_MULTI_PLAYER
-Multiplayer
+Mehrspieler
 
 INTRO_BTN_LOAD_GAME
 Spiel laden
 
 INTRO_BTN_OPTIONS
-Optionen
+Einstellungen
 
 INTRO_BTN_ABOUT
 Über das Spiel
@@ -1308,7 +1313,7 @@ Aktualisieren
 ########################
 
 MPLOBBY_WINDOW_TITLE
-Multiplayer Aufstellung
+Mehrspieler Aufstellung
 
 MPLOBBY_HOST_ABORTED_GAME
 Der Host hat das Spielsetup abgebrochen.
@@ -1493,7 +1498,7 @@ Speicherstände
 ###########################
 
 OPTIONS_TITLE
-Optionen
+Einstellungen
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Mehrere Flottenfenster
@@ -2358,10 +2363,10 @@ MOD_SET_OWNER
 Set Owner
 
 MOD_ADD_STARLANE
-Sternenstrasse hinzufügen
+Sternenstraße hinzufügen
 
 MOD_REMOVE_STARLANE
-Sternenstrasse entfernen
+Sternenstraße entfernen
 
 ###############
 #  Diplomacy  #
@@ -2799,7 +2804,7 @@ Struktur: %8%
 Triebstoff Fassungsvermögen: %14%
 Kolonisation Vermögen: %15%
 Truppen: %16%
-Geschwindigkeit in Sternenstrasse: %13%
+Geschwindigkeit in Sternenstraße: %13%
 '''
 
 ## Temporarily removed
@@ -3025,7 +3030,7 @@ TELEPATHY_TEXT
 FUEL_TITLE
 Triebstoff
 FUEL_TEXT
-'''Triebstoff erlaubt Schiffe entlang der Sternenstrasse zu reisen. Für jede Sternstrasse verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternenstrasse reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstrasse ist.'''
+'''Triebstoff erlaubt Schiffe entlang der Sternenstraße zu reisen. Für jede Sternstrasse verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternenstraße reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstrasse ist.'''
 
 SUPPLY_TITLE
 Versorgung
@@ -5016,7 +5021,7 @@ Aufklärungsreichweite
 METER_BATTLE_SPEED
 Kampfgeschwindigkeit
 METER_STARLANE_SPEED
-Geschwindigkeit in Sternenstrasse
+Geschwindigkeit in Sternenstraße
 METER_DAMAGE
 Schaden
 METER_ROF
@@ -5178,7 +5183,7 @@ Besiedlung
 PC_BATTLE_SPEED
 Kampf Geschwindigkeit
 PC_STARLANE_SPEED
-Sternenstrasse Geschwindigkeit
+Sternenstraße Geschwindigkeit
 PC_GENERAL
 General
 
@@ -5501,10 +5506,10 @@ DESC_REMOVE_SPECIAL
 Entfernt die Besonderheit %1% vom Objekt
 
 DESC_ADD_STARLANES
-Creates Sternenstrassen between the target system and the system of objects%1%
+Creates Sternenstraßen between the target system and the system of objects%1%
 
 DESC_REMOVE_STARLANES
-Removes Sternenstrassen between the target system and the system of objects%1%
+Removes Sternenstraßen between the target system and the system of objects%1%
 
 DESC_SET_STAR_TYPE
 Ändert die Sternenklasse auf %1%
@@ -5822,16 +5827,16 @@ DESC_WITHIN_STARLANE_JUMPS_NOT
  die nicht innerhalb von %1% Sternenstraßensprünge Objekt %2% erreichen
 
 DESC_CAN_ADD_STARLANE_CONNECTION
- that can have Sternenstrassen added connecting to all systems that contain objects%1%
+ that can have Sternenstraßen added connecting to all systems that contain objects%1%
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
- that can not have Sternenstrassen added connecting to all systems that contain objects%1%
+ that can not have Sternenstraßen added connecting to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
- that can have Sternenstrassen removed that connect to all systems that contain objects%1%
+ that can have Sternenstraßen removed that connect to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
- that can not have Sternenstrassen removed that connect to all systems that contain objects%1%
+ that can not have Sternenstraßen removed that connect to all systems that contain objects%1%
 
 DESC_EXPLORED_BY_EMPIRE
  erkundet durch das %1% Imperium
@@ -6113,7 +6118,7 @@ Quantum Networking
 LRN_QUANT_NET_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
-A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternenstrassen. This advancement greatly facilitates research throughout the empire.
+A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternenstraßen. This advancement greatly facilitates research throughout the empire.
 
 Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted. Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances. When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
 
@@ -6355,7 +6360,7 @@ CON_INFRA_ECOL
 Infrastrukturökologie
 
 CON_INFRA_ECOL_DESC
-'''Increases Sternenstrasse Schnelligkeit of your ships by 20 when they are within 50 uus of a controlled planet.
+'''Increases Sternenstraße Schnelligkeit of your ships by 20 when they are within 50 uus of a controlled planet.
 
 Der grundlegende Aufbau einer neu errichteten planetaren Kolonie scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Kolonie einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Kolonie errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Kolonie unabdingbar.'''
 
@@ -6537,7 +6542,7 @@ SHP_DOMESTIC_MONSTER
 Domesticated Mega-Fauna
 
 SHP_DOMESTIC_MONSTER_DESC
-'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternenstrassen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
+'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternenstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
 SHP_ENDOCRINE_SYSTEMS
 Mega-Fauna Endocrine Systems
@@ -6703,7 +6708,7 @@ EXOBOT_SHORT_DESC
 Builds Exobot Citizens
 
 STARLANE_SPEED_SHORT_DESC
-Steigert die Sternenstrassegeschwindigkeit
+Steigert die Sternenstraßegeschwindigkeit
 
 CON_ORBITAL_CON
 Orbitale Konstruktion
@@ -6736,10 +6741,10 @@ CON_FRC_ENRG_CAMO_DESC
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_PLANET_DRIVE
-Planetary Sternenstrasse Drive
+Planetary Sternenstraße Drive
 
 CON_PLANET_DRIVE_DESC
-Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternenstrasse, it would be possible to move such planets to a safer location in times of necessity.
+Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternenstraße, it would be possible to move such planets to a safer location in times of necessity.
 
 CON_STARGATE
 Stargate
@@ -6822,7 +6827,7 @@ LRN_OBSERVATORY_I
 Observatorium
 
 LRN_OBSERVATORY_I_DESC
-Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of Sternenstrassen throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of Sternenstrassen to be identified an monitored.
+Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of Sternenstraßen throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of Sternenstraßen to be identified an monitored.
 
 LRN_SOLAR_MAN
 Solar Manipulation
@@ -6850,9 +6855,9 @@ LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''By manipulating the dimensional properties of a Sternenstrasse, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
+'''By manipulating the dimensional properties of a Sternenstraße, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
 
-Alternatively, such a ship may be sent randomly along a completely different Sternenstrasse adjacent to the building.'''
+Alternatively, such a ship may be sent randomly along a completely different Sternenstraße adjacent to the building.'''
 
 LRN_GATEWAY_VOID
 Gateway to the Void
@@ -6876,7 +6881,7 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''Has a 10% chance of taking control of any enemy ship within one Sternenstrasse jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
+'''Has a 10% chance of taking control of any enemy ship within one Sternenstraße jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
@@ -7069,24 +7074,24 @@ SHP_ROOT_AGGRESSION_DESC
 Erlaubt Grundbewaffnung und [[shippart GT_TROOP_POD]].
 
 SHP_WEAPON_1_2
-Massetreiber 2
+Massenkatapult 2
 SHP_WEAPON_1_2_DESC
-'''Verbessert den Massetreiber auf Stufe 2.'''
+'''Verbessert das Massenkatapult auf Stufe 2.'''
 
 SHP_WEAPON_1_3
-Massetreiber 3
+Massenkatapult 3
 SHP_WEAPON_1_3_DESC
-'''Verbessert den Massetreiber auf Stufe 3.'''
+'''Verbessert das Massenkatapult auf Stufe 3.'''
 
 SHP_WEAPON_1_4
-Massetreiber 4
+Massenkatapult 4
 SHP_WEAPON_1_4_DESC
-'''Verbessert den Massetreiber auf Stufe 4.'''
+'''Verbessert das Massenkatapult auf Stufe 4.'''
 
 SHP_WEAPON_2_1
 Laser 1
 SHP_WEAPON_2_1_DESC
-'''Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als den Massetreiber.'''
+'''Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als das Massenkatapult.'''
 
 SHP_WEAPON_2_2
 Laser 2
@@ -7150,7 +7155,7 @@ SHP_ION_CANNON_DESC
 Schaltet den Schiffsteil Ionenkanone frei.
 
 SHP_WEAPON_1
-Massetreiber
+Massenkatapult
 
 SHP_WEAPON_1_DESC
 With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
@@ -7288,19 +7293,19 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases Sternenstrasse speed by 10. May be added more than once to a hull.
+Better engine parts equate to better engines. Increases Sternenstraße speed by 10. May be added more than once to a hull.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Sternenstrasse speed by 15. May be added more than once to a hull.
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Sternenstraße speed by 15. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstrasse speed by 20. May be added more than once to a hull.
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstraße speed by 20. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Deuteriumtank
@@ -7501,7 +7506,7 @@ Observatorium
 BLD_OBSERVATORY_DESC
 '''One random star will be revealed each turn to the entire galaxy. Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.
 
-An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of Sternenstrassen.'''
+An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of Sternenstraßen.'''
 
 BLD_CULTURE_ARCHIVES
 Cultural Archives
@@ -7622,9 +7627,9 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Angriffsbasis
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 Sternenstrasse jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 Sternenstraße jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four Sternenstrasse jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four Sternenstraße jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
@@ -7697,7 +7702,7 @@ BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Sternenstrasse travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Sternenstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
 
@@ -7818,12 +7823,12 @@ BLD_REPLICATORS_DESC
 Only one replication focus can take effect in the empire at one time.'''
 
 BLD_PLANET_DRIVE
-Planetary Sternenstrasse Drive
+Planetary Sternenstraße Drive
 
 BLD_PLANET_DRIVE_DESC
 '''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
 
-Due to a lack of UI targeting, a second building is currently required on the other end of the Sternenstrasse. This building will destroy itself immediately, so that the planet can move to a different target system later.
+Due to a lack of UI targeting, a second building is currently required on the other end of the Sternenstraße. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
 To use this building, set the planet to Planet Drive focus, and construct a Planetary Beacon in an adjacent system. The planet will then be moved to that system.'''
 
@@ -7831,7 +7836,7 @@ BLD_PLANET_BEACON
 Planetary Beacon
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the planetary Sternenstrasse drive. This building can be built at an outpost.
+Designates the target for the planetary Sternenstraße drive. This building can be built at an outpost.
 
 BLD_ART_PLANET
 Künstlicher Planet
@@ -7861,7 +7866,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Sternenstrasse Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
+This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Sternenstraße Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -7875,7 +7880,7 @@ BLD_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulates the dimensional properties of adjacent Sternenstrassen. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the Sternenstrasse in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
+Manipulates the dimensional properties of adjacent Sternenstraßen. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the Sternenstraße in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
 Stargate
@@ -7907,7 +7912,7 @@ The outpost of the Experimentors, used for carrying out highly advanced experime
 BLD_NOVA_BOMB_ACTIVATOR
 Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
-Activates all Nova Bombs within one Sternenstrasse jump.
+Activates all Nova Bombs within one Sternenstraße jump.
 
 
 #############################################################
@@ -7915,7 +7920,7 @@ Activates all Nova Bombs within one Sternenstrasse jump.
 #############################################################
 
 HULL_DESC
-'''Geschwindigkeit in Sternenstrasse: %1%
+'''Geschwindigkeit in Sternenstraße: %1%
 Treibstoff Fassungsvermögen: %2%
 Kampfgeschwindigkeit: %3%
 Struktur: %4%'''
@@ -7960,29 +7965,29 @@ Fassungsvermögen: %9% Abfangjäger'''
 
 
 SR_WEAPON_1_1
-Massetreiber 1
+Massenkatapult 1
 SR_WEAPON_1_1_DESC
-'''Der Massetreiber, eine Standardwaffe.'''
+'''Der Massenkatapult, eine Standardwaffe.'''
 
 SR_WEAPON_1_2
-Massetreiber 2
+Massenkatapult 2
 SR_WEAPON_1_2_DESC
-'''Der Massetreiber, auf Stufe 2 verbessert.'''
+'''Der Massenkatapult, auf Stufe 2 verbessert.'''
 
 SR_WEAPON_1_3
-Massetreiber 3
+Massenkatapult 3
 SR_WEAPON_1_3_DESC
-'''Der Massetreiber, auf Stufe 3 verbessert.'''
+'''Der Massenkatapult, auf Stufe 3 verbessert.'''
 
 SR_WEAPON_1_4
-Massetreiber 4
+Massenkatapult 4
 SR_WEAPON_1_4_DESC
-'''Der Massetreiber, auf Stufe 4 verbessert.'''
+'''Der Massenkatapult, auf Stufe 4 verbessert.'''
 
 SR_WEAPON_2_1
 Laser 1
 SR_WEAPON_2_1_DESC
-'''Der Laser, eine viel leistungsfähigere Schiffswaffe als den Massetreiber.'''
+'''Der Laser, eine viel leistungsfähigere Schiffswaffe als das Massenkatapult.'''
 
 SR_WEAPON_2_2
 Laser 2
@@ -8175,7 +8180,7 @@ FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Increases Sternenstrasse Schnelligkeit by 10.
+'''Increases Sternenstraße Schnelligkeit by 10.
 
 Better engine parts equate to better engines.'''
 
@@ -8183,7 +8188,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Sternenstrasse Schnelligkeit by 15. 
+'''Increases Sternenstraße Schnelligkeit by 15. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
@@ -8191,7 +8196,7 @@ FU_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstrasse Schnelligkeit by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstraße Schnelligkeit by 20. 
 
 FU_BASIC_TANK
 Zusatz Triebstofftank
@@ -8399,7 +8404,7 @@ SP_NOVA_BOMB
 Nova Bomb
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one Sternenstrasse jump away.
+A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one Sternenstraße jump away.
 
 
 #############################################################
