@@ -51,7 +51,7 @@
       <PERSON name="Patrick B."               nick="Rogor"            task="Programming"/>
       <PERSON name=""                         nick="Vezzra"           task="Programming"/>
       <PERSON name="Landon Manning"           nick="yandonman"        task="Programming"/>
-      <PERSON name="Marcel Metz"              nick="adrian_broher"    task="Programming"/>
+      <PERSON name="Marcel Metz"              nick="adrian_broher"    task="Programming, German Translation"/>
     </GROUP>
     <GROUP name="GAMEDESIGN and CONTENT">
       <PERSON name="Krum Stanoev"             nick=""                 task="Game Design"/>
@@ -107,6 +107,7 @@
       <PERSON name="Vladimir Safronenkov"     nick="pohlman"          task="Russian Translation"/>
       <PERSON name="Alexandr Kopitkov"        nick="Cjckem"           task="Russian Translation"/>
       <PERSON name=""                         nick="alchemy"          task="French Translation"/>
+      <PERSON name=""                         nick="andrewsa"         task="Russian Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>
