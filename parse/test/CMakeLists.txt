@@ -32,6 +32,36 @@ install(
     COMPONENT COMPONENT_FREEORION
 )
 
+find_package (Boost REQUIRED COMPONENTS unit_test_framework)
+
+include_directories (
+    ${Boost_UNIT_TEST_FRAMEWORK_INCLUDES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+add_executable(test_parsers_boost
+    testmain.cpp
+    TestEnumParser.cpp
+    TestValueRefIntParser.cpp
+    TestValueRefDoubleParser.cpp
+)
+
+target_link_libraries(test_parsers_boost
+    freeorioncommon
+    freeorionparse
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
+)
+
+install(
+    TARGETS test_parsers_boost
+    RUNTIME DESTINATION .
+    COMPONENT COMPONENT_FREEORION
+)
+
+add_test(enum_parser             ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
+add_test(value_ref_int_parser    ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
+add_test(value_ref_double_parser ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
+
 macro (add_test_and_data_files name)
     set(suffix "")
     set(args "")
@@ -49,29 +79,12 @@ macro (add_test_and_data_files name)
 endmacro ()
 
 add_test_and_data_files(test_parsers lexer -f lexer_tokens)
-add_test_and_data_files(test_parsers capture_result_enum_parser -f capture_result_enumerators)
-add_test_and_data_files(test_parsers combat_fighter_type_enum_parser -f combat_fighter_type_enumerators)
-add_test_and_data_files(test_parsers empire_affiliation_type_enum_parser -f empire_affiliation_type_enumerators)
-add_test_and_data_files(test_parsers non_ship_part_meter_type_enum_parser -f non_ship_part_meter_type_enumerators)
-add_test_and_data_files(test_parsers planet_environment_enum_parser -f planet_environment_enumerators)
-add_test_and_data_files(test_parsers planet_size_enum_parser -f planet_size_enumerators)
-add_test_and_data_files(test_parsers planet_type_enum_parser -f planet_type_enumerators)
-add_test_and_data_files(test_parsers ship_part_class_enum_parser -f ship_part_class_enumerators)
-add_test_and_data_files(test_parsers ship_slot_type_enum_parser -f ship_slot_type_enumerators)
-add_test_and_data_files(test_parsers star_type_enum_parser -f star_type_enumerators)
-add_test_and_data_files(test_parsers value_ref_statistic_type_enum_parser -f statistic_type_enumerators)
-add_test_and_data_files(test_parsers tech_type_enum_parser -f tech_type_enumerators)
-add_test_and_data_files(test_parsers universe_object_type_enum_parser -f universe_object_type_enumerators)
-add_test_and_data_files(test_parsers unlockable_item_type_enum_parser -f unlockable_item_type_enumerators)
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_arithmetic)
 add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable)
 add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable_arithmetic)
 add_test_and_data_files(test_parsers int_value_ref_parser -f int_statistic)
-add_test_and_data_files(test_parsers double_value_ref_parser -f double_arithmetic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_variable)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_variable_arithmetic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_statistic)
-add_test_and_data_files(test_parsers double_value_ref_parser -f int_arithmetic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f int_variable)
 add_test_and_data_files(test_parsers double_value_ref_parser -f int_variable_arithmetic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f int_statistic)
@@ -121,7 +134,6 @@ add_test_and_data_files(test_parsers fleet_plans_parser -f fleet_plans_permutati
 add_test_and_data_files(test_parsers monster_fleet_plans_parser -f monster_fleet_plans)
 add_test_and_data_files(test_parsers monster_fleet_plans_parser -f monster_fleet_plans_permutations)
 
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_arithmetic_errors --fail)
 add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable_errors --fail)
 add_test_and_data_files(test_parsers int_value_ref_parser -f int_statistic_errors --fail)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_arithmetic_errors --fail)

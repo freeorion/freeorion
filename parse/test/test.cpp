@@ -21,7 +21,7 @@ void send_error_string(const std::string& str)
 
 void print_help()
 {
-    std::cout << "Usage: test lexer|planet_size_enum_parser|planet_type_enum_parser|planet_environment_enum_parser|universe_object_type_enum_parser|star_type_enum_parser|non_ship_part_meter_type_enum_parser|set_non_ship_part_meter_type_enum_parser|set_ship_part_meter_type_enum_parser|empire_affiliation_type_enum_parser|unlockable_item_type_enum_parser|tech_type_enum_parser|ship_slot_type_enum_parser|ship_part_class_enum_parser|combat_fighter_type_enum_parser|capture_result_enum_parser|value_ref_statistic_type_enum_parser|int_value_ref_parser|double_value_ref_parser|string_value_ref_parser|planet_size_value_ref_parser|planet_type_value_ref_parser|planet_environment_value_ref_parser|universe_object_type_value_ref_parser|star_type_value_ref_parser|int_value_ref_evaluation|double_value_ref_evaluation|condition_parser|effect_parser|buildings_parser|specials_parser|species_parser|techs_parser|items_parser|ship_parts_parser|ship_hulls_parser|ship_designs_parser|fleet_plans_parser|monster_fleet_plans_parser|alignments_parser <-f filename>|<test string> --fail" << std::endl;
+    std::cout << "Usage: test lexer|int_value_ref_parser|double_value_ref_parser|string_value_ref_parser|planet_size_value_ref_parser|planet_type_value_ref_parser|planet_environment_value_ref_parser|universe_object_type_value_ref_parser|star_type_value_ref_parser|condition_parser|effect_parser|buildings_parser|specials_parser|species_parser|techs_parser|items_parser|ship_parts_parser|ship_hulls_parser|ship_designs_parser|fleet_plans_parser|monster_fleet_plans_parser|alignments_parser <-f filename>|<test string> --fail" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -37,22 +37,6 @@ int main(int argc, char* argv[])
     test_type test = unknown;
 #define CASE(x) if (test_str == #x) test = x
     CASE(lexer);
-    CASE(planet_size_enum_parser);
-    CASE(planet_type_enum_parser);
-    CASE(planet_environment_enum_parser);
-    CASE(universe_object_type_enum_parser);
-    CASE(star_type_enum_parser);
-    CASE(non_ship_part_meter_type_enum_parser);
-    CASE(set_non_ship_part_meter_type_enum_parser);
-    CASE(set_ship_part_meter_type_enum_parser);
-    CASE(empire_affiliation_type_enum_parser);
-    CASE(unlockable_item_type_enum_parser);
-    CASE(tech_type_enum_parser);
-    CASE(ship_slot_type_enum_parser);
-    CASE(ship_part_class_enum_parser);
-    CASE(combat_fighter_type_enum_parser);
-    CASE(capture_result_enum_parser);
-    CASE(value_ref_statistic_type_enum_parser);
     CASE(int_value_ref_parser);
     CASE(double_value_ref_parser);
     CASE(string_value_ref_parser);
@@ -61,8 +45,6 @@ int main(int argc, char* argv[])
     CASE(planet_environment_value_ref_parser);
     CASE(universe_object_type_value_ref_parser);
     CASE(star_type_value_ref_parser);
-    CASE(int_value_ref_evaluation);
-    CASE(double_value_ref_evaluation);
     CASE(condition_parser);
     CASE(effect_parser);
     CASE(buildings_parser);
@@ -202,22 +184,6 @@ int main(int argc, char* argv[])
 
         switch (test) {
         case lexer: boost::spirit::qi::on_error<boost::spirit::qi::fail>(lexer_rules.lexer, parse::report_error(_1, _2, _3, _4)); break;
-        case planet_size_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<PlanetSize>(), parse::report_error(_1, _2, _3, _4)); break;
-        case planet_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<PlanetType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case planet_environment_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<PlanetEnvironment>(), parse::report_error(_1, _2, _3, _4)); break;
-        case universe_object_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<UniverseObjectType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case star_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<StarType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case non_ship_part_meter_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::non_ship_part_meter_type_enum(), parse::report_error(_1, _2, _3, _4)); break;
-        case set_non_ship_part_meter_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::set_non_ship_part_meter_type_enum(), parse::report_error(_1, _2, _3, _4)); break;
-        case set_ship_part_meter_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::set_ship_part_meter_type_enum(), parse::report_error(_1, _2, _3, _4)); break;
-        case empire_affiliation_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<UnlockableItemType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case unlockable_item_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<UnlockableItemType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case tech_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<TechType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case ship_slot_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<ShipSlotType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case ship_part_class_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<ShipPartClass>(), parse::report_error(_1, _2, _3, _4)); break;
-        case combat_fighter_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<CombatFighterType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case capture_result_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<CaptureResult>(), parse::report_error(_1, _2, _3, _4)); break;
-        case value_ref_statistic_type_enum_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::enum_parser<ValueRef::StatisticType>(), parse::report_error(_1, _2, _3, _4)); break;
         case int_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<int>(), parse::report_error(_1, _2, _3, _4)); break;
         case double_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<double>(), parse::report_error(_1, _2, _3, _4)); break;
         case string_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<std::string>(), parse::report_error(_1, _2, _3, _4)); break;
@@ -226,8 +192,6 @@ int main(int argc, char* argv[])
         case planet_environment_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<PlanetEnvironment>(), parse::report_error(_1, _2, _3, _4)); break;
         case universe_object_type_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<UniverseObjectType>(), parse::report_error(_1, _2, _3, _4)); break;
         case star_type_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<StarType>(), parse::report_error(_1, _2, _3, _4)); break;
-        case int_value_ref_evaluation: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<int>(), parse::report_error(_1, _2, _3, _4)); break;
-        case double_value_ref_evaluation: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<double>(), parse::report_error(_1, _2, _3, _4)); break;
         case condition_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::condition_parser(), parse::report_error(_1, _2, _3, _4)); break;
         case effect_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::effect_parser(), parse::report_error(_1, _2, _3, _4)); break;
         default: break;
@@ -240,13 +204,8 @@ int main(int argc, char* argv[])
 
             ++iterations;
 
-            const std::size_t equals_position =
-                test == int_value_ref_evaluation || test == double_value_ref_evaluation ?
-                string.find('=') :
-                std::string::npos;
-
             parse::text_iterator first(string.begin());
-            const parse::text_iterator last(equals_position == std::string::npos ? string.end() : string.begin() + equals_position);
+            const parse::text_iterator last(string.end());
 
             bool success = false;
 
@@ -270,70 +229,6 @@ int main(int argc, char* argv[])
                 switch (test) {
                 case lexer: {
                     success = boost::spirit::qi::phrase_parse(it, end_it, lexer_rules.lexer, in_state("WS")[l.self]);
-                    break;
-                }
-                case planet_size_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<PlanetSize>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case planet_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<PlanetType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case planet_environment_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<PlanetEnvironment>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case universe_object_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<UniverseObjectType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case star_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<StarType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case non_ship_part_meter_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::non_ship_part_meter_type_enum(), in_state("WS")[l.self]);
-                    break;
-                }
-                case set_non_ship_part_meter_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::set_non_ship_part_meter_type_enum(), in_state("WS")[l.self]);
-                    break;
-                }
-                case set_ship_part_meter_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::set_ship_part_meter_type_enum(), in_state("WS")[l.self]);
-                    break;
-                }
-                case empire_affiliation_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<EmpireAffiliationType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case unlockable_item_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<UnlockableItemType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case tech_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<TechType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case ship_slot_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<ShipSlotType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case ship_part_class_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<ShipPartClass>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case combat_fighter_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<CombatFighterType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case capture_result_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<CaptureResult>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case value_ref_statistic_type_enum_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::enum_parser<ValueRef::StatisticType>(), in_state("WS")[l.self]);
                     break;
                 }
                 case int_value_ref_parser: {
@@ -366,32 +261,6 @@ int main(int argc, char* argv[])
                 }
                 case star_type_value_ref_parser: {
                     success = boost::spirit::qi::phrase_parse(it, end_it, parse::value_ref_parser<StarType>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case int_value_ref_evaluation: {
-                    ValueRef::ValueRefBase<int>* result = 0;
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::value_ref_parser<int>(), in_state("WS")[l.self], result);
-                    assert(equals_position != std::string::npos);
-                    const int expected_result = boost::lexical_cast<int>(string.substr(equals_position + 1, -1));
-                    if (result->Eval() == expected_result) {
-                        std::cout <<  "Correct evaluation." << std::endl;
-                    } else {
-                        std::cout <<  "Incorrect evaluation of \"" << string << "\".  Got " << result->Eval() << "." << std::endl;
-                        ++failures;
-                    }
-                    break;
-                }
-                case double_value_ref_evaluation: {
-                    ValueRef::ValueRefBase<double>* result = 0;
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::value_ref_parser<double>(), in_state("WS")[l.self], result);
-                    assert(equals_position != std::string::npos);
-                    const double expected_result = boost::lexical_cast<double>(string.substr(equals_position + 1, -1));
-                    if (result->Eval() == expected_result) {
-                        std::cout <<  "Correct evaluation." << std::endl;
-                    } else {
-                        std::cout <<  "Incorrect evaluation of \"" << string << "\".  Got " << result->Eval() << "." << std::endl;
-                        ++failures;
-                    }
                     break;
                 }
                 case condition_parser: {
@@ -465,12 +334,10 @@ int main(int argc, char* argv[])
                 }
 
                 if (success && it == end_it) {
-                    if (test != int_value_ref_evaluation && test != double_value_ref_evaluation) {
-                        if (fail)
-                            std::cout <<  "Successful parse of \"" << string << "\" (that's bad -- it should fail)." << std::endl;
-                        else
-                            std::cout <<  "Successful parse." << std::endl;
-                    }
+                    if (fail)
+                        std::cout <<  "Successful parse of \"" << string << "\" (that's bad -- it should fail)." << std::endl;
+                    else
+                        std::cout <<  "Successful parse." << std::endl;
                 } else {
                     if (fail)
                         std::cout <<  "Failed parse, as expected." << std::endl;
