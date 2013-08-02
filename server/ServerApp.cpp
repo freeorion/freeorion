@@ -170,7 +170,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         if (psd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;
 
-        // check that AIs have a name, as they will be sorted lated based on it
+        // check that AIs have a name, as they will be sorted later based on it
         std::string player_name = psd.m_player_name;
         if (player_name.empty()) {
             Logger().errorStream() << "ServerApp::CreateAIClients can't create a player with no name.";
@@ -212,19 +212,19 @@ EmpireManager& ServerApp::Empires()
 CombatData* ServerApp::CurrentCombat()
 { return m_current_combat; }
 
-UniverseObject* ServerApp::GetUniverseObject(int object_id)
+TemporaryPtr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
 { return m_universe.Objects().Object(object_id); }
 
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id); }
 
-UniverseObject* ServerApp::EmpireKnownObject(int object_id, int empire_id)
+TemporaryPtr<UniverseObject> ServerApp::EmpireKnownObject(int object_id, int empire_id)
 { return m_universe.EmpireKnownObjects(empire_id).Object(object_id); }
 
 ServerNetworking& ServerApp::Networking()
 { return m_networking; }
 
-std::string ServerApp::GetVisibleObjectName(const UniverseObject* object) {
+std::string ServerApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
     if(!object) {
         Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
@@ -1238,24 +1238,24 @@ namespace {
 
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int> >& empire_fleets, int system_id) {
         empire_fleets.clear();
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system)
             return;
         std::vector<int> system_fleets = system->FindObjectIDs<Fleet>();
         for (std::vector<int>::const_iterator it = system_fleets.begin(); it != system_fleets.end(); ++it) {
-            if (const Fleet* fleet = GetFleet(*it))
+            if (TemporaryPtr<const Fleet> fleet = GetFleet(*it))
                 empire_fleets[fleet->Owner()].insert(*it);
         }
     }
 
     void GetEmpirePlanetsAtSystem(std::map<int, std::set<int> >& empire_planets, int system_id) {
         empire_planets.clear();
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system)
             return;
         std::vector<int> system_planets = system->FindObjectIDs<Planet>();
         for (std::vector<int>::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
-            if (const Planet* planet = GetPlanet(*it)) {
+            if (TemporaryPtr<const Planet> planet = GetPlanet(*it)) {
                 if (!planet->Unowned())
                     empire_planets[planet->Owner()].insert(*it);
                 else if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
@@ -1266,7 +1266,7 @@ namespace {
 
     void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
         visible_fleets.clear();
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system)
             return; // no such system
         std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
@@ -1297,7 +1297,7 @@ namespace {
         for (std::vector<int>::const_iterator ship_it = all_system_ship_ids.begin();
              ship_it != all_system_ship_ids.end(); ++ship_it)
         {
-            const Ship* ship = GetShip(*ship_it);
+            TemporaryPtr<const Ship> ship = GetShip(*ship_it);
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
             if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
@@ -1308,7 +1308,7 @@ namespace {
         for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin();
              fleet_it != fleet_ids.end(); ++fleet_it)
         {
-            const Fleet* fleet = GetFleet(*fleet_it);
+            TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
@@ -1320,7 +1320,7 @@ namespace {
             for (std::set<int>::const_iterator ship_it = fleet_ship_ids.begin();
                  ship_it != fleet_ship_ids.end(); ++ship_it)
             {
-                const Ship* ship = GetShip(*ship_it);
+                TemporaryPtr<const Ship> ship = GetShip(*ship_it);
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
@@ -1334,12 +1334,12 @@ namespace {
 
     void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id) {
         visible_planets.clear();
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system)
             return; // no such system
         std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
         if (planet_ids.empty())
-            return; // no fleets to be seen
+            return; // no planets to be seen
         if (empire_id != ALL_EMPIRES && !Empires().Lookup(empire_id))
             return; // no such empire
 
@@ -1353,7 +1353,7 @@ namespace {
                 if (planet_vis <= VIS_BASIC_VISIBILITY)
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
-                const Planet* planet = GetPlanet(*planet_it);
+                TemporaryPtr<const Planet> planet = GetPlanet(*planet_it);
                 if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
                     continue;
                 visible_planets.insert(*planet_it);
@@ -1371,7 +1371,7 @@ namespace {
         for (std::vector<int>::const_iterator ship_it = all_system_ship_ids.begin();
              ship_it != all_system_ship_ids.end(); ++ship_it)
         {
-            const Ship* ship = GetShip(*ship_it);
+            TemporaryPtr<const Ship> ship = GetShip(*ship_it);
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
             if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
@@ -1382,7 +1382,7 @@ namespace {
         for (std::vector<int>::const_iterator planet_it = planet_ids.begin();
              planet_it != planet_ids.end(); ++planet_it)
         {
-            const Planet* planet = GetPlanet(*planet_it);
+            TemporaryPtr<const Planet> planet = GetPlanet(*planet_it);
             if (!planet)
                 continue;
 
@@ -1424,7 +1424,7 @@ namespace {
             for (std::set<int>::const_iterator fleet_it = empire_fleets.begin();
                  fleet_it != empire_fleets.end(); ++fleet_it)
             {
-                const Fleet* fleet = GetFleet(*fleet_it);
+                TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
                 if (!fleet)
                     continue;
                 // an unarmed Monster will not trigger combat
@@ -1493,7 +1493,7 @@ namespace {
                  planet_it != aggressive_empire_visible_planets.end(); ++planet_it)
             {
                 int planet_id = *planet_it;
-                const Planet* planet = GetPlanet(planet_id);
+                TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
                 if (!planet)
                     continue;
                 int visible_planet_empire_id = planet->Owner();
@@ -1525,7 +1525,7 @@ namespace {
                  fleet_it != aggressive_empire_visible_fleets.end(); ++fleet_it)
             {
                 int fleet_id = *fleet_it;
-                const Fleet* fleet = GetFleet(fleet_id);
+                TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();
@@ -1540,25 +1540,24 @@ namespace {
     }
 
     /** Cleans up CombatInfo within \a combats. */
-    void CleanupSystemCombatInfo(std::vector<CombatInfo>& combats) {
-        for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it)
-        { it->Clear(); }
-        combats.clear();
-    }
+    //void CleanupSystemCombatInfo(std::vector<CombatInfo>& combats) {
+    //    for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it)
+    //    { it->Clear(); }
+    //    combats.clear();
+    //}
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
     void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats) {
-        CleanupSystemCombatInfo(combats);
-
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
         std::vector<int> sys_ids = GetUniverse().Objects().FindObjectIDs<System>();
 
         for (std::vector<int>::const_iterator it = sys_ids.begin(); it != sys_ids.end(); ++it) {
             int sys_id = *it;
-            if (CombatConditionsInSystem(sys_id))
+            if (CombatConditionsInSystem(sys_id)) {
                 combats.push_back(CombatInfo(sys_id, CurrentTurn()));
+            }
         }
     }
 
@@ -1597,32 +1596,28 @@ namespace {
 
 
             // copy actual state of objects in combat after it was resolved
-            universe.Objects().Copy(combat_info.objects);
+            // universe.Objects().Copy(combat_info.objects); - NOTE: Changed CombatSystem.cpp to use the real objects.
 
 
-            // copy empires' latest known state of objects in combat after it was resolved
-            for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin();
-                 eko_it != combat_info.empire_known_objects.end(); ++eko_it)
-            {
-                const ObjectMap& combat_known_objects = eko_it->second;
-                int empire_id = eko_it->first;
-                ObjectMap& actual_known_objects = universe.EmpireKnownObjects(empire_id);
+            // copy empires' latest known state of objects in combat after it was resolved - NOTE: Changed CombatSystem.cpp to use the actual latest known objects.
+            //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin();
+            //     eko_it != combat_info.empire_known_objects.end(); ++eko_it)
+            //{
+            //    const ObjectMap& combat_known_objects = eko_it->second;
+            //    int empire_id = eko_it->first;
+            //    ObjectMap& actual_known_objects = universe.EmpireKnownObjects(empire_id);
 
-                //Logger().debugStream() << "copying known objects from combat to main gamestate for empire " << empire_id;
+            //    //Logger().debugStream() << "copying known objects from combat to main gamestate for empire " << empire_id;
 
-                actual_known_objects.Copy(combat_known_objects, empire_id);
-            };
-
+            //    actual_known_objects.Copy(combat_known_objects, empire_id);
+            //};
 
             // destroy in main universe objects that were destroyed in combat,
             // and any associated objects that should now logically also be
             // destroyed
             for (std::set<int>::const_iterator do_it = combat_info.destroyed_object_ids.begin();
                  do_it != combat_info.destroyed_object_ids.end(); ++do_it)
-            {
-                int destroyed_object_id = *do_it;
-                universe.RecursiveDestroy(destroyed_object_id);
-            }
+            { universe.RecursiveDestroy(*do_it); }
 
 
             // update which empires know objects are destroyed.  this may
@@ -1639,6 +1634,7 @@ namespace {
 
                 for (std::set<int>::const_iterator object_it = object_ids.begin(); object_it != object_ids.end(); ++object_it) {
                     int object_id = *object_it;
+                    Logger().debugStream() << "Setting knowledge of destroyed object " << object_id << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 }
             }
@@ -1646,7 +1642,7 @@ namespace {
 
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
-            if (System* system = GetSystem(combat_info.system_id)) {
+            if (TemporaryPtr<System> system = GetSystem(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
@@ -1691,6 +1687,13 @@ namespace {
                 for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
                      dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
                 {
+                    Logger().debugStream() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << *dest_obj_it;
+                    if (TemporaryPtr<UniverseObject> obj = GetEmpireKnownObject(*dest_obj_it, empire_id)) {
+                        Logger().debugStream() << "Object known to empire: " << obj->Dump();
+                    }
+                    else {
+                        Logger().debugStream() << "Object not known to empire";
+                    }
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id,
                                                                              empire_id));
                 }
@@ -1702,22 +1705,30 @@ namespace {
                  object_it != combat_info.damaged_object_ids.end(); ++object_it)
             {
                 int damaged_object_id = *object_it;
+                Logger().debugStream() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
-                if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end())
+                if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end()) {
+                    Logger().debugStream() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
+                }
                 // which empires know about this object?
                 for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
                      empire_it != combat_info.empire_known_objects.end(); ++empire_it)
                 {
+                    Logger().debugStream() << "Checking if empire " << empire_it->first << " knows about the object.";
                     // does this empire know about this object?
                     const ObjectMap& objects = empire_it->second;
-                    if (!objects.Object(damaged_object_id))
+                    if (!objects.Object(damaged_object_id)) {
+                        Logger().debugStream() << "Nope.";
                         continue;
+                    }
+                    Logger().debugStream() << "Yep.";
                     // empire knows about object, so generate a sitrep about it
                     int empire_id = empire_it->first;
                     Empire* empire = Empires().Lookup(empire_id);
                     if (!empire)
                         continue;
+                    Logger().debugStream() << "Creating sitrep.";
                     empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(damaged_object_id, combat_info.system_id,
                                                                            empire_id));
                 }
@@ -1729,12 +1740,12 @@ namespace {
 namespace {
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
-        Ship* ship = GetShip(ship_id);
+        TemporaryPtr<Ship> ship = GetShip(ship_id);
         if (!ship) {
             Logger().errorStream() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
-        Planet* planet = GetPlanet(planet_id);
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
@@ -1784,9 +1795,9 @@ namespace {
         // find a focus to give planets by default.  use first defined available focus.
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci.
-        std::vector<std::string> available_foci = planet->AvailableFoci();
+        std::vector<std::string> available_foci = planet->AvailableFoci(planet);
         if (!available_foci.empty())
-            planet->SetFocus(*available_foci.begin());
+            SetFocus(planet, *available_foci.begin());
 
         planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);
@@ -1796,7 +1807,7 @@ namespace {
 
         const std::set<int>& planet_buildings = planet->Buildings();
         for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
-            if (Building* building = GetBuilding(*it)) {
+            if (TemporaryPtr<Building> building = GetBuilding(*it)) {
                 building->SetOwner(empire_id); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
             } else {
                 Logger().errorStream() << "ColonizePlanet couldn't find building with id: " << *it;
@@ -1811,10 +1822,10 @@ namespace {
     void HandleColonization() {
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int> > > planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
-        std::vector<Ship*> ships = GetUniverse().Objects().FindObjects<Ship>();
+        std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
 
-        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
-            const Ship* ship = *it;
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
+            TemporaryPtr<const Ship> ship = *it;
             if (!ship) {
                 Logger().errorStream() << "HandleColonization couldn't get ship";
                 continue;
@@ -1829,7 +1840,7 @@ namespace {
             int colonize_planet_id = ship->OrderedColonizePlanet();
             if (colonize_planet_id == INVALID_OBJECT_ID)
                 continue;
-            Planet* planet = GetPlanet(colonize_planet_id);
+            TemporaryPtr<Planet> planet = GetPlanet(colonize_planet_id);
             if (!planet)
                 continue;
 
@@ -1862,13 +1873,13 @@ namespace {
             int colonizing_ship_id = *empire_ships_colonizing.begin();
 
             int planet_id = planet_it->first;
-            const Planet* planet = GetPlanet(planet_id);
+            TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
             if (!planet) {
                 Logger().errorStream() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
             }
             int system_id = planet->SystemID();
-            const System* system = GetSystem(system_id);
+            TemporaryPtr<const System> system = GetSystem(system_id);
             if (!system) {
                 Logger().errorStream() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
@@ -1878,7 +1889,7 @@ namespace {
             std::set<int> empires_with_armed_ships_in_system;
             std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
             for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
-                const Fleet* fleet = GetFleet(*fleet_it);
+                TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
                 if (fleet->Aggressive() && fleet->HasArmedShips())
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
@@ -1945,12 +1956,12 @@ namespace {
       * ground combat resolution */
     void HandleInvasion() {
         std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
-        std::vector<Ship*> ships = GetUniverse().Objects().FindObjects<Ship>();
-        std::vector<Planet*> planets = GetUniverse().Objects().FindObjects<Planet>();
+        std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
+        std::vector<TemporaryPtr<Planet> > planets = GetUniverse().Objects().FindObjects<Planet>();
 
         // assemble invasion forces from each invasion ship
-        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
-            const Ship* ship = *it;
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
+            TemporaryPtr<const Ship> ship = *it;
             if (!ship) {
                 Logger().errorStream() << "HandleInvasion couldn't get ship";
                 continue;
@@ -1969,7 +1980,7 @@ namespace {
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == INVALID_OBJECT_ID)
                 continue;
-            Planet* planet = GetPlanet(invade_planet_id);
+            TemporaryPtr<Planet> planet = GetPlanet(invade_planet_id);
             if (!planet)
                 continue;
             planet->ResetIsAboutToBeInvaded();
@@ -1985,8 +1996,8 @@ namespace {
         }
 
         // check each planet for other troops, such as due to empire troops, native troops, or rebel troops
-        for (std::vector<Planet*>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-            Planet* planet = *planet_it;
+        for (std::vector<TemporaryPtr<Planet> >::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+            TemporaryPtr<Planet> planet = *planet_it;
             if (!planet) {
                 Logger().errorStream() << "HandleInvasion couldn't get planet";
                 continue;
@@ -2006,7 +2017,7 @@ namespace {
              planet_it != planet_empire_troops.end(); ++planet_it)
         {
             int planet_id = planet_it->first;
-            Planet* planet = GetPlanet(planet_id);
+            TemporaryPtr<Planet> planet = GetPlanet(planet_id);
             std::set<int> all_involved_empires;
             int planet_initial_owner_id = planet->Owner();
 
@@ -2169,9 +2180,9 @@ void ServerApp::PreCombatProcessTurns() {
         m_universe.Destroy(*it);
 
     // check for empty fleets after scrapping
-    std::vector<Fleet*> fleets = objects.FindObjects<Fleet>();
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        if (Fleet* fleet = *it)
+    std::vector<TemporaryPtr<Fleet> > fleets = objects.FindObjects<Fleet>();
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        if (TemporaryPtr<Fleet> fleet = *it)
             if (fleet->Empty())
                 m_universe.Destroy(fleet->ID());
     }
@@ -2186,28 +2197,26 @@ void ServerApp::PreCombatProcessTurns() {
 
     // fleet movement
     fleets = objects.FindObjects<Fleet>();
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        Fleet* fleet = *it;
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
         if (fleet)
             fleet->ClearArrivalFlag();
     }
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
         // save for possible SitRep generation after moving...
-        Fleet* fleet = *it;
+        TemporaryPtr<Fleet> fleet = *it;
         if (fleet)
-            fleet->MovementPhase();
+            fleet->MovementPhase(fleet);
     }
-
 
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-
     // SitRep for fleets having arrived at destinations
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
         // save for possible SitRep generation after moving...
-        const Fleet* fleet = *it;
+        TemporaryPtr<const Fleet> fleet = *it;
         if (!fleet || !fleet->ArrivedThisTurn())
             continue;
         // sitreps for all empires that can see fleet at new location
@@ -2223,8 +2232,8 @@ void ServerApp::PreCombatProcessTurns() {
 
 
     // update fleet routes after movement
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        Fleet* fleet = *it;
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
         if (fleet)
             fleet->CalculateRoute();
     }
@@ -2263,7 +2272,7 @@ void ServerApp::ProcessCombats() {
     for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it) {
         CombatInfo& combat_info = *it;
 
-        if (System* system = combat_info.GetSystem())
+        if (TemporaryPtr<System> system = combat_info.GetSystem())
             system->SetLastTurnBattleHere(CurrentTurn());
 
         //// DEBUG
@@ -2304,7 +2313,7 @@ void ServerApp::ProcessCombats() {
         // TODO: Until there is a fully-implemented interactive combat system
         // to use, we autoresolve anyway, unless we're testing the
         // in-development 3D system.
-        if (GetOptionsDB().Get<bool>("test-3d-combat")) {
+        if (GetOptionsDB().Get<bool>("test-3d-combat")) { // Duplicates check above?
             m_fsm->process_event(
                 ResolveCombat(GetSystem(combat_info.system_id), combat_info.empire_ids));
             while (m_current_combat) {
@@ -2315,27 +2324,29 @@ void ServerApp::ProcessCombats() {
             AutoResolveCombat(combat_info);
         }
     }
-
+    
     BackProjectSystemCombatInfoObjectMeters(combats);
-
+    
     DisseminateSystemCombatInfo(combats);
-
+    
     CreateCombatSitReps(combats);
-
-    CleanupSystemCombatInfo(combats);
+    
+    //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
     //std::vector<Fleet*> all_fleets =  m_universe.Objects().FindObjects<Fleet>;
-    const std::vector<System*> systems =  m_universe.Objects().FindObjects<System>();
-    for (std::vector<System*>::const_iterator sys_it = systems.begin(); sys_it!=systems.end(); sys_it++) {
-        const System* system = *sys_it;
-        std::vector<int> fleet_ids =  system->FindObjectIDs<Fleet>();
+    for (ObjectMap::const_iterator<System> sys_it = m_universe.Objects().const_begin<System>();
+         sys_it != m_universe.Objects().const_begin<System>(); ++sys_it)
+    {
+        TemporaryPtr<const System> system = *sys_it;
         bool unrestricted_monsters_present = false;
         bool unrestricted_empires_present = false;
         std::vector<int> restricted_monsters;
-        for (std::vector<int>::iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); fleet_it++) {
-            const Fleet* fleet = GetFleet(*fleet_it);
+        for (ObjectMap::const_iterator<Fleet> fleet_it = m_universe.Objects().const_begin<Fleet>();
+             fleet_it != m_universe.Objects().const_begin<Fleet>(); ++fleet_it)
+        {
+            TemporaryPtr<const Fleet> fleet = *fleet_it;
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
@@ -2354,7 +2365,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             for (std::vector<int>::iterator monster_it = restricted_monsters.begin(); 
                  monster_it != restricted_monsters.end(); monster_it++) 
             {
-                Fleet* monster_fleet = GetFleet(*monster_it);
+                TemporaryPtr<Fleet> monster_fleet = GetFleet(*monster_it);
                 // even if it was a diff test that made monster restricted, we will set arrival lane
                 monster_fleet->SetArrivalStarlane(monster_fleet->SystemID()); 
             }
@@ -2374,7 +2385,7 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
         int capital_id = empire_it->second->CapitalID();
-        if (const UniverseObject* capital = GetUniverseObject(capital_id)) {
+        if (TemporaryPtr<const UniverseObject> capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(empire_it->first))
                 empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -2490,7 +2501,7 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
         int capital_id = empire_it->second->CapitalID();
-        if (const UniverseObject* capital = GetUniverseObject(capital_id)) {
+        if (TemporaryPtr<const UniverseObject> capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(empire_it->first))
                 empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -2521,9 +2532,9 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // update fleet routes after combat, production, growth, effects, etc.
-    std::vector<Fleet*> fleets = objects.FindObjects<Fleet>();
-    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        Fleet* fleet = *it;
+    std::vector<TemporaryPtr<Fleet> > fleets = objects.FindObjects<Fleet>();
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
         if (fleet)
             fleet->CalculateRoute();
     }

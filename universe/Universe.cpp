@@ -377,7 +377,7 @@ struct Universe::GraphImpl {
             int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
             // look up lane between systems
-            const System* system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+            TemporaryPtr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
             if (!system1) {
                 Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
@@ -601,7 +601,7 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         return object_it->second;
     } else {
-        const UniverseObject* obj = m_objects.Object(object_id);
+        TemporaryPtr<const UniverseObject> obj = m_objects.Object(object_id);
         if (!obj)
             return std::set<std::string>();
         // all specials visible
@@ -717,7 +717,7 @@ bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) c
 }
 
 bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (const System* system = GetEmpireKnownSystem(system_id, empire_id))
+    if (TemporaryPtr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -734,41 +734,50 @@ std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empir
     return std::multimap<double, int>();
 }
 
-int Universe::Insert(UniverseObject* obj) {
-    if (!obj)
-        return INVALID_OBJECT_ID;
+int Universe::GenerateObjectID() {
+    if (m_last_allocated_object_id + 1 < MAX_ID)
+        return ++m_last_allocated_object_id;
 
-    if (m_last_allocated_object_id + 1 < MAX_ID) {
-        int id = ++m_last_allocated_object_id;
-        obj->SetID(id);
-        m_objects.Insert(obj);
-        return id;
-    }
-
-    // we'll probably never execute this branch, considering how many IDs are available
-    // find a hole in the assigned IDs in which to place the object
-    int last_id_seen = INVALID_OBJECT_ID;
+    int last_id_seen = -1; // 0 is the first valid object id
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (1 < it->ID() - last_id_seen) {
-            int id = last_id_seen + 1;
-            obj->SetID(id);
-            m_objects.Insert(obj);
-            return id;
-        }
+        if (it->ID() - last_id_seen > 1)
+            return last_id_seen + 1;
     }
 
-    return INVALID_OBJECT_ID;
+    return INVALID_OBJECT_ID; // We're screwed.
 }
 
-bool Universe::InsertID(UniverseObject* obj, int id) {
-    if (!obj || id == INVALID_OBJECT_ID || id >= MAX_ID)
-        return false;
+template <class T>
+TemporaryPtr<T> Universe::Insert(T* obj) {
+    if (!obj)
+        return TemporaryPtr<T>();
+
+    int id = GenerateObjectID();
+    if (id != INVALID_OBJECT_ID) {
+        obj->SetID(id);
+        return m_objects.Insert(obj);
+    }
+    
+    // Avoid leaking memory if there are more than 2^31 objects in the Universe.
+    // Realistically, we should probably do something a little more drastic in this case,
+    // like terminate the program and call 911 or something.
+    delete obj;
+    return TemporaryPtr<T>();
+}
+
+template <class T>
+TemporaryPtr<T> Universe::InsertID(T* obj, int id) {
+    if (id == INVALID_OBJECT_ID)
+        return Insert(obj);
+    if (!obj || id >= MAX_ID)
+        return TemporaryPtr<T>();
 
     obj->SetID(id);
-    m_objects.Insert(obj);
-    if ( id > m_last_allocated_object_id )
-        m_last_allocated_object_id=id;
-    return true;
+    TemporaryPtr<T> result = m_objects.Insert(obj);
+    if (id > m_last_allocated_object_id )
+        m_last_allocated_object_id = id;
+    Logger().debugStream() << "Inserting object with id " << id;
+    return result;
 }
 
 int Universe::InsertShipDesign(ShipDesign* ship_design) {
@@ -834,7 +843,6 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
         it->second->ResetMeters();
 
     ExecuteEffects(targets_causes, true, false, false, true);
-
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
@@ -848,14 +856,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, object_ids);
 
-    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+    std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it) {
         (*it)->ResetTargetMaxUnpairedMeters();
         (*it)->ResetPairedActiveMeters();
     }
@@ -865,7 +873,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 
     ExecuteEffects(targets_causes, true, true);
 
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
@@ -876,9 +884,9 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, object_ids);
 
-    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+    std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
 
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it) {
         (*it)->ResetTargetMaxUnpairedMeters();
         (*it)->ResetPairedActiveMeters();
     }
@@ -886,7 +894,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
         it->second->ResetMeters();
     ExecuteEffects(targets_causes, true, true, false, true);
 
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
@@ -926,7 +934,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
             continue;
         // get object
-        UniverseObject* obj = m_objects.Object(object_id);
+        TemporaryPtr<UniverseObject> obj = m_objects.Object(object_id);
         if (!obj) {
             Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -981,7 +989,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
         // get next object id on list
         int cur_object_id = *list_it;
         // get object
-        UniverseObject* cur_object = m_objects.Object(cur_object_id);
+        TemporaryPtr<UniverseObject> cur_object = m_objects.Object(cur_object_id);
         if (!cur_object) {
             Logger().errorStream() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
             return;
@@ -1025,7 +1033,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
-        UniverseObject* obj = m_objects.Object(obj_id);
+        TemporaryPtr<UniverseObject> obj = m_objects.Object(obj_id);
 
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
@@ -1049,7 +1057,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters objects:";
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (const UniverseObject* obj = GetUniverseObject(*it))
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
                 Logger().debugStream() << obj->Dump();
         }
     }
@@ -1058,14 +1066,14 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, objects_vec);
-
+    
     // Apply and record effect meter adjustments
     ExecuteEffects(targets_causes, true, true, false, false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects objects:";
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (const UniverseObject* obj = GetUniverseObject(*it))
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
                 Logger().debugStream() << obj->Dump();
         }
     }
@@ -1076,7 +1084,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     if (!m_effect_discrepancy_map.empty()) {
         for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
             int obj_id = *obj_it;
-            UniverseObject* obj = m_objects.Object(obj_id);
+            TemporaryPtr<UniverseObject> obj = m_objects.Object(obj_id);
 
             // check if this object has any discrepancies
             Effect::DiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
@@ -1125,17 +1133,17 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (const UniverseObject* obj = GetUniverseObject(*it))
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
                 Logger().debugStream() << obj->Dump();
         }
     }
 }
 
 void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids) {
-    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+    std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
 
     // copy current meter values to initial values
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
         (*it)->BackPropegateMeters();
 }
 
@@ -1162,11 +1170,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
         all_potential_targets.push_back(m_objects.Object(*it));
 
-    Logger().debugStream() << "Universe::GetEffectsAndTargets";
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "target objects:";
         for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it) {
-            if (const UniverseObject* obj = GetUniverseObject(*it))
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
                 Logger().debugStream() << obj->Dump();
         }
     }
@@ -1187,11 +1194,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     type_timer.restart();
-    std::vector<Planet*> planets = m_objects.FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator planet_it = planets.begin();
+    std::vector<TemporaryPtr<Planet> > planets = m_objects.FindObjects<Planet>();
+    for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
          planet_it != planets.end(); ++planet_it)
     {
-        const Planet* planet = *planet_it;
+        TemporaryPtr<const Planet> planet = *planet_it;
         if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = planet->SpeciesName();
@@ -1210,11 +1217,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double planet_species_time = type_timer.elapsed();
     type_timer.restart();
 
-    std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
-    for (std::vector<Ship*>::const_iterator ship_it = ships.begin();
+    std::vector<TemporaryPtr<Ship> > ships = m_objects.FindObjects<Ship>();
+    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
          ship_it != ships.end(); ++ship_it)
     {
-        const Ship* ship = *ship_it;
+        TemporaryPtr<const Ship> ship = *ship_it;
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = ship->SpeciesName();
@@ -1237,12 +1244,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
-    for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        const UniverseObject* obj = *it;
-        int source_object_id = obj->ID();
+    for (ObjectMap::const_iterator<> obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
+        int source_object_id = obj_it->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
-        const std::map<std::string, int>& specials = it->Specials();
+        const std::map<std::string, int>& specials = obj_it->Specials();
         for (std::map<std::string, int>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(special_it->first);
             if (!special) {
@@ -1250,7 +1256,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 continue;
             }
 
-            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), obj, ECT_SPECIAL, special->Name(),
+            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), *obj_it, ECT_SPECIAL, special->Name(),
                                                  all_potential_targets, targets_causes,
                                                  cached_source_condition_matches[source_object_id],
                                                  invariant_condition_matches);
@@ -1265,21 +1271,21 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         int source_id = empire->CapitalID();
-        const UniverseObject* source = m_objects.Object(source_id);
+        TemporaryPtr<const UniverseObject> source = m_objects.Object(source_id);
         if (source_id == INVALID_OBJECT_ID ||
             !source ||
-            !source->Unowned() ||
+            !source->Unowned() || // TODO: Don't forget to fix this!
             !source->OwnedBy(empire->EmpireID()))
         {
             // find alternate object owned by this empire to act as source
             // first try to get a planet
-            std::vector<UniverseObject*> empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
+            std::vector<TemporaryPtr<UniverseObject> > empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
             if (!empire_planets.empty()) {
                 source = *empire_planets.begin();
                 source_id = source->ID();
             } else {
                 // if no planet, use any owned object
-                std::vector<UniverseObject*> empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
+                std::vector<TemporaryPtr<UniverseObject> > empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
                 if (!empire_objects.empty()) {
                     source = *empire_objects.begin();
                     source_id = source->ID();
@@ -1307,11 +1313,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     type_timer.restart();
-    std::vector<Building*> buildings = m_objects.FindObjects<Building>();
-    for (std::vector<Building*>::const_iterator building_it = buildings.begin();
+    std::vector<TemporaryPtr<Building> > buildings = m_objects.FindObjects<Building>();
+    for (std::vector<TemporaryPtr<Building> >::const_iterator building_it = buildings.begin();
          building_it != buildings.end(); ++building_it)
     {
-        const Building* building = *building_it;
+        TemporaryPtr<const Building> building = *building_it;
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
         const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
@@ -1333,8 +1339,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
     type_timer.restart();
     ships = m_objects.FindObjects<Ship>();
-    for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-        const Ship* ship = *ship_it;
+    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+        TemporaryPtr<const Ship> ship = *ship_it;
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -1378,9 +1384,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for FIELDS";
     type_timer.restart();
-    std::vector<Field*> fields = m_objects.FindObjects<Field>();
-    for (std::vector<Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
-        const Field* field = *field_it;
+    std::vector<TemporaryPtr<Field> > fields = m_objects.FindObjects<Field>();
+    for (std::vector<TemporaryPtr<Field> >::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
+        TemporaryPtr<const Field> field = *field_it;
         if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -1411,7 +1417,7 @@ namespace {
     Effect::TargetSet& GetConditionMatches(const Condition::ConditionBase* cond,
                                            std::map<const Condition::ConditionBase*, Effect::TargetSet>&
                                                cached_condition_matches,
-                                           const UniverseObject* source,
+                                           TemporaryPtr<const UniverseObject> source,
                                            const ScriptingContext& source_context,
                                            Effect::TargetSet& target_objects)
     {
@@ -1449,7 +1455,7 @@ namespace {
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                                    const UniverseObject* source,
+                                                    TemporaryPtr<const UniverseObject> source,
                                                     EffectsCauseType effect_cause_type,
                                                     const std::string& specific_cause_name,
                                                     Effect::TargetSet& target_objects,
@@ -1463,7 +1469,6 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         int source_id = (source ? source->ID() : INVALID_OBJECT_ID);
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
-
 
     ScriptingContext source_context(source);
     int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
@@ -1531,7 +1536,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
          targets_it != targets_causes.end(); ++targets_it)
     {
-        const UniverseObject* source = GetUniverseObject(targets_it->first.source_object_id);
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects effgrp (source " +
                                  (source ? source->Name() : "No Source!") +
                                  ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
@@ -1630,7 +1635,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= VIS_PARTIAL_VISIBILITY) {
-        if (const Ship* ship = GetShip(object_id)) {
+        if (TemporaryPtr<const Ship> ship = GetShip(object_id)) {
             int design_id = ship->DesignID();
             if (design_id == ShipDesign::INVALID_DESIGN_ID) {
                 Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
@@ -1647,7 +1652,7 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;
-    //const UniverseObject* obj = GetUniverseObject(object_id);
+    //TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
     //if (!obj)
     //    return;
     //if (!obj->HasSpecial(special_name))
@@ -1671,7 +1676,7 @@ namespace {
                 object_it != Objects().const_end(); ++object_it)
         {
             // skip unowned objects, which can't provide detection to any empire
-            const UniverseObject* obj = *object_it;
+            TemporaryPtr<const UniverseObject> obj = *object_it;
             if (obj->Unowned())
                 continue;
 
@@ -1684,11 +1689,11 @@ namespace {
                 continue;
 
             // don't allow moving ships / fleets to give detection
-            const Fleet* fleet = 0;
+            TemporaryPtr<const Fleet> fleet;
             if (obj->ObjectType() == OBJ_FLEET) {
-                fleet = universe_object_cast<const Fleet*>(obj);
+                fleet = dynamic_ptr_cast<const Fleet>(obj);
             } else if (obj->ObjectType() == OBJ_SHIP) {
-                const Ship* ship = universe_object_cast<const Ship*>(obj);
+                TemporaryPtr<const Ship> ship = dynamic_ptr_cast<const Ship>(obj);
                 if (ship)
                     fleet = Objects().Object<Fleet>(ship->FleetID());
             }
@@ -1746,7 +1751,7 @@ namespace {
         for (ObjectMap::const_iterator<> object_it = objects.const_begin();
              object_it != objects.const_end(); ++object_it)
         {
-            const UniverseObject* obj = *object_it;
+            TemporaryPtr<const UniverseObject> obj = *object_it;
             int object_id = object_it->ID();
             const Meter* stealth_meter = obj->GetMeter(METER_STEALTH);
             if (!stealth_meter)
@@ -1839,6 +1844,7 @@ namespace {
             empire_location_detection_ranges,
         const ObjectMap& objects)
     {
+        std::vector<TemporaryPtr<const Field> > fields = objects.FindObjects<Field>();
         Universe& universe = GetUniverse();
 
         for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
@@ -1864,7 +1870,7 @@ namespace {
             for (ObjectMap::const_iterator<Field> field_it = objects.const_begin<Field>();
                  field_it != objects.const_end<Field>(); ++field_it)
             {
-                const Field* field = *field_it;
+                TemporaryPtr<const Field> field = *field_it;
                 if (field->GetMeter(METER_STEALTH)->Current() > detection_strength)
                     continue;
                 double field_size = field->GetMeter(METER_SIZE)->Current();
@@ -1949,7 +1955,7 @@ namespace {
         for (ObjectMap::const_iterator<> object_it = Objects().const_begin();
                 object_it != Objects().const_end(); ++object_it)
         {
-            const UniverseObject* obj = *object_it;
+            TemporaryPtr<const UniverseObject> obj = *object_it;
             if (obj->Unowned())
                 continue;
             universe.SetEmpireObjectVisibility(obj->Owner(), object_it->ID(), VIS_FULL_VISIBILITY);
@@ -1987,7 +1993,7 @@ namespace {
         std::map<int, std::set<int> > empires_systems_with_owned_objects;
         // get systems where empires have owned objects
         for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-            const UniverseObject* obj = *it;
+            TemporaryPtr<const UniverseObject> obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
                 continue;
             empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
@@ -2005,9 +2011,9 @@ namespace {
         }
 
         // get planets, check their locations...
-        std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-        for (std::vector<const Planet*>::iterator it = planets.begin(); it != planets.end(); ++it) {
-            const Planet* planet = *it;
+        std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
+        for (std::vector<TemporaryPtr<const Planet> >::iterator it = planets.begin(); it != planets.end(); ++it) {
+            TemporaryPtr<const Planet> planet = *it;
             int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
                 continue;
@@ -2039,7 +2045,7 @@ namespace {
             int container_obj_id = container_object_it->ID();
 
             // get container object
-            const UniverseObject* container_obj = *container_object_it;
+            TemporaryPtr<const UniverseObject> container_obj = *container_object_it;
             if (!container_obj)
                 continue;   // shouldn't be necessary, but I like to be safe...
 
@@ -2132,9 +2138,9 @@ namespace {
 
     void PropegateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
                                                     Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
-        const std::vector<const System*> systems = objects.FindObjects<System>();
-        for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-            const System* system = *it;
+        const std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+        for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+            TemporaryPtr<const System> system = *it;
             int system_id = system->ID();
 
             // for each empire with a visibility map
@@ -2184,15 +2190,15 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        std::vector<const Fleet*> moving_fleets;
-        std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-        for (std::vector<const UniverseObject*>::iterator it = moving_fleet_objects.begin();
+        std::vector<TemporaryPtr<const Fleet> > moving_fleets;
+        std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
+        for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = moving_fleet_objects.begin();
              it != moving_fleet_objects.end(); ++it)
         {
-            const UniverseObject* obj = *it;
+            TemporaryPtr<const UniverseObject> obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
-            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+            TemporaryPtr<const Fleet> fleet = dynamic_ptr_cast<const Fleet>(obj);
             if (!fleet)
                 continue;
 
@@ -2248,7 +2254,7 @@ namespace {
                     continue;
 
                 int object_id = obj_it->first;
-                const UniverseObject* obj = objects.Object(object_id);
+                TemporaryPtr<const UniverseObject> obj = objects.Object(object_id);
                 if (!obj)
                     continue;
                 const std::map<std::string, int>& all_object_specials = obj->Specials();
@@ -2343,7 +2349,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
     // for each object in universe
     for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int object_id = it->ID();
-        const UniverseObject* full_object = *it; // not filtered on server by visibility
+        TemporaryPtr<const UniverseObject> full_object = *it; // not filtered on server by visibility
         if (!full_object) {
             Logger().errorStream() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects with id " << object_id;
             continue;
@@ -2376,10 +2382,10 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            if (UniverseObject* known_obj = known_object_map.Object(object_id)) {
+            if (TemporaryPtr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
-                if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
+                if (UniverseObject* new_obj = full_object->Clone(full_object, empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
                     known_object_map.Insert(new_obj);
             }
 
@@ -2428,9 +2434,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             if (vis_map.find(object_id) != vis_map.end() ||
                 destroyed_set.find(object_id) != destroyed_set.end())
             {
-                std::set<int>::iterator temp = stale_it;    ++temp;
-                stale_set.erase(stale_it);
-                stale_it = temp;
+                stale_set.erase(stale_it++);
             } else {
                 ++stale_it;
             }
@@ -2486,12 +2490,11 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         for (ObjectMap::const_iterator<> obj_it = latest_known_objects.const_begin();
              obj_it != latest_known_objects.const_end(); ++obj_it)
         {
-            const UniverseObject* obj = *obj_it;
-            if (obj->ObjectType() != OBJ_FLEET)
+            if (obj_it->ObjectType() != OBJ_FLEET)
                 continue;
-            if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY)
+            if (obj_it->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY)
                 continue;
-            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+            TemporaryPtr<const Fleet> fleet = dynamic_ptr_cast<const Fleet>(*obj_it);
             if (!fleet)
                 continue;
             int fleet_id = obj_it->ID();
@@ -2516,7 +2519,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                  ship_it != ship_ids.end(); ++ship_it)
             {
                 int ship_id = *ship_it;
-                const Ship* ship = latest_known_objects.Object<Ship>(ship_id);
+                TemporaryPtr<const Ship> ship = latest_known_objects.Object<Ship>(ship_id);
 
                 // if ship doesn't think it's in this fleet, doesn't count.
                 if (!ship || ship->FleetID() != fleet_id)
@@ -2546,7 +2549,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         //for (std::set<int>::const_iterator stale_it = stale_set.begin();
         //     stale_it != stale_set.end(); ++stale_it)
         //{
-        //    const UniverseObject* obj = latest_known_objects.Object(*stale_it);
+        //    TemporaryPtr<const UniverseObject> obj = latest_known_objects.Object(*stale_it);
         //    Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         //}
     }
@@ -2580,15 +2583,14 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
 
 void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
     // remove object from any containing UniverseObject
-    UniverseObject* obj = m_objects.Object(object_id);
+    TemporaryPtr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
     }
-    //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
     m_destroyed_object_ids.insert(object_id);
-
+    
     if (update_destroyed_object_knowers) {
         // record empires that know this object has been destroyed
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
@@ -2606,40 +2608,41 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     obj->MoveTo(obj->X(), obj->Y());
 
 
-    // remove from existing objects set
+    // signal that an object has been deleted
     UniverseObjectDeleteSignal(obj);
-    delete m_objects.Remove(object_id);
+    m_objects.Remove(object_id);
 }
 
 void Universe::RecursiveDestroy(int object_id) {
-    UniverseObject* obj = m_objects.Object(object_id);
+    TemporaryPtr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return;
     }
 
-    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+    if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         Destroy(object_id);
-        if (fleet && fleet->Empty())
+        if (fleet && fleet->Empty()) {
             Destroy(fleet->ID());
+        }
 
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
+    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(obj)) {
         std::set<int> fleet_ships = fleet->ShipIDs();           // copy, so destroying ships can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = fleet_ships.begin();
              it != fleet_ships.end(); ++it)
         { Destroy(*it); }
         Destroy(object_id);
 
-    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
+    } else if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(obj)) {
         std::set<int> planet_buildings = planet->Buildings();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = planet_buildings.begin();
              it != planet_buildings.end(); ++it)
         { Destroy(*it); }
         Destroy(object_id);
 
-    } else if (System* system = universe_object_cast<System*>(obj)) {
+    } else if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(obj)) {
         std::vector<int> system_objs = system->FindObjectIDs();
         for (std::vector<int>::const_iterator it = system_objs.begin();
              it != system_objs.end(); ++it)
@@ -2656,9 +2659,10 @@ void Universe::RecursiveDestroy(int object_id) {
 }
 
 bool Universe::Delete(int object_id) {
+    Logger().debugStream() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
-    UniverseObject* obj = m_objects.Object(object_id);
+    TemporaryPtr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().errorStream() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
@@ -2667,9 +2671,8 @@ bool Universe::Delete(int object_id) {
     // move object to invalid position, thereby removing it from anything that
     // contained it and propegating associated signals
     obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
-
     // remove from existing objects set
-    delete m_objects.Remove(object_id);
+    m_objects.Remove(object_id);
 
     // TODO: Should this also remove the object from the latest known objects
     // and known destroyed objects for each empire?
@@ -2730,7 +2733,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     m_system_distances.resize(system_ids.size(), system_ids.size());
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
-        const System* system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
+        TemporaryPtr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
 
         m_system_id_to_graph_index[system1_id] = i;
 
@@ -2757,7 +2760,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
                 if (it->second) {                               // if this is a wormhole
                     edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
                 } else {                                        // if this is a starlane
-                    const UniverseObject* system2 = GetUniverseObject(it->first);
+                    TemporaryPtr<const UniverseObject> system2 = GetUniverseObject(it->first);
                     double x_dist = system2->X() - system1->X();
                     double y_dist = system2->Y() - system1->Y();
                     edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -2769,7 +2772,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         // define the straight-line system distances for this system
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[j];
-            const UniverseObject* system2 = GetUniverseObject(system2_id);
+            TemporaryPtr<const UniverseObject> system2 = GetUniverseObject(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i][j] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -2983,3 +2986,51 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
     if (it != m_empire_stale_knowledge_object_ids.end())
         empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
+
+template <class T>
+TemporaryPtr<T> Universe::InsertNewObject(T* object) {
+    m_objects.Insert(object);
+    return m_objects.Object<T>(object->ID());
+}
+
+TemporaryPtr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Ship(), id); }
+
+TemporaryPtr<Ship> Universe::CreateShip(int empire_id, int design_id, const std::string& species_name,
+                                        int produced_by_empire_id/*= ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Ship(empire_id, design_id, species_name, produced_by_empire_id), id); }
+
+TemporaryPtr<Fleet> Universe::CreateFleet(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Fleet(), id); }
+
+TemporaryPtr<Fleet> Universe::CreateFleet(const std::string& name, double x, double y, int owner, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Fleet(name, x, y, owner), id); }
+
+TemporaryPtr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Planet(), id); }
+
+TemporaryPtr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Planet(type, size), id); }
+
+TemporaryPtr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new System(), id); }
+
+TemporaryPtr<System> Universe::CreateSystem(StarType star, int orbits, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new System(star, orbits, name, x, y), id); }
+
+TemporaryPtr<System> Universe::CreateSystem(StarType star, int orbits, const std::map<int, bool>& lanes_and_holes,
+                                    const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new System(star, orbits, lanes_and_holes, name, x, y), id); }
+
+TemporaryPtr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Building(), id); }
+
+TemporaryPtr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
+                                        int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Building(empire_id, building_type, produced_by_empire_id), id); }
+
+TemporaryPtr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Field(), id); }
+
+TemporaryPtr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new Field(field_type, x, y, radius), id); }

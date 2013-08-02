@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 #include "ObjectMap.h"
+#include "TemporaryPtr.h"
 
 #include <boost/signal.hpp>
 #include <boost/unordered_map.hpp>
@@ -33,7 +34,7 @@ class UniverseObject;
 class System;
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<const UniverseObject*> ObjectSet;
+    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
 }
 
 namespace Effect {
@@ -41,7 +42,7 @@ namespace Effect {
     struct TargetsAndCause;
     struct SourcedEffectsGroup;
     class EffectsGroup;
-    typedef std::vector<UniverseObject*> TargetSet;
+    typedef std::vector<TemporaryPtr<UniverseObject> > TargetSet;
     typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
     typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
@@ -78,7 +79,7 @@ public:
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
+    typedef boost::signal<void (TemporaryPtr<const UniverseObject>)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
     //@}
 
     /** \name Structors */ //@{
@@ -220,21 +221,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** Inserts object \a obj into the universe; returns the ID number
-      * assigned to the object, or -1 on failure.
-      * \note Universe gains ownership of \a obj once it is inserted; the
-      * caller should \a never delete \a obj after passing it to Insert(). */
-    int             Insert(UniverseObject* obj);
-
-    /** Inserts object \a obj of given ID into the universe; returns true
-      * on proper insert, or false on failure.
-      * \note Universe gains ownership of \a obj once it is inserted; the
-      * caller should \a never delete \a obj after
-      * passing it to InsertID().
-      * Useful mostly for times when ID needs to be consistent on client
-      * and server */
-    bool            InsertID(UniverseObject* obj, int id);
-
     /** Inserts \a ship_design into the universe; returns the ship design ID
       * assigned to it, or -1 on failure.
       * \note Universe gains ownership of \a ship_design once inserted. */
@@ -393,13 +379,13 @@ public:
 
     /** Generates an object ID for a future object. Usually used by the server
       * to service new ID requests. */
-    int             GenerateObjectID() { return ++m_last_allocated_object_id; }
+    int             GenerateObjectID();
 
     /** Generates design ID for a new (ship) design. Usually used by the
       * server to service new ID requests. */
-    int             GenerateDesignID() { return ++m_last_allocated_design_id; }
+    int             GenerateDesignID() { return ++m_last_allocated_design_id; } // TODO: See GenerateObjectID()
 
-    typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
+    typedef std::vector<std::vector<std::set<TemporaryPtr<System> > > > AdjacencyGrid;
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool&     UniverseObjectSignalsInhibited();
@@ -413,6 +399,30 @@ public:
 
     double          UniverseWidth() const;
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
+
+    /** \name Generators */ //@{
+    TemporaryPtr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
+                                  int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+
+    TemporaryPtr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
+
+    TemporaryPtr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
+
+    TemporaryPtr<System> CreateSystem(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<System> CreateSystem(StarType star, int orbits, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    TemporaryPtr<System> CreateSystem(StarType star, int orbits, const std::map<int, bool>& lanes_and_holes, // TODO: std::map<int, bool> is typedef'd in System.h.  Figure out how to make this less awkward...
+                                      const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+
+    TemporaryPtr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<Building> CreateBuilding(int empire_id, const std::string& building_type,
+                       int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+
+    TemporaryPtr<Field> CreateField(int id = INVALID_OBJECT_ID);
+    TemporaryPtr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
+    //@}
 
 private:
     template <typename T>
@@ -459,6 +469,18 @@ private:
         storage_type m_m;
     };
 
+    /** Inserts object \a obj into the universe; returns a TemporaryPtr
+      * to the inserted object. */
+    template <class T>
+    TemporaryPtr<T>             Insert(T* obj);
+
+    /** Inserts object \a obj of given ID into the universe; returns a
+      * TemporaryPtr to the inserted object on proper insert, or a null
+      * TemporaryPtr on failure.  Useful mostly for times when ID needs
+      * to be consistent on client and server */
+    template <class T>
+    TemporaryPtr<T>            InsertID(T* obj, int id);
+
     typedef distance_matrix<double> DistanceMatrix;
     typedef distance_matrix<short> JumpsMatrix;
 
@@ -480,7 +502,7 @@ private:
       * NOTE: this method will modify target_objects temporarily, but restore
       * its contents before returning. */
     void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                                 const UniverseObject* source,
+                                                 TemporaryPtr<const UniverseObject> source,
                                                  EffectsCauseType effect_cause_type,
                                                  const std::string& specific_cause_name,
                                                  Effect::TargetSet& target_objects,
@@ -603,6 +625,9 @@ private:
 
     /***/
     void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
+
+    template <class T>
+    TemporaryPtr<T> InsertNewObject(T* object);
 
     friend class boost::serialization::access;
     template <class Archive>

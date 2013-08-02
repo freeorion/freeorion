@@ -12,6 +12,7 @@
 #include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../universe/Predicates.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -48,7 +49,7 @@ namespace {
 
     class ShipRow : public GG::ListBox::Row {
     public:
-        ShipRow(Ship* ship, Fleet* fleet, GG::X w, GG::Y h) :
+        ShipRow(TemporaryPtr<Ship> ship, TemporaryPtr<Fleet> fleet, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, ""),
             m_ship(ship)
         {
@@ -88,7 +89,7 @@ namespace {
         int ShipID() const
         { return m_ship->ID(); }
 
-        Ship* const m_ship;
+        const TemporaryPtr<Ship> m_ship;
     };
 
     Ogre::SceneNode* CreatePlacementRegionNode(Ogre::SceneManager* scene_manager,
@@ -219,7 +220,7 @@ namespace {
         }
     }
 
-    std::size_t GroupIndexOfShip(const std::vector<CombatSetupGroup>& setup_groups, const Ship* ship) {
+    std::size_t GroupIndexOfShip(const std::vector<CombatSetupGroup>& setup_groups, TemporaryPtr<const Ship> ship) {
         std::size_t retval = setup_groups.size();
         for (std::size_t i = 0; i < setup_groups.size(); ++i) {
             if (setup_groups[i].m_ships.find(ship->ID()) != setup_groups[i].m_ships.end()) {
@@ -238,7 +239,7 @@ CombatSetupWnd::CombatSetupWnd(
     Ogre::SceneManager* scene_manager,
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     intersect_mouse_with_ecliptic,
-    boost::function<const Ogre::MaterialPtr& (const Ship&)>
+    boost::function<const Ogre::MaterialPtr& (TemporaryPtr<const Ship>)>
     get_ship_material,
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     add_ship_node_to_combat_wnd,
@@ -264,7 +265,6 @@ CombatSetupWnd::CombatSetupWnd(
     m_redo_placements_button(new CUIButton(GG::X0, GG::Y1, GG::X1, UserString("REDO_PLACEMENTS"))),
     m_auto_place_button(new CUIButton(GG::X0, GG::Y(2), GG::X1, UserString("AUTO_PLACE_SHIPS"))),
     m_done_button(new CUIButton(GG::X0, GG::Y(3), GG::X1, UserString("DONE"))),
-    m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
     m_scene_manager(scene_manager),
     m_combat_universe(combat_data->m_combat_universe),
@@ -302,26 +302,26 @@ CombatSetupWnd::CombatSetupWnd(
          ++it) {
         if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(*it)) {
             // create scene node
-            Ship& ship = combat_ship->GetShip();
+            TemporaryPtr<Ship> ship = combat_ship->GetShip();
 
             // TODO: Temporary!  Serialization of CombatData currently sends
             // everything to everyone.  Fix this.
-            if (!ship.OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            if (!ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 continue;
 
             Ogre::SceneNode* node = GetShipNode(ship);
 
             if (combat_ship->position() == OpenSteer::Vec3(0.0, 0.0, 0.0)) {
-                UniverseObject* o = m_combat_universe[ship.FleetID()];
-                Fleet* fleet = boost::polymorphic_downcast<Fleet*>(o);
-                ShipRow* row = new ShipRow(&ship, fleet, row_size.x, row_size.y);
+                TemporaryPtr<UniverseObject> o = m_combat_universe[ship->FleetID()];
+                TemporaryPtr<Fleet> fleet = universe_object_ptr_cast<Fleet>(o);
+                ShipRow* row = new ShipRow(ship, fleet, row_size.x, row_size.y);
                 m_listbox->Insert(row);
             } else {
                 node->setPosition(ToOgre(combat_ship->position()));
                 node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
                                                       ToOgre(combat_ship->forward()),
                                                       ToOgre(combat_ship->up())));
-                PlaceShip(&ship, node);
+                PlaceShip(ship, node);
                 node->setVisible(true);
             }
         }
@@ -360,7 +360,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         Ogre::MovableObject* movable_object = 0;
         if (!PlaceableShipNode() && (movable_object = m_get_object_under_pt(event.Point()))) {
             Ogre::SceneNode* node = movable_object->getParentSceneNode();
-            if (Ogre::any_cast<Ship*>(&node->getUserAny())) {
+            if (Ogre::any_cast<TemporaryPtr<Ship> >(&node->getUserAny())) {
                 m_button_press_placed_ship_node = node;
                 assert(m_button_press_placed_ship_node);
                 m_button_press_on_placed_ship = event.Point();
@@ -379,7 +379,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
             }
             if (m_dragging_placed_ship) {
                 std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
-                Ship* ship = *Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
+                TemporaryPtr<Ship> ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&m_button_press_placed_ship_node->getUserAny());
                 bool valid_location = intersection.first && ValidPlacement(ship, intersection.second);
                 if (valid_location)
                     RepositionShip(ship, m_button_press_placed_ship_node, intersection.second);
@@ -395,7 +395,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         bool valid_placement = false;
         if (placement_node) {
             std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
-            Ship* ship = *Ogre::any_cast<Ship*>(&placement_node->getUserAny());
+            TemporaryPtr<Ship> ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&placement_node->getUserAny());
             valid_placement = intersection.first && ValidPlacement(ship, intersection.second);
         }
         if (valid_placement) {
@@ -425,7 +425,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 Ogre::SceneNode* CombatSetupWnd::PlaceableShipNode() const
 { return m_selected_placeable_ship ? m_placeable_ship_node : 0; }
 
-bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point) const {
+bool CombatSetupWnd::ValidPlacement(TemporaryPtr<Ship> ship, const Ogre::Vector3& point) const {
     bool retval = false;
     std::size_t i = GroupIndexOfShip(m_setup_groups, ship);
     if (i != m_setup_groups.size()) {
@@ -444,7 +444,7 @@ bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point) cons
         for (std::map<int, Ogre::SceneNode*>::const_iterator it = m_placed_nodes.begin();
              it != m_placed_nodes.end();
              ++it) {
-            Ship* this_ship = *Ogre::any_cast<Ship*>(&it->second->getUserAny());
+            TemporaryPtr<Ship> this_ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&it->second->getUserAny());
             if (this_ship == ship)
                 continue;
             Ogre::SceneNode::ObjectIterator iterator = it->second->getAttachedObjectIterator();
@@ -464,7 +464,7 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt) {
     if (Ogre::SceneNode* node = PlaceableShipNode()) {
         std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(pt);
         if (intersection.first) {
-            Ship* ship = *Ogre::any_cast<Ship*>(&node->getUserAny());
+            TemporaryPtr<Ship> ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&node->getUserAny());
             bool valid_location = ValidPlacement(ship, intersection.second);
             node->setVisible(true);
             node->setPosition(intersection.second);
@@ -506,13 +506,13 @@ void CombatSetupWnd::CreateCombatOrder(int ship_id, Ogre::SceneNode* node) {
                                               ToOpenSteer(axes[1]));
 }
 
-Ogre::SceneNode* CombatSetupWnd::GetShipNode(Ship& ship) {
-    Ogre::SceneNode*& retval = m_ship_nodes[ship.ID()];
+Ogre::SceneNode* CombatSetupWnd::GetShipNode(TemporaryPtr<Ship> ship) {
+    Ogre::SceneNode*& retval = m_ship_nodes[ship->ID()];
     if (!retval) {
         retval = CreateShipSceneNode(m_scene_manager, ship);
-        retval->setUserAny(Ogre::Any(&ship));
+        retval->setUserAny(Ogre::Any(ship));
         const Ogre::MaterialPtr& material = m_get_ship_material(ship);
-        Ogre::Entity*& entity = m_ship_entities[ship.ID()];
+        Ogre::Entity*& entity = m_ship_entities[ship->ID()];
         entity = CreateShipEntity(m_scene_manager, ship, material);
         retval->attachObject(entity);
     }
@@ -523,17 +523,17 @@ Ogre::SceneNode* CombatSetupWnd::GetShipNode(Ship& ship) {
 void CombatSetupWnd::PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels) {
     assert(sels.size() <= 1u);
     if (sels.empty()) {
-        PlaceableShipSelected(0);
-        UpdatePlacementIndicators(0);
+        PlaceableShipSelected(TemporaryPtr<Ship>());
+        UpdatePlacementIndicators(TemporaryPtr<Ship>());
     } else {
         GG::ListBox::Row* row = **sels.begin();
         ShipRow* ship_row = boost::polymorphic_downcast<ShipRow*>(row);
-        PlaceableShipSelected(const_cast<Ship*>(ship_row->m_ship));
+        PlaceableShipSelected(TemporaryPtr<Ship>(ship_row->m_ship));
         UpdatePlacementIndicators(ship_row->m_ship);
     }
 }
 
-void CombatSetupWnd::PlaceableShipSelected(Ship* ship) {
+void CombatSetupWnd::PlaceableShipSelected(TemporaryPtr<Ship> ship) {
     if (ship != m_selected_placeable_ship) {
         m_selected_placeable_ship = ship;
         if (m_placeable_ship_node) {
@@ -541,11 +541,11 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship) {
             m_placeable_ship_node = 0;
         }
         if (m_selected_placeable_ship)
-            m_placeable_ship_node = GetShipNode(*ship);
+            m_placeable_ship_node = GetShipNode(ship);
     }
 }
 
-void CombatSetupWnd::UpdatePlacementIndicators(const Ship* ship) {
+void CombatSetupWnd::UpdatePlacementIndicators(TemporaryPtr<const Ship> ship) {
     if (ship) {
         std::size_t i = GroupIndexOfShip(m_setup_groups, ship);
         if (i != m_setup_groups.size()) {
@@ -577,7 +577,7 @@ void CombatSetupWnd::UpdatePlacementIndicators(const Ship* ship) {
 }
 
 void CombatSetupWnd::CancelCurrentShipPlacement() {
-    m_selected_placeable_ship = 0;
+    m_selected_placeable_ship = TemporaryPtr<Ship>();
     if (m_placeable_ship_node) {
         m_placeable_ship_node->setVisible(false);
         m_placeable_ship_node = 0;
@@ -595,23 +595,23 @@ void CombatSetupWnd::PlaceCurrentShip() {
     assert(selections.size() == 1u);
     m_listbox->Erase(*selections.begin());
 
-    m_selected_placeable_ship = 0;
+    m_selected_placeable_ship = TemporaryPtr<Ship>();
     m_placeable_ship_node = 0;
 
     m_done_button->Disable(!m_listbox->Empty());
 }
 
-void CombatSetupWnd::PlaceShip(Ship* ship, Ogre::SceneNode* node) {
+void CombatSetupWnd::PlaceShip(TemporaryPtr<Ship> ship, Ogre::SceneNode* node) {
     int ship_id = ship->ID();
     m_add_ship_node_to_combat_wnd(ship_id,
                                   node,
                                   m_ship_entities[ship_id],
-                                  m_get_ship_material(*ship));
+                                  m_get_ship_material(ship));
     CreateCombatOrder(ship_id, node);
     m_placed_nodes[ship_id] = node;
 }
 
-void CombatSetupWnd::RepositionShip(Ship* ship, Ogre::SceneNode* node, const Ogre::Vector3& position) {
+void CombatSetupWnd::RepositionShip(TemporaryPtr<Ship> ship, Ogre::SceneNode* node, const Ogre::Vector3& position) {
     int ship_id = ship->ID();
     m_reposition_ship_node(ship_id, position, StarwardOrientationForPosition(position));
     CreateCombatOrder(ship_id, node);
@@ -623,9 +623,9 @@ void CombatSetupWnd::RedoPlacementsButtonClicked() {
     for (std::map<int, Ogre::SceneNode*>::iterator it = m_placed_nodes.begin();
          it != m_placed_nodes.end();
          ++it) {
-        Ship* ship = *Ogre::any_cast<Ship*>(&it->second->getUserAny());
-        UniverseObject* o = m_combat_universe[ship->FleetID()];
-        Fleet* fleet = boost::polymorphic_downcast<Fleet*>(o);
+        TemporaryPtr<Ship> ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&it->second->getUserAny());
+        TemporaryPtr<UniverseObject> o = m_combat_universe[ship->FleetID()];
+        TemporaryPtr<Fleet> fleet = universe_object_ptr_cast<Fleet>(o);
         ShipRow* row = new ShipRow(ship, fleet, row_size.x, row_size.y);
         m_listbox->Insert(row);
         m_remove_ship(it->first);

@@ -63,54 +63,39 @@ namespace {
         return retval;
     }
 
-    /** Creates a new fleet at \a system and inserts \a ship into it.  Used
-     * when a ship has been moved by the MoveTo effect separately from the
-     * fleet that previously held it.  Also used by CreateShip effect to give
-     * the new ship a fleet.  All ships need to be within fleets. */
-    Fleet* CreateNewFleet(System* system, Ship* ship) {
+    /** creates a new fleet at a specified \a x and \a y location within the
+     * Universe, and and inserts \a ship into it.  Used when a ship has been
+     * moved by the MoveTo effect separately from the fleet that previously
+     * held it.  All ships need to be within fleets. */
+    TemporaryPtr<Fleet> CreateNewFleet(double x, double y, TemporaryPtr<Ship> ship) {
         Universe& universe = GetUniverse();
-        if (!system || !ship)
-            return 0;
+        if (!ship)
+            return TemporaryPtr<Fleet>();
 
-        int new_fleet_id = GetNewObjectID();
+        TemporaryPtr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
-        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, fleet->ID());
+        fleet->Rename(fleet_name);
 
-        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ship->Owner());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-
-        universe.InsertID(fleet, new_fleet_id);
-        system->Insert(fleet);
 
         fleet->AddShip(ship->ID());
 
         return fleet;
     }
 
-    /** creates a new fleet at a specified \a x and \a y location within the
-     * Universe, and and inserts \a ship into it.  Used when a ship has been
-     * moved by the MoveTo effect separately from the fleet that previously
-     * held it.  All ships need to be within fleets. */
-    Fleet* CreateNewFleet(double x, double y, Ship* ship) {
-        Universe& universe = GetUniverse();
-        if (!ship)
-            return 0;
+    /** Creates a new fleet at \a system and inserts \a ship into it.  Used
+     * when a ship has been moved by the MoveTo effect separately from the
+     * fleet that previously held it.  Also used by CreateShip effect to give
+     * the new ship a fleet.  All ships need to be within fleets. */
+    TemporaryPtr<Fleet> CreateNewFleet(TemporaryPtr<System> system, TemporaryPtr<Ship> ship) {
+        if (!system || !ship)
+            return TemporaryPtr<Fleet>();
 
-        int new_fleet_id = GetNewObjectID();
-
-        std::vector<int> ship_ids;
-        ship_ids.push_back(ship->ID());
-        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
-
-        Fleet* fleet = new Fleet(fleet_name, x, y, ship->Owner());
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-
-        universe.InsertID(fleet, new_fleet_id);
-
-        fleet->AddShip(ship->ID());
-
+        TemporaryPtr<Fleet> fleet = CreateNewFleet(system->X(), system->Y(), ship);
+        system->Insert(fleet);
         return fleet;
     }
 
@@ -119,7 +104,7 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, const UniverseObject* target_object) {
+    void ExploreSystem(int system_id, TemporaryPtr<const UniverseObject> target_object) {
         if (!target_object)
             return;
         if (Empire* empire = Empires().Lookup(target_object->Owner()))
@@ -130,13 +115,13 @@ namespace {
      * resets the fleet's move route.  Used after a fleet has been moved with
      * the MoveTo effect, as its previous route was assigned based on its
      * previous location, and may not be valid for its new location. */
-    void UpdateFleetRoute(Fleet* fleet, int new_next_system, int new_previous_system) {
+    void UpdateFleetRoute(TemporaryPtr<Fleet> fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
             Logger().errorStream() << "UpdateFleetRoute passed a null fleet pointer";
             return;
         }
 
-        const System* next_system = GetSystem(new_next_system);
+        TemporaryPtr<const System> next_system = GetSystem(new_next_system);
         if (!next_system) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
@@ -205,7 +190,7 @@ namespace {
         TargetSet retval;
         retval.reserve(object_set.size());
         for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
-            retval.push_back(const_cast<UniverseObject*>(*it));
+            retval.push_back(const_ptr_cast<UniverseObject>(*it));
         return retval;
     }
 
@@ -232,13 +217,13 @@ namespace {
             LoadSystemNames(star_names);
 
         const ObjectMap& objects = Objects();
-        std::vector<const System*> systems = objects.FindObjects<System>();
+        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
 
         // pick a name for the system
         for (std::list<std::string>::const_iterator it = star_names.begin(); it != star_names.end(); ++it) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::vector<const System*>::const_iterator sys_it = systems.begin();
+            for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
                  sys_it != systems.end(); ++sys_it)
             {
                 if ((*sys_it)->Name() == *it) {
@@ -272,7 +257,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const {
     targets.clear();
 
-    UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<UniverseObject> source = GetUniverseObject(source_id);
     if (!source && m_activation) {
         Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
         return;
@@ -288,12 +273,12 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
     if (m_activation && !m_activation->Eval(ScriptingContext(source), source))
         return;
 
-    BOOST_MPL_ASSERT((boost::is_same<TargetSet,             std::vector<UniverseObject*> >));
-    BOOST_MPL_ASSERT((boost::is_same<Condition::ObjectSet,  std::vector<const UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<TargetSet,             std::vector<TemporaryPtr<UniverseObject> > >));
+    BOOST_MPL_ASSERT((boost::is_same<Condition::ObjectSet,  std::vector<TemporaryPtr<const UniverseObject> > >));
 
     // HACK! We're doing some dirt here for efficiency's sake.  Since we can't
-    // const-cast std::set<UniverseObject*> to std::set<const
-    // UniverseObject*>, we're telling the compiler that one type is actually
+    // const-cast std::set<TemporaryPtr<UniverseObject> > to std::set<const
+    // TemporaryPtr<UniverseObject> >, we're telling the compiler that one type is actually
     // the other, rather than doing a copy.
     m_scope->Eval(ScriptingContext(source),
                   *static_cast<Condition::ObjectSet *>(static_cast<void *>(&targets)),
@@ -310,7 +295,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
     ScriptingContext source_context(source);
     //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
     for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
@@ -321,7 +306,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
 }
 
 void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
     const TargetSet& targets = targets_and_cause.target_set;
     ScriptingContext source_context(source);
 
@@ -363,7 +348,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
         for (TargetSet::const_iterator target_it = targets.begin();
              target_it != targets.end(); ++target_it)
         {
-            UniverseObject* target = *target_it;
+            TemporaryPtr<UniverseObject> target = *target_it;
 
             // get Meter for this effect and target
             const Meter* meter = 0;
@@ -374,7 +359,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
             } else if (set_ship_part_meter_effect) {
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;   // only ships have ship part meters
-                const Ship* ship = universe_object_cast<const Ship*>(target);
+                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
                 if (!ship)
                     continue;
                 meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
@@ -403,11 +388,11 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
 }
 
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) const {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-        UniverseObject* target = *target_it;
+        TemporaryPtr<UniverseObject> target = *target_it;
 
         //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
@@ -427,7 +412,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
                 meter_type = meter_effect->GetMeterType();
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;
-                const Ship* ship = universe_object_cast<const Ship*>(target);
+                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
                 if (!ship)
                     continue;
                 meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
@@ -442,11 +427,11 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
 }
 
 void EffectsGroup::ExecuteSetEmpireMeter(int source_id, const TargetSet& targets) const {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-        UniverseObject* target = *target_it;
+        TemporaryPtr<UniverseObject> target = *target_it;
 
         // only process SetEmpireMeter effects in this function
 
@@ -465,13 +450,13 @@ void EffectsGroup::ExecuteSetEmpireMeter(int source_id, const TargetSet& targets
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                                    AccountingMap& accounting_map) const
 {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets_and_cause.target_set.begin();
          target_it != targets_and_cause.target_set.end(); ++target_it)
     {
-        UniverseObject* target = *target_it;
+        TemporaryPtr<UniverseObject> target = *target_it;
 
         for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
              effect_it != m_effects.end(); ++effect_it)
@@ -490,7 +475,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
                 meter_type = meter_effect->GetMeterType();
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;
-                const Ship* ship = universe_object_cast<const Ship*>(target);
+                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
                 if (!ship)
                     continue;
                 meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
@@ -521,11 +506,11 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
 }
 
 void EffectsGroup::ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const {
-    const UniverseObject* source = GetUniverseObject(source_id);
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-        UniverseObject* target = *target_it;
+        TemporaryPtr<UniverseObject> target = *target_it;
 
         for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
              effect_it != m_effects.end(); ++effect_it)
@@ -802,7 +787,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    Ship* ship = universe_object_cast<Ship*>(context.effect_target);
+    TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target);
     if (!ship) {
         Logger().errorStream() << "SetShipPartMeter::Execute acting on non-ship target:";
         context.effect_target->Dump();
@@ -1066,7 +1051,7 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     if (!empire)
         return;
 
-    const Planet* planet = universe_object_cast<const Planet*>(context.effect_target);
+    TemporaryPtr<const Planet> planet = dynamic_ptr_cast<const Planet>(context.effect_target);
     if (!planet)
         return;
 
@@ -1101,7 +1086,7 @@ SetPlanetType::~SetPlanetType()
 { delete m_type; }
 
 void SetPlanetType::Execute(const ScriptingContext& context) const {
-    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
         PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
         p->SetType(type);
         if (type == PT_ASTEROIDS)
@@ -1137,7 +1122,7 @@ SetPlanetSize::~SetPlanetSize()
 { delete m_size; }
 
 void SetPlanetSize::Execute(const ScriptingContext& context) const {
-    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
         PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
         p->SetSize(size);
         if (size == SZ_ASTEROIDS)
@@ -1171,10 +1156,10 @@ SetSpecies::~SetSpecies()
 { delete m_species_name; }
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
-    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, p->SpeciesName()));
         p->SetSpecies(species_name);
-    } else if (Ship* s = universe_object_cast<Ship*>(context.effect_target)) {
+    } else if (TemporaryPtr<Ship> s = dynamic_ptr_cast<Ship>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, s->SpeciesName()));
         s->SetSpecies(species_name);
     }
@@ -1211,18 +1196,18 @@ void SetOwner::Execute(const ScriptingContext& context) const {
 
     context.effect_target->SetOwner(empire_id);
 
-    if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
+    if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
-        Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return;
         if (fleet->Owner() == empire_id)
             return;
 
         // move ship into new fleet
-        Fleet* new_fleet = 0;
-        if (System* system = GetSystem(ship->SystemID()))
+        TemporaryPtr<Fleet> new_fleet;
+        if (TemporaryPtr<System> system = GetSystem(ship->SystemID()))
             new_fleet = CreateNewFleet(system, ship);
         else
             new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
@@ -1278,7 +1263,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "CreatePlanet::Execute passed no target object";
         return;
     }
-    System* location = GetSystem(context.effect_target->SystemID());
+    TemporaryPtr<System> location = GetSystem(context.effect_target->SystemID());
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -1286,7 +1271,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
 
     PlanetSize target_size = INVALID_PLANET_SIZE;
     PlanetType target_type = INVALID_PLANET_TYPE;
-    if (const Planet* location_planet = universe_object_cast<const Planet*>(context.effect_target)) {
+    if (TemporaryPtr<const Planet> location_planet = dynamic_ptr_cast<const Planet>(context.effect_target)) {
         target_size = location_planet->Size();
         target_type = location_planet->Type();
     }
@@ -1305,16 +1290,14 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    Planet* planet = new Planet(type, size);
+    TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(type, size);
     if (!planet) {
         Logger().errorStream() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
-    int new_planet_id = GetNewObjectID();
-    GetUniverse().InsertID(planet, new_planet_id);
 
     int orbit = *(free_orbits.begin());
-    location->Insert(planet, orbit);
+    location->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
 }
 
 std::string CreatePlanet::Description() const {
@@ -1352,9 +1335,9 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "CreateBuilding::Execute passed no target object";
         return;
     }
-    Planet* location = universe_object_cast<Planet*>(context.effect_target);
+    TemporaryPtr<Planet> location = dynamic_ptr_cast<Planet>(context.effect_target);
     if (!location)
-        if (Building* location_building = universe_object_cast<Building*>(context.effect_target))
+        if (TemporaryPtr<Building> location_building = dynamic_ptr_cast<Building>(context.effect_target))
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
@@ -1368,16 +1351,13 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    Building* building = new Building(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
+    TemporaryPtr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
         return;
     }
 
-    int new_building_id = GetNewObjectID();
-    GetUniverse().InsertID(building, new_building_id);
-
-    location->AddBuilding(new_building_id);
+    location->AddBuilding(building->ID());
 
     building->SetOwner(location->Owner());
 }
@@ -1442,7 +1422,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    System* system = GetSystem(context.effect_target->SystemID());
+    TemporaryPtr<System> system = GetSystem(context.effect_target->SystemID());
     if (!system) {
         Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -1493,34 +1473,27 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //// possible future modification: try to put new ship into existing fleet if
     //// ownership with target object's fleet works out (if target is a ship)
     //// attempt to find a
-    //Fleet* fleet = universe_object_cast<Fleet*>(target);
+    //TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target);
     //if (!fleet)
-    //    if (const Ship* ship = universe_object_cast<const Ship*>(target))
+    //    if (TemporaryPtr<const Ship> ship = dynamic_ptr_cast<const Ship>(target))
     //        fleet = ship->FleetID();
     //// etc.
 
-    Ship* ship = new Ship(empire_id, design_id, species_name, ALL_EMPIRES);
-    if (!ship) {
-        Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
-        return;
-    }
+    TemporaryPtr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
+
     ship->Rename(empire ? empire->NewShipName() : ship->Design()->Name());
 
-    UniverseObject* obj = ship;
-    obj->ResetTargetMaxUnpairedMeters();
-    obj->ResetPairedActiveMeters();
+    ship->ResetTargetMaxUnpairedMeters();
+    ship->ResetPairedActiveMeters();
 
-    obj->GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    obj->GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    obj->GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
-    obj->GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    obj->GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    obj->GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    ship->GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
 
-    obj->BackPropegateMeters();
-
-    int new_ship_id = GetNewObjectID();
-    GetUniverse().InsertID(ship, new_ship_id);
+    ship->BackPropegateMeters();
 
     GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 
@@ -1610,7 +1583,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "CreateField::Execute passed null target";
         return;
     }
-    const UniverseObject* target = context.effect_target;
+    TemporaryPtr<UniverseObject> target = context.effect_target;
 
     const FieldType* field_type = GetFieldType(m_field_type_name);
     if (!field_type) {
@@ -1641,18 +1614,15 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    Field* field = new Field(m_field_type_name, x, y, size);
+    TemporaryPtr<Field> field = GetUniverse().CreateField(m_field_type_name, x, y, size);
     if (!field) {
         Logger().errorStream() << "CreateField::Execute couldn't create field!";
         return;
     }
 
-    int new_field_id = GetNewObjectID();
-    GetUniverse().InsertID(field, new_field_id);
-
     // if target is a system, and location matches system location, can put
     // field into system
-    System* system = universe_object_cast<System*>(target);
+    TemporaryPtr<System> system = dynamic_ptr_cast<System>(target);
     if (!system)
         return;
     if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
@@ -1718,7 +1688,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     //    Logger().errorStream() << "CreateSystem::Execute passed null target";
     //    return;
     //}
-    //const UniverseObject* target = context.effect_target;
+    //TemporaryPtr<const UniverseObject> target = context.effect_target;
 
     // pick a star type
     StarType star_type = STAR_NONE;
@@ -1740,14 +1710,11 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
 
     const int MAX_SYSTEM_ORBITS = 9;    // hard coded value in UniverseServer.cpp
 
-    System* system = new System(star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), x, y);
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), x, y);
     if (!system) {
         Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
         return;
     }
-
-    int new_id = GetNewObjectID();
-    GetUniverse().InsertID(system, new_id);
 }
 
 std::string CreateSystem::Description() const {
@@ -1861,7 +1828,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    System* target_system = universe_object_cast<System*>(context.effect_target);
+    TemporaryPtr<System> target_system = dynamic_ptr_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1887,21 +1854,21 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::set<System*> endpoint_systems;
+    std::set<TemporaryPtr<System> > endpoint_systems;
     for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
-        const UniverseObject* endpoint_object = *it;
-        const System* endpoint_system = universe_object_cast<const System*>(endpoint_object);
+        TemporaryPtr<const UniverseObject> endpoint_object = *it;
+        TemporaryPtr<const System> endpoint_system = dynamic_ptr_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(const_cast<System*>(endpoint_system));
+        endpoint_systems.insert(const_ptr_cast<System>(endpoint_system));
     }
 
     // add starlanes from target to endpoint systems
     int target_system_id = target_system->ID();
-    for (std::set<System*>::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
-        System* endpoint_system = *it;
+    for (std::set<TemporaryPtr<System> >::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
+        TemporaryPtr<System> endpoint_system = *it;
         target_system->AddStarlane(endpoint_system->ID());
         endpoint_system->AddStarlane(target_system_id);
     }
@@ -1935,7 +1902,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    System* target_system = universe_object_cast<System*>(context.effect_target);
+    TemporaryPtr<System> target_system = dynamic_ptr_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1961,21 +1928,21 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::set<System*> endpoint_systems;
+    std::set<TemporaryPtr<System> > endpoint_systems;
     for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
-        const UniverseObject* endpoint_object = *it;
-        const System* endpoint_system = universe_object_cast<const System*>(endpoint_object);
+        TemporaryPtr<const UniverseObject> endpoint_object = *it;
+        TemporaryPtr<const System> endpoint_system = dynamic_ptr_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(const_cast<System*>(endpoint_system));
+        endpoint_systems.insert(const_ptr_cast<System>(endpoint_system));
     }
 
     // remove starlanes from target to endpoint systems
     int target_system_id = target_system->ID();
-    for (std::set<System*>::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
-        System* endpoint_system = *it;
+    for (std::set<TemporaryPtr<System> >::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
+        TemporaryPtr<System> endpoint_system = *it;
         target_system->RemoveStarlane(endpoint_system->ID());
         endpoint_system->RemoveStarlane(target_system_id);
     }
@@ -2005,7 +1972,7 @@ void SetStarType::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "SetStarType::Execute given no target object";
         return;
     }
-    if (System* s = universe_object_cast<System*>(context.effect_target))
+    if (TemporaryPtr<System> s = dynamic_ptr_cast<System>(context.effect_target))
         s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
     else
         Logger().errorStream() << "SetStarType::Execute given a non-system target";
@@ -2058,15 +2025,15 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         return;
 
     // "randomly" pick a destination
-    UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
+    TemporaryPtr<UniverseObject> destination = const_ptr_cast<UniverseObject>(*valid_locations.begin());
 
 
     // do the moving...
 
-    if (Fleet* fleet = universe_object_cast<Fleet*>(context.effect_target)) {
+    if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
-        if (System* dest_system = GetSystem(destination->SystemID())) {
+        if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
                 dest_system->Insert(fleet);
                 ExploreSystem(dest_system->ID(), fleet);
@@ -2083,11 +2050,11 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
             // if destination object is a fleet or is part of a fleet, can use that fleet's previous and next systems to get
             // valid next and previous systems for the target fleet.
-            const Fleet* dest_fleet = 0;
+            TemporaryPtr<const Fleet> dest_fleet;
 
-            dest_fleet = universe_object_cast<const Fleet*>(destination);
+            dest_fleet = dynamic_ptr_cast<const Fleet>(destination);
             if (!dest_fleet)
-                if (const Ship* dest_ship = universe_object_cast<const Ship*>(destination))
+                if (TemporaryPtr<const Ship> dest_ship = dynamic_ptr_cast<const Ship>(destination))
                     dest_fleet = GetFleet(dest_ship->FleetID());
 
             if (dest_fleet) {
@@ -2099,11 +2066,11 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             }
         }
 
-    } else if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
+    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        Fleet* old_fleet = GetFleet(ship->FleetID());
-        Fleet* dest_fleet = universe_object_cast<Fleet*>(destination);  // may be 0 if destination is not a fleet
+        TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> dest_fleet = dynamic_ptr_cast<Fleet>(destination);  // may be 0 if destination is not a fleet
         bool same_owners = ship->Owner() == destination->Owner();
         int dest_sys_id = destination->SystemID();
         int ship_sys_id = ship->SystemID();
@@ -2122,7 +2089,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
         } else {
             // need to create a new fleet for ship
-            if (System* dest_system = GetSystem(destination->SystemID())) {
+            if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
                 CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
@@ -2134,55 +2101,55 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (old_fleet && old_fleet->NumShips() < 1)
             universe.EffectDestroy(old_fleet->ID());
 
-    } else if (Planet* planet = universe_object_cast<Planet*>(context.effect_target)) {
+    } else if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
-        if (System* dest_system = GetSystem(destination->SystemID())) {
+        if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
             // check if planet is already in this system.  if so, don't need to do anything
             if (planet->SystemID() == INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
                 //  determine if and which orbits are available
                 std::set<int> free_orbits = dest_system->FreeOrbits();
                 if (!free_orbits.empty()) {
                     int orbit = *(free_orbits.begin());
-                    dest_system->Insert(planet, orbit);
+                    dest_system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
                     ExploreSystem(dest_system->ID(), planet);
                 }
             }
         }
         // don't move planets to a location outside a system
 
-    } else if (Building* building = universe_object_cast<Building*>(context.effect_target)) {
+    } else if (TemporaryPtr<Building> building = dynamic_ptr_cast<Building>(context.effect_target)) {
         // buildings need to be located on planets, so if destination is a planet, insert building into it,
         // or attempt to get the planet on which the destination object is located and insert target building into that
-        if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
+        if (TemporaryPtr<Planet> dest_planet = dynamic_ptr_cast<Planet>(destination)) {
             dest_planet->AddBuilding(building->ID());
-            if (const System* dest_system = GetSystem(dest_planet->SystemID()))
+            if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
                 ExploreSystem(dest_system->ID(), building);
 
 
-        } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
-            if (Planet* dest_planet = GetPlanet(dest_building->PlanetID())) {
+        } else if (TemporaryPtr<Building> dest_building = dynamic_ptr_cast<Building>(destination)) {
+            if (TemporaryPtr<Planet> dest_planet = GetPlanet(dest_building->PlanetID())) {
                 dest_planet->AddBuilding(building->ID());
-                if (const System* dest_system = GetSystem(dest_planet->SystemID()))
+                if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
                     ExploreSystem(dest_system->ID(), building);
             }
         }
         // else if destination is something else that can be on a planet...
 
-    } else if (System* system = universe_object_cast<System*>(context.effect_target)) {
+    } else if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(context.effect_target)) {
         if (destination->SystemID() == INVALID_OBJECT_ID) {
             // can simply move system to new location, and insert destination object into system
             system->UniverseObject::MoveTo(destination);
             // find fleets at this location and insert into system
-            std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
-            for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it)
-                if (Fleet* fleet = *it)
+            std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
+            for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it)
+                if (TemporaryPtr<Fleet> fleet = *it)
                     if (fleet->X() == system->X() && fleet->Y() == system->Y())
                         system->Insert(fleet);
         } else {
-            //System* destination_system = GetSystem(destination->SystemID());
+            //TemporaryPtr<System> destination_system = GetSystem(destination->SystemID());
             // TODO: merge systems
         }
-    } else if (Field* field = universe_object_cast<Field*>(context.effect_target)) {
+    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(context.effect_target)) {
         field->UniverseObject::MoveTo(destination);
     }
 }
@@ -2228,7 +2195,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "MoveInOrbit::Execute given no target object";
         return;
     }
-    UniverseObject* target = context.effect_target;
+    TemporaryPtr<UniverseObject> target = context.effect_target;
 
     double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
     if (m_focus_x)
@@ -2244,7 +2211,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         m_focal_point_condition->Eval(context, matches);
         if (matches.empty())
             return;
-        const UniverseObject* focus_object = *matches.begin();
+        TemporaryPtr<const UniverseObject> focus_object = *matches.begin();
         focus_x = focus_object->X();
         focus_y = focus_object->Y();
     }
@@ -2266,20 +2233,20 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    if (System* system = universe_object_cast<System*>(target)) {
+    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target)) {
         fleet->MoveTo(new_x, new_y);
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
         return;
-    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
-        Fleet* old_fleet = GetFleet(ship->FleetID());
+    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(target)) {
+        TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->NumShips() < 1)
             GetUniverse().EffectDestroy(old_fleet->ID());
-    } else if (Field* field = universe_object_cast<Field*>(target)) {
+    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(target)) {
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
@@ -2354,7 +2321,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "MoveTowards::Execute given no target object";
         return;
     }
-    UniverseObject* target = context.effect_target;
+    TemporaryPtr<UniverseObject> target = context.effect_target;
 
     double dest_x = 0.0, dest_y = 0.0, speed = 1.0;
     if (m_dest_x)
@@ -2370,7 +2337,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         m_dest_condition->Eval(context, matches);
         if (matches.empty())
             return;
-        const UniverseObject* focus_object = *matches.begin();
+        TemporaryPtr<const UniverseObject> focus_object = *matches.begin();
         dest_x = focus_object->X();
         dest_y = focus_object->Y();
     }
@@ -2398,20 +2365,20 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    if (System* system = universe_object_cast<System*>(target)) {
+    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target)) {
         fleet->MoveTo(new_x, new_y);
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
         return;
-    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
-        Fleet* old_fleet = GetFleet(ship->FleetID());
+    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(target)) {
+        TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->NumShips() < 1)
             GetUniverse().EffectDestroy(old_fleet->ID());
-    } else if (Field* field = universe_object_cast<Field*>(target)) {
+    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(target)) {
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
@@ -2470,7 +2437,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    Fleet* target_fleet = universe_object_cast<Fleet*>(context.effect_target);
+    TemporaryPtr<Fleet> target_fleet = dynamic_ptr_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         Logger().errorStream() << "SetDestination::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2500,7 +2467,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
     Condition::ObjectSet::iterator obj_it = valid_locations.begin();
     std::advance(obj_it, destination_idx);
-    UniverseObject* destination = const_cast<UniverseObject*>(*obj_it);
+    TemporaryPtr<UniverseObject> destination = const_ptr_cast<UniverseObject>(*obj_it);
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
@@ -2551,7 +2518,7 @@ void SetAggression::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    Fleet* target_fleet = universe_object_cast<Fleet*>(context.effect_target);
+    TemporaryPtr<Fleet> target_fleet = dynamic_ptr_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         Logger().errorStream() << "SetAggression::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2858,7 +2825,7 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
     if (m_size)
         size = m_size->Eval(context);
 
-    if (System* system = universe_object_cast<System*>(context.effect_target))
+    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(context.effect_target))
         system->SetOverlayTexture(m_texture, size);
 }
 
@@ -2883,7 +2850,7 @@ SetTexture::SetTexture(const std::string& texture) :
 void SetTexture::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
-    if (Planet* planet = universe_object_cast<Planet*>(context.effect_target))
+    if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(context.effect_target))
         planet->SetSurfaceTexture(m_texture);
 }
 

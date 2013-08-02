@@ -16,7 +16,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<const UniverseObject*> ObjectSet;
+    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
 }
 namespace Effect {
     class EffectsGroup;

@@ -5,6 +5,7 @@
 #include "CUIControls.h"
 #include "CUIWnd.h"
 #include "../combat/CombatOrder.h"
+#include "../universe/TemporaryPtr.h"
 
 
 namespace Ogre {
@@ -36,7 +37,7 @@ public:
                    Ogre::SceneManager* scene_manager,
                    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt&)>
                    intersect_mouse_with_ecliptic,
-                   boost::function<const Ogre::MaterialPtr& (const Ship&)>
+                   boost::function<const Ogre::MaterialPtr& (TemporaryPtr<const Ship>)>
                    get_ship_material,
                    boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
                    add_ship_node_to_combat_wnd,
@@ -58,18 +59,18 @@ protected:
 
 private:
     Ogre::SceneNode* PlaceableShipNode() const;
-    bool ValidPlacement(Ship* ship, const Ogre::Vector3& point) const;
+    bool ValidPlacement(TemporaryPtr<Ship> ship, const Ogre::Vector3& point) const;
 
     void HandleMouseMoves(const GG::Pt& pt);
     void CreateCombatOrder(int ship_id, Ogre::SceneNode* node);
-    Ogre::SceneNode* GetShipNode(Ship& ship);
+    Ogre::SceneNode* GetShipNode(TemporaryPtr<Ship> ship);
     void PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels);
-    void PlaceableShipSelected(Ship* ship);
-    void UpdatePlacementIndicators(const Ship* ship);
+    void PlaceableShipSelected(TemporaryPtr<Ship> ship);
+    void UpdatePlacementIndicators(TemporaryPtr<const Ship> ship);
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
-    void PlaceShip(Ship* ship, Ogre::SceneNode* node);
-    void RepositionShip(Ship* ship, Ogre::SceneNode* node, const Ogre::Vector3& position);
+    void PlaceShip(TemporaryPtr<Ship> ship, Ogre::SceneNode* node);
+    void RepositionShip(TemporaryPtr<Ship> ship, Ogre::SceneNode* node, const Ogre::Vector3& position);
     void RedoPlacementsButtonClicked();
     void AutoPlaceButtonClicked();
     void DoneButtonClicked();
@@ -88,17 +89,17 @@ private:
     CUIButton* m_redo_placements_button;
     CUIButton* m_auto_place_button;
     CUIButton* m_done_button;
-    Ship* m_selected_placeable_ship;
+    TemporaryPtr<Ship> m_selected_placeable_ship;
     Ogre::SceneNode* m_placeable_ship_node;
     std::map<int, Ogre::Entity*> m_ship_entities;
     std::map<int, Ogre::SceneNode*> m_ship_nodes;
     std::map<int, Ogre::SceneNode*> m_placed_nodes;
     Ogre::SceneManager* m_scene_manager;
-    std::map<int, UniverseObject*> m_combat_universe;
+    std::map<int, TemporaryPtr<UniverseObject> > m_combat_universe;
 
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     m_intersect_mouse_with_ecliptic;
-    boost::function<const Ogre::MaterialPtr& (const Ship&)>
+    boost::function<const Ogre::MaterialPtr& (TemporaryPtr<const Ship>)>
     m_get_ship_material;
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     m_add_ship_node_to_combat_wnd;

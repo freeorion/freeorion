@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 
+#include "TemporaryPtr.h"
 #include <boost/shared_ptr.hpp>
 
 #include <map>
@@ -14,7 +15,7 @@ class UniverseObject;
 
 namespace Effect {
     class EffectsGroup;
-    typedef std::vector<UniverseObject*> TargetSet;
+    typedef std::vector<TemporaryPtr<UniverseObject> > TargetSet;
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */

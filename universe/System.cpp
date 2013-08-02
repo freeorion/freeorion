@@ -62,21 +62,25 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     UniverseObject::Init();
 }
 
-System* System::Clone(int empire_id) const {
+System* System::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
+    if (this != obj) {
+        Logger().debugStream() << "System::Clone passed a TemporaryPtr to an object other than this.";
+    }
+
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     System* retval = new System();
-    retval->Copy(this, empire_id);
+    retval->Copy(obj, empire_id);
     return retval;
 }
 
-void System::Copy(const UniverseObject* copied_object, int empire_id) {
+void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    const System* copied_system = universe_object_cast<System*>(copied_object);
+    TemporaryPtr<const System> copied_system = universe_object_ptr_cast<System>(copied_object);
     if (!copied_system) {
         Logger().errorStream() << "System::Copy passed an object that wasn't a System";
         return;
@@ -291,8 +295,8 @@ std::vector<int> System::FindObjectIDs() const {
 std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = GetUniverseObject(it->second)) {
-            if (obj->Accept(visitor))
+        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second)) {
+            if (obj->Accept(obj, visitor))
                 retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
@@ -305,8 +309,8 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = GetUniverseObject(it->second)) {
-            if (obj->Accept(visitor))
+        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second)) {
+            if (obj->Accept(obj, visitor))
                 retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDsInOrbit couldn't get Object with ID " << it->second;
@@ -337,13 +341,17 @@ System::const_lane_iterator System::begin_lanes() const
 System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
-UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<System* const>(this)); }
+TemporaryPtr<UniverseObject> System::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
+    if (this_obj != this)
+        return TemporaryPtr<UniverseObject>();
 
-int System::Insert(UniverseObject* obj)
+    return visitor.Visit(const_ptr_cast<System>(static_ptr_cast<const System>(this_obj)));
+}
+
+int System::Insert(TemporaryPtr<UniverseObject> obj)
 { return Insert(obj, -1); }
 
-int System::Insert(UniverseObject* obj, int orbit) {
+int System::Insert(TemporaryPtr<UniverseObject> obj, int orbit) {
     if (!obj) {
         Logger().errorStream() << "System::Insert() : Attempted to place a null object in a System";
         return -1;
@@ -366,24 +374,24 @@ int System::Insert(UniverseObject* obj, int orbit) {
     }
 
     // inform obj of its new location and system id.  this should propegate to all objects contained within obj
-    obj->MoveTo(this);          // ensure object is physically at same location in universe as this system
+    obj->MoveTo(this->ID());    // ensure object is physically at same location in universe as this system
     obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...
 
 
     // update obj and its contents in this System's bookkeeping
-    std::list<UniverseObject*> inserted_objects;
+    std::list<TemporaryPtr<UniverseObject> > inserted_objects;
     inserted_objects.push_back(obj);
     // recursively get all objects contained within obj
-    for (std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
+    for (std::list<TemporaryPtr<UniverseObject> >::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
         std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
         for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
-            if (UniverseObject* cobj = GetUniverseObject(*coit))
+            if (TemporaryPtr<UniverseObject> cobj = GetUniverseObject(*coit))
                 inserted_objects.push_back(cobj);
     }
 
 
     // for all inserted objects, up date this System's bookkeeping about orbit and whether it is contained herein
-    for (std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
+    for (std::list<TemporaryPtr<UniverseObject> >::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
         int cur_id = (*it)->ID();
 
         // check if obj is already in system's internal bookkeeping.  if it is, check if it is in the wrong
@@ -402,8 +410,8 @@ int System::Insert(UniverseObject* obj, int orbit) {
 
 
     // special case for if object is a fleet
-    if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
-        FleetInsertedSignal(*fleet);
+    if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(obj))
+        FleetInsertedSignal(fleet);
 
     StateChangedSignal();
 
@@ -413,41 +421,41 @@ int System::Insert(UniverseObject* obj, int orbit) {
 int System::Insert(int obj_id, int orbit) {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-    UniverseObject* object = GetUniverseObject(obj_id);
+    TemporaryPtr<UniverseObject> object = GetUniverseObject(obj_id);
     if (!object)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
 
     return Insert(object, orbit);
 }
 
-void System::Remove(UniverseObject* obj) {
+void System::Remove(TemporaryPtr<UniverseObject> obj) {
     //Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
     //Logger().debugStream() << "..objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     //    Logger().debugStream() << ".... " << GetUniverse().Object(it->second)->Name();
-
+    
     // ensure object and (recursive) contents are all removed from system
-    std::list<UniverseObject*> removed_objects;
+    std::list<TemporaryPtr<UniverseObject> > removed_objects;
     removed_objects.push_back(obj);
-    obj = 0;    // to ensure I don't accidentally use obj instead of cur_obj in subsequent code
+    obj = TemporaryPtr<UniverseObject>();    // to ensure I don't accidentally use obj instead of cur_obj in subsequent code
     // recursively get all objects contained within obj
-    for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
+    for (std::list<TemporaryPtr<UniverseObject> >::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
         std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
         for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
-            if (UniverseObject* cobj = GetUniverseObject(*coit))
+            if (TemporaryPtr<UniverseObject> cobj = GetUniverseObject(*coit))
                 removed_objects.push_back(cobj);
     }
 
 
     // keep track of what is removed...
     bool removed_something = false;
-    std::vector<Fleet*> removed_fleets;
+    std::vector<TemporaryPtr<Fleet> > removed_fleets;
     bool removed_planet = false;
 
 
     // do actual removal
-    for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
-        UniverseObject* cur_obj = *it;
+    for (std::list<TemporaryPtr<UniverseObject> >::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
+        TemporaryPtr<UniverseObject> cur_obj = *it;
 
         //if (this->ID() != cur_obj->SystemID())
         //    Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << cur_obj->SystemID();
@@ -461,7 +469,7 @@ void System::Remove(UniverseObject* obj) {
 
                 if (cur_obj->ObjectType() == OBJ_PLANET)
                     removed_planet = true;
-                if (Fleet* fleet = universe_object_cast<Fleet*>(cur_obj))
+                if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(cur_obj))
                     removed_fleets.push_back(fleet);
 
                 break;                  // assuming no duplicate entries
@@ -471,9 +479,9 @@ void System::Remove(UniverseObject* obj) {
 
     if (removed_something) {
         // UI bookeeping
-        for (std::vector<Fleet*>::const_iterator it = removed_fleets.begin();
+        for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = removed_fleets.begin();
              it != removed_fleets.end(); ++it)
-        { FleetRemovedSignal(**it); }
+        { FleetRemovedSignal(*it); }
         if (removed_planet) {
             Logger().debugStream() << "Removed planet from system...";
         }
@@ -495,7 +503,7 @@ void System::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
     // move other objects in system to it
     for (orbit_iterator it = begin(); it != end(); ++it)
-        if (UniverseObject* obj = GetUniverseObject(it->second))
+        if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->second))
             obj->MoveTo(this->ID());
 }
 
@@ -631,16 +639,16 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const {
     // check if any fleets owned by empire are moving along a starlane connected to this system...
 
     // get moving fleets owned by empire
-    std::vector<const Fleet*> moving_empire_fleets;
-    std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-    for (std::vector<const UniverseObject*>::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
-        if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it))
+    std::vector<TemporaryPtr<const Fleet> > moving_empire_fleets;
+    std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
+        if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(*it))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
 
     // add any lanes an owned fleet is moving along that connect to this system
-    for (std::vector<const Fleet*>::const_iterator it = moving_empire_fleets.begin(); it != moving_empire_fleets.end(); ++it) {
-        const Fleet* fleet = *it;
+    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = moving_empire_fleets.begin(); it != moving_empire_fleets.end(); ++it) {
+        TemporaryPtr<const Fleet> fleet = *it;
         if (fleet->SystemID() != INVALID_OBJECT_ID) {
             Logger().errorStream() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
@@ -712,8 +720,8 @@ double StarlaneEntranceTangentAxis()
 { return 80.0; }
 
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
-    const System* system_1 = GetSystem(from_system);
-    const System* system_2 = GetSystem(to_system);
+    TemporaryPtr<const System> system_1 = GetSystem(from_system);
+    TemporaryPtr<const System> system_2 = GetSystem(to_system);
     if (!system_1 || !system_2) {
         Logger().errorStream() << "StarlaneEntranceOrbitalPosition passed invalid system id";
         return 0.0;

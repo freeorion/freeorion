@@ -3,6 +3,7 @@
 #define _ServerFSM_h_
 
 #include "../network/Message.h"
+#include "../universe/TemporaryPtr.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/mpl/list.hpp>
@@ -41,9 +42,9 @@ struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 
 struct ResolveCombat : sc::event<ResolveCombat> {
-    ResolveCombat(System* system, std::set<int>& empire_ids);
+    ResolveCombat(TemporaryPtr<System> system, std::set<int>& empire_ids);
 
-    System* const m_system;
+    TemporaryPtr<System> const m_system;
     std::set<int> m_empire_ids;
 };
 
@@ -344,7 +345,7 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdl
     sc::result react(const ProcessTurn& u);
     sc::result react(const CheckTurnEndConditions& c);
 
-    System* m_combat_system;
+    TemporaryPtr<System> m_combat_system;
     std::set<int> m_combat_empire_ids;
 
     SERVER_ACCESSOR

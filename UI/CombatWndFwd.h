@@ -19,10 +19,11 @@ namespace OpenSteer {
 
 class Ship;
 class ShipDesign;
+template <class T> class TemporaryPtr;
 
 bool IsVisible(const Ogre::SceneNode& node);
-Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship);
-Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
+Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, TemporaryPtr<const Ship> ship);
+Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, TemporaryPtr<const Ship> ship,
                                const Ogre::MaterialPtr& material);
 Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec);
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);

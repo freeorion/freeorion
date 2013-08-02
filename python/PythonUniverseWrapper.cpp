@@ -21,21 +21,23 @@ namespace {
     void                    DumpObjects(const Universe& universe)
     { Logger().debugStream() << universe.Objects().Dump(); }
 
+    // We're returning the result of operator-> here so that python doesn't need to deal with our TemporaryPtr class.
+    // Please don't use this trick elsewhere to grab a raw UniverseObject*!
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
-    { return ::GetUniverseObject(id); }
-    const Fleet*            GetFleetP(const Universe& universe, int id)
-    { return ::GetFleet(id); }
+    { return ::GetUniverseObject(id).operator->(); }
     const Ship*             GetShipP(const Universe& universe, int id)
-    { return ::GetShip(id); }
+    { return ::GetShip(id).operator->(); }
+    const Fleet*            GetFleetP(const Universe& universe, int id)
+    { return ::GetFleet(id).operator->(); }
     const Planet*           GetPlanetP(const Universe& universe, int id)
-    { return ::GetPlanet(id); }
+    { return ::GetPlanet(id).operator->(); }
     const System*           GetSystemP(const Universe& universe, int id)
-    { return ::GetSystem(id); }
+    { return ::GetSystem(id).operator->(); }
     const Field*            GetFieldP(const Universe& universe, int id)
-    { return ::GetField(id);  }
+    { return ::GetField(id).operator->();  }
     const Building*         GetBuildingP(const Universe& universe, int id)
-    { return ::GetBuilding(id); }
-
+    { return ::GetBuilding(id).operator->(); }
+    
     std::vector<int>        ObjectIDs(const Universe& universe)
     { return Objects().FindObjectIDs(); }
     std::vector<int>        FleetIDs(const Universe& universe)

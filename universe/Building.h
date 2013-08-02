@@ -18,20 +18,6 @@ namespace Condition {
 /** A Building UniverseObject type. */
 class FO_COMMON_API Building : public UniverseObject {
 public:
-    /** \name Structors */ //@{
-    Building() :
-        UniverseObject(),
-        m_building_type(),
-        m_planet_id(INVALID_OBJECT_ID),
-        m_ordered_scrapped(false),
-        m_produced_by_empire_id(ALL_EMPIRES)
-    {}
-    Building(int empire_id, const std::string& building_type,
-             int produced_by_empire_id = ALL_EMPIRES);                  ///< basic ctor
-
-    virtual Building*       Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
-    //@}
-
     /** \name Accessors */ //@{
     virtual std::set<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
@@ -45,23 +31,43 @@ public:
     int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
 
-    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                            Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
     virtual void    MoveTo(double x, double y);
 
     void            Reset();                            ///< resets any building state, and removes owners
     void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
+
+    virtual void    ResetTargetMaxUnpairedMeters();
     //@}
 
 protected:
-    virtual void    ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    Building() :
+        UniverseObject(),
+        m_building_type(),
+        m_planet_id(INVALID_OBJECT_ID),
+        m_ordered_scrapped(false),
+        m_produced_by_empire_id(ALL_EMPIRES)
+    {}
+    Building(int empire_id, const std::string& building_type,
+             int produced_by_empire_id = ALL_EMPIRES);                  ///< basic ctor
+    
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~Building() {}
+
+    virtual Building*       Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
+    //@}
 
 private:
     std::string m_building_type;

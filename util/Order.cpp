@@ -68,7 +68,7 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     m_object(object),
     m_name(name)
 {
-    const UniverseObject* obj = GetUniverseObject(object);
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object);
     if (!obj) {
         Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
         return;
@@ -85,7 +85,7 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
 void RenameOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    UniverseObject* obj = GetUniverseObject(m_object);
+    TemporaryPtr<UniverseObject> obj = GetUniverseObject(m_object);
 
     if (!obj) {
         Logger().errorStream() << "Attempted to rename nonexistant object with id " << m_object;
@@ -115,11 +115,11 @@ NewFleetOrder::NewFleetOrder() :
     Order()
 {}
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
+    m_fleet_id(fleet_id),
     m_system_id(system_id),
-    m_new_id( new_id ),
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
@@ -127,8 +127,7 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
               << "    m_empire=" << EmpireID() << std::endl
               << "    m_fleet_name=" << m_fleet_name << std::endl
               << "    m_system_id=" << m_system_id << std::endl
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
-              << "    m_new_id=" << m_new_id << std::endl
+              << "    m_fleet_id=" << m_fleet_id << std::endl
               << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
               << std::endl;
 #endif
@@ -143,7 +142,7 @@ void NewFleetOrder::ExecuteImpl() const {
         Logger().errorStream() << "Empire attempted to create a new fleet outside a system";
         return;
     }
-    System* system = GetSystem(m_system_id);
+    TemporaryPtr<System> system = GetSystem(m_system_id);
     if (!system) {
         Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
         return;
@@ -153,7 +152,7 @@ void NewFleetOrder::ExecuteImpl() const {
     std::vector<int> validated_ships;
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        const Ship* ship = GetShip(m_ship_ids[i]);
+        TemporaryPtr<const Ship> ship = GetShip(m_ship_ids[i]);
         if (!ship) {
             Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
             continue;
@@ -173,15 +172,14 @@ void NewFleetOrder::ExecuteImpl() const {
 
 
     // create fleet
-    Fleet* fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
+    TemporaryPtr<Fleet> fleet = universe.CreateFleet(m_fleet_name, system->X(), system->Y(), EmpireID(), m_fleet_id);
     fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
     // an ID is provided to ensure consistancy between server and client universes
-    universe.InsertID(fleet, m_new_id);
     universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
     system->Insert(fleet);
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
-    Ship* firstShip = GetShip(validated_ships[0]);
-    Fleet* firstFleet = GetFleet(firstShip->FleetID());
+    TemporaryPtr<Ship> firstShip = GetShip(validated_ships[0]);
+    TemporaryPtr<Fleet> firstFleet = GetFleet(firstShip->FleetID());
     if (firstFleet)
         fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
     fleet->SetAggressive(false);
@@ -206,13 +204,13 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     m_dest_system(dest_system_id)
 {
     // perform sanity checks
-    const Fleet* fleet = GetFleet(FleetID());
+    TemporaryPtr<const Fleet> fleet = GetFleet(FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
-    const System* destination_system = GetSystem(DestinationSystemID());
+    TemporaryPtr<const System> destination_system = GetSystem(DestinationSystemID());
     if (!destination_system) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists / is known to exist";
         return;
@@ -246,13 +244,13 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
 void FleetMoveOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    Fleet* fleet = GetFleet(FleetID());
+    TemporaryPtr<Fleet> fleet = GetFleet(FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
-    const System* destination_system = GetEmpireKnownSystem(DestinationSystemID(), EmpireID());
+    TemporaryPtr<const System> destination_system = GetEmpireKnownSystem(DestinationSystemID(), EmpireID());
     if (!destination_system) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
         return;
@@ -329,8 +327,8 @@ void FleetTransferOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
     // look up the source fleet and destination fleet
-    Fleet* source_fleet = GetFleet(SourceFleet());
-    Fleet* target_fleet = GetFleet(DestinationFleet());
+    TemporaryPtr<Fleet> source_fleet = GetFleet(SourceFleet());
+    TemporaryPtr<Fleet> target_fleet = GetFleet(DestinationFleet());
 
     if (!source_fleet || !target_fleet) {
         Logger().errorStream() << "Empire attempted to move ships to or from a nonexistant fleet";
@@ -370,7 +368,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
         int curr = (*itr);
-        Ship* a_ship = GetShip(curr);
+        TemporaryPtr<Ship> a_ship = GetShip(curr);
         if (!a_ship) {
             Logger().errorStream() << "Illegal ship id specified in fleet merge order.";
             return;
@@ -409,7 +407,7 @@ void ColonizeOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    Ship* ship = GetShip(m_ship);
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
@@ -429,7 +427,7 @@ void ColonizeOrder::ExecuteImpl() const {
     }
     double colonist_capacity = design->ColonyCapacity();
 
-    Planet* planet = GetPlanet(m_planet);
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
@@ -475,7 +473,7 @@ void ColonizeOrder::ExecuteImpl() const {
 }
 
 bool ColonizeOrder::UndoImpl() const {
-    Planet* planet = GetPlanet(m_planet);
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
@@ -485,7 +483,7 @@ bool ColonizeOrder::UndoImpl() const {
         return false;
     }
 
-    Ship* ship = GetShip(m_ship);
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
         Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
@@ -521,7 +519,7 @@ void InvadeOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    Ship* ship = GetShip(m_ship);
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
@@ -535,7 +533,7 @@ void InvadeOrder::ExecuteImpl() const {
         return;
     }
 
-    Planet* planet = GetPlanet(m_planet);
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
@@ -579,13 +577,13 @@ void InvadeOrder::ExecuteImpl() const {
 }
 
 bool InvadeOrder::UndoImpl() const {
-    Planet* planet = GetPlanet(m_planet);
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
 
-    Ship* ship = GetShip(m_ship);
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
         Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
@@ -618,7 +616,7 @@ DeleteFleetOrder::DeleteFleetOrder(int empire, int fleet) :
 void DeleteFleetOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    Fleet* fleet = GetFleet(FleetID());
+    TemporaryPtr<Fleet> fleet = GetFleet(FleetID());
 
     if (!fleet) {
         Logger().errorStream() << "Illegal fleet id specified in fleet delete order.";
@@ -655,7 +653,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& fo
 void ChangeFocusOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    Planet* planet = GetPlanet(PlanetID());
+    TemporaryPtr<Planet> planet = GetPlanet(PlanetID());
 
     if (!planet) {
         Logger().errorStream() << "Illegal planet id specified in change planet focus order.";
@@ -667,7 +665,7 @@ void ChangeFocusOrder::ExecuteImpl() const {
         return;
     }
 
-    planet->SetFocus(m_focus);
+    SetFocus(planet, m_focus);
 }
 
 ////////////////////////////////////////////////
@@ -964,12 +962,12 @@ void ScrapOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    if (Ship* ship = GetShip(m_object_id)) {
+    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
         if (ship->SystemID() != INVALID_OBJECT_ID && ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(true);
-    } else if (Building* building = GetBuilding(m_object_id)) {
+    } else if (TemporaryPtr<Building> building = GetBuilding(m_object_id)) {
         int planet_id = building->PlanetID();
-        if (const Planet* planet = GetPlanet(planet_id)) {
+        if (TemporaryPtr<const Planet> planet = GetPlanet(planet_id)) {
             if (building->OwnedBy(empire_id) && planet->OwnedBy(empire_id))
                 building->SetOrderedScrapped(true);
         }
@@ -980,10 +978,10 @@ bool ScrapOrder::UndoImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    if (Ship* ship = GetShip(m_object_id)) {
+    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(false);
-    } else if (Building* building = GetBuilding(m_object_id)) {
+    } else if (TemporaryPtr<Building> building = GetBuilding(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(false);
     } else {
@@ -1010,7 +1008,7 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = 
 void AggressiveOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
-    if (Fleet* fleet = GetFleet(m_object_id)) {
+    if (TemporaryPtr<Fleet> fleet = GetFleet(m_object_id)) {
         if (fleet->OwnedBy(empire_id))
             fleet->SetAggressive(m_aggression);
     }

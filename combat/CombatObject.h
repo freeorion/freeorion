@@ -4,6 +4,7 @@
 
 #include "PathingEngineFwd.h"
 #include "SimpleVehicle.h"
+#include "../universe/TemporaryPtr.h"
 #include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>

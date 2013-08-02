@@ -7,6 +7,7 @@
 #include <boost/serialization/nvp.hpp>
 
 #include "../util/Export.h"
+#include "TemporaryPtr.h"
 
 class Meter;
 
@@ -37,7 +38,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void                Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis = VIS_FULL_VISIBILITY);
     void                SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population

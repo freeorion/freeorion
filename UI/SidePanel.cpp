@@ -632,7 +632,7 @@ public:
 
     void Refresh() {
         ScopedTimer timer("RotatingPlanetControl::Refresh", true);
-        const Planet* planet = GetPlanet(m_planet_id);
+        TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
@@ -737,22 +737,22 @@ namespace {
 
     const std::string EMPTY_STRING;
 
-    const std::string& GetPlanetSizeName(const Planet& planet) {
-        if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
+    const std::string& GetPlanetSizeName(TemporaryPtr<const Planet> planet) {
+        if (planet->Size() == SZ_ASTEROIDS || planet->Size() == SZ_GASGIANT)
             return EMPTY_STRING;
-        return UserString(boost::lexical_cast<std::string>(planet.Size()));
+        return UserString(boost::lexical_cast<std::string>(planet->Size()));
     }
 
-    const std::string& GetPlanetTypeName(const Planet& planet)
-    { return UserString(boost::lexical_cast<std::string>(planet.Type())); }
+    const std::string& GetPlanetTypeName(TemporaryPtr<const Planet> planet)
+    { return UserString(boost::lexical_cast<std::string>(planet->Type())); }
 
-    const std::string& GetPlanetEnvironmentName(const Planet &planet, const std::string& species_name)
-    { return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name))); }
+    const std::string& GetPlanetEnvironmentName(TemporaryPtr<const Planet> planet, const std::string& species_name)
+    { return UserString(boost::lexical_cast<std::string>(planet->EnvironmentForSpecies(species_name))); }
 
-    const std::string& GetStarTypeName(const System& system) {
-        if (system.GetStarType() == INVALID_STAR_TYPE)
+    const std::string& GetStarTypeName(TemporaryPtr<const System> system) {
+        if (system->GetStarType() == INVALID_STAR_TYPE)
             return EMPTY_STRING;
-        return UserString(boost::lexical_cast<std::string>(system.GetStarType()));
+        return UserString(boost::lexical_cast<std::string>(system->GetStarType()));
     }
 
     const GG::Y PLANET_PANEL_TOP = GG::Y(140);
@@ -803,7 +803,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 {
     SetName(UserString("PLANET_PANEL"));
 
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -846,7 +846,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // check for shipyard
     const std::set<int>& buildings = planet->Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        const Building* building = GetBuilding(*building_it);
+        TemporaryPtr<const Building> building = GetBuilding(*building_it);
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
@@ -1013,7 +1013,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::CheckDisplayPlanets() {
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
@@ -1049,10 +1049,10 @@ void SidePanel::PlanetPanel::CheckDisplayPlanets() {
 }
 
 namespace {
-    bool IsAvailable(const Ship* ship, int system_id, int empire_id) {
+    bool IsAvailable(TemporaryPtr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (ship->SystemID() == system_id &&
@@ -1064,10 +1064,10 @@ namespace {
         return false;
     }
 
-    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) {
+    bool AvailableToColonize(TemporaryPtr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if ( IsAvailable(ship, system_id, empire_id) &&
@@ -1077,10 +1077,10 @@ namespace {
         return false;
     };
 
-    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id) {
+    bool AvailableToInvade(TemporaryPtr<const Ship> ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
@@ -1090,7 +1090,7 @@ namespace {
         return false;
     };
 
-    bool CanColonizePlanetType(const Ship* ship, PlanetType planet_type) {
+    bool CanColonizePlanetType(TemporaryPtr<const Ship> ship, PlanetType planet_type) {
         if (!ship || planet_type == INVALID_PLANET_TYPE)
             return false;
 
@@ -1119,8 +1119,8 @@ namespace {
         return false;
     }
 
-    std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
-        std::set<const Ship*> retval;
+    std::set<TemporaryPtr<const Ship> > ValidSelectedInvasionShips(int system_id) {
+        std::set<TemporaryPtr<const Ship> > retval;
 
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == INVALID_OBJECT_ID)
@@ -1129,7 +1129,7 @@ namespace {
         // is there a valid single selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+            if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(*ss_it))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     retval.insert(ship);
 
@@ -1141,9 +1141,9 @@ namespace {
             return false;
 
         const ObjectMap& objects = Objects();
-        std::vector<const Ship*> ships = objects.FindObjects<Ship>();
-        for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-            const Ship* ship = *it;
+        std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
+        for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+            TemporaryPtr<const Ship> ship = *it;
             if (ship->SystemID() == system_id &&
                 ship->OwnedBy(empire_id) &&
                 ship->CanColonize())
@@ -1156,29 +1156,29 @@ namespace {
     }
 }
 
-const Ship* ValidSelectedColonyShip(int system_id) {
+TemporaryPtr<const Ship> ValidSelectedColonyShip(int system_id) {
     // if not looking in a valid system, no valid colony ship can be available
     if (system_id == INVALID_OBJECT_ID)
-        return 0;
+        return TemporaryPtr<const Ship>();
 
     // is there a valid selected ship in the active FleetWnd?
     std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
     for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-        if (const Ship* ship = GetShip(*ss_it))
+        if (TemporaryPtr<const Ship> ship = GetShip(*ss_it))
             if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 return ship;
-    return 0;
+    return TemporaryPtr<const Ship>();
 }
 
 int AutomaticallyChosenColonyShip(int target_planet_id) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return INVALID_OBJECT_ID;
-    Planet* target_planet = GetPlanet(target_planet_id);
+    TemporaryPtr<Planet> target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
     int system_id = target_planet->SystemID();
-    const System* system = GetSystem(system_id);
+    TemporaryPtr<const System> system = GetSystem(system_id);
     if (!system)
         return INVALID_OBJECT_ID;
     // is planet a valid colonization target?
@@ -1190,13 +1190,13 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     //const ObjectMap& objects = Objects();
     std::vector<int> ships = system->FindObjectIDs<Ship>();
-    std::vector<const Ship*> capable_and_available_colony_ships;
+    std::vector<TemporaryPtr<const Ship> > capable_and_available_colony_ships;
     capable_and_available_colony_ships.reserve(ships.size());
 
     // get all ships that can colonize and that are free to do so in the
     // specified planet'ssystem and that can colonize the requested planet
     for (std::vector<int>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = GetShip(*it);
+        TemporaryPtr<const Ship> ship = GetShip(*it);
         if (!AvailableToColonize(ship, system_id, empire_id))
             continue;
         if (!CanColonizePlanetType(ship, target_planet_type))
@@ -1220,10 +1220,10 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     bool changed_planet = false;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
-    for (std::vector<const Ship*>::const_iterator ship_it = capable_and_available_colony_ships.begin();
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = capable_and_available_colony_ships.begin();
          ship_it != capable_and_available_colony_ships.end(); ship_it++)
     {
-        const Ship* ship = *ship_it;
+        TemporaryPtr<const Ship> ship = *ship_it;
         if (!ship)
             continue;
         int ship_id = ship->ID();
@@ -1281,18 +1281,18 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     return best_ship;
 }
 
-std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
-    std::set<const Ship*> retval;
+std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_planet_id) {
+    std::set<TemporaryPtr<const Ship> > retval;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return retval;
 
-    const Planet* target_planet = GetPlanet(target_planet_id);
+    TemporaryPtr<const Planet> target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return retval;
     int system_id = target_planet->SystemID();
-    const System* system = GetSystem(system_id);
+    TemporaryPtr<const System> system = GetSystem(system_id);
     if (!system)
         return retval;
 
@@ -1305,11 +1305,11 @@ std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
     double defending_troops = target_planet->NextTurnCurrentMeterValue(METER_TROOPS);
 
     const ObjectMap& objects = Objects();
-    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+    std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
 
     double invasion_troops = 0;
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        TemporaryPtr<const Ship> ship = *it;
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
@@ -1329,7 +1329,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1378,13 +1378,13 @@ void SidePanel::PlanetPanel::Refresh() {
         }
     }
 
-    const Ship* selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    TemporaryPtr<const Ship> selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
-    std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    std::set<TemporaryPtr<const Ship> > invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
-        std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+        std::set<TemporaryPtr<const Ship> > autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
 
@@ -1455,13 +1455,13 @@ void SidePanel::PlanetPanel::Refresh() {
 
     if (species_name.empty())
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                       % GetPlanetSizeName(*planet)
-                                       % GetPlanetTypeName(*planet));
+                                       % GetPlanetSizeName(planet)
+                                       % GetPlanetTypeName(planet));
     else
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                                       % GetPlanetSizeName(*planet)
-                                       % GetPlanetTypeName(*planet)
-                                       % GetPlanetEnvironmentName(*planet, species_name));
+                                       % GetPlanetSizeName(planet)
+                                       % GetPlanetTypeName(planet)
+                                       % GetPlanetEnvironmentName(planet, species_name));
 
 
     if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
@@ -1529,10 +1529,10 @@ void SidePanel::PlanetPanel::Refresh() {
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
-        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
-            const Ship* invasion_ship = *ship_it;
+            TemporaryPtr<const Ship> invasion_ship = *ship_it;
             if (const ShipDesign* design = invasion_ship->Design())
                 invasion_troops += design->TroopCapacity();
         }
@@ -1553,7 +1553,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        const std::vector<std::string>& available_foci = planet->AvailableFoci();
+        const std::vector<std::string>& available_foci = planet->AvailableFoci(planet);
 
         // refresh items in list
         m_focus_drop->Clear();
@@ -1616,7 +1616,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
@@ -1664,7 +1664,7 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet)
         return;
 
@@ -1809,7 +1809,7 @@ void SidePanel::PlanetPanel::Select(bool selected) {
 }
 
 namespace {
-    void CancelColonizeInvadeScrapShipOrders(const Ship* ship) {
+    void CancelColonizeInvadeScrapShipOrders(TemporaryPtr<const Ship> ship) {
         if (!ship)
             return;
 
@@ -1860,7 +1860,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // order or cancel colonization, depending on whether it has previosuly
     // been ordered
 
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet || !planet->CurrentMeterValue(METER_POPULATION) == 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -1877,7 +1877,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
     } else {
         // find colony ship and order it to colonize
-        const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
+        TemporaryPtr<const Ship> ship = ValidSelectedColonyShip(SidePanel::SystemID());
         if (!ship)
             ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
@@ -1900,7 +1900,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // order or cancel invasion, depending on whether it has previosuly
     // been ordered
 
-    const Planet* planet = GetPlanet(m_planet_id);
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet ||
         !m_order_issuing_enabled ||
         (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
@@ -1922,17 +1922,17 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
     } else {
         // order selected invasion ships to invade planet
-        std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        std::set<TemporaryPtr<const Ship> > invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
         if (invasion_ships.empty()) {
-            std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+            std::set<TemporaryPtr<const Ship> > autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
 
-        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
-            const Ship* ship = *ship_it;
+            TemporaryPtr<const Ship> ship = *ship_it;
             if (!ship)
                 continue;
 
@@ -1948,31 +1948,37 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator 
     // parameter, does some safety checks, and disables UI sounds
-
+    Logger().debugStream() << "SidePanel::PlanetPanel::FocusDropListSelectionChanged";
     if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid interator";
         return;
     }
 
-    const UniverseObject* obj = GetUniverseObject(m_planet_id);
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    Logger().debugStream() << "Got temporary Ptr.";
     if (!obj) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
         return;
     }
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
+    TemporaryPtr<const ResourceCenter> res = dynamic_ptr_cast<const ResourceCenter>(obj);
+    Logger().debugStream() << "Got resource center.";
     if (!res) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
     }
 
     std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    if (i >= res->AvailableFoci().size()) {
+    Logger().debugStream() << "Got selected index (" << i << ")";
+    if (i >= res->AvailableFoci(res).size()) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
+    Logger().debugStream() << "Finished checking focus.";
 
     Sound::TempUISoundDisabler sound_disabler;
-    FocusChangedSignal(res->AvailableFoci().at(i));
+    Logger().debugStream() << "About to send focus-changed signal.";
+    FocusChangedSignal(res->AvailableFoci(res).at(i));
+    Logger().debugStream() << "Done!.";
 }
 
 void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
@@ -1987,7 +1993,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_buildings_panel->EnableOrderIssuing(enable);
     m_specials_panel->EnableOrderIssuing(enable);
 
-    const UniverseObject* obj = GetUniverseObject(m_planet_id);
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
     else
@@ -2088,13 +2094,13 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
          planet_it != planet_ids.end(); ++planet_it)
     {
         int planet_id = *planet_it;
-        const Planet* planet = GetPlanet(planet_id);
+        TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
             continue;
         }
         int system_id = planet->SystemID();
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system) {
             Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
@@ -2221,9 +2227,9 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
             PlanetPanel*    panel =     *it;
             int             planet_id = panel->PlanetID();
-            const Planet*   planet =    GetPlanet(planet_id);
+            TemporaryPtr<const Planet>   planet =    GetPlanet(planet_id);
 
-            if (planet && planet->Accept(*m_valid_selection_predicate)) {
+            if (planet && planet->Accept(planet, *m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
                 //std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
             } else {
@@ -2491,7 +2497,7 @@ void SidePanel::Refresh() {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    const System* system = GetSystem(s_system_id);
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
     if (!system) {
         Logger().errorStream() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
@@ -2499,12 +2505,12 @@ void SidePanel::Refresh() {
 
     std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it)
-        if (Planet* planet = GetPlanet(*it))
+        if (TemporaryPtr<Planet> planet = GetPlanet(*it))
             s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
 
     std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
-        if (Fleet* fleet = GetFleet(*it))
+        if (TemporaryPtr<Fleet> fleet = GetFleet(*it))
             s_fleet_state_change_signals[*it] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
 
     //s_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Update));
@@ -2532,7 +2538,7 @@ void SidePanel::RefreshImpl() {
 
     // get info with which to repopulate
     int app_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const System* system = GetSystem(s_system_id);
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
@@ -2585,7 +2591,7 @@ void SidePanel::RefreshImpl() {
 
 
     // star type
-    m_star_type_text->SetText(GetStarTypeName(*system));
+    m_star_type_text->SetText(GetStarTypeName(system));
 
 
     // configure selection of planet panels in panel container
@@ -2609,9 +2615,9 @@ void SidePanel::RefreshImpl() {
     const std::set<int>& destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(app_empire_id);
     std::vector<int> known_system_planet_ids;
     const ObjectMap& objects = Objects();
-    std::vector<const Planet*> all_planets = objects.FindObjects<Planet>();
-    for (std::vector<const Planet*>::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
-        const Planet* planet = *it;
+    std::vector<TemporaryPtr<const Planet> > all_planets = objects.FindObjects<Planet>();
+    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
+        TemporaryPtr<const Planet> planet = *it;
         int planet_id = planet->ID();
         if (planet->SystemID() == s_system_id) {
             if (destroyed_object_ids.find(planet_id) == destroyed_object_ids.end()) // to be displayed, planet should not be in set of known destroyed objects
@@ -2634,7 +2640,7 @@ void SidePanel::RefreshImpl() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
     for (std::vector<int>::const_iterator it = known_system_planet_ids.begin(); it != known_system_planet_ids.end(); ++it) {
-        const Planet* planet = GetPlanet(*it);
+        TemporaryPtr<const Planet> planet = GetPlanet(*it);
         if (planet && planet->OwnedBy(empire_id))
             owned_planets.push_back(*it);
     }
@@ -2754,16 +2760,16 @@ void SidePanel::PlanetSelected(int planet_id) {
         PlanetSelectedSignal(planet_id);
 }
 
-void SidePanel::FleetInserted(Fleet& fleet) {
+void SidePanel::FleetInserted(TemporaryPtr<Fleet> fleet) {
     //std::cout << "SidePanel::FleetInserted" << std::endl;
-    s_fleet_state_change_signals[fleet.ID()].disconnect();  // in case already present
-    s_fleet_state_change_signals[fleet.ID()] = GG::Connect(fleet.StateChangedSignal, &SidePanel::FleetStateChanged);
+    s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
+    s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
     SidePanel::Update();
 }
 
-void SidePanel::FleetRemoved(Fleet& fleet) {
+void SidePanel::FleetRemoved(TemporaryPtr<Fleet> fleet) {
     //std::cout << "SidePanel::FleetRemoved" << std::endl;
-    std::map<int, boost::signals::connection>::iterator it = s_fleet_state_change_signals.find(fleet.ID());
+    std::map<int, boost::signals::connection>::iterator it = s_fleet_state_change_signals.find(fleet->ID());
     if (it != s_fleet_state_change_signals.end()) {
         it->second.disconnect();
         s_fleet_state_change_signals.erase(it);

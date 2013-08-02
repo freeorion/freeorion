@@ -115,14 +115,14 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
-    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids);
+    explicit NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids);
     //@}
 
     /** \name Accessors */ //@{
     const std::string&        FleetName() const    {return m_fleet_name;} ///< returns the name of the new fleet
     int                       SystemID() const     {return m_system_id;}  ///< returns the system the new fleet will be placed into (may be INVALID_OBJECT_ID if a position is specified)
-    int                       NewID() const        {return m_new_id;}     ///< returns the ID for this fleet 
-    const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDa for the ships used to start this fleet
+    int                       FleetID() const      {return m_fleet_id;}   ///< returns the id of the new fleet
+    const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDs for the ships used to start this fleet
     //@}
 
 private:
@@ -138,7 +138,7 @@ private:
 
     std::string               m_fleet_name;
     int                       m_system_id;
-    int                       m_new_id;
+    int                       m_fleet_id;
     std::vector<int>          m_ship_ids;
 
     friend class boost::serialization::access;

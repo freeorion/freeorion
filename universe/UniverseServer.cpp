@@ -394,7 +394,7 @@ namespace {
         Logger().debugStream() << "... placed " << positions_placed << " systems";
     }
 
-    System* GenerateSystem(Universe &universe, GalaxySetupOption age, double x, double y) {
+    TemporaryPtr<System> GenerateSystem(Universe &universe, GalaxySetupOption age, double x, double y) {
         //Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
         if (age <= GALAXY_SETUP_NONE || age > GALAXY_SETUP_HIGH)
             age = GALAXY_SETUP_MEDIUM;
@@ -434,13 +434,13 @@ namespace {
         }
 
         // create new system
-        System* system = new System(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
+        TemporaryPtr<System> system = universe.CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
 
-        int new_system_id = universe.Insert(system);
-        if (new_system_id == INVALID_OBJECT_ID) {
+        if (!system) {
+            Logger().debugStream() << "...NOT!";
             throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system into the object map failed.");
         }
-
+        
         return system;
     }
 
@@ -450,13 +450,13 @@ namespace {
         Logger().debugStream() << "GenerateStarField with " << positions.size() << " positions";
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
-            System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
+            TemporaryPtr<System> system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
             adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
                 [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
         }
     }
 
-    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors) {
+    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<TemporaryPtr<System> >& neighbors) {
         const double ADJACENCY_BOX_SIZE = GetUniverse().UniverseWidth() / ADJACENCY_BOXES;
         std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
                                                        static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
@@ -466,34 +466,34 @@ namespace {
 
         if (0 < grid_box.first) {
             if (0 < grid_box.second) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
+                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
+            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
             neighbors.insert(grid_square.begin(), grid_square.end());
             if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
+                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
         }
         if (0 < grid_box.second) {
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
+            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
             neighbors.insert(grid_square.begin(), grid_square.end());
         }
         if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
+            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
             neighbors.insert(grid_square.begin(), grid_square.end());
         }
 
         if (grid_box.first < adjacency_grid.size() - 1) {
             if (0 < grid_box.second) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
+                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
+            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
             neighbors.insert(grid_square.begin(), grid_square.end());
             if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
+                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
         }
@@ -619,7 +619,7 @@ namespace Delauney {
 
     /** runs a Delauney Triangulation routine on a set of 2D points extracted
       * from an array of systems returns the list of triangles produced */
-    std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
+    std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<TemporaryPtr<System> > &systems) {
 
         int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
         std::list<Delauney::DTTriangle>::iterator itCur, itEnd;
@@ -1008,7 +1008,7 @@ namespace {
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
     void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray,
-                                    std::vector<System*> &systems)
+                                    std::vector<TemporaryPtr<System> > &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that
         // start at the start or destination of the new lane
@@ -1181,7 +1181,7 @@ namespace {
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
     void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray,
-                          std::vector<System*> &systems)
+                          std::vector<TemporaryPtr<System> > &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
         // at the start or destination of the new lane
@@ -1470,10 +1470,9 @@ namespace {
         // check for each pair of meter types.  if both exist, set active
         // meter current value equal to target meter current value.
         for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            UniverseObject* obj = *it;
             for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
-                if (Meter* meter = obj->GetMeter(meter_it->first))
-                    if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
+                if (Meter* meter = it->GetMeter(meter_it->first))
+                    if (Meter* targetmax_meter = it->GetMeter(meter_it->second))
                         meter->SetCurrent(targetmax_meter->Current());
         }
     }
@@ -1483,11 +1482,10 @@ namespace {
     void SetNativePopulationValues(ObjectMap& object_map) {
 
         for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            UniverseObject* obj = *it;
-            Meter* meter = obj->GetMeter(METER_POPULATION);
-            Meter* targetmax_meter = obj->GetMeter(METER_TARGET_POPULATION);
+            Meter* meter = it->GetMeter(METER_POPULATION);
+            Meter* targetmax_meter = it->GetMeter(METER_TARGET_POPULATION);
             // only applies to unowned planets
-            if (meter && targetmax_meter && obj->Unowned()) {
+            if (meter && targetmax_meter && it->Unowned()) {
                 double r = RandZeroToOne();
                 double factor = (0.1<r)?r:0.1;
                 meter->SetCurrent(targetmax_meter->Current() * factor);
@@ -1528,7 +1526,7 @@ void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySe
 
     // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
     // in order to ensure that they get spaced out properly
-    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
+    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<TemporaryPtr<System> > >(ADJACENCY_BOXES));
 
     m_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
 
@@ -1576,22 +1574,34 @@ void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySe
 
     GenerateStarField(*this, age, positions, adjacency_grid, m_universe_width / ADJACENCY_BOXES);
 
+    Logger().debugStream() << "Populating Systems";
     PopulateSystems(planet_density);
+    Logger().debugStream() << "Generating Starlanes";
     GenerateStarlanes(starlane_freq, adjacency_grid);
+    Logger().debugStream() << "Initializing System Graph";
     InitializeSystemGraph();
+    Logger().debugStream() << "Generating Homeworlds";
     GenerateHomeworlds(total_players, homeworld_planet_ids);
+    Logger().debugStream() << "Generating Fields";
     GenerateFields(GALAXY_SETUP_MEDIUM);
+    Logger().debugStream() << "Getting Predefined Ship Design Manager";
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
+    Logger().debugStream() << "Generating Empires";
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
+    Logger().debugStream() << "Naming Planets";
     NamePlanets();
+    Logger().debugStream() << "Generating Natives";
     GenerateNatives(native_freq);
+    Logger().debugStream() << "Generating Space Monsters";
     GenerateSpaceMonsters(monster_freq);
+    Logger().debugStream() << "Adding Starting Specials";
     AddStartingSpecials(specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
-
+    
     // Apply effects for 1st turn.
     ApplyAllEffectsAndUpdateMeters();
+    Logger().debugStream() << "Finished applying all effects and updating meters.";
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
@@ -1622,7 +1632,7 @@ void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySe
 void Universe::PopulateSystems(GalaxySetupOption density) {
     Logger().debugStream() << "PopulateSystems";
 
-    std::vector<System*> sys_vec = Objects().FindObjects<System>();
+    std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to populate an empty galaxy.");
@@ -1634,9 +1644,8 @@ void Universe::PopulateSystems(GalaxySetupOption density) {
     //const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
     //const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
 
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-
+    for (std::vector<TemporaryPtr<System> >::iterator sys_it = sys_vec.begin(); sys_it != sys_vec.end(); ++sys_it) {
+        TemporaryPtr<System> system = *sys_it;
         for (int orbit = 0; orbit < system->Orbits(); orbit++) {
             // randomly generate size and type
             // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
@@ -1666,9 +1675,8 @@ void Universe::PopulateSystems(GalaxySetupOption density) {
                 planet_type = PlanetType(type_idx);
             }
 
-            Planet* planet = new Planet(planet_type, planet_size);
-            Insert(planet);                 // add planet to universe map
-            system->Insert(planet, orbit);  // add planet to system map
+            TemporaryPtr<Planet> planet = CreatePlanet(planet_type, planet_size);
+            system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);  // add planet to system map
         }
     }
 }
@@ -1697,7 +1705,6 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
     // to add that special by testing its spawn rate
     std::vector<std::string>::const_iterator special_name_it = special_names.begin();
     for (ObjectMap::iterator<> obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it) {
-        UniverseObject* obj = *obj_it;
         // for this object, find a suitable special
         std::vector<std::string>::const_iterator initial_special_name_it = special_name_it;
         while (true) {
@@ -1712,7 +1719,7 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
                 // there is no location condition, assume this special can't
                 // be spawned automatically
                 const Condition::ConditionBase* location_test = special->Location();
-                if (location_test && location_test->Eval(obj)) {
+                if (location_test && location_test->Eval(*obj_it)) {
                     // special can be placed here
 
                     // test random chance to place this special
@@ -1720,18 +1727,18 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
                     if (RandZeroToOne() < this_special_chance) {
                         // spawn special
                         specials_added[special_name]++;
-                        obj->AddSpecial(special_name);
-                        Logger().debugStream() << "Special " << special_name << " added to " << obj->Name();
+                        obj_it->AddSpecial(special_name);
+                        Logger().debugStream() << "Special " << special_name << " added to " << obj_it->Name();
 
                         // kludges for planet appearance changes for particular specials
                         if (special_name == "TIDAL_LOCK_SPECIAL") {
-                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
                                 planet->SetRotationalPeriod(Day(planet->OrbitalPeriod()));
                         } else if (special_name == "SLOW_ROTATION_SPECIAL") {
-                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
                                 planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
                         } else if (special_name == "HIGH_AXIAL_TILT_SPECIAL") {
-                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
                                 planet->SetHighAxialTilt();
                         }
                     }
@@ -1776,9 +1783,11 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
 
     SpeciesManager& species_manager = GetSpeciesManager();
 
-    std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
+    std::vector<TemporaryPtr<Planet> > planet_vec = Objects().FindObjects<Planet>();
     Condition::ObjectSet planet_set(planet_vec.size());
-    std::copy(planet_vec.begin(), planet_vec.end(), planet_set.begin());
+    for (std::vector<TemporaryPtr<Planet> >::iterator it = planet_vec.begin();
+         it != planet_vec.end(); ++it)
+    { planet_set.push_back(*it); }
 
     // select only planets far away from player homeworlds
     Condition::ObjectSet native_safe_planet_set;
@@ -1793,17 +1802,17 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
         species_it != species_manager.native_end(); ++species_it)
     { Logger().debugStream() << "... " << species_it->first; }
 
-    std::vector<Planet*> native_safe_planets;
+    std::vector<TemporaryPtr<Planet> > native_safe_planets;
     for (Condition::ObjectSet::iterator it = native_safe_planet_set.begin(); it != native_safe_planet_set.end(); ++it)
-        if (const Planet* planet = dynamic_cast<const Planet*>(*it))
-            native_safe_planets.push_back(const_cast<Planet*>(planet));
+        if (TemporaryPtr<const Planet> planet = dynamic_ptr_cast<const Planet>(*it))
+            native_safe_planets.push_back(const_ptr_cast<Planet>(planet));
 
     // randomly add species to planets
-    for (std::vector<Planet*>::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
+    for (std::vector<TemporaryPtr<Planet> >::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
         if (RandZeroToOne() > native_chance)
             continue;
 
-        Planet* planet = *it;
+        TemporaryPtr<Planet> planet = *it;
         PlanetType planet_type = planet->Type();
         Logger().debugStream() << "Attempting to add natives to planet " << planet->Name() << " of type " << planet_type;
 
@@ -1831,12 +1840,12 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
             species->AddHomeworld(planet->ID());
 
         // find a focus to give planets by default.  use first defined available focus.
-        std::vector<std::string> available_foci = planet->AvailableFoci();
+        std::vector<std::string> available_foci = planet->AvailableFoci(planet);
         if (!available_foci.empty()) {
-            planet->SetFocus(*available_foci.begin());
+            SetFocus(planet, *available_foci.begin());
             Logger().debugStream() << "Set focus to " << *available_foci.begin();
         } else {
-            Logger().debugStream() << "No foci available for this planet!";
+            Logger().debugStream() << "No foci available for this planet! (" << planet->ObjectType() << ")";
         }
 
         Logger().debugStream() << "Added native " << species_name << " to planet " << planet->Name();
@@ -1865,7 +1874,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
     const PredefinedShipDesignManager& predefined_design_manager = GetPredefinedShipDesignManager();
 
     // possible locations to generate monsters
-    std::vector<System*> system_vec = Objects().FindObjects<System>();
+    std::vector<TemporaryPtr<System> > system_vec = Objects().FindObjects<System>();
     if (system_vec.empty())
         return;
 
@@ -1879,8 +1888,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
     // system, which hasn't already been added too many times, and then attempt
     // to add that monster by testing the spawn rate chance
     MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
-    for (std::vector<System*>::iterator sys_it = system_vec.begin(); sys_it != system_vec.end(); ++sys_it) {
-        System* system = *sys_it;
+    for (std::vector<TemporaryPtr<System> >::iterator sys_it = system_vec.begin(); sys_it != system_vec.end(); ++sys_it) {
         //Logger().debugStream() << "Attempting to add monster at system " << system->Name();
         // for this system, find a suitable monster fleet plan
         const MonsterFleetPlanManager::iterator initial_monster_plan_it = monster_plan_it;
@@ -1896,7 +1904,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
                 // location.  if there is no location condition, assume there
                 // is no restriction on this monster's spawn location.
                 const Condition::ConditionBase* location_test = plan->Location();
-                if (!location_test || location_test->Eval(system)) {
+                if (!location_test || location_test->Eval(*sys_it)) {
                     //Logger().debugStream() << "... ... can be placed here";
                     // monster can be placed here.
 
@@ -1915,13 +1923,12 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
 
                         // create fleet for monsters
                         const std::string& fleet_name = UserString("MONSTERS");
-                        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
+                        TemporaryPtr<Fleet> fleet = CreateFleet(fleet_name, (*sys_it)->X(), (*sys_it)->Y(), ALL_EMPIRES);
                         if (!fleet) {
                             Logger().errorStream() << "unable to create new fleet for monsters!";
                             return;
                         }
-                        Insert(fleet);
-                        system->Insert(fleet);
+                        (*sys_it)->Insert(fleet);
 
                         // create ships and add to fleet
                         for (std::vector<std::string>::const_iterator monster_it = monsters.begin();
@@ -1934,14 +1941,13 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
                             }
 
                             // create new monster ship
-                            Ship* ship = new Ship(ALL_EMPIRES, design_id, "", ALL_EMPIRES);
+                            TemporaryPtr<Ship> ship = CreateShip(ALL_EMPIRES, design_id, "", ALL_EMPIRES);
                             if (!ship)
                                 continue;
 
                             ship->Rename(UserString(*monster_it));
-                            int ship_id = Insert(ship);
 
-                            fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
+                            fleet->AddShip(ship->ID());    // also moves ship to fleet's location and inserts into system
                         }
                     } else {
                         //Logger().debugStream() << "... ... failed random chance test. skipping system.";
@@ -1987,7 +1993,7 @@ void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& ad
     std::set<int>::iterator laneSetIter, laneSetEnd, laneSetIter2, laneSetEnd2;
 
     // get systems
-    std::vector<System*> sys_vec = Objects().FindObjects<System>();
+    std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
@@ -2140,10 +2146,10 @@ void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& ad
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids) {
     homeworld_planet_ids.clear();
 
-    std::vector<System*> sys_vec = Objects().FindObjects<System>();
+    std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
     //Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
-    //for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-    //    const System* sys = *it;
+    //for (std::vector<TemporaryPtr<System> >::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+    //    TemporaryPtr<const System> sys = *it;
     //    Logger().debugStream() << "... sys ptr: " << sys << " name: " << (sys ? sys->Name() : "no system!?") << " id: " << (sys ? boost::lexical_cast<std::string>(sys->ID()) : "none?!");
     //}
 
@@ -2152,7 +2158,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
 
     for (int i = 0; i < players; ++i) {
         int system_index;
-        System* system;
+        TemporaryPtr<System> system;
 
         // make sure it has planets and it's not too close to the other homeworlds
         bool too_close = true;
@@ -2160,21 +2166,19 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
-            //Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
+            Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
             system = sys_vec[system_index];
-            //Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
+            Logger().debugStream() << "... system name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
 
             for (unsigned int j = 0; j < homeworld_planet_ids.size(); ++j) {
-                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
-                Planet* homeworld = GetPlanet(homeworld_planet_ids[j]);
+                Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
+                TemporaryPtr<Planet> homeworld = GetPlanet(homeworld_planet_ids[j]);
                 if (!homeworld) {
                     Logger().errorStream() << "couldn't find homeworld!";
                     continue;
                 }
 
-                System* existing_system = GetSystem(homeworld->SystemID());
-                //Logger().debugStream() << ".... existing system ptr: " << existing_system;
-
+                TemporaryPtr<System> existing_system = GetSystem(homeworld->SystemID());
                 if (!existing_system) {
                     Logger().errorStream() << "couldn't find existing system!";
                     continue;
@@ -2192,7 +2196,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         sys_vec.erase(sys_vec.begin() + system_index);
 
         // find a place to put the homeworld, and replace whatever planet is there already
-        int planet_id, home_orbit; std::string planet_name;
+        int home_orbit; std::string planet_name;
 
         // we can only select a planet if there are planets in this system.
         if (system->Orbits() >0 && !system->FindObjectIDs<Planet>().empty()) {
@@ -2210,35 +2214,33 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
             planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         }
 
-        Planet* planet = new Planet(PT_TERRAN, SZ_MEDIUM);
-        planet_id = Insert(planet);
+        TemporaryPtr<Planet> planet = CreatePlanet(PT_TERRAN, SZ_MEDIUM); // TODO: Is setting homeworlds' EPs hacked into the scripts somewhere?  We can probably do it here, if only we had the species...
         planet->Rename(planet_name);
-        system->Insert(planet, home_orbit);
+        system->Insert(TemporaryPtr<UniverseObject>(planet), home_orbit);
 
-        homeworld_planet_ids.push_back(planet_id);
+        homeworld_planet_ids.push_back(planet->ID());
     }
 }
 
 void Universe::NamePlanets() {
-    std::vector<System*> sys_vec = Objects().FindObjects<System>();
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
+    std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
+    for (ObjectMap::iterator<System> sys_it = Objects().begin<System>(); sys_it != Objects().end<System>(); ++sys_it) {
         int num_planets_in_system = 0;
-        for (int i = 0; i < system->Orbits(); i++) {
-            std::vector<int> planet_ids = system->FindObjectIDsInOrbit<Planet>(i);
+        for (int i = 0; i < sys_it->Orbits(); i++) {
+            std::vector<int> planet_ids = sys_it->FindObjectIDsInOrbit<Planet>(i);
             if (!planet_ids.empty()) {
                 assert(planet_ids.size() == 1);
-                Planet* planet = GetPlanet(*planet_ids.begin());
+                TemporaryPtr<Planet> planet = GetPlanet(*planet_ids.begin());
                 if (!planet) {
                     Logger().errorStream() << "Universe::NamePlanet couldn't get planet with id " << *planet_ids.begin();
                     continue;
                 }
                 if (planet->Type() == PT_ASTEROIDS) {
                     std::string name = boost::io::str(FlexibleFormat(UserString("PL_ASTEROID_BELT_OF_SYSTEM")) %
-                                                      system->Name());
+                                                      sys_it->Name());
                     planet->Rename(name);
                 } else {
-                    planet->Rename(system->Name() + " " + RomanNumber(++num_planets_in_system));
+                    planet->Rename(sys_it->Name() + " " + RomanNumber(++num_planets_in_system));
                 }
             }
         }
@@ -2251,7 +2253,7 @@ void Universe::GenerateFields(GalaxySetupOption freq) {
     //    Logger().errorStream() << "AddFields couldn't find storm field type!";
     //    return;
     //}
-    //Field* field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
+    //TemporaryPtr<Field> field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
     //Insert(field);
 }
 
@@ -2385,8 +2387,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
 
         // set ownership of home planet
-        Planet* home_planet = GetPlanet(homeworld_id);
-        System* home_system = (home_planet ? GetSystem(home_planet->SystemID()) : 0);
+        TemporaryPtr<Planet> home_planet = GetPlanet(homeworld_id);
+        TemporaryPtr<System> home_system = (home_planet ? GetSystem(home_planet->SystemID()) : TemporaryPtr<System>());
         if (!home_planet || !home_system) {
             Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
             continue;
@@ -2429,18 +2431,17 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci, although this might be buggy since the universe isn't fully
         // created yet at this point in unverse generation.
-        std::vector<std::string> available_foci = home_planet->AvailableFoci();
+        std::vector<std::string> available_foci = home_planet->AvailableFoci(home_planet);
         if (!available_foci.empty())
-            home_planet->SetFocus(*available_foci.begin());
+            SetFocus(home_planet, *available_foci.begin());
 
 
         // give homeworlds starting buildings
         for (std::vector<std::string>::const_iterator building_it = starting_building_names.begin();
              building_it != starting_building_names.end(); ++building_it)
         {
-            Building* building = new Building(empire_id, *building_it, empire_id);
-            int building_id = Insert(building);
-            home_planet->AddBuilding(building_id);
+            TemporaryPtr<Building> building = CreateBuilding(empire_id, *building_it, empire_id);
+            home_planet->AddBuilding(building->ID());
         }
 
 
@@ -2455,12 +2456,11 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         {
             // create fleet
             const std::string& fleet_name = (*it)->Name();
-            Fleet* fleet = new Fleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
+            TemporaryPtr<Fleet> fleet = CreateFleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
             if (!fleet) {
                 Logger().errorStream() << "unable to create new fleet!";
                 break;
             }
-            Insert(fleet);
             home_system->Insert(fleet);
 
             // create ships and add to fleet
@@ -2483,17 +2483,16 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
                 }
 
                 // create new ship
-                Ship* ship = new Ship(empire_id, design_id, empire_starting_species, empire_id);
+                TemporaryPtr<Ship> ship = CreateShip(empire_id, design_id, empire_starting_species, empire_id);
                 if (!ship) {
                     Logger().errorStream() << "unable to create new ship!";
                     break;
                 }
 
                 ship->Rename(empire->NewShipName());
-                int ship_id = Insert(ship);
 
                 // add ship to fleet
-                fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
+                fleet->AddShip(ship->ID());    // also moves ship to fleet's location and inserts into system
             }
         }
     }

@@ -161,7 +161,7 @@ namespace {
 ////////////////////////////////////////////////////////////
 // ResolveCombat
 ////////////////////////////////////////////////////////////
-ResolveCombat::ResolveCombat(System* system, std::set<int>& empire_ids) :
+ResolveCombat::ResolveCombat(TemporaryPtr<System> system, std::set<int>& empire_ids) :
     m_system(system),
     m_empire_ids()
 { std::swap(m_empire_ids, empire_ids); }
@@ -1391,13 +1391,16 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
                      GetCombatLogManager());
         } catch (const std::exception&) {
+            Logger().debugStream() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
-
+        
+        Logger().debugStream() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }
-
+    
+    Logger().debugStream() << "Finished ClientSaveData from outside of if.";
     return discard_event();
 }
 
@@ -1407,7 +1410,6 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 ////////////////////////////////////////////////////////////
 ProcessingTurn::ProcessingTurn(my_context c) :
     my_base(c),
-    m_combat_system(0),
     m_combat_empire_ids()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn"; }
 
@@ -1491,7 +1493,7 @@ ResolvingCombat::ResolvingCombat(my_context c) :
     std::map<int, std::vector<CombatSetupGroup> > setup_groups;
     server.m_current_combat =
         new CombatData(context<ProcessingTurn>().m_combat_system, setup_groups);
-    context<ProcessingTurn>().m_combat_system = 0;
+    context<ProcessingTurn>().m_combat_system = TemporaryPtr<System>();
 
     // TODO: For now, we're just sending all designs to everyone.  Reconsider
     // this later.
@@ -1565,7 +1567,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
         int owner_id = ALL_EMPIRES;
         if (order.Type() == CombatOrder::SHIP_ORDER ||
             order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
-            if (UniverseObject* object = GetUniverseObject(order.ID())) {
+            if (TemporaryPtr<UniverseObject> object = GetUniverseObject(order.ID())) {
                 assert(!object->Unowned());
                 owner_id = object->Owner();
             }

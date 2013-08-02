@@ -60,21 +60,25 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
 }
 
-Field* Field::Clone(int empire_id) const {
+Field* Field::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
+    if (this != obj) {
+        Logger().debugStream() << "Field::Clone passed a TemporaryPtr to an object other than this.";
+    }
+
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Field* retval = new Field();
-    retval->Copy(this, empire_id);
+    retval->Copy(obj, empire_id);
     return retval;
 }
 
-void Field::Copy(const UniverseObject* copied_object, int empire_id) {
+void Field::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    const Field* copied_field = universe_object_cast<Field*>(copied_object);
+    TemporaryPtr<const Field> copied_field = universe_object_ptr_cast<Field>(copied_object);
     if (!copied_field) {
         Logger().errorStream() << "Field::Copy passed an object that wasn't a Field";
         return;
@@ -123,10 +127,14 @@ const std::string& Field::PublicName(int empire_id) const {
     return UserString(m_type_name);
 }
 
-UniverseObject* Field::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<Field* const>(this)); }
+TemporaryPtr<UniverseObject> Field::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
+    if (this_obj != this)
+        return TemporaryPtr<UniverseObject>();
 
-bool Field::InField(const UniverseObject* obj) const
+    return visitor.Visit(const_ptr_cast<Field>(static_ptr_cast<const Field>(this_obj)));
+}
+
+bool Field::InField(TemporaryPtr<const UniverseObject> obj) const
 { return obj && InField(obj->X(), obj->Y()); }
 
 bool Field::InField(double x, double y) const {

@@ -13,13 +13,6 @@ namespace Effect {
 /** a class representing a region of space */
 class FO_COMMON_API Field : public UniverseObject {
 public:
-    /** \name Structors */ //@{
-    Field();                                        ///< default ctor
-    Field(const std::string& field_type, double x, double y, double radius);
-
-    virtual Field*              Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Field
-    //@}
-
     /** \name Accessors */ //@{
     virtual std::set<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
@@ -30,20 +23,33 @@ public:
     virtual std::string         Dump() const;
 
     const std::string&          FieldTypeName() const { return m_type_name; }
-    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
-    bool                        InField(const UniverseObject* obj) const;
+    bool                        InField(TemporaryPtr<const UniverseObject> obj) const;
     bool                        InField(double x, double y) const;
 
     virtual const std::string&  PublicName(int empire_id) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void                Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
+
+    virtual void                ResetTargetMaxUnpairedMeters();
     //@}
 
 protected:
-    virtual void                ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    Field();                                        ///< default ctor
+    Field(const std::string& field_type, double x, double y, double radius);
+    
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~Field() {}
+
+    virtual Field*              Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Field
+    //@}
 
 private:
     virtual void                ClampMeters();

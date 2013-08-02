@@ -107,8 +107,8 @@ private:
     void                NextButtonClicked();            ///< responts to user clicking previous system button
     void                PlanetSelected(int planet_id);  ///< responds to user selection of a planet by emitting PlanetSelectedSignal
 
-    static void         FleetInserted(Fleet& fleet);    ///< responds to insertion of a fleet into system during a turn.  may update colonize buttons
-    static void         FleetRemoved(Fleet& fleet);     ///< responds to removal of fleet from system during a turn.  may update colonize buttons
+    static void         FleetInserted(TemporaryPtr<Fleet> fleet);    ///< responds to insertion of a fleet into system during a turn.  may update colonize buttons
+    static void         FleetRemoved(TemporaryPtr<Fleet> fleet);     ///< responds to removal of fleet from system during a turn.  may update colonize buttons
     static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
 
     CUIDropDownList*            m_system_name;
@@ -132,7 +132,7 @@ private:
     static std::map<int, boost::signals::connection>    s_fleet_state_change_signals;
 };
 
-const Ship* ValidSelectedColonyShip(int system_id);
-int         AutomaticallyChosenColonyShip(int target_planet_id);
+TemporaryPtr<const Ship>    ValidSelectedColonyShip(int system_id);
+int                         AutomaticallyChosenColonyShip(int target_planet_id);
 
 #endif // _SidePanel_h_

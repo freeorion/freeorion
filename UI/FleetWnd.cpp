@@ -95,14 +95,14 @@ namespace {
 
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
-        const Fleet* fleet = GetFleet(fleet_id);
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet)
             return retval;
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        const System* dest = GetSystem(fleet->FinalDestinationID());
-        const System* cur_sys = GetSystem(fleet->SystemID());
+        TemporaryPtr<const System> dest = GetSystem(fleet->FinalDestinationID());
+        TemporaryPtr<const System> cur_sys = GetSystem(fleet->SystemID());
         if (dest && dest != cur_sys) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
@@ -164,13 +164,13 @@ namespace {
 
         // get system where new fleet is to be created.
         int first_ship_id = ship_ids.front();
-        const Ship* first_ship = GetShip(first_ship_id);
+        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
         if (!first_ship) {
             Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
             return;
         }
         int system_id = first_ship->SystemID();
-        const System* system = GetSystem(system_id); // may be null
+        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
         if (!system) {
             Logger().errorStream() << "CreateNewFleetFromShips couldn't get a valid system with system id " << system_id;
             return;
@@ -187,7 +187,7 @@ namespace {
         // being taken
         std::set<int> original_fleet_ids;
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            const Ship* ship = objects.Object<Ship>(*it);
+            TemporaryPtr<const Ship> ship = objects.Object<Ship>(*it);
             if (!ship) {
                 Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
                 return;
@@ -224,20 +224,20 @@ namespace {
         if (!ClientPlayerIsModerator()) {
             if (empire_id == ALL_EMPIRES)
                 return;
-
+            
             // create new fleet with ships
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
             // set aggression of new fleet, if not already what was requested
-            if (const Fleet* new_fleet = GetFleet(new_fleet_id))
+            if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
                 if (new_fleet->Aggressive() != aggressive)
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
 
             // delete empty fleets from which ships may have been taken
             for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
-                const Fleet* fleet = objects.Object<Fleet>(*it);
+                TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(*it);
                 if (fleet && fleet->Empty())
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                         new DeleteFleetOrder(empire_id, fleet->ID())));
@@ -286,7 +286,7 @@ FleetUIManager::iterator FleetUIManager::end() const
 FleetWnd* FleetUIManager::ActiveFleetWnd() const
 { return m_active_fleet_wnd; }
 
-FleetWnd* FleetUIManager::WndForFleet(const Fleet* fleet) const {
+FleetWnd* FleetUIManager::WndForFleet(TemporaryPtr<const Fleet> fleet) const {
     assert(fleet);
     FleetWnd* retval = 0;
     for (std::set<FleetWnd*>::const_iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
@@ -439,11 +439,11 @@ namespace {
     ////////////////////////////////////////////////
     // Free Functions
     ////////////////////////////////////////////////
-    bool    ValidShipTransfer(const Ship* ship, const Fleet* new_fleet) {
+    bool    ValidShipTransfer(TemporaryPtr<const Ship> ship, TemporaryPtr<const Fleet> new_fleet) {
         if (!ship || !new_fleet)
             return false;   // can't transfer no ship or to no fleet
 
-        const Fleet* current_fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<const Fleet> current_fleet = GetFleet(ship->FleetID());
         if (current_fleet && current_fleet->ID() == new_fleet->ID())
             return false;   // can't transfer a fleet to a fleet it already is in
 
@@ -466,7 +466,7 @@ namespace {
         return true;
     }
 
-    bool    ValidFleetMerge(const Fleet* fleet, const Fleet* target_fleet) {
+    bool    ValidFleetMerge(TemporaryPtr<const Fleet> fleet, TemporaryPtr<const Fleet> target_fleet) {
         if (!fleet || !target_fleet)
             return false;   // missing objects
 
@@ -657,7 +657,7 @@ void ShipDataPanel::SetShipIcon() {
     delete m_scanline_control;
     m_scanline_control = 0;
 
-    const Ship* ship = GetShip(m_ship_id);
+    TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
     if (!ship)
         return;
 
@@ -697,7 +697,7 @@ void ShipDataPanel::SetShipIcon() {
 void ShipDataPanel::Refresh() {
     SetShipIcon();
 
-    const Ship* ship = GetShip(m_ship_id);
+    TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
     if (!ship) {
         // blank text and delete icons
         m_ship_name_text->SetText("");
@@ -760,7 +760,7 @@ void ShipDataPanel::Refresh() {
 }
 
 double ShipDataPanel::StatValue(const std::string& stat_name) const {
-    if (const Ship* ship = GetShip(m_ship_id)) {
+    if (TemporaryPtr<const Ship> ship = GetShip(m_ship_id)) {
         if (stat_name == DAMAGE_STAT_STRING)
             return ship->TotalWeaponsDamage();
 
@@ -812,7 +812,7 @@ void ShipDataPanel::Init() {
     m_initialized = true;
 
     // ship name text.  blank if no ship.
-    const Ship* ship = GetShip(m_ship_id);
+    TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
     std::string ship_name;
     if (ship)
         ship_name = ship->Name();
@@ -860,7 +860,7 @@ void ShipDataPanel::Init() {
     // bookkeeping
     m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
-    if (Fleet* fleet = GetFleet(ship->FleetID()))
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
         m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
     Refresh();
@@ -943,7 +943,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_destination_text);
 
-    if (const Fleet* fleet = GetFleet(m_fleet_id)) {
+    if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         // stat icon for fleet count
@@ -1102,7 +1102,7 @@ void FleetDataPanel::DragDropLeave()
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Fleet* this_panel_fleet = GetFleet(m_fleet_id);
+    TemporaryPtr<const Fleet> this_panel_fleet = GetFleet(m_fleet_id);
 
     // for every Wnd being dropped...
     for (DropsAcceptableIter it = first; it != last; ++it) {
@@ -1120,7 +1120,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
         const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first);
         if (!ship_row)
             continue;
-        const Ship* ship = GetShip(ship_row->ShipID());
+        TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID());
         if (!ship)
             continue;
 
@@ -1182,7 +1182,7 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void FleetDataPanel::AggressionToggleButtonPressed() {
     if (!m_aggression_toggle)
         return;
-    const Fleet* fleet = GetFleet(m_fleet_id);
+    TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id);
     if (fleet) {
         if (!ClientPlayerIsModerator()) {
             int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1225,7 +1225,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
-    } else if (const Fleet* fleet = GetFleet(m_fleet_id)) {
+    } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
         m_fleet_name_text->SetText(fleet->PublicName(client_empire_id));
@@ -1276,7 +1276,7 @@ void FleetDataPanel::SetStatIconValues() {
     std::vector<float> fuels;
     std::vector<float> speeds;
 
-    const Fleet* fleet = GetFleet(m_fleet_id);
+    TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id);
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
@@ -1287,7 +1287,7 @@ void FleetDataPanel::SetStatIconValues() {
             continue;
         if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
             continue;
-        if (const Ship* ship = GetShip(ship_id)) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             if (const ShipDesign* design = ship->Design()) {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsDamage();
@@ -1331,7 +1331,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
 
     if (m_new_fleet_drop_target) {
         aggressive = m_new_fleet_aggression;
-    } else if (const Fleet* fleet = GetFleet(m_fleet_id)) {
+    } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         aggressive = fleet->Aggressive();
     } else {
         DetachChild(m_aggression_toggle);
@@ -1483,7 +1483,7 @@ public:
             return;
 
         // extract drop target fleet from row under drop point
-        const Fleet* target_fleet = 0;
+        TemporaryPtr<const Fleet> target_fleet;
         if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row))
             target_fleet = GetFleet(fleet_row->FleetID());
 
@@ -1496,12 +1496,12 @@ public:
             // if any of the nested if's fail, the default rejection of the drop will remain set
             if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first))
-                    if (const Fleet* fleet = GetFleet(fleet_row->FleetID()))
+                    if (TemporaryPtr<const Fleet> fleet = GetFleet(fleet_row->FleetID()))
                         it->second = ValidFleetMerge(fleet, target_fleet);
 
             } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
-                    if (const Ship* ship = GetShip(ship_row->ShipID()))
+                    if (TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID()))
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
                 // no valid drop type string
@@ -1522,15 +1522,15 @@ public:
         const FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(*drop_target_row);
         assert(drop_target_fleet_row);
 
-        Fleet* target_fleet = GetFleet(drop_target_fleet_row->FleetID());
+        TemporaryPtr<Fleet> target_fleet = GetFleet(drop_target_fleet_row->FleetID());
         assert(target_fleet);
 
         int target_fleet_id = target_fleet->ID();
 
 
         // sort dropped Wnds to extract fleets or ships dropped.  (should only be one or the other in a given drop)
-        std::vector<Fleet*> dropped_fleets;
-        std::vector<Ship*> dropped_ships;
+        std::vector<TemporaryPtr<Fleet> > dropped_fleets;
+        std::vector<TemporaryPtr<Ship> > dropped_ships;
 
         for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             const GG::Wnd* wnd = *it;
@@ -1554,8 +1554,8 @@ public:
             // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
             //std::cout << ".... dropped " << dropped_fleets.size() << " fleets" << std::endl;
 
-            for (std::vector<Fleet*>::const_iterator it = dropped_fleets.begin(); it != dropped_fleets.end(); ++it) {
-                const Fleet* dropped_fleet = *it;
+            for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = dropped_fleets.begin(); it != dropped_fleets.end(); ++it) {
+                TemporaryPtr<const Fleet> dropped_fleet = *it;
                 assert(dropped_fleet);
                 int dropped_fleet_id = dropped_fleet->ID();
 
@@ -1582,15 +1582,15 @@ public:
             //std::cout << ".... dropped " << dropped_ships.size() << " ships" << std::endl;
 
             // get source fleet of ship(s).  assumes all ships are from the same source fleet.
-            const Ship* first_ship = dropped_ships[0];
+            TemporaryPtr<const Ship> first_ship = dropped_ships[0];
             assert(first_ship);
             int fleet_id = first_ship->FleetID();
 
             // compile ship IDs into a vector, while also recording original fleets from which ships are being taken
             std::vector<int> ship_ids_vec;
             std::set<int> dropped_ships_fleets;
-            for (std::vector<Ship*>::const_iterator it = dropped_ships.begin(); it != dropped_ships.end(); ++it) {
-                const Ship* ship = *it;
+            for (std::vector<TemporaryPtr<Ship> >::const_iterator it = dropped_ships.begin(); it != dropped_ships.end(); ++it) {
+                TemporaryPtr<const Ship> ship = *it;
                 assert(ship);
                 ship_ids_vec.push_back(ship->ID());
                 dropped_ships_fleets.insert(ship->FleetID());
@@ -1603,7 +1603,7 @@ public:
 
                 // delete empty fleets
                 for (std::set<int>::const_iterator it = dropped_ships_fleets.begin(); it != dropped_ships_fleets.end(); ++it) {
-                    const Fleet* fleet = GetFleet(*it);
+                    TemporaryPtr<const Fleet> fleet = GetFleet(*it);
                     if (fleet && fleet->Empty())
                         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                             new DeleteFleetOrder(empire_id, fleet->ID())));
@@ -1652,7 +1652,7 @@ public:
         FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(drop_target_row);
         assert(drop_target_fleet_row);
 
-        Fleet* drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
+        TemporaryPtr<Fleet> drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
         assert(drop_target_fleet);
 
         // use DropsAcceptable to check whether wnds being dragged over can be dropped.
@@ -1685,7 +1685,7 @@ public:
 
                 const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(dropped_wnd);
                 assert(fleet_row);
-                Fleet* fleet = GetFleet(fleet_row->FleetID());
+                TemporaryPtr<Fleet> fleet = GetFleet(fleet_row->FleetID());
 
                 if (!ValidFleetMerge(fleet, drop_target_fleet))
                     return; // not a valid drop
@@ -1697,7 +1697,7 @@ public:
 
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(dropped_wnd);
                 assert(ship_row);
-                Ship* ship = GetShip(ship_row->ShipID());
+                TemporaryPtr<Ship> ship = GetShip(ship_row->ShipID());
 
                 if (!ValidShipTransfer(ship, drop_target_fleet))
                     return; // not a valid drop
@@ -1800,7 +1800,7 @@ public:
     void            Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
-        const Fleet* fleet = GetFleet(m_fleet_id);
+        TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id);
         if (!fleet) {
             Clear();
             return;
@@ -1861,13 +1861,13 @@ public:
             if (!ship_row)
                 continue;
 
-            const Ship* ship = GetShip(ship_row->ShipID());
+            TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID());
             if (!ship) {
                 Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
                 continue;
             }
 
-            const Fleet* fleet = GetFleet(ship->FleetID());
+            TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
             if (!fleet) {
                 Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
                 continue;
@@ -1885,7 +1885,7 @@ public:
         if (wnds.empty())
             return;
 
-        Ship* ship_from_dropped_wnd = 0;
+        TemporaryPtr<Ship> ship_from_dropped_wnd;
         std::vector<int> ship_ids;
         for (std::vector<GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             const GG::Wnd* wnd = *it;
@@ -1909,7 +1909,7 @@ public:
 
             // delete old fleet if now empty
             const ObjectMap& objects = GetUniverse().Objects();
-            if (const Fleet* dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
+            if (TemporaryPtr<const Fleet> dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
                 if (dropped_ship_old_fleet->Empty())
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                         new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
@@ -1964,7 +1964,7 @@ private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
     void            Refresh();
     void            DoLayout();
-    void            UniverseObjectDeleted(const UniverseObject* obj);
+    void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ShipBrowsed(GG::ListBox::iterator it);
     void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
@@ -2028,7 +2028,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
 
     // if set fleet changed, and new fleet exists, update state change signal connection
     if (m_fleet_id != old_fleet_id && m_fleet_id != INVALID_OBJECT_ID) {
-        const Fleet* fleet = GetFleet(m_fleet_id);
+        TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id);
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals::at_front);
         } else {
@@ -2138,7 +2138,7 @@ void FleetDetailPanel::DoLayout() {
     m_ships_lb->SizeMove(ul, lr);
 }
 
-void FleetDetailPanel::UniverseObjectDeleted(const UniverseObject* obj) {
+void FleetDetailPanel::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     if (obj && obj->ID() == m_fleet_id)
         SetFleet(INVALID_OBJECT_ID);
 }
@@ -2165,7 +2165,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!ship_row)
         return;
 
-    Ship* ship = GetShip(ship_row->ShipID());
+    TemporaryPtr<Ship> ship = GetShip(ship_row->ShipID());
     if (!ship)
         return;
 
@@ -2411,7 +2411,7 @@ void FleetWnd::SetStatIconValues() {
     float shield_tally =    0.0;
     
     for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
-        const Fleet* fleet = GetFleet(*it);
+        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
         if ( (!fleet) || (!(m_empire_id==ALL_EMPIRES || fleet->OwnedBy(m_empire_id))) )
             continue;
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
@@ -2421,7 +2421,7 @@ void FleetWnd::SetStatIconValues() {
                 continue;
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
-            if (const Ship* ship = GetShip(ship_id)) {
+            if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
                 if (const ShipDesign* design = ship->Design()) {
                     ship_count++;
                     damage_tally += ship->TotalWeaponsDamage();
@@ -2466,7 +2466,7 @@ std::string FleetWnd::StatTooltip(const std::string& stat_name) const {
 
 void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
-    if (const System* system = GetSystem(m_system_id))
+    if (TemporaryPtr<const System> system = GetSystem(m_system_id))
         m_system_connection = GG::Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this, boost::signals::at_front);
 }
 
@@ -2498,9 +2498,9 @@ void FleetWnd::Refresh() {
     if (GetSystem(m_system_id)) {
         // get fleets to show from system, based on required ownership
         const ObjectMap& objects = Objects();
-        std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
-        for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
-            const Fleet* fleet = *it;
+        std::vector<TemporaryPtr<const Fleet> > all_fleets = objects.FindObjects<Fleet>();
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
+            TemporaryPtr<const Fleet> fleet = *it;
             int fleet_id = fleet->ID();
 
             // skip fleets in wrong system
@@ -2607,7 +2607,7 @@ void FleetWnd::DoLayout() {
     bool this_client_owns_fleets_in_this_wnd(false);
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
-        const Fleet* fleet = GetFleet(*it);
+        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
         if (!fleet)
             continue;
         if (fleet->OwnedBy(this_client_empire_id)) {
@@ -2663,7 +2663,7 @@ void FleetWnd::DoLayout() {
 }
 
 void FleetWnd::AddFleet(int fleet_id) {
-    const Fleet* fleet = GetFleet(fleet_id);
+    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet /*|| fleet->Empty()*/)
         return;
 
@@ -2752,7 +2752,7 @@ int FleetWnd::EmpireID() const
 
 bool FleetWnd::ContainsFleet(int fleet_id) const {
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        Fleet* fleet = GetFleet(FleetInRow(it));
+        TemporaryPtr<Fleet> fleet = GetFleet(FleetInRow(it));
         if (fleet && fleet->ID() == fleet_id)
             return true;
     }
@@ -2830,24 +2830,18 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    Fleet* fleet = GetFleet(FleetInRow(it));
+    TemporaryPtr<Fleet> fleet = GetFleet(FleetInRow(it));
     if (!fleet)
         return;
 
-    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
-        FleetRightClickedSignal(fleet->ID());  // response handled in MapWnd
-        return;
-    }
-
-    const System* system = GetSystem(fleet->SystemID());    // may be null
+    TemporaryPtr<const System> system = GetSystem(fleet->SystemID());    // may be null
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
     // find damaged ships
     std::vector<int> damaged_ship_ids;
     damaged_ship_ids.reserve(ship_ids_set.size());
     for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-        const Ship* ship = GetShip(*it);
+        TemporaryPtr<const Ship> ship = GetShip(*it);
         if (ship->CurrentMeterValue(METER_STRUCTURE) < ship->CurrentMeterValue(METER_MAX_STRUCTURE))
             damaged_ship_ids.push_back(*it);
     }
@@ -2856,7 +2850,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     std::vector<int> unfueled_ship_ids;
     unfueled_ship_ids.reserve(ship_ids_set.size());
     for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-        const Ship* ship = GetShip(*it);
+        TemporaryPtr<const Ship> ship = GetShip(*it);
         if (!ship)
             continue;
         if (ship->CurrentMeterValue(METER_FUEL) < 1)
@@ -3067,7 +3061,7 @@ std::string FleetWnd::TitleText() const {
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-        if (const System* system = GetSystem(m_system_id)) {
+        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                   empire->Name() % sys_name);
@@ -3076,7 +3070,7 @@ std::string FleetWnd::TitleText() const {
                                   empire->Name());
         }
     } else {
-        if (const System* system = GetSystem(m_system_id)) {
+        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
                                   sys_name);
@@ -3096,11 +3090,11 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
 void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 { SelectedShipsChangedSignal(); }
 
-void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj) {
+void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     // check if deleted object was a fleet.  if not, abort.
-    const Fleet* deleted_fleet = universe_object_cast<const Fleet*>(obj);
+    TemporaryPtr<const Fleet> deleted_fleet = universe_object_ptr_cast<const Fleet>(obj);
     if (!deleted_fleet)
-        return;
+        return; // TODO: Why exactly does this function not just take a Fleet instead of a UniverseObject?  Maybe rename to FleetDeleted?
 
     // if detail panel is showing the deleted fleet, reset to show nothing
     if (GetFleet(m_fleet_detail_panel->FleetID()) == deleted_fleet)
@@ -3119,7 +3113,7 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj) {
 }
 
 void FleetWnd::SystemChangedSlot() {
-    const System* system = GetSystem(m_system_id);
+    TemporaryPtr<const System> system = GetSystem(m_system_id);
     if (!system) {
         Logger().errorStream() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
         return;

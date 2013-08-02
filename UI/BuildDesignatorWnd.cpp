@@ -173,10 +173,10 @@ namespace {
         GG::TextControl*                m_desc;
     };
 
-    const UniverseObject* GetSourceObjectForEmpire(int empire_id) {
+    TemporaryPtr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
         // get a source object, which is owned by the empire,
         // preferably the capital
-        const UniverseObject* source = 0;
+        TemporaryPtr<const UniverseObject> source;
         if (empire_id == ALL_EMPIRES)
             return source;
         const Empire* empire = Empires().Lookup(empire_id);
@@ -207,7 +207,7 @@ namespace {
         location_conditions.push_back(&bld_avail_cond);
         if (const BuildingType* building_type = GetBuildingType(building_name))
             location_conditions.push_back(building_type->Location());
-        const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
         return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
@@ -235,7 +235,7 @@ namespace {
                     location_conditions.push_back(part_type->Location());
             }
         }
-        const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
         return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
@@ -573,7 +573,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::Refresh()";
-    if (const UniverseObject* prod_loc = GetUniverseObject(this->m_production_location))
+    if (TemporaryPtr<const UniverseObject> prod_loc = GetUniverseObject(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
@@ -909,7 +909,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         int location_id = queue[queue_idx].location;
-        if (const UniverseObject* build_location = objects.Object(location_id)) {
+        if (TemporaryPtr<const UniverseObject> build_location = objects.Object(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
             MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
@@ -1142,7 +1142,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    const System* sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
+    TemporaryPtr<const System> sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
     if (!sys) {
         Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
@@ -1161,7 +1161,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
     for (std::vector<int>::iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = GetPlanet(*it);
+        TemporaryPtr<const Planet> planet = GetPlanet(*it);
         if (!planet) {
             Logger().errorStream() << "BuildDesignatorWnd::SetDefaultPlanet couldn't get planet with id " << *it;
             continue;

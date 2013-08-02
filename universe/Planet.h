@@ -82,13 +82,6 @@ class FO_COMMON_API Planet :
     public ResourceCenter
 {
 public:
-    /** \name Structors */ //@{
-    Planet();                                   ///< default ctor
-    Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size
-
-    virtual Planet*             Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
-    //@}
-
     /** \name Accessors */ //@{
     virtual std::set<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
@@ -121,17 +114,18 @@ public:
     const std::set<int>&        Buildings() const {return m_buildings;}
 
     virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
-    virtual std::vector<UniverseObject*>FindObjects() const;            ///< returns objects contained within this object
+    virtual std::vector<TemporaryPtr<UniverseObject> >FindObjects() const;            ///< returns objects contained within this object
     virtual std::vector<int>            FindObjectIDs() const;          ///< returns ids of objects contained within this object
-
-    virtual std::vector<std::string>    AvailableFoci() const;
+    
+    virtual std::vector<std::string>    AvailableFoci(TemporaryPtr<const ResourceCenter> res) const; // Requires a TemporaryPtr to itself to pass into condition evaluation functions.
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
     bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
-    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
     virtual float               InitialMeterValue(MeterType type) const;
     virtual float               CurrentMeterValue(MeterType type) const;
@@ -141,7 +135,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     virtual Meter*  GetMeter(MeterType type);
 
@@ -172,12 +166,24 @@ public:
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
 
     void            SetSurfaceTexture(const std::string& texture);
+
+    virtual void    ResetTargetMaxUnpairedMeters();
     //@}
 
     static int      TypeDifference(PlanetType type1, PlanetType type2);
 
 protected:
-    virtual void            ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    Planet();                                   ///< default ctor
+    Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size
+    
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~Planet() {}
+
+    virtual Planet*         Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
+    //@}
 
 private:
     void Init();

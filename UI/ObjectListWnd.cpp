@@ -620,7 +620,7 @@ private:
             for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
                  planet_it != Objects().const_end<Planet>(); ++planet_it)
             {
-                std::vector<std::string> obj_foci = planet_it->AvailableFoci();
+                std::vector<std::string> obj_foci = planet_it->AvailableFoci(*planet_it);
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
 
@@ -839,11 +839,11 @@ private:
 };
 
 namespace {
-    std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject* obj) {
+    std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(TemporaryPtr<const UniverseObject> obj) {
         std::vector<boost::shared_ptr<GG::Texture> > retval;
 
         if (obj->ObjectType() == OBJ_SHIP) {
-            const Ship* ship = universe_object_cast<const Ship*>(obj);
+            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj);
             if (ship) {
                 if (const ShipDesign* design = ship->Design())
                     retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
@@ -852,7 +852,7 @@ namespace {
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
                 boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (head_icon)
                     retval.push_back(head_icon);
@@ -861,7 +861,7 @@ namespace {
                     retval.push_back(size_icon);
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (const System* system = universe_object_cast<const System*>(obj)) {
+            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
@@ -874,13 +874,13 @@ namespace {
                     retval.push_back(halo_texture);
             }
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
         } else if (obj->ObjectType() == OBJ_BUILDING) {
-            if (const Building* building = universe_object_cast<const Building*>(obj))
+            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj))
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
         } else if (obj->ObjectType() == OBJ_FIELD) {
-            if (const Field* field = universe_object_cast<const Field*>(obj))
+            if (TemporaryPtr<const Field> field = universe_object_ptr_cast<const Field>(obj))
                 retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
         }
         if (retval.empty())
@@ -888,17 +888,17 @@ namespace {
         return retval;
     }
 
-    const std::string& ObjectName(const UniverseObject* obj) {
+    const std::string& ObjectName(TemporaryPtr<const UniverseObject> obj) {
         if (!obj)
             return EMPTY_STRING;
         if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (const System* system = universe_object_cast<const System*>(obj))
+            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj))
                 return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
         }
         return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
     }
 
-    std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(const UniverseObject* obj) {
+    std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(TemporaryPtr<const UniverseObject> obj) {
         if (!obj)
             return std::make_pair("", ClientUI::TextColor());
         if (const Empire* empire = Empires().Lookup(obj->Owner()))
@@ -912,7 +912,7 @@ namespace {
 ////////////////////////////////////////////////
 class ObjectPanel : public GG::Control {
 public:
-    ObjectPanel(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded, bool has_contents, int indent = 0) :
+    ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded, bool has_contents, int indent = 0) :
         Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
         m_initialized(false),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
@@ -979,7 +979,7 @@ public:
             AttachChild(m_dot);
         }
 
-        const UniverseObject* obj = GetUniverseObject(m_object_id);
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
 
         m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(),
@@ -1066,7 +1066,7 @@ private:
 ////////////////////////////////////////////////
 class ObjectRow : public GG::ListBox::Row {
 public:
-    ObjectRow(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded,
+    ObjectRow(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded,
               int container_object_panel,
               const std::set<int>& contained_object_panels, int indent) :
         GG::ListBox::Row(w, h, "ObjectRow", GG::ALIGN_CENTER, 1),
@@ -1229,7 +1229,7 @@ public:
         m_object_change_connections.clear();
     }
 
-    bool            ObjectShown(const UniverseObject* obj, bool assume_visible_without_checking = false) {
+    bool            ObjectShown(TemporaryPtr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
         if (!obj)
             return false;
 
@@ -1267,7 +1267,7 @@ public:
             std::set<int>                   fields;
 
             for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-                const UniverseObject* obj = *it;
+                TemporaryPtr<const UniverseObject> obj = *it;
                 if (!ObjectShown(obj))
                     continue;
 
@@ -1277,13 +1277,13 @@ public:
                     systems.insert(object_id);
                 } else if (obj->ObjectType() == OBJ_FIELD) {
                     fields.insert(object_id);
-                } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+                } else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
                     system_fleets[fleet->SystemID()].insert(object_id);
-                } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+                } else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
                     fleet_ships[ship->FleetID()].insert(object_id);
-                } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+                } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
                     system_planets[planet->SystemID()].insert(object_id);
-                } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
+                } else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj)) {
                     planet_buildings[building->PlanetID()].insert(object_id);
                 }
             }
@@ -1486,7 +1486,7 @@ private:
     void            AddObjectRow(int object_id, int container, const std::set<int>& contents,
                                  int indent, GG::ListBox::iterator it)
     {
-        const UniverseObject* obj = GetUniverseObject(object_id);
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
@@ -1579,7 +1579,7 @@ private:
     void            ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        const UniverseObject* obj = GetUniverseObject(object_id);
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
         Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
@@ -1591,7 +1591,7 @@ private:
             Refresh();
     }
 
-    void            UniverseObjectDeleted(const UniverseObject* obj) {
+    void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
         if (obj)
             RemoveObjectRow(obj->ID());
     }
@@ -1701,7 +1701,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
 
-    const UniverseObject* obj = GetUniverseObject(object_id);
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
     //Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;

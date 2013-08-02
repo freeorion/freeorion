@@ -24,10 +24,10 @@ using boost::io::str;
 extern int g_indent;
 
 namespace {
-    const Fleet* FleetFromObject(const UniverseObject* obj) {
-        const Fleet* retval = universe_object_cast<const Fleet*>(obj);
+    TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
+        TemporaryPtr<const Fleet> retval = universe_object_ptr_cast<const Fleet>(obj);
         if (!retval) {
-            if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj))
                 retval = GetFleet(ship->FleetID());
         }
         return retval;
@@ -72,7 +72,7 @@ namespace {
 
     std::map<std::string, bool> ConditionDescriptionAndTest(const std::vector<const Condition::ConditionBase*>& conditions,
                                                             const ScriptingContext& parent_context,
-                                                            const UniverseObject* candidate_object/* = 0*/)
+                                                            TemporaryPtr<const UniverseObject> candidate_object/* = 0*/)
     {
         std::map<std::string, bool> retval;
 
@@ -97,8 +97,8 @@ namespace {
 }
 
 std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
-                                 const UniverseObject* candidate_object/* = 0*/,
-                                 const UniverseObject* source_object/* = 0*/)
+                                 TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
+                                 TemporaryPtr<const UniverseObject> source_object/* = 0*/)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -152,7 +152,7 @@ struct Condition::ConditionBase::MatchHelper {
         m_this(this_),
         m_parent_context(parent_context)
     {}
-    bool operator()(const UniverseObject* candidate) const
+    bool operator()(TemporaryPtr<const UniverseObject> candidate) const
     { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
     const Condition::ConditionBase* m_this;
     const ScriptingContext& m_parent_context;
@@ -200,7 +200,7 @@ void Condition::ConditionBase::Eval(Condition::ObjectSet& matches) const
 { Eval(ScriptingContext(), matches); }
 
 bool Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
-                                    const UniverseObject* candidate) const
+                                    TemporaryPtr<const UniverseObject> candidate) const
 {
     if (!candidate)
         return false;
@@ -210,7 +210,7 @@ bool Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
-bool Condition::ConditionBase::Eval(const UniverseObject* candidate) const {
+bool Condition::ConditionBase::Eval(TemporaryPtr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
     Condition::ObjectSet non_matches, matches;
@@ -292,7 +292,7 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     // will match anything if the proper number of objects match the
     // subcondition.  So, the local context that is passed to the subcondition
     // needs to have a null local candidate.
-    const UniverseObject* no_object(0);
+    TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (!(
@@ -438,7 +438,7 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
         // evaluate turn limits once, check range, and use result to match or
         // reject all the search domain, since the current turn doesn't change
         // from object to object, and neither do the range limits.
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low =  (m_low ? std::max(BEFORE_FIRST_TURN, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
         int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
@@ -617,7 +617,7 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::multimap<double, const UniverseObject*> sort_key_objects;
+        std::multimap<double, TemporaryPtr<const UniverseObject> > sort_key_objects;
         for (Condition::ObjectSet::const_iterator it = from_set.begin(); it != from_set.end(); ++it) {
             double sort_value = sort_key->Eval(ScriptingContext(context, *it));
             sort_key_objects.insert(std::make_pair(sort_value, *it));
@@ -633,10 +633,10 @@ namespace {
         if (sorting_method == Condition::SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = sort_key_objects.begin();
+            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
                  sorted_it != sort_key_objects.end(); ++sorted_it)
             {
-                const UniverseObject* object_to_transfer = sorted_it->second;
+                TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
                 Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -650,10 +650,10 @@ namespace {
         } else if (sorting_method == Condition::SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<double, const UniverseObject*>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
-                const UniverseObject* object_to_transfer = sorted_it->second;
+                TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
                 Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -666,7 +666,7 @@ namespace {
         } else if (sorting_method == Condition::SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<double, unsigned int> histogram;
-            for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = sort_key_objects.begin();
+            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
                  sorted_it != sort_key_objects.end(); ++sorted_it)
             {
                 histogram[sorted_it->first]++;
@@ -687,15 +687,15 @@ namespace {
                 double cur_sort_key = inv_hist_it->second;
 
                 // get range of objects with the current sort key
-                std::pair<std::multimap<double, const UniverseObject*>::const_iterator,
-                          std::multimap<double, const UniverseObject*>::const_iterator> key_range =
+                std::pair<std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator,
+                          std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator> key_range =
                     sort_key_objects.equal_range(cur_sort_key);
 
                 // loop over range, selecting objects to transfer from from_set to to_set
-                for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = key_range.first;
+                for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
-                    const UniverseObject* object_to_transfer = sorted_it->second;
+                    TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
                     Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
@@ -734,7 +734,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     // SortedNumberOf does not have a valid local candidate to be matched
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition needs to have a null local candidate.
-    const UniverseObject* no_object(0);
+    TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     // which input matches match the subcondition?
@@ -776,7 +776,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     if (search_domain == NON_MATCHES) {
         // put matched objects that are in subcondition_matching_non_matches into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
-            const UniverseObject* matched_object = *match_it;
+            TemporaryPtr<const UniverseObject> matched_object = *match_it;
 
             // is this matched object in subcondition_matching_non_matches?
             ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
@@ -801,7 +801,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     } else { /*(search_domain == MATCHES)*/
         // put matched objecs that are in subcondition_matching_matches back into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
-            const UniverseObject* matched_object = *match_it;
+            TemporaryPtr<const UniverseObject> matched_object = *match_it;
 
             // is this matched object in subcondition_matching_matches?
             ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
@@ -969,7 +969,7 @@ namespace {
             m_affiliation(affiliation)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate || candidate->Unowned())
                 return false;
 
@@ -1009,7 +1009,7 @@ void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, 
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int empire_id = m_empire_id ? m_empire_id->Eval(ScriptingContext(parent_context, no_object)) : ALL_EMPIRES;
         EvalImpl(matches, non_matches, search_domain, EmpireAffiliationSimpleMatch(empire_id, m_affiliation));
     } else {
@@ -1073,7 +1073,7 @@ std::string Condition::EmpireAffiliation::Dump() const {
 }
 
 bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "EmpireAffiliation::Match passed no candidate object";
         return false;
@@ -1178,14 +1178,14 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or a building on a planet?
-            const Planet* planet = universe_object_cast<const Planet*>(candidate);
-            const ::Building* building = 0;
-            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const ::Building> building;
+            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (!planet)
@@ -1318,16 +1318,16 @@ std::string Condition::Homeworld::Dump() const {
 }
 
 bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Homeworld::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or a building on a planet?
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-    const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (!planet)
@@ -1379,7 +1379,7 @@ std::string Condition::Capital::Dump() const
 { return DumpIndent() + "Capital\n"; }
 
 bool Condition::Capital::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Capital::Match passed no candidate object";
         return false;
@@ -1411,13 +1411,13 @@ std::string Condition::Monster::Dump() const
 { return DumpIndent() + "Monster\n"; }
 
 bool Condition::Monster::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Monster::Match passed no candidate object";
         return false;
     }
 
-    if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
         if (ship->IsMonster())
             return true;
 
@@ -1440,13 +1440,13 @@ std::string Condition::Armed::Dump() const
 { return DumpIndent() + "Armed\n"; }
 
 bool Condition::Armed::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Armed::Match passed no candidate object";
         return false;
     }
 
-    if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
         if (ship->IsArmed())
             return true;
 
@@ -1478,7 +1478,7 @@ namespace {
             m_type(type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -1491,10 +1491,10 @@ namespace {
                 return candidate->ObjectType() == m_type;
                 break;
             case OBJ_POP_CENTER:
-                return dynamic_cast<const PopCenter*>(candidate) != 0;
+                return (bool)dynamic_ptr_cast<const PopCenter>(candidate);
                 break;
             case OBJ_PROD_CENTER:
-                return dynamic_cast<const ResourceCenter*>(candidate) != 0;
+                return (bool)dynamic_ptr_cast<const ResourceCenter>(candidate);
                 break;
             default:
                 break;
@@ -1560,7 +1560,7 @@ std::string Condition::Type::Dump() const {
 }
 
 bool Condition::Type::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Type::Match passed no candidate object";
         return false;
@@ -1601,12 +1601,12 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a building?
-            const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+            TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
             if (!building)
                 return false;
 
@@ -1718,14 +1718,14 @@ std::string Condition::Building::Dump() const {
 }
 
 bool Condition::Building::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Building::Match passed no candidate object";
         return false;
     }
 
     // is it a building?
-    const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+    TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
     if (building) {
         // match any building type?
         if (m_names.empty())
@@ -1776,7 +1776,7 @@ namespace {
             m_high_turn(high_turn)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -1806,7 +1806,7 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectS
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate turn limits once, pass to simple match for all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
         int high = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
@@ -1869,7 +1869,7 @@ std::string Condition::HasSpecial::Dump() const {
 }
 
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "HasSpecial::Match passed no candidate object";
         return false;
@@ -1907,7 +1907,7 @@ std::string Condition::HasTag::Dump() const
 { return DumpIndent() + "HasTag name = \"" + m_name + "\"\n"; }
 
 bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "HasTag::Match passed no candidate object";
         return false;
@@ -1945,7 +1945,7 @@ namespace {
             m_high(high)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             int turn = candidate->CreationTurn();
@@ -1964,7 +1964,7 @@ void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, Obje
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low = (m_low ? m_low->Eval(local_context) : BEFORE_FIRST_TURN);
         int high = (m_high ? m_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
@@ -2011,7 +2011,7 @@ std::string Condition::CreatedOnTurn::Dump() const {
 }
 
 bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
         return false;
@@ -2046,7 +2046,7 @@ namespace {
             m_subcondition_matches(subcondition_matches)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2072,7 +2072,7 @@ void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -2117,7 +2117,7 @@ std::string Condition::Contains::Dump() const {
 }
 
 bool Condition::Contains::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Contains::Match passed no candidate object";
         return false;
@@ -2168,7 +2168,7 @@ namespace {
             m_subcondition_matches(subcondition_matches)
     {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2194,7 +2194,7 @@ void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, Object
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -2239,7 +2239,7 @@ std::string Condition::ContainedBy::Dump() const {
 }
 
 bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ContainedBy::Match passed no candidate object";
         return false;
@@ -2290,7 +2290,7 @@ namespace {
             m_system_id(system_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
@@ -2311,7 +2311,7 @@ void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int system_id = (m_system_id ? m_system_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, InSystemSimpleMatch(system_id));
     } else {
@@ -2334,7 +2334,7 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const {
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && ValueRef::ConstantExpr(m_system_id))
         system_id = m_system_id->Eval();
-    if (const System* system = GetSystem(system_id))
+    if (TemporaryPtr<const System> system = GetSystem(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -2361,7 +2361,7 @@ std::string Condition::InSystem::Dump() const {
 }
 
 bool Condition::InSystem::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "InSystem::Match passed no candidate object";
         return false;
@@ -2395,7 +2395,7 @@ namespace {
             m_object_id(object_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             return candidate &&
                 m_object_id != INVALID_OBJECT_ID &&
                 candidate->ID() == m_object_id;
@@ -2413,7 +2413,7 @@ void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int object_id = (m_object_id ? m_object_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, ObjectIDSimpleMatch(object_id));
     } else {
@@ -2436,7 +2436,7 @@ std::string Condition::ObjectID::Description(bool negated/* = false*/) const {
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && ValueRef::ConstantExpr(m_object_id))
         object_id = m_object_id->Eval();
-    if (const System* system = GetSystem(object_id))
+    if (TemporaryPtr<const System> system = GetSystem(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -2453,7 +2453,7 @@ std::string Condition::ObjectID::Dump() const
 { return DumpIndent() + "Object id = " + m_object_id->Dump(); }
 
 bool Condition::ObjectID::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ObjectID::Match passed no candidate object";
         return false;
@@ -2494,14 +2494,14 @@ namespace {
             m_types(types)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or on a planet?
-            const Planet* planet = universe_object_cast<const Planet*>(candidate);
-            const ::Building* building = 0;
-            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const ::Building> building;
+            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -2612,15 +2612,15 @@ std::string Condition::PlanetType::Dump() const {
 }
 
 bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetType::Match passed no candidate object";
         return false;
     }
 
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-    const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -2666,14 +2666,14 @@ namespace {
             m_sizes(sizes)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            // is it a planet or on a planet?
-            const Planet* planet = universe_object_cast<const Planet*>(candidate);
-            const ::Building* building = 0;
-            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+            // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
+            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const ::Building> building;
+            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -2789,15 +2789,15 @@ std::string Condition::PlanetSize::Dump() const {
 }
 
 bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetSize::Match passed no candidate object";
         return false;
     }
 
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-    const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -2841,14 +2841,14 @@ namespace {
             m_environments(environments)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            // is it a planet or on a planet?
-            const Planet* planet = universe_object_cast<const Planet*>(candidate);
-            const ::Building* building = 0;
-            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+            // is it a planet or on a planet? TODO: factor out
+            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const ::Building> building;
+            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -2964,15 +2964,16 @@ std::string Condition::PlanetEnvironment::Dump() const {
 }
 
 bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
-
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-    const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+    
+    // is it a planet or on a planet? TODO: factor out
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -3017,25 +3018,25 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a population centre?
-            if (const ::PopCenter* pop = dynamic_cast<const ::PopCenter*>(candidate)) {
+            if (TemporaryPtr<const ::PopCenter> pop = dynamic_ptr_cast<const ::PopCenter>(candidate)) {
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a ship?
-            if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate)) {
+            if (TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const Ship>(candidate)) {
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a building on a planet?
-            if (const ::Building* building = universe_object_cast<const ::Building*>(candidate)) {
-                const ::Planet* planet = GetPlanet(building->PlanetID());
+            if (TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const Building>(candidate)) {
+                TemporaryPtr<const ::Planet> planet = GetPlanet(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
@@ -3144,16 +3145,16 @@ std::string Condition::Species::Dump() const {
 }
 
 bool Condition::Species::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Species::Match passed no candidate object";
         return false;
     }
 
-    // is it a planet or a building on a planet?
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-    const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+    // is it a planet or a building on a planet? TODO: factor out
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -3167,7 +3168,7 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const {
         }
     }
     // is it a ship?
-    const Ship* ship = universe_object_cast<const Ship*>(candidate);
+    TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
     if (ship) {
         if (m_names.empty()) {
             return !ship->SpeciesName().empty();    // match any species name
@@ -3255,7 +3256,7 @@ namespace {
             m_low(low),
             m_high(high)
         {}
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -3421,7 +3422,7 @@ std::string Condition::Enqueued::Dump() const {
 }
 
 bool Condition::Enqueued::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Enqueued::Match passed no candidate object";
         return false;
@@ -3465,16 +3466,16 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(candidate);
-            const ::Building* building = 0;
-            if (!res_center && (building = universe_object_cast<const ::Building*>(candidate))) {
-                if (const Planet* planet = GetPlanet(building->PlanetID()))
-                    res_center = dynamic_cast<const ResourceCenter*>(planet);
+            TemporaryPtr<const ResourceCenter> res_center = dynamic_ptr_cast<const ResourceCenter>(candidate);
+            TemporaryPtr<const ::Building> building;
+            if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+                if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
+                    res_center = dynamic_ptr_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
                 return !res_center->Focus().empty() && (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
@@ -3584,18 +3585,18 @@ std::string Condition::FocusType::Dump() const {
 }
 
 bool Condition::FocusType::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "FocusType::Match passed no candidate object";
         return false;
     }
 
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(candidate);
-    const ::Building* building = 0;
-    if (!res_center && (building = universe_object_cast<const ::Building*>(candidate))) {
-        if (const Planet* planet = GetPlanet(building->PlanetID()))
-            res_center = dynamic_cast<const ResourceCenter*>(planet);
+    TemporaryPtr<const ResourceCenter> res_center = dynamic_ptr_cast<const ResourceCenter>(candidate);
+    TemporaryPtr<const ::Building> building;
+    if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+        if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
+            res_center = dynamic_ptr_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -3638,12 +3639,12 @@ namespace {
             m_types(types)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            const System* system = GetSystem(candidate->SystemID());
-            if (system || (system = universe_object_cast<const System*>(candidate)))
+            TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
+            if (system || (system = universe_object_ptr_cast<const System>(candidate)))
                 return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
 
             return false;
@@ -3747,14 +3748,14 @@ std::string Condition::StarType::Dump() const {
 }
 
 bool Condition::StarType::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "StarType::Match passed no candidate object";
         return false;
     }
 
-    const System* system = GetSystem(candidate->SystemID());
-    if (system || (system = universe_object_cast<const System*>(candidate))) {
+    TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
+    if (system || (system = universe_object_ptr_cast<const System>(candidate))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(local_context) == system->GetStarType())
                 return true;
@@ -3791,13 +3792,13 @@ std::string Condition::DesignHasHull::Dump() const
 { return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n"; }
 
 bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasHull::Match passed no candidate object";
         return false;
     }
 
-    if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
         if (const ShipDesign* design = ship->Design())
             return (design->Hull() == m_name);
     return false;
@@ -3836,12 +3837,12 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ship?
-            const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
+            TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -3870,7 +3871,7 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, Obje
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low =  std::max(0, m_low->Eval(local_context));
         int high = std::min(m_high->Eval(local_context), INT_MAX);
@@ -3915,7 +3916,7 @@ std::string Condition::DesignHasPart::Dump() const
 { return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name; }
 
 bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasPart::Match passed no candidate object";
         return false;
@@ -3960,12 +3961,12 @@ namespace {
             m_part_class(part_class)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ship?
-            const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
+            TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -3998,7 +3999,7 @@ void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low =  std::max(0, m_low->Eval(local_context));
         int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
@@ -4043,7 +4044,7 @@ std::string Condition::DesignHasPartClass::Dump() const
 { return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class)); }
 
 bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasPartClass::Match passed no candidate object";
         return false;
@@ -4083,13 +4084,13 @@ std::string Condition::PredefinedShipDesign::Dump() const
 { return DumpIndent() + "PredefinedShipDesign name = \"" + m_name + "\"\n"; }
 
 bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PredefinedShipDesign::Match passed no candidate object";
         return false;
     }
 
-    const Ship* ship = universe_object_cast<const Ship*>(candidate);
+    TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
     if (!ship)
         return false;
     const ShipDesign* candidate_design = ship->Design();
@@ -4131,12 +4132,12 @@ namespace {
             m_design_id(design_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
                 return false;
-            if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
                 if (ship->DesignID() == m_design_id)
                     return true;
             return false;
@@ -4154,7 +4155,7 @@ void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int design_id = m_design_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, NumberedShipDesignSimpleMatch(design_id));
     } else {
@@ -4187,7 +4188,7 @@ std::string Condition::NumberedShipDesign::Dump() const
 { return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump(); }
 
 bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "NumberedShipDesign::Match passed no candidate object";
         return false;
@@ -4220,13 +4221,13 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate))
+            if (TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate))
                 return ship->ProducedByEmpireID() == m_empire_id;
-            else if (const ::Building* building = universe_object_cast<const ::Building*>(candidate))
+            else if (TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate))
                 return building->ProducedByEmpireID() == m_empire_id;
             return false;
         }
@@ -4243,7 +4244,7 @@ void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context, O
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, ProducedByEmpireSimpleMatch(empire_id));
     } else {
@@ -4283,7 +4284,7 @@ std::string Condition::ProducedByEmpire::Dump() const
 { return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ProducedByEmpire::Match passed no candidate object";
         return false;
@@ -4317,7 +4318,7 @@ namespace {
             m_chance(chance)
         {}
 
-        bool operator()(const UniverseObject* candidate) const
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const
         { return RandZeroToOne() <= m_chance; }
 
         double m_chance;
@@ -4332,7 +4333,7 @@ void Condition::Chance::Eval(const ScriptingContext& parent_context, ObjectSet& 
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         double chance = std::max(0.0, std::min(1.0, m_chance->Eval(ScriptingContext(parent_context, no_object))));
         EvalImpl(matches, non_matches, search_domain, ChanceSimpleMatch(chance));
     } else {
@@ -4406,7 +4407,7 @@ namespace {
             m_meter_type(meter_type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -4471,7 +4472,7 @@ void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectS
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
@@ -4520,7 +4521,7 @@ std::string Condition::MeterValue::Dump() const {
 }
 
 bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "MeterValue::Match passed no candidate object";
         return false;
@@ -4568,10 +4569,10 @@ namespace {
             m_meter(meter)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            const Ship* ship = universe_object_cast<const Ship*>(candidate);
+            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
@@ -4596,7 +4597,7 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
@@ -4653,7 +4654,7 @@ std::string Condition::ShipPartMeterValue::Dump() const {
 }
 
 bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ShipPartMeterValue::Match passed no candidate object";
         return false;
@@ -4702,7 +4703,7 @@ namespace {
             m_meter(meter)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             const Empire* empire = Empires().Lookup(m_empire_id);
@@ -4731,7 +4732,7 @@ void Condition::EmpireMeterValue::Eval(const ScriptingContext& parent_context, O
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int empire_id = m_empire_id->Eval(local_context);   // if m_empire_id not set, default to local candidate's owner, which is not target invariant
         double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -4803,7 +4804,7 @@ std::string Condition::EmpireMeterValue::Dump() const {
 }
 
 bool Condition::EmpireMeterValue::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "EmpireMeterValue::Match passed no candidate object";
         return false;
@@ -4849,7 +4850,7 @@ namespace {
             m_stockpile(stockpile)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -4881,7 +4882,7 @@ void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_contex
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         double low = m_low->Eval(local_context);
         double high = m_high->Eval(local_context);
@@ -4929,7 +4930,7 @@ std::string Condition::EmpireStockpileValue::Dump() const {
 }
 
 bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "EmpireStockpileValue::Match passed no candidate object";
         return false;
@@ -4968,7 +4969,7 @@ std::string Condition::OwnerHasTech::Dump() const
 { return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n"; }
 
 bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -5012,7 +5013,7 @@ std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const
 { return DumpIndent() + "OwnerHasBuildingTypeAvailable name = \"" + m_name + "\"\n"; }
 
 bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
         return false;
@@ -5056,7 +5057,7 @@ std::string Condition::OwnerHasShipDesignAvailable::Dump() const
 { return DumpIndent() + "OwnerHasShipDesignAvailable id = \"" + boost::lexical_cast<std::string>(m_id) + "\"\n"; }
 
 bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
         return false;
@@ -5096,7 +5097,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             return candidate->GetVisibility(m_empire_id) != VIS_NO_VISIBILITY;
@@ -5114,7 +5115,7 @@ void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context, Ob
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, VisibleToEmpireSimpleMatch(empire_id));
     } else {
@@ -5154,7 +5155,7 @@ std::string Condition::VisibleToEmpire::Dump() const
 { return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "VisibleToEmpire::Match passed no candidate object";
         return false;
@@ -5192,7 +5193,7 @@ namespace {
             m_distance(distance)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -5223,7 +5224,7 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, Obj
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -5274,7 +5275,7 @@ std::string Condition::WithinDistance::Dump() const {
 }
 
 bool Condition::WithinDistance::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "WithinDistance::Match passed no candidate object";
         return false;
@@ -5322,12 +5323,12 @@ bool Condition::WithinStarlaneJumps::operator==(const Condition::ConditionBase& 
 namespace {
     const int MANY_JUMPS(999999);
 
-    int JumpsBetweenObjects(const UniverseObject* one, const UniverseObject* two) {
+    int JumpsBetweenObjects(TemporaryPtr<const UniverseObject> one, TemporaryPtr<const UniverseObject> two) {
         if (!one || !two)
             return MANY_JUMPS;
 
-        const System* system_one = GetSystem(one->SystemID());
-        const System* system_two = GetSystem(two->SystemID());
+        TemporaryPtr<const System> system_one = GetSystem(one->SystemID());
+        TemporaryPtr<const System> system_two = GetSystem(two->SystemID());
 
         if (system_one && system_two) {
             // both condition-matching object and candidate are / in systems.
@@ -5343,7 +5344,7 @@ namespace {
 
         } else if (system_one) {
             // just object one is / in a system.
-            if (const Fleet* fleet = FleetFromObject(two)) {
+            if (TemporaryPtr<const Fleet> fleet = FleetFromObject(two)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
                 short jumps1 = -1, jumps2 = -1;
@@ -5360,7 +5361,7 @@ namespace {
 
         } else if (system_two) {
             // just object two is a system.
-            if (const Fleet* fleet = FleetFromObject(one)) {
+            if (TemporaryPtr<const Fleet> fleet = FleetFromObject(one)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
                 short jumps1 = -1, jumps2 = -1;
@@ -5377,8 +5378,8 @@ namespace {
         } else {
             // neither object is / in a system
 
-            const Fleet* fleet_one = FleetFromObject(one);
-            const Fleet* fleet_two = FleetFromObject(two);
+            TemporaryPtr<const Fleet> fleet_one = FleetFromObject(one);
+            TemporaryPtr<const Fleet> fleet_two = FleetFromObject(two);
 
             if (fleet_one && fleet_two) {
                 // both objects are / in a fleet.
@@ -5411,7 +5412,7 @@ namespace {
             m_jump_limit(jump_limit)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_from_objects.empty())
@@ -5452,7 +5453,7 @@ void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -5500,7 +5501,7 @@ std::string Condition::WithinStarlaneJumps::Dump() const {
 }
 
 bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "WithinStarlaneJumps::Match passed no candidate object";
         return false;
@@ -5547,7 +5548,7 @@ namespace {
             m_destination_objects(destination_objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             // TODO: implement this test
@@ -5567,7 +5568,7 @@ void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_co
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -5612,7 +5613,7 @@ std::string Condition::CanAddStarlaneConnection::Dump() const {
 }
 
 bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanAddStarlaneConnection::Match passed no candidate object";
         return false;
@@ -5794,7 +5795,7 @@ std::string Condition::CanRemoveStarlaneConnection::Dump() const {
 }
 
 bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanRemoveStarlaneConnection::Match passed no candidate object";
         return false;
@@ -5802,7 +5803,7 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 
     // get system for candidate object
     int candidate_system_id = candidate->SystemID();
-    const System* candidate_system = GetSystem(candidate_system_id);
+    TemporaryPtr<const System> candidate_system = GetSystem(candidate_system_id);
     if (!candidate_system)
         return false;
 
@@ -5822,16 +5823,16 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
         return false;
 
     // assemble all systems in or containing objects in subcondition matches
-    std::set<const System*> destination_systems;
+    std::set<TemporaryPtr<const System> > destination_systems;
     for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it)
-        if (const System* system = GetSystem((*it)->SystemID()))
+        if (TemporaryPtr<const System> system = GetSystem((*it)->SystemID()))
             destination_systems.insert(system);
 
     if (destination_systems.empty())
         return false;
 
     // does the candidate object have starlanes to all systems containing subcondition matches?
-    for (std::set<const System*>::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
+    for (std::set<TemporaryPtr<const System> >::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
         if (!candidate_system->HasStarlaneTo((*it)->ID()) || !(*it)->HasStarlaneTo(candidate_system->ID()))
             return false;
     }
@@ -5839,10 +5840,10 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // create starlane graph, fill with system info, exclusing lanes to
     // subcondition-matches from candidate
     std::map<int, std::set<int> > system_lanes;
-    std::vector<const System*> systems = objects.FindObjects<System>();
+    std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
 
-    //for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
-    //    const System* loop_system = *system_it;
+    //for (std::vector<TemporaryPtr<const System> >::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
+    //    TemporaryPtr<const System> loop_system = *system_it;
     //    int loop_system_id = loop_system->ID();
     //    system_lanes[loop_system_id];   // ensure there's at least an empty lane set for this system
 
@@ -5866,7 +5867,7 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // connectivity still preserved between systems connected by those starlanes?
     // To test, check if any of those pairs of systems are disconnected in the
     // test graph.
-    for (std::set<const System*>::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {}
+    for (std::set<TemporaryPtr<const System> >::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {}
 
     return true;
 }
@@ -5896,7 +5897,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -5918,7 +5919,7 @@ void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context, O
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, ExploredByEmpireSimpleMatch(empire_id));
     } else {
@@ -5958,7 +5959,7 @@ std::string Condition::ExploredByEmpire::Dump() const
 { return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ExploredByEmpire::Match passed no candidate object";
         return false;
@@ -5983,7 +5984,7 @@ std::string Condition::Stationary::Dump() const
 { return DumpIndent() + "Stationary\n"; }
 
 bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Stationary::Match passed no candidate object";
         return false;
@@ -5992,9 +5993,9 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    const Fleet* fleet = universe_object_cast<const Fleet*>(candidate);
+    TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(candidate);
     if (!fleet)
-        if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+        if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (fleet) {
@@ -6036,7 +6037,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -6061,7 +6062,7 @@ void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_con
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(empire_id));
     } else {
@@ -6101,7 +6102,7 @@ std::string Condition::FleetSupplyableByEmpire::Dump() const
 { return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "FleetSupplyableByEmpire::Match passed no candidate object";
         return false;
@@ -6140,7 +6141,7 @@ namespace {
             m_from_objects(from_objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_from_objects.empty())
@@ -6152,7 +6153,7 @@ namespace {
 
             // is candidate object connected to a subcondition matching object by resource supply?
             for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                const UniverseObject* from_object(*it);
+                TemporaryPtr<const UniverseObject> from_object(*it);
 
                 for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
                     const std::set<int>& group = *groups_it;
@@ -6186,7 +6187,7 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& pa
         // evaluate contained objects once and check for all candidates
         ObjectMap& objects = GetUniverse().Objects();
 
-        const UniverseObject* no_object(0);
+        TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -6217,7 +6218,7 @@ bool Condition::ResourceSupplyConnectedByEmpire::SourceInvariant() const
 { return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
         return false;
@@ -6283,7 +6284,7 @@ std::string Condition::CanColonize::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool Condition::CanColonize::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanColonize::Match passed no candidate object";
         return false;
@@ -6292,7 +6293,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        const Planet* planet = universe_object_cast<const Planet*>(candidate);
+        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
         if (!planet) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly planet candidate";
             return false;
@@ -6300,12 +6301,12 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+        TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
         if (!building) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
-        const Planet* planet = GetPlanet(building->PlanetID());
+        TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
             Logger().errorStream() << "CanColonize couldn't get building's planet";
             return false;
@@ -6313,7 +6314,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        const Ship* ship = universe_object_cast<const Ship*>(candidate);
+        TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
         if (!ship) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly ship candidate";
             return false;
@@ -6347,7 +6348,7 @@ std::string Condition::CanProduceShips::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) const {
-    const UniverseObject* candidate = local_context.condition_local_candidate;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanProduceShips::Match passed no candidate object";
         return false;
@@ -6356,7 +6357,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        const Planet* planet = universe_object_cast<const Planet*>(candidate);
+        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
         if (!planet) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
@@ -6364,12 +6365,12 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+        TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
         if (!building) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
-        const Planet* planet = GetPlanet(building->PlanetID());
+        TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
             Logger().errorStream() << "CanProduceShips couldn't get building's planet";
             return false;
@@ -6377,7 +6378,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        const Ship* ship = universe_object_cast<const Ship*>(candidate);
+        TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
         if (!ship) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
@@ -6423,7 +6424,7 @@ bool Condition::And::operator==(const Condition::ConditionBase& rhs) const {
 void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    const UniverseObject* no_object(0);
+    TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (search_domain == NON_MATCHES) {
@@ -6536,7 +6537,7 @@ bool Condition::Or::operator==(const Condition::ConditionBase& rhs) const {
 void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    const UniverseObject* no_object(0);
+    TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (search_domain == NON_MATCHES) {
@@ -6645,7 +6646,7 @@ bool Condition::Not::operator==(const Condition::ConditionBase& rhs) const {
 void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    const UniverseObject* no_object(0);
+    TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (search_domain == NON_MATCHES) {

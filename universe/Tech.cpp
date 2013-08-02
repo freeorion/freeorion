@@ -143,17 +143,17 @@ std::string Tech::Dump() const {
 }
 
 namespace {
-    const UniverseObject* SourceForEmpire(int empire_id) {
+    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return 0;
+            return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
             for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
@@ -174,7 +174,7 @@ double Tech::ResearchCost(int empire_id) const {
         if (ValueRef::ConstantExpr(m_research_cost))
             return m_research_cost->Eval();
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
 
         if (source || m_research_cost->SourceInvariant()) {
             ScriptingContext context(source);
@@ -197,7 +197,7 @@ int Tech::ResearchTime(int empire_id) const {
         if (ValueRef::ConstantExpr(m_research_turns))
             return m_research_turns->Eval();
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source);
 
         return m_research_turns->Eval(context);

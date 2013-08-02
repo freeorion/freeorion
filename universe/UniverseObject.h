@@ -5,9 +5,11 @@
 #include "InhibitableSignal.h"
 
 #include "Enums.h"
+#include "TemporaryPtr.h"
 #include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>
+#include <boost/python/detail/destroy.hpp>
 
 #include <set>
 #include <string>
@@ -42,18 +44,6 @@ public:
 
     /** \name Slot Types */ //@{
     typedef StateChangedSignalType::slot_type               StateChangedSlotType;
-    //@}
-
-    /** \name Structors */ //@{
-    UniverseObject();
-    UniverseObject(const std::string name, double x, double y);
-    virtual ~UniverseObject();
-
-    /** returns new copy of this UniverseObject, limited to only copy data that
-      * is visible to the empire with the specified \a empire_id as determined
-      * by the detection and visibility system.  Caller takes ownership of
-      * returned pointee. */
-    virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
     //@}
 
     /** \name Accessors */ //@{
@@ -94,7 +84,8 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
-    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
     int                         CreationTurn() const;               ///< returns game turn on which object was created
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
@@ -106,7 +97,7 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
-    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES) = 0;
+    virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) = 0;
 
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id
     void                    Rename(const std::string& name);    ///< renames this object to \a name
@@ -115,13 +106,13 @@ public:
         of the move would place either coordinate outside the map area.*/
     void                    Move(double x, double y);
 
-    /** calls MoveTo(const UniverseObject*) with the object pointed to by \a object_id. */
+    /** calls MoveTo(TemporaryPtr<const UniverseObject>) with the object pointed to by \a object_id. */
     void                    MoveTo(int object_id);
 
     /** moves this object and contained objects to exact map coordinates of specified \a object
         If \a object is a system, places this object into that system.
         May throw std::invalid_argument if \a object is not a valid object*/
-    void                    MoveTo(UniverseObject* object);
+    void                    MoveTo(TemporaryPtr<UniverseObject> object);
 
     /** moves this object and contained objects to exact map coordinates (x, y). \throw std::invalid_arugment
         May throw std::invalid_arugment if the either coordinate of the move is outside the map area.*/
@@ -141,7 +132,7 @@ public:
 
     /** Performs the movement that this object is responsible for this object's
       * actions during the movement phase of a turn. */
-    virtual void            MovementPhase() {};
+    virtual void            MovementPhase(TemporaryPtr<UniverseObject> obj) {};
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
@@ -168,10 +159,26 @@ public:
     static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    friend class Universe;
+    friend class ObjectMap;
+    template <class T> friend void boost::checked_delete(T* x);
+    /** \name Structors */ //@{
+    UniverseObject();
+    UniverseObject(const std::string name, double x, double y);
+    virtual ~UniverseObject();
+
+    /** returns new copy of this UniverseObject, limited to only copy data that
+      * is visible to the empire with the specified \a empire_id as determined
+      * by the detection and visibility system.  Caller takes ownership of
+      * returned pointee. */
+    virtual UniverseObject* Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const = 0;
+    //@}
+
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter
 
-    void                    Copy(const UniverseObject* copied_object, Visibility vis,
+    void                    Copy(TemporaryPtr<const UniverseObject> copied_object, Visibility vis,
                                  const std::set<std::string>& visible_specials);///< used by public UniverseObject::Copy and derived classes' ::Copy methods
 
     std::string                 m_name;

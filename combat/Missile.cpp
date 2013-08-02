@@ -23,7 +23,7 @@ Missile::Missile() :
     m_pathing_engine()
 {}
 
-Missile::Missile(const Ship& launcher, const PartType& part, CombatObjectPtr target,
+Missile::Missile(TemporaryPtr<const Ship> launcher, const PartType& part, CombatObjectPtr target,
                  const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
                  PathingEngine& pathing_engine) :
     m_proximity_token(0),
@@ -130,20 +130,20 @@ MissilePtr Missile::shared_from_this()
     return ptr;
 }
 
-void Missile::Init(const Ship& launcher,
+void Missile::Init(TemporaryPtr<const Ship> launcher,
                    const OpenSteer::Vec3& position_,
                    const OpenSteer::Vec3& direction)
 {
     assert(!launcher.Unowned());
-    m_empire_id = launcher.Owner();
+    m_empire_id = launcher->Owner();
 
-    m_stats.m_damage =      launcher.GetPartMeter(METER_DAMAGE,     m_part_name)->Current();
-    m_stats.m_ROF =         launcher.GetPartMeter(METER_ROF,        m_part_name)->Current();
-    m_stats.m_range =       launcher.GetPartMeter(METER_RANGE,      m_part_name)->Current();
-    m_stats.m_speed =       launcher.GetPartMeter(METER_SPEED,      m_part_name)->Current();
-    m_stats.m_stealth =     launcher.GetPartMeter(METER_STEALTH,    m_part_name)->Current();
-    m_stats.m_structure =   launcher.GetPartMeter(METER_STRUCTURE,  m_part_name)->Current();
-    m_stats.m_capacity=     launcher.GetPartMeter(METER_CAPACITY,   m_part_name)->Current();
+    m_stats.m_damage =      launcher->GetPartMeter(METER_DAMAGE,     m_part_name)->Current();
+    m_stats.m_ROF =         launcher->GetPartMeter(METER_ROF,        m_part_name)->Current();
+    m_stats.m_range =       launcher->GetPartMeter(METER_RANGE,      m_part_name)->Current();
+    m_stats.m_speed =       launcher->GetPartMeter(METER_SPEED,      m_part_name)->Current();
+    m_stats.m_stealth =     launcher->GetPartMeter(METER_STEALTH,    m_part_name)->Current();
+    m_stats.m_structure =   launcher->GetPartMeter(METER_STRUCTURE,  m_part_name)->Current();
+    m_stats.m_capacity =    launcher->GetPartMeter(METER_CAPACITY,   m_part_name)->Current();
 
     m_structure = m_stats.m_structure;
 

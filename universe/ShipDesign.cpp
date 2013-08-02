@@ -309,17 +309,19 @@ FighterStats::FighterStats(CombatFighterType type,
 
 
 namespace {
-    const UniverseObject* SourceForEmpire(int empire_id) {
+    // Looks like there are at least 3 SourceForEmpire functions lying around - one in ShipDesign, one in Tech, and one in Building
+    // TODO: Eliminate duplication
+    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return 0;
+            return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
             for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
@@ -469,11 +471,11 @@ double PartType::ProductionCost(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_cost))
             return m_production_cost->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_cost->Eval(context);
@@ -487,11 +489,11 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_time))
             return m_production_time->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_time->Eval(context);
@@ -540,6 +542,9 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     return count;
 }
 
+// HullType:: and PartType::ProductionCost and ProductionTime are almost identical.
+// Chances are, the same is true of buildings and techs as well.
+// TODO: Eliminate duplication
 double HullType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
         return 1.0;
@@ -547,11 +552,11 @@ double HullType::ProductionCost(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_cost))
             return m_production_cost->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_cost->Eval(context);
@@ -565,11 +570,11 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_time))
             return m_production_time->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_time->Eval(context);
@@ -823,13 +828,13 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
-    const UniverseObject* location = GetUniverseObject(location_id);
+    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
     // currently ships can only be built at planets, and by species that are
     // not planetbound
-    const Planet* planet = universe_object_cast<const Planet*>(location);
+    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(location);
     if (!planet)
         return false;
     const std::string& species_name = planet->SpeciesName();
@@ -854,7 +859,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     // empire id.  this is used in conditions to reference which empire is
     // doing the producing.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = SourceForEmpire(empire_id);
+    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
     // if this empire doesn't own ANYTHING, then how is it producing anyway?
     if (!source)
         return false;

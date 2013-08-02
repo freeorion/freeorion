@@ -102,21 +102,25 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(int empire_id) const {
+Planet* Planet::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
+    if (this != obj) {
+        Logger().debugStream() << "Planet::Clone passed a TemporaryPtr to an object other than this.";
+    }
+
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Planet* retval = new Planet();
-    retval->Copy(this, empire_id);
+    retval->Copy(obj, empire_id);
     return retval;
 }
 
-void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
+void Planet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    const Planet* copied_planet = universe_object_cast<Planet*>(copied_object);
+    TemporaryPtr<const Planet> copied_planet = universe_object_ptr_cast<Planet>(copied_object);
     if (!copied_planet) {
         Logger().errorStream() << "Planet::Copy passed an object that wasn't a Planet";
         return;
@@ -416,8 +420,8 @@ Degree Planet::AxialTilt() const
 bool Planet::Contains(int object_id) const
 { return m_buildings.find(object_id) != m_buildings.end(); }
 
-std::vector<UniverseObject*> Planet::FindObjects() const {
-    std::vector<UniverseObject*> retval;
+std::vector<TemporaryPtr<UniverseObject> > Planet::FindObjects() const {
+    std::vector<TemporaryPtr<UniverseObject> > retval;
     // add buildings on this planet
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
         retval.push_back(GetUniverseObject(*it));
@@ -431,8 +435,12 @@ std::vector<int> Planet::FindObjectIDs() const {
     return retval;
 }
 
-UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<Planet* const>(this)); }
+TemporaryPtr<UniverseObject> Planet::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
+    if (this_obj != this)
+        return TemporaryPtr<UniverseObject>();
+
+    return visitor.Visit(const_ptr_cast<Planet>(static_ptr_cast<const Planet>(this_obj)));
+}
 
 Meter* Planet::GetMeter(MeterType type)
 { return UniverseObject::GetMeter(type); }
@@ -491,15 +499,22 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     return std::min(current_meter_value + 1.0f, max_meter_value);
 }
 
-std::vector<std::string> Planet::AvailableFoci() const {
+std::vector<std::string> Planet::AvailableFoci(TemporaryPtr<const ResourceCenter> res) const {
+    if (this != res)
+        Logger().errorStream() << "Planet::AvailableFoci called with a TemporaryPtr different from itself.";
+
     std::vector<std::string> retval;
-    ScriptingContext context(this);
-    if (const Species* species = GetSpecies(this->SpeciesName())) {
+    TemporaryPtr<const Planet> this_planet = dynamic_ptr_cast<const Planet>(res);
+    if (!this_planet)
+        return retval;
+
+    ScriptingContext context(this_planet);
+    if (const Species* species = GetSpecies(this_planet->SpeciesName())) {
         const std::vector<FocusType>& foci = species->Foci();
         for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
             const FocusType& focus_type = *it;
             if (const Condition::ConditionBase* location = focus_type.Location()) {
-                if (location->Eval(context, this))
+                if (location->Eval(context, this_planet))
                     retval.push_back(focus_type.Name());
             }
         }
@@ -563,8 +578,8 @@ void Planet::AddBuilding(int building_id) {
         return;
     }
     //Logger().debugStream() << "Planet::AddBuilding " << this->Name() << " adding building: " << building_id;
-    if (Building* building = GetBuilding(building_id)) {
-        if (System* system = GetSystem(this->SystemID())) {
+    if (TemporaryPtr<Building> building = GetBuilding(building_id)) {
+        if (TemporaryPtr<System> system = GetSystem(this->SystemID())) {
             system->Insert(building);
         } else {
             Logger().errorStream() << "... planet is not located in a system?!?!";
@@ -602,7 +617,7 @@ void Planet::Reset() {
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        if (Building* building = GetBuilding(*it))
+        if (TemporaryPtr<Building> building = GetBuilding(*it))
             building->Reset();
 
     m_just_conquered = false;
@@ -618,7 +633,7 @@ void Planet::Depopulate() {
     GetMeter(METER_TRADE)->Reset();
     GetMeter(METER_CONSTRUCTION)->Reset();
 
-    SetFocus("");
+    ClearFocus();
 }
 
 void Planet::Conquer(int conquerer) {
@@ -628,12 +643,12 @@ void Planet::Conquer(int conquerer) {
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
 
     // deal with UniverseObjects (eg. buildings) located on this planet
-    std::vector<UniverseObject*> contained_objects = this->FindObjects();
-    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
-        UniverseObject* obj = *it;
+    std::vector<TemporaryPtr<UniverseObject> > contained_objects = this->FindObjects();
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
+        TemporaryPtr<UniverseObject> obj = *it;
 
         // Buildings:
-        if (Building* building = universe_object_cast<Building*>(obj)) {
+        if (TemporaryPtr<Building> building = dynamic_ptr_cast<Building>(obj)) {
             const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
             // determine what to do with building of this type...
@@ -646,7 +661,7 @@ void Planet::Conquer(int conquerer) {
                 // destroy object
                 Logger().debugStream() << "Planet::Conquer destroying object: " << obj->Name();
                 GetUniverse().Destroy(obj->ID());
-                obj = 0;
+                obj = TemporaryPtr<UniverseObject>();
             } else if (cap_result == CR_RETAIN) {
                 // do nothing
             }
@@ -688,10 +703,10 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 }
 
 void Planet::SetSystem(int sys) {
-    //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
+    //Logger().debugStream() << "Planet::MoveTo(TemporaryPtr<UniverseObject> object)";
     UniverseObject::SetSystem(sys);
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = GetUniverseObject(*it);
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(*it);
         if (!obj) {
             Logger().errorStream() << "Planet::SetSystem couldn't get building object with id " << *it;
             continue;
@@ -706,7 +721,7 @@ void Planet::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
     // move buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = GetUniverseObject(*it);
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(*it);
         if (!obj) {
             Logger().errorStream() << "Planet::MoveTo couldn't get building object with id " << *it;
             continue;

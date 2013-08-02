@@ -29,7 +29,7 @@ const std::size_t PathingEngine::TARGET_FPS = 60;
 const std::size_t PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC = 2;
 const std::size_t PathingEngine::UPDATE_SETS = TARGET_FPS / TARGET_OBJECT_UPDATES_PER_SEC;
 const std::size_t PathingEngine::SECONDS_PER_TURN = 5;
-const std::map<int, UniverseObject*>* PathingEngine::s_combat_universe = 0;
+const std::map<int, TemporaryPtr<UniverseObject> >* PathingEngine::s_combat_universe = 0;
 
 PathingEngine::PathingEngine() :
     m_next_fighter_id(0),
@@ -203,7 +203,7 @@ void PathingEngine::AddObject(const CombatObjectPtr& obj) {
     } else if (obj->IsShip()) {
         assert(boost::dynamic_pointer_cast<CombatShip>(obj));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(obj);
-        m_ships_by_id[combat_ship->GetShip().ID()] = combat_ship;
+        m_ships_by_id[combat_ship->GetShip()->ID()] = combat_ship;
         combat_ship->SetWeakPtr(combat_ship);
     }
 }
@@ -220,7 +220,7 @@ void PathingEngine::RemoveObject(const CombatObjectPtr& obj) {
     } else if (obj->IsShip()) {
         assert(boost::dynamic_pointer_cast<CombatShip>(obj));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(obj);
-        m_ships_by_id.erase(combat_ship->GetShip().ID());
+        m_ships_by_id.erase(combat_ship->GetShip()->ID());
     }
 }
 

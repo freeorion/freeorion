@@ -10,6 +10,7 @@ class ShaderProgram;
 class Fleet;
 class FleetWnd;
 class UniverseObject;
+template <class T> class TemporaryPtr;
 
 /** represents one or more fleets of an empire at a location on the map. */
 class FleetButton : public GG::Button {
@@ -60,10 +61,10 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::SizeType size_type);
+boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type);
+boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleet size at passed icon size */
 boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);

@@ -187,10 +187,10 @@ namespace {
         return retval;
     }
 
-    std::pair<std::string, int> PlanetLightsChannel(const std::string& base_name, const Planet& planet) {
+    std::pair<std::string, int> PlanetLightsChannel(const std::string& base_name, TemporaryPtr<const Planet> planet) {
         std::pair<std::string, int> retval;
 
-        double pop = planet.CurrentMeterValue(METER_POPULATION);
+        double pop = planet->CurrentMeterValue(METER_POPULATION);
         unsigned int lights_level = NO_CITY_LIGHTS;
         const double MIN_POP_FOR_LIGHTS = 5.0;
         if (MIN_POP_FOR_LIGHTS < pop)
@@ -377,11 +377,11 @@ namespace {
         }
     }
 
-    std::string ShipIDString(const Ship& ship)
-    { return "ship_" + boost::lexical_cast<std::string>(ship.ID()) + "_"; }
+    std::string ShipIDString(TemporaryPtr<const Ship> ship)
+    { return "ship_" + boost::lexical_cast<std::string>(ship->ID()) + "_"; }
 
-    std::string ShipMeshName(const Ship& ship)
-    { return ship.Design()->Model() + ".mesh"; }
+    std::string ShipMeshName(TemporaryPtr<const Ship> ship)
+    { return ship->Design()->Model() + ".mesh"; }
 
     bool CloseTo(const GG::Pt& p1, const GG::Pt& p2) {
         const int EPSILON = 5;
@@ -817,20 +817,22 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
         // a sample system
         std::vector<Planet*> planets;
-        planets.push_back(new Planet(planet_types[0], planet_sizes[0]));
-        planets.push_back(new Planet(planet_types[1], planet_sizes[1]));
-        planets.push_back(new Planet(planet_types[2], planet_sizes[2]));
-        planets.push_back(new Planet(planet_types[3], planet_sizes[3]));
-        planets.push_back(new Planet(planet_types[4], planet_sizes[4]));
-        planets.push_back(new Planet(planet_types[5], planet_sizes[5]));
-        planets.push_back(new Planet(planet_types[6], planet_sizes[6]));
-        planets.push_back(new Planet(planet_types[7], planet_sizes[7]));
-        planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
-        planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
+        // This code is basically never used, and it's in my way right now, so I'm just commenting it out. ~ Bigjoe5
+        //planets.push_back(new Planet(planet_types[0], planet_sizes[0]));
+        //planets.push_back(new Planet(planet_types[1], planet_sizes[1]));
+        //planets.push_back(new Planet(planet_types[2], planet_sizes[2]));
+        //planets.push_back(new Planet(planet_types[3], planet_sizes[3]));
+        //planets.push_back(new Planet(planet_types[4], planet_sizes[4]));
+        //planets.push_back(new Planet(planet_types[5], planet_sizes[5]));
+        //planets.push_back(new Planet(planet_types[6], planet_sizes[6]));
+        //planets.push_back(new Planet(planet_types[7], planet_sizes[7]));
+        //planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
+        //planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
 
         CombatData* combat_data = new CombatData;
-        combat_data->m_system = new System(star_type, planets.size(), "Sample", 0.0, 0.0);
-        System& system = *combat_data->m_system;
+        // This too.
+        /*combat_data->m_system = new System(star_type, planets.size(), "Sample", 0.0, 0.0);
+        TemporaryPtr<System> system = combat_data->m_system;
         std::map<int, UniverseObject*>& combat_universe = combat_data->m_combat_universe;
         for (std::size_t i = 0; i < planets.size(); ++i) {
             Planet* planet = planets[i];
@@ -838,7 +840,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
             combat_universe[planet_ids[i]] = planet;
             system.Insert(planet_ids[i], i);
             assert(system.Contains(i));
-        }
+        }*/
 
         std::vector<CombatSetupGroup> setup_groups;
         InitCombat(*combat_data, setup_groups);
@@ -928,8 +930,8 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
     for (System::const_orbit_iterator it = m_combat_data->m_system->begin();
          it != m_combat_data->m_system->end(); ++it)
     {
-        const Planet* planet = 0;
-        planet = universe_object_cast<Planet*>(m_combat_data->m_combat_universe[it->second]);
+        TemporaryPtr<const Planet> planet;
+        planet = universe_object_ptr_cast<Planet>(m_combat_data->m_combat_universe[it->second]);
         if (!planet) continue;
 
         std::string material_name = PlanetNodeMaterial(planet->Type());
@@ -1040,7 +1042,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                     assert(material_name == "atmosphereless_planet");
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
                         setTextureName(base_name + "Normal.png");
-                    std::pair<std::string, int> lights_channel = PlanetLightsChannel(base_name, *planet);
+                    std::pair<std::string, int> lights_channel = PlanetLightsChannel(base_name, planet);
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
                         setTextureName(lights_channel.first);
                     material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
@@ -1328,7 +1330,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
                         m_combat_order_set.push_back(
                             CombatOrder(
-                                combat_ship->GetShip().ID(),
+                                combat_ship->GetShip()->ID(),
                                 ShipMission(attack ?
                                             ShipMission::ATTACK_THIS : ShipMission::DEFEND_THIS,
                                             *target),
@@ -1372,7 +1374,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
                         m_combat_order_set.push_back(
                             CombatOrder(
-                                combat_ship->GetShip().ID(),
+                                combat_ship->GetShip()->ID(),
                                 ShipMission(patrol ? ShipMission::PATROL_TO : ShipMission::MOVE_TO,
                                             ToOpenSteer(intersection.second)),
                                 append));
@@ -1524,8 +1526,8 @@ void CombatWnd::ApplyUpdateFromServer() {
         assert(boost::dynamic_pointer_cast<CombatShip>(*it));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
         combat_ship->SetListener(*this);
-        Ship& ship = combat_ship->GetShip();
-        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+        TemporaryPtr<Ship> ship = combat_ship->GetShip();
+        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship->ID());
         if (ship_data_it == m_ship_assets.end()) {
             AddCombatShip(combat_ship);
         } else {
@@ -1814,13 +1816,13 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt) {
 void CombatWnd::DeselectAll()
 { m_current_selections.clear(); }
 
-const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship) {
-    assert(ship.Design());
-    const ShipDesign& ship_design = *ship.Design();
+const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(TemporaryPtr<const Ship> ship) {
+    assert(ship->Design());
+    const ShipDesign& ship_design = *ship->Design();
 
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    std::string modified_material_name = ShipMaterialName(ship_design, ship.Owner());
+    std::string modified_material_name = ShipMaterialName(ship_design, ship->Owner());
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
@@ -1840,7 +1842,7 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship) {
         setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
 
     assert(!ship.Unowned());
-    GG::Clr color = Empires().Lookup(ship.Owner())->Color();
+    GG::Clr color = Empires().Lookup(ship->Owner())->Color();
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("decal_color", Ogre::Vector3(color.r / 255.0, color.g / 255.0, color.b / 255.0));
 
@@ -1888,8 +1890,8 @@ void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object) {
     if (combat_object->IsShip()) {
         assert(boost::dynamic_pointer_cast<CombatShip>(combat_object));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
-        Ship& ship = combat_ship->GetShip();
-        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+        TemporaryPtr<Ship> ship = combat_ship->GetShip();
+        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship->ID());
         assert(ship_data_it != m_ship_assets.end());
 
         ShipData& ship_data = ship_data_it->second;
@@ -1918,7 +1920,7 @@ void CombatWnd::RemoveShip(int ship_id) {
 }
 
 void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship) {
-    const Ship& ship = combat_ship->GetShip();
+    TemporaryPtr<const Ship> ship = combat_ship->GetShip();
 
     const Ogre::MaterialPtr& material = GetShipMaterial(ship);
     Ogre::Entity* entity = CreateShipEntity(m_scene_manager, ship, material);
@@ -1928,11 +1930,11 @@ void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship) {
 
     SetNodePositionAndOrientation(node, combat_ship);
 
-    AddShipNode(ship.ID(), node, entity, material);
+    AddShipNode(ship->ID(), node, entity, material);
 }
 
 void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship) {
-    ShipData& ship_data = m_ship_assets[combat_ship->GetShip().ID()];
+    ShipData& ship_data = m_ship_assets[combat_ship->GetShip()->ID()];
     m_scene_manager->destroySceneNode(ship_data.m_node);
     m_collision_world->getCollisionObjectArray().remove(ship_data.m_bt_object);
     delete ship_data.m_bt_mesh;
@@ -1940,7 +1942,7 @@ void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship) {
     delete ship_data.m_bt_object;
     m_collision_shapes.erase(ship_data.m_bt_shape);
     m_collision_objects.erase(ship_data.m_bt_object);
-    m_ship_assets.erase(combat_ship->GetShip().ID());
+    m_ship_assets.erase(combat_ship->GetShip()->ID());
 }
 
 bool CombatWnd::OpenChatWindow() {
@@ -2138,12 +2140,12 @@ bool IsVisible(const Ogre::SceneNode& node) {
     return retval;
 }
 
-Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship) {
+Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, TemporaryPtr<const Ship> ship) {
     return scene_manager->getRootSceneNode()->createChildSceneNode(
         ShipIDString(ship) + ShipMeshName(ship) + "_node");
 }
 
-Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
+Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, TemporaryPtr<const Ship> ship,
                                const Ogre::MaterialPtr& material)
 {
     std::string mesh_name = ShipMeshName(ship);

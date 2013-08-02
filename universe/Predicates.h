@@ -17,12 +17,13 @@ class Field;
 #include <boost/type_traits/remove_pointer.hpp>
 
 #include "../util/Export.h"
+#include "TemporaryPtr.h"
 
 extern const int ALL_EMPIRES;
 
 /** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
 template <class T1, class T2>
-T1 universe_object_cast(T2 ptr);
+T1 universe_object_ptr_cast(T2 ptr);
 
 /** the base class for UniverseObject visitor classes.  These visitors have Visit() overloads for each type in the UniversObject-based
     class herarchy.  Calling Visit() returns the \a obj parameter, if some predicate is true of that object.  Each UniverseObject
@@ -37,13 +38,13 @@ T1 universe_object_cast(T2 ptr);
     Visit(UniverseObject*) is 0, so overridding any \a one Visit() method besides this one will ensure that only UniverseObjects
     of a single subclass are recognized by the visitor. */
 struct FO_COMMON_API UniverseObjectVisitor {
-    virtual UniverseObject* Visit(UniverseObject* obj) const;
-    virtual UniverseObject* Visit(Building* obj) const;
-    virtual UniverseObject* Visit(Fleet* obj) const;
-    virtual UniverseObject* Visit(Planet* obj) const;
-    virtual UniverseObject* Visit(Ship* obj) const;
-    virtual UniverseObject* Visit(System* obj) const;
-    virtual UniverseObject* Visit(Field* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<UniverseObject> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Building> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Planet> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const;
     virtual ~UniverseObjectVisitor();
 };
 
@@ -51,7 +52,7 @@ struct FO_COMMON_API UniverseObjectVisitor {
 template <class T>
 struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
 {
-    virtual UniverseObject* Visit(T* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<T> obj) const;
     virtual ~UniverseObjectSubclassVisitor() {}
 };
 
@@ -61,7 +62,7 @@ struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
 struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 {
     StationaryFleetVisitor(int empire = ALL_EMPIRES);
-    virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
     virtual ~StationaryFleetVisitor();
     const int empire_id;
 };
@@ -72,7 +73,7 @@ struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
     OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
     virtual ~OrderedMovingFleetVisitor();
     const int empire_id;
 };
@@ -82,7 +83,7 @@ struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 {
     MovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
     virtual ~MovingFleetVisitor();
     const int empire_id;
 };
@@ -92,7 +93,7 @@ template <class T>
 struct OwnedVisitor : UniverseObjectVisitor
 {
     OwnedVisitor(int empire = ALL_EMPIRES);
-    virtual T* Visit(T* obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<T> obj) const;
     virtual ~OwnedVisitor() {} 
     const int empire_id;
 };
@@ -100,39 +101,24 @@ struct OwnedVisitor : UniverseObjectVisitor
 // template implementations
 
 template <class T1, class T2>
-T1 universe_object_cast(T2 ptr)
+TemporaryPtr<T1> universe_object_ptr_cast(TemporaryPtr<T2> ptr)
 {
-    using namespace boost;
-
-    //typedef typename add_pointer<
-    //    typename remove_const<
-    //        typename remove_pointer<
-    //            T2
-    //        >::type
-    //    >::type
-    //>::type T2ConstFreeType;
-    typedef typename add_pointer<
-        typename remove_const<
-            typename remove_pointer<
-                T1
-            >::type
-        >::type
-    >::type T1ConstFreeType;
+    typedef boost::remove_const<T1>::type T1ConstFreeType;
 
     // If you've failed this assertion, you're trying to cast some type T2 to
-    // [const] UniverseObject*.  If T2 is not derived from UniverseObject,
+    // [const] UniverseObject.  If T2 is not derived from UniverseObject,
     // this just doesn't make sense.  If T2 is derived from UniverseObject, no
     // cast is necessary -- implicit conversion is already defined in the
     // language.
-    BOOST_MPL_ASSERT((boost::mpl::not_<boost::is_same<T1ConstFreeType, UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::mpl::not_<boost::is_same<T1ConstFreeType, UniverseObject> >));
 
-    typedef UniverseObjectSubclassVisitor<typename remove_pointer<T1ConstFreeType>::type> VisitorType;
+    typedef UniverseObjectSubclassVisitor<T1ConstFreeType> VisitorType;
 
-    return static_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
+    return static_ptr_cast<T1ConstFreeType>(ptr->Accept(ptr, VisitorType()));
 }
 
 template <class T>
-UniverseObject* UniverseObjectSubclassVisitor<T>::Visit(T* obj) const
+TemporaryPtr<UniverseObject> UniverseObjectSubclassVisitor<T>::Visit(TemporaryPtr<T> obj) const
 { return obj; }
 
 template <class T>
@@ -141,11 +127,11 @@ OwnedVisitor<T>::OwnedVisitor(int empire) :
 {}
 
 template <class T>
-T* OwnedVisitor<T>::Visit(T* obj) const
+TemporaryPtr<UniverseObject> OwnedVisitor<T>::Visit(TemporaryPtr<T> obj) const
 {
     if (obj->OwnedBy(empire_id))
         return obj;
-    return 0;
+    return TemporaryPtr<UniverseObject>();
 }
 
 #endif // _Predicates_h_

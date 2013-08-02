@@ -355,6 +355,7 @@ void SitRepPanel::FilterClicked() {
 }
 
 void SitRepPanel::Update() {
+    Logger().debugStream() << "SitRepPanel::Update()";
     m_sitreps_lb->Clear();
 
     if (m_showing_turn == INVALID_GAME_TURN)

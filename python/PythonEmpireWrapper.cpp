@@ -119,8 +119,8 @@ namespace {
             std::set<int> planetSet;
             std::set<int> objSet = map_it->first;
             for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
-                UniverseObject* location = GetUniverseObject(*obj_it);
-                if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+                if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
                     planetSet.insert(*obj_it);
             }
             if (!planetSet.empty())
@@ -140,8 +140,8 @@ namespace {
                  std::set<int> planetSet;
                  std::set<int> objSet = map_it->first;
                  for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
-                     UniverseObject* location = GetUniverseObject(*obj_it);
-                     if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                     TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+                     if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
                          planetSet.insert(*obj_it);
                  }
                  if (!planetSet.empty())
@@ -162,8 +162,8 @@ namespace {
                  std::set<int> planetSet;
                  std::set<int> objSet = *sets_it;
                  for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
-                     UniverseObject* location = GetUniverseObject(*obj_it);
-                     if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                     TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+                     if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
                          planetSet.insert(*obj_it);
                  }
                  if (!planetSet.empty())

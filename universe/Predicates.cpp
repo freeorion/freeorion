@@ -14,26 +14,26 @@
 UniverseObjectVisitor::~UniverseObjectVisitor()
 {}
 
-UniverseObject* UniverseObjectVisitor::Visit(UniverseObject* obj) const
-{ return 0; }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<UniverseObject> obj) const
+{ return TemporaryPtr<UniverseObject>(); }
 
-UniverseObject* UniverseObjectVisitor::Visit(Building* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Building> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
-UniverseObject* UniverseObjectVisitor::Visit(Fleet* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Fleet> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
-UniverseObject* UniverseObjectVisitor::Visit(Planet* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Planet> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
-UniverseObject* UniverseObjectVisitor::Visit(Ship* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Ship> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
-UniverseObject* UniverseObjectVisitor::Visit(System* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<System> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
-UniverseObject* UniverseObjectVisitor::Visit(Field* obj) const
-{ return Visit(static_cast<UniverseObject*>(obj)); }
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Field> obj) const
+{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
 
 ////////////////////////////////////////////////
 // StationaryFleetVisitor
@@ -45,12 +45,12 @@ StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
 {}
 
-UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const {
+TemporaryPtr<UniverseObject> StationaryFleetVisitor::Visit(TemporaryPtr<Fleet> obj) const {
     if ((obj->FinalDestinationID() == INVALID_OBJECT_ID ||
          obj->FinalDestinationID() == obj->SystemID()) &&
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return 0;
+    return TemporaryPtr<UniverseObject>();
 }
 
 ////////////////////////////////////////////////
@@ -63,13 +63,13 @@ OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = ALL_EMPIRES*
     empire_id(empire)
 {}
 
-UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const {
+TemporaryPtr<UniverseObject> OrderedMovingFleetVisitor::Visit(TemporaryPtr<Fleet> obj) const {
     if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
         obj->FinalDestinationID() != obj->SystemID() &&
         obj->SystemID() != INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return 0;
+    return TemporaryPtr<UniverseObject>();
 }
 
 ////////////////////////////////////////////////
@@ -82,10 +82,10 @@ MovingFleetVisitor::MovingFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
 {}
 
-UniverseObject* MovingFleetVisitor::Visit(Fleet* obj) const {
+TemporaryPtr<UniverseObject> MovingFleetVisitor::Visit(TemporaryPtr<Fleet> obj) const {
     if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
         obj->SystemID() == INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return 0;
+    return TemporaryPtr<UniverseObject>();
 }

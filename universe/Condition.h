@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 #include "ValueRefFwd.h"
+#include "TemporaryPtr.h"
 
 #include "../util/Export.h"
 
@@ -20,7 +21,7 @@ struct ScriptingContext;
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
-    typedef std::vector<const UniverseObject*> ObjectSet;
+    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
 
     enum SearchDomain {
         NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
@@ -103,8 +104,8 @@ namespace Condition {
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
 FO_COMMON_API std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
-                                 const UniverseObject* candidate_object = 0,
-                                 const UniverseObject* source_object = 0);
+                                 TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
+                                 TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition::ConditionBase {
@@ -133,11 +134,11 @@ struct FO_COMMON_API Condition::ConditionBase {
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool                Eval(const ScriptingContext& parent_context,
-                             const UniverseObject* candidate) const;
+                             TemporaryPtr<const UniverseObject> candidate) const;
 
     /** Tests single candidate object, returning true iff it matches condition
       * with empty ScriptingContext. */
-    bool                Eval(const UniverseObject* candidate) const;
+    bool                Eval(TemporaryPtr<const UniverseObject> candidate) const;
 
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this

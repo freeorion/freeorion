@@ -3,6 +3,7 @@
 #define _ResourceCenter_h_
 
 #include "Enums.h"
+#include "TemporaryPtr.h"
 #include <boost/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -29,9 +30,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
-    virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
-    virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
+    const std::string&              Focus() const;                                          ///< current focus to which this ResourceCenter is set
+    virtual std::vector<std::string>AvailableFoci(TemporaryPtr<const ResourceCenter> res) const; ///< focus settings available to this ResourceCenter
+    virtual const std::string&      FocusIcon(const std::string& focus_name) const;         ///< icon representing focus with name \a focus_name for this ResourceCenter
 
     std::string     Dump() const;
 
@@ -43,9 +44,10 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void            Copy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void            Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void            SetFocus(const std::string& focus);
+    friend void     SetFocus(TemporaryPtr<ResourceCenter> res, const std::string& focus); // TODO: Make this a member again?
+    void            ClearFocus();
 
     virtual void    Reset();                                                        ///< Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
     //@}

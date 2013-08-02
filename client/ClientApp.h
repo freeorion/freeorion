@@ -46,9 +46,9 @@ public:
     virtual void            StartCombatTurn();  ///< encodes combat order sets and sends combat turn orders message
 
     EmpireManager&              Empires();      ///< returns the set of known Empires
-    UniverseObject*             GetUniverseObject(int object_id);
+    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
-    UniverseObject*             EmpireKnownObject(int object_id, int empire_id);
+    TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
     OrderSet&                   Orders();       ///< returns Order set for this client's player
     CombatOrderSet&             CombatOrders(); ///< returns CombatOrder set for this client's player
     ClientNetworking&           Networking();   ///< returns the networking object for this client's player
@@ -58,7 +58,7 @@ public:
     void SetCurrentTurn(int turn);              ///< sets the current game turn
     void SetSinglePlayerGame(bool sp = true);   ///< sets whether the current game is single player (sp = true) or multiplayer (sp = false)
 
-    std::string             GetVisibleObjectName(const UniverseObject* object);
+    std::string             GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */

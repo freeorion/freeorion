@@ -217,14 +217,13 @@ struct CombatSetupGroup;
     round of combat. */
 struct FO_COMMON_API CombatData {
     CombatData() :
-        m_combat_turn_number(0),
-        m_system(0)
+        m_combat_turn_number(0)
     {}
-    CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups);
+    CombatData(TemporaryPtr<System> system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups);
 
     unsigned int m_combat_turn_number;
-    System* m_system;
-    std::map<int, UniverseObject*> m_combat_universe;
+    TemporaryPtr<System> m_system;
+    std::map<int, TemporaryPtr<UniverseObject> > m_combat_universe;
     PathingEngine m_pathing_engine;
 
     friend class boost::serialization::access;

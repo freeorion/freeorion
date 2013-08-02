@@ -21,17 +21,6 @@ CombatLogManager&   GetCombatLogManager();
 
 namespace {
     const bool TRACE_EXECUTION = true;
-
-    void FreeCombatData(CombatData* combat_data) {
-        if (!combat_data)
-            return;
-        delete combat_data->m_system;
-        for (std::map<int, UniverseObject*>::iterator it = combat_data->m_combat_universe.begin();
-             it != combat_data->m_combat_universe.end();
-             ++it) {
-            delete it->second;
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -700,8 +689,6 @@ ResolvingCombat::ResolvingCombat(my_context ctx) :
 ResolvingCombat::~ResolvingCombat() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
     Client().GetClientUI()->GetMapWnd()->Show();
-    FreeCombatData(m_previous_combat_data.get());
-    FreeCombatData(m_combat_data.get());
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
@@ -719,7 +706,6 @@ boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
     if (m_previous_combat_data.get()) {
-        FreeCombatData(m_previous_combat_data.get());
         m_previous_combat_data.release();
     }
     m_previous_combat_data = m_combat_data;

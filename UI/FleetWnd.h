@@ -30,7 +30,7 @@ public:
     iterator        begin() const;
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
-    FleetWnd*       WndForFleet(const Fleet* fleet) const;
+    FleetWnd*       WndForFleet(TemporaryPtr<const Fleet> fleet) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
@@ -146,7 +146,7 @@ private:
 
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
 
-    void            UniverseObjectDeleted(const UniverseObject *obj);
+    void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
 
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd

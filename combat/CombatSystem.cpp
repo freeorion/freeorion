@@ -30,25 +30,21 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     turn(turn_),
     system_id(system_id_)
 {
-    const Universe& universe = GetUniverse();
-    const ObjectMap& universe_objects = universe.Objects();
-
-    const System* system = universe_objects.Object<System>(system_id);
+    TemporaryPtr<System> system = ::GetSystem(system_id);
     if (!system) {
         Logger().errorStream() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
 
-    // add copy of system to full / complete objects in combat
-    System* copy_system = system->Clone();
-    objects.Insert(copy_system);
+    // add system to full / complete objects in combat - NOTE: changed from copy of system
+    objects.Insert(system);
 
 
     // find ships and their owners in system
     std::vector<int> ship_ids = system->FindObjectIDs<Ship>();
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
         int ship_id = *it;
-        const Ship* ship = GetShip(ship_id);
+        TemporaryPtr<Ship> ship = GetShip(ship_id);
         if (!ship) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -57,16 +53,15 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         // add owner to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
 
-        // add copy of ship to full / complete copy of objects in system
-        Ship* copy = ship->Clone();
-        objects.Insert(copy);
+        // add ship to full / complete copy of objects in system - NOTE: changed from copy of ship
+        objects.Insert(ship);
     }
 
     // find planets and their owners in system
     std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
         int planet_id = *it;
-        const Planet* planet = GetPlanet(planet_id);
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -76,9 +71,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
             empire_ids.insert(planet->Owner());
 
-        // add copy of ship to full / complete copy of objects in system
-        Planet* copy = planet->Clone();
-        objects.Insert(copy);
+        // add ship to full / complete copy of objects in system - NOTE: changed from copy of ship
+        objects.Insert(planet);
     }
 
     // TODO: should buildings be considered separately?
@@ -92,18 +86,17 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         int empire_id = *empire_it;
         if (empire_id == ALL_EMPIRES)
             continue;
-        System* visibility_limited_copy = system->Clone(empire_id);
-        empire_known_objects[empire_id].Insert(visibility_limited_copy);
+        empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
     }
     // ships
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
         int ship_id = *it;
-        const Ship* ship = GetShip(ship_id);
+        TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
         }
-        const Fleet* fleet = GetFleet(ship->FleetID());
+        TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get fleet with id " << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -113,21 +106,18 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
-            if (universe.GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY ||
+            if (GetUniverse().GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY ||
                    (fleet->Aggressive() &&
                        (empire_id == ALL_EMPIRES ||
                         fleet->Unowned() ||
                         Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
-            {
-                Ship* visibility_limited_copy = ship->Clone(empire_id);
-                empire_known_objects[empire_id].Insert(visibility_limited_copy);
-            }
+            { empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
         }
     }
     // planets
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
         int planet_id = *it;
-        const Planet* planet = GetPlanet(planet_id);
+        TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -137,33 +127,32 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
-            if (universe.GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
-                Planet* visibility_limited_copy = planet->Clone(empire_id);
-                empire_known_objects[empire_id].Insert(visibility_limited_copy);
+            if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+                empire_known_objects[empire_id].Insert(GetEmpireKnownPlanet(planet->ID(), empire_id));
             }
         }
     }
 
     // after battle is simulated, any changes to latest known or actual objects
     // will be copied back to the main Universe's ObjectMap and the Universe's
-    // empire latest known objects ObjectMap
+    // empire latest known objects ObjectMap - NOTE: Using the real thing now
 }
 
-void CombatInfo::Clear() {
-    system_id = INVALID_OBJECT_ID;
-    empire_ids.clear();
-    objects.Clear();
-    for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
-        it->second.Clear();
-    damaged_object_ids.clear();
-    destroyed_object_ids.clear();
-    destroyed_object_knowers.clear();
-}
+//void CombatInfo::Clear() {
+//    system_id = INVALID_OBJECT_ID;
+//    empire_ids.clear();
+//    objects.Clear();
+//    for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
+//        it->second.Clear();
+//    damaged_object_ids.clear();
+//    destroyed_object_ids.clear();
+//    destroyed_object_knowers.clear();
+//}
 
-const System* CombatInfo::GetSystem() const
+TemporaryPtr<const System> CombatInfo::GetSystem() const
 { return this->objects.Object<System>(this->system_id); }
 
-System* CombatInfo::GetSystem()
+TemporaryPtr<System> CombatInfo::GetSystem()
 { return this->objects.Object<System>(this->system_id); }
 
 void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int encoding_empire) const {
@@ -258,7 +247,7 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    void AttackShipShip(Ship* attacker, float damage, Ship* target, CombatInfo& combat_info, int round) {
+    void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
@@ -292,7 +281,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(Ship* attacker, float damage, Planet* target, CombatInfo& combat_info, int round) {
+    void AttackShipPlanet(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Planet> target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
         if (damage <= 0.0f)
             return;
@@ -359,13 +348,15 @@ namespace {
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackPlanetShip(Planet* attacker, Ship* target, CombatInfo& combat_info, int round) {
+    void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
 
         float damage = 0.0f;
         const Meter* attacker_damage = attacker->UniverseObject::GetMeter(METER_DEFENSE);
         if (attacker_damage)
             damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
+
+        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
         if (!target_structure) {
@@ -384,6 +375,7 @@ namespace {
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
+            damaged_object_ids.insert(target->ID());
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
@@ -394,12 +386,12 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetPlanet(Planet* attacker, Planet* target, CombatInfo& combat_info, int round) {
+    void AttackPlanetPlanet(TemporaryPtr<Planet> attacker, TemporaryPtr<Planet> target, CombatInfo& combat_info, int round) {
         Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
     }
 
-    bool ObjectCanBeAttacked(const UniverseObject* obj) {
+    bool ObjectCanBeAttacked(TemporaryPtr<const UniverseObject> obj) {
         if (!obj)
             return false;
         UniverseObjectType obj_type = obj->ObjectType();
@@ -415,7 +407,7 @@ namespace {
         }
     }
 
-    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id) {
+    bool ObjectAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
         if (obj->OwnedBy(empire_id))
             return false;
         if (obj->Unowned() && empire_id == ALL_EMPIRES)
@@ -433,7 +425,7 @@ namespace {
 
     // monsters / natives can attack any planet, but can only attack
     // visible ships or ships that are in aggressive fleets
-    bool ObjectAttackableByMonsters(const UniverseObject* obj, float monster_detection = 0.0) {
+    bool ObjectAttackableByMonsters(TemporaryPtr<const UniverseObject> obj, float monster_detection = 0.0) {
         if (obj->Unowned())
             return false;
 
@@ -451,10 +443,10 @@ namespace {
         return false;
     }
 
-    bool ObjectCanAttack(const UniverseObject* obj) {
-        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+    bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
+        if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
             return ship->IsArmed();
-        } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+        } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
         } else {
             return false;
@@ -472,7 +464,7 @@ namespace {
         float           part_attack;
     };
 
-    std::vector<PartAttackInfo> ShipWeaponsStrengths(const Ship* ship) {
+    std::vector<PartAttackInfo> ShipWeaponsStrengths(TemporaryPtr<const Ship> ship) {
         std::vector<PartAttackInfo> retval;
         if (!ship)
             return retval;
@@ -510,7 +502,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (combat_info.objects.Empty())
         return;
 
-    const System* system = combat_info.objects.Object<System>(combat_info.system_id);
+    TemporaryPtr<const System> system = combat_info.objects.Object<System>(combat_info.system_id);
     if (!system)
         Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else
@@ -532,7 +524,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     float monster_detection = 0.0;
 
     for (ObjectMap::iterator<> it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
-        const UniverseObject* obj = *it;
+        TemporaryPtr<const UniverseObject> obj = *it;
         //Logger().debugStream() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
         if (ObjectCanAttack(obj)) {
             //Logger().debugStream() << "... can attack";
@@ -555,7 +547,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
          target_it != valid_target_object_ids.end(); ++target_it)
     {
         int object_id = *target_it;
-        const UniverseObject* obj = combat_info.objects.Object(object_id);
+        TemporaryPtr<const UniverseObject> obj = combat_info.objects.Object(object_id);
         //Logger().debugStream() << "Considering attackability of object " << obj->Name() << " owned by " << obj->Owner();
 
         // for all empires, can they attack this object?
@@ -624,7 +616,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         assert(attacker_it != valid_attacker_object_ids.end());
         int attacker_id = *attacker_it;
 
-        UniverseObject* attacker = combat_info.objects.Object(attacker_id);
+        TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
         if (!attacker) {
             Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << attacker_id;
             continue;
@@ -632,8 +624,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         Logger().debugStream() << "Attacker: " << attacker->Name();
 
 
-        Ship* attack_ship = universe_object_cast<Ship*>(attacker);
-        Planet* attack_planet = universe_object_cast<Planet*>(attacker);
+        TemporaryPtr<Ship> attack_ship = universe_object_ptr_cast<Ship>(attacker);
+        TemporaryPtr<Planet> attack_planet = universe_object_ptr_cast<Planet>(attacker);
 
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
@@ -695,7 +687,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             assert(target_it != valid_target_ids.end());
             int target_id = *target_it;
 
-            UniverseObject* target = combat_info.objects.Object(target_id);
+            TemporaryPtr<UniverseObject> target = combat_info.objects.Object(target_id);
             if (!target) {
                 Logger().errorStream() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
@@ -705,18 +697,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
             // do actual attacks, and mark attackers as valid targets for attacked object's owners
             if (attack_ship) {
-                if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
+                if (TemporaryPtr<Ship> target_ship = universe_object_ptr_cast<Ship>(target)) {
                     AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
-                } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
+                } else if (TemporaryPtr<Planet> target_planet = universe_object_ptr_cast<Planet>(target)) {
                     AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             } else if (attack_planet) {
-                if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
+                if (TemporaryPtr<Ship> target_ship = universe_object_ptr_cast<Ship>(target)) {
                     AttackPlanetShip(attack_planet, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
-                } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
+                } else if (TemporaryPtr<Planet> target_planet = universe_object_ptr_cast<Planet>(target)) {
                     AttackPlanetPlanet(attack_planet, target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
@@ -734,8 +726,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                          it != combat_info.empire_ids.end(); ++it)
                     {
                         int empire_id = *it;
-                        if (empire_id != ALL_EMPIRES)
+                        if (empire_id != ALL_EMPIRES) {
+                            Logger().debugStream() << "Giving knowledge of destroyed object " << target_id << " to empire " << empire_id;
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
+                        }
                     }
 
                     // remove destroyed ship's ID from lists of valid attackers and targets

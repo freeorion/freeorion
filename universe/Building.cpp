@@ -41,21 +41,25 @@ Building::Building(int empire_id, const std::string& building_type,
     UniverseObject::Init();
 }
 
-Building* Building::Clone(int empire_id) const {
+Building* Building::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
+    if (this != obj) {
+        Logger().debugStream() << "Building::Clone passed a TemporaryPtr to an object other than this.";
+    }
+
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Building* retval = new Building();
-    retval->Copy(this, empire_id);
+    retval->Copy(obj, empire_id);
     return retval;
 }
 
-void Building::Copy(const UniverseObject* copied_object, int empire_id) {
+void Building::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    const Building* copied_building = universe_object_cast<Building*>(copied_object);
+    TemporaryPtr<const Building> copied_building = universe_object_ptr_cast<Building>(copied_object);
     if (!copied_building) {
         Logger().errorStream() << "Building::Copy passed an object that wasn't a Building";
         return;
@@ -110,11 +114,15 @@ std::string Building::Dump() const {
     return os.str();
 }
 
-UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<Building* const>(this)); }
+TemporaryPtr<UniverseObject> Building::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
+    if (this_obj != this)
+        return TemporaryPtr<UniverseObject>();
+
+    return visitor.Visit(const_ptr_cast<Building>(static_ptr_cast<const Building>(this_obj)));
+}
 
 void Building::SetPlanetID(int planet_id) {
-    if (Planet* planet = GetPlanet(m_planet_id))
+    if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))
         planet->RemoveBuilding(this->ID());
     m_planet_id = planet_id;
 }
@@ -124,7 +132,7 @@ void Building::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
 
     // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
-    if (Planet* planet = GetPlanet(m_planet_id))
+    if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))
         planet->RemoveBuilding(this->ID());
 }
 
@@ -200,17 +208,17 @@ std::string BuildingType::Dump() const {
 }
 
 namespace {
-    const UniverseObject* SourceForEmpire(int empire_id) {
+    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return 0;
+            return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
             for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
@@ -231,11 +239,11 @@ double BuildingType::ProductionCost(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_cost))
             return m_production_cost->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_cost->Eval(context);
@@ -252,11 +260,11 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
         if (ValueRef::ConstantExpr(m_production_time))
             return m_production_time->Eval();
 
-        UniverseObject* location = GetUniverseObject(location_id);
+        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        const UniverseObject* source = SourceForEmpire(empire_id);
+        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
         return m_production_time->Eval(context);
@@ -267,11 +275,11 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
-    const UniverseObject* location = GetUniverseObject(location_id);
+    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
-    const UniverseObject* source = SourceForEmpire(empire_id);
+    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
     if (!source)
         return false;
 

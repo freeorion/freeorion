@@ -369,6 +369,7 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
+    Logger().debugStream() << "Setting from XML";
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     if (elem.NumChildren()) {

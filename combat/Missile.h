@@ -15,7 +15,7 @@ class FO_COMMON_API Missile :
     public CombatObject
 {
 public:
-    Missile(const Ship& launcher, const PartType& part, CombatObjectPtr target,
+    Missile(TemporaryPtr<const Ship> launcher, const PartType& part, CombatObjectPtr target,
             const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
             PathingEngine& pathing_engine);
     ~Missile();
@@ -46,7 +46,7 @@ public:
 private:
     Missile();
 
-    void Init(const Ship& launcher,
+    void Init(TemporaryPtr<const Ship> launcher,
               const OpenSteer::Vec3& position_,
               const OpenSteer::Vec3& direction);
     OpenSteer::Vec3 Steer();

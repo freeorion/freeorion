@@ -22,36 +22,25 @@ boost::format FlexibleFormat(const std::string& string_to_format);
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
       * depend on their context. */
-    ScriptingContext() :
-        source(0),
-        effect_target(0),
-        condition_root_candidate(0),
-        condition_local_candidate(0)
+    ScriptingContext()
     {}
 
     /** Context with only a source object.  Useful for evaluating effectsgroup
       * scope and activation conditions that have no external candidates or
       * effect target to propegate. */
-    explicit ScriptingContext(const UniverseObject* source_) :
-        source(source_),
-        effect_target(0),
-        condition_root_candidate(0),
-        condition_local_candidate(0)
+    explicit ScriptingContext(TemporaryPtr<const UniverseObject> source_) :
+        source(source_)
     {}
 
-    ScriptingContext(const UniverseObject* source_, UniverseObject* target_) :
+    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_) :
         source(source_),
-        effect_target(target_),
-        condition_root_candidate(0),
-        condition_local_candidate(0)
+        effect_target(target_)
     {}
 
-    ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_,
                      const boost::any& current_value_) :
         source(source_),
         effect_target(target_),
-        condition_root_candidate(0),
-        condition_local_candidate(0),
         current_value(current_value_)
     {}
 
@@ -71,7 +60,7 @@ struct ScriptingContext {
       * there is no root candidate in the parent context, then the input object
       * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
-                     const UniverseObject* condition_local_candidate) :
+                     TemporaryPtr<const UniverseObject> condition_local_candidate) :
         source(                     parent_context.source),
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate ?
@@ -81,22 +70,21 @@ struct ScriptingContext {
         current_value(              parent_context.current_value)
     {}
 
-    ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_,
                      const boost::any& current_value_,
-                     const UniverseObject* condition_root_candidate_,
-                     const UniverseObject* condition_local_candidate_) :
+                     TemporaryPtr<const UniverseObject> condition_root_candidate_,
+                     TemporaryPtr<const UniverseObject> condition_local_candidate_) :
         source(source_),
-        effect_target(0),
         condition_root_candidate(condition_root_candidate_),
         condition_local_candidate(condition_local_candidate_),
         current_value(current_value_)
     {}
 
-    const UniverseObject*   source;
-    UniverseObject*         effect_target;
-    const UniverseObject*   condition_root_candidate;
-    const UniverseObject*   condition_local_candidate;
-    const boost::any        current_value;
+    TemporaryPtr<const UniverseObject>  source;
+    TemporaryPtr<UniverseObject>        effect_target;
+    TemporaryPtr<const UniverseObject>  condition_root_candidate;
+    TemporaryPtr<const UniverseObject>  condition_local_candidate;
+    const boost::any                    current_value;
 };
 
 /** The base class for all ValueRef classes.  This class provides the public
@@ -224,10 +212,10 @@ protected:
     /** Evaluates the property for the specified objects. */
     void    GetObjectPropertyValues(const ScriptingContext& context,
                                     const Condition::ObjectSet& objects,
-                                    std::map<const UniverseObject*, T>& object_property_values) const;
+                                    std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
-    T       ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const;
+    T       ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
 
 private:
     StatisticType                   m_stat_type;
@@ -619,7 +607,7 @@ void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context
 template <class T>
 void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
                                                      const Condition::ObjectSet& objects,
-                                                     std::map<const UniverseObject*, T>& object_property_values) const
+                                                     std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const
 {
     object_property_values.clear();
     //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
@@ -678,7 +666,7 @@ T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
         return T(-1);   // should be INVALID_T of enum types
 
     // evaluate property for each condition-matched object
-    std::map<const UniverseObject*, T> object_property_values;
+    std::map<TemporaryPtr<const UniverseObject>, T> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // count number of each result, tracking which has the most occurances
@@ -686,7 +674,7 @@ T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
     typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+    for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
          it != object_property_values.end(); ++it)
     {
         const T& property_value = it->second;
@@ -720,7 +708,7 @@ namespace ValueRef {
 }
 
 template <class T>
-T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const
+T ValueRef::Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const
 {
     if (object_property_values.empty())
         return T(0);
@@ -732,7 +720,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
         case UNIQUE_COUNT: {
             std::set<T> observed_values;
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { observed_values.insert(it->second); }
             return T(observed_values.size());
@@ -746,7 +734,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
         case SUM: {
             T accumulator(0);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator += it->second; }
             return accumulator;
@@ -755,7 +743,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
 
         case MEAN: {
             T accumulator(0);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator += it->second; }
             return accumulator / static_cast<T>(object_property_values.size());
@@ -764,7 +752,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
 
         case RMS: {
             T accumulator(0);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator += (it->second * it->second); }
             accumulator /= static_cast<T>(object_property_values.size());
@@ -780,7 +768,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
             unsigned int max_seen(0);
 
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -804,9 +792,9 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
 
         case MAX: {
-            typename std::map<const UniverseObject*, T>::const_iterator max_it = object_property_values.begin();
+            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
 
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -820,9 +808,9 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
 
         case MIN: {
-            typename std::map<const UniverseObject*, T>::const_iterator min_it = object_property_values.begin();
+            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
 
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -836,10 +824,10 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
 
         case SPREAD: {
-            typename std::map<const UniverseObject*, T>::const_iterator max_it = object_property_values.begin();
-            typename std::map<const UniverseObject*, T>::const_iterator min_it = object_property_values.begin();
+            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
+            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
 
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -860,14 +848,14 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
 
             // find sample mean
             T accumulator(0);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator += it->second; }
             const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
 
             // find average of squared deviations from sample mean
             accumulator = T(0);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator += (it->second - MEAN) * (it->second - MEAN); }
             const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
@@ -878,7 +866,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
 
         case PRODUCT: {
             T accumulator(1);
-            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             { accumulator *= it->second; }
             return accumulator;

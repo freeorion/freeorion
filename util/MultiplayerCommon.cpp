@@ -54,14 +54,14 @@ namespace {
     }
 
     // overload for arriving fleets
-    void FindPlacementAreas(const System* system,
-                            const std::map<int, std::vector<Fleet*> >& arriving_fleets_by_starlane,
+    void FindPlacementAreas(const TemporaryPtr<System> system,
+                            const std::map<int, std::vector<TemporaryPtr<Fleet> > >& arriving_fleets_by_starlane,
                             const std::map<int, std::set<int> >& empires_by_starlane,
                             std::vector<CombatSetupGroup>& setup_groups)
     {
         assert(!arriving_fleets_by_starlane.begin()->second.back()->Unowned());
         int owner = arriving_fleets_by_starlane.begin()->second.back()->Owner();
-        for (std::map<int, std::vector<Fleet*> >::const_iterator it = arriving_fleets_by_starlane.begin();
+        for (std::map<int, std::vector<TemporaryPtr<Fleet> > >::const_iterator it = arriving_fleets_by_starlane.begin();
              it != arriving_fleets_by_starlane.end();
              ++it)
         {
@@ -98,8 +98,8 @@ namespace {
     }
 
     // overload for present fleets
-    void FindPlacementAreas(const System* system,
-                            const std::vector<Fleet*>& fleets,
+    void FindPlacementAreas(TemporaryPtr<const System> system,
+                            const std::vector<TemporaryPtr<Fleet> >& fleets,
                             CombatSetupGroup& setup_group)
     {
         for (std::size_t i = 0; i < fleets.size(); ++i) {
@@ -107,7 +107,7 @@ namespace {
         }
 
         for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-            if (const Planet* planet = GetPlanet(it->second)) {
+            if (TemporaryPtr<const Planet> planet = GetPlanet(it->second)) {
                 double orbit_r = OrbitalRadius(it->first);
                 double rads = planet->OrbitalPositionOnTurn(CurrentTurn());
                 float planet_r = PlanetRadius(planet->Size());
@@ -129,10 +129,10 @@ namespace {
         setup_group.m_allow = false;
     }
 
-    void PlaceShips(const System* system,
+    void PlaceShips(TemporaryPtr<const System> system,
                     const CombatSetupGroup& setup_group,
-                    const std::map<int, UniverseObject*>& combat_universe,
-                    std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
+                    const std::map<int, TemporaryPtr<UniverseObject> >& combat_universe,
+                    std::map<TemporaryPtr<Ship>, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
         Logger().debugStream() << "Placing combat ships in " << system->Name();
         // TODO: Do something other than just random placement.  Take into
@@ -141,7 +141,7 @@ namespace {
              it != setup_group.m_ships.end(); ++it)
         {
             assert(combat_universe.find(*it) != combat_universe.end());
-            Ship* ship = static_cast<Ship*>(combat_universe.find(*it)->second);
+            TemporaryPtr<Ship> ship = universe_object_ptr_cast<Ship>(combat_universe.find(*it)->second);
 #define LIMIT_ITERATIONS 1
 #if LIMIT_ITERATIONS
             const unsigned int MAX_PLACEMENT_ITERATIONS = 50;
@@ -211,10 +211,10 @@ namespace {
         }
     }
 
-    void PlaceShips(const System* system,
+    void PlaceShips(TemporaryPtr<const System> system,
                     const std::map<int, std::vector<CombatSetupGroup> >& setup_groups,
-                    const std::map<int, UniverseObject*>& combat_universe,
-                    std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
+                    const std::map<int, TemporaryPtr<UniverseObject> >& combat_universe,
+                    std::map<TemporaryPtr<Ship>, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
         for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
              it != setup_groups.end(); ++it)
@@ -361,7 +361,7 @@ std::string MultiplayerLobbyData::Dump() const {
 ////////////////////////////////////////////////
 // CombatData
 ////////////////////////////////////////////////
-CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups) :
+CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups) :
     m_combat_turn_number(0),
     m_system(system)
 {
@@ -369,14 +369,14 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
     using OpenSteer::Vec3;
     m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius() / 2.0, Vec3()));
 
-    std::map<int, std::vector<Fleet*> > present_fleets_by_empire;
-    std::map<int, std::map<int, std::vector<Fleet*> > > arriving_fleets_by_starlane_by_empire;
+    std::map<int, std::vector<TemporaryPtr<Fleet> > > present_fleets_by_empire;
+    std::map<int, std::map<int, std::vector<TemporaryPtr<Fleet> > > > arriving_fleets_by_starlane_by_empire;
     std::map<int, std::set<int> > empires_by_starlane;
 
     for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
         m_combat_universe[it->second] = GetUniverseObject(it->second);
-        if (const Planet* planet =
-            universe_object_cast<Planet*>(m_combat_universe[it->second])) {
+        if (TemporaryPtr<const Planet> planet =
+                universe_object_ptr_cast<const Planet>(m_combat_universe[it->second])) {
             double orbit_radius = OrbitalRadius(it->first);
             if (planet->Type() == PT_ASTEROIDS) {
                 m_pathing_engine.AddObstacle(
@@ -390,8 +390,8 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
                 m_pathing_engine.AddObstacle(
                     new SphereObstacle(PlanetRadius(planet->Size()), position));
             }
-        } else if (Fleet* fleet =
-                   universe_object_cast<Fleet*>(m_combat_universe[it->second])) {
+        } else if (TemporaryPtr<Fleet> fleet =
+                   universe_object_ptr_cast<Fleet>(m_combat_universe[it->second])) {
             assert(!fleet->Unowned());
             int owner = fleet->Owner();
             if (fleet->ArrivedThisTurn()) {
@@ -404,7 +404,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
         }
     }
 
-    for (std::map<int, std::vector<Fleet*> >::iterator it = present_fleets_by_empire.begin();
+    for (std::map<int, std::vector<TemporaryPtr<Fleet> > >::iterator it = present_fleets_by_empire.begin();
          it != present_fleets_by_empire.end();
          ++it)
     {
@@ -413,7 +413,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
         FindPlacementAreas(m_system, it->second, empire_setup_groups.back());
     }
 
-    for (std::map<int, std::map<int, std::vector<Fleet*> > >::iterator
+    for (std::map<int, std::map<int, std::vector<TemporaryPtr<Fleet> > > >::iterator
              it = arriving_fleets_by_starlane_by_empire.begin();
          it != arriving_fleets_by_starlane_by_empire.end();
          ++it)
@@ -421,7 +421,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
         FindPlacementAreas(m_system, it->second, empires_by_starlane, setup_groups[it->first]);
     }
 
-    std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> > placements;
+    std::map<TemporaryPtr<Ship>, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> > placements;
     PlaceShips(m_system, setup_groups, m_combat_universe, placements);
 
     for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
@@ -431,8 +431,8 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
             for (std::set<int>::const_iterator ship_it = it->second[i].m_ships.begin();
                  ship_it != it->second[i].m_ships.end();
                  ++ship_it) {
-                assert(universe_object_cast<Ship*>(GetUniverseObject(*ship_it)));
-                Ship* ship = static_cast<Ship*>(GetUniverseObject(*ship_it));
+                TemporaryPtr<Ship> ship = GetShip(*ship_it);
+                assert(ship);
                 const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& placement = placements[ship];
                 CombatShipPtr combat_ship(
                     new CombatShip(ship, placement.first, placement.second, m_combat_universe, m_pathing_engine));

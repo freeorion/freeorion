@@ -30,7 +30,7 @@ namespace {
     template <class Stats>
     struct CopyStats
     {
-        CopyStats(const Ship& ship, float structure_factor) :
+        CopyStats(TemporaryPtr<const Ship> ship, float structure_factor) :
             m_ship(ship),
             m_structure_factor(structure_factor)
         {}
@@ -39,12 +39,12 @@ namespace {
             const std::string name = elem.second->Name();
             return CombatShip::DirectWeapon(
                 name,
-                m_ship.GetPartMeter(METER_RANGE, name)->Current(),
-                m_ship.GetPartMeter(METER_DAMAGE, name)->Current() *
-                m_ship.GetPartMeter(METER_ROF, name)->Current() *
+                m_ship->GetPartMeter(METER_RANGE, name)->Current(),
+                m_ship->GetPartMeter(METER_DAMAGE, name)->Current() *
+                m_ship->GetPartMeter(METER_ROF, name)->Current() *
                 m_structure_factor);
         }
-        const Ship& m_ship;
+        TemporaryPtr<const Ship> m_ship;
         const float m_structure_factor;
     };
 
@@ -111,9 +111,9 @@ CombatShip::CombatShip() :
     ,m_last_mission(ShipMission::NONE)
 {}
 
-CombatShip::CombatShip(Ship* ship,
+CombatShip::CombatShip(TemporaryPtr<Ship> ship,
                        const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
-                       const std::map<int, UniverseObject*>& combat_universe,
+                       const std::map<int, TemporaryPtr<UniverseObject> >& combat_universe,
                        PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_empire_id(ship->Owner()),
@@ -140,24 +140,24 @@ CombatShip::CombatShip(Ship* ship,
 CombatShip::~CombatShip()
 { delete m_proximity_token; }
 
-Ship& CombatShip::GetShip() const
+TemporaryPtr<Ship> CombatShip::GetShip() const
 {
-    std::map<int, UniverseObject*>::const_iterator it = m_combat_universe->find(m_ship_id);
+    std::map<int, TemporaryPtr<UniverseObject> >::const_iterator it = m_combat_universe->find(m_ship_id);
     assert(it != m_combat_universe->end());
-    return *boost::polymorphic_downcast<Ship*>(it->second);
+    return universe_object_ptr_cast<Ship>(it->second);
 }
 
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
 
 float CombatShip::StructureAndShield() const
-{ return Structure() + GetShip().CurrentMeterValue(METER_SHIELD); }
+{ return Structure() + GetShip()->CurrentMeterValue(METER_SHIELD); }
 
 float CombatShip::Structure() const
-{ return GetShip().CurrentMeterValue(METER_STRUCTURE); }
+{ return GetShip()->CurrentMeterValue(METER_STRUCTURE); }
 
 float CombatShip::FractionalStructure() const
-{ return m_turn_start_structure / GetShip().CurrentMeterValue(METER_MAX_STRUCTURE); }
+{ return m_turn_start_structure / GetShip()->CurrentMeterValue(METER_MAX_STRUCTURE); }
 
 float CombatShip::AntiFighterStrength() const
 { return m_raw_PD_strength * FractionalStructure(); }
@@ -178,7 +178,7 @@ bool CombatShip::IsShip() const
 { return true; }
 
 int CombatShip::Owner() const
-{ return GetShip().Owner(); }
+{ return GetShip()->Owner(); }
 
 void CombatShip::LaunchFighters()
 {
@@ -195,7 +195,7 @@ void CombatShip::LaunchFighters()
 
         std::vector<CombatFighterPtr>& fighters_vec = it->second.second;
         std::size_t num_fighters = fighters_vec.size();
-        double launch_rate = GetShip().GetPartMeter(METER_LAUNCH_RATE, part->Name())->Current();
+        double launch_rate = GetShip()->GetPartMeter(METER_LAUNCH_RATE, part->Name())->Current();
         std::size_t launch_size =
             std::min<std::size_t>(num_fighters, launch_rate * it->second.first);
 
@@ -219,7 +219,7 @@ void CombatShip::LaunchFighters()
             fighters_vec.resize(fighters_vec.size() - size);
             m_pathing_engine->AddFighterFormation(*formation_it);
         }
-        GetShip().RemoveFighters(it->first, launch_size);
+        GetShip()->RemoveFighters(it->first, launch_size);
     }
 }
 
@@ -237,7 +237,7 @@ void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
          ++it) {
         (*it)->ExitSpace();
     }
-    GetShip().AddFighters(map_entry.first, formation->size());
+    GetShip()->AddFighters(map_entry.first, formation->size());
 }
 
 void CombatShip::AppendMission(const ShipMission& mission)
@@ -287,7 +287,7 @@ void CombatShip::update(const float elapsed_time, bool force)
         serialNumber % PathingEngine::UPDATE_SETS) {
         if (m_last_queue_update_turn != m_turn)
             UpdateMissionQueue();
-        if (GetShip().IsArmed())
+        if (GetShip()->IsArmed())
             FireAtHostiles();
         steer = Steer();
     }
@@ -305,19 +305,19 @@ void CombatShip::Damage(float d, DamageSource source)
     assert(0.0f < d);
     if (source == PD_DAMAGE)
         d *= PD_VS_SHIP_FACTOR;
-    float shield_damage = std::min(d, GetShip().CurrentMeterValue(METER_SHIELD));
-    GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
+    float shield_damage = std::min(d, GetShip()->CurrentMeterValue(METER_SHIELD));
+    GetShip()->GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     d -= shield_damage;
-    GetShip().UniverseObject::GetMeter(METER_STRUCTURE)->AddToCurrent(-d);
+    GetShip()->GetMeter(METER_STRUCTURE)->AddToCurrent(-d);
 }
 
 void CombatShip::Damage(const CombatFighterPtr& source)
 {
     float damage = source->Stats().m_anti_ship_damage * source->Formation()->size();
-    float shield_damage = std::min(damage, GetShip().CurrentMeterValue(METER_SHIELD));
-    GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
+    float shield_damage = std::min(damage, GetShip()->CurrentMeterValue(METER_SHIELD));
+    GetShip()->GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     damage -= shield_damage;
-    GetShip().UniverseObject::GetMeter(METER_STRUCTURE)->AddToCurrent(-damage);
+    GetShip()->GetMeter(METER_STRUCTURE)->AddToCurrent(-damage);
 }
 
 void CombatShip::TurnStarted(unsigned int number)
@@ -330,7 +330,7 @@ void CombatShip::TurnStarted(unsigned int number)
         m_proximity_token = 0;
         m_pathing_engine->RemoveObject(shared_from_this());
     } else {
-        const ShipDesign& design = *GetShip().Design();
+        const ShipDesign& design = *GetShip()->Design();
         m_unfired_SR_weapons.resize(design.SRWeapons().size());
         m_unfired_PD_weapons.clear();
         std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
@@ -355,13 +355,13 @@ CombatShipPtr CombatShip::shared_from_this()
 }
 
 float CombatShip::MaxWeaponRange() const
-{ return GetShip().Design()->MaxWeaponRange(); }
+{ return GetShip()->Design()->MaxWeaponRange(); }
 
 float CombatShip::MinNonPDWeaponRange() const
-{ return GetShip().Design()->MinNonPDWeaponRange(); }
+{ return GetShip()->Design()->MinNonPDWeaponRange(); }
 
 float CombatShip::MaxPDRange() const
-{ return GetShip().Design()->MaxPDRange(); }
+{ return GetShip()->Design()->MaxPDRange(); }
 
 void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
@@ -370,7 +370,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(3.0);
-    SimpleVehicle::setMaxSpeed(GetShip().Design()->BattleSpeed());
+    SimpleVehicle::setMaxSpeed(GetShip()->Design()->BattleSpeed());
 
     // TODO: setMass()
 
@@ -383,7 +383,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     m_mission_queue.push_front(ShipMission(ShipMission::NONE));
 
-    const Ship::ConsumablesMap& fighters = GetShip().Fighters();
+    const Ship::ConsumablesMap& fighters = GetShip()->Fighters();
     for (Ship::ConsumablesMap::const_iterator it = fighters.begin(); it != fighters.end(); ++it) {
         const PartType* part = GetPartType(it->first);
         assert(part && part->Class() == PC_FIGHTERS);
@@ -400,10 +400,10 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         }
     }
 
-    m_missiles = GetShip().Missiles();
+    m_missiles = GetShip()->Missiles();
 
     float PD_minus_non_PD = 0.0f;
-    const std::vector<std::string>& part_names = GetShip().Design()->Parts();
+    const std::vector<std::string>& part_names = GetShip()->Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
         if (part_names[i].empty())
             continue;
@@ -412,27 +412,27 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         assert(part);
         if (part->Class() == PC_POINT_DEFENSE) {
             const std::string& part_name = part->Name();
-            float damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
+            float damage = GetShip()->GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_PD_strength +=
                 damage *
-                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
+                GetShip()->GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip()->GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD += damage;
         } else if (part->Class() == PC_SHORT_RANGE) {
             const std::string& part_name = part->Name();
-            float damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
+            float damage = GetShip()->GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_SR_strength +=
                 damage *
-                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
+                GetShip()->GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip()->GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         } else if (part->Class() == PC_MISSILES) {
             const std::string& part_name = part->Name();
-            float damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
+            float damage = GetShip()->GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_LR_strength +=
                 damage *
-                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
+                GetShip()->GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip()->GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         }
     }
@@ -554,7 +554,7 @@ void CombatShip::UpdateMissionQueue()
                     OpenSteer::Vec3 attacker_position = ship->position();
                     OpenSteer::Vec3 target_to_attacker =
                         (attacker_position - target_position).normalize();
-                    double min_PD_range = GetShip().Design()->PDWeapons().begin()->first;
+                    double min_PD_range = GetShip()->Design()->PDWeapons().begin()->first;
                     m_mission_destination =
                         target_position + target_to_attacker * min_PD_range / 2.0;
                 } else {
@@ -563,7 +563,7 @@ void CombatShip::UpdateMissionQueue()
                     OpenSteer::Vec3 target_position = target->position();
                     OpenSteer::Vec3 target_to_here =
                         (position() - target->position()).normalize();
-                    double min_PD_range = GetShip().Design()->PDWeapons().begin()->first;
+                    double min_PD_range = GetShip()->Design()->PDWeapons().begin()->first;
                     m_mission_destination =
                         target_position + target_to_here * min_PD_range / 3.0;
                 }
@@ -642,7 +642,7 @@ void CombatShip::UpdateMissionQueue()
         break;
     }
     case ShipMission::ENTER_STARLANE: {
-        System* system = GetSystem(GetShip().SystemID());
+        TemporaryPtr<System> system = GetSystem(GetShip()->SystemID());
         assert(system);
         for (System::const_lane_iterator it = system->begin_lanes();
              it != system->end_lanes();
@@ -755,8 +755,8 @@ void CombatShip::FireAt(CombatObjectPtr target)
     }
     std::size_t i = 0;
     for (std::multimap<float, const PartType*>::const_iterator it =
-             GetShip().Design()->LRWeapons().begin();
-         it != GetShip().Design()->LRWeapons().end();
+             GetShip()->Design()->LRWeapons().begin();
+         it != GetShip()->Design()->LRWeapons().end();
          ++it, ++i)
     {
         if (m_next_LR_fire_turns[i] < m_turn) {
@@ -767,11 +767,11 @@ void CombatShip::FireAt(CombatObjectPtr target)
                     new Missile(GetShip(), *it->second, target,
                                 position(), direction, *m_pathing_engine));
                 m_pathing_engine->AddObject(missile);
-                GetShip().RemoveMissiles(it->second->Name(), 1);
+                GetShip()->RemoveMissiles(it->second->Name(), 1);
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
-                    GetShip().GetPartMeter(METER_ROF, it->second->Name())->Current() * structure_factor;
+                    GetShip()->GetPartMeter(METER_ROF, it->second->Name())->Current() * structure_factor;
                 Listener().MissileLaunched(missile);
             }
         }

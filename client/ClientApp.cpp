@@ -41,7 +41,7 @@ Universe& ClientApp::GetUniverse()
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 
-UniverseObject* ClientApp::GetUniverseObject(int object_id)
+TemporaryPtr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
 { return GetUniverse().Objects().Object(object_id); }
 
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
@@ -54,7 +54,7 @@ ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     return m_universe.Objects();
 }
 
-UniverseObject* ClientApp::EmpireKnownObject(int object_id, int empire_id)
+TemporaryPtr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int empire_id)
 { return EmpireKnownObjects(empire_id).Object(object_id); }
 
 const OrderSet& ClientApp::Orders() const
@@ -118,14 +118,14 @@ CombatOrderSet& ClientApp::CombatOrders()
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }
 
-std::string ClientApp::GetVisibleObjectName(const UniverseObject* object) {
+std::string ClientApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
     if (!object) {
         Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
 
     std::string name_text = object->PublicName(m_empire_id);
-    if (const System* system = universe_object_cast<const System*>(object))
+    if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(object))
         name_text = system->ApparentName(m_empire_id);
 
     return name_text;

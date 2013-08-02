@@ -166,9 +166,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     }
 
     // get fleets
-    std::vector<const Fleet*> fleets;
+    std::vector<TemporaryPtr<const Fleet> > fleets;
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
-        const Fleet* fleet = GetFleet(*it);
+        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
         if (!fleet) {
             Logger().errorStream() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
             continue;
@@ -188,8 +188,8 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     } else {
         owner_id = (*fleets.begin())->Owner();
         // use ALL_EMPIRES if there are multiple owners (including no owner and an owner)
-        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-            const Fleet* fleet = *it;
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            TemporaryPtr<const Fleet> fleet = *it;
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
                 multiple_owners = true;
@@ -206,12 +206,12 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         // all ships owned by now empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-            const Fleet* fleet = *it;
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            TemporaryPtr<const Fleet> fleet = *it;
             for (std::set<int>::const_iterator ship_it = fleet->ShipIDs().begin();
                  ship_it != fleet->ShipIDs().end(); ++ship_it)
             {
-                if (const Ship* ship = GetShip(*ship_it)) {
+                if (TemporaryPtr<const Ship> ship = GetShip(*ship_it)) {
                     if (!ship->IsMonster()) {
                         monsters = false;
                         break;
@@ -235,7 +235,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
 
     // select icon(s) for fleet(s), and get a fleet for use later
-    const Fleet* first_fleet = 0;
+    TemporaryPtr<const Fleet> first_fleet;
     if (m_fleets.size() != 1) {
         first_fleet = *(fleets.begin());
 
@@ -244,9 +244,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         // all fleets would use the same icon, and if so, use that icon, and
         // only default to generic icon in cases where there are multiple
         // different icons for the various fleets being represented
-        m_head_icon = FleetHeadIcon(0, size_type);
+        m_head_icon = FleetHeadIcon(TemporaryPtr<Fleet>(), size_type);
         int num_ships = 0;
-        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
             num_ships += (*it)->NumShips();
         m_size_icon = FleetSizeIcon(num_ships, size_type);
 
@@ -276,7 +276,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     if (first_fleet && first_fleet->SystemID() == INVALID_OBJECT_ID) {
         int next_sys_id = first_fleet->NextSystemID();
-        if (const UniverseObject* obj = GetUniverseObject(next_sys_id)) {
+        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(next_sys_id)) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their 
             // actual universe position, but if they're moving along a starlane, this code will assume
@@ -429,7 +429,7 @@ void FleetButton::PlayFleetButtonOpenSound()
 /////////////////////
 // Free Functions
 /////////////////////
-boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
+boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {
     if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
         return boost::shared_ptr<GG::Texture>();
 
@@ -456,7 +456,7 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::Si
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + main_filename), false);
 }
 
-boost::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
+boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {
     if (!fleet)
         return FleetSizeIcon(1u, size_type);
     return FleetSizeIcon(fleet->NumShips(), size_type);

@@ -25,6 +25,7 @@ class OrderSet;
 class PathingEngine;
 class Universe;
 class UniverseObject;
+template <class T> class TemporaryPtr;
 
 // NB: Do not try to serialize types that contain longs, since longs are different sizes on 32- and 64-bit
 // architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
@@ -33,7 +34,7 @@ class UniverseObject;
 FO_COMMON_API void Serialize(freeorion_oarchive& oa, const Universe& universe);
 
 /** Serializes \a object_map to output archive \a oa. */
-void Serialize(freeorion_oarchive& oa, const std::map<int, UniverseObject*>& objects);
+void Serialize(freeorion_oarchive& oa, const std::map<int, TemporaryPtr<UniverseObject> >& objects);
 
 /** Serializes \a order_set to output archive \a oa. */
 void Serialize(freeorion_oarchive& oa, const OrderSet& order_set);
@@ -45,7 +46,7 @@ void Serialize(freeorion_oarchive& oa, const PathingEngine& pathing_engine);
 FO_COMMON_API void Deserialize(freeorion_iarchive& ia, Universe& universe);
 
 /** Serializes \a object_map from input archive \a ia. */
-void Deserialize(freeorion_iarchive& ia, std::map<int, UniverseObject*>& objects);
+void Deserialize(freeorion_iarchive& ia, std::map<int, TemporaryPtr<UniverseObject> >& objects);
 
 /** Deserializes \a order_set from input archive \a ia. */
 void Deserialize(freeorion_iarchive& ia, OrderSet& order_set);

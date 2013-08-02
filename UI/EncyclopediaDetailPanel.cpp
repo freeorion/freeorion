@@ -140,24 +140,24 @@ namespace {
             for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
                  ship_it != objects.const_end<Ship>(); ++ship_it)
             {
-                const std::string& ship_name = ship_it->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(ship_name,
-                    LinkTaggedIDText(VarText::SHIP_ID_TAG, ship_it->ID(), ship_name) + "  "));
+                TemporaryPtr<const Ship> ship = *ship_it;
+                const std::string& ship_name = ship->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(ship_name,  LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
             }
 
         } else if (dir_name == "ENC_MONSTER") {
             // monster objects
-            std::vector<const Ship*> monsters;
+            std::vector<TemporaryPtr<const Ship> > monsters;
             for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
                  ship_it != objects.const_end<Ship>(); ++ship_it)
             {
-                if (ship_it->IsMonster())
+                if ((*ship_it)->IsMonster())
                     monsters.push_back(*ship_it);
             }
             if (!monsters.empty()) {
                 retval += UserString("MONSTER_OBJECTS");
-                for (std::vector<const Ship*>::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it) {
-                    const Ship* ship = *ship_it;
+                for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it) {
+                    TemporaryPtr<const Ship> ship = *ship_it;
                     const std::string& ship_name = ship->PublicName(client_empire_id);
                     retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ";
                 }
@@ -175,36 +175,36 @@ namespace {
             for (ObjectMap::const_iterator<Fleet> fleet_it = objects.const_begin<Fleet>();
                  fleet_it != objects.const_end<Fleet>(); ++fleet_it)
             {
-                const std::string& flt_name = fleet_it->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(flt_name,
-                    LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet_it->ID(), flt_name) + "  "));
+                TemporaryPtr<const Fleet> fleet = *fleet_it;
+                const std::string& flt_name = fleet->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(flt_name,  LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  "));
             }
 
         } else if (dir_name == "ENC_PLANET") {
             for (ObjectMap::const_iterator<Planet> planet_it = objects.const_begin<Planet>();
                  planet_it != objects.const_end<Planet>(); ++planet_it)
             {
-                const std::string& plt_name = planet_it->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(plt_name,
-                    LinkTaggedIDText(VarText::PLANET_ID_TAG, planet_it->ID(), plt_name) + "  "));
+                TemporaryPtr<const Planet> planet = *planet_it;
+                const std::string& plt_name = planet->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(plt_name,  LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  "));
             }
 
         } else if (dir_name == "ENC_BUILDING") {
             for (ObjectMap::const_iterator<Building> building_it = objects.const_begin<Building>();
                  building_it != objects.const_end<Building>(); ++building_it)
             {
-                const std::string& bld_name = building_it->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(bld_name,
-                    LinkTaggedIDText(VarText::BUILDING_ID_TAG, building_it->ID(), bld_name) + "  "));
+                TemporaryPtr<const Building> building = *building_it;
+                const std::string& bld_name = building->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(bld_name,  LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  "));
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
             for (ObjectMap::const_iterator<System> system_it = objects.const_begin<System>();
                  system_it != objects.const_end<System>(); ++system_it)
             {
-                const std::string& sys_name = system_it->ApparentName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(sys_name,
-                    LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system_it->ID(), sys_name) + "  "));
+                TemporaryPtr<const System> system = *system_it;
+                const std::string& sys_name = system->ApparentName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(sys_name,  LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  "));
             }
 
         } else if (dir_name == "ENC_FIELD") {
@@ -536,7 +536,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        const UniverseObject* location = GetUniverseObject(empire->CapitalID());
+        TemporaryPtr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
@@ -863,31 +863,31 @@ void EncyclopediaDetailPanel::Refresh() {
         general_type = UserString("ENC_SPECIAL");
 
         // objects that have special
-        std::vector<const UniverseObject*> objects_with_special;
+        std::vector<TemporaryPtr<const UniverseObject> > objects_with_special;
         for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
             if (obj_it->Specials().find(m_items_it->second) != obj_it->Specials().end())
                 objects_with_special.push_back(*obj_it);
 
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
-            for (std::vector<const UniverseObject*>::const_iterator obj_it = objects_with_special.begin();
+            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator obj_it = objects_with_special.begin();
                  obj_it != objects_with_special.end(); ++obj_it)
             {
-                const UniverseObject* obj = *obj_it;
+                TemporaryPtr<const UniverseObject> obj = *obj_it;
 
-                if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+                if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship->PublicName(client_empire_id)) + "  ";
 
-                else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+                else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), fleet->PublicName(client_empire_id)) + "  ";
 
-                else if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+                else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
 
-                else if (const Building* building = universe_object_cast<const Building*>(obj))
+                else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj))
                     detailed_description += LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), building->PublicName(client_empire_id)) + "  ";
 
-                else if (const System* system = universe_object_cast<const System*>(obj))
+                else if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id)) + "  ";
 
                 else
@@ -920,7 +920,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Empires
         name = empire->Name();
-        const Planet* capital = objects.Object<Planet>(empire->CapitalID());
+        TemporaryPtr<const Planet> capital = objects.Object<Planet>(empire->CapitalID());
         if (capital)
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
@@ -936,13 +936,13 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         // Planets
-        std::vector<const UniverseObject*> empire_planets = objects.FindObjects(OwnedVisitor<Planet>(empire_id));
+        std::vector<TemporaryPtr<const UniverseObject> > empire_planets = objects.FindObjects(OwnedVisitor<Planet>(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
-            for (std::vector<const UniverseObject*>::const_iterator planet_it = empire_planets.begin();
+            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator planet_it = empire_planets.begin();
                  planet_it != empire_planets.end(); ++planet_it)
             {
-                const UniverseObject* obj = *planet_it;
+                TemporaryPtr<const UniverseObject> obj = *planet_it;
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
             }
         } else {
@@ -950,16 +950,16 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         // Fleets
-        std::vector<const UniverseObject*> empire_fleets = objects.FindObjects(OwnedVisitor<Fleet>(empire_id));
+        std::vector<TemporaryPtr<const UniverseObject> > empire_fleets = objects.FindObjects(OwnedVisitor<Fleet>(empire_id));
         if (!empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
-            for (std::vector<const UniverseObject*>::const_iterator fleet_it = empire_fleets.begin();
+            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator fleet_it = empire_fleets.begin();
                  fleet_it != empire_fleets.end(); ++fleet_it)
             {
-                const UniverseObject* obj = *fleet_it;
+                TemporaryPtr<const UniverseObject> obj = *fleet_it;
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
-                if (const System* system = GetSystem(obj->SystemID())) {
+                if (TemporaryPtr<const System> system = GetSystem(obj->SystemID())) {
                     std::string sys_name = system->ApparentName(client_empire_id);
                     system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
@@ -1029,7 +1029,7 @@ void EncyclopediaDetailPanel::Refresh() {
             for (std::set<int>::const_iterator hw_it = species->Homeworlds().begin();
                  hw_it != species->Homeworlds().end(); ++hw_it)
             {
-                if (const Planet* homeworld = objects.Object<Planet>(*hw_it))
+                if (TemporaryPtr<const Planet> homeworld = objects.Object<Planet>(*hw_it))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, *hw_it, homeworld->PublicName(client_empire_id)) + "\n";
                 else
                     detailed_description += UserString("UNKNOWN_PLANET") + "\n";
@@ -1037,19 +1037,19 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         // occupied planets
-        std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-        std::vector<const Planet*> species_occupied_planets;
-        for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-            const Planet* planet = *planet_it;
+        std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
+        std::vector<TemporaryPtr<const Planet> > species_occupied_planets;
+        for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+            TemporaryPtr<const Planet> planet = *planet_it;
             if (planet->SpeciesName() == m_items_it->second)
                 species_occupied_planets.push_back(planet);
         }
         if (!species_occupied_planets.empty()) {
             detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
-            for (std::vector<const Planet*>::const_iterator planet_it = species_occupied_planets.begin();
+            for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = species_occupied_planets.begin();
                  planet_it != species_occupied_planets.end(); ++planet_it)
             {
-                const Planet* planet = *planet_it;
+                TemporaryPtr<const Planet> planet = *planet_it;
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
             }
             detailed_description += "\n";
@@ -1114,8 +1114,7 @@ void EncyclopediaDetailPanel::Refresh() {
             }
         }
 
-        Ship* temp = new Ship(client_empire_id, design_id, "", client_empire_id);
-        GetUniverse().InsertID(temp, TEMPORARY_OBJECT_ID);
+        TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "", client_empire_id, TEMPORARY_OBJECT_ID);
         GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
@@ -1140,18 +1139,18 @@ void EncyclopediaDetailPanel::Refresh() {
         GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
         // ships of this design
-        std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
-        std::vector<const Ship*> design_ships;
-        for (std::vector<const Ship*>::const_iterator ship_it = all_ships.begin();
+        std::vector<TemporaryPtr<const Ship> > all_ships = objects.FindObjects<Ship>();
+        std::vector<TemporaryPtr<const Ship> > design_ships;
+        for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = all_ships.begin();
              ship_it != all_ships.end(); ++ship_it)
         {
-            const Ship* ship = *ship_it;
+            TemporaryPtr<const Ship> ship = *ship_it;
             if (ship->DesignID() == design_id)
                 design_ships.push_back(ship);
         }
         if (!design_ships.empty()) {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
-            for (std::vector<const Ship*>::const_iterator ship_it = design_ships.begin();
+            for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = design_ships.begin();
                  ship_it != design_ships.end(); ++ship_it)
             {
                 detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->PublicName(client_empire_id)) + "  ";
@@ -1201,10 +1200,9 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
             }
 
-            GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design.get()), TEMPORARY_OBJECT_ID);
+            GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
 
-            Ship* temp = new Ship(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id);
-            GetUniverse().InsertID(temp, TEMPORARY_OBJECT_ID);
+            TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id, TEMPORARY_OBJECT_ID);
             GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
             detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
@@ -1236,7 +1234,7 @@ void EncyclopediaDetailPanel::Refresh() {
         int id = boost::lexical_cast<int>(m_items_it->second);
 
         if (id != INVALID_OBJECT_ID) {
-            const UniverseObject* obj = objects.Object(id);
+            TemporaryPtr<const UniverseObject> obj = objects.Object(id);
             if (!obj) {
                 Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_items_it->second;
                 return;
@@ -1255,7 +1253,7 @@ void EncyclopediaDetailPanel::Refresh() {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
         int planet_id = boost::lexical_cast<int>(m_items_it->second);
-        Planet* planet = GetPlanet(planet_id);
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
 
         std::string original_planet_species = planet->SpeciesName();
         int original_owner_id = planet->Owner();
@@ -1274,8 +1272,8 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Collect species colonizing/environment hospitality information
         for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
-            const UniverseObject* obj = objects.Object(*it);
-            const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+            TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
+            TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj);
             if (!pc)
                 continue;
 
@@ -1397,7 +1395,7 @@ void EncyclopediaDetailPanel::Refresh() {
         texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/combat.png", true);
         general_type = UserString("ENC_COMBAT_LOG");
 
-        const System* system = objects.Object<System>(log.system_id);
+        TemporaryPtr<const System> system = objects.Object<System>(log.system_id);
         const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
         detailed_description = str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
@@ -1407,7 +1405,7 @@ void EncyclopediaDetailPanel::Refresh() {
         for (std::vector<AttackEvent>::const_iterator it = log.attack_events.begin();
              it != log.attack_events.end(); ++it)
         {
-            const UniverseObject* attacker = objects.Object(it->attacker_id);
+            TemporaryPtr<const UniverseObject> attacker = objects.Object(it->attacker_id);
             std::string attacker_link;
             if (attacker) {
                 const std::string& attacker_name = attacker->PublicName(client_empire_id);
@@ -1417,7 +1415,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 attacker_link = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
             }
 
-            const UniverseObject* target = objects.Object(it->target_id);
+            TemporaryPtr<const UniverseObject> target = objects.Object(it->target_id);
             std::string target_link;
             if (target) {
                 const std::string& target_name = target->PublicName(client_empire_id);
@@ -1677,7 +1675,7 @@ void EncyclopediaDetailPanel::SetIncompleteDesign(boost::weak_ptr<const ShipDesi
 void EncyclopediaDetailPanel::SetIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }
 
-void EncyclopediaDetailPanel::SetItem(const Planet* planet)
+void EncyclopediaDetailPanel::SetItem(TemporaryPtr<const Planet> planet)
 { SetPlanet(planet ? planet->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Tech* tech)
@@ -1701,7 +1699,7 @@ void EncyclopediaDetailPanel::SetItem(const Species* species)
 void EncyclopediaDetailPanel::SetItem(const FieldType* field_type)
 { SetFieldType(field_type ? field_type->Name() : EMPTY_STRING); }
 
-void EncyclopediaDetailPanel::SetItem(const UniverseObject* obj)
+void EncyclopediaDetailPanel::SetItem(TemporaryPtr<const UniverseObject> obj)
 { SetObject(obj ? obj->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Empire* empire)

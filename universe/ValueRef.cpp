@@ -22,7 +22,7 @@
 #include <boost/algorithm/string/split.hpp>
 
 namespace {
-    const UniverseObject* FollowReference(std::vector<adobe::name_t>::const_iterator first,
+    TemporaryPtr<const UniverseObject> FollowReference(std::vector<adobe::name_t>::const_iterator first,
                                           std::vector<adobe::name_t>::const_iterator last,
                                           ValueRef::ReferenceType ref_type,
                                           const ScriptingContext& context)
@@ -32,7 +32,7 @@ namespace {
         //    << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
         //    << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
-        const UniverseObject* obj(0);
+        TemporaryPtr<const UniverseObject> obj;
         switch(ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
@@ -45,18 +45,18 @@ namespace {
         while (first != last) {
             adobe::name_t property_name = *first;
             if (property_name == Planet_name) {
-                if (const Building* b = universe_object_cast<const Building*>(obj))
+                if (TemporaryPtr<const Building> b = universe_object_ptr_cast<const Building>(obj))
                     obj = GetPlanet(b->PlanetID());
                 else
-                    obj = 0;
+                    obj = TemporaryPtr<const UniverseObject>();
             } else if (property_name == System_name) {
                 if (obj)
                     obj = GetSystem(obj->SystemID());
             } else if (property_name == Fleet_name) {
-                if (const Ship* s = universe_object_cast<const Ship*>(obj))
+                if (TemporaryPtr<const Ship> s = universe_object_ptr_cast<const Ship>(obj))
                     obj = GetFleet(s->FleetID());
                 else
-                    obj = 0;
+                    obj = TemporaryPtr<const UniverseObject>();
             }
             ++first;
         }
@@ -300,20 +300,18 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(PlanetSize)
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return INVALID_PLANET_SIZE;
         }
 
-        if (property_name == PlanetSize_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+        if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
+            if (property_name == PlanetSize_name)
                 return p->Size();
-        } else if (property_name == NextLargerPlanetSize_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == NextLargerPlanetSize_name)
                 return p->NextLargerPlanetSize();
-        } else if (property_name == NextSmallerPlanetSize_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == NextSmallerPlanetSize_name)
                 return p->NextSmallerPlanetSize();
         }
 
@@ -328,29 +326,24 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(PlanetType)
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return INVALID_PLANET_TYPE;
         }
 
-        if (property_name == PlanetType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+        if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
+            if (property_name == PlanetType_name)
                 return p->Type();
-        } else if (property_name == OriginalType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == OriginalType_name)
                 return p->OriginalType();
-        } else if (property_name == NextCloserToOriginalPlanetType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == NextCloserToOriginalPlanetType_name)
                 return p->NextCloserToOriginalPlanetType();
-        } else if (property_name == NextBetterPlanetType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == NextBetterPlanetType_name)
                 return p->NextBetterPlanetTypeForSpecies();
-        } else if (property_name == ClockwiseNextPlanetType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == ClockwiseNextPlanetType_name)
                 return p->ClockwiseNextPlanetType();
-        } else if (property_name == CounterClockwiseNextPlanetType_name) {
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            else if (property_name == CounterClockwiseNextPlanetType_name)
                 return p->CounterClockwiseNextPlanetType();
         }
 
@@ -366,12 +359,12 @@ namespace ValueRef {
         IF_CURRENT_VALUE(PlanetEnvironment)
 
         if (property_name == PlanetEnvironment_name) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+            TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
                 Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_PLANET_ENVIRONMENT;
             }
-            if (const Planet* p = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object))
                 return p->EnvironmentForSpecies();
         }
 
@@ -387,17 +380,17 @@ namespace ValueRef {
         IF_CURRENT_VALUE(UniverseObjectType)
 
         if (property_name == ObjectType_name) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+            TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
                 Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_UNIVERSE_OBJECT_TYPE;
             }
             ObjectTypeVisitor v;
-            if (object->Accept(v))
+            if (object->Accept(object, v))
                 return v.m_type;
-            else if (dynamic_cast<const PopCenter*>(object))
+            else if (dynamic_ptr_cast<const PopCenter>(object))
                 return OBJ_POP_CENTER;
-            else if (dynamic_cast<const ResourceCenter*>(object))
+            else if (dynamic_ptr_cast<const ResourceCenter>(object))
                 return OBJ_PROD_CENTER;
         }
 
@@ -412,22 +405,20 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(StarType)
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return INVALID_STAR_TYPE;
         }
-
-        if (property_name == StarType_name) {
-            if (const System* s = universe_object_cast<const System*>(object))
+        
+        if (TemporaryPtr<const System> s = universe_object_ptr_cast<const System>(object)) {
+            if (property_name == StarType_name)
                 return s->GetStarType();
-        } else if (property_name == NextOlderStarType_name) {
-            if (const System* s = universe_object_cast<const System*>(object))
+            else if (property_name == NextOlderStarType_name)
                 return s->NextOlderStarType();
-        } else if (property_name == NextYoungerStarType_name) {
-            if (const System* s = universe_object_cast<const System*>(object))
+            else if (property_name == NextYoungerStarType_name)
                 return s->NextYoungerStarType();
-        } 
+        }
 
         Logger().errorStream() << "Variable<StarType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_STAR_TYPE;
@@ -454,7 +445,7 @@ namespace ValueRef {
             return 0.0;
         }
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                                        m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
@@ -486,15 +477,15 @@ namespace ValueRef {
             return object->Y();
 
         } else if (property_name == SizeAsDouble_name) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->SizeAsInt();
 
         } else if (property_name == DistanceFromOriginalType_name) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->DistanceFromOriginalType();
 
         } else if (property_name == NextTurnPopGrowth_name) {
-            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
+            if (TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(object))
                 return pop->NextTurnPopGrowth();
 
         } else if (property_name == CurrentTurn_name) {
@@ -522,7 +513,7 @@ namespace ValueRef {
             return 0;
         }
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                                        m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
@@ -538,67 +529,67 @@ namespace ValueRef {
         } else if (property_name == Age_name) {
             return object->AgeInTurns();
         } else if (property_name == ProducedByEmpireID_name) {
-            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->ProducedByEmpireID();
-            else if (const Building* building = universe_object_cast<const Building*>(object))
+            else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->ProducedByEmpireID();
             else
                 return ALL_EMPIRES;
         } else if (property_name == DesignID_name) {
-            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->DesignID();
             else
                 return ShipDesign::INVALID_DESIGN_ID;
         } else if (property_name == Species_name) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
-            else if (const Ship* ship = universe_object_cast<const Ship*>(object))
+            else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
             else
                 return -1;
         } else if (property_name == FleetID_name) {
-            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->FleetID();
-            else if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+            else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == PlanetID_name) {
-            if (const Building* building = universe_object_cast<const Building*>(object))
+            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->PlanetID();
-            else if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == SystemID_name) {
             return object->SystemID();
         } else if (property_name == FinalDestinationID_name) {
-            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->FinalDestinationID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == NextSystemID_name) {
-            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->NextSystemID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == PreviousSystemID_name) {
-            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->PreviousSystemID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == NumShips_name) {
-            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->NumShips();
             else
                 return 0;
         } else if (property_name == LastTurnBattleHere_name) {
-            if (const System* system = universe_object_cast<const System*>(object))
+            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(object))
                 return system->LastTurnBattleHere();
             else
                 return INVALID_GAME_TURN;
         } else if (property_name == Orbit_name) {
-            if (const System* system = GetSystem(object->SystemID()))
+            if (TemporaryPtr<const System> system = GetSystem(object->SystemID()))
                 return system->OrbitOfObjectID(object->ID());
             return -1;
         }
@@ -620,7 +611,7 @@ namespace ValueRef {
             return "";
         }
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return "";
@@ -629,15 +620,15 @@ namespace ValueRef {
         if (property_name == Name_name) {
             return object->Name();
         } else if (property_name == Species_name) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->SpeciesName();
-            else if (const Ship* ship = universe_object_cast<const Ship*>(object))
+            else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->SpeciesName();
         } else if (property_name == BuildingType_name) {
-            if (const Building* building = universe_object_cast<const Building*>(object))
+            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->BuildingTypeName();
         } else if (property_name == Focus_name) {
-            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->Focus();
         }
 
@@ -666,7 +657,7 @@ namespace ValueRef {
             return condition_matches.empty() ? 0.0 : 1.0;
 
         // evaluate property for each condition-matched object
-        std::map<const UniverseObject*, double> object_property_values;
+        std::map<TemporaryPtr<const UniverseObject>, double> object_property_values;
         GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         return ReduceData(object_property_values);
@@ -686,7 +677,7 @@ namespace ValueRef {
             return condition_matches.empty() ? 0 : 1;
 
         // evaluate property for each condition-matched object
-        std::map<const UniverseObject*, int> object_property_values;
+        std::map<TemporaryPtr<const UniverseObject>, int> object_property_values;
         GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         return ReduceData(object_property_values);
@@ -707,7 +698,7 @@ namespace ValueRef {
             return "";
 
         // evaluate property for each condition-matched object
-        std::map<const UniverseObject*, std::string> object_property_values;
+        std::map<TemporaryPtr<const UniverseObject>, std::string> object_property_values;
         GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         // count number of each result, tracking which has the most occurances
@@ -715,7 +706,7 @@ namespace ValueRef {
         std::map<std::string, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
         unsigned int max_seen(0);
 
-        for (std::map<const UniverseObject*, std::string>::const_iterator it = object_property_values.begin();
+        for (std::map<TemporaryPtr<const UniverseObject>, std::string>::const_iterator it = object_property_values.begin();
              it != object_property_values.end(); ++it)
         {
             const std::string& property_value = it->second;

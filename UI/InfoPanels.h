@@ -29,6 +29,7 @@ class BuildingType;
 class StatisticIcon;
 class CUIDropDownList;
 class CensusListBox;
+template <class T> class TemporaryPtr;
 namespace GG {
     class StaticGraphic;
 }
@@ -67,19 +68,19 @@ private:
 
     void                DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    const PopCenter*    GetPopCenter() const;           ///< returns the PopCenter object with id m_popcenter_id
+    TemporaryPtr<const PopCenter>   GetPopCenter() const;           ///< returns the PopCenter object with id m_popcenter_id
 
-    int                         m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
+    int                             m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    StatisticIcon*              m_pop_stat;             ///< icon and number of population
-    StatisticIcon*              m_happiness_stat;       ///< icon and number of happiness
+    StatisticIcon*                  m_pop_stat;             ///< icon and number of population
+    StatisticIcon*                  m_happiness_stat;       ///< icon and number of happiness
 
-    MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population
-    MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
+    MultiIconValueIndicator*        m_multi_icon_value_indicator;   ///< textually / numerically indicates population
+    MultiMeterStatusBar*            m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    GG::Button*                 m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    static std::map<int, bool>  s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+    static std::map<int, bool>      s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Shows resource meters with meter-bars */

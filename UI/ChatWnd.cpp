@@ -106,13 +106,13 @@ void MessageWndEdit::FindGameWords() {
         m_gameWords.insert(it->second->PlayerName());
     }
     // add system names
-    std::vector<System*> systems = GetUniverse().Objects().FindObjects<System>();
+    std::vector<TemporaryPtr<System> > systems = GetUniverse().Objects().FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         if (systems[i]->Name() != "")
             m_gameWords.insert(systems[i]->Name());
     }
      // add ship names
-    std::vector<Ship*> ships = GetUniverse().Objects().FindObjects<Ship>();
+    std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
     for (unsigned int i = 0; i < ships.size(); ++i) {
         if (ships[i]->Name() != "")
             m_gameWords.insert(ships[i]->Name());

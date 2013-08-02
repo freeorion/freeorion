@@ -27,7 +27,7 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_focus(rhs.m_focus)
 {}
 
-void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis) {
+void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis) {
     if (copied_object == this)
         return;
     if (!copied_object) {
@@ -56,7 +56,7 @@ void ResourceCenter::Init() {
 const std::string& ResourceCenter::Focus() const
 { return m_focus; }
 
-std::vector<std::string> ResourceCenter::AvailableFoci() const
+std::vector<std::string> ResourceCenter::AvailableFoci(TemporaryPtr<const ResourceCenter> res) const
 { return std::vector<std::string>(); }
 
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
@@ -107,19 +107,23 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
         return current_meter_value;
 }
 
-void ResourceCenter::SetFocus(const std::string& focus) {
+void SetFocus(TemporaryPtr<ResourceCenter> res, const std::string& focus) {
     if (focus.empty()) {
-        m_focus.clear();
-        ResourceCenterChangedSignal();
+        res->ClearFocus();
         return;
     }
-    std::vector<std::string> avail_foci = AvailableFoci();
+    std::vector<std::string> avail_foci = res->AvailableFoci(res);
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
-        m_focus = focus;
-        ResourceCenterChangedSignal();
+        res->m_focus = focus;
+        res->ResourceCenterChangedSignal();
         return;
     }
-    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
+    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << res->Dump();
+}
+
+void ResourceCenter::ClearFocus() {
+    m_focus.clear();
+    ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {

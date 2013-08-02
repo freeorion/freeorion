@@ -34,22 +34,6 @@ public:
     typedef ShipIDSet::iterator         iterator;                       ///< an iterator to the ships in the fleet
     typedef ShipIDSet::const_iterator   const_iterator;                 ///< a const iterator to the ships in the fleet
 
-    /** \name Structors */ //@{
-    Fleet() :
-        UniverseObject(),
-        m_moving_to(INVALID_OBJECT_ID),
-        m_prev_system(INVALID_OBJECT_ID),
-        m_next_system(INVALID_OBJECT_ID),
-        m_aggressive(true),
-        m_travel_distance(0.0),
-        m_arrived_this_turn(false),
-        m_arrival_starlane(INVALID_OBJECT_ID)
-    {}
-    Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
-
-    virtual Fleet*                      Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
-    //@}
-
     /** \name Accessors */ //@{
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType          ObjectType() const;
@@ -97,7 +81,8 @@ public:
     int                                 NumShips() const                    { return m_ships.size(); }  ///< Returns number of ships in fleet.
     bool                                Empty() const                       { return m_ships.empty(); } ///< Returns true if fleet contains no ships, false otherwise.
     virtual bool                        Contains(int object_id) const;      ///< Returns true iff this Fleet contains a ship with ID \a id.
-    virtual std::vector<UniverseObject*>FindObjects() const;                ///< returns objects contained within this fleet
+    virtual std::vector<TemporaryPtr<UniverseObject> >
+                                        FindObjects() const;                ///< returns objects contained within this fleet
     virtual std::vector<int>            FindObjectIDs() const;              ///< returns ids of objects contained within this fleet
 
     /** Returns true iff this fleet is moving, but the route is unknown.  This
@@ -115,18 +100,18 @@ public:
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
 
-    virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     void                    SetRoute(const std::list<int>& route);          ///< sets this fleet to move through the series of systems in the list, in order
     void                    CalculateRoute() const;                         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to its current destination system
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
-
-    virtual void            MovementPhase();
+    
+    virtual void            MovementPhase(TemporaryPtr<UniverseObject> obj);
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     void                    AddShips(const std::vector<int>& ship_ids);     ///< adds the ships to the fleet
@@ -141,6 +126,8 @@ public:
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
     void                    SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
     void                    ClearArrivalFlag() { m_arrived_this_turn = false; } ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
+
+    virtual void            ResetTargetMaxUnpairedMeters();
     //@}
 
     /* returns a name for a fleet based on the specified \a ship_ids */
@@ -151,7 +138,26 @@ public:
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
 protected:
-    virtual void            ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    Fleet() :
+        UniverseObject(),
+        m_moving_to(INVALID_OBJECT_ID),
+        m_prev_system(INVALID_OBJECT_ID),
+        m_next_system(INVALID_OBJECT_ID),
+        m_aggressive(true),
+        m_travel_distance(0.0),
+        m_arrived_this_turn(false),
+        m_arrival_starlane(INVALID_OBJECT_ID)
+    {}
+    Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
+    
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~Fleet() {}
+
+    virtual Fleet*          Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
+    //@}
 
 private:
     ///< removes any systems on the route after the specified system

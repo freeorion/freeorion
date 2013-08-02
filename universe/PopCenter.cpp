@@ -26,7 +26,7 @@ PopCenter::PopCenter() :
 PopCenter::~PopCenter()
 {}
 
-void PopCenter::Copy(const PopCenter* copied_object, Visibility vis) {
+void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis) {
     if (copied_object == this)
         return;
     if (!copied_object) {

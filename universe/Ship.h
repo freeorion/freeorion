@@ -11,7 +11,7 @@ class Fighter;
 class Fleet;
 class ShipDesign;
 
-/** a class representing a single FreeOrion ship*/
+/** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship : public UniverseObject {
 public:
     // map from part type name to (number of parts in the design of that type,
@@ -19,14 +19,6 @@ public:
     typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
 
     typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
-
-    /** \name Structors */ //@{
-    Ship();                                         ///< default ctor
-    Ship(int empire_id, int design_id, const std::string& species_name,
-         int produced_by_empire_id = ALL_EMPIRES);  ///< general ctor taking ship's empire and design id, species name and production empire id.
-
-    virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
-    //@}
 
     /** \name Accessors */ //@{
     virtual std::set<std::string>
@@ -54,7 +46,8 @@ public:
     const ConsumablesMap&       Fighters() const            { return m_fighters; }
     const ConsumablesMap&       Missiles() const            { return m_missiles; }
 
-    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
@@ -73,7 +66,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
 
@@ -95,10 +88,24 @@ public:
     void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+
+    virtual void    ResetTargetMaxUnpairedMeters();
     //@}
 
 protected:
-    virtual void    ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    Ship();                                         ///< default ctor
+    Ship(int empire_id, int design_id, const std::string& species_name,
+         int produced_by_empire_id = ALL_EMPIRES);  ///< general ctor taking ship's empire and design id, species name and production empire id.
+    
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~Ship() {}
+
+    virtual Ship*   Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
+    //@}
+
 
 private:
     virtual void    PopGrowthProductionResearchPhase();

@@ -140,7 +140,7 @@ void ResourcePool::Update() {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<std::set<int>, std::set<const UniverseObject*> > system_groups_to_object_groups;
+    std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > > system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
@@ -151,7 +151,7 @@ void ResourcePool::Update() {
          obj_it != m_object_ids.end(); ++obj_it)
     {
         int object_id = *obj_it;
-        const UniverseObject* obj = GetUniverseObject(object_id);
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             Logger().errorStream() << "ResourcePool::Update couldn't find object with id " << object_id;
             continue;
@@ -190,16 +190,16 @@ void ResourcePool::Update() {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (std::map<std::set<int>, std::set<const UniverseObject*> >::const_iterator object_group_it = system_groups_to_object_groups.begin();
+    for (std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > >::const_iterator object_group_it = system_groups_to_object_groups.begin();
          object_group_it != system_groups_to_object_groups.end(); ++object_group_it)
     {
-        const std::set<const UniverseObject*>& object_group = object_group_it->second;
+        const std::set<TemporaryPtr<const UniverseObject> >& object_group = object_group_it->second;
         std::set<int> object_group_ids;
         double total_group_production = 0.0;
-        for (std::set<const UniverseObject*>::const_iterator obj_it = object_group.begin();
+        for (std::set<TemporaryPtr<const UniverseObject> >::const_iterator obj_it = object_group.begin();
              obj_it != object_group.end(); ++obj_it)
         {
-            const UniverseObject* obj = *obj_it;
+            TemporaryPtr<const UniverseObject> obj = *obj_it;
             if (obj->GetMeter(meter_type))
                 total_group_production += obj->CurrentMeterValue(meter_type);
             object_group_ids.insert(obj->ID());
@@ -235,11 +235,9 @@ void PopulationPool::Update() {
     double future_population = 0.0;
     // sum population from all PopCenters in this pool
     for (std::vector<int>::const_iterator it = m_pop_center_ids.begin(); it != m_pop_center_ids.end(); ++it) {
-        if (const UniverseObject* obj = GetUniverseObject(*it)) {
-            if (const PopCenter* center = dynamic_cast<const PopCenter*>(obj)) {
-                m_population += center->CurrentMeterValue(METER_POPULATION);
-                future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
-            }
+        if (TemporaryPtr<const PopCenter> center = GetPopCenter(*it)) {
+            m_population += center->CurrentMeterValue(METER_POPULATION);
+            future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
         }
     }
     m_growth = future_population - m_population;

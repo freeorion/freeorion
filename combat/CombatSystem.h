@@ -41,12 +41,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const System*   GetSystem() const;  ///< returns System object in this CombatInfo's objects if one exists with id system_id
+    TemporaryPtr<const System>  GetSystem() const;  ///< returns System object in this CombatInfo's objects if one exists with id system_id
     //@}
 
     /** \name Mutators */ //@{
-    void            Clear();            ///< cleans up contents
-    System*         GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
+    //void                        Clear();            ///< cleans up contents
+    TemporaryPtr<System>        GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
     //@}
 
     int                                 turn;                       ///< main game turn

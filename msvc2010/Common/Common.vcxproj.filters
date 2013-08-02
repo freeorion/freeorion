@@ -238,6 +238,9 @@
     <ClInclude Include="..\..\util\ScopedTimer.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\TemporaryPtr.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">

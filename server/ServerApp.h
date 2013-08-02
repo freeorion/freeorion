@@ -157,14 +157,14 @@ public:
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     Universe&                   GetUniverse();    ///< returns server's copy of Universe
     EmpireManager&              Empires();        ///< returns the server's copy of the Empires
-    UniverseObject*             GetUniverseObject(int object_id);
+    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
-    UniverseObject*             EmpireKnownObject(int object_id, int empire_id);
+    TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
 
     CombatData*                 CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
-    std::string                 GetVisibleObjectName(const UniverseObject* object);
+    std::string                 GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
 
     /** returns a universe object ID which can be used for new objects.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */

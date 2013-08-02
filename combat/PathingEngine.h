@@ -83,7 +83,7 @@ public:
     static const std::size_t UPDATE_SETS;
     static const std::size_t SECONDS_PER_TURN;
 
-    static const std::map<int, UniverseObject*>* s_combat_universe;
+    static const std::map<int, TemporaryPtr<UniverseObject> >* s_combat_universe;
 
 private:
     void RemoveFighter(const CombatFighterPtr& fighter,
@@ -128,7 +128,7 @@ PathingEngine::CreateFighterFormation(CombatShipPtr base, Iter first, Iter last)
 {
     assert(first != last);
     assert(!base->GetShip().Unowned());
-    int empire_id = base->GetShip().Owner();
+    int empire_id = base->GetShip()->Owner();
 
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
     CombatFighterPtr fighter(new CombatFighter(CombatObjectPtr(), empire_id, *this));

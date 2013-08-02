@@ -84,7 +84,7 @@ namespace {
                     m_valid = false;
                     return;
                 }
-                const UniverseObject* obj = GetUniverseObject(object_id);
+                TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
                 if (!obj) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get object with ID " << object_id;
                     m_str += UserString("ERROR");

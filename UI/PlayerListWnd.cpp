@@ -220,7 +220,7 @@ namespace {
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
             for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>(); ship_it != objects.const_end<Ship>(); ++ship_it) {
-                const Ship* ship = *ship_it;
+                TemporaryPtr<const Ship> ship = *ship_it;
                 if (empire) {
                     if (ship->Owner() == empire->EmpireID()
                         && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end()
@@ -231,7 +231,7 @@ namespace {
             }
 
             for (ObjectMap::const_iterator<Planet> planet_it = objects.const_begin<Planet>(); planet_it != objects.const_end<Planet>(); ++planet_it) {
-                const Planet* planet = *planet_it;
+                TemporaryPtr<const Planet> planet = *planet_it;
                 if (empire) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;

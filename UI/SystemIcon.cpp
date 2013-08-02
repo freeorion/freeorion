@@ -55,7 +55,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    const System* system = GetSystem(system_id);
+    TemporaryPtr<const System> system = GetSystem(system_id);
     if (!system)
         return;
 
@@ -74,10 +74,10 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // or have a shipyard, or have neutral population
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
-    std::vector<const Planet*> system_planets;
-    std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
+    std::vector<TemporaryPtr<const Planet> > system_planets;
+    std::vector<TemporaryPtr<const Planet>> planets = objects.FindObjects<Planet>();
+    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        TemporaryPtr<const Planet> planet = *it;
         if (planet->SystemID() != system_id)
             continue;
         if (known_destroyed_object_ids.find(planet->ID()) != known_destroyed_object_ids.end())
@@ -86,8 +86,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     }
 
     std::set<int> owner_empire_ids;
-    for (std::vector<const Planet*>::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
-        const Planet* planet = *it;
+    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
+        TemporaryPtr<const Planet> planet = *it;
         int planet_id = planet->ID();
 
         // is planet a capital?
@@ -116,7 +116,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
             for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
                 if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
                     continue;
-                const Building* building = objects.Object<Building>(*building_it);
+                TemporaryPtr<const Building> building = objects.Object<Building>(*building_it);
                 if (!building)
                     continue;
                 // annoying hard-coded building name here... not sure how better to deal with it
@@ -190,7 +190,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetSystem(m_system_id)) {
+    if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -559,7 +559,7 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    const System* system = GetSystem(m_system_id);
+    TemporaryPtr<const System> system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);

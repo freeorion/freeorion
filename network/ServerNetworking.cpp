@@ -87,8 +87,12 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-void PlayerConnection::SendMessage(const Message& message)
-{ WriteMessage(m_socket, message); }
+void PlayerConnection::SendMessage(const Message& message) {
+    /*if (TRACE_EXECUTION)
+        Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
+                               << message;*/
+    WriteMessage(m_socket, message);
+}
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
                                        Networking::ClientType client_type)
@@ -145,17 +149,18 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
 {
     if (error) {
         if (error == boost::asio::error::eof ||
-            error == boost::asio::error::connection_reset)
+            error == boost::asio::error::connection_reset) {
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
-        else
+        } else {
             Logger().errorStream() << "PlayerConnection::HandleMessageBodyRead(): error \""
                                    << error << "\"";
+        }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
-            //if (TRACE_EXECUTION)
-                //Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
-                //                       << "received message " << m_incoming_message;
+            if (TRACE_EXECUTION)
+                Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
+                                       << "received message " << m_incoming_message;
             if (EstablishedPlayer()) {
                 EventSignal(boost::bind(m_player_message_callback,
                                         m_incoming_message,
@@ -179,7 +184,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // as I can see.  It is here because without it, there are
         // intermittent problems, like the server gets a disconnect event for
         // each connection, just after the connection.  I cannot figure out
-        // whay this is so, but putting a pause in place seems to at least
+        // why this is so, but putting a pause in place seems to at least
         // mask the problem.  For now, this is sufficient, since rapid
         // connects and disconnects are not a priority.
         if (m_new_connection) {
@@ -188,11 +193,12 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
-                error == boost::asio::error::connection_reset)
+                error == boost::asio::error::connection_reset) {
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
-            else
+            } else {
                 Logger().errorStream() << "PlayerConnection::HandleMessageHeaderRead(): "
                                        << "error \"" << error << "\"";
+            }
         }
     } else {
         m_new_connection = false;
@@ -329,9 +335,6 @@ bool ServerNetworking::ModeratorsInGame() const {
 void ServerNetworking::SendMessage(const Message& message,
                                    PlayerConnectionPtr player_connection)
 {
-    //if (TRACE_EXECUTION)
-    //    Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
-    //                           << message;
     player_connection->SendMessage(message);
 }
 
@@ -374,9 +377,13 @@ void ServerNetworking::Disconnect(int id) {
 }
 
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
-{ DisconnectImpl(player_connection); }
+{
+    Logger().debugStream() << "ServerNetworking::Disconnect";
+    DisconnectImpl(player_connection);
+}
 
 void ServerNetworking::DisconnectAll() {
+    Logger().debugStream() << "ServerNetworking::DisconnectAll";
     for (const_iterator it = m_player_connections.begin();
          it != m_player_connections.end(); ) {
         PlayerConnectionPtr player_connection = *it++;

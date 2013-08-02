@@ -29,10 +29,8 @@ void ObjectMap::serialize(Archive& ar, const unsigned int version)
     ar & BOOST_SERIALIZATION_NVP(m_objects);
 
     // If loading from the archive, propagate the changes to the specialized maps.
-    // This involves a lot of casting, 
-    if (Archive::is_loading::value) {
+    if (Archive::is_loading::value)
         CopyObjectsToSpecializedMaps();
-    }
 }
 
 template <class Archive>
@@ -78,7 +76,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     Logger().debugStream() << "Universe::serialize : (de)serializing actual objects";
     ar  & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
-    Logger().debugStream() << "Universe::serialize : (de)serializing empre known objects";
+    Logger().debugStream() << "Universe::serialize : (de)serializing empire known objects";
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
     Logger().debugStream() << "Universe::serialize : (de)serializing last allocated ids";
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
@@ -260,11 +258,11 @@ void System::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigne
 void Serialize(freeorion_oarchive& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 
-void Serialize(freeorion_oarchive& oa, const std::map<int, UniverseObject*>& objects)
+void Serialize(freeorion_oarchive& oa, const std::map<int, TemporaryPtr<UniverseObject> >& objects)
 { oa << BOOST_SERIALIZATION_NVP(objects); }
 
 void Deserialize(freeorion_iarchive& ia, Universe& universe)
 { ia >> BOOST_SERIALIZATION_NVP(universe); }
 
-void Deserialize(freeorion_iarchive& ia, std::map<int, UniverseObject*>& objects)
+void Deserialize(freeorion_iarchive& ia, std::map<int, TemporaryPtr<UniverseObject> >& objects)
 { ia >> BOOST_SERIALIZATION_NVP(objects); }

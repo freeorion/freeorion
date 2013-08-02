@@ -202,8 +202,8 @@ namespace {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const UniverseObject* prev = GetEmpireKnownObject(lane.first, empire_id);
-        const UniverseObject* next = GetEmpireKnownObject(lane.second, empire_id);
+        TemporaryPtr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
+        TemporaryPtr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
             Logger().errorStream() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -1375,7 +1375,7 @@ void MapWnd::RenderSystems() {
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (const System* system = GetSystem(it->first))
+                if (TemporaryPtr<const System> system = GetSystem(it->first))
                     if (system->NumStarlanes() > 0)
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
             }
@@ -1643,7 +1643,7 @@ void MapWnd::RenderVisibilityRadii() {
         if (stale_object_ids.find(object_id) != stale_object_ids.end())
             continue;
 
-        const UniverseObject* obj = *it;
+        TemporaryPtr<const UniverseObject> obj = *it;
 
         // skip unowned objects
         if (obj->Unowned())
@@ -1657,10 +1657,10 @@ void MapWnd::RenderVisibilityRadii() {
         if (obj->ObjectType() == OBJ_FLEET)
             continue;
         if (obj->ObjectType() == OBJ_SHIP) {
-            const Ship* ship = universe_object_cast<const Ship*>(obj);
+            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
+            TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
             if (!fleet)
                 continue;
             int cur_id = fleet->SystemID();
@@ -1916,7 +1916,7 @@ void MapWnd::InitTurn() {
     //Logger().debugStream() << Empires().Dump();
     //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;
     //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
-    //    const UniverseObject* obj = const_universe.Object(*it);
+    //    TemporaryPtr<const UniverseObject> obj = const_universe.Object(*it);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
     //    else
@@ -1953,9 +1953,9 @@ void MapWnd::InitTurn() {
     InitTurnRendering();
 
     // connect system fleet add and remove signals
-    std::vector<const System*> systems = objects.FindObjects<System>();
-    for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-        const System *system = *it;
+    std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+    for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+        TemporaryPtr<const System> system = *it;
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal,
                                                                      &MapWnd::FleetAddedOrRemoved,   this));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal,
@@ -2033,7 +2033,7 @@ void MapWnd::InitTurn() {
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (const UniverseObject* obj = objects.Object(this_client_empire->CapitalID())) {
+        if (TemporaryPtr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -2131,9 +2131,9 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    std::vector<const System*> systems = objects.FindObjects<System>();
-    for (std::vector<const System*>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
-        const System* sys = *sys_it;
+    std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+    for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+        TemporaryPtr<const System> sys = *sys_it;
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -2170,9 +2170,9 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    std::vector<const Field*> fields = objects.FindObjects<Field>();
-    for (std::vector<const Field*>::const_iterator fld_it = fields.begin(); fld_it != fields.end(); ++fld_it) {
-        const Field* field = *fld_it;
+    std::vector<TemporaryPtr<const Field> > fields = objects.FindObjects<Field>();
+    for (std::vector<TemporaryPtr<const Field> >::const_iterator fld_it = fields.begin(); fld_it != fields.end(); ++fld_it) {
+        TemporaryPtr<const Field> field = *fld_it;
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -2230,7 +2230,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
-        const System* system = GetSystem(system_id);
+        TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2362,8 +2362,8 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
     while (!tryNext.empty() ) {
         int sysID = tryNext.front();
         //Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers  ==> GetLeastJumps, checking system "<< sysID;
-        for (System::const_lane_iterator laneIt= universe_object_cast<System*>(objMap.Object(sysID))->begin_lanes(); 
-             laneIt!= universe_object_cast<System*>(objMap.Object(sysID))->end_lanes(); laneIt++)
+        for (System::const_lane_iterator laneIt= universe_object_ptr_cast<System>(objMap.Object(sysID))->begin_lanes(); 
+             laneIt!= universe_object_ptr_cast<System>(objMap.Object(sysID))->end_lanes(); laneIt++)
         {
             int newSys = laneIt->first;
             std::pair<int, int> lane_forward = std::make_pair(sysID, newSys);
@@ -2433,7 +2433,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 int object_id = *objIt;
                 thisPool += boost::lexical_cast<std::string>(object_id) +", ";
 
-                const Planet* planet = GetPlanet(object_id);
+                TemporaryPtr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
                     continue;
 
@@ -2510,7 +2510,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        const System* start_system = GetSystem(system_id);
+        TemporaryPtr<const System> start_system = GetSystem(system_id);
         if (!start_system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2527,7 +2527,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
-            const System* dest_system = GetSystem(lane_it->first);
+            TemporaryPtr<const System> dest_system = GetSystem(lane_it->first);
             if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -2825,11 +2825,11 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
 }
 
 void MapWnd::CenterOnObject(int id) {
-    if (UniverseObject* obj = GetUniverseObject(id))
+    if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
-void MapWnd::CenterOnObject(const UniverseObject* obj) {
+void MapWnd::CenterOnObject(TemporaryPtr<const UniverseObject> obj) {
     if (!obj) return;
     CenterOnMapCoord(obj->X(), obj->Y());
 }
@@ -2841,7 +2841,7 @@ void MapWnd::ReselectLastSystem() {
 
 void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    const System* system = GetSystem(system_id);
+    TemporaryPtr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -2901,7 +2901,7 @@ void MapWnd::ReselectLastFleet() {
     //// DEBUG
     //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
     //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
-    //    const UniverseObject* obj = GetUniverse().Object(*it);
+    //    TemporaryPtr<const UniverseObject> obj = GetUniverse().Object(*it);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
     //    else
@@ -2913,7 +2913,7 @@ void MapWnd::ReselectLastFleet() {
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
-        const Fleet* fleet = objects.Object<Fleet>(*it);
+        TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(*it);
         if (!fleet)
             missing_fleets.insert(*it);
     }
@@ -2934,7 +2934,7 @@ void MapWnd::SelectPlanet(int planetID)
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
-void MapWnd::SelectFleet(Fleet* fleet) {
+void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -2972,7 +2972,7 @@ void MapWnd::SelectFleet(Fleet* fleet) {
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
-        System* system = GetSystem(fleet->SystemID());
+        TemporaryPtr<System> system = GetSystem(fleet->SystemID());
 
         // create fleetwnd to show fleet to be selected (actual selection occurs below).
         if (system) {
@@ -3032,7 +3032,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    const Fleet* fleet = GetFleet(fleet_id);
+    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -3079,7 +3079,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
 
     // ensure passed fleet exists
-    const Fleet* fleet = GetFleet(fleet_id);
+    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -3163,7 +3163,7 @@ void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System* system = GetSystem(it->first);
+        TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
@@ -3180,7 +3180,7 @@ void MapWnd::DoFieldIconsLayout() {
     for (std::map<int, FieldIcon*>::const_iterator field_it = m_field_icons.begin();
          field_it != m_field_icons.end(); ++field_it)
     {
-        const Field* field = GetField(field_it->first);
+        TemporaryPtr<const Field> field = GetField(field_it->first);
         if (!field) {
             Logger().errorStream() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_it->first;
             continue;
@@ -3201,7 +3201,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position departing fleet buttons
     for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
         // calculate system icon position
-        const System* system = GetSystem(it->first);
+        TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
@@ -3231,7 +3231,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position stationary fleet buttons
     for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
         // calculate system icon position
-        const System* system = GetSystem(it->first);
+        TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
@@ -3263,7 +3263,7 @@ void MapWnd::DoFleetButtonsLayout() {
         FleetButton* fb = *it;
 
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-        const Fleet* fleet = 0;
+        TemporaryPtr<const Fleet> fleet;
 
         // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
         if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
@@ -3283,7 +3283,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 }
 
-std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const {
+std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const {
     if (!fleet) {
         return std::make_pair<double, double>(double(UniverseObject::INVALID_POSITION), double(UniverseObject::INVALID_POSITION));
     }
@@ -3320,13 +3320,16 @@ void MapWnd::RefreshFleetButtons() {
 
     // for each system, each empire's fleets that are ordered to move,
     // but still at the system: "departing fleets"
-    std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
-    std::vector<const UniverseObject*> departing_fleet_objects = objects.FindObjects(OrderedMovingFleetVisitor());
-    for (std::vector<const UniverseObject*>::iterator it = departing_fleet_objects.begin();
+    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > departing_fleets;
+    std::vector<TemporaryPtr<const UniverseObject> > departing_fleet_objects = objects.FindObjects(OrderedMovingFleetVisitor());
+    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = departing_fleet_objects.begin();
         it != departing_fleet_objects.end(); ++it)
     {
-        const UniverseObject* obj = *it;
+        TemporaryPtr<const UniverseObject> obj = *it;
         int object_id = obj->ID();
+
+        if (verbose_logging)
+            Logger().debugStream() << "ordered-to-move fleet id: " << object_id;
 
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
@@ -3334,18 +3337,24 @@ void MapWnd::RefreshFleetButtons() {
         if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
             continue;
 
+        if (verbose_logging)
+            Logger().debugStream() << " ... not stale, not destroyed";
+
         // skip fleets outside systems
         if (obj->SystemID() == INVALID_OBJECT_ID)
             continue;
 
-        const System* system = GetSystem(obj->SystemID());
+        TemporaryPtr<const System> system = GetSystem(obj->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system with id " << obj->SystemID() << " of an departing fleet named " << obj->Name() << " in RefreshFleetButtons()";
             continue;
         }
 
+        if (verbose_logging)
+            Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
+
         // skip empty fleets
-        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -3357,12 +3366,12 @@ void MapWnd::RefreshFleetButtons() {
 
     // for each system, each empire's fleets in a system, not
     // ordered to move: "stationary fleets"
-    std::map<const System*, std::map<int, std::vector<const Fleet*> > > stationary_fleets;
-    std::vector<const UniverseObject*> stationary_fleet_objects = objects.FindObjects(StationaryFleetVisitor());
-    for (std::vector<const UniverseObject*>::iterator it = stationary_fleet_objects.begin();
+    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > stationary_fleets;
+    std::vector<TemporaryPtr<const UniverseObject> > stationary_fleet_objects = objects.FindObjects(StationaryFleetVisitor());
+    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = stationary_fleet_objects.begin();
          it != stationary_fleet_objects.end(); ++it)
     {
-        const UniverseObject* obj = *it;
+        TemporaryPtr<const UniverseObject> obj = *it;
         int object_id = obj->ID();
 
         if (verbose_logging)
@@ -3381,14 +3390,17 @@ void MapWnd::RefreshFleetButtons() {
         if (obj->SystemID() == INVALID_OBJECT_ID)
             continue;
 
-        const System* system = GetSystem(obj->SystemID());
+        TemporaryPtr<const System> system = GetSystem(obj->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
             continue;
         }
 
+        if (verbose_logging)
+            Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
+
         // skip empty fleets
-        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -3400,12 +3412,12 @@ void MapWnd::RefreshFleetButtons() {
 
     // for each universe location, map from empire id to fleets
     // moving along starlanes: "moving fleets"
-    std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > > moving_fleets;
-    std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-    for (std::vector<const UniverseObject*>::iterator it = moving_fleet_objects.begin();
+    std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > moving_fleets;
+    std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
+    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = moving_fleet_objects.begin();
          it != moving_fleet_objects.end(); ++it)
     {
-        const UniverseObject* obj = *it;
+        TemporaryPtr<const UniverseObject> obj = *it;
         int object_id = obj->ID();
 
         // skip known destroyed and stale info objects
@@ -3420,7 +3432,7 @@ void MapWnd::RefreshFleetButtons() {
         }
 
         // skip empty fleets
-        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -3453,23 +3465,23 @@ void MapWnd::RefreshFleetButtons() {
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
 
     // departing fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator
+    for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          departing_fleets_it = departing_fleets.begin();
          departing_fleets_it != departing_fleets.end(); ++departing_fleets_it)
     {
-        const System* system = departing_fleets_it->first;
+        TemporaryPtr<const System> system = departing_fleets_it->first;
         int system_id = system->ID();
-        const std::map<int, std::vector<const Fleet*> >& empires_map = departing_fleets_it->second;
+        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = departing_fleets_it->second;
 
         // create button for each empire's fleets
-        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<const Fleet*> fleets = empire_it->second;
+        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const std::vector<TemporaryPtr<const Fleet> > fleets = empire_it->second;
             if (fleets.empty())
                 continue;
 
             // buttons need fleet IDs
             std::vector<int> fleet_IDs;
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 fleet_IDs.push_back((*fleet_it)->ID());
 
             // create new fleetbutton for this cluster of fleets
@@ -3478,7 +3490,7 @@ void MapWnd::RefreshFleetButtons() {
             // store
             m_departing_fleet_buttons[system_id].insert(fb);
 
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
@@ -3488,23 +3500,23 @@ void MapWnd::RefreshFleetButtons() {
     }
 
     // stationary fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator
+    for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          stationary_fleets_it = stationary_fleets.begin();
          stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it)
     {
-        const System* system = stationary_fleets_it->first;
+        TemporaryPtr<const System> system = stationary_fleets_it->first;
         int system_id = system->ID();
-        const std::map<int, std::vector<const Fleet*> >& empires_map = stationary_fleets_it->second;
+        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = stationary_fleets_it->second;
 
         // create button for each empire's fleets
-        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<const Fleet*> fleets = empire_it->second;
+        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const std::vector<TemporaryPtr<const Fleet> > fleets = empire_it->second;
             if (fleets.empty())
                 continue;
 
             // buttons need fleet IDs
             std::vector<int> fleet_IDs;
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 fleet_IDs.push_back((*fleet_it)->ID());
 
             // create new fleetbutton for this cluster of fleets
@@ -3513,7 +3525,7 @@ void MapWnd::RefreshFleetButtons() {
             // store
             m_stationary_fleet_buttons[system_id].insert(fb);
 
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
@@ -3523,16 +3535,16 @@ void MapWnd::RefreshFleetButtons() {
     }
 
     // moving fleets
-    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator
+    for (std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          moving_fleets_it = moving_fleets.begin();
          moving_fleets_it != moving_fleets.end(); ++moving_fleets_it)
     {
-        const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
+        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = moving_fleets_it->second;
         //std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
 
         // create button for each empire's fleets
-        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<const Fleet*>& fleets = empire_it->second;
+        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const std::vector<TemporaryPtr<const Fleet> >& fleets = empire_it->second;
             if (fleets.empty())
                 continue;
 
@@ -3540,7 +3552,7 @@ void MapWnd::RefreshFleetButtons() {
 
             // buttons need fleet IDs
             std::vector<int> fleet_IDs;
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 fleet_IDs.push_back((*fleet_it)->ID());
 
             // create new fleetbutton for this cluster of fleets
@@ -3549,7 +3561,7 @@ void MapWnd::RefreshFleetButtons() {
             // store
             m_moving_fleet_buttons.insert(fb);
 
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
                 m_fleet_buttons[(*fleet_it)->ID()] = fb;
 
             AttachChild(fb);
@@ -3572,7 +3584,7 @@ void MapWnd::RefreshFleetButtons() {
         SetFleetMovementLine(it->second);
 }
 
-void MapWnd::FleetAddedOrRemoved(Fleet& fleet) {
+void MapWnd::FleetAddedOrRemoved(TemporaryPtr<Fleet> fleet) {
     RefreshFleetButtons();
     RefreshFleetSignals();
 }
@@ -3588,9 +3600,9 @@ void MapWnd::RefreshFleetSignals() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    std::vector<const Fleet*> fleets = objects.FindObjects<Fleet>();
-    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        const Fleet *fleet = *it;
+    std::vector<TemporaryPtr<const Fleet> > fleets = objects.FindObjects<Fleet>();
+    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<const Fleet> fleet = *it;
         m_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
     }
 }
@@ -3828,7 +3840,7 @@ void MapWnd::SystemRightClicked(int system_id) {
             }
         } else if (mas == MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
-            const System* system = GetSystem(system_id);
+            TemporaryPtr<const System> system = GetSystem(system_id);
             if (!system)
                 return;
             std::vector<int> object_ids = system->FindObjectIDs();
@@ -3836,7 +3848,7 @@ void MapWnd::SystemRightClicked(int system_id) {
             for (std::vector<int>::const_iterator it = object_ids.begin();
                  it != object_ids.end(); ++it)
             {
-                const UniverseObject* obj = GetUniverseObject(*it);
+                TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
                 if (!obj)
                     continue;
                 UniverseObjectType obj_type = obj->ObjectType();
@@ -3922,7 +3934,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
     for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
         int fleet_id = *it;
 
-        const Fleet* fleet = GetFleet(fleet_id);
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
             continue;
@@ -3950,9 +3962,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            const System* begin_sys = GetSystem(begin_id);
+            TemporaryPtr<const System> begin_sys = GetSystem(begin_id);
             int end_id = *route.rbegin();
-            const System* end_sys = GetSystem(end_id);
+            TemporaryPtr<const System> end_sys = GetSystem(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -3989,7 +4001,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         Logger().errorStream() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    const Fleet* first_fleet = GetFleet(btn_fleets[0]);
+    TemporaryPtr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
 
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
@@ -4216,9 +4228,9 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
 void MapWnd::HandleEmpireElimination(int empire_id)
 {}
 
-void MapWnd::UniverseObjectDeleted(const UniverseObject *obj) {
+void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     Logger().debugStream() << "MapWnd::UniverseObjectDeleted";
-    if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+    if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
         if (it1 != m_fleet_lines.end())
             m_fleet_lines.erase(it1);
@@ -4601,7 +4613,7 @@ void MapWnd::ShowProduction() {
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = GetUniverseObject(empire->CapitalID()))
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -4731,9 +4743,9 @@ void MapWnd::RefreshFleetResourceIndicator() {
 
     int total_fleet_count = 0;
     const ObjectMap& objects = Objects();
-    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
+    std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        TemporaryPtr<const Ship> ship = *it;
         if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
             total_fleet_count++;
     }
@@ -4828,8 +4840,8 @@ void MapWnd::RefreshPopulationIndicator() {
 
     //tally up all species population counts
     for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
-        const UniverseObject* obj = objects.Object(*it);
-        const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+        TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
+        TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj);
         if (!pc)
             continue;
 
@@ -4908,7 +4920,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
     for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
         int cur_object_id = *list_it;
 
-        const UniverseObject* cur_object = objects.Object(cur_object_id);
+        TemporaryPtr<const UniverseObject> cur_object = objects.Object(cur_object_id);
         if (!cur_object) {
             Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object with id " << cur_object_id;
             continue;
@@ -4963,7 +4975,7 @@ bool MapWnd::ZoomToHomeSystem() {
     int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitalID();
 
     if (id != INVALID_OBJECT_ID) {
-        const UniverseObject *object = GetUniverseObject(id);
+        TemporaryPtr<const UniverseObject> object = GetUniverseObject(id);
         if (!object) return false;
         CenterOnObject(object->SystemID());
         SelectSystem(object->SystemID());
@@ -5108,7 +5120,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     {
         const std::set<int>& objs = *set_set_it;
         for (std::set<int>::const_iterator set_it = objs.begin(); set_it != objs.end(); ++set_it) {
-            const UniverseObject* obj = GetUniverseObject(*set_it);
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*set_it);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -5360,7 +5372,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     //clean the fleet list by removing non-existing fleet, and extract the fleets waiting for orders
     for (std::set<int>::iterator it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
-        Fleet *fleet = GetFleet(*it);
+        TemporaryPtr<Fleet> fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
@@ -5388,7 +5400,7 @@ void MapWnd::DispatchFleetsExploring() {
     std::map<int, int> unknown_systems;
     std::set<int> supplyable_systems = empire->FleetSupplyableSystemIDs();
     for (std::set<int>::iterator it = candidates_unknown_systems.begin(); it != candidates_unknown_systems.end(); it ++) {
-        if (System* system = GetSystem(*it)){
+        if (TemporaryPtr<System> system = GetSystem(*it)){
             if (!empire->HasExploredSystem(system->ID()) && systems_being_explored.find(*it) == systems_being_explored.end()) {
                 //we compute the minimum distance to find a supplyable system
                 std::pair<int, int> pair = GetNearestSupplyPoint(empire, system->ID());
@@ -5414,7 +5426,7 @@ void MapWnd::DispatchFleetsExploring() {
         int better_fleet_id;
 
         for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); it ++){
-            Fleet *fleet = GetFleet(*it);
+            TemporaryPtr<Fleet> fleet = GetFleet(*it);
             if (fleet && fleet->MovePath().empty()) {
 
                 double far_min_dist = DBL_MAX;

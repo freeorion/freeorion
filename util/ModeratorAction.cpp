@@ -11,6 +11,8 @@
 #include <boost/serialization/export.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+// Some of the moderator actions are very similar to effects, the result of completing a build, and certain orders such as creating a new fleet.
+// TODO: eliminate duplication
 
 Moderator::ModeratorAction::ModeratorAction()
 {}
@@ -46,7 +48,7 @@ Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
 {}
 
 void Moderator::SetOwner::Execute() const {
-    UniverseObject* obj = GetUniverseObject(m_object_id);
+    TemporaryPtr<UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
         Logger().errorStream() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
@@ -76,12 +78,12 @@ Moderator::AddStarlane::AddStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::AddStarlane::Execute() const {
-    System* sys1 = GetSystem(m_id_1);
+    TemporaryPtr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
         Logger().errorStream() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    System* sys2 = GetSystem(m_id_2);
+    TemporaryPtr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
         Logger().errorStream() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -112,12 +114,12 @@ Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::RemoveStarlane::Execute() const {
-    System* sys1 = GetSystem(m_id_1);
+    TemporaryPtr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
         Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    System* sys2 = GetSystem(m_id_2);
+    TemporaryPtr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
         Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -166,13 +168,13 @@ namespace {
             LoadSystemNames(star_names);
 
         const ObjectMap& objects = Objects();
-        std::vector<const System*> systems = objects.FindObjects<System>();
+        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
 
         // pick a name for the system
         for (std::list<std::string>::const_iterator it = star_names.begin(); it != star_names.end(); ++it) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::vector<const System*>::const_iterator sys_it = systems.begin();
+            for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
                  sys_it != systems.end(); ++sys_it)
             {
                 if ((*sys_it)->Name() == *it) {
@@ -190,14 +192,11 @@ namespace {
 void Moderator::CreateSystem::Execute() const {
     const int MAX_SYSTEM_ORBITS = 9;    // hard coded value in UniverseServer.cpp
 
-    System* system = new System(m_star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), m_x, m_y);
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(m_star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), m_x, m_y);
     if (!system) {
         Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
         return;
     }
-
-    int new_id = GetNewObjectID();
-    GetUniverse().InsertID(system, new_id);
 }
 
 std::string Moderator::CreateSystem::Dump() const {
@@ -226,7 +225,7 @@ Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, Pla
 {}
 
 void Moderator::CreatePlanet::Execute() const {
-    System* location = GetSystem(m_system_id);
+    TemporaryPtr<System> location = GetSystem(m_system_id);
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -239,16 +238,14 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    Planet* planet = new Planet(m_planet_type, m_planet_size);
+    TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
     if (!planet) {
         Logger().errorStream() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
-    int new_planet_id = GetNewObjectID();
-    GetUniverse().InsertID(planet, new_planet_id);
 
     int orbit = *(free_orbits.begin());
-    location->Insert(planet, orbit);
+    location->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
 }
 
 std::string Moderator::CreatePlanet::Dump() const {

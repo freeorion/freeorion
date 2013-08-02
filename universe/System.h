@@ -35,25 +35,6 @@ public:
     typedef StarlaneMap::iterator               lane_iterator;          ///< iterator for starlanes and wormholes
     typedef StarlaneMap::const_iterator         const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
-    /** \name Structors */ //@{
-    System();                                                           ///< default ctor
-
-    /** general ctor.  \throw std::invalid_arugment May throw
-      * std::invalid_arugment if \a star is out of the range of StarType,
-      * \a orbits is negative, or either x or y coordinate is outside the map
-      * area.*/
-    System(StarType star, int orbits, const std::string& name, double x, double y);
-
-    /** general ctor.  \throw std::invalid_arugment May throw
-      * std::invalid_arugment if \a star is out of the range of StarType,
-      * \a orbits is negative, or either x or y coordinate is outside the map
-      * area.*/
-    System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
-           const std::string& name, double x, double y);
-
-    virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
-    //@}
-
     /** \name Accessors */ //@{
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType  ObjectType() const;
@@ -119,23 +100,24 @@ public:
 
     int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 
-    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                            Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
 
     const std::string&      OverlayTexture() const      { return m_overlay_texture; }
     double                  OverlaySize() const         { return m_overlay_size; }      ///< size in universe
 
-    mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
-    mutable boost::signal<void (Fleet& fleet)> FleetRemovedSignal;      ///< fleet is removed from system
+    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
+    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetRemovedSignal;      ///< fleet is removed from system
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     /** inserts a UniversObject into the system, though not in any particular
       * orbit.  Only objects free of any particular orbit, such as ships,
       * should be inserted using this function.  This function calls
       * obj->SetSystem(this), and obj->MoveTo( this system's position )*/
-    int                     Insert(UniverseObject* obj);
+    int                     Insert(TemporaryPtr<UniverseObject> obj);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound
       * objects, such as Planets, and planet-bound objects should be inserted
@@ -143,7 +125,7 @@ public:
       * obj->MoveTo( here )
       * \throw std::invalid_arugment May throw std::invalid_arugment if
       * \a orbit is out of the range [0, Orbits()].*/
-    int                     Insert(UniverseObject* obj, int orbit);
+    int                     Insert(TemporaryPtr<UniverseObject> obj, int orbit);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound
       * objects, such as Planets, and planet-bound objects should be inserted
@@ -177,10 +159,34 @@ public:
     lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
 
     void                    SetOverlayTexture(const std::string& texture, double size);
+
+    virtual void            ResetTargetMaxUnpairedMeters();
     //@}
 
 protected:
-    virtual void            ResetTargetMaxUnpairedMeters();
+    friend class Universe;
+    /** \name Structors */ //@{
+    System();                                                           ///< default ctor
+
+    /** general ctor.  \throw std::invalid_arugment May throw
+      * std::invalid_arugment if \a star is out of the range of StarType,
+      * \a orbits is negative, or either x or y coordinate is outside the map
+      * area.*/
+    System(StarType star, int orbits, const std::string& name, double x, double y);
+
+    /** general ctor.  \throw std::invalid_arugment May throw
+      * std::invalid_arugment if \a star is out of the range of StarType,
+      * \a orbits is negative, or either x or y coordinate is outside the map
+      * area.*/
+    System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
+           const std::string& name, double x, double y);
+
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::checked_delete(T* x);
+    ~System() {}
+
+    virtual System*         Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
+    //@}
 
 private:
     /** returns the subset of m_objects that is visible to empire with id
@@ -188,7 +194,7 @@ private:
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;
 
     /** removes object \a obj from this system. */
-    void                    Remove(UniverseObject* obj);
+    void                    Remove(TemporaryPtr<UniverseObject> obj);
 
     StarType        m_star;
     int             m_orbits;
@@ -242,25 +248,23 @@ bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system);
 
 // template implementations
 template <class T>
-std::vector<int> System::FindObjectIDs() const
-{
+std::vector<int> System::FindObjectIDs() const {
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = GetUniverseObject(it->second))
-            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
+            if (obj->Accept(obj, UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
     return retval;
 }
 
 template <class T>
-std::vector<int> System::FindObjectIDsInOrbit(int orbit) const
-{
+std::vector<int> System::FindObjectIDsInOrbit(int orbit) const {
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = GetUniverseObject(it->second))
-            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
+            if (obj->Accept(obj, UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
     return retval;

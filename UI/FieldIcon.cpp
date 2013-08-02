@@ -105,7 +105,7 @@ void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void FieldIcon::Refresh() {
-    const Field* field = GetField(m_field_id);
+    TemporaryPtr<const Field> field = GetField(m_field_id);
     if (!field)
         return;
     m_texture = ClientUI::FieldTexture(field->FieldTypeName());
@@ -126,7 +126,7 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     GG::MenuItem menu_contents;
 
-    const Field* field = GetField(m_field_id);
+    TemporaryPtr<const Field> field = GetField(m_field_id);
     if (!field)
         return;
     const std::string& field_type_name = field->FieldTypeName();

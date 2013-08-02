@@ -410,17 +410,17 @@ void CombatFighter::Init(const PartType& part)
 {
     CombatObjectPtr b = m_base.lock();
     assert(boost::dynamic_pointer_cast<CombatShip>(b));
-    const Ship& base = boost::static_pointer_cast<CombatShip>(b)->GetShip();
+    TemporaryPtr<const Ship> base = boost::static_pointer_cast<CombatShip>(b)->GetShip();
     m_stats.m_type =                boost::get<FighterStats>(part.Stats()).m_type;
-    m_stats.m_anti_ship_damage =    base.GetPartMeter(METER_ANTI_SHIP_DAMAGE,       m_part_name)->Current();
-    m_stats.m_anti_fighter_damage = base.GetPartMeter(METER_ANTI_FIGHTER_DAMAGE,    m_part_name)->Current();
-    m_stats.m_launch_rate =         base.GetPartMeter(METER_LAUNCH_RATE,            m_part_name)->Current();
-    m_stats.m_fighter_weapon_range= base.GetPartMeter(METER_FIGHTER_WEAPON_RANGE,   m_part_name)->Current();
-    m_stats.m_speed =               base.GetPartMeter(METER_SPEED,                  m_part_name)->Current();
-    m_stats.m_stealth =             base.GetPartMeter(METER_STEALTH,                m_part_name)->Current();
-    m_stats.m_structure =           base.GetPartMeter(METER_STRUCTURE,              m_part_name)->Current();
-    m_stats.m_detection =           base.GetPartMeter(METER_DETECTION,              m_part_name)->Current();
-    m_stats.m_capacity =            base.GetPartMeter(METER_CAPACITY,               m_part_name)->Current();
+    m_stats.m_anti_ship_damage =    base->GetPartMeter(METER_ANTI_SHIP_DAMAGE,       m_part_name)->Current();
+    m_stats.m_anti_fighter_damage = base->GetPartMeter(METER_ANTI_FIGHTER_DAMAGE,    m_part_name)->Current();
+    m_stats.m_launch_rate =         base->GetPartMeter(METER_LAUNCH_RATE,            m_part_name)->Current();
+    m_stats.m_fighter_weapon_range= base->GetPartMeter(METER_FIGHTER_WEAPON_RANGE,   m_part_name)->Current();
+    m_stats.m_speed =               base->GetPartMeter(METER_SPEED,                  m_part_name)->Current();
+    m_stats.m_stealth =             base->GetPartMeter(METER_STEALTH,                m_part_name)->Current();
+    m_stats.m_structure =           base->GetPartMeter(METER_STRUCTURE,              m_part_name)->Current();
+    m_stats.m_detection =           base->GetPartMeter(METER_DETECTION,              m_part_name)->Current();
+    m_stats.m_capacity =            base->GetPartMeter(METER_CAPACITY,               m_part_name)->Current();
 }
 
 void CombatFighter::DamageImpl(float d)

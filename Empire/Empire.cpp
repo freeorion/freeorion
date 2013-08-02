@@ -1328,7 +1328,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
     if (!building_type || !building_type->Producible())
         return false;
 
-    UniverseObject* build_location = GetUniverseObject(location);
+    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
     if (!build_location)
         return false;
 
@@ -1355,7 +1355,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    UniverseObject* build_location = GetUniverseObject(location);
+    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1426,16 +1426,16 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     m_supply_system_ranges.clear();
 
     // as of this writing, only planets can generate supply propegation
-    std::vector<const UniverseObject*> owned_planets;
+    std::vector<TemporaryPtr<const UniverseObject> > owned_planets;
     for (std::set<int>::const_iterator it = known_objects.begin(); it != known_objects.end(); ++it) {
-        if (const Planet* planet = GetPlanet(*it))
+        if (TemporaryPtr<const Planet> planet = GetPlanet(*it))
             if (planet->OwnedBy(this->EmpireID()))
                 owned_planets.push_back(planet);
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (std::vector<const UniverseObject*>::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
-        const UniverseObject* obj = *it;
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
+        TemporaryPtr<const UniverseObject> obj = *it;
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
         // ensure object is within a system, from which it can distribute supplies
@@ -1478,11 +1478,11 @@ void Empire::UpdateSystemSupplyRanges() {
 void Empire::UpdateUnobstructedFleets() {
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
     for (std::set<int>::const_iterator sys_it = m_supply_unobstructed_systems.begin(); sys_it != m_supply_unobstructed_systems.end(); ++sys_it) {
-        const System* system = GetSystem(*sys_it);
+        TemporaryPtr<const System> system = GetSystem(*sys_it);
         std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
         for (std::vector<int>::iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); fleet_it++) {
             if (known_destroyed_objects.find(*fleet_it) == known_destroyed_objects.end()) {
-                if (Fleet* fleet = GetFleet(*fleet_it) ) {
+                if (TemporaryPtr<Fleet> fleet = GetFleet(*fleet_it) ) {
                     if (fleet->OwnedBy(m_id))
                         fleet->SetArrivalStarlane(*sys_it);
                 }
@@ -1520,7 +1520,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     }
 
     // get all fleets, or just fleets visible to this client's empire
-    const std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
+    const std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // find systems that contain fleets that can either maintaining supply or block supply
@@ -1538,8 +1538,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        const Fleet* fleet = *it;
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<const Fleet> fleet = *it;
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -1610,7 +1610,7 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
     } else { // if the system is unobstructed, mark all its lanes as avilable
         //Logger().debugStream() << "Empire::UpdateAvailableLane for system ("<< start_system_id <<") adding all lanes";
-        const System* system = GetSystem(start_system_id);
+        TemporaryPtr<const System> system = GetSystem(start_system_id);
         for (System::const_lane_iterator lane_it = system->begin_lanes(); lane_it != system->end_lanes(); lane_it++) {
             m_pending_system_exit_lanes[start_system_id].insert(lane_it->first); // will add both starlanes and wormholes
             //Logger().debugStream() << "..... lane "<< lane_it->first;
@@ -1761,7 +1761,7 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
          sys_it != supply_groups_map.end(); ++sys_it, ++graph_id)
     {
         int sys_id = sys_it->first;
-        //const System* sys = GetSystem(sys_id);
+        //TemporaryPtr<const System> sys = GetSystem(sys_id);
         //std::string name = sys->Name();
         //Logger().debugStream() << "supply-exchanging system: " << name << " ID (" << sys_id <<")";
 
@@ -1782,10 +1782,10 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
             boost::add_edge(start_graph_id, end_graph_id, graph);
 
             //int sys_id1 = graph_id_to_sys_id[start_graph_id];
-            //const System* sys1 = GetSystem(sys_id1);
+            //TemporaryPtr<const System> sys1 = GetSystem(sys_id1);
             //std::string name1 = sys1->Name();
             //int sys_id2 = graph_id_to_sys_id[end_graph_id];
-            //const System* sys2 = GetSystem(sys_id2);
+            //TemporaryPtr<const System> sys2 = GetSystem(sys_id2);
             //std::string name2 = sys2->Name();
             //Logger().debugStream() << "added edge to graph: " << name1 << " and " << name2;
         }
@@ -1797,7 +1797,7 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
 
     //for (std::vector<int>::size_type i = 0; i != components.size(); ++i) {
     //    int sys_id = graph_id_to_sys_id[i];
-    //    const System* sys = GetSystem(sys_id);
+    //    TemporaryPtr<const System> sys = GetSystem(sys_id);
     //    std::string name = sys->Name();
     //    Logger().debugStream() << "system " << name <<" is in component " << components[i];
     //}
@@ -1821,7 +1821,7 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
         //// DEBUG!
         //Logger().debugStream() << "Set: ";
         //for (std::set<int>::const_iterator set_it = map_it->second.begin(); set_it != map_it->second.end(); ++set_it) {
-        //    const UniverseObject* obj = GetUniverse().Object(*set_it);
+        //    TemporaryPtr<const UniverseObject> obj = GetUniverse().Object(*set_it);
         //    if (!obj) {
         //        Logger().debugStream() << " ... missing object!";
         //        continue;
@@ -2480,7 +2480,7 @@ void Empire::CheckProductionProgress() {
 
     Universe& universe = GetUniverse();
 
-    std::map<int, std::vector<Ship*> >  system_new_ships;
+    std::map<int, std::vector<TemporaryPtr<Ship> > >  system_new_ships;
 
     // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
     // action is appropriate, and record that queue item as complete, so it can be erased from the queue
@@ -2499,11 +2499,13 @@ void Empire::CheckProductionProgress() {
         if (item_cost - EPSILON <= elem.progress) {
             elem.progress -= item_cost; // this is the correct calculation -- item_cost is now for one full item, not just one turn's portion
             elem.progress_memory = elem.progress;
+            Logger().debugStream() << "Completed an item!!! " << elem.item.name;
 
             switch (elem.item.build_type) {
             case BT_BUILDING: {
+                Logger().debugStream() << "It's a building";
                 int planet_id = elem.location;
-                Planet* planet = GetPlanet(planet_id);
+                TemporaryPtr<Planet> planet = GetPlanet(planet_id);
                 if (!planet) {
                     Logger().errorStream() << "Couldn't get planet with id  " << planet_id << " on which to create building";
                     break;
@@ -2512,16 +2514,17 @@ void Empire::CheckProductionProgress() {
                 // check location condition before each building is created, so
                 // that buildings being produced can prevent subsequent
                 // buildings completions on the same turn from going through
-                if (!this->BuildableItem(elem.item, elem.location))
+                if (!this->BuildableItem(elem.item, elem.location)) {
+                    Logger().debugStream() << "Location test failed for building " << elem.item.name << " on planet " << planet->Name();
                     break;
+                }
 
                 // create new building
-                Building* building = new Building(m_id, elem.item.name, m_id);
-                int building_id = universe.Insert(building);
-                planet->AddBuilding(building_id);
+                TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
+                planet->AddBuilding(building->ID());
 
-                AddSitRepEntry(CreateBuildingBuiltSitRep(building_id, planet->ID()));
-                //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
+                AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
+                Logger().debugStream() << "New Building created on turn: " << CurrentTurn();
                 break;
             }
 
@@ -2529,8 +2532,8 @@ void Empire::CheckProductionProgress() {
                 if (elem.blocksize < 1)
                     break;   // nothing to do!
 
-                UniverseObject* build_location = GetUniverseObject(elem.location);
-                System* system = universe_object_cast<System*>(build_location);
+                TemporaryPtr<UniverseObject> build_location = GetUniverseObject(elem.location);
+                TemporaryPtr<System> system = universe_object_ptr_cast<System>(build_location);
                 if (!system && build_location)
                     system = GetSystem(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production
@@ -2552,11 +2555,11 @@ void Empire::CheckProductionProgress() {
                 // is a valid capital, or otherwise ???
                 // TODO: Add more fallbacks if necessary
                 std::string species_name;
-                if (const PopCenter* location_pop_center = dynamic_cast<const PopCenter*>(build_location))
+                if (TemporaryPtr<const PopCenter> location_pop_center = dynamic_ptr_cast<const PopCenter>(build_location))
                     species_name = location_pop_center->SpeciesName();
-                else if (const Ship* location_ship = universe_object_cast<const Ship*>(build_location))
+                else if (TemporaryPtr<const Ship> location_ship = universe_object_ptr_cast<const Ship>(build_location))
                     species_name = location_ship->SpeciesName();
-                else if (const Planet* capital_planet = GetPlanet(this->CapitalID()))
+                else if (TemporaryPtr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
                     species_name = capital_planet->SpeciesName();
                 // else give up...
                 if (species_name.empty()) {
@@ -2572,12 +2575,11 @@ void Empire::CheckProductionProgress() {
                     }
                 }
 
-                Ship* ship = 0;
-                int ship_id = INVALID_OBJECT_ID;
+                TemporaryPtr<Ship> ship;
 
                 for (int count = 0; count < elem.blocksize; count++) {
                     // create ship
-                    ship = new Ship(m_id, elem.item.design_id, species_name, m_id);
+                    ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
                     // set active meters that have associated max meters to an
                     // initial very large value, so that when the active meters are
                     // later clamped, they will equal the max meter after effects
@@ -2588,7 +2590,6 @@ void Empire::CheckProductionProgress() {
                     ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
                     ship->BackPropegateMeters();
 
-                    ship_id = universe.Insert(ship);
                     ship->Rename(NewShipName());
 
                     // store ships to put into fleets later
@@ -2596,11 +2597,11 @@ void Empire::CheckProductionProgress() {
                 }
                 // add sitrep
                 if (elem.blocksize == 1) {
-                    AddSitRepEntry(CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID()));
-                    Logger().debugStream() << "New Ship, id " << ship_id << ", created on turn: " << ship->CreationTurn();
+                    AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(), ship->DesignID()));
+                    Logger().debugStream() << "New Ship, id " << ship->ID() << ", created on turn: " << ship->CreationTurn();
                 } else {
                     AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), elem.blocksize));
-                    Logger().debugStream() << "New block of "<< elem.blocksize << "ships created on turn: " << ship->CreationTurn();
+                    Logger().debugStream() << "New block of "<< elem.blocksize << " ships created on turn: " << ship->CreationTurn();
                 }
                 break;
             }
@@ -2616,48 +2617,47 @@ void Empire::CheckProductionProgress() {
     }
 
     // create fleets for new ships and put ships into fleets
-    for (std::map<int, std::vector<Ship*> >::iterator it = system_new_ships.begin();
+    for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator it = system_new_ships.begin();
          it != system_new_ships.end(); ++it)
     {
-        System* system = GetSystem(it->first);
+        TemporaryPtr<System> system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "Couldn't get system with id " << it->first << " for creating new fleets for newly produced ships";
             continue;
         }
 
-        std::vector<Ship*>& allShips = it->second;
+        std::vector<TemporaryPtr<Ship> >& allShips = it->second;
         if (allShips.empty())
             continue;
 
         //group ships into fleets, by design
-        std::map<int,std::vector<Ship*> > shipsByDesign;
-        for (std::vector<Ship*>::iterator it = allShips.begin(); it != allShips.end(); ++it) {
-            Ship* ship = *it;
+        std::map<int,std::vector<TemporaryPtr<Ship> > > shipsByDesign;
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = allShips.begin(); it != allShips.end(); ++it) {
+            TemporaryPtr<Ship> ship = *it;
             shipsByDesign[ship->DesignID()].push_back(ship);
         }
-        for (std::map<int, std::vector<Ship*> >::iterator design_it = shipsByDesign.begin();
+        for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = shipsByDesign.begin();
              design_it != shipsByDesign.end(); ++design_it)
         {
             std::vector<int> ship_ids;
 
-            std::vector<Ship*>& ships = design_it->second;
+            std::vector<TemporaryPtr<Ship> >& ships = design_it->second;
             if (ships.empty())
                 continue;
 
             // create new fleet for ships
-            Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
-            int fleet_id = universe.Insert(fleet);
+            TemporaryPtr<Fleet> fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
 
             system->Insert(fleet);
 
-            for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
-                Ship* ship = *it;
+            for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
+                TemporaryPtr<Ship> ship = *it;
                 ship_ids.push_back(ship->ID());
                 fleet->AddShip(ship->ID());
             }
 
             // rename fleet, given its id and the ship that is in it
-            fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+            fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet->ID()));
 
             Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
         }
@@ -2682,16 +2682,17 @@ void Empire::SetPlayerName(const std::string& player_name)
 
 void Empire::InitResourcePools() {
     const ObjectMap& objects = GetUniverse().Objects();
-    std::vector<const UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
+    std::vector<TemporaryPtr<const UniverseObject> > object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<int> object_ids_vec, popcenter_ids_vec;
 
     // determine if each object owned by this empire is a PopCenter, and store
     // ids of PopCenters and objects in appropriate vectors
-    for (std::vector<const UniverseObject*>::const_iterator it = object_vec.begin(); it != object_vec.end(); ++it) {
-        const UniverseObject* obj = *it;
-        object_ids_vec.push_back(obj->ID());
-        if (dynamic_cast<const PopCenter*>(obj))
-            popcenter_ids_vec.push_back(obj->ID());
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = object_vec.begin();
+         it != object_vec.end(); ++it)
+    {
+        object_ids_vec.push_back((*it)->ID());
+        if (dynamic_ptr_cast<const PopCenter>(*it))
+            popcenter_ids_vec.push_back((*it)->ID());
     }
     m_population_pool.SetPopCenters(popcenter_ids_vec);
     m_resource_pools[RE_RESEARCH]->SetObjects(object_ids_vec);
@@ -2725,7 +2726,7 @@ void Empire::InitResourcePools() {
     for (std::vector<ResourceType>::const_iterator res_it = res_type_vec.begin(); res_it != res_type_vec.end(); ++res_it) {
         ResourceType res_type = *res_it;
         int stockpile_object_id = INVALID_OBJECT_ID;
-        if (const UniverseObject* stockpile_obj = GetUniverseObject(StockpileID(res_type)))
+        if (TemporaryPtr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
             stockpile_object_id = stockpile_obj->ID();
         m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
     }
@@ -2761,9 +2762,9 @@ void Empire::UpdateTradeSpending() {
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
 
-    std::vector<UniverseObject*> buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
-    for (std::vector<UniverseObject*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        Building* building = universe_object_cast<Building*>(*it);
+    std::vector<TemporaryPtr<UniverseObject> > buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
+    for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
+        TemporaryPtr<Building> building = universe_object_ptr_cast<Building>(*it);
         if (!building)
             continue;
 

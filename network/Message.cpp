@@ -1013,8 +1013,8 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data) {
     }
 }
 
-void ExtractMessageData(const Message& msg, System*& system,
-                        std::map<int, UniverseObject*>& combat_universe)
+void ExtractMessageData(const Message& msg, TemporaryPtr<System> system,
+                        std::map<int, TemporaryPtr<UniverseObject> >& combat_universe)
 {
     try {
         std::istringstream is(msg.Text());

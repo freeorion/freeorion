@@ -395,7 +395,7 @@ void PartsListBox::Populate() {
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
-        const UniverseObject* location = GetUniverseObject(empire->CapitalID());
+        TemporaryPtr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 

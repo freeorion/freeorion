@@ -357,7 +357,7 @@ namespace {
         // get location indicator text
         std::string location_text;
         if (w > GG::X(300))
-            if (const UniverseObject* location = GetUniverseObject(build.location))
+            if (TemporaryPtr<const UniverseObject> location = GetUniverseObject(build.location))
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
 
         // create and arrange widgets to display info

@@ -48,7 +48,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis,
+void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visibility vis,
                           const std::set<std::string>& visible_specials)
 {
     if (copied_object == this)
@@ -77,7 +77,7 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis,
         this->m_id =                    copied_object->m_id;
         if (this->m_system_id != copied_object->m_system_id) {
             // as with other containers, removal from the old container (System) is triggered by the contained Object
-            System* oldSys = GetSystem(this->m_system_id);
+            TemporaryPtr<System> oldSys = GetSystem(this->m_system_id);
             if (this->ContainedBy(this->m_system_id) && (oldSys))
                 oldSys->Remove(this->m_id);
             this->m_system_id =         copied_object->m_system_id;// actual Insertion into the new System is handled by the System::Copy process for the new System
@@ -167,7 +167,7 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump() const {
-    const System* system = GetSystem(this->SystemID());
+    TemporaryPtr<const System> system = GetSystem(this->SystemID());
 
     std::stringstream os;
 
@@ -194,7 +194,7 @@ bool UniverseObject::Contains(int object_id) const
 { return false; }
 
 bool UniverseObject::ContainedBy(int object_id) const {
-    const UniverseObject* object = GetUniverseObject(object_id);
+    TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
     if (object)
         return object->Contains(m_id);
     else
@@ -246,8 +246,12 @@ Visibility UniverseObject::GetVisibility(int empire_id) const
 const std::string& UniverseObject::PublicName(int empire_id) const
 { return m_name; }
 
-UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<UniverseObject* const>(this)); }
+TemporaryPtr<UniverseObject> UniverseObject::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
+    if (this_obj != this)
+        return TemporaryPtr<UniverseObject>();
+
+    return visitor.Visit(const_ptr_cast<UniverseObject>(this_obj));
+}
 
 void UniverseObject::SetID(int id) {
     m_id = id;
@@ -265,7 +269,7 @@ void UniverseObject::Move(double x, double y)
 void UniverseObject::MoveTo(int object_id)
 { MoveTo(GetUniverseObject(object_id)); }
 
-void UniverseObject::MoveTo(UniverseObject* object) {
+void UniverseObject::MoveTo(TemporaryPtr<UniverseObject> object) {
     if (!object)
         throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
 
@@ -287,11 +291,14 @@ void UniverseObject::MoveTo(double x, double y) {
 
     m_x = x;
     m_y = y;
-
+    
     // remove object from its old system (unless object is a system, as that would attempt to remove it from itself)
-    if (this->ID() != this->SystemID())
-        if (System* system = GetSystem(this->SystemID()))
+    if (this->ID() != this->SystemID()) {
+        if (TemporaryPtr<System> system = GetSystem(this->SystemID())) {
+
             system->Remove(this->ID());
+        }
+    }
 
     StateChangedSignal();
 }
