@@ -1,7 +1,7 @@
 Russian
 # Creative Commons Attribution-ShareAlike 3.0
-#This is the Russian String Table file for FreeOrion 0.4.3 SVN6267 Translated by andreiwsa ; using a translate Max Koloshnitsyn (black_owl(at)mail.ru); using a translate of cjckem at gmail.com
-#Это языковой файл для FreeOrion 0.4.3 SVN6267 Перевод сделал andreiwsa ; использован перевод Макс Колошницын (black_owl(at)mail.ru); использован перевод cjckem at gmail.com
+#This is the Russian String Table file for FreeOrion 0.4.3 SVN6282 Translated by andreiwsa ; using a translate Max Koloshnitsyn (black_owl(at)mail.ru); using a translate of cjckem at gmail.com
+#Это языковой файл для FreeOrion 0.4.3 SVN6282 Перевод сделал andreiwsa ; использован перевод Макс Колошницын (black_owl(at)mail.ru); использован перевод cjckem at gmail.com
 
 #################
 #    Common     #
@@ -1585,10 +1585,10 @@ OPTIONS_APP_HEIGHT_WINDOWED
 Высота окна
 
 OPTIONS_APP_LEFT_WINDOWED
-Window Left Edge Position
+Позиция Левого края Окна
 
 OPTIONS_APP_TOP_WINDOWED
-Window Top Position
+Позиция Верхнего края Окна
 
 OPTIONS_FULLSCREEN
 Полноэкранный
@@ -1639,13 +1639,13 @@ OPTIONS_UI_SYSTEM_FOG_SPACING
 Промежуток между линиями тумана войны
 
 OPTIONS_UI_SYSTEM_CIRCLES
-Круги звездных систем
+Круги звёздных систем
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
-Относительный размер кругов звездных систем
+Относительный размер кругов звёздных систем
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-Относительный размер индикатора выбора зведы
+Относительный размер индикатора выбора звезды
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Скорость анимации индикатора выбора звезды
@@ -1657,7 +1657,7 @@ OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
 Цвет названия бесхозных систем
 
 OPTIONS_FLEET_ICONS
-Значки звездных флотов
+Значки звёздных флотов
 
 OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
 Минимальное увеличение для значка самого маленького флота
@@ -1702,10 +1702,10 @@ OPTIONS_GALAXY_MAP_POPUP
 Контекстное меню на карте галактики
 
 OPTIONS_STARLANES
-Звездные пути
+Звёздные пути
 
 OPTIONS_STARLANE_THICKNESS
-Толщина межзвездных путей
+Толщина межзвёздных путей
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
 Цветные линии транспортировки ресурсов
@@ -1723,7 +1723,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Скорость точек линий обеспечения флотов
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Цвет звездных путей по умолчанию
+Цвет звёздных путей по умолчанию
 
 OPTIONS_MUSIC
 Музыка
@@ -1759,7 +1759,7 @@ OPTIONS_SOUND_FLEET_ROLLOVER
 Отпускание кнопки флота
 
 OPTIONS_SOUND_SYSTEM_ROLLOVER
-Отпускание кнопки звездной системы
+Отпускание кнопки звёздной системы
 
 OPTIONS_SOUND_WINDOW
 Звуки окна
@@ -1783,7 +1783,7 @@ OPTIONS_SOUND_SIDEPANEL
 Открытие боковой панели
 
 OPTIONS_SOUND_PLANET
-Щелчек на планету
+Щелчок на планету
 
 OPTIONS_SOUND_FOCUS
 Фокусировка
@@ -1912,7 +1912,7 @@ OPTIONS_COMBAT_ENABLE_GLOW
 Огонь
 
 OPTIONS_COMBAT_ENABLE_SKYBOX
-Звездное небо
+Звёздное небо
 
 OPTIONS_COMBAT_ENABLE_LENS_FLARES
 Эффекты линз
@@ -1948,7 +1948,7 @@ OPTIONS_VERBOSE_LOGGING_DESC
 Более детальное логирование  для отладки
 
 OPTIONS_VERBOSE_SITREP_DESC
-Включить ошибки в отчеты
+Включить ошибки в отчёты
 
 ##################
 # CombatSetupWnd #
@@ -2087,7 +2087,7 @@ TRADE_CONSUMPTION
 Потребление
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
-Межзвездный обмен
+Межзвёздный обмен
 IMPORT_EXPORT_TOOLTIP
 Импорт / Экспорт
 RESOURCE_IMPORT
@@ -2334,7 +2334,7 @@ FW_FLEET_COUNT_SUMMARY
 Состав флота - количество кораблей во флоте.
 
 FW_SPLIT_DAMAGED_FLEET
-Отделить поврежденные корабли от флота
+Отделить повреждённые корабли от флота
 
 FW_SPLIT_UNFUELED_FLEET
 Отделить корабли без топлива от флота
@@ -2381,10 +2381,10 @@ MOD_SET_OWNER
 Установить владельца 
 
 MOD_ADD_STARLANE
-Добавить Звездный путь 
+Добавить Межзвёздный путь 
 
 MOD_REMOVE_STARLANE
-Удалить Звездный путь 
+Удалить Межзвёздный путь 
 
 ###############
 #  Diplomacy  #
@@ -2524,7 +2524,7 @@ RESEARCH_INFO_RP
 ОИ
 
 RESEARCH_QUEUE_PROMPT
-Дважды щелкните мышью или нажмите Shift на любой пункт, чтобы добавить его к очереди исследования. 
+Дважды щёлкните мышью или нажмите Shift на любой пункт, чтобы добавить его к очереди исследования. 
 
 
 ####################
@@ -2630,7 +2630,7 @@ DESIGN_WND_FINISHED_DESIGNS
 Готовые проекты
 
 DESIGN_WND_SAVED_DESIGNS
-Сохраненные проекты
+Сохранённые проекты
 
 DESIGN_WND_TEMPLATES
 Временные проекты
@@ -2712,7 +2712,7 @@ NO_SHIPS_OF_DESIGN
 Нет кораблей такого вида
 
 ENC_INCOMPETE_SHIP_DESIGN
-Незавершенный проект корабля
+Незавершённый проект корабля
 
 ENC_EMPIRE
 Империя
@@ -3152,7 +3152,7 @@ TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Продвижения флотов...
 
 TURN_PROGRESS_PHASE_COMBAT
-Рассчет сражений...
+Расчёт сражений...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
 Производство и демография...
@@ -3237,7 +3237,7 @@ VISIBLE
 Видимый 
 
 PREVIOUSLY_VISIBLE
-Prev. Visible
+Пред. видимый
 
 DESTROYED
 Разрушенный 
@@ -3252,10 +3252,10 @@ CONDITION_ARMED
 Armed
 
 CONDITION_CAPITAL
-Capital
+Столица
 
 CONDITION_MONSTER
-Monster
+Монстр
 
 CONDITION_STATIONARY
 Stationary
@@ -3279,16 +3279,16 @@ CONDITION_SPECIES
 Species Name
 
 CONDITION_PLANETSIZE
-Planet Size
+Размер планеты
 
 CONDITION_PLANETTYPE
-Planet Type
+Тип Планеты
 
 CONDITION_FOCUSTYPE
 Focus Setting
 
 CONDITION_STARTYPE
-Star Type
+Тип Звезды
 
 CONDITION_METERVALUE
 Object Property Value
@@ -3301,10 +3301,10 @@ Object Property Value
 #Window title####
 
 SITREP_PANEL_TITLE
-Отчет о событиях
+Отчёт о событиях
 
 SITREP_PANEL_TITLE_TURN
-Отчет о событиях - Ход %1%
+Отчёт о событиях - Ход %1%
 
 SITREP_ERROR
 Произошло непонятное событие.
@@ -3424,19 +3424,19 @@ SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Бесхозное строение уничтожено
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
-Объект был поврежден в системе %system%.
+Объект был повреждён в системе %system%.
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
-Объект поврежден
+Объект повреждён
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 Корабль %shipdesign% '%ship%' империи %empire% был поврежден в системе %system%.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
-Поврежден корабль империи
+Повреждён корабль империи
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-%shipdesign% был поврежден в системе %system%.
+%shipdesign% был повреждён в системе %system%.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
-Поврежден бесхозный корабль
+Повреждён бесхозный корабль
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 Планета %planet% империи %empire% в системе %system% подверглась бомбардировкам.
@@ -3541,7 +3541,7 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% починен в %building% на %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Drydock Repair
+Ремонт Сухой Док
 
 EFFECT_MONSTER_SPAWNING
 %predefinedshipdesign% Появился в %system%!
@@ -3556,12 +3556,12 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 EFFECT_TERRAFORM
 %planet% терраформирована.
 EFFECT_TERRAFORM_LABEL
-Terraform
+Терраформирование
 
 EFFECT_STARVATION
-Famine struck %planet%.
+Начался голод %planet%.
 EFFECT_STARVATION_LABEL
-Famine
+Голод
 
 EFFECT_TAME_MONSTER_HATCHED
 A tamed %predefinedshipdesign% is ready for service at %planet%.
@@ -3586,12 +3586,12 @@ Derelict Minerals
 EFFECT_DERELICT_MAP
 Information on the area was obtained from an abandoned derelict at %system%.
 EFFECT_DERELICT_MAP_LABEL
-Derelict Map
+Заброшенная Карта
 
 EFFECT_DERELICT_FUEL
 Ships were refueled from the residual supply found in an abandoned derelict at %system%.
 EFFECT_DERELICT_FUEL_LABEL
-Derelict Fuel
+Заброшенная Топливо
 
 EFFECT_BIOWEAPON
 %system% has lost population due to a biological attack!
@@ -3599,14 +3599,14 @@ EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
 EFFECT_EXOBOT
-An Exobot colony ship has been built at %planet%.
+Колония Экзоботов построена на %planet%.
 EFFECT_EXOBOT_LABEL
-Exobot Ship
+Корабль Экзоботов
 
 EFFECT_EVACUEES
-Evacuees have settled at %planet%.
+Эвакуированные поселились на %planet%.
 EFFECT_EVACUEES_LABEL
-Evacuees
+Эвакуированные
 
 EFFECT_STARGATE
 The fleet %fleet% has traveled by Stargate to the %system% system.
@@ -6191,7 +6191,7 @@ LRN_NDIM_SUBSPACE
 N-мерное Подпространство
 
 LRN_NDIM_SUBSPACE_DESC
-Раннее теоретики суперструн говорили о 10-, 11- или 26-мерной вселенной, "скрученных" в 4 макроизмерения настолько, что их не заметно.  Теперь эти и другие измерения могут быть "раскрученны" и открыты, и сама поверхность пространства вытягивается и прокалывается непостоянной материей на- или из уровней существования, ранее скрытых за поверхностью нашего ограниченного восприятия, или создавая слои и пузыри там, где ничто не существовало прежде.
+Раннее теоретики суперструн говорили о 10-, 11- или 26-мерной вселенной, "скрученных" в 4 макроизмерения настолько, что их не заметно.  Теперь эти и другие измерения могут быть "раскручены" и открыты, и сама поверхность пространства вытягивается и прокалывается непостоянной материей на- или из уровней существования, ранее скрытых за поверхностью нашего ограниченного восприятия, или создавая слои и пузыри там, где ничто не существовало прежде.
 
 LRN_UNIF_CONC
 Объединенное Сознание
@@ -6207,9 +6207,9 @@ LRN_QUANT_NET
 LRN_QUANT_NET_DESC
 '''Увеличиввает целевой показатель [[encyclopedia RESEARCH_TITLE]] на всех научно-ориентрованных планетах на 0,5*Население.
 
-Большая, в масштабах всей империи вычислительная сеть способна мнгновенно передавать информацию, что нанамного быстрее, чем это происходит через межзвездные пути, что способствует ускоренному развитию науки по всей империи.
+Большая, в масштабах всей империи вычислительная сеть способна мгновенно передавать информацию, что нанамного быстрее, чем это происходит через межзвездные пути, что способствует ускоренному развитию науки по всей империи.
 
-Каждая частица, соединенна на квантовом уровне с любой другой частицей, с которой она ранее взаимодействовала.  Устаревшие принципы механики не работают на этом уровне, где частицы могут взаимодействовать несмотря на рассояние между ними.  При полном понимании этого феномена возможно установление связи между определенными, удаленными друг от друга точками практически мнгновенно на невиданных доселе скоростях для передачи информации.'''
+Каждая частица, соединённа на квантовом уровне с любой другой частицей, с которой она ранее взаимодействовала.  Устаревшие принципы механики не работают на этом уровне, где частицы могут взаимодействовать несмотря на рассояние между ними.  При полном понимании этого феномена возможно установление связи между определенными, удаленными друг от друга точками практически мнгновенно на невиданных доселе скоростях для передачи информации.'''
 
 LRN_TRANSCEND
 Сингулярность Трансцендентности
@@ -6400,7 +6400,7 @@ By producing automated factories that operate without direct supervision, it is 
 Поскольку оборудование становится все более и более автоматизированным, оно приобретает способность к полному собственному копированию и обслуживанию без внешней поддержки, кроме обеспечения необходимым сырьем и материалами, для производства конечного продукта. Когда оборудование управляется искусственным разумом, вся система может учиться, планировать, реагировать, и адаптироваться автономно, и может делать это без громоздкой, неэффективной, традиционной схемой с наймом и предоставлением жилья рабочим.'''
 
 PRO_INTSTEL_COPRO
-Межзвездное совместное производство
+Межзвёздное совместное производство
 
 PRO_INTSTEL_COPRO_DESC
 Традиционные средства производства продукции ограничены потребностью самостоятельности производства из-за транспортировки и других логистических проблем. Более позднее планетарное региональное сотрудничество разрешает некоторую степень специализации и сотрудничества, с использованием производственного оборудования нескольких частей системы, благодаря чему целая система извлекает выгоду из централизованной экспертизы и экономии за счет роста производства. Раcширяя это понятие на несколько порядков, система может адаптироваться к галактическому масштабу, с отдельными планетами или целыми звездными системами, функционирующими в качестве единого специализированного средства производства. Логистические трудности, как часть такой системы, не отличаются от тех, что были ранее, и возрастают лишь до той степени, которая предполагает потенциальнаю пользу.
@@ -6449,9 +6449,9 @@ CON_INFRA_ECOL
 Экология инфраструктуры
 
 CON_INFRA_ECOL_DESC
-'''Увеличивает межзвездную скорость ваших кораблей на 20, когда они находятся в пределах 50uus от контролируемого планеты.
+'''Увеличивает межзвёздную скорость ваших кораблей на 20, когда они находятся в пределах 50uus от контролируемого планеты.
 
-Может показаться, что основная инфраструктура, развернутая в планетарной колонии, полностью создана поселенцами, и функционирует согласно только их правилам. Однако в действительности, экология планеты, на которой построена колония, является фундаментом и механизмом поддержки для возведенной инфраструктуры и часто формирует неотъемлемую часть ее функций. Понимание взаимодействия между естественными и искусственными компонентами, пределов запасов, которые может обеспечить экосистема, необходимо для развития оптимальной и жизнеспособной инфраструктуры любой колонии.'''
+Может показаться, что основная инфраструктура, развёрнутая в планетарной колонии, полностью создана поселенцами, и функционирует согласно только их правилам. Однако в действительности, экология планеты, на которой построена колония, является фундаментом и механизмом поддержки для возведенной инфраструктуры и часто формирует неотъемлемую часть ее функций. Понимание взаимодействия между естественными и искусственными компонентами, пределов запасов, которые может обеспечить экосистема, необходимо для развития оптимальной и жизнеспособной инфраструктуры любой колонии.'''
 
 CON_ORGANIC_STRC
 Органические строения
@@ -6479,10 +6479,10 @@ CON_ASYMP_MATS
 Асимптотические материалы
 
 CON_ASYMP_MATS_DESC
-Как только определенные пороги эксплуатационных характеристик пройдены, измерение физических свойств материалов для относительного сравнения становится непрактичным в любых терминах, кроме порядков величин или логарифмических масштабов. Это тоже что и сверхпроводимость в электронике: пределом прочности, стойкостью, плотностью, эластичностью, жаропрочным индексом и другими прочностными свойствами материалов можно эффективно управлять без каких либо ограничений. Все ранее существовавшие ограничения исчезли, в проектировании строений  более нет препятствий, они могут расширяться или измениться в той же степени как и свойства материалов.
+Как только определённые пороги эксплуатационных характеристик пройдены, измерение физических свойств материалов для относительного сравнения становится непрактичным в любых терминах, кроме порядков величин или логарифмических масштабов. Это тоже что и сверхпроводимость в электронике: пределом прочности, стойкостью, плотностью, эластичностью, жаропрочным индексом и другими прочностными свойствами материалов можно эффективно управлять без каких либо ограничений. Все ранее существовавшие ограничения исчезли, в проектировании строений  более нет препятствий, они могут расширяться или измениться в той же степени как и свойства материалов.
 
 CON_FRC_ENRG_STRC
-Высокоэнергетичные строения
+Высокоэнергетические строения
 
 CON_FRC_ENRG_STRC_DESC
 '''Увеличивает прирост показателей на 3 в ход, и снижение показателей на 5 в ход.
@@ -6554,7 +6554,7 @@ SHP_SPACE_TACTICS_DESC
 Сражения в условиях микрогравитации и вакуума требуют специализированного оружия и оборонительных систем, а также теоретические тактики, которые мотивируют их использование.
 
 SHP_INTSTEL_LOG
-Межзвездная логистика
+Межзвёздная логистика
 
 SHP_INTSTEL_LOG_DESC
 '''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
@@ -6562,13 +6562,13 @@ SHP_INTSTEL_LOG_DESC
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
 SHP_MIL_ROBO_CONT
-Военная роботехника
+Военная робототехника
 
 SHP_MIL_ROBO_CONT_DESC
 Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
 
 SHP_SPACE_FLUX_DRIVE
-Spatial Flux Drive
+Пространственно потоковый Двигатель
 
 SHP_SPACE_FLUX_DRIVE_DESC
 Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects.
@@ -6580,7 +6580,7 @@ SHP_CONTGRAV_MAINT_DESC
 When the mass of the ship surpasses a certain threshold, it becomes necessary to consider the gravitational stresses on vital architectural points in the ship's structure. These points will be unable to withstand the gravitational stresses and collapse, destroying the vessel. This necessitates nearly constant maintenance of these points to avoid total structural failure.
 
 SHP_NANOROBO_MAINT
-Nano-Robotic Maintenance
+Обслуживание нано-роботов
 
 SHP_NANOROBO_MAINT_DESC
 Just as nanorobots can be used for production, so also can they be used for maintenance. A hull with a complement of centrally organized nanite engineers would be able to rapidly repair damage, even during combat. Such machines would have great difficulty distinguishing organic beings from a part of the hull in need of repair however, and as such this concept could only be applied to automated hulls.
@@ -6592,55 +6592,55 @@ SHP_MASSPROP_SPEC_DESC
 Traditional propulsion devices operate well on objects of relatively low mass. However, when the mass of a ship approaches that of a small moon, ordinary methods of propulsion are very clumsy and require tremendous amounts of energy. A new approach to propulsion, taking into account the size of the object in question as a fundamental aspect of the system, could allow such vessels to have useful mobility.
 
 SHP_TRANSSPACE_DRIVE
-Trans-Spatial Drive
+Транс-пространственный Двигатель
 
 SHP_TRANSSPACE_DRIVE_DESC
 Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion. 
 
 SHP_MIDCOMB_LOG
-Mid-Combat Logistics
+Средне-тыловое обеспечение
 
 SHP_MIDCOMB_LOG_DESC
 When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
 
 SHP_ASTEROID_HULLS
-Asteroid Hulls
+Астероидные Корпуса
 
 SHP_ASTEROID_HULLS_DESC
 Rather than constructing a hull from scratch, it is far easier to take a pre-existing space-borne object and adapt it to fill the role of a ship's hull. Not only would such ships be very inexpensive to produce, but they would also be able to avoid detection by enemy ships by hiding amongst other asteroids.
 
 SHP_ASTEROID_REFORM
-Asteroid Reformation
+Астероидная Реформация
 
 SHP_ASTEROID_REFORM_DESC
 Through advanced processing of asteroid bodies rock armor can be produced which is as cheap as but more durable than lead armor plating.
 
 SHP_MONOMOLEC_LATTICE
-Monomolecular Latticing
+Мономолекулярная Решётка
 
 SHP_MONOMOLEC_LATTICE_DESC
 Asteroid Hulls can be reinforced and armor plated, but the fact remains that the basic substance of which most asteroids are primarily composed is of lesser strength than most modern alloys. However, if the molecular structure of the rock itself were to be rearranged into a crystal lattice, its strength could be increased tremendously, allowing the production of asteroid hulls of previously impossible strengths.
 
 SHP_MULTICELL_CAST
-Multi-Cellular Casting
+Многоклеточное Литье
 
 SHP_MULTICELL_CAST_DESC
 Even when it is inert, organic material is much more versatile than standard materials. A non-living multi-cellular ship would provide some of the advantages of organic materials without the customary nuisances of organic life.
 
 SHP_DOMESTIC_MONSTER
-Domesticated Mega-Fauna
+Одомашненная Мега-Фауна
 
 SHP_DOMESTIC_MONSTER_DESC
 '''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
 SHP_ENDOCRINE_SYSTEMS
-Mega-Fauna Endocrine Systems
+Эндокринные системы Мега-фауны
 
 SHP_ENDOCRINE_SYSTEMS_DESC
 The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
 
 SHP_HAB_MEGAFAUN
-Habitable Mega-Fauna
+Обитаемая Мега-Фауна
 
 SHP_HAB_MEGAFAUN_DESC
 It is generally uncommon to find comfortable living conditions within a gigantic space monster. This is exactly what must exist within an organic hull however, if it is to be adequately controlled from within. The development of massive, habitable creatures opens up numerous possibilities for ship design.
@@ -6652,7 +6652,7 @@ SHP_MONOCELL_EXP_DESC
 Multi-cellular organisms tend to have longer life spans than single celled organisms due to specialization and interdependency. However, with the appropriate technological refinements, these aspects of multi-cellular life can be applied to a massive mono-cellular organism, allowing it to have practical functionality in combat.
 
 SHP_CONT_SYMB
-Contrived Symbiosis
+Хитрый Симбиоз
 
 SHP_CONT_SYMB_DESC
 Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions. However, this is a purely behavioral type of symbiosis. Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
@@ -6664,19 +6664,19 @@ SHP_CONT_BIOADAPT_DESC
 It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns. By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
 
 SHP_BIOADAPTIVE_SPEC
-Bio-Neural Specialization
+Био-нейронная Специализация
 
 SHP_BIOADAPTIVE_SPEC_DESC
 As a species evolves mental capabilities, the individuals whose minds are not perfectly attuned to the needs of their bodies cannot compete with those whose minds are perfectly specialized for their bodies. Thus, all evolved life forms have nearly ideal mental development for their type of body. There are no such guarantees for artificial life forms however, and often the true potential of such a being is unrealized due to subtle incompatibilities between mind and body. By specializing the organism's neural patterns to conform to its body type, these incompatibilities can be eliminated.
 
 SHP_FRC_ENRG_COMP
-Force-Energy Compression
+Сильно-Сжатая Энергия
 
 SHP_FRC_ENRG_COMP_DESC
 Typically, the manipulation of energy requires it to be in the form of matter so that potential energy can be stored as desired and released on demand. Matter converted to pure energy stored in the fabric of space-time itself would be more versatile than any material substance, but impossible to contain without advanced force-field technology.
 
 SHP_QUANT_ENRG_MAG
-Quantum Energy Magnification
+Увеличение Квантовой энергий
 
 SHP_QUANT_ENRG_MAG_DESC
 '''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
@@ -6684,7 +6684,7 @@ SHP_QUANT_ENRG_MAG_DESC
 Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
 SHP_ENRG_BOUND_MAN
-Energy Boundary Manipulation
+Манипуляция пограничной энергией
 
 SHP_ENRG_BOUND_MAN_DESC
 '''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
@@ -6794,10 +6794,10 @@ TAME_MONSTER_SHORT_DESC
 Приручает космических монстров
 
 EXOBOT_SHORT_DESC
-Создает поселение экзоботов
+Создаёт поселение экзоботов
 
 STARLANE_SPEED_SHORT_DESC
-Увеличивает Межзвездную скорость 
+Увеличивает Межзвёздную скорость 
 
 CON_ORBITAL_CON
 Орбитальное конструирование
@@ -6955,7 +6955,7 @@ LRN_GATEWAY_VOID_DESC
 The power of the Void Mind is almost imperceptible in a mere four-dimensional space-time. By creating a permanent gateway accessing an immense number of dimensions, a dangerous, non-discriminating force can be unleashed in a localized area.
 
 LRN_ENCLAVE_VOID
-Enclave of the Void
+Анклав Пустоты
 
 LRN_ENCLAVE_VOID_DESC
 Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
@@ -7463,7 +7463,7 @@ SPY_DIST_MOD_DESC
 All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
 
 SHP_ANTIMAT_TORP
-Antimatter Torpedo
+Торпеды Антиматерии
 
 SHP_ANTIMAT_TORP_DESC
 A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead.
@@ -7487,7 +7487,7 @@ SHP_MINIAST_SWARM_DESC
 This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_SCAT_AST_HULL
-Scattered Asteroid Hull
+Рассеянный Корпус Астероида
 
 SHP_SCAT_AST_HULL_DESC
 This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
@@ -7523,7 +7523,7 @@ SHP_BIOBOMBER_DESC
 Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
 
 SHP_NOVA_BOMB
-Nova Bomb
+Бомба Нова
 
 SHP_NOVA_BOMB_DESC
 The most powerful weapon ever devised, capable of destroying an entire star system.
@@ -7535,7 +7535,7 @@ SHP_DEATH_SPORE_DESC
 Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
 
 SHP_BIOTERM
-Bio-Terminators
+Био-Терминаторы
 
 SHP_BIOTERM_DESC
 Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
@@ -7751,7 +7751,7 @@ BLD_INDUSTRY_CENTER_DESC
 [[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
 
 BLD_EXOBOT_SHIP
-Exobot Colony Origin
+Начальная колония Экзоботов
 BLD_EXOBOT_SHIP_DESC
 '''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
 
@@ -7882,7 +7882,7 @@ BLD_NEUTRONIUM_FORGE_DESC
 The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
 
 BLD_NEUTRONIUM_SYNTH
-Neutronium Synthesizer
+Нейтронный Синтезатор
 
 BLD_NEUTRONIUM_SYNTH_DESC
 '''An empire with this building does not need a Neutronium Extractor to build neutronium ship parts.
@@ -8005,7 +8005,7 @@ BLD_EXPERIMENTOR_OUTPOST_DESC
 The outpost of the Experimentors, used for carrying out highly advanced experiments.  This structure also acts as a cloak to prevent anyone from interfering with their work.
 
 BLD_NOVA_BOMB_ACTIVATOR
-Nova Bomb Activator
+Активатор Нова бомбы 
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
 
@@ -8047,10 +8047,10 @@ PART_DESC_FIGHTER_STATS
 Урон истребителям врага: %3%
 Урон кораблям врага: %2%
 Скорость запуска истребителей: %4% шт./ход
-Скорость: %5%
-Живучесть: %6%
-[[encyclopedia STEALTH_TITLE]]: %7%
-Обнаружение: %8%
+Скорость истребителей: %5%
+Живучесть истребителей: %6%
+[[encyclopedia STEALTH_TITLE]] истребителей: %7%
+Обнаружение истребителей: %8%
 Вместимость: %9% истребителей'''
 
 
@@ -8060,87 +8060,87 @@ PART_DESC_FIGHTER_STATS
 
 
 SR_WEAPON_1_1
-Mass Driver 1
+Электромагнитное Орудие 1
 SR_WEAPON_1_1_DESC
 '''The Mass Driver, a basic weapon.'''
 
 SR_WEAPON_1_2
-Mass Driver 2
+Электромагнитное Орудие 2
 SR_WEAPON_1_2_DESC
 '''Mass Driver, refined to level 2.'''
 
 SR_WEAPON_1_3
-Mass Driver 3
+Электромагнитное Орудие 3
 SR_WEAPON_1_3_DESC
 '''Mass Driver, refined to level 3.'''
 
 SR_WEAPON_1_4
-Mass Driver 4
+Электромагнитное Орудие 4
 SR_WEAPON_1_4_DESC
 '''Mass Driver, refined to level 4.'''
 
 SR_WEAPON_2_1
-Laser 1
+Лазер 1
 SR_WEAPON_2_1_DESC
 '''The Laser, a more powerful ship's weapon than the Mass Driver.'''
 
 SR_WEAPON_2_2
-Laser 2
+Лазер 2
 SR_WEAPON_2_2_DESC
 '''Laser, refined to level 2.'''
 
 SR_WEAPON_2_3
-Laser 3
+Лазер 3
 SR_WEAPON_2_3_DESC
 '''Laser, refined to level 3.'''
 
 SR_WEAPON_2_4
-Laser 4
+Лазер 4
 SR_WEAPON_2_4_DESC
 '''Laser, refined to level 4.'''
 
 SR_WEAPON_3_1
-Plasma Cannon 1
+Плазменная Пушка 1
 SR_WEAPON_3_1_DESC
 '''The Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
 SR_WEAPON_3_2
-Plasma Cannon 2
+Плазменная Пушка 2
 SR_WEAPON_3_2_DESC
 '''Plasma Cannon, refined to level 2.'''
 
 SR_WEAPON_3_3
-Plasma Cannon 3
+Плазменная Пушка 3
 SR_WEAPON_3_3_DESC
 '''Plasma Cannon, refined to level 3.'''
 
 SR_WEAPON_3_4
-Plasma Cannon 4
+Плазменная Пушка 4
 SR_WEAPON_3_4_DESC
 '''Plasma Cannon, refined to level 4.'''
 
 SR_WEAPON_4_1
-Death Ray 1
+Смертельный Луч 1
 SR_WEAPON_4_1_DESC
 '''The Death Ray, the ultimate ship's weapon.'''
 
 SR_WEAPON_4_2
-Death Ray 2
+Смертельный Луч 2
 SR_WEAPON_4_2_DESC
 '''Death Ray, refined to level 2.'''
 
 SR_WEAPON_4_3
-Death Ray 3
+Смертельный Луч 3
 SR_WEAPON_4_3_DESC
 '''Death Ray, refined to level 3.'''
 
 SR_WEAPON_4_4
-Death Ray 4
+Смертельный Луч 4
 SR_WEAPON_4_4_DESC
 '''Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.'''
 
 SR_WEAPON_2
-Laser
+Лазер
 
 SR_WEAPON_2_DESC
 Lower power and mass
@@ -8248,50 +8248,50 @@ LR_PLASMA_TORPEDO_DESC
 A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
 
 DT_DETECTOR_1
-Optical Scanner
+Оптический Сканер
 
 DT_DETECTOR_1_DESC
-Short-range detection.
+Малый Радиус Обнаружения.
 
 DT_DETECTOR_2
-Active Radar
+Активный Радар
 
 DT_DETECTOR_2_DESC
-Medium-range detection.
+Средний Радиус Обнаружения.
 
 DT_DETECTOR_3
-Neutron Scanner
+Нейтронный Сканер
 
 DT_DETECTOR_3_DESC
-Long-range detection.
+Большой Радиус Обнаружения.
 
 DT_DETECTOR_4
-Sensors
+Сенсоры
 
 DT_DETECTOR_4_DESC
-Very long-range detection.
+Очень Большой Радиус Обнаружения.
 
 FU_IMPROVED_ENGINE_COUPLINGS
-Improved Engine Couplings
+Улучшенная Сцепка Двигателей
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Increases Starlane speed by 10.
+'''Увеличивает Межзвёздную скорость на 10.
 
 Better engine parts equate to better engines.'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
-N-Dimensional Engine Matrix
+N-мерная матрица двигателя
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Starlane speed by 15. 
+'''Увеличивает Межзвёздную скорость на 15. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
 FU_SINGULARITY_ENGINE_CORE
-Singularity Engine Core
+Основной Сингулярный Двигатель
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Увеличивает Межзвёздную скорость на 20. 
 
 FU_BASIC_TANK
 Дополнительный топливный бак
@@ -8321,31 +8321,31 @@ ST_CLOAK_1
 Electromagnetic Damper
 
 ST_CLOAK_1_DESC
-'''Weak Cloaking (+20)
+'''Слабая Маскировка (+20)
 
 Improves [[encyclopedia STEALTH_TITLE]] of ship on which it is mounted by damping electromagnetic emissions from ship systems. Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 ST_CLOAK_2
-Absorption Field
+Абсорбирующие Поле
 
 ST_CLOAK_2_DESC
-'''Moderate Cloaking (+40)
+'''Умереная Маскировка (+40)
 
 Creates an absorption field around the ship, effectively transforming it into a perfect blackbody. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 ST_CLOAK_3
-Dimensional Cloak
+Пространственная маскировка
 
 ST_CLOAK_3_DESC
-'''Strong Cloking (+60)
+'''Силная Маскировка (+60)
 
 Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_TITLE]]. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 ST_CLOAK_4
-Phasing Cloak
+Фазовая Маскировка
 
 ST_CLOAK_4_DESC
-'''Very Strong Cloaking (+80)
+'''Очень Сильная Маскировка (+80)
 
 Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
@@ -8386,7 +8386,7 @@ AR_CRYSTAL_PLATE_DESC
 '''An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.'''
 
 AR_NEUTRONIUM_PLATE
-Neutronium Armor Plating
+Нейтронная Броня
 
 AR_NEUTRONIUM_PLATE_DESC
 '''Strongest, most durable armor plating. Admirable defense.'''
@@ -8398,7 +8398,7 @@ AR_PRECURSOR_PLATE_DESC
 Marvelously effective armor of unknown composition
 
 SH_DEFENSE_GRID
-Defense Grid
+Защитная Сетка
 
 SH_DEFENSE_GRID_DESC
 '''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 4.
@@ -8406,7 +8406,7 @@ SH_DEFENSE_GRID_DESC
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_DEFLECTOR
-Deflector Shield
+Отражающий Щит
 
 SH_DEFLECTOR_DESC
 '''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 7.
@@ -8414,7 +8414,7 @@ SH_DEFLECTOR_DESC
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_PLASMA
-Plasma Shield
+Плазменный Щит
 
 SH_PLASMA_DESC
 '''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 12.
@@ -8422,7 +8422,7 @@ SH_PLASMA_DESC
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_BLACK
-Blackshield
+Черный Щит
 
 SH_BLACK_DESC
 '''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 20.
@@ -8430,7 +8430,7 @@ SH_BLACK_DESC
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_MULTISPEC
-Multi-Spectral Shield
+Мультиспектральный Щит
 
 SH_MULTISPEC_DESC
 '''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 15.
@@ -8438,7 +8438,7 @@ SH_MULTISPEC_DESC
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 CO_COLONY_POD
-Colony Pod
+Модуль Колоний
 
 CO_COLONY_POD_DESC
 '''Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
@@ -8446,7 +8446,7 @@ CO_COLONY_POD_DESC
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
 CO_SUSPEND_ANIM_POD
-Cryonic Colony Pod
+Крионический модуль Колоний
 
 CO_SUSPEND_ANIM_POD_DESC
 '''Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
@@ -8484,19 +8484,19 @@ SP_VOID
 Void Eruptor
 
 SP_DEATH_SPORE
-Death Spores
+Споры Смерти
 
 SP_DEATH_SPORE_DESC
 A biological weapon which gradually reduces the population of a planet.
 
 SP_BIOTERM
-Bio-Terminators
+Био-Терминаторы
 
 SP_BIOTERM_DESC
 A powerful biological weapon which quickly reduces the population of a planet.
 
 SP_NOVA_BOMB
-Nova Bomb
+Бомба Нова 
 
 SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
@@ -8508,7 +8508,7 @@ A weapon of tremendous power capable of destroying an entire system.  The weapon
 
 
 SH_ROBOTIC
-Robotic Hull
+Роботизированный Корпус
 
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
@@ -8540,7 +8540,7 @@ SH_NANOROBOTIC_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
 
 SH_TITANIC
-Titanic Hull
+Титанический Корпус
 
 SH_TITANIC_DESC
 '''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and [[encyclopedia STEALTH_TITLE]].
@@ -8564,7 +8564,7 @@ SH_LOGISTICS_FACILITATOR_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
 SH_ASTEROID
-Asteroid Hull
+Корпус Астероида
 
 SH_ASTEROID_DESC
 '''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
@@ -8572,7 +8572,7 @@ SH_ASTEROID_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
 SH_SMALL_ASTEROID
-Small Asteroid Hull
+Маленький Корпус Астероида
 
 SH_SMALL_ASTEROID_DESC
 '''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
@@ -8580,7 +8580,7 @@ SH_SMALL_ASTEROID_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
 SH_HEAVY_ASTEROID
-Heavy Asteroid Hull
+Большой Корпус Астероида
 
 SH_HEAVY_ASTEROID_DESC
 '''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
@@ -8732,7 +8732,7 @@ SH_QUANTUM_ENERGY_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_SOLAR
-Solar Hull
+Солнечный Корпус
 
 SH_SOLAR_DESC
 '''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
@@ -8747,14 +8747,14 @@ SH_BASIC_SMALL_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
 
 SH_BASIC_MEDIUM
-Basic Medium Hull
+Основной Средний Корпус
 SH_BASIC_MEDIUM_DESC
 '''A medium-sized, basic interstellar hull.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
 
 SH_STANDARD
-Basic Large Hull
+Основной Большой Корпус
 
 SH_STANDARD_DESC
 '''A large, basic interstellar hull.
@@ -8966,10 +8966,10 @@ ULTIMATE_GROUND_TROOPS
 '''+++	Беспрецедентные наземные [[encyclopedia TROOP_TITLE]]: 300%.'''
 
 BAD_DETECTION
-'''-	Плохое [[encyclopedia DETECTION_RANGE_TITLE]]: -20 malus.'''
+'''-	Плохое [[encyclopedia DETECTION_RANGE_TITLE]]: -20 малус.'''
 
 GOOD_DETECTION
-'''+	Хорошее [[encyclopedia DETECTION_RANGE_TITLE]]: +25 bonus.'''
+'''+	Хорошее [[encyclopedia DETECTION_RANGE_TITLE]]: +25 бонус.'''
 
 GREAT_DETECTION
 '''++	Превосходное [[encyclopedia DETECTION_RANGE_TITLE]]: +50 бонус.'''
@@ -8978,7 +8978,7 @@ ULTIMATE_DETECTION
 '''+++	Беспрецедентное обнаружение: +100 бонус.'''
 
 BAD_STEALTH
-'''-	Плохая [[encyclopedia STEALTH_TITLE]]: -15 malus.'''
+'''-	Плохая [[encyclopedia STEALTH_TITLE]]: -15 малус.'''
 
 AVERAGE_STEALTH
 '''	Средняя [[encyclopedia STEALTH_TITLE]].'''
@@ -9079,7 +9079,7 @@ GREAT_MINING_LABEL
 '''%1% Превосходная добыча'''
 
 ULTIMATE_MINING_LABEL
-'''%1% Беспрецендентная добыча'''
+'''%1% Беспрецедентная добыча'''
 
 FOCUS_INDUSTRY_LABEL
 '''%2% Цель - промышленность'''
@@ -9109,7 +9109,7 @@ GREAT_RESEARCH_LABEL
 '''%2% Превосходная наука'''
 
 ULTIMATE_RESEARCH_LABEL
-'''%2% Беспрецендентная наука'''
+'''%2% Беспрецедентная наука'''
 
 BAD_TROOPS_LABEL
 '''%2% Плохие войска'''
@@ -9124,13 +9124,13 @@ GREAT_TROOPS_LABEL
 '''%2% Превосходные войска'''
 
 ULTIMATE_TROOPS_LABEL
-'''%2% Беспрецендентные войска'''
+'''%2% Беспрецедентные войска'''
 
 INDEPENDENT_TROOP_LABEL
 '''Independent Homeworld'''
 
 OUTPOST_TROOP_LABEL
-'''Outpost'''
+'''Аванпост'''
 
 VERY_BRIGHT_STAR
 '''Очень яркая звезда'''
@@ -9169,7 +9169,7 @@ EXCELLENT_VISION_LABEL
 '''Прекрасное зрение'''
 
 FOCUS_PROTECTION_LABEL
-'''Protection Focus'''
+'''Защитный Фокус'''
 
 XENOPHOBIC_LABEL_SELF
 '''Xenophobic Frenzy (other species nearby)'''
@@ -9242,8 +9242,8 @@ Monastery
 Orphanage Planet'''
 
 AI_CAPITOL_NAMES_TURTLE
-'''Citadel
-Prison World'''
+'''Цитадель
+Тюремный Мир'''
 
 AI_CAPITOL_NAMES_CAUTIOUS
 '''Bastion of the Brave,
