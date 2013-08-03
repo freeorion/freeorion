@@ -562,6 +562,20 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     turns_left_to_completion(-1)
 {}
 
+bool ProductionQueue::Element::operator<(const Element& rhs) const {
+    return this->item                       < rhs.item &&
+           this->ordered                    < rhs.ordered &&
+           this->blocksize                  < rhs.blocksize &&
+           this->remaining                  < rhs.remaining &&
+           this->location                   < rhs.location &&
+           this->allocated_pp               < rhs.allocated_pp &&
+           this->progress                   < rhs.progress &&
+           this->progress_memory            < rhs.progress_memory &&
+           this->blocksize_memory           < rhs.blocksize_memory &&
+           this->turns_left_to_next_item    < rhs.turns_left_to_next_item &&
+           this->turns_left_to_completion   < rhs.turns_left_to_completion;
+}
+
 
 /////////////////////
 // ProductionQueue //
@@ -2482,15 +2496,30 @@ void Empire::CheckProductionProgress() {
 
     std::map<int, std::vector<TemporaryPtr<Ship> > >  system_new_ships;
 
-    // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
-    // action is appropriate, and record that queue item as complete, so it can be erased from the queue
+    // preprocess the queue to get all the costs and times of all items
+    // before doing any generation of new objects or other modifications
+    // of the gamestate. this will ensure that the cost of items doesn't
+    // change while the queue is being processed, so that if there is
+    // sufficent PP to complete an object at the start of a turn,
+    // items above it on the queue getting finished don't increase the
+    // cost and result in it not being finished that turn.
+    std::map<ProductionQueue::Element, std::pair<double, int> > queue_item_costs_and_times;
+    for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
+        ProductionQueue::Element& elem = m_production_queue[i];
+        queue_item_costs_and_times[elem] = ProductionCostAndTime(elem);
+        queue_item_costs_and_times[elem].first *= elem.blocksize;
+    }
+
+    // go through queue, updating production progress.  If a production item is
+    // completed, create the produced object or take whatever other action is
+    // appropriate, and record that queue item as complete, so it can be erased
+    // from the queue
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         ProductionQueue::Element& elem = m_production_queue[i];
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = ProductionCostAndTime(elem);
-        item_cost *= elem.blocksize;
+        boost::tie(item_cost, build_turns) = queue_item_costs_and_times[elem];
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
