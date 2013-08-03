@@ -159,7 +159,7 @@ public:
     static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     friend class Universe;
     friend class ObjectMap;
     template <class T> friend void boost::checked_delete(T* x);

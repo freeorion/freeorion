@@ -34,51 +34,37 @@ public:
 
     template <class T = UniverseObject>
     struct iterator : private std::map<int, boost::shared_ptr<T> >::iterator {
-        // This constructor assumes that if we are not end(), we are a valid iterator somewhere >= begin() and < end()
-        // Don't do stupid things with invalid iterators, or there will be problems!
-        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base, ObjectMap& owner) :
-            std::map<int, boost::shared_ptr<T> >::iterator(base),
-            m_owner(owner)
-        {
-            if (*this == owner.end<T>())
-                m_in_range = false;
-            else
-                m_in_range = true;
-
-            Refresh();
-        }
+        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base) :
+            std::map<int, boost::shared_ptr<T> >::iterator(base)
+        { Refresh(); }
 
         TemporaryPtr<T> operator *() const
         { return m_current_ptr; }
 
         // The result of this operator is not intended to be stored, so it's safe to
-        // return a reference to a member variable that's going to be overwritten soon.
+        // return a reference to an instance variable that's going to be soon overwritten.
         TemporaryPtr<T>& operator ->() const
         { return m_current_ptr; }
 
         iterator& operator ++() {
             std::map<int, boost::shared_ptr<T> >::iterator::operator++();
-            AfterIncrementRangeCheck();
             Refresh();
             return *this;
         }
 
         iterator operator ++(int) {
             iterator result = std::map<int, boost::shared_ptr<T> >::iterator::operator++(0);
-            AfterIncrementRangeCheck();
             Refresh();
             return result;
         }
 
         iterator& operator --() {
-            BeforeDecrementRangeCheck();
             std::map<int, boost::shared_ptr<T> >::iterator::operator--();
             Refresh();
             return *this;
         }
 
         iterator operator --(int) {
-            BeforeDecrementRangeCheck();
             iterator result = std::map<int, boost::shared_ptr<T> >::iterator::operator--(0);
             Refresh();
             return result;
@@ -91,87 +77,52 @@ public:
         { return std::map<int, boost::shared_ptr<T> >::iterator::operator !=(other); }
 
     private:
-        // We want to store a TemporaryPtr in this class, so that all operations done via an iterator with the -> operator
-        // will be merged into the real object as a single transaction.
+        // 
         mutable TemporaryPtr<T> m_current_ptr;
-        ObjectMap& m_owner;
-        bool m_in_range;
 
-        void AfterIncrementRangeCheck() {
-            if (*this == m_owner.end<T>())
-                this->m_in_range = false;
-            if (*this == m_owner.begin<T>())
-                this->m_in_range = true;
-        }
-
-        void BeforeDecrementRangeCheck() {
-            if (*this == m_owner.begin<T>())
-                this->m_in_range = false;
-            if (*this == m_owner.end<T>())
-                this->m_in_range = true;
-        }
-
-        // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
-        // Otherwise, we just want to return a "null" pointer.
-        // Each time we move the iterator around, we update the m_in_range variable to check if we can snag a valid object,
-        // then call this Refresh method to do the actual update to m_current_ptr.
         void Refresh() const {
-            if (m_in_range) {
-                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
-            } else {
+            if (std::map<int, boost::shared_ptr<T> >::_Isnil(_Ptr)) {
                 m_current_ptr = TemporaryPtr<T>();
+            } else {
+                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
             }
         }
     };
 
     template <class T = UniverseObject>
     struct const_iterator : private std::map<int, boost::shared_ptr<T> >::const_iterator {
-        // This constructor assumes that if we are not const_end(), we are a valid iterator somewhere >= const_begin() and < const_end()
-        // Don't do stupid things with invalid iterators, or there will be problems!
-        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base, const ObjectMap& owner) :
-            std::map<int, boost::shared_ptr<T> >::const_iterator(base),
-            m_owner(owner)
-        {
-            if (*this == owner.const_end<T>())
-                m_in_range = false;
-            else
-                m_in_range = true;
-
-            Refresh();
-        }
+        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base) :
+            std::map<int, boost::shared_ptr<T> >::const_iterator(base)
+        { Refresh(); }
 
         TemporaryPtr<const T> operator *() const
         { return m_current_ptr; }
         
         // The result of this operator is not intended to be stored, so it's safe to
-        // return a reference to a member variable that's going to be overwritten soon.
+        // return a reference to an instance variable that's going to be soon overwritten.
         TemporaryPtr<const T>& operator ->() const
         { return m_current_ptr; }
 
         const_iterator& operator ++() {
             std::map<int, boost::shared_ptr<T> >::const_iterator::operator++();
-            AfterIncrementRangeCheck();
             Refresh();
             return *this;
         }
 
         const_iterator operator ++(int) {
-            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
-            AfterIncrementRangeCheck();
+            iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
             Refresh();
             return result;
         }
 
         const_iterator& operator --() {
-            BeforeDecrementRangeCheck();
             std::map<int, boost::shared_ptr<T> >::const_iterator::operator--();
             Refresh();
             return *this;
         }
 
         const_iterator operator --(int) {
-            BeforeDecrementRangeCheck();
-            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
+            iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
             Refresh();
             return result;
         }
@@ -183,34 +134,14 @@ public:
         { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator !=(other); }
 
     private:
-        // We want to store a TemporaryPtr in this class, so that we get a read-consistent view of the object when accessed via the -> operator.
+        // See iterator for comments.
         mutable TemporaryPtr<const T> m_current_ptr;
-        const ObjectMap& m_owner;
-        bool m_in_range;
 
-        void AfterIncrementRangeCheck() {
-            if (*this == m_owner.const_end<T>())
-                this->m_in_range = false;
-            if (*this == m_owner.const_begin<T>())
-                this->m_in_range = true;
-        }
-
-        void BeforeDecrementRangeCheck() {
-            if (*this == m_owner.const_begin<T>())
-                this->m_in_range = false;
-            if (*this == m_owner.const_end<T>())
-                this->m_in_range = true;
-        }
-
-        // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
-        // Otherwise, we just want to return a "null" pointer.
-        // Each time we move the iterator around, we update the m_in_range variable to check if we can snag a valid object,
-        // then call this Refresh method to do the actual update to m_current_ptr.
         void Refresh() const {
-            if (m_in_range) {
-                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);
-            } else {
+            if (std::map<int, boost::shared_ptr<T> >::_Isnil(_Ptr)) {
                 m_current_ptr = TemporaryPtr<T>();
+            } else {
+                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);
             }
         }
     };
@@ -399,19 +330,19 @@ private:
 
 template <class T>
 ObjectMap::iterator<T> ObjectMap::begin()
-{ return iterator<T>(Map<T>().begin(), *this); }
+{ return iterator<T>(Map<T>().begin()); }
 
 template <class T>
 ObjectMap::iterator<T> ObjectMap::end()
-{ return iterator<T>(Map<T>().end(), *this); }
+{ return iterator<T>(Map<T>().end()); }
 
 template <class T>
 ObjectMap::const_iterator<T> ObjectMap::const_begin() const
-{ return const_iterator<T>(Map<T>().begin(), *this); }
+{ return const_iterator<T>(Map<T>().begin()); }
 
 template <class T>
 ObjectMap::const_iterator<T> ObjectMap::const_end() const
-{ return const_iterator<T>(Map<T>().end(), *this); }
+{ return const_iterator<T>(Map<T>().end()); }
 
 template <class T>
 TemporaryPtr<const T> ObjectMap::Object(int id) const {

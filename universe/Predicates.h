@@ -103,7 +103,7 @@ struct OwnedVisitor : UniverseObjectVisitor
 template <class T1, class T2>
 TemporaryPtr<T1> universe_object_ptr_cast(TemporaryPtr<T2> ptr)
 {
-    typedef typename boost::remove_const<T1>::type T1ConstFreeType;
+    typedef boost::remove_const<T1>::type T1ConstFreeType;
 
     // If you've failed this assertion, you're trying to cast some type T2 to
     // [const] UniverseObject.  If T2 is not derived from UniverseObject,

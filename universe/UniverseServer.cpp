@@ -1633,7 +1633,6 @@ void Universe::PopulateSystems(GalaxySetupOption density) {
     Logger().debugStream() << "PopulateSystems";
 
     std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
-    Logger().debugStream() << "Got all the systems";
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to populate an empty galaxy.");

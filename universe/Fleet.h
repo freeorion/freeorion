@@ -152,7 +152,7 @@ protected:
     {}
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
     
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
     ~Fleet() {}
 
