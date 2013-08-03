@@ -62,7 +62,7 @@ protected:
     Building(int empire_id, const std::string& building_type,
              int produced_by_empire_id = ALL_EMPIRES);                  ///< basic ctor
     
-    template <class T> friend static void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
     ~Building() {}
 

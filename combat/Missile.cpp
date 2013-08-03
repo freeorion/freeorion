@@ -134,7 +134,7 @@ void Missile::Init(TemporaryPtr<const Ship> launcher,
                    const OpenSteer::Vec3& position_,
                    const OpenSteer::Vec3& direction)
 {
-    assert(!launcher.Unowned());
+    assert(!launcher->Unowned());
     m_empire_id = launcher->Owner();
 
     m_stats.m_damage =      launcher->GetPartMeter(METER_DAMAGE,     m_part_name)->Current();
