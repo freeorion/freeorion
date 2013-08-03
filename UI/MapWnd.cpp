@@ -1945,7 +1945,7 @@ void MapWnd::InitTurn() {
 
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
-    UpdateMeterEstimates();
+    GetUniverse().UpdateMeterEstimates();
 
     GetUniverse().ApplyAppearanceEffects();
 
@@ -2850,7 +2850,7 @@ void MapWnd::SelectSystem(int system_id) {
 
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
-        UpdateMeterEstimates(system_id, true);
+        GetUniverse().UpdateMeterEstimates(system_id, true);
     }
 
 
@@ -4863,99 +4863,9 @@ void MapWnd::RefreshPopulationIndicator() {
         new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts)));
 }
 
-void MapWnd::UpdateMetersAndResourcePools() {
-    UpdateMeterEstimates();
+void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
+    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), true);
     UpdateEmpireResourcePools();
-}
-
-void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec) {
-    UpdateMeterEstimates(objects_vec);
-    UpdateEmpireResourcePools();
-}
-
-void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects) {
-    //std::cout << "MapWnd::UpdateMetersAndResourcePools(" << object_id << ", " << update_contained_objects << ")" << std::endl;
-    UpdateMeterEstimates(object_id, update_contained_objects);
-    UpdateEmpireResourcePools();
-}
-
-void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
-{ UpdateMetersAndResourcePools(SidePanel::SystemID(), true); }
-
-void MapWnd::UpdateMeterEstimates()
-{ UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
-
-void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
-    //Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
-
-    const ObjectMap& objects = GetUniverse().Objects();
-    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    //const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
-
-
-    if (object_id == INVALID_OBJECT_ID) {
-        // update meters for all objects.  Value of updated_contained_objects is
-        // irrelivant and is ignored in this case.
-        std::vector<int> object_ids;
-        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
-            int object_id = obj_it->ID();
-            // skip known destroyed objects, but do update for stale objects
-            if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
-                continue;
-            object_ids.push_back(object_id);
-        }
-
-        UpdateMeterEstimates(object_ids);
-        return;
-    }
-
-    // collect objects to update meters of.  this may be a single object, a
-    // group of related objects, or all objects in the (known) universe.
-    // also clear effect accounting for meters that are to be updated.
-    std::set<int> objects_set;
-    std::list<int> objects_list;
-    objects_list.push_back(object_id);
-
-    for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
-        int cur_object_id = *list_it;
-
-        TemporaryPtr<const UniverseObject> cur_object = objects.Object(cur_object_id);
-        if (!cur_object) {
-            Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object with id " << cur_object_id;
-            continue;
-        }
-
-        // skip known destroyed objects, but do update for stale objects
-        if (this_client_known_destroyed_objects.find(cur_object_id) != this_client_known_destroyed_objects.end())
-            continue;
-
-        // add current object to list
-        objects_set.insert(cur_object_id);
-
-        // add contained objects within current object to list of objects to
-        // process, if requested.  assumes no objects contain themselves (which
-        // could cause infinite loops)
-        if (update_contained_objects) {
-            std::vector<int> contained_objects = cur_object->FindObjectIDs(); // get all contained objects
-            std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
-        }
-    }
-    std::vector<int> objects_vec;
-    objects_vec.reserve(objects_set.size());
-    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
-    UpdateMeterEstimates(objects_vec);
-}
-
-void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
-    // causes meters to be updated when appropriate, such as after a focus change,
-    // which would affect target meters
-
-    Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
-
-    GetUniverse().InhibitUniverseObjectSignals(true);
-    GetUniverse().UpdateMeterEstimates(objects_vec);
-    GetUniverse().InhibitUniverseObjectSignals(false);
 }
 
 void MapWnd::UpdateEmpireResourcePools() {
