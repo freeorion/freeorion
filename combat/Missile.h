@@ -5,6 +5,7 @@
 #include "PathingEngineFwd.h"
 
 #include "CombatObject.h"
+#include "../universe/TemporaryPtr.h"
 #include "../universe/ShipDesign.h"
 #include "../util/Export.h"
 

@@ -130,9 +130,17 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\combat\AsteroidBeltObstacle.h" />
+    <ClInclude Include="..\..\combat\CombatFighter.h" />
     <ClInclude Include="..\..\combat\CombatLogManager.h" />
+    <ClInclude Include="..\..\combat\CombatObject.h" />
     <ClInclude Include="..\..\combat\CombatOrder.h" />
+    <ClInclude Include="..\..\combat\CombatShip.h" />
     <ClInclude Include="..\..\combat\CombatSystem.h" />
+    <ClInclude Include="..\..\combat\Missile.h" />
+    <ClInclude Include="..\..\combat\PathingEngine.h" />
+    <ClInclude Include="..\..\combat\PathingEngineFwd.h" />
+    <ClInclude Include="..\..\combat\ProximityDatabase.h" />
     <ClInclude Include="..\..\Empire\Diplomacy.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
