@@ -1841,7 +1841,7 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(TemporaryPtr<const Ship> shi
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
 
-    assert(!ship.Unowned());
+    assert(!ship->Unowned());
     GG::Clr color = Empires().Lookup(ship->Owner())->Color();
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("decal_color", Ogre::Vector3(color.r / 255.0, color.g / 255.0, color.b / 255.0));

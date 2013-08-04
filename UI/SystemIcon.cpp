@@ -75,7 +75,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
     std::vector<TemporaryPtr<const Planet> > system_planets;
-    std::vector<TemporaryPtr<const Planet>> planets = objects.FindObjects<Planet>();
+    std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
     for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets.begin(); it != planets.end(); ++it) {
         TemporaryPtr<const Planet> planet = *it;
         if (planet->SystemID() != system_id)

@@ -127,7 +127,7 @@ CombatFighterFormationPtr
 PathingEngine::CreateFighterFormation(CombatShipPtr base, Iter first, Iter last)
 {
     assert(first != last);
-    assert(!base->GetShip().Unowned());
+    assert(!base->GetShip()->Unowned());
     int empire_id = base->GetShip()->Owner();
 
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
