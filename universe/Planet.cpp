@@ -507,7 +507,6 @@ std::vector<std::string> Planet::AvailableFoci(TemporaryPtr<const ResourceCenter
     TemporaryPtr<const Planet> this_planet = dynamic_ptr_cast<const Planet>(res);
     if (!this_planet)
         return retval;
-
     ScriptingContext context(this_planet);
     if (const Species* species = GetSpecies(this_planet->SpeciesName())) {
         const std::vector<FocusType>& foci = species->Foci();
@@ -519,6 +518,7 @@ std::vector<std::string> Planet::AvailableFoci(TemporaryPtr<const ResourceCenter
             }
         }
     }
+
     return retval;
 }
 

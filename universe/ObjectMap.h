@@ -34,8 +34,9 @@ public:
 
     template <class T = UniverseObject>
     struct iterator : private std::map<int, boost::shared_ptr<T> >::iterator {
-        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base) :
-            std::map<int, boost::shared_ptr<T> >::iterator(base)
+        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base, ObjectMap& owner) :
+            std::map<int, boost::shared_ptr<T> >::iterator(base),
+            m_owner(owner)
         { Refresh(); }
 
         TemporaryPtr<T> operator *() const
@@ -79,9 +80,13 @@ public:
     private:
         // 
         mutable TemporaryPtr<T> m_current_ptr;
+        ObjectMap& m_owner;
 
+        // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
+        // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
+        // the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::_Isnil(_Ptr)) {
+            if (std::map<int, boost::shared_ptr<T> >::iterator::operator ==(m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
@@ -91,8 +96,9 @@ public:
 
     template <class T = UniverseObject>
     struct const_iterator : private std::map<int, boost::shared_ptr<T> >::const_iterator {
-        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base) :
-            std::map<int, boost::shared_ptr<T> >::const_iterator(base)
+        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base, const ObjectMap& owner) :
+            std::map<int, boost::shared_ptr<T> >::const_iterator(base),
+            m_owner(owner)
         { Refresh(); }
 
         TemporaryPtr<const T> operator *() const
@@ -110,7 +116,7 @@ public:
         }
 
         const_iterator operator ++(int) {
-            iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
+            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
             Refresh();
             return result;
         }
@@ -122,7 +128,7 @@ public:
         }
 
         const_iterator operator --(int) {
-            iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
+            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
             Refresh();
             return result;
         }
@@ -136,9 +142,13 @@ public:
     private:
         // See iterator for comments.
         mutable TemporaryPtr<const T> m_current_ptr;
+        const ObjectMap& m_owner;
 
+        // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
+        // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
+        // the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::_Isnil(_Ptr)) {
+            if (std::map<int, boost::shared_ptr<T> >::const_iterator::operator ==(m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);
@@ -330,19 +340,19 @@ private:
 
 template <class T>
 ObjectMap::iterator<T> ObjectMap::begin()
-{ return iterator<T>(Map<T>().begin()); }
+{ return iterator<T>(Map<T>().begin(), *this); }
 
 template <class T>
 ObjectMap::iterator<T> ObjectMap::end()
-{ return iterator<T>(Map<T>().end()); }
+{ return iterator<T>(Map<T>().end(), *this); }
 
 template <class T>
 ObjectMap::const_iterator<T> ObjectMap::const_begin() const
-{ return const_iterator<T>(Map<T>().begin()); }
+{ return const_iterator<T>(Map<T>().begin(), *this); }
 
 template <class T>
 ObjectMap::const_iterator<T> ObjectMap::const_end() const
-{ return const_iterator<T>(Map<T>().end()); }
+{ return const_iterator<T>(Map<T>().end(), *this); }
 
 template <class T>
 TemporaryPtr<const T> ObjectMap::Object(int id) const {
