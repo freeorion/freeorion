@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTO
 ########################################
 project(FreeOrion)
 
-set(FreeOrion_VERSION 0.4.3)
+set(FreeOrion_VERSION 0.4.3+)
 set(FREEORION_RELEASE false)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
