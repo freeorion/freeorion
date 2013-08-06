@@ -138,8 +138,18 @@ struct FO_COMMON_API ProductionQueue {
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
-        bool operator<(const ProductionItem& rhs) const
-        { return this->build_type < rhs.build_type && this->name < rhs.name && this->design_id < rhs.design_id; }
+        bool operator<(const ProductionItem& rhs) const {
+            if (build_type < rhs.build_type)
+                return true;
+            if (build_type > rhs.build_type)
+                return false;
+            if (build_type == BT_BUILDING)
+                return name < rhs.name;
+            else if (build_type == BT_SHIP)
+                return design_id < rhs.design_id;
+
+            return false;
+        }
 
         BuildType   build_type;
 
@@ -159,8 +169,6 @@ struct FO_COMMON_API ProductionQueue {
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
-
-        bool operator<(const Element& rhs) const;
 
         ProductionItem  item;
         int             ordered;                    ///< how many of item (blocks) to produce
