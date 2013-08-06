@@ -41,6 +41,7 @@ include_directories (
 
 add_executable(test_parsers_boost
     testmain.cpp
+    CommonTest.cpp
     TestEnumParser.cpp
     TestValueRefIntParser.cpp
     TestValueRefDoubleParser.cpp

@@ -2,16 +2,17 @@
 
 #include "ValueRefParser.h"
 #include "universe/ValueRef.h"
-
-#define CHECK_IS_TYPE_PTR(TYPE, VALUE) \
-    BOOST_CHECK_MESSAGE(VALUE && typeid(TYPE) == typeid(*VALUE), \
-        "check typeid(" #TYPE ") == typeid(" #VALUE ") failed: " #VALUE " was " << (VALUE ? typeid(*VALUE).name() : "(null)"))
-
-#define REQUIRE_IS_TYPE_PTR(TYPE, VALUE) \
-    BOOST_REQUIRE_MESSAGE(VALUE && typeid(TYPE) == typeid(*VALUE), \
-        "check typeid(" #TYPE ") == typeid(" #VALUE ") failed: " #VALUE " was " << (VALUE ? typeid(*VALUE).name() : "(null)"))
+#include "CommonTest.h"
 
 struct ValueRefIntFixture {
+    ValueRefIntFixture():
+        result(0)
+    {}
+
+    ~ValueRefIntFixture() {
+        delete result;
+    }
+
     bool parse(std::string phrase, ValueRef::ValueRefBase<int>*& result) {
         parse::value_ref_parser_rule<int>::type& rule = parse::value_ref_parser<int>();
         const parse::lexer& lexer = lexer.instance();
@@ -28,74 +29,106 @@ struct ValueRefIntFixture {
             in_state("WS")[lexer.self]
         );
     }
-};
 
-// XXX value_ref_parser_rule<int> throws an expectation_failure, the enum parser does not. is this intended?
+    ValueRef::ValueRefBase<int>* result;
+    const ValueRef::Operation<int>* operation1;
+    const ValueRef::Operation<int>* operation2;
+    const ValueRef::Operation<int>* operation3;
+    const ValueRef::Operation<int>* operation4;
+    const ValueRef::Operation<int>* operation5;
+    const ValueRef::Operation<int>* operation6;
+    const ValueRef::Constant<int>* value;
+};
 
 BOOST_FIXTURE_TEST_SUITE(ValueRefIntParser, ValueRefIntFixture)
 
-BOOST_AUTO_TEST_CASE(IntLiteralParser) {
-    ValueRef::ValueRefBase<int>* result;
-
-    // XXX: What is the desired real to int casting behaviour (to nearest int, floor, ...)
-
+BOOST_AUTO_TEST_CASE(IntLiteralParserInteger) {
     BOOST_CHECK(parse("7309", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == 7309);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 7309);
+}
+
+BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeInteger) {
     BOOST_CHECK(parse("-1343", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == -1343);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1343);
+}
+
+// XXX: What is the desired real to int casting behaviour (to nearest int, floor, ...)
+BOOST_AUTO_TEST_CASE(IntLiteralParserReal) {
     BOOST_CHECK(parse("14.234", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == 14);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 14);
+}
+
+BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeReal) {
     BOOST_CHECK(parse("-13.7143", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == -13);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 13);
+}
+
+BOOST_AUTO_TEST_CASE(IntLiteralParserBracketedInteger) {
     BOOST_CHECK(parse("(595)", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == 595);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 595);
+}
+
+BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeBracketedInteger) {
     BOOST_CHECK(parse("(-1532)", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == -1532);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1532);
+}
+
+BOOST_AUTO_TEST_CASE(IntLiteralParserDoubleBracketedInteger) {
     BOOST_CHECK(parse("((143))", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == 143);
-    delete result;
-    result = 0;
 
-    BOOST_CHECK(parse("((-6754.20))", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<int>, result);
-    if(dynamic_cast<ValueRef::Constant<int>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<int>*>(result)->Value() == -6754);
-    delete result;
-    result = 0;
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 143);
+}
 
-    // errornous input
+BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeBracketedReal) {
+    BOOST_CHECK(parse("(-(6754.20))", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6754);
+}
+
+// XXX value_ref_parser_rule<int> throws an expectation_failure, the enum parser does not. is this intended?
+BOOST_AUTO_TEST_CASE(IntLiteralParserErrornousInput) {
     BOOST_CHECK(!parse("-", result));
     BOOST_CHECK(!parse("(1", result));
     BOOST_CHECK(!parse("(-", result));
@@ -118,72 +151,91 @@ BOOST_AUTO_TEST_CASE(IntLiteralParser) {
 // Term:
 // -1+2
 // Expected AST:
-//  +   #
-//  |\  #
-// -1 2 #
+// +    #
+// |\   #
+// | \  #
+// -  2 #
+// |    #
+// 1    #
 BOOST_AUTO_TEST_CASE(IntArithmeticParser1) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("-1+2", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    ValueRef::Operation<int>* operation = dynamic_cast<ValueRef::Operation<int>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
+    // (-1) + 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->LHS())->Value() == -1);
+    // -1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->RHS())->Value() == 2);
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
 
-    delete result;
+    // 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
+
 }
 
 // Term:
 // -1+2-8+5
 // Expected AST:
-//  +   #
-//  |\  #
-//  - 5 #
-//  |\  #
-//  + 8 #
-//  |\  #
-// -1 2 #
+// +   #
+// |\  #
+// - 5 #
+// |\  #
+// + 8 #
+// |\  #
+// - 2 #
+// |   #
+// 1
 BOOST_AUTO_TEST_CASE(IntArithmeticParser2) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("-1+2-8+5", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    const ValueRef::Operation<int>* operation  = dynamic_cast<ValueRef::Operation<int>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (-1+2-8) + 5
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->RHS())->Value() == 5);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
     // (-1+2) - 8
-    const ValueRef::Operation<int>* operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::MINUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::MINUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation2->LHS());
+    // (-1) + 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS())->Value() == 8);
+    // -1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation3->LHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
-    // -1 + 2
-    const ValueRef::Operation<int>* operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::PLUS);
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS())->Value() == -1);
+    // 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation3->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS())->Value() == 2);
+    // 8
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 8);
 
-    delete result;
+    // 5
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 5);
 }
 
 // Term:
@@ -195,31 +247,32 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser2) {
 // |\   #
 // 4 3  #
 BOOST_AUTO_TEST_CASE(IntArithmeticParser3) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("4*3+2", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    const ValueRef::Operation<int>* operation = dynamic_cast<ValueRef::Operation<int>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (4*3) + 2
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->RHS())->Value() == 2);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
     // 4 * 3
-    const ValueRef::Operation<int>* operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::TIMES);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS())->Value() == 4);
+    // 4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 4);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS())->Value() == 3);
+    // 3
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3);
 
-    delete result;
+    // 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
 }
 
 // Term:
@@ -231,31 +284,42 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser3) {
 //    | \    #
 //    2 -7   #
 BOOST_AUTO_TEST_CASE(IntArithmeticParser4) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("-1+2/-7", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    const ValueRef::Operation<int>* operation = dynamic_cast<ValueRef::Operation<int>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // -1 + (2/-7)
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->LHS())->Value() == -1);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->RHS());
+    // -1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::NEGATE);
+
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 
     // 2 / -7
-    const ValueRef::Operation<int>* operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation->RHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::DIVIDE);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->RHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::DIVIDE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS())->Value() == 2);
+    // 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS())->Value() == -7);
+    // -7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation3->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
-    delete result;
+    // 7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 7);
 }
 
 // Term:
@@ -265,42 +329,56 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser4) {
 //   / \       #
 // (/)  *      #
 // /\   | \    #
-//-1 3 -6  7   #
+// - 3  -  7   #
+// |    |      #
+// 1    6      #
 BOOST_AUTO_TEST_CASE(IntArithmeticParser5) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("-1/3+-6*7", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    const ValueRef::Operation<int>* operation = dynamic_cast<ValueRef::Operation<int>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (-1/3) + (-6*7)
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->RHS());
+    // (-1) / 3
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::DIVIDE);
 
-    // -1 / 3
-    const ValueRef::Operation<int>* operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::DIVIDE);
+    // -1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS())->Value() == -1);
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS())->Value() == 3);
+    // 3
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3);
 
-    // -6 * 7
-    const ValueRef::Operation<int>* operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation->RHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::TIMES);
+    // (-6) * 7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS())->Value() == -6);
+    // -6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation4->LHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<int>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation3->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS())->Value() == 7);
+    // 6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation5->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation5->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6);
 
-    delete result;
+    // 7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 7);
 }
 
 // Term:
@@ -314,66 +392,76 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser5) {
 //  /\  |\    #
 // *  6 9 1   #
 // | \        #
-// 3 -4       #
+// 3  -       #
+//    |       #
+//    4       #
+//
+//
 BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
-    ValueRef::ValueRefBase<int>* result;
-
     BOOST_CHECK(parse("1+3*-4*6*(9-1)", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, result);
-    const ValueRef::Operation<int>* operation = dynamic_cast<ValueRef::Operation<int>*>(result);
-
     // 1 + (3*-4/6*(9-1))
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation->LHS())->Value() == -1);
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 
     // (3*-4/6) * ((9-1))
-    const ValueRef::Operation<int>* operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation->RHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::TIMES);
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation2->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation2->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation1->RHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
     // 3 * (-4/6)
-    const ValueRef::Operation<int>* operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::TIMES);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS())->Value() == 3);
+    // 3
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<int>, operation3->RHS());
+    // (-4) / 6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation3->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::DIVIDE);
 
-    // -4 / 6
-    const ValueRef::Operation<int>* operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->RHS());
-    BOOST_CHECK(operation4->GetOpType() == ValueRef::DIVIDE);
+    // -4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation4->LHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<int>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation4->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation4->LHS())->Value() == -4);
+    // 4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation5->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation5->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 4);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation4->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS())->Value() == 6);
+    // 6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6);
 
     // 9 - 1
-    const ValueRef::Operation<int>* operation5 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->RHS());
-    BOOST_CHECK(operation5->GetOpType() == ValueRef::MINUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation2->RHS()));
+    operation6 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(operation6->GetOpType(), ValueRef::MINUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation5->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation5->LHS())->Value() == 9);
+    // 9
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation6->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation6->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 9);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<int>, operation5->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<int>*>(operation5->RHS())->Value() == 1);
-
-    delete result;
+    // 1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation6->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation6->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 }
 
 BOOST_AUTO_TEST_CASE(IntArithmeticParserMalformed) {
-    ValueRef::ValueRefBase<int>* result = 0;
-
     BOOST_CHECK(!parse("1 +", result));
     BOOST_CHECK(!result);
 

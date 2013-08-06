@@ -2,16 +2,17 @@
 
 #include "ValueRefParser.h"
 #include "universe/ValueRef.h"
-
-#define CHECK_IS_TYPE_PTR(TYPE, VALUE) \
-    BOOST_CHECK_MESSAGE(VALUE && typeid(TYPE) == typeid(*VALUE), \
-        "check typeid(" #TYPE ") == typeid(" #VALUE ") failed: " #VALUE " was " << (VALUE ? typeid(*VALUE).name() : "(null)"))
-
-#define REQUIRE_IS_TYPE_PTR(TYPE, VALUE) \
-    BOOST_REQUIRE_MESSAGE(VALUE && typeid(TYPE) == typeid(*VALUE), \
-        "check typeid(" #TYPE ") == typeid(" #VALUE ") failed: " #VALUE " was " << (VALUE ? typeid(*VALUE).name() : "(null)"))
+#include "CommonTest.h"
 
 struct ValueRefDoubleFixture {
+    ValueRefDoubleFixture():
+        result(0)
+    {}
+
+    ~ValueRefDoubleFixture() {
+        delete result;
+    }
+
     bool parse(std::string phrase, ValueRef::ValueRefBase<double>*& result) {
         parse::value_ref_parser_rule<double>::type& rule = parse::value_ref_parser<double>();
         const parse::lexer& lexer = lexer.instance();
@@ -28,86 +29,126 @@ struct ValueRefDoubleFixture {
             in_state("WS")[lexer.self]
         );
     }
-};
 
-// XXX value_ref_parser_rule<double> throws an expectation_failure, the enum parser does not. is this intended?
+    ValueRef::ValueRefBase<double>* result;
+    const ValueRef::Operation<double>* operation1;
+    const ValueRef::Operation<double>* operation2;
+    const ValueRef::Operation<double>* operation3;
+    const ValueRef::Operation<double>* operation4;
+    const ValueRef::Operation<double>* operation5;
+    const ValueRef::Operation<double>* operation6;
+    const ValueRef::Constant<double>* value;
+};
 
 BOOST_FIXTURE_TEST_SUITE(ValueRefDoubleParser, ValueRefDoubleFixture)
 
-BOOST_AUTO_TEST_CASE(DoubleLiteralParser) {
-    ValueRef::ValueRefBase<double>* result;
-
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserInteger) {
     BOOST_CHECK(parse("7309", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == 7309.0);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 7309.0);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeInteger) {
     BOOST_CHECK(parse("-1343", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == -1343.0);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1343.0);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserReal) {
     BOOST_CHECK(parse("14.234", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == 14.234);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 14.234);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeReal) {
     BOOST_CHECK(parse("-13.7143", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == -13.7143);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 13.7143);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserRealFractionOnly) {
     BOOST_CHECK(parse(".234", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == .234);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), .234);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeRealFractionOnly) {
     BOOST_CHECK(parse("-.143", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == -.143);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), .143);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserBracketedInteger) {
     BOOST_CHECK(parse("(595)", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == 595.0);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 595.0);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeBracketedInteger) {
     BOOST_CHECK(parse("(-1532)", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == -1532.0);
-    delete result;
-    result = 0;
 
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1532);
+}
+
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserBracketedReal) {
     BOOST_CHECK(parse("((143.97))", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == 143.97);
-    delete result;
-    result = 0;
 
-    BOOST_CHECK(parse("((-6754.20))", result));
-    CHECK_IS_TYPE_PTR(ValueRef::Constant<double>, result);
-    if(dynamic_cast<ValueRef::Constant<double>*>(result))
-        BOOST_CHECK(dynamic_cast<ValueRef::Constant<double>*>(result)->Value() == -6754.20);
-    delete result;
-    result = 0;
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), 143.97);
+}
 
-    // errornous input
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeBracketedReal) {
+    BOOST_CHECK(parse("(-(6754.20))", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::NEGATE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6754.2);
+}
+
+// XXX value_ref_parser_rule<double> throws an expectation_failure, the enum parser does not. is this intended?
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserErrornousInput) {
     BOOST_CHECK(!parse("-", result));
     BOOST_CHECK(!parse("(.20", result));
     BOOST_CHECK(!parse("(-", result));
@@ -130,28 +171,35 @@ BOOST_AUTO_TEST_CASE(DoubleLiteralParser) {
 // Term:
 // -1.2+2.7
 // Expected AST:
-//   +      #
-//   |\     #
-//   | \    #
-//   |  \   #
-//   |   \  #
-// -1.2 2.7 #
+//  +     #
+//  |\    #
+//  | \   #
+//  |  \  #
+//  - 2.7 #
+//  |     #
+// 1.2    #
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser1) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("-1.2+2.7", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    ValueRef::Operation<double>* operation = dynamic_cast<ValueRef::Operation<double>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
+    // (-1.2) + 2.7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->LHS())->Value() == -1.2);
+    // -1.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->RHS())->Value() == 2.7);
+    // 1.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>*), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1.2);
 
-    delete result;
+    // 2.7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2.7);
 }
 
 // Term:
@@ -164,173 +212,203 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser1) {
 //  + 8     #
 //  |\      #
 //  | \     #
-//  |  \    #
-//  |   \   #
-// -1.1 2.8 #
+//  - 2.8 #
+//  |
+// 1.1
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser2) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("-1.1+2.8-8+5.2", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    const ValueRef::Operation<double>* operation  = dynamic_cast<ValueRef::Operation<double>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (-1.1+2.8-8) + 5.2
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->RHS())->Value() == 5.2);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
     // (-1.1+2.8) - 8
-    const ValueRef::Operation<double>* operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::MINUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::MINUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation2->LHS());
+    // (-1.1) + 2.8
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS())->Value() == 8.0);
+    // -1.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation3->LHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
-    // -1.1 + 2.8
-    const ValueRef::Operation<double>* operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::PLUS);
+    // 1.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1.1);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS())->Value() == -1.1);
+    // 2.8
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2.8);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation3->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS())->Value() == 2.8);
+    // 8
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 8.0);
 
-    delete result;
+    // 5.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 5.2);
 }
 
 // Term:
 // 4.8*3.1+2.04
 // Expected AST:
-// +        #
-// |\       #
-// * 2.04   #
-// |\       #
-// | \      #
-// |  \     #
-// |   \    #
+//  +       #
+//  |\      #
+//  | \     #
+//  * 2.04  #
+//  |\      #
+//  | \     #
+//  |  \    #
 // 4.8 3.1  #
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser3) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("4.8*3.1+2.04", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    const ValueRef::Operation<double>* operation = dynamic_cast<ValueRef::Operation<double>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (4.8*3.1) + 2.04
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->RHS())->Value() == 2.04);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
     // 4.8 * 3.1
-    const ValueRef::Operation<double>* operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::TIMES);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS())->Value() == 4.8);
+    // 4.8
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 4.8);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS())->Value() == 3.1);
+    // 3.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3.1);
 
-    delete result;
+    // 2.04
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2.04);
 }
 
 // Term:
 // -1.5+2.9/-7.4
 // Expected AST:
-//  +              #
-//  |\             #
-//  | \            #
-//  |  \           #
-//  |   \          #
-// -1.5 (/)        #
-//       | \       #
-//       |  \      #
-//       |   \     #
-//       |    \    #
-//       2.9 -7.4  #
+//  +          #
+//  |\         #
+//  - \        #
+//  |  \       #
+// 1.5 (/)     #
+//      | \    #
+//     2.9 -   #
+//         |   #
+//       -7.4  #
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser4) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("-1.5+2.9/-7.4", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    const ValueRef::Operation<double>* operation = dynamic_cast<ValueRef::Operation<double>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
+    // (-1.5) + (2.9/-7.4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    // -1.5 + (2.9/-7.4)
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->LHS())->Value() == -1.5);
+    // -1.5
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->RHS());
+    // 1.5
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1.5);
 
-    // 2.9 / -7.4
-    const ValueRef::Operation<double>* operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation->RHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::DIVIDE);
+    // 2.9 / (-7.4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->RHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::DIVIDE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS())->Value() == 2.9);
+    // 2.9
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2.9);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS())->Value() == -7.4);
+    // -7.4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation3->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
-    delete result;
+    // 7.4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 7.4);
 }
 
 // Term:
 // -1.2/3.7+-6.2*7.6
 // Expected AST:
-//         +          #
-//        /  \        #
-//       /    \       #
-//      /      \      #
-//    (/)       *     #
-//    /\        /\    #
-//   /  \      /  \   #
-// -1.2 3.7 -6.2 7.6  #
+//       +        #
+//      / \       #
+//     /   \      #
+//   (/)    *     #
+//   /\     /\    #
+//  /  \   /  \   #
+//  - 3.7  - 7.6  #
+//  |      |      #
+// 1.2    6.2     #
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser5) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("-1.2/3.7+-6.2*7.6", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    const ValueRef::Operation<double>* operation = dynamic_cast<ValueRef::Operation<double>*>(result);
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
-
     // (-1.2/3.7) + (-6.2*7.6)
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->RHS());
+    // (-1.2) / 3.7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::DIVIDE);
 
-    // -1.2 / 3.7
-    const ValueRef::Operation<double>* operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation->LHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::DIVIDE);
+    // -1.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS())->Value() == -1.2);
+    // 1.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1.2);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation2->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS())->Value() == 3.7);
+    // 3.7
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3.7);
 
-    // -6.2 * 7.6
-    const ValueRef::Operation<double>* operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation->RHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::TIMES);
+    // (-6.2) * 7.6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS())->Value() == -6.2);
+    // -6.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation4->LHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation3->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS())->Value() == 7.6);
+    // 6.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation5->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation5->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6.2);
 
-    delete result;
+    // 7.6
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 7.6);
 }
 
 // Term:
@@ -350,64 +428,70 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser5) {
 //  /  \          #
 // .4 -4.1        #
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
-    ValueRef::ValueRefBase<double>* result;
-
     BOOST_CHECK(parse("1.1+.4*-4.1/6.2*(9-.1)", result));
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, result);
-    const ValueRef::Operation<double>* operation = dynamic_cast<ValueRef::Operation<double>*>(result);
-
     // 1.1 + (.4*-4.1/6.2*(9-.1))
-    BOOST_CHECK(operation->GetOpType() == ValueRef::PLUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::PLUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation->LHS())->Value() == -1.1);
+    // 1.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 1.1);
 
     // (.4*-4.1/6.2) * ((9-.1))
-    const ValueRef::Operation<double>* operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation->RHS());
-    BOOST_CHECK(operation2->GetOpType() == ValueRef::TIMES);
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation2->LHS());
-
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation2->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->RHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
     // .4 * (-4.1/6.2)
-    const ValueRef::Operation<double>* operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
-    BOOST_CHECK(operation3->GetOpType() == ValueRef::TIMES);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::TIMES);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation3->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS())->Value() == .4);
+    // .4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), .4);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Operation<double>, operation3->RHS());
+    // (-4.1) / 6.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation3->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::DIVIDE);
 
-    // -4.1 / 6.2
-    const ValueRef::Operation<double>* operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->RHS());
-    BOOST_CHECK(operation4->GetOpType() == ValueRef::DIVIDE);
+    // -4.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation4->LHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation4->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation4->LHS())->Value() == -4.1);
+    // 4.1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation5->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation5->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 4.1);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation4->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS())->Value() == 6.2);
+    // 6.2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 6.2);
 
     // 9 - .1
-    const ValueRef::Operation<double>* operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->RHS());
-    BOOST_CHECK(operation5->GetOpType() == ValueRef::MINUS);
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->RHS()));
+    operation6 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(operation6->GetOpType(), ValueRef::MINUS);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation5->LHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation5->LHS())->Value() == 9.0);
+    // 9
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation6->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation6->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 9.0);
 
-    REQUIRE_IS_TYPE_PTR(ValueRef::Constant<double>, operation5->RHS());
-    BOOST_CHECK(dynamic_cast<const ValueRef::Constant<double>*>(operation5->RHS())->Value() == .1);
-
-    delete result;
+    // .1
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation6->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation6->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), .1);
 }
 
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParserMalformed) {
-    ValueRef::ValueRefBase<double>* result = 0;
-
     // XXX: Is a trailing dot a valid real number?
     BOOST_CHECK(!parse("5.", result));
     BOOST_CHECK(!result);
