@@ -141,7 +141,7 @@ endif ()
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/libltdl)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/libltdl ${CMAKE_CURRENT_BINARY_DIR})
 
 
 ########################################
@@ -247,7 +247,7 @@ endif ()
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/GG/Config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/GG/Config.h
     @ONLY
 )
 
