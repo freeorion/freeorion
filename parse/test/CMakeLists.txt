@@ -45,6 +45,7 @@ add_executable(test_parsers_boost
     TestEnumParser.cpp
     TestValueRefIntParser.cpp
     TestValueRefDoubleParser.cpp
+    TestValueRefUniverseObjectTypeParser.cpp
 )
 
 target_link_libraries(test_parsers_boost
@@ -59,9 +60,10 @@ install(
     COMPONENT COMPONENT_FREEORION
 )
 
-add_test(enum_parser             ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
-add_test(value_ref_int_parser    ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
-add_test(value_ref_double_parser ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
+add_test(enum_parser                           ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
+add_test(value_ref_int_parser                  ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
+add_test(value_ref_double_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
+add_test(value_ref_universe_object_type_parser ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefUniverseObjectTypeParser)
 
 macro (add_test_and_data_files name)
     set(suffix "")
@@ -104,7 +106,6 @@ add_test_and_data_files(test_parsers planet_type_value_ref_parser -f planet_type
 add_test_and_data_files(test_parsers planet_environment_value_ref_parser -f planet_environment_constant)
 add_test_and_data_files(test_parsers planet_environment_value_ref_parser -f planet_environment_variable)
 add_test_and_data_files(test_parsers planet_environment_value_ref_parser -f planet_environment_statistic)
-add_test_and_data_files(test_parsers universe_object_type_value_ref_parser -f universe_object_type_constant)
 add_test_and_data_files(test_parsers universe_object_type_value_ref_parser -f universe_object_type_variable)
 add_test_and_data_files(test_parsers universe_object_type_value_ref_parser -f universe_object_type_statistic)
 add_test_and_data_files(test_parsers star_type_value_ref_parser -f star_type_constant)
