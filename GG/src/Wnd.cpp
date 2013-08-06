@@ -664,7 +664,6 @@ void Wnd::GridLayout()
 {
     RemoveLayout();
 
-    Pt cl_ul = ClientUpperLeft(), cl_lr = ClientLowerRight();
     Pt client_sz = ClientSize();
 
     GridLayoutWndContainer grid_layout;
@@ -691,7 +690,6 @@ void Wnd::GridLayout()
     // align left sides of windows
     for (LeftIter it = grid_layout.get<Left>().begin(); it != grid_layout.get<Left>().end(); ++it) {
         Pt ul = it->ul;
-        Pt lr = it->lr;
         for (X x = ul.x - 1; x >= 0; --x) {
             if (grid_layout.get<Right>().find(x + 1, IsRight()) != grid_layout.get<Right>().end()) {
                 break;
@@ -706,7 +704,6 @@ void Wnd::GridLayout()
 
     // align right sides of windows
     for (RightIter it = grid_layout.get<Right>().begin(); it != grid_layout.get<Right>().end(); ++it) {
-        Pt ul = it->ul;
         Pt lr = it->lr;
         for (X x = lr.x + 1; x < client_sz.x; ++x) {
             if (grid_layout.get<Left>().find(x - 1, IsLeft()) != grid_layout.get<Left>().end()) {
@@ -723,7 +720,6 @@ void Wnd::GridLayout()
     // align tops of windows
     for (TopIter it = grid_layout.get<Top>().begin(); it != grid_layout.get<Top>().end(); ++it) {
         Pt ul = it->ul;
-        Pt lr = it->lr;
         for (Y y = ul.y - 1; y >= 0; --y) {
             if (grid_layout.get<Bottom>().find(y + 1, IsBottom()) != grid_layout.get<Bottom>().end()) {
                 break;
@@ -738,7 +734,6 @@ void Wnd::GridLayout()
 
     // align bottoms of windows
     for (BottomIter it = grid_layout.get<Bottom>().begin(); it != grid_layout.get<Bottom>().end(); ++it) {
-        Pt ul = it->ul;
         Pt lr = it->lr;
         for (Y y = lr.y + 1; y < client_sz.y; ++y) {
             if (grid_layout.get<Top>().find(y - 1, IsTop()) != grid_layout.get<Top>().end()) {

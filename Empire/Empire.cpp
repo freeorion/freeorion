@@ -923,7 +923,7 @@ void ProductionQueue::Update() {
 
     dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     dp_time = (dp_time_end - dp_time_start).total_nanoseconds();
-    dp_time = dp_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
+    (void)dp_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
 
     //dp_time = dpsim_queue_timer.elapsed() * 1000;
     // Logger().debugStream() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;

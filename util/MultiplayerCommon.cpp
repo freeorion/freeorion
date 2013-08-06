@@ -41,6 +41,7 @@ namespace {
 
     const double TWO_PI = 8.0 * std::atan(1.0);
 
+#ifdef DEBUG_XML_TO_CLR
     std::string ClrToString(GG::Clr clr) {
         unsigned int r = static_cast<int>(clr.r);
         unsigned int g = static_cast<int>(clr.g);
@@ -52,6 +53,7 @@ namespace {
             boost::lexical_cast<std::string>(a) + ")";
         return retval;
     }
+#endif
 
     // overload for arriving fleets
     void FindPlacementAreas(const TemporaryPtr<System> system,
@@ -258,7 +260,9 @@ GG::Clr XMLToClr(const XMLElement& clr) {
                 retval.b = (rgba >> 8)  & 0xFF;
                 retval.a = rgba         & 0xFF;
             }
-            //std::cout << "hex colour: " << hex_colour << " int: " << rgba << " RGBA: " << ClrToString(retval) << std::endl;
+#ifdef DEBUG_XML_TO_CLR
+            std::cout << "hex colour: " << hex_colour << " int: " << rgba << " RGBA: " << ClrToString(retval) << std::endl;
+#endif
         } else {
             std::cerr << "XMLToClr could not interpret hex colour string \"" << hex_colour << "\"" << std::endl;
         }
@@ -272,7 +276,9 @@ GG::Clr XMLToClr(const XMLElement& clr) {
             retval.b = boost::lexical_cast<int>(clr.Child("blue").Text());
         if (clr.ContainsChild("alpha"))
             retval.a = boost::lexical_cast<int>(clr.Child("alpha").Text());
-        //std::cout << "non hex colour RGBA: " << ClrToString(retval) << std::endl;
+#ifdef DEBUG_XML_TO_CLR
+        std::cout << "non hex colour RGBA: " << ClrToString(retval) << std::endl;
+#endif
     }
     return retval;
 }

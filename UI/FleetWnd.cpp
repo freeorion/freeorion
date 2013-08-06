@@ -1288,7 +1288,7 @@ void FleetDataPanel::SetStatIconValues() {
         if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
             continue;
         if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
-            if (const ShipDesign* design = ship->Design()) {
+            if (ship->Design()) {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsDamage();
                 structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
@@ -2422,7 +2422,7 @@ void FleetWnd::SetStatIconValues() {
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
             if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
-                if (const ShipDesign* design = ship->Design()) {
+                if (ship->Design()) {
                     ship_count++;
                     damage_tally += ship->TotalWeaponsDamage();
                     structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);

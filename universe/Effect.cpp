@@ -179,21 +179,6 @@ namespace {
         return false;
     }
 
-    Condition::ObjectSet EffectTargetSetToConditionObjectSet(const TargetSet& target_set) {
-        Condition::ObjectSet retval;
-        retval.reserve(target_set.size());
-        std::copy(target_set.begin(), target_set.end(), std::inserter(retval, retval.begin()));
-        return retval;
-    }
-
-    TargetSet ConditionObjectSetToEffectTargetSet(const Condition::ObjectSet& object_set) {
-        TargetSet retval;
-        retval.reserve(object_set.size());
-        for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
-            retval.push_back(const_ptr_cast<UniverseObject>(*it));
-        return retval;
-    }
-
     std::vector<adobe::name_t> TargetOwnerVec() {
         std::vector<adobe::name_t> retval(2);
         retval[0] = Target_name;
@@ -315,7 +300,6 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
     {
         const EffectBase* effect = *effect_it;
         MeterType meter_type = INVALID_METER_TYPE;
-        const Meter* meter = 0;
 
         // for meter effects, need to separately call effect's Execute for each
         // target and do meter accounting before and after.
