@@ -1,10 +1,5 @@
 #include "ValueRefParserImpl.h"
 
-//#include "Double.h"
-
-//extern name_token_rule              first_token;      // in IntValueRefParser.cpp
-//extern name_token_rule              container_token;  // in IntValueRefParser.cpp
-
 namespace {
     struct double_parser_rules {
         double_parser_rules() {
@@ -17,7 +12,7 @@ namespace {
 
             const parse::lexer& tok = parse::lexer::instance();
 
-            final_token
+            variable_name
                 =    tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
@@ -63,12 +58,12 @@ namespace {
 
             variable
                 = (
-                        first_token [ push_back(_a, _1) ] > '.'
-                    >  -(container_token [ push_back(_a, _1) ] > '.')
+                        variable_scope [ push_back(_a, _1) ] > '.'
+                    >  -(container_type [ push_back(_a, _1) ] > '.')
                     >   (
-                            final_token
+                            variable_name
                             [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
-                        |   int_var_final_token()
+                        |   int_var_variable_name()
                             [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
                         )
                   )
@@ -86,7 +81,7 @@ namespace {
                   )
                 ;
 
-            initialize_numeric_statistic_parser<double>(statistic, final_token);
+            initialize_numeric_statistic_parser<double>(statistic, variable_name);
 
             initialize_expression_parsers<double>(function_expr,
                                                   exponential_expr,
@@ -107,7 +102,7 @@ namespace {
                 |   int_statistic
                 ;
 
-            final_token.name("real number variable name (e.g., Growth)");
+            variable_name.name("real number variable name (e.g., Growth)");
             constant.name("real number constant");
 
 
@@ -122,7 +117,7 @@ namespace {
             primary_expr.name("real number expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(final_token);
+            debug(variable_name);
             debug(constant);
             debug(variable);
             debug(statistic);
@@ -140,7 +135,7 @@ namespace {
         typedef statistic_rule<double>::type                statistic_rule;
         typedef expression_rule<double>::type               expression_rule;
 
-        name_token_rule     final_token;
+        name_token_rule     variable_name;
         rule                constant;
         variable_rule       variable;
         statistic_rule      statistic;
@@ -159,8 +154,8 @@ namespace {
     }
 }
 
-const name_token_rule& double_var_final_token()
-{ return get_double_parser_rules().final_token; }
+const name_token_rule& double_var_variable_name()
+{ return get_double_parser_rules().variable_name; }
 
 const statistic_rule<double>::type& double_var_statistic()
 { return get_double_parser_rules().statistic; }

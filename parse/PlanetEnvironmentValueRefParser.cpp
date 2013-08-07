@@ -14,7 +14,7 @@ namespace {
 
             const parse::lexer& tok = parse::lexer::instance();
 
-            final_token
+            variable_name
                 %=   tok.PlanetEnvironment_
                 ;
 
@@ -23,12 +23,12 @@ namespace {
                 ;
 
             variable
-                =    first_token [ push_back(_a, _1) ] > '.'
-                >   -(container_token [ push_back(_a, _1) ] > '.')
-                >    final_token [ push_back(_a, _1), _val = new_<ValueRef::Variable<PlanetEnvironment> >(_a) ]
+                =    variable_scope [ push_back(_a, _1) ] > '.'
+                >   -(container_type [ push_back(_a, _1) ] > '.')
+                >    variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<PlanetEnvironment> >(_a) ]
                 ;
 
-            initialize_nonnumeric_statistic_parser<PlanetEnvironment>(statistic, final_token);
+            initialize_nonnumeric_statistic_parser<PlanetEnvironment>(statistic, variable_name);
 
             primary_expr
                 %=   constant
@@ -36,14 +36,14 @@ namespace {
                 |    statistic
                 ;
 
-            final_token.name("PlanetEnvironment variable name (e.g., PlanetEnvironment)");
+            variable_name.name("PlanetEnvironment variable name (e.g., PlanetEnvironment)");
             constant.name("PlanetEnvironment");
             variable.name("PlanetEnvironment variable");
             statistic.name("PlanetEnvironment statistic");
             primary_expr.name("PlanetEnvironment expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(final_token);
+            debug(variable_name);
             debug(constant);
             debug(variable);
             debug(statistic);
@@ -55,7 +55,7 @@ namespace {
         typedef variable_rule<PlanetEnvironment>::type variable_rule;
         typedef statistic_rule<PlanetEnvironment>::type statistic_rule;
 
-        name_token_rule final_token;
+        name_token_rule variable_name;
         rule constant;
         variable_rule variable;
         statistic_rule statistic;

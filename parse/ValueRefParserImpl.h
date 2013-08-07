@@ -180,17 +180,17 @@ void initialize_expression_parsers(
         ;
 }
 
-extern name_token_rule              first_token;
-extern name_token_rule              container_token;
-const name_token_rule&              int_var_final_token();
+extern name_token_rule              variable_scope;
+extern name_token_rule              container_type;
+const name_token_rule&              int_var_variable_name();
 const statistic_rule<int>::type&    int_var_statistic();
-const name_token_rule&              double_var_final_token();
+const name_token_rule&              double_var_variable_name();
 const statistic_rule<double>::type& double_var_statistic();
 
 template <typename T>
 void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& final_token)
+    const name_token_rule& variable_name)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -217,8 +217,8 @@ void initialize_numeric_statistic_parser(
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_name)
                    >>       eps [ push_back(_a, val(LocalCandidate_name)) ]
-                   >>       -(container_token [ push_back(_a, _1) ] >> '.')
-                   >>       final_token [ push_back(_a, _1) ]
+                   >>       -(container_type [ push_back(_a, _1) ] >> '.')
+                   >>       variable_name [ push_back(_a, _1) ]
                    >>  parse::label(Condition_name) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
              )
@@ -229,7 +229,7 @@ void initialize_numeric_statistic_parser(
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& final_token)
+    const name_token_rule& variable_name)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -248,8 +248,8 @@ void initialize_nonnumeric_statistic_parser(
                   tok.Mode_ [ _b = ValueRef::MODE ]
               >>  parse::label(Property_name)
               >>        eps [ push_back(_a, val(LocalCandidate_name)) ]
-              >>        -(container_token [ push_back(_a, _1) ] > '.')
-              >>        final_token [ push_back(_a, _1) ]
+              >>        -(container_type [ push_back(_a, _1) ] > '.')
+              >>        variable_name [ push_back(_a, _1) ]
               >   parse::label(Condition_name) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]

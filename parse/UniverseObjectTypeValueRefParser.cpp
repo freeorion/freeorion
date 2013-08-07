@@ -14,7 +14,7 @@ namespace {
 
             const parse::lexer& tok = parse::lexer::instance();
 
-            final_token
+            variable_name
                 %=   tok.ObjectType_
                 ;
 
@@ -23,13 +23,13 @@ namespace {
                 ;
 
             variable
-                =    first_token [ push_back(_a, _1) ] > '.'
-                >   -(container_token [ push_back(_a, _1) ] > '.')
-                >    final_token [ push_back(_a, _1), _val = new_<ValueRef::Variable<UniverseObjectType> >(_a) ]
+                =    variable_scope [ push_back(_a, _1) ] > '.'
+                >   -(container_type [ push_back(_a, _1) ] > '.')
+                >    variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<UniverseObjectType> >(_a) ]
                 ;
 
 
-            initialize_nonnumeric_statistic_parser<UniverseObjectType>(statistic, final_token);
+            initialize_nonnumeric_statistic_parser<UniverseObjectType>(statistic, variable_name);
 
             primary_expr
                 %=   constant
@@ -37,14 +37,14 @@ namespace {
                 |    statistic
                 ;
 
-            final_token.name("ObjectType variable name (e.g., ObjectType)");
+            variable_name.name("ObjectType variable name (e.g., ObjectType)");
             constant.name("ObjectType");
             variable.name("ObjectType variable");
             statistic.name("ObjectType statistic");
             primary_expr.name("ObjectType expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(final_token);
+            debug(variable_name);
             debug(constant);
             debug(variable);
             debug(statistic);
@@ -56,7 +56,7 @@ namespace {
         typedef variable_rule<UniverseObjectType>::type variable_rule;
         typedef statistic_rule<UniverseObjectType>::type statistic_rule;
 
-        name_token_rule final_token;
+        name_token_rule variable_name;
         rule constant;
         variable_rule variable;
         statistic_rule statistic;

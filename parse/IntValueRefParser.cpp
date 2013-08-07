@@ -1,8 +1,8 @@
 #include "ValueRefParserImpl.h"
 
 
-name_token_rule first_token;
-name_token_rule container_token;
+name_token_rule variable_scope;
+name_token_rule container_type;
 
 namespace {
     struct int_parser_rules {
@@ -16,23 +16,23 @@ namespace {
 
             const parse::lexer& tok = parse::lexer::instance();
 
-            first_token
+            variable_scope
                 =   tok.Source_
                 |   tok.Target_
                 |   tok.LocalCandidate_
                 |   tok.RootCandidate_
                 ;
 
-            container_token
+            container_type
                 =   tok.Planet_
                 |   tok.System_
                 |   tok.Fleet_
                 ;
 
             // TODO: Should we apply elements of this list only to certain
-            // containers?  For example, if one writes "Source.Planet.",
+            // objects? For example, if one writes "Source.Planet.",
             // "NumShips" should not follow.
-            final_token
+            variable_name
                 =   tok.Owner_
                 |   tok.ID_
                 |   tok.CreationTurn_
@@ -59,9 +59,9 @@ namespace {
             variable
                 =   (
                         (
-                            first_token [ push_back(_a, _1) ] > '.'
-                        >  -(container_token [ push_back(_a, _1) ] > '.')
-                        >   final_token [ push_back(_a, _1) ]
+                            variable_scope [ push_back(_a, _1) ] > '.'
+                        >  -(container_type [ push_back(_a, _1) ] > '.')
+                        >   variable_name [ push_back(_a, _1) ]
                         )
                     |   (
                             tok.CurrentTurn_
@@ -73,7 +73,7 @@ namespace {
                     [ _val = new_<ValueRef::Variable<int> >(_a) ]
                 ;
 
-            initialize_numeric_statistic_parser<int>(statistic, final_token);
+            initialize_numeric_statistic_parser<int>(statistic, variable_name);
 
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
@@ -89,9 +89,9 @@ namespace {
                 |   statistic
                 ;
 
-            first_token.name("Source, Target, LocalCandidate, or RootCandidate");
-            container_token.name("Planet, System, or Fleet");
-            final_token.name("integer variable name (e.g., FleetID)");
+            variable_scope.name("Source, Target, LocalCandidate, or RootCandidate");
+            container_type.name("Planet, System, or Fleet");
+            variable_name.name("integer variable name (e.g., FleetID)");
             constant.name("integer constant");
             variable.name("integer variable");
             statistic.name("integer statistic");
@@ -104,9 +104,9 @@ namespace {
             primary_expr.name("integer expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(first_token);
-            debug(container_token);
-            debug(final_token);
+            debug(variable_scope);
+            debug(container_type);
+            debug(variable_name);
             debug(constant);
             debug(variable);
             debug(statistic);
@@ -123,7 +123,7 @@ namespace {
         typedef statistic_rule<int>::type               statistic_rule;
         typedef expression_rule<int>::type              expression_rule;
 
-        name_token_rule     final_token;
+        name_token_rule     variable_name;
         rule                constant;
         variable_rule       variable;
         statistic_rule      statistic;
@@ -142,8 +142,8 @@ namespace {
     }
 }
 
-const name_token_rule& int_var_final_token()
-{ return get_int_parser_rules().final_token; }
+const name_token_rule& int_var_variable_name()
+{ return get_int_parser_rules().variable_name; }
 
 const statistic_rule<int>::type& int_var_statistic()
 { return get_int_parser_rules().statistic; }

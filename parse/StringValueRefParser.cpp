@@ -14,7 +14,7 @@ namespace { struct string_parser_rules {
 
             const parse::lexer& tok = parse::lexer::instance();
 
-            final_token
+            variable_name
                 %=   tok.Name_
                 |    tok.Species_
                 |    tok.BuildingType_
@@ -36,14 +36,14 @@ namespace { struct string_parser_rules {
 
             variable
                 = (
-                        first_token [ push_back(_a, _1) ] > '.'
-                    >  -(container_token [ push_back(_a, _1) ] > '.')
+                        variable_scope [ push_back(_a, _1) ] > '.'
+                    >  -(container_type [ push_back(_a, _1) ] > '.')
                     >   (
-                            final_token
+                            variable_name
                             [ push_back(_a, _1), _val = new_<ValueRef::Variable<std::string> >(_a) ]
-                        |   int_var_final_token()
+                        |   int_var_variable_name()
                             [ push_back(_a, _1), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_a)) ]
-                        |   double_var_final_token()
+                        |   double_var_variable_name()
                             [ push_back(_a, _1), _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_a)) ]
                         )
                     )
@@ -53,7 +53,7 @@ namespace { struct string_parser_rules {
                     )
                 ;
 
-            initialize_nonnumeric_statistic_parser<std::string>(statistic, final_token);
+            initialize_nonnumeric_statistic_parser<std::string>(statistic, variable_name);
 
             int_statistic
                 =    int_var_statistic() [ _val = new_<ValueRef::StringCast<int> >(_1) ]
@@ -71,7 +71,7 @@ namespace { struct string_parser_rules {
                 |    statistic
                 ;
 
-            final_token.name("string variable name (e.g., Name)");
+            variable_name.name("string variable name (e.g., Name)");
             constant.name("string");
             variable.name("string variable");
             statistic.name("string statistic");
@@ -80,7 +80,7 @@ namespace { struct string_parser_rules {
             expr.name("string expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(final_token);
+            debug(variable_name);
             debug(constant);
             debug(variable);
             debug(statistic);
@@ -94,7 +94,7 @@ namespace { struct string_parser_rules {
         typedef variable_rule<std::string>::type variable_rule;
         typedef statistic_rule<std::string>::type statistic_rule;
 
-        name_token_rule final_token;
+        name_token_rule variable_name;
         rule            constant;
         variable_rule   variable;
         statistic_rule  statistic;
