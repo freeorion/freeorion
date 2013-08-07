@@ -2324,13 +2324,13 @@ void ServerApp::ProcessCombats() {
             AutoResolveCombat(combat_info);
         }
     }
-    
+
     BackProjectSystemCombatInfoObjectMeters(combats);
-    
+
     DisseminateSystemCombatInfo(combats);
-    
+
     CreateCombatSitReps(combats);
-    
+
     //CleanupSystemCombatInfo(combats); - NOTE: No longer needed since ObjectMap.Clear doesn't release any resources that aren't released in the destructor.
 }
 

@@ -403,7 +403,7 @@ void SitRepPanel::Update() {
     for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
          sitrep_it != currentTurnSitreps.end(); sitrep_it++)
     { orderedSitreps.push_back(*sitrep_it); }
-    for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin(); 
+    for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin();
          sitrep_it != orderedSitreps.end(); sitrep_it++)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
 
