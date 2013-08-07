@@ -118,8 +118,8 @@ NewFleetOrder::NewFleetOrder() :
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
-    m_fleet_id(fleet_id),
     m_system_id(system_id),
+    m_fleet_id(fleet_id),
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER

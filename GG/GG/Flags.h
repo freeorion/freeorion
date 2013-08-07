@@ -226,9 +226,9 @@ public:
         {
 #ifndef NDEBUG
             bool insert_successful =
-#endif
                 m_flags.insert(flag).second;
             assert(insert_successful);
+#endif
             if (permanent)
                 m_permanent.insert(flag);
             m_strings[flag] = name;

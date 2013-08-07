@@ -910,7 +910,7 @@ private:
     static boost::shared_ptr<BrowseInfoWnd> s_default_browse_info_wnd;
 
     friend class GUI;   ///< GUI needs access to \a m_zorder, m_children, etc.
-    friend class GUIImpl;
+    friend struct GUIImpl;
     friend class Timer; ///< Timer needs to be able to call HandleEvent
     friend class ZList; ///< ZList needs access to \a m_zorder in order to order windows
 };

@@ -197,7 +197,7 @@ void InitBinDir(const std::string& argv0) {
         size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
 #else
-        size_t exe_path_size = readlink("/proc/self/exe", buf, BUF_SIZE);
+        ssize_t exe_path_size = readlink("/proc/self/exe", buf, BUF_SIZE);
         if (exe_path_size == static_cast<size_t>(-1)) {
             problem = true;
 

@@ -287,7 +287,6 @@ void MultiEdit::SetText(const std::string& str)
                     last_line = lines.size() - 1;
                 }
                 CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &lines);
-                CPSize last_line_last_char_idx = last_line < lines.size() - 1 ? CharIndexOf(last_line + 1, CP0, &lines) : CharIndexOf(lines.size() - 1, CP0, &lines);
                 if (m_style & MULTI_TERMINAL_STYLE) {
                     // chopping these lines off the front will invalidate the cursor range unless we do this
                     CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &lines);

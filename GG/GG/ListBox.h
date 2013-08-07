@@ -215,7 +215,7 @@ public:
 
         bool                   m_ignore_adjust_layout;
 
-        friend class DeferAdjustLayout;
+        friend struct DeferAdjustLayout;
     };
 
     typedef std::list<Row*>::iterator iterator;

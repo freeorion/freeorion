@@ -608,7 +608,7 @@ bool GUI::AcceptedDragDropWnd(const Wnd* wnd) const
 }
 
 bool GUI::MouseButtonDown(unsigned int bn) const
-{ return (bn >= 0 && bn <= 2) ? s_impl->m_button_state[bn] : false; }
+{ return (bn <= 2) ? s_impl->m_button_state[bn] : false; }
 
 Pt GUI::MousePosition() const
 { return s_impl->m_mouse_pos; }
