@@ -205,6 +205,15 @@ add_library(freeorioncommon
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set_property(
+        SOURCE
+        util/SerializePathingEngine.cpp
+        PROPERTY
+        COMPILE_FLAGS -ftemplate-depth=512
+    )
+endif ()
+
 if (CMAKE_COMPILER_IS_GNUCXX)
     set_source_files_properties(
         ${CMAKE_BINARY_DIR}/util/Version.cpp

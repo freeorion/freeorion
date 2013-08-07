@@ -52,6 +52,16 @@ add_library(freeorionparse
     KeymapParser.cpp
 )
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set_property(
+        SOURCE
+        ConditionParser1.cpp
+        EffectParser1.cpp
+        PROPERTY
+        COMPILE_FLAGS -ftemplate-depth=512
+    )
+endif ()
+
 if (BUILD_TESTS)
     add_subdirectory(test)
 endif ()
