@@ -2493,7 +2493,6 @@ void Empire::CheckProductionProgress() {
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         ProductionQueue::Element& elem = m_production_queue[i];
         queue_item_costs_and_times[elem.item] = ProductionCostAndTime(elem);
-        queue_item_costs_and_times[elem.item].first *= elem.blocksize;
     }
 
     for (std::map<ProductionQueue::ProductionItem, std::pair<double, int> >::const_iterator
@@ -2513,15 +2512,21 @@ void Empire::CheckProductionProgress() {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = queue_item_costs_and_times[elem.item];
+        item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
 
         // if accumulated PP is sufficient, the item is complete
         if (item_cost - EPSILON <= elem.progress) {
-            elem.progress -= item_cost; // this is the correct calculation -- item_cost is now for one full item, not just one turn's portion
+            // deduct cost of complete item from progress, so that next
+            // repetition can continue accumulating PP, but don't set progress
+            // to 0, as this way overflow PP allocated this turn can be used
+            // for the next repetition of the item.
+            elem.progress -= item_cost;
+
             elem.progress_memory = elem.progress;
-            Logger().debugStream() << "Completed an item!!! " << elem.item.name;
+            Logger().debugStream() << "Completed an item: " << elem.item.name;
 
             switch (elem.item.build_type) {
             case BT_BUILDING: {
