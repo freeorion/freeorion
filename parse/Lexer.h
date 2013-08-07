@@ -52,12 +52,12 @@ struct lexer :
     /** \name Keyword tokens.  These should be kept in lexicographically
         sorted order, so that finding, adding, and removing tokens is a bit
         easier.  See the note above the Enum tokens section. */ ///@{
-#define NAME_TOKEN(r, _, name) boost::spirit::lex::token_def<adobe::name_t> BOOST_PP_CAT(name, _);
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
-#undef NAME_TOKEN
+#define DECLARE_TOKEN(r, _, name) boost::spirit::lex::token_def<adobe::name_t> BOOST_PP_CAT(name, _);
+    BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
+    BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
+    BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
+    BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_4)
+#undef DECLARE_TOKEN
     //@}
 
     /** \name Error token. */ ///@{

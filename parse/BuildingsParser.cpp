@@ -64,8 +64,8 @@ namespace {
 
             building_prefix
                 =    tok.BuildingType_
-                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
                 ;
 
             producible
@@ -76,17 +76,17 @@ namespace {
 
             building_type
                 =    building_prefix(_a, _b)
-                >    parse::label(BuildCost_name)               > double_value_ref [ _c = _1 ]
-                >    parse::label(BuildTime_name)               > int_value_ref [ _d = _1 ]
+                >    parse::label(BuildCost_token)               > double_value_ref [ _c = _1 ]
+                >    parse::label(BuildTime_token)               > int_value_ref [ _d = _1 ]
                 >    producible [ _e = _1 ]
                 >    (
-                            parse::label(CaptureResult_name)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
+                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
                         |   eps [ _f = CR_CAPTURE ]
                      )
                 >    parse::detail::tags_parser()(_g)
-                >    parse::label(Location_name)                > parse::detail::condition_parser [ _h = _1 ]
-                >    parse::label(EffectsGroups_name)           > -parse::detail::effects_group_parser() [ _i = _1 ]
-                >    parse::label(Icon_name)                    > tok.string
+                >    parse::label(Location_token)                > parse::detail::condition_parser [ _h = _1 ]
+                >    parse::label(EffectsGroups_token)           > -parse::detail::effects_group_parser() [ _i = _1 ]
+                >    parse::label(Icon_token)                    > tok.string
                     [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
                 ;
 

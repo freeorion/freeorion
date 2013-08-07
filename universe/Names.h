@@ -10,7 +10,7 @@
 #include "../util/Export.h"
 
 
-#define NAMES_SEQ_1                             \
+#define TOKEN_SEQ_1                             \
     (Abs)                                       \
     (AccountingLabel)                           \
     (Activation)                                \
@@ -100,7 +100,7 @@
     (ExploredByEmpire)                          \
     (External)
 
-#define NAMES_SEQ_2                             \
+#define TOKEN_SEQ_2                             \
     (FieldType)                                 \
     (Fighters)                                  \
     (FighterType)                               \
@@ -173,7 +173,7 @@
     (MoveTo)                                    \
     (MoveTowards)
 
-#define NAMES_SEQ_3                             \
+#define TOKEN_SEQ_3                             \
     (Name)                                      \
     (Native)                                    \
     (Neutron)                                   \
@@ -254,7 +254,7 @@
     (ROF)                                       \
     (RootCandidate)
 
-#define NAMES_SEQ_4                             \
+#define TOKEN_SEQ_4                             \
     (Scope)                                     \
     (SetAggressive)                             \
     (SetAntiFighterDamage)                      \
@@ -385,11 +385,11 @@
     (Y)                                         \
     (Yellow)
 
-#define DECLARE_NAME(r, _, elem) extern FO_COMMON_API adobe::aggregate_name_t BOOST_PP_CAT(elem, _name);
-BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_1)
-BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_2)
-BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_3)
-BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_4)
-#undef DECLARE_NAME
+#define DECLARE_TOKEN(r, _, elem) extern FO_COMMON_API adobe::aggregate_name_t BOOST_PP_CAT(elem, _token);
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_4)
+#undef DECLARE_TOKEN
 
 #endif

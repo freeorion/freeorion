@@ -70,16 +70,16 @@ namespace {
 
             hull_prefix
                 =    tok.Hull_
-                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
                 ;
 
             hull_stats
-                =    parse::label(Speed_name)         > parse::double_ [ _a = _1 ]
-                >    parse::label(StarlaneSpeed_name) > parse::double_ [ _b = _1 ]
-                >    parse::label(Fuel_name)          > parse::double_ [ _c = _1 ]
-                >    parse::label(Stealth_name)       > parse::double_ [ _d = _1 ]
-                >    parse::label(Structure_name)     > parse::double_ [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _1) ]
+                =    parse::label(Speed_token)         > parse::double_ [ _a = _1 ]
+                >    parse::label(StarlaneSpeed_token) > parse::double_ [ _b = _1 ]
+                >    parse::label(Fuel_token)          > parse::double_ [ _c = _1 ]
+                >    parse::label(Stealth_token)       > parse::double_ [ _d = _1 ]
+                >    parse::label(Structure_token)     > parse::double_ [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _1) ]
                 ;
 
             producible
@@ -90,15 +90,15 @@ namespace {
 
             slot
                 =    tok.Slot_
-                >    parse::label(Type_name) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
-                >    parse::label(Position_name)
+                >    parse::label(Type_token) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
+                >    parse::label(Position_token)
                 >    '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
                         [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
             slots
                 =  -(
-                        parse::label(Slots_name)
+                        parse::label(Slots_token)
                     >>  (
                             '[' > +slot [ push_back(_r1, _1) ] > ']'
                             |   slot [ push_back(_r1, _1) ]
@@ -107,20 +107,20 @@ namespace {
                 ;
 
             location
-                =    parse::label(Location_name) >> parse::detail::condition_parser [ _r1 = _1 ]
+                =    parse::label(Location_token) >> parse::detail::condition_parser [ _r1 = _1 ]
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             common_params
-                =   parse::label(BuildCost_name)    > double_value_ref  [ _a = _1 ]
-                >   parse::label(BuildTime_name)    > int_value_ref     [ _b = _1 ]
+                =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
+                >   parse::label(BuildTime_token)    > int_value_ref     [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   -(
-                        parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
+                        parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Icon_name)        > tok.string
+                >    parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
             ;
 
@@ -129,7 +129,7 @@ namespace {
                 >   hull_stats [ _c = _1 ]
                 >   -slots(_e)
                 >   common_params [ _d = _1 ]
-                >   parse::label(Graphic_name) > tok.string
+                >   parse::label(Graphic_token) > tok.string
                     [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 

@@ -419,13 +419,13 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
 {
     assert(!property_name.empty());
     adobe::name_t ref_type_name = property_name.front();
-    if (ref_type_name == Source_name) {
+    if (ref_type_name == Source_token) {
         m_ref_type = SOURCE_REFERENCE;
-    } else if (ref_type_name == Value_name || ref_type_name == Target_name) {
+    } else if (ref_type_name == Value_token || ref_type_name == Target_token) {
         m_ref_type = EFFECT_TARGET_REFERENCE;
-    } else if (ref_type_name == LocalCandidate_name) {
+    } else if (ref_type_name == LocalCandidate_token) {
         m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    } else if (ref_type_name == RootCandidate_name) {
+    } else if (ref_type_name == RootCandidate_token) {
         m_ref_type = CONDITION_ROOT_CANDIDATE_REFERENCE;
     } else {
         m_ref_type = NON_OBJECT_REFERENCE;
@@ -480,7 +480,7 @@ std::string ValueRef::Variable<T>::Description() const
     switch (m_ref_type) {
     case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
     case EFFECT_TARGET_REFERENCE: {
-        if (m_property_name.back() == Value_name)
+        if (m_property_name.back() == Value_token)
                                                 formatter % UserString("DESC_VAR_VALUE");
         else
                                                 formatter % UserString("DESC_VAR_TARGET");

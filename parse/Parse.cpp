@@ -38,7 +38,7 @@ namespace {
 
             start
                 =  -(
-                        parse::label(Tags_name)
+                        parse::label(Tags_token)
                     >>  (
                             ('[' > +tok.string [ insert(_r1, _1) ] > ']')
                             |   tok.string [ insert(_r1, _1) ]
@@ -74,17 +74,17 @@ namespace {
 
             effects_group
                 =    tok.EffectsGroup_
-                >   parse::label(Scope_name)                >> parse::detail::condition_parser [ _a = _1 ]
+                >   parse::label(Scope_token)                >> parse::detail::condition_parser [ _a = _1 ]
                 >  -(
-                        parse::label(Activation_name)       >> parse::detail::condition_parser [ _b = _1 ]
+                        parse::label(Activation_token)       >> parse::detail::condition_parser [ _b = _1 ]
                      )
                 >  -(
-                        parse::label(StackingGroup_name)    >> tok.string [ _c = _1 ]
+                        parse::label(StackingGroup_token)    >> tok.string [ _c = _1 ]
                      )
                 >  -(
-                        parse::label(AccountingLabel_name)  >> tok.string [ _e = _1 ]
+                        parse::label(AccountingLabel_token)  >> tok.string [ _e = _1 ]
                      )
-                >   parse::label(Effects_name)
+                >   parse::label(Effects_token)
                 >   (
                             '[' >> +parse::effect_parser() [ push_back(_d, _1) ] >> ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
@@ -185,8 +185,8 @@ namespace {
 
             start
                 =    tok.Item_
-                >    parse::label(Type_name) > parse::enum_parser<UnlockableItemType>() [ _a = _1 ]
-                >    parse::label(Name_name) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+                >    parse::label(Type_token) > parse::enum_parser<UnlockableItemType>() [ _a = _1 ]
+                >    parse::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
                 ;
 
             start.name("ItemSpec");

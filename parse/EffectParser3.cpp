@@ -28,20 +28,20 @@ namespace {
 
             move_to
                 =    tok.MoveTo_
-                >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
+                >    parse::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
                 ;
 
             move_in_orbit
                 =    tok.MoveInOrbit_
                 >>  (
                         (
-                            parse::label(Speed_name) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Focus_name) >> parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
+                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
+                        >>  parse::label(Focus_token) >> parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
                         )
                     |   (
-                            parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_name)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
+                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
@@ -50,20 +50,20 @@ namespace {
                 =    tok.MoveTowards_
                 >>  (
                         (
-                            parse::label(Speed_name) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Target_name)>> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
+                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
+                        >>  parse::label(Target_token)>> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
                         )
                     |   (
-                            parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_name)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name)     >> double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
+                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             set_destination
                 =    tok.SetDestination_
-                >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
+                >    parse::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
                 ;
 
             set_aggression
@@ -77,37 +77,37 @@ namespace {
 
             victory
                 =    tok.Victory_
-                >    parse::label(Reason_name) > tok.string [ _val = new_<Effect::Victory>(_1) ]
+                >    parse::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
                 ;
 
             add_special
                 =    tok.AddSpecial_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Effect::AddSpecial>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::AddSpecial>(_1) ]
                 ;
 
             remove_special
                 =    tok.RemoveSpecial_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Effect::RemoveSpecial>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::RemoveSpecial>(_1) ]
                 ;
 
             add_starlanes
                 =    tok.AddStarlanes_
-                >    parse::label(Endpoint_name) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
+                >    parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
                 ;
 
             remove_starlanes
                 =    tok.RemoveStarlanes_
-                >    parse::label(Endpoint_name) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
+                >    parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
                 ;
 
             set_star_type
                 =    tok.SetStarType_
-                >    parse::label(Type_name) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
+                >    parse::label(Type_token) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
                 ;
 
             set_texture
                 =    tok.SetTexture_
-                >    parse::label(Name_name)    > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+                >    parse::label(Name_token)    > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             start

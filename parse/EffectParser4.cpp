@@ -36,51 +36,51 @@ namespace {
 
             create_planet
                 =    tok.CreatePlanet_
-                >>   parse::label(Type_name)       >> planet_type_value_ref [ _a = _1 ]
-                >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ _val = new_<Effect::CreatePlanet>(_a, _1) ]
+                >>   parse::label(Type_token)       >> planet_type_value_ref [ _a = _1 ]
+                >>   parse::label(PlanetSize_token) >> planet_size_value_ref [ _val = new_<Effect::CreatePlanet>(_a, _1) ]
                 ;
 
             create_building
                 =    tok.CreateBuilding_
-                >>   parse::label(Name_name)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
+                >>   parse::label(Name_token)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
                 ;
 
             create_ship_1
                 =    tok.CreateShip_
-                >>   parse::label(DesignName_name) >> int_value_ref [ _b = _1 ] // TODO: DesignName -> DesignID.
-                >>   parse::label(Empire_name)     >> int_value_ref [ _c = _1 ]
-                >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
+                >>   parse::label(DesignName_token) >> int_value_ref [ _b = _1 ] // TODO: DesignName -> DesignID.
+                >>   parse::label(Empire_token)     >> int_value_ref [ _c = _1 ]
+                >>   parse::label(Species_token)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
                 ;
 
             create_ship_2
                 =    tok.CreateShip_
-                >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
-                >>   parse::label(Empire_name)     >> int_value_ref [ _b = _1 ]
-                >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_a, _b, _1) ]
+                >>   parse::label(DesignName_token) >> tok.string [ _a = _1 ]
+                >>   parse::label(Empire_token)     >> int_value_ref [ _b = _1 ]
+                >>   parse::label(Species_token)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_a, _b, _1) ]
                 ;
 
             create_ship_3
                 =    tok.CreateShip_
-                >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
-                >>   parse::label(Empire_name)     >> int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
+                >>   parse::label(DesignName_token) >> tok.string [ _a = _1 ]
+                >>   parse::label(Empire_token)     >> int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
                 ;
 
             create_ship_4
                 =    tok.CreateShip_
-                >>   parse::label(DesignName_name) >> tok.string [ _val = new_<Effect::CreateShip>(_1) ]
+                >>   parse::label(DesignName_token) >> tok.string [ _val = new_<Effect::CreateShip>(_1) ]
                 ;
 
             create_field
                 =   tok.CreateField_
-                >>  parse::label(Type_name)        >> tok.string [ _a = _1 ]
+                >>  parse::label(Type_token)        >> tok.string [ _a = _1 ]
                 >>  (
                         (
-                            parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
+                            parse::label(Size_token)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
                         )
                     |   (
-                            parse::label(X_name)       >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name)       >> double_value_ref [ _c = _1 ]
-                        >>  parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
+                            parse::label(X_token)       >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_token)       >> double_value_ref [ _c = _1 ]
+                        >>  parse::label(Size_token)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
                         )
                     )
                 ;
@@ -89,13 +89,13 @@ namespace {
                 =   tok.CreateSystem_
                 >>  (
                         (
-                            parse::label(Type_name)     >> star_type_value_ref [ _a = _1 ]
-                        >>  parse::label(X_name)        >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_a, _b, _1) ]
+                            parse::label(Type_token)     >> star_type_value_ref [ _a = _1 ]
+                        >>  parse::label(X_token)        >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_token)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_a, _b, _1) ]
                         )
                     |   (
-                            parse::label(X_name)        >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
+                            parse::label(X_token)        >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_token)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
                         )
                     )
                 ;

@@ -55,17 +55,17 @@ namespace {
 
             special_prefix
                 =    tok.Special_
-                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
                 ;
 
             spawn
                 =    (
-                            parse::label(SpawnRate_name)  >> parse::double_ [ _r1 = _1 ]
+                            parse::label(SpawnRate_token)  >> parse::double_ [ _r1 = _1 ]
                         |   eps [ _r1 = 1.0 ]
                      )
                 >    (
-                            parse::label(SpawnLimit_name) >> parse::int_ [ _r2 = _1 ]
+                            parse::label(SpawnLimit_token) >> parse::int_ [ _r2 = _1 ]
                         |   eps [ _r2 = 9999 ]
                      )
                 ;
@@ -73,17 +73,17 @@ namespace {
             special
                 =    special_prefix(_a, _b)
                 >>   (
-                        parse::label(Stealth_name)          >> parse::double_ [ _g = _1 ]
+                        parse::label(Stealth_token)          >> parse::double_ [ _g = _1 ]
                      |  eps [ _g = 0.001 ]
                      )
                 >    spawn(_c, _d)
                 >   -(
-                        parse::label(Location_name)      >> parse::detail::condition_parser [ _e = _1 ]
+                        parse::label(Location_token)      >> parse::detail::condition_parser [ _e = _1 ]
                      )
                 >   -(
-                        parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
+                        parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _e, _1)) ]
+                >    parse::label(Graphic_token) > tok.string [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _e, _1)) ]
                 ;
 
             start

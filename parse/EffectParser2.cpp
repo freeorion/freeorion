@@ -35,7 +35,7 @@ namespace {
 
             set_meter
                 =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   parse::label(Value_name) >> double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
+                >>   parse::label(Value_token) >> double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
                 ;
 
             set_ship_part_meter
@@ -48,21 +48,21 @@ namespace {
                 ;
 
             set_ship_part_meter_suffix_1
-                =    parse::label(PartClass_name) >> parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
-                >    parse::label(Value_name)     >  double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_name)  >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _d, _1) ]
+                =    parse::label(PartClass_token) >> parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
+                >    parse::label(Value_token)     >  double_value_ref [ _d = _1 ]
+                >    parse::label(SlotType_token)  >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _d, _1) ]
                 ;
 
             set_ship_part_meter_suffix_2
-                =    parse::label(FighterType_name) >> parse::enum_parser<CombatFighterType>() [ _b = _1 ]
-                >    parse::label(Value_name)       >  double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_name)    >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _d, _1) ]
+                =    parse::label(FighterType_token) >> parse::enum_parser<CombatFighterType>() [ _b = _1 ]
+                >    parse::label(Value_token)       >  double_value_ref [ _d = _1 ]
+                >    parse::label(SlotType_token)    >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _d, _1) ]
                 ;
 
             set_ship_part_meter_suffix_3
-                =    parse::label(PartName_name) > tok.string [ _c = _1 ]
-                >    parse::label(Value_name)    > double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_name) > parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _d, _1) ]
+                =    parse::label(PartName_token) > tok.string [ _c = _1 ]
+                >    parse::label(Value_token)    > double_value_ref [ _d = _1 ]
+                >    parse::label(SlotType_token) > parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _d, _1) ]
                 ;
 
             set_empire_stockpile
@@ -71,11 +71,11 @@ namespace {
                     )
                 >>  (
                         (
-                            parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
-                        >>  parse::label(Value_name)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                            parse::label(Empire_token) >> int_value_ref [ _b = _1 ]
+                        >>  parse::label(Value_token)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
                     |   (
-                            parse::label(Value_name)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
+                            parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
                         )
                     )
                 ;
@@ -84,7 +84,7 @@ namespace {
                 =    tok.SetEmpireCapital_
                 >>  (
                         (
-                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
+                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
                         )
                     |   eps [ _val = new_<Effect::SetEmpireCapital>() ]
                     )
@@ -92,22 +92,22 @@ namespace {
 
             set_planet_type
                 =    tok.SetPlanetType_
-                >    parse::label(Type_name) > planet_type_value_ref [ _val = new_<Effect::SetPlanetType>(_1) ]
+                >    parse::label(Type_token) > planet_type_value_ref [ _val = new_<Effect::SetPlanetType>(_1) ]
                 ;
 
             set_planet_size
                 =    tok.SetPlanetSize_
-                >    parse::label(PlanetSize_name) > planet_size_value_ref [ _val = new_<Effect::SetPlanetSize>(_1) ]
+                >    parse::label(PlanetSize_token) > planet_size_value_ref [ _val = new_<Effect::SetPlanetSize>(_1) ]
                 ;
 
             set_species
                 =    tok.SetSpecies_
-                >    parse::label(Name_name) > string_value_ref [ _val = new_<Effect::SetSpecies>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::SetSpecies>(_1) ]
                 ;
 
             set_owner
                 =    tok.SetOwner_
-                >    parse::label(Empire_name) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
+                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
             start

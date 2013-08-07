@@ -52,17 +52,17 @@ namespace {
 
             field
                 =   tok.FieldType_
-                >   parse::label(Name_name)                 >> tok.string [ _a = _1 ]
-                >   parse::label(Description_name)          >> tok.string [ _b = _1 ]
-                >   parse::label(Stealth_name)              >> parse::double_ [ _c = _1]
+                >   parse::label(Name_token)                 >> tok.string [ _a = _1 ]
+                >   parse::label(Description_token)          >> tok.string [ _b = _1 ]
+                >   parse::label(Stealth_token)              >> parse::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
                 //>   -(
-                //        parse::label(Location_name)         >> parse::detail::condition_parser [ _e = _1 ]
+                //        parse::label(Location_token)         >> parse::detail::condition_parser [ _e = _1 ]
                 //     )
                 >   -(
-                        parse::label(EffectsGroups_name)    >> parse::detail::effects_group_parser() [ _f = _1 ]
+                        parse::label(EffectsGroups_token)    >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Graphic_name) >> tok.string [ insert(_r1, new_<FieldType>(_a, _b, _c, _d,/* _e, */_f, _1)) ]
+                >    parse::label(Graphic_token) >> tok.string [ insert(_r1, new_<FieldType>(_a, _b, _c, _d,/* _e, */_f, _1)) ]
                 ;
 
             start

@@ -25,7 +25,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_name)),
+                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_token)),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(

@@ -87,20 +87,20 @@ namespace {
             using phoenix::push_back;
 
             tech_info_name_desc
-                =    parse::label(Name_name)              > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_name)       > tok.string [ _r2 = _1 ]
-                >    parse::label(Short_Description_name) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
+                =    parse::label(Name_token)              > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_token)       > tok.string [ _r2 = _1 ]
+                >    parse::label(Short_Description_token) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
                 ;
 
             tech_info
                 =    tech_info_name_desc(_a, _b, _c)
                 >>  -(
-                            parse::label(TechType_name) >> parse::enum_parser<TechType>() [ _d = _1 ]
+                            parse::label(TechType_token) >> parse::enum_parser<TechType>() [ _d = _1 ]
                         |   eps [ _d = TT_THEORY ]
                      )
-                >    parse::label(Category_name)      > tok.string      [ _e = _1 ]
-                >    parse::label(ResearchCost_name)  > double_value_ref[ _f = _1 ]
-                >    parse::label(ResearchTurns_name) > int_value_ref   [ _g = _1 ]
+                >    parse::label(Category_token)      > tok.string      [ _e = _1 ]
+                >    parse::label(ResearchCost_token)  > double_value_ref[ _f = _1 ]
+                >    parse::label(ResearchTurns_token) > int_value_ref   [ _g = _1 ]
                 >>   (
                             tok.Unresearchable_ [ _h = false ]
                         |   tok.Researchable_ [ _h = true ]
@@ -110,7 +110,7 @@ namespace {
                 ;
 
             prerequisites
-                =     parse::label(Prerequisites_name)
+                =     parse::label(Prerequisites_token)
                 >>   (
                             '[' > +tok.string [ insert(_r1, _1) ] > ']'
                         |   tok.string [ insert(_r1, _1) ]
@@ -118,7 +118,7 @@ namespace {
                 ;
 
             unlocks
-                =    parse::label(Unlock_name)
+                =    parse::label(Unlock_token)
                 >>   (
                             '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
                         |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
@@ -132,10 +132,10 @@ namespace {
                         >  -prerequisites(_b)
                         >  -unlocks(_c)
                         >  -(
-                                parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _d = _1 ]
+                                parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _d = _1 ]
                             )
                         >  -(
-                                parse::label(Graphic_name) >> tok.string [ _e = _1 ]
+                                parse::label(Graphic_token) >> tok.string [ _e = _1 ]
                             )
                      )
                      [ insert_tech(_r1, new_<Tech>(_a, _d, _b, _c, _e)) ]
@@ -143,9 +143,9 @@ namespace {
 
             category
                 =    tok.Category_
-                >    parse::label(Name_name)    > tok.string [ _a = _1 ]
-                >    parse::label(Graphic_name) > tok.string [ _b = _1 ]
-                >    parse::label(Colour_name)  > parse::detail::color_parser() [ insert_category(_r1, new_<TechCategory>(_a, _b, _1)) ]
+                >    parse::label(Name_token)    > tok.string [ _a = _1 ]
+                >    parse::label(Graphic_token) > tok.string [ _b = _1 ]
+                >    parse::label(Colour_token)  > parse::detail::color_parser() [ insert_category(_r1, new_<TechCategory>(_a, _b, _1)) ]
                 ;
 
             start

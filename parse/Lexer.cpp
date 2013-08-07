@@ -39,12 +39,12 @@ lexer::lexer() :
     double_(double_regex),
     string(string_regex),
 
-#define NAME_TOKEN(r, _, name) BOOST_PP_CAT(name, _)("(?i:" BOOST_PP_STRINGIZE(name) ")"),
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
-#undef NAME_TOKEN
+#define DEFINE_TOKEN(r, _, name) BOOST_PP_CAT(name, _)("(?i:" BOOST_PP_STRINGIZE(name) ")"),
+    BOOST_PP_SEQ_FOR_EACH(DEFINE_TOKEN, _, TOKEN_SEQ_1)
+    BOOST_PP_SEQ_FOR_EACH(DEFINE_TOKEN, _, TOKEN_SEQ_2)
+    BOOST_PP_SEQ_FOR_EACH(DEFINE_TOKEN, _, TOKEN_SEQ_3)
+    BOOST_PP_SEQ_FOR_EACH(DEFINE_TOKEN, _, TOKEN_SEQ_4)
+#undef DEFINE_TOKEN
 
     error_token("\\S+?")
 
@@ -82,17 +82,17 @@ lexer::lexer() :
         |     ']'
         ;
 
-#define NAME_TOKEN(r, _, name)                                          \
+#define REGISTER_TOKEN(r, _, name)                                        \
     {                                                                   \
-        adobe::name_t n(BOOST_PP_CAT(name, _name));                     \
+        adobe::name_t n(BOOST_PP_CAT(name, _token));                    \
         self += BOOST_PP_CAT(name, _) [ _val = n ];                     \
         m_name_tokens[n] = &BOOST_PP_CAT(name, _);                      \
     }
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
-    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
-#undef NAME_TOKEN
+    BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_1)
+    BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_2)
+    BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_3)
+    BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_4)
+#undef REGISTER_TOKEN
 
     self
         +=    error_token

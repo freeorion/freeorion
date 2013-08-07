@@ -52,22 +52,22 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
-                >    parse::label(Hull_name)        > tok.string [ _r3 = _1 ]
+                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
+                >    parse::label(Hull_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
                 =    design_prefix(_a, _b, _c)
-                >    parse::label(Parts_name)
+                >    parse::label(Parts_token)
                 >    (
                             '[' > +tok.string [ push_back(_d, _1) ] > ']'
                         |   tok.string [ push_back(_d, _1) ]
                      )
                 >   -(
-                        parse::label(Icon_name)     >> tok.string [ _e = _1 ]
+                        parse::label(Icon_token)     >> tok.string [ _e = _1 ]
                      )
-                >    parse::label(Model_name)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, 0, _c, _d, _e, _1)) ]
+                >    parse::label(Model_token)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, 0, _c, _d, _e, _1)) ]
                 ;
 
             start

@@ -181,8 +181,8 @@ namespace {
 
     std::vector<adobe::name_t> TargetOwnerVec() {
         std::vector<adobe::name_t> retval(2);
-        retval[0] = Target_name;
-        retval[1] = Owner_name;
+        retval[0] = Target_token;
+        retval[1] = Owner_token;
         return retval;
     }
 

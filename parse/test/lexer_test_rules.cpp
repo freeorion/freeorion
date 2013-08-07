@@ -51,49 +51,39 @@ lexer_test_rules::lexer_test_rules()
         |  char_(',') [ std::cout << _1 << "\n" ]
         ;
 
+#define ADD_TOKEN(r, _, name) \
+    | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _token)) ]
+
     lexer_2
         =  char_('[') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
-#undef NAME_TOKEN
+        BOOST_PP_SEQ_FOR_EACH(ADD_TOKEN, _, TOKEN_SEQ_1)
         ;
 
     lexer_3
         =  char_(']') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
-#undef NAME_TOKEN
+        BOOST_PP_SEQ_FOR_EACH(ADD_TOKEN, _, TOKEN_SEQ_2)
         ;
 
     lexer_4
         =  char_('(') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
-#undef NAME_TOKEN
+        BOOST_PP_SEQ_FOR_EACH(ADD_TOKEN, _, TOKEN_SEQ_3)
         ;
 
     lexer_5
         =  char_(')') [ std::cout << _1 << "\n" ]
-#define NAME_TOKEN(r, _, name) | tok.BOOST_PP_CAT(name, _) [ std::cout << _1 << "\n", do_erase(BOOST_PP_CAT(name, _name)) ]
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
-#undef NAME_TOKEN
+        BOOST_PP_SEQ_FOR_EACH(ADD_TOKEN, _, TOKEN_SEQ_4)
         ;
 
-#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
-#undef NAME_TOKEN
+#undef ADD_TOKEN
 
-#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
-#undef NAME_TOKEN
+#define ADD_UNCHECKED_TOKENS(r, _, name) \
+    unchecked_tokens.insert(BOOST_PP_CAT(name, _token));
 
-#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
-#undef NAME_TOKEN
-
-#define NAME_TOKEN(r, _, name) unchecked_tokens.insert(BOOST_PP_CAT(name, _name));
-        BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
-#undef NAME_TOKEN
+        BOOST_PP_SEQ_FOR_EACH(ADD_UNCHECKED_TOKENS, _, TOKEN_SEQ_1)
+        BOOST_PP_SEQ_FOR_EACH(ADD_UNCHECKED_TOKENS, _, TOKEN_SEQ_2)
+        BOOST_PP_SEQ_FOR_EACH(ADD_UNCHECKED_TOKENS, _, TOKEN_SEQ_3)
+        BOOST_PP_SEQ_FOR_EACH(ADD_UNCHECKED_TOKENS, _, TOKEN_SEQ_4)
+#undef ADD_UNCHECKED_TOKENS
 
 #define NAME(x)
 // x.name(#x); debug(x)

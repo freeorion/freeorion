@@ -34,23 +34,23 @@ namespace {
 
             set_empire_meter_1
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
-                >    parse::label(Meter_name)  >  tok.string [ _a = _1 ]
-                >    parse::label(Value_name)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+                >>   parse::label(Empire_token) >> int_value_ref [ _b = _1 ]
+                >    parse::label(Meter_token)  >  tok.string [ _a = _1 ]
+                >    parse::label(Value_token)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Meter_name) >> tok.string [ _a = _1 ]
-                >    parse::label(Value_name) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+                >>   parse::label(Meter_token) >> tok.string [ _a = _1 ]
+                >    parse::label(Value_token) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
             give_empire_tech
                 =    tok.GiveEmpireTech_
-                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+                >>   parse::label(Name_token) >>     tok.string [ _a = _1 ]
                 >>   (
                         (
-                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
+                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
                         )
                      |  eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
                      )
@@ -58,11 +58,11 @@ namespace {
 
             set_empire_tech_progress
                 =    tok.SetEmpireTechProgress_
-                >>   parse::label(Name_name) >>     string_value_ref [ _a = _1 ]
-                >>   parse::label(Progress_name) >> double_value_ref [ _b = _1 ]
+                >>   parse::label(Name_token) >>     string_value_ref [ _a = _1 ]
+                >>   parse::label(Progress_token) >> double_value_ref [ _b = _1 ]
                 >>   (
                         (
-                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
+                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
                         )
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
                      )
@@ -70,23 +70,23 @@ namespace {
 
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_name) >> tok.string [ _a = _1 ]
+                >    parse::label(Message_token) >> tok.string [ _a = _1 ]
                 >> -(
-                        parse::label(Icon_name) >> tok.string [ _b = _1 ]
+                        parse::label(Icon_token) >> tok.string [ _b = _1 ]
                     )
                 >> -(
-                        parse::label(Parameters_name) >> string_and_string_ref_vector [ _c = _1 ]
+                        parse::label(Parameters_token) >> string_and_string_ref_vector [ _c = _1 ]
                     )
                 >>  (
                         (
                             (
-                                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                                parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                             |   eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
+                        >>  parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
                         )
                     |   (
-                            parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                         |   eps [ _d = AFFIL_ANY ]
                         )
                         [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
@@ -95,13 +95,13 @@ namespace {
 
             set_overlay_texture
                 =    tok.SetOverlayTexture_
-                >    parse::label(Name_name)    > tok.string [ _a = _1 ]
-                >    parse::label(Size_name)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+                >    parse::label(Name_token)    > tok.string [ _a = _1 ]
+                >    parse::label(Size_token)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
                 ;
 
             string_and_string_ref // TODO: Try to make this simpler.
-                =    parse::label(Tag_name)  >> tok.string [ _a = _1 ]
-                >>   parse::label(Data_name) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
+                =    parse::label(Tag_token)  >> tok.string [ _a = _1 ]
+                >>   parse::label(Data_token) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                 ;
 
             string_and_string_ref_vector

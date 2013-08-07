@@ -67,7 +67,7 @@ namespace {
             homeworld
                 =    (
                             tok.Homeworld_
-                        >>  parse::label(Name_name) >> string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
+                        >>  parse::label(Name_token) >> string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
                      )
                 |    tok.Homeworld_ [ _val = new_<Condition::Homeworld>() ]
                 ;
@@ -76,7 +76,7 @@ namespace {
                 =    (
                             tok.Building_
                         >> -(
-                                parse::label(Name_name) >> string_ref_vec [ _a = _1 ]
+                                parse::label(Name_token) >> string_ref_vec [ _a = _1 ]
                             )
                      )
                      [ _val = new_<Condition::Building>(_a) ]
@@ -85,7 +85,7 @@ namespace {
             species
                 =    tok.Species_
                 >>   (
-                            parse::label(Name_name) >> string_ref_vec [ _val = new_<Condition::Species>(_1) ]
+                            parse::label(Name_token) >> string_ref_vec [ _val = new_<Condition::Species>(_1) ]
                         |   eps [ _val = new_<Condition::Species>() ] // TODO: Is this as useless as it looks?
                      )
                 ;
@@ -93,14 +93,14 @@ namespace {
             focus_type
                 =    tok.Focus_
                 >>   (
-                            parse::label(Type_name) >> string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
+                            parse::label(Type_token) >> string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
                         |   eps [ _val = new_<Condition::FocusType>(std::vector<const ValueRef::ValueRefBase<std::string>*>()) ]
                      )
                 ;
 
             planet_type
                 =    tok.Planet_
-                >>   parse::label(Type_name)
+                >>   parse::label(Type_token)
                 >>   (
                             '[' >> +planet_type_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_type_value_ref [ push_back(_a, _1) ]
@@ -110,7 +110,7 @@ namespace {
 
             planet_size
                 =    tok.Planet_
-                >>   parse::label(Size_name)
+                >>   parse::label(Size_token)
                 >>   (
                             '[' >> +planet_size_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_size_value_ref [ push_back(_a, _1) ]
@@ -120,7 +120,7 @@ namespace {
 
             planet_environment
                 =    tok.Planet_
-                >>   parse::label(Environment_name)
+                >>   parse::label(Environment_token)
                 >>   (
                             '[' >> +planet_environment_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_environment_value_ref [ push_back(_a, _1) ]
@@ -132,7 +132,7 @@ namespace {
                 =    parse::enum_parser<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |    (
                             tok.ObjectType_
-                        >>  parse::label(Type_name) >> universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
+                        >>  parse::label(Type_token) >> universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
                      )
                 ;
 
@@ -140,10 +140,10 @@ namespace {
                 =    (
                             parse::non_ship_part_meter_type_enum() [ _a = _1 ]
                         >> -(
-                                parse::label(Low_name) >> double_value_ref [ _b = _1 ]
+                                parse::label(Low_token) >> double_value_ref [ _b = _1 ]
                             )
                         >> -(
-                                parse::label(High_name) >> double_value_ref [ _c = _1 ]
+                                parse::label(High_token) >> double_value_ref [ _c = _1 ]
                             )
                      )
                      [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
@@ -151,13 +151,13 @@ namespace {
 
             ship_part_meter_value
                 =    (      tok.ShipPartMeter_
-                        >>  parse::label(Part_name)      >>  tok.string [ _d = _1 ]
+                        >>  parse::label(Part_token)      >>  tok.string [ _d = _1 ]
                         >>  parse::ship_part_meter_type_enum() [ _a = _1 ]
                         >> -(
-                                parse::label(Low_name)  >>  double_value_ref [ _b = _1 ]
+                                parse::label(Low_token)  >>  double_value_ref [ _b = _1 ]
                             )
                         >> -(
-                                parse::label(High_name) >>  double_value_ref [ _c = _1 ]
+                                parse::label(High_token) >>  double_value_ref [ _c = _1 ]
                             )
                      )
                      [ _val = new_<Condition::ShipPartMeterValue>(_d, _a, _b, _c) ]
@@ -166,23 +166,23 @@ namespace {
             empire_meter_value
                 =   tok.EmpireMeter_
                 >>  (
-                        parse::label(Empire_name)   >>  int_value_ref [ _b = _1 ]
-                    >>  parse::label(Meter_name)    >>  tok.string [ _a = _1 ]
+                        parse::label(Empire_token)   >>  int_value_ref [ _b = _1 ]
+                    >>  parse::label(Meter_token)    >>  tok.string [ _a = _1 ]
                     >> -(
-                            parse::label(Low_name)  >>  double_value_ref [ _c = _1 ]
+                            parse::label(Low_token)  >>  double_value_ref [ _c = _1 ]
                         )
                     >> -(
-                            parse::label(High_name) >>  double_value_ref [ _d = _1 ]
+                            parse::label(High_token) >>  double_value_ref [ _d = _1 ]
                         )
                         [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
                     )
                 |   (
-                        parse::label(Meter_name)    >>  tok.string [ _a = _1 ]
+                        parse::label(Meter_token)    >>  tok.string [ _a = _1 ]
                     >> -(
-                            parse::label(Low_name)  >>  double_value_ref [ _c = _1 ]
+                            parse::label(Low_token)  >>  double_value_ref [ _c = _1 ]
                         )
                     >> -(
-                            parse::label(High_name) >>  double_value_ref [ _d = _1 ]
+                            parse::label(High_token) >>  double_value_ref [ _d = _1 ]
                         )
                         [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
                     )

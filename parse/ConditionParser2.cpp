@@ -31,15 +31,15 @@ namespace {
 
             has_special
                 =    tok.HasSpecial_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Condition::HasSpecial>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::HasSpecial>(_1) ]
                 ;
 
             has_special_since_turn
                 =    (
                             tok.HasSpecialSinceTurn_
-                        >   parse::label(Name_name) >> tok.string [ _e = _1 ]
-                        >>-(parse::label(Low_name) >> int_value_ref [ _a = _1 ] )
-                        >>-(parse::label(High_name) >> int_value_ref [ _b = _1 ] )
+                        >   parse::label(Name_token) >> tok.string [ _e = _1 ]
+                        >>-(parse::label(Low_token) >> int_value_ref [ _a = _1 ] )
+                        >>-(parse::label(High_token) >> int_value_ref [ _b = _1 ] )
                      )
                      [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
                 ;
@@ -47,36 +47,36 @@ namespace {
             enqueued
                 =  tok.Enqueued_
                 >  (((
-                        parse::label(Type_name) >> tok.Building_
+                        parse::label(Type_token) >> tok.Building_
                         >> (
-                               parse::label(Name_name) >>       tok.string [ _e = _1 ]
+                               parse::label(Name_token) >>       tok.string [ _e = _1 ]
                             |                                   eps [ _e = "" ]
                            )
-                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
                     )
                    |((
-                        parse::label(Type_name) >> tok.Ship_
-                        >> -(   parse::label(Design_name) >>    int_value_ref [ _d = _1 ] )
-                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                        parse::label(Type_token) >> tok.Ship_
+                        >> -(   parse::label(Design_token) >>    int_value_ref [ _d = _1 ] )
+                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
                     )
                    |((
-                        parse::label(Type_name) >> tok.Ship_
-                        >>      parse::label(Name_name) >>    tok.string [ _e = _1 ]
-                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                        parse::label(Type_token) >> tok.Ship_
+                        >>      parse::label(Name_token) >>    tok.string [ _e = _1 ]
+                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
                     )
                    |((
-                           -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                           -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
                     )
                    )
@@ -84,68 +84,68 @@ namespace {
 
             has_tag
                 =    tok.HasTag_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Condition::HasTag>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::HasTag>(_1) ]
                 ;
 
             owner_has_tech
                 =    tok.OwnerHasTech_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Condition::OwnerHasTech>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::OwnerHasTech>(_1) ]
                 ;
 
             design_has_hull
                 =    tok.DesignHasHull_
-                >    parse::label(Name_name) > tok.string [ _val = new_<Condition::DesignHasHull>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::DesignHasHull>(_1) ]
                 ;
 
             design_has_part
                 =    tok.DesignHasPart_
-                >    parse::label(Low_name)   > int_value_ref [ _a = _1 ]
-                >    parse::label(High_name)  > int_value_ref [ _b = _1 ]
-                >    parse::label(Class_name) > tok.string [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
+                >    parse::label(Low_token)   > int_value_ref [ _a = _1 ]
+                >    parse::label(High_token)  > int_value_ref [ _b = _1 ]
+                >    parse::label(Class_token) > tok.string [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
                 ;
 
             design_has_part_class
                 =    tok.DesignHasPartClass_
-                >    parse::label(Low_name)   > int_value_ref [ _a = _1 ]
-                >    parse::label(High_name)  > int_value_ref [ _b = _1 ]
-                >    parse::label(Class_name) > parse::enum_parser<ShipPartClass>() [ _val = new_<Condition::DesignHasPartClass>(_a, _b, _1) ]
+                >    parse::label(Low_token)   > int_value_ref [ _a = _1 ]
+                >    parse::label(High_token)  > int_value_ref [ _b = _1 ]
+                >    parse::label(Class_token) > parse::enum_parser<ShipPartClass>() [ _val = new_<Condition::DesignHasPartClass>(_a, _b, _1) ]
                 ;
 
             predefined_design
                 =    tok.Design_
-                >>   parse::label(Name_name) >> tok.string [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                >>   parse::label(Name_token) >> tok.string [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number
                 =    tok.Design_
-                >    parse::label(Design_name) > int_value_ref [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                >    parse::label(Design_token) > int_value_ref [ _val = new_<Condition::NumberedShipDesign>(_1) ]
                 ;
 
             produced_by_empire // TODO: Lose "empire" part.
                 =    tok.ProducedByEmpire_
-                >    parse::label(Empire_name) > int_value_ref [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::ProducedByEmpire>(_1) ]
                 ;
 
             visible_to_empire // TODO: Lose "empire" part.
                 =    tok.VisibleToEmpire_
-                >    parse::label(Empire_name) > int_value_ref [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::VisibleToEmpire>(_1) ]
                 ;
 
             explored_by_empire // TODO: Lose "empire" part.
                 =    tok.ExploredByEmpire_
-                >    parse::label(Empire_name) > int_value_ref [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::ExploredByEmpire>(_1) ]
                 ;
 
             resupplyable_by
                 =    tok.ResupplyableBy_
-                >    parse::label(Empire_name) > int_value_ref [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
                 ;
 
             in_system
                 =   (
                         tok.InSystem_
                     >> -(
-                            parse::label(ID_name) >> int_value_ref [ _a = _1 ]
+                            parse::label(ID_token) >> int_value_ref [ _a = _1 ]
                         )
                     )
                     [ _val = new_<Condition::InSystem>(_a) ]
@@ -153,7 +153,7 @@ namespace {
 
             object_id
                 =    tok.Object_
-                >    parse::label(ID_name) > int_value_ref [ _val = new_<Condition::ObjectID>(_1) ]
+                >    parse::label(ID_token) > int_value_ref [ _val = new_<Condition::ObjectID>(_1) ]
                 ;
 
             start

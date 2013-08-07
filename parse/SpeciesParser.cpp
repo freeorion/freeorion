@@ -63,14 +63,14 @@ namespace {
 
             focus_type
                 =    tok.Focus_
-                >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                >    parse::label(Description_name) > tok.string [ _b = _1 ]
-                >    parse::label(Location_name)    > parse::detail::condition_parser [ _c = _1 ]
-                >    parse::label(Graphic_name)     > tok.string [ _val = construct<FocusType>(_a, _b, _c, _1) ]
+                >    parse::label(Name_token)        > tok.string [ _a = _1 ]
+                >    parse::label(Description_token) > tok.string [ _b = _1 ]
+                >    parse::label(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
+                >    parse::label(Graphic_token)     > tok.string [ _val = construct<FocusType>(_a, _b, _c, _1) ]
                 ;
 
             foci
-                =    parse::label(Foci_name)
+                =    parse::label(Foci_token)
                 >>   (
                             '[' > +focus_type [ push_back(_r1, _1) ] > ']'
                         |   focus_type [ push_back(_r1, _1) ]
@@ -78,12 +78,12 @@ namespace {
                 ;
 
             effects
-                =    parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _r1 = _1 ]
+                =    parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _r1 = _1 ]
                 ;
 
             environment_map_element
-                =    parse::label(Type_name)        >> parse::enum_parser<PlanetType>() [ _a = _1 ]
-                >    parse::label(Environment_name) >  parse::enum_parser<PlanetEnvironment>()
+                =    parse::label(Type_token)        >> parse::enum_parser<PlanetType>() [ _a = _1 ]
+                >    parse::label(Environment_token) >  parse::enum_parser<PlanetEnvironment>()
                         [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
 
@@ -93,7 +93,7 @@ namespace {
                 ;
 
             environments
-                =    parse::label(Environments_name) >> environment_map [ _r1 = _1 ]
+                =    parse::label(Environments_token) >> environment_map [ _r1 = _1 ]
                 ;
 
             species_params
@@ -106,15 +106,15 @@ namespace {
 
             species
                 =    tok.Species_
-                >    parse::label(Name_name)                > tok.string [ _a = _1 ]
-                >    parse::label(Description_name)         > tok.string [ _b = _1 ]
-                >    parse::label(Gameplay_Description_name) > tok.string [ _h = _1 ]
+                >    parse::label(Name_token)                > tok.string [ _a = _1 ]
+                >    parse::label(Description_token)         > tok.string [ _b = _1 ]
+                >    parse::label(Gameplay_Description_token) > tok.string [ _h = _1 ]
                 >    species_params [ _c = _1]
                 >    parse::detail::tags_parser()(_d)
                 >   -foci(_e)
                 >   -effects(_f)
                 >   -environments(_g)
-                >    parse::label(Graphic_name) > tok.string
+                >    parse::label(Graphic_token) > tok.string
                      [ insert_species(_r1, new_<Species>(_a, _b, _h, _e, _g, _f, _c, _d, _1)) ]
                 ;
 
