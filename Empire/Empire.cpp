@@ -2220,17 +2220,21 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
 }
 
 void Empire::AddTech(const std::string& name) {
-    m_techs.insert(name);
-
     const Tech* tech = GetTech(name);
     if (!tech) {
         Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;
         return;
     }
 
+    if (m_techs.find(name) == m_techs.end())
+        AddSitRepEntry(CreateTechResearchedSitRep(name));
+
     const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
     for (unsigned int i = 0; i < unlocked_items.size(); ++i)
         UnlockItem(unlocked_items[i]);  // potential infinite if a tech (in)directly unlocks itself?
+
+    if (m_techs.find(name) == m_techs.end())
+        m_techs.insert(name);
 }
 
 void Empire::UnlockItem(const ItemSpec& item) {
@@ -2245,7 +2249,7 @@ void Empire::UnlockItem(const ItemSpec& item) {
         AddHullType(item.name);
         break;
     case UIT_SHIP_DESIGN:
-        AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name)); // this adds the generic version of the design, not created by any empire, to this empire's remembered designs.
+        AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name));
         break;
     case UIT_TECH:
         AddTech(item.name);
@@ -2261,8 +2265,12 @@ void Empire::AddBuildingType(const std::string& name) {
         Logger().errorStream() << "Empire::AddBuildingType given an invalid building type name: " << name;
         return;
     }
-    if (building_type->Producible())
-        m_available_building_types.insert(name);
+    if (!building_type->Producible())
+        return;
+    if (m_available_building_types.find(name) != m_available_building_types.end())
+        return;
+    m_available_building_types.insert(name);
+    AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name));
 }
 
 void Empire::AddPartType(const std::string& name) {
@@ -2271,8 +2279,10 @@ void Empire::AddPartType(const std::string& name) {
         Logger().errorStream() << "Empire::AddPartType given an invalid part type name: " << name;
         return;
     }
-    if (part_type->Producible())
-        m_available_part_types.insert(name);
+    if (!part_type->Producible())
+        return;
+    m_available_part_types.insert(name);
+    AddSitRepEntry(CreateShipPartUnlockedSitRep(name));
 }
 
 void Empire::AddHullType(const std::string& name) {
@@ -2281,8 +2291,10 @@ void Empire::AddHullType(const std::string& name) {
         Logger().errorStream() << "Empire::AddHullType given an invalid hull type name: " << name;
         return;
     }
-    if (hull_type->Producible())
-        m_available_hull_types.insert(name);
+    if (!hull_type->Producible())
+        return;
+    m_available_hull_types.insert(name);
+    AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
 }
 
 void Empire::AddExploredSystem(int ID) {
@@ -2457,8 +2469,6 @@ void Empire::CheckResearchProgress() {
         progress += it->allocated_rp;
         if (tech->ResearchCost(m_id) - EPSILON <= progress) {
             AddTech(it->name);
-            AddSitRepEntry(CreateTechResearchedSitRep(it->name));
-            // TODO: create unlocked item sitreps?
             m_research_progress.erase(it->name);
             to_erase.push_back(it->name);
         }

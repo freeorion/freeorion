@@ -3329,6 +3329,10 @@ EFFECT_ANCIENT_SHIP
 EFFECT_ANCIENT_BUILDING
 EFFECT_ANCIENT_TECH
 SITREP_TECH_RESEARCHED
+SITREP_TECH_UNLOCKED
+SITREP_SHIP_PART_UNLOCKED
+SITREP_SHIP_HULL_UNLOCKED
+SITREP_BUILDING_TYPE_UNLOCKED
 SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
@@ -3370,6 +3374,18 @@ SITREP_TECH_RESEARCHED
 %tech% has been researched.
 SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
+
+SITREP_TECH_UNLOCKED
+%tech% has been unlocked and can now be researched
+
+SITREP_SHIP_PART_UNLOCKED
+%shippart% has been unlocked and can now be produced in ship designs
+
+SITREP_SHIP_HULL_UNLOCKED
+%shiphull% has been unlocked and can now be produced in ship designs
+
+SITREP_BUILDING_TYPE_UNLOCKED
+%buildingtype% has been unlocked and can now be produced
 
 SITREP_COMBAT_SYSTEM
 A %combat% occurred at %system%.

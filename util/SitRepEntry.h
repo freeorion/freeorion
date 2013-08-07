@@ -40,6 +40,12 @@ SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name);
 SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id);
 SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number);
 SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id);
+
+SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name);
+SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name);
+SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name);
+SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name);
+
 FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id);
 FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id);
 FO_COMMON_API SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
