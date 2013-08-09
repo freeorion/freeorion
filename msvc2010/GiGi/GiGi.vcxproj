@@ -175,6 +175,7 @@
       <OutputFile>../../GiGi.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib;../../../Boost/lib/</AdditionalLibraryDirectories>
       <LinkStatus>false</LinkStatus>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -213,6 +214,7 @@
       <AdditionalDependencies>opengl32.lib;glu32.lib;freetype244MT.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

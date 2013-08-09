@@ -55,6 +55,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,7 +90,7 @@
       <LinkStatus>
       </LinkStatus>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>

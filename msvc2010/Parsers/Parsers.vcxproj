@@ -55,6 +55,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,7 +89,7 @@
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
       <OutputFile>../../Parsers.dll</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <AdditionalDependencies>GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
