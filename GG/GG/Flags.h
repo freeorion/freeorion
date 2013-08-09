@@ -225,9 +225,11 @@ public:
     void insert(FlagType flag, const std::string& name, bool permanent = false)
         {
 #ifndef NDEBUG
-            bool insert_successful =
-                m_flags.insert(flag).second;
-            assert(insert_successful);
+            std::pair<typename std::set<FlagType>::iterator, bool> result =
+#endif
+            m_flags.insert(flag);
+#ifndef NDEBUG
+            assert(result.second);
 #endif
             if (permanent)
                 m_permanent.insert(flag);
