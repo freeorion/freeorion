@@ -262,7 +262,7 @@ Part
     buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/generic_part.png"
+    icon = "icons/ship_parts/xentronium_plating.png"
 
 Part
     name = "AR_ROCK_PLATE"
@@ -385,7 +385,7 @@ Part
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
             effects = SetMaxShield Value + 12
-    icon = "icons/ship_parts/generic_part.png"
+    icon = "icons/ship_parts/plasma_shield.png"
 
 Part
     name = "SH_BLACK"
@@ -402,7 +402,7 @@ Part
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
             effects = SetMaxShield Value + 20
-    icon = "icons/ship_parts/generic_part.png"
+    icon = "icons/ship_parts/blackshield.png"
 
 Part
     name = "SH_MULTISPEC"

@@ -2501,7 +2501,7 @@ Tech
     researchcost = 1
     researchturns = 1
     unlock = Item type = ShipPart name = "AR_STD_PLATE"
-    graphic = "icons/ship_parts/std_armor_plating.png"
+    graphic = "icons/tech/armor_plating.png"
 
 Tech
     name = "SHP_ZORTRIUM_PLATE"
@@ -2513,7 +2513,7 @@ Tech
     researchturns = 2
     prerequisites = "SHP_ROOT_ARMOR"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
-    graphic = "icons/ship_parts/zortrium_plating.png"
+    graphic = "icons/tech/armor_plating.png"
 
 Tech
     name = "SHP_DIAMOND_PLATE"
@@ -2525,7 +2525,7 @@ Tech
     researchturns = 4
     prerequisites = "SHP_ZORTRIUM_PLATE"
     unlock = Item type = ShipPart name = "AR_DIAMOND_PLATE"
-    graphic = "icons/ship_parts/crystal_plating.png"
+    graphic = "icons/tech/armor_plating.png"
 
 Tech
     name = "SHP_XENTRONIUM_PLATE"
@@ -2537,6 +2537,7 @@ Tech
     researchturns = 6
     prerequisites = "SHP_DIAMOND_PLATE"
     unlock = Item type = ShipPart name = "AR_XENTRONIUM_PLATE"
+    graphic = "icons/tech/armor_plating.png"
 
 //#
 //#     SHIPS WEAPONS
