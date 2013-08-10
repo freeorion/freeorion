@@ -61,9 +61,6 @@ struct PlayingGame;
 struct WaitingForSPHostAck;
 struct WaitingForMPHostAck;
 struct WaitingForMPJoinAck;
-
-// Substates of IntroMenu
-struct IntroMenuIdle;
 struct MPLobby;
 
 // Substates of PlayingGame
@@ -79,19 +76,6 @@ class IntroScreen;
 class MultiPlayerLobbyWnd;
 
 #define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
-
-/** Note that empty idle states are needed for several states.  They are needed
-  * when a state has internal states (and so because of the requirements of
-  * Boost.StateChart, must have an initial internal state), but the state does
-  * not logically have an initial state that is always correct to use. */
-#define EMPTY_IDLE_STATE(name)                                          \
-    struct name##Idle : boost::statechart::simple_state<name##Idle, name> \
-    {                                                                   \
-        typedef boost::statechart::simple_state<name##Idle, name> Base; \
-        name##Idle() {if (TraceHumanClientFSMExecution()) Logger().debugStream() << "(HumanClientFSM) " #name "Idle"; } \
-        ~name##Idle() {if (TraceHumanClientFSMExecution()) Logger().debugStream() << "(HumanClientFSM) ~" #name "Idle";} \
-        CLIENT_ACCESSOR                                                 \
-    }
 
 
 /** The finite state machine that represents the human client's operation. */
@@ -109,8 +93,8 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
 
 /** The human client's initial state. */
-struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle> {
-    typedef boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle> Base;
+struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM> {
+    typedef boost::statechart::state<IntroMenu, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostSPGameRequested>,
@@ -127,10 +111,6 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenu
 
     CLIENT_ACCESSOR
 };
-
-
-/** The IntroMenu's initial state. */
-EMPTY_IDLE_STATE(IntroMenu);
 
 
 /** The human client state in which the player has requested to host a single
@@ -195,8 +175,8 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
 
 
 /** The human client state in which the multiplayer lobby is active. */
-struct MPLobby : boost::statechart::state<MPLobby, IntroMenu> {
-    typedef boost::statechart::state<MPLobby, IntroMenu> Base;
+struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
+    typedef boost::statechart::state<MPLobby, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<Disconnection>,
@@ -356,6 +336,5 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, PlayingGame> 
 };
 
 #undef CLIENT_ACCESSOR
-#undef EMPTY_IDLE_STATE
 
 #endif
