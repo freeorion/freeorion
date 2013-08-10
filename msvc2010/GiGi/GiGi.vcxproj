@@ -211,7 +211,7 @@
       </LinkStatus>
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;freetype244MT.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;freetype244MT.lib;libpng.lib;User32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>

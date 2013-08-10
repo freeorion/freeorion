@@ -88,6 +88,7 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
+      <AdditionalDependencies></AdditionalDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -77,7 +77,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiOgrePlugin_OIS.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;GiGiOgre.lib;OgreMain.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;GiGiOgre.lib;OgreMain.lib;OIS.lib;User32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>

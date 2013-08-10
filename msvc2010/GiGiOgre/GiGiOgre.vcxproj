@@ -77,7 +77,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiOgre.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;GiGi.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain.lib;GiGi.lib;opengl32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <LinkStatus>

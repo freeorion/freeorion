@@ -90,7 +90,7 @@
       <OutputFile>../../Parsers.dll</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
-      <AdditionalDependencies>GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies></AdditionalDependencies>
     </Link>
     <Lib>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>

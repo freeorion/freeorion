@@ -85,7 +85,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;GiGiOgrePlugin_OIS.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;GiGiOgrePlugin_OIS.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;User32.lib</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <LinkStatus>
       </LinkStatus>
