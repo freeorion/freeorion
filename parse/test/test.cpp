@@ -21,7 +21,7 @@ void send_error_string(const std::string& str)
 
 void print_help()
 {
-    std::cout << "Usage: test lexer|int_value_ref_parser|double_value_ref_parser|string_value_ref_parser|planet_size_value_ref_parser|planet_type_value_ref_parser|planet_environment_value_ref_parser|universe_object_type_value_ref_parser|star_type_value_ref_parser|condition_parser|effect_parser|buildings_parser|specials_parser|species_parser|techs_parser|items_parser|ship_parts_parser|ship_hulls_parser|ship_designs_parser|fleet_plans_parser|monster_fleet_plans_parser|alignments_parser <-f filename>|<test string> --fail" << std::endl;
+    std::cout << "Usage: test lexer|int_value_ref_parser|double_value_ref_parser|string_value_ref_parser|planet_size_value_ref_parser|planet_type_value_ref_parser|planet_environment_value_ref_parser|star_type_value_ref_parser|condition_parser|effect_parser|buildings_parser|specials_parser|species_parser|techs_parser|items_parser|ship_parts_parser|ship_hulls_parser|ship_designs_parser|fleet_plans_parser|monster_fleet_plans_parser|alignments_parser <-f filename>|<test string> --fail" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -43,7 +43,6 @@ int main(int argc, char* argv[])
     CASE(planet_size_value_ref_parser);
     CASE(planet_type_value_ref_parser);
     CASE(planet_environment_value_ref_parser);
-    CASE(universe_object_type_value_ref_parser);
     CASE(star_type_value_ref_parser);
     CASE(condition_parser);
     CASE(effect_parser);
@@ -190,7 +189,6 @@ int main(int argc, char* argv[])
         case planet_size_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<PlanetSize>(), parse::report_error(_1, _2, _3, _4)); break;
         case planet_type_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<PlanetType>(), parse::report_error(_1, _2, _3, _4)); break;
         case planet_environment_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<PlanetEnvironment>(), parse::report_error(_1, _2, _3, _4)); break;
-        case universe_object_type_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<UniverseObjectType>(), parse::report_error(_1, _2, _3, _4)); break;
         case star_type_value_ref_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::value_ref_parser<StarType>(), parse::report_error(_1, _2, _3, _4)); break;
         case condition_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::condition_parser(), parse::report_error(_1, _2, _3, _4)); break;
         case effect_parser: boost::spirit::qi::on_error<boost::spirit::qi::fail>(parse::effect_parser(), parse::report_error(_1, _2, _3, _4)); break;
@@ -253,10 +251,6 @@ int main(int argc, char* argv[])
                 }
                 case planet_environment_value_ref_parser: {
                     success = boost::spirit::qi::phrase_parse(it, end_it, parse::value_ref_parser<PlanetEnvironment>(), in_state("WS")[l.self]);
-                    break;
-                }
-                case universe_object_type_value_ref_parser: {
-                    success = boost::spirit::qi::phrase_parse(it, end_it, parse::value_ref_parser<UniverseObjectType>(), in_state("WS")[l.self]);
                     break;
                 }
                 case star_type_value_ref_parser: {
