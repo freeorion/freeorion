@@ -113,6 +113,10 @@ configure_file(
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
+if("${FreeOrion_WC_REVISION}" STREQUAL "???")
+    set(FreeOrion_WC_REVISION "unknown")
+endif ()
+
 
 ########################################
 # Build common code library            #
@@ -509,11 +513,55 @@ if (UNIX)
         list(APPEND CPACK_GENERATOR DEB)
     endif ()
     set(DPKG ${DPKG} CACHE INTERNAL "")
-    set(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
 elseif (WIN32)
     set(CPACK_GENERATOR "NSIS")
+endif ()
+
+
+########################################
+# Source Packaging                     #
+########################################
+
+if (UNIX)
+    set(CPACK_SOURCE_GENERATOR "TGZ")
+elseif (WIN32)
     set(CPACK_SOURCE_GENERATOR "ZIP")
 endif ()
+
+set(CPACK_SOURCE_IGNORE_FILES
+    "~$"
+    "\\\\.asm$"
+    "\\\\.bz2$"
+    "/CMakeCache\\\\.txt$"
+    "/CMakeFiles/"
+    "/cmake_install\\\\.cmake$"
+    "/CPackConfig.cmake$"
+    "/_CPack_Packages/"
+    "/CPackSourceConfig.cmake$"
+    "/CTestTestfile\\\\.cmake$"
+    "\\\\.dll$"
+    "\\\\.exe$"
+    "\\\\.exp$"
+    "/freeorion$"
+    "/freeorionca$"
+    "/freeoriond$"
+    "GG/GG/Config.h$"
+    "\\\\.git/"
+    "\\\\.gz$"
+    "\\\\.lib$"
+    "/Makefile$"
+    "/ogre_plugins.cfg$"
+    "\\\\.pc$"
+    "\\\\.pdb$"
+    "\\\\.pyc$"
+    "/Release/"
+    "\\\\.so$"
+    "\\\\.swp$"
+)
+
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+    "${CMAKE_PROJECT_NAME}-v${FreeOrion_VERSION}-${FreeOrion_WC_REVISION}-source"
+)
 
 include(CPack)
 
