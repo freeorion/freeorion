@@ -97,6 +97,7 @@ namespace parse {
             |    tok.PopulationCenter_ [ _val = OBJ_POP_CENTER ]
             |    tok.ProductionCenter_ [ _val = OBJ_PROD_CENTER ]
             |    tok.System_ [ _val = OBJ_SYSTEM ]
+            |    tok.Field_ [ _val = OBJ_FIELD ]
             ;
         static bool once = true;
         if (once) {

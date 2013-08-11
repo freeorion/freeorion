@@ -101,6 +101,7 @@
     (External)
 
 #define TOKEN_SEQ_2                             \
+    (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
     (FighterType)                               \
