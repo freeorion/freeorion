@@ -629,10 +629,6 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (client_player_id == Networking::INVALID_PLAYER_ID)
         return;
     int client_empire_id = app->EmpireID();
-    if (client_empire_id == ALL_EMPIRES)
-        return;
-    if (clicked_player_id == client_player_id)
-        return;
 
     // get empire id of clicked player
     const std::map<int, PlayerInfo>& players = app->Players();
@@ -644,8 +640,6 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     const PlayerInfo& clicked_player_info = clicked_player_it->second;
     int clicked_empire_id = clicked_player_info.empire_id;
 
-    if (clicked_empire_id == ALL_EMPIRES)
-        return;
     if (!Empires().Lookup(clicked_empire_id)) {
         Logger().errorStream() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
                                << clicked_empire_id << " for player " << clicked_player_id
@@ -653,32 +647,38 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     }
 
-    // get diplomatic status between client and clicked empires
-    DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
-    if (diplo_status == INVALID_DIPLOMATIC_STATUS) {
-        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
-        return;
-    }
-    DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
-
-    // create popup menu with diplomacy options in it
     GG::MenuItem menu_contents;
-    if (diplo_status == DIPLO_WAR) {
-        if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
-            // who sent message?
-            if (existing_message.SenderEmpireID() == client_empire_id)
-                menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANEL"), 4, false, false));
-            else if (existing_message.SenderEmpireID() == clicked_empire_id)
-                menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),         3, false, false));
-
-        } else if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        // get diplomatic status between client and clicked empires
+        DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
+        if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_player_id != client_player_id) {
+            Logger().errorStream() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
+            return;
         }
+        DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
 
-    } else if (diplo_status == DIPLO_PEACE) {
-        if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+        // create popup menu with diplomacy options in it
+        if ( client_empire_id != ALL_EMPIRES) {
+            if (diplo_status == DIPLO_WAR) {
+                if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+                    // who sent message?
+                    if (existing_message.SenderEmpireID() == client_empire_id)
+                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANEL"), 4, false, false));
+                    else if (existing_message.SenderEmpireID() == clicked_empire_id)
+                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),         3, false, false));
+
+                } else if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
+                }
+
+            } else if (diplo_status == DIPLO_PEACE) {
+                if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+            }
+        }
     }
+
+    menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % Empires().Lookup(clicked_empire_id)->Name()), 5, false, false));
 
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 
@@ -704,6 +704,10 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         case 4: {   // PEACE_PROPOSAL_CANEL
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
                                              CancelDiplomaticMessage(client_empire_id, clicked_empire_id)));
+            break;
+        }
+        case 5: { // Pedia lookup
+            ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id);
             break;
         }
         default:
