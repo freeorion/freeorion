@@ -410,35 +410,7 @@ void PopulationPanel::DoExpandCollapseLayout() {
 
 void PopulationPanel::Render() {
     // Draw outline and background...
-
-    // copied from CUIWnd
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void PopulationPanel::Update() {
@@ -714,35 +686,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
 void ResourcePanel::Render() {
     // Draw outline and background...
-
-    // copied from CUIWnd
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 
     // draw details depending on state of ownership and expanded / collapsed status
 
@@ -940,36 +884,9 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
 
 void MilitaryPanel::Render() {
     if (Height() < 1) return;   // don't render if empty
+
     // Draw outline and background...
-
-    // copied from CUIWnd
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1555,36 +1472,9 @@ void BuildingsPanel::ExpandCollapse(bool expanded) {
 
 void BuildingsPanel::Render() {
     if (Height() < 1) return;   // don't render if empty
+
     // Draw outline and background...
-
-    // copied from CUIWnd
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1822,37 +1712,12 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
 }
 
 void BuildingIndicator::Render() {
-    // Draw outline and background...
-
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-
+    // Draw outline and background...
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();

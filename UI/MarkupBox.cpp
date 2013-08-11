@@ -453,37 +453,7 @@ const std::string& MarkupBox::Text() const {
 
 void MarkupBox::Render() {
     // Draw outline and background...
-
-    // copied from CUIWnd
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void MarkupBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

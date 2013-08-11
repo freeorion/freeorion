@@ -380,31 +380,10 @@ void EncyclopediaDetailPanel::Render() {
     GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
-   // use GL to draw the lines
+    // draw background and outer border
+    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, false);
+
     glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
     // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndInnerBorderColor());

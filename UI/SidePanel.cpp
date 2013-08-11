@@ -2401,30 +2401,10 @@ void SidePanel::Render() {
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
+    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, false);
+
    // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
 
     // draw inner border
     if (cl_ul.y < cl_lr.y) {

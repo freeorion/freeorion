@@ -142,30 +142,10 @@ void CUIWnd::Render() {
     GG::Pt cl_lr = ClientLowerRight();
 
     if (!m_minimized) {
+        AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, true);
+
         // use GL to draw the lines
         glDisable(GL_TEXTURE_2D);
-
-        // draw background
-        glBegin(GL_POLYGON);
-            glColor(ClientUI::WndColor());
-            glVertex(ul.x, ul.y);
-            glVertex(lr.x, ul.y);
-            glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-            glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-            glVertex(ul.x, lr.y);
-            glVertex(ul.x, ul.y);
-        glEnd();
-
-        // draw outer border on pixel inside of the outer edge of the window
-        glBegin(GL_LINE_STRIP);
-            glColor(ClientUI::WndOuterBorderColor());
-            glVertex(ul.x, ul.y);
-            glVertex(lr.x, ul.y);
-            glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-            glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-            glVertex(ul.x, lr.y);
-            glVertex(ul.x, ul.y);
-        glEnd();
 
         // draw inner border, including extra resize-tab lines
         glBegin(GL_LINE_STRIP);
