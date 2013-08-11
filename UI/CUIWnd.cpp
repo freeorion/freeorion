@@ -144,11 +144,8 @@ void CUIWnd::Render() {
     if (!m_minimized) {
         // use GL to draw the lines
         glDisable(GL_TEXTURE_2D);
-        GLint initial_modes[2];
-        glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
         // draw background
-        glPolygonMode(GL_BACK, GL_FILL);
         glBegin(GL_POLYGON);
             glColor(ClientUI::WndColor());
             glVertex(ul.x, ul.y);
@@ -160,8 +157,7 @@ void CUIWnd::Render() {
         glEnd();
 
         // draw outer border on pixel inside of the outer edge of the window
-        glPolygonMode(GL_BACK, GL_LINE);
-        glBegin(GL_POLYGON);
+        glBegin(GL_LINE_STRIP);
             glColor(ClientUI::WndOuterBorderColor());
             glVertex(ul.x, ul.y);
             glVertex(lr.x, ul.y);
@@ -170,9 +166,6 @@ void CUIWnd::Render() {
             glVertex(ul.x, lr.y);
             glVertex(ul.x, ul.y);
         glEnd();
-
-        // reset this to whatever it was initially
-        glPolygonMode(GL_BACK, initial_modes[1]);
 
         // draw inner border, including extra resize-tab lines
         glBegin(GL_LINE_STRIP);

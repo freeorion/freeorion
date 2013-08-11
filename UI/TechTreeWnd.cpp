@@ -254,8 +254,6 @@ void TechTreeWnd::TechTreeControls::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     glBegin(GL_LINES);
         glColor(ClientUI::WndOuterBorderColor());
@@ -278,9 +276,6 @@ void TechTreeWnd::TechTreeControls::Render() {
             glVertex(cl_lr.x - 1, status_bottom);
         }
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -890,11 +885,8 @@ void TechTreeWnd::LayoutPanel::Render() {
     GG::Pt lr = LowerRight();
 
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::CtrlColor());
         glVertex(ul.x, ul.y);
@@ -903,9 +895,6 @@ void TechTreeWnd::LayoutPanel::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     BeginClipping();
     glEnable(GL_LINE_SMOOTH);

@@ -332,9 +332,8 @@ void CUIStateButton::Render() {
                 glVertex(bn_lr.x, bn_lr.y - OFFSET);
                 glVertex(bn_lr.x, bn_ul.y);
                 glEnd();
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glColor(outside_color);
-                glBegin(GL_POLYGON);
+                glBegin(GL_LINE_STRIP);
                 glVertex(bn_lr.x, bn_ul.y);
                 glVertex(bn_ul.x + OFFSET, bn_ul.y);
                 glVertex(bn_ul.x, bn_ul.y + OFFSET);
@@ -344,7 +343,6 @@ void CUIStateButton::Render() {
                 glVertex(bn_lr.x, bn_lr.y - OFFSET);
                 glVertex(bn_lr.x, bn_ul.y);
                 glEnd();
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 glEnable(GL_TEXTURE_2D);
             } else {
                 GG::Clr inside_color = border_color_to_use;

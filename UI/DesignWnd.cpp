@@ -2274,11 +2274,8 @@ void DesignWnd::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -2288,8 +2285,6 @@ void DesignWnd::Render() {
         glVertex(ul.x, ul.y);
     glEnd();
 
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
     glEnable(GL_TEXTURE_2D);
 }
 

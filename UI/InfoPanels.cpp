@@ -417,11 +417,8 @@ void PopulationPanel::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -432,8 +429,7 @@ void PopulationPanel::Render() {
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndOuterBorderColor());
         glVertex(ul.x, ul.y);
         glVertex(lr.x, ul.y);
@@ -441,9 +437,6 @@ void PopulationPanel::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -728,11 +721,8 @@ void ResourcePanel::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -743,8 +733,7 @@ void ResourcePanel::Render() {
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndOuterBorderColor());
         glVertex(ul.x, ul.y);
         glVertex(lr.x, ul.y);
@@ -752,9 +741,6 @@ void ResourcePanel::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 
@@ -962,11 +948,8 @@ void MilitaryPanel::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -977,8 +960,7 @@ void MilitaryPanel::Render() {
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndOuterBorderColor());
         glVertex(ul.x, ul.y);
         glVertex(lr.x, ul.y);
@@ -986,9 +968,6 @@ void MilitaryPanel::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -1584,11 +1563,8 @@ void BuildingsPanel::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -1599,8 +1575,7 @@ void BuildingsPanel::Render() {
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndOuterBorderColor());
         glVertex(ul.x, ul.y);
         glVertex(lr.x, ul.y);
@@ -1608,9 +1583,6 @@ void BuildingsPanel::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -1858,11 +1830,8 @@ void BuildingIndicator::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
     // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
         glVertex(ul.x, ul.y);
@@ -1873,8 +1842,7 @@ void BuildingIndicator::Render() {
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndOuterBorderColor());
         glVertex(ul.x, ul.y);
         glVertex(lr.x, ul.y);
@@ -1882,9 +1850,6 @@ void BuildingIndicator::Render() {
         glVertex(ul.x, lr.y);
         glVertex(ul.x, ul.y);
     glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
 
@@ -1901,7 +1866,6 @@ void BuildingIndicator::Render() {
     float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
     s_scanline_shader->Use();
     s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-    glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(GG::CLR_WHITE);
         glVertex(ul.x, ul.y);
