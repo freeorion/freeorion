@@ -28,7 +28,6 @@ struct lexer_test_rules
 enum test_type {
     unknown,
     lexer,
-    int_value_ref_parser,
     double_value_ref_parser,
     string_value_ref_parser,
     planet_size_value_ref_parser,

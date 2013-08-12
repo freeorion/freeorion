@@ -1,0 +1,250 @@
+#include <boost/test/unit_test.hpp>
+
+#include "ValueRefParser.h"
+#include "universe/ValueRef.h"
+#include "CommonTest.h"
+
+struct ValueRefStringFixture {
+    ValueRefStringFixture():
+        result(0)
+    {}
+
+    ~ValueRefStringFixture() {
+        delete result;
+    }
+
+    bool parse(std::string phrase, ValueRef::ValueRefBase<std::string>*& result) {
+        parse::value_ref_parser_rule<std::string>::type& rule = parse::value_ref_parser<std::string>();
+        const parse::lexer& lexer = lexer.instance();
+        boost::spirit::qi::in_state_type in_state;
+        boost::spirit::qi::_1_type _1;
+
+        std::string::const_iterator begin_phrase = phrase.begin();
+        std::string::const_iterator end_phrase = phrase.end();
+
+        return boost::spirit::qi::phrase_parse(
+            lexer.begin(begin_phrase, end_phrase),
+            lexer.end(),
+            rule[boost::phoenix::ref(result) = _1],
+            in_state("WS")[lexer.self]
+        );
+    }
+
+    typedef std::pair<ValueRef::ReferenceType, std::string> ReferenceType;
+    typedef std::pair<ValueRef::StatisticType, std::string> StatisticType;
+
+    static const boost::array<ReferenceType, 4>  referenceTypes;
+    static const boost::array<StatisticType, 9>  statisticTypes;
+    static const boost::array<std::string, 3>  containerTypes;
+    static const boost::array<std::string, 13> attributes;
+
+    ValueRef::ValueRefBase<std::string>* result;
+    const ValueRef::Statistic<std::string>* statistic;
+    const ValueRef::Variable<std::string>* variable;
+};
+
+const boost::array<ValueRefStringFixture::ReferenceType, 4>  ValueRefStringFixture::referenceTypes = {{
+    std::make_pair(ValueRef::SOURCE_REFERENCE, "Source"),
+    std::make_pair(ValueRef::EFFECT_TARGET_REFERENCE, "Target"),
+    std::make_pair(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LocalCandidate"),
+    std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
+}};
+
+
+const boost::array<ValueRefStringFixture::StatisticType, 9> ValueRefStringFixture::statisticTypes = {{
+    std::make_pair(ValueRef::MAX,     "Max"),
+    std::make_pair(ValueRef::MEAN,    "Mean"),
+    std::make_pair(ValueRef::MIN,     "Min"),
+    std::make_pair(ValueRef::MODE,    "Mode"),
+    std::make_pair(ValueRef::PRODUCT, "Product"),
+    std::make_pair(ValueRef::RMS,     "RMS"),
+    std::make_pair(ValueRef::SPREAD,  "Spread"),
+    std::make_pair(ValueRef::STDEV,   "StDev"),
+    std::make_pair(ValueRef::SUM,     "Sum")
+}};
+
+const boost::array<std::string, 3> ValueRefStringFixture::containerTypes = {{
+    "Fleet",
+    "Planet",
+    "System"
+}};
+
+const boost::array<std::string, 13> ValueRefStringFixture::attributes = {{
+    "Age",
+    "CreationTurn",
+    "DesignID",
+    "FinalDestinationID",
+    "FleetID",
+    "ID",
+    "NextSystemID",
+    "NumShips"
+    "Owner",
+    "PlanetID",
+    "PreviousSystemID",
+    "ProducedByEmpireID",
+    "SystemID"
+}};
+
+BOOST_FIXTURE_TEST_SUITE(ValueRefStringParser, ValueRefStringFixture)
+
+BOOST_AUTO_TEST_CASE(StringVariableParserCurrentTurn) {
+    BOOST_CHECK(parse("CurrentTurn", result));
+    adobe::name_t property[] = { adobe::name_t("CurrentTurn") };
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
+    variable = dynamic_cast<const ValueRef::StringCast<int>*>(result);
+    BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::NON_OBJECT_REFERENCE);
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+        variable->PropertyName().begin(), variable->PropertyName().end(),
+        property, property + 1
+    );
+}
+
+BOOST_AUTO_TEST_CASE(StringVariableParserValue) {
+    BOOST_CHECK(parse("Value", result));
+    adobe::name_t property[] = { adobe::name_t("Value") };
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<std::string>), typeid(*result));
+    variable = dynamic_cast<const ValueRef::Variable<std::string>*>(result);
+    BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+        variable->PropertyName().begin(), variable->PropertyName().end(),
+        property, property + 1
+    );
+}
+
+BOOST_AUTO_TEST_CASE(StringVariableParserTypeless) {
+    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
+        BOOST_FOREACH(const std::string& attribute, attributes) {
+            std::string phrase = reference.second + "." + attribute;
+            BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
+            adobe::name_t property[] = {
+                adobe::name_t(reference.second.c_str()),
+                adobe::name_t(attribute.c_str())
+            };
+
+            BOOST_CHECK_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
+            if(variable = dynamic_cast<const ValueRef::StringCast<int>*>(result)) {
+                BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
+                BOOST_CHECK_EQUAL_COLLECTIONS(
+                    variable->PropertyName().begin(), variable->PropertyName().end(),
+                    property, property + 2
+                );
+            }
+
+            delete result;
+            result = 0;
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(StringVariableParserTyped) {
+    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
+        BOOST_FOREACH(const std::string& type, containerTypes) {
+            BOOST_FOREACH(const std::string& attribute, attributes) {
+                std::string phrase = reference.second + "." + type + "." + attribute;
+                BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
+                adobe::name_t property[] = {
+                    adobe::name_t(reference.second.c_str()),
+                    adobe::name_t(type.c_str()),
+                    adobe::name_t(attribute.c_str())
+                };
+
+                BOOST_CHECK_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
+                if(variable = dynamic_cast<const ValueRef::StringCast<int>*>(result)) {
+                    BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
+                    BOOST_CHECK_EQUAL_COLLECTIONS(
+                        variable->PropertyName().begin(), variable->PropertyName().end(),
+                        property, property + 3
+                    );
+                }
+
+                delete result;
+                result = 0;
+            }
+        }
+    }
+}
+
+// XXX: Statistic COUNT, UNIQUE_COUNT and IF not tested.
+
+BOOST_AUTO_TEST_CASE(StringStatisticParserTypeless) {
+    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
+        BOOST_FOREACH(const std::string& attribute, attributes) {
+            adobe::name_t property[] = { adobe::name_t(attribute.c_str()) };
+
+            boost::array<std::string, 4> phrases = {{
+                // long variant
+                statisticType.first + " Property = " + attribute + " Condition = All",
+                // Check variant with missing "Condition =" keyword.
+                statisticType.first + " Property = " + attribute + " All",
+                // Check variant with missing "Property =" keyword.
+                statisticType.first + " " + attribute + " Condition = All",
+                // Check short variant
+                statisticType.first + " " + attribute + " All"
+            }};
+
+            BOOST_FOREACH(const std::string& phrase, phrases) {
+                BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
+
+                BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<std::string>), typeid(*result));
+                if(statistic = dynamic_cast<const ValueRef::Statistic<std::string>*>(result)) {
+                    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
+                    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
+                    BOOST_CHECK_EQUAL_COLLECTIONS(
+                        statistic->PropertyName().begin(), statistic->PropertyName().end(),
+                        property, property + 1
+                    );
+                    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+                }
+
+                delete result;
+                result = 0;
+            }
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(StringStatisticParserTyped) {
+    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
+        BOOST_FOREACH(const std::string& containerType, containerTypes) {
+            BOOST_FOREACH(const std::string& attribute, attributes) {
+                adobe::name_t property[] = {
+                    adobe::name_t(containerType.c_str()),
+                    adobe::name_t(attribute.c_str())
+                };
+
+                boost::array<std::string, 4> phrases = {{
+                    // long variant
+                    statisticType.first + " Property = " + containerType + "." + attribute + " Condition = All",
+                    // Check variant with missing "Condition =" keyword.
+                    statisticType.first + " Property = " + containerType + "." + attribute + " All",
+                    // Check variant with missing "Property =" keyword.
+                    statisticType.first + " " + containerType + "." + attribute + " Condition = All",
+                    // Check short variant
+                    statisticType.first + " " + containerType + "." + attribute + " All"
+                }};
+
+                BOOST_FOREACH(const std::string& phrase, phrases) {
+                    BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
+
+                    BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<std::string>), typeid(*result));
+                    if(statistic = dynamic_cast<const ValueRef::Statistic<std::string>*>(result)) {
+                        BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
+                        BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
+                        BOOST_CHECK_EQUAL_COLLECTIONS(
+                            statistic->PropertyName().begin(), statistic->PropertyName().end(),
+                            property, property + 2
+                        );
+                        BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+                    }
+
+                    delete result;
+                    result = 0;
+                }
+            }
+        }
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

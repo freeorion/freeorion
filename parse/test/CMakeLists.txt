@@ -43,8 +43,9 @@ add_executable(test_parsers_boost
     testmain.cpp
     CommonTest.cpp
     TestEnumParser.cpp
-    TestValueRefIntParser.cpp
     TestValueRefDoubleParser.cpp
+    TestValueRefIntParser.cpp
+    TestValueRefStringParser.cpp
     TestValueRefUniverseObjectTypeParser.cpp
 )
 
@@ -61,8 +62,9 @@ install(
 )
 
 add_test(enum_parser                           ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
-add_test(value_ref_int_parser                  ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
 add_test(value_ref_double_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
+add_test(value_ref_int_parser                  ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
+add_test(value_ref_string_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefStringParser)
 add_test(value_ref_universe_object_type_parser ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefUniverseObjectTypeParser)
 
 macro (add_test_and_data_files name)
@@ -82,19 +84,12 @@ macro (add_test_and_data_files name)
 endmacro ()
 
 add_test_and_data_files(test_parsers lexer -f lexer_tokens)
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable)
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable_arithmetic)
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_statistic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_variable)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_variable_arithmetic)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_statistic)
-add_test_and_data_files(test_parsers double_value_ref_parser -f int_variable)
 add_test_and_data_files(test_parsers double_value_ref_parser -f int_variable_arithmetic)
-add_test_and_data_files(test_parsers double_value_ref_parser -f int_statistic)
 add_test_and_data_files(test_parsers string_value_ref_parser -f string_constant)
 add_test_and_data_files(test_parsers string_value_ref_parser -f string_variable)
-add_test_and_data_files(test_parsers string_value_ref_parser -f int_variable)
-add_test_and_data_files(test_parsers string_value_ref_parser -f int_statistic)
 add_test_and_data_files(test_parsers string_value_ref_parser -f double_variable)
 add_test_and_data_files(test_parsers string_value_ref_parser -f double_statistic)
 add_test_and_data_files(test_parsers planet_size_value_ref_parser -f planet_size_constant)
@@ -134,8 +129,6 @@ add_test_and_data_files(test_parsers fleet_plans_parser -f fleet_plans_permutati
 add_test_and_data_files(test_parsers monster_fleet_plans_parser -f monster_fleet_plans)
 add_test_and_data_files(test_parsers monster_fleet_plans_parser -f monster_fleet_plans_permutations)
 
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_variable_errors --fail)
-add_test_and_data_files(test_parsers int_value_ref_parser -f int_statistic_errors --fail)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_arithmetic_errors --fail)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_variable_errors --fail)
 add_test_and_data_files(test_parsers double_value_ref_parser -f double_statistic_errors --fail)
