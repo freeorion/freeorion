@@ -39,6 +39,7 @@ struct ValueRefStringFixture {
     static const boost::array<std::string, 13> attributes;
 
     ValueRef::ValueRefBase<std::string>* result;
+    const ValueRef::Constant<std::string>* value;
     const ValueRef::Statistic<std::string>* statistic;
     const ValueRef::Variable<std::string>* variable;
 };
@@ -87,6 +88,38 @@ const boost::array<std::string, 13> ValueRefStringFixture::attributes = {{
 
 BOOST_FIXTURE_TEST_SUITE(ValueRefStringParser, ValueRefStringFixture)
 
+BOOST_AUTO_TEST_CASE(StringLiteralParserString) {
+    BOOST_CHECK(parse("Tiny", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<std::string>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<std::string>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), "Tiny");
+}
+
+BOOST_AUTO_TEST_CASE(StringLiteralParserSpaceString) {
+    BOOST_CHECK(parse("\"A little bit of text with spaces.\"", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<std::string>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<std::string>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), "\"A little bit of text with spaces.\"");
+}
+
+BOOST_AUTO_TEST_CASE(StringLiteralParserInteger) {
+    BOOST_CHECK(parse("5", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<std::string>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<std::string>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), "5");
+}
+
+BOOST_AUTO_TEST_CASE(StringLiteralParserReal) {
+    BOOST_CHECK(parse("7.21", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<std::string>), typeid(*result));
+    value = dynamic_cast<const ValueRef::Constant<std::string>*>(result);
+    BOOST_CHECK_EQUAL(value->Value(), "7.21");
+}
+
 BOOST_AUTO_TEST_CASE(StringVariableParserCurrentTurn) {
     BOOST_CHECK(parse("CurrentTurn", result));
     adobe::name_t property[] = { adobe::name_t("CurrentTurn") };
@@ -98,6 +131,11 @@ BOOST_AUTO_TEST_CASE(StringVariableParserCurrentTurn) {
         variable->PropertyName().begin(), variable->PropertyName().end(),
         property, property + 1
     );
+}
+
+BOOST_AUTO_TEST_CASE(StringLiteralParserMalformed) {
+    BOOST_CHECK(parse("\"A bit of text with missing quotes, whoops", result));
+    BOOST_CHECK(!result);
 }
 
 BOOST_AUTO_TEST_CASE(StringVariableParserValue) {
@@ -175,13 +213,13 @@ BOOST_AUTO_TEST_CASE(StringStatisticParserTypeless) {
 
             boost::array<std::string, 4> phrases = {{
                 // long variant
-                statisticType.first + " Property = " + attribute + " Condition = All",
+                statisticType.second + " Property = " + attribute + " Condition = All",
                 // Check variant with missing "Condition =" keyword.
-                statisticType.first + " Property = " + attribute + " All",
+                statisticType.second + " Property = " + attribute + " All",
                 // Check variant with missing "Property =" keyword.
-                statisticType.first + " " + attribute + " Condition = All",
+                statisticType.second + " " + attribute + " Condition = All",
                 // Check short variant
-                statisticType.first + " " + attribute + " All"
+                statisticType.second + " " + attribute + " All"
             }};
 
             BOOST_FOREACH(const std::string& phrase, phrases) {
@@ -216,13 +254,13 @@ BOOST_AUTO_TEST_CASE(StringStatisticParserTyped) {
 
                 boost::array<std::string, 4> phrases = {{
                     // long variant
-                    statisticType.first + " Property = " + containerType + "." + attribute + " Condition = All",
+                    statisticType.second + " Property = " + containerType + "." + attribute + " Condition = All",
                     // Check variant with missing "Condition =" keyword.
-                    statisticType.first + " Property = " + containerType + "." + attribute + " All",
+                    statisticType.second + " Property = " + containerType + "." + attribute + " All",
                     // Check variant with missing "Property =" keyword.
-                    statisticType.first + " " + containerType + "." + attribute + " Condition = All",
+                    statisticType.second + " " + containerType + "." + attribute + " Condition = All",
                     // Check short variant
-                    statisticType.first + " " + containerType + "." + attribute + " All"
+                    statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
                 BOOST_FOREACH(const std::string& phrase, phrases) {
