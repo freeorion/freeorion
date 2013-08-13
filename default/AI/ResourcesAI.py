@@ -25,6 +25,7 @@ IFocus = AIFocusType.FOCUS_INDUSTRY
 RFocus = AIFocusType.FOCUS_RESEARCH
 MFocus = AIFocusType.FOCUS_MINING
 GFocus = AIFocusType.FOCUS_GROWTH
+fociMap={IFocus:"Industry",  RFocus:"Research", MFocus:"Mining",  GFocus:"Growth"}
 
 useGrowth = True
 limitAssessments = False
@@ -45,7 +46,14 @@ def getResourceTargetTotals(empirePlanetIDs,  planetMap):#+
     
     targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry),  planetMap.values()) )
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planetMap.values()) )
-    
+
+    #print "\nAvailable Foci:"
+    #for pid in empirePlanetIDs:
+    #    planet=planetMap[pid]
+    #    print planet.name,  ": ",  ",  ".join( [fociMap.get(foc,  str(foc)) for foc in planet.availableFoci])
+    #print
+
+
     newFocus= IFocus
     for pid in empirePlanetIDs:
         planet=planetMap[pid]
@@ -146,7 +154,7 @@ def setPlanetResourceFoci(): #+
     empire = fo.getEmpire()
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
-    freq = min(3,  ( max(5,  currentTurn-120)   )/4.0)**(1.0/3) 
+    freq = min(1,  ( max(5,  currentTurn-120)   )/4.0)**(1.0/3) 
     if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
         timer = 6*[time()]
     else:
@@ -198,7 +206,7 @@ def setPlanetResourceFoci(): #+
                             print "%s focus of planet %s (%d) at Growth Focus"%( ["set",  "left" ][  curFocus == GFocus ] ,  planetMap[spPID].name,  spPID) 
                             break
                         else:
-                            print "failed setting focus of planet %s (%d) at Growth Focus; focus left at %s"%(  planetMap[spPID].name,  spPID,  planetMap[spPID].focus) 
+                            print "Error: failed setting focus of planet %s (%d) at Growth Focus; focus left at %s"%(  planetMap[spPID].name,  spPID,  planetMap[spPID].focus) 
         for pid in empirePlanetIDs:
             planet = planetMap[pid]
             if "COMPUTRONIUM_SPECIAL" in planet.specials:#TODO: ensure only one (extremely rarely needed)
@@ -281,10 +289,13 @@ def setPlanetResourceFoci(): #+
             ratios.append( (thisFactor,  pid ) )
                 
         ctPP0 = curTargetPP
-        ctRP0 = curTargetRP 
+        ctRP0 = curTargetRP
+        ppIF= sum([ x.get(IFocus,  (0, 0))[0] for x in newTargets.values()])
+        rpIF= sum([ x.get(IFocus,  (0, 0))[1] for x in newTargets.values()])
+        ppRF= sum([ x.get(RFocus,  (0, 0))[0] for x in newTargets.values()])
+        rpRF= sum([ x.get(RFocus,  (0, 0))[1] for x in newTargets.values()])
         ratios.sort()
         printedHeader=False
-        fociMap={IFocus:"Industry",  RFocus:"Research", MFocus:"Mining",  GFocus:"Growth"}
         gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
         for ratio,  pid in ratios:
             if priorityRatio < ( curTargetRP/ (curTargetPP + 0.0001)) : #we have enough RP
@@ -319,7 +330,8 @@ def setPlanetResourceFoci(): #+
             curTargetPP -= (II-RI)
         print "============================"
         print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f  ( %.1f / %.1f )"%(priorityRatio,  rp/(pp+0.0001),  rp,  pp)
-        print "Max Industry assignments would result in target RP/PP ratio of %.2f  ( %.1f / %.1f )"%( ctRP0/ (ctPP0 + 0.0001), ctRP0,  ctPP0 )
+        print "Max Industry assignments would result in target RP/PP ratio of %.2f  ( %.1f / %.1f )"%( rpIF/ (ppIF + 0.0001), rpIF,  ppIF )
+        print "Max Research assignments would result in target RP/PP ratio of %.2f  ( %.1f / %.1f )"%( rpRF/ (ppRF + 0.0001), rpRF,  ppRF )
         print "-------------------------------------"
         print "%34s|%20s|%15s |%15s|%15s |%15s "%("                      Planet  ", " current RP/PP ", " current target RP/PP ", "current Focus ","  newFocus  ", " new target RP/PP ")
         totalChanged=0
@@ -332,7 +344,7 @@ def setPlanetResourceFoci(): #+
                 totalChanged+=1
                 result = fo.issueChangeFocusOrder(pid, newFocus)
                 if result != 1:
-                    print "Trouble changing focus of planet %s (%d) to %s"%(planetMap[pid].name,  pid,  newFocus)
+                    print "Error: Trouble changing focus of planet %s (%d) to %s"%(planetMap[pid].name,  pid,  newFocus)
             otPP, otRP= newTargets[pid].get(oldFocus,  (0, 0))
             ntPP, ntRP= newTargets[pid].get(newFocus,  (0, 0))
             print "pID (%3d)  %22s |  c:  %5.1f / %5.1f |   cT:  %5.1f / %5.1f  |  cF: %8s |  nF: %8s  | cT:  %5.1f / %5.1f "%(pid,  planetMap[pid].name, cRP, cPP,   otRP, otPP,  fociMap.get(oldFocus, 'unknown'),  fociMap[newFocus] , ntRP, ntPP )

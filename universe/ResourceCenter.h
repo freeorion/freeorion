@@ -32,6 +32,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Focus() const;                                          ///< current focus to which this ResourceCenter is set
     virtual std::vector<std::string>AvailableFoci(TemporaryPtr<const ResourceCenter> res) const; ///< focus settings available to this ResourceCenter
+    virtual std::vector<std::string>ApparentAvailableFoci() const;                          ///< focus settings available to this ResourceCenter; uses info from 'local' universe object map; should only give a different result if were ever called on Server
     virtual const std::string&      FocusIcon(const std::string& focus_name) const;         ///< icon representing focus with name \a focus_name for this ResourceCenter
 
     std::string     Dump() const;

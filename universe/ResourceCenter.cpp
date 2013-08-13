@@ -59,6 +59,9 @@ const std::string& ResourceCenter::Focus() const
 std::vector<std::string> ResourceCenter::AvailableFoci(TemporaryPtr<const ResourceCenter> res) const
 { return std::vector<std::string>(); }
 
+std::vector<std::string> ResourceCenter::ApparentAvailableFoci() const
+{ return std::vector<std::string>(); }
+
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
 { return EMPTY_STRING; }
 
