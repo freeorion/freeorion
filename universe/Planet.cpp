@@ -527,7 +527,7 @@ std::vector<std::string> Planet::ApparentAvailableFoci() const {
     TemporaryPtr<const Planet> this_planet = GetUniverse().Objects().Object<Planet>(this->ID());
     if (!this_planet)
         return retval;// can only happen if the ObjectMap of the returned universe didn't contain this planet, which would probably indicate an underlying problem
-        return AvailableFoci(this_planet);
+    return AvailableFoci(this_planet);
 }
 
 const std::string& Planet::FocusIcon(const std::string& focus_name) const {
