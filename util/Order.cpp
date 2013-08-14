@@ -665,7 +665,7 @@ void ChangeFocusOrder::ExecuteImpl() const {
         return;
     }
 
-    SetFocus(planet, m_focus);
+    planet->SetFocus(m_focus);
 }
 
 ////////////////////////////////////////////////

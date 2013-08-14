@@ -56,10 +56,7 @@ void ResourceCenter::Init() {
 const std::string& ResourceCenter::Focus() const
 { return m_focus; }
 
-std::vector<std::string> ResourceCenter::AvailableFoci(TemporaryPtr<const ResourceCenter> res) const
-{ return std::vector<std::string>(); }
-
-std::vector<std::string> ResourceCenter::ApparentAvailableFoci() const
+std::vector<std::string> ResourceCenter::AvailableFoci() const
 { return std::vector<std::string>(); }
 
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
@@ -110,18 +107,18 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
         return current_meter_value;
 }
 
-void SetFocus(TemporaryPtr<ResourceCenter> res, const std::string& focus) {
+void ResourceCenter::SetFocus(const std::string& focus) {
     if (focus.empty()) {
-        res->ClearFocus();
+        ClearFocus();
         return;
     }
-    std::vector<std::string> avail_foci = res->AvailableFoci(res);
+    std::vector<std::string> avail_foci = AvailableFoci();
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
-        res->m_focus = focus;
-        res->ResourceCenterChangedSignal();
+        m_focus = focus;
+        ResourceCenterChangedSignal();
         return;
     }
-    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << res->Dump();
+    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
 }
 
 void ResourceCenter::ClearFocus() {

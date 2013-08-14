@@ -1795,9 +1795,9 @@ namespace {
         // find a focus to give planets by default.  use first defined available focus.
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci.
-        std::vector<std::string> available_foci = planet->AvailableFoci(planet);
+        std::vector<std::string> available_foci = planet->AvailableFoci();
         if (!available_foci.empty())
-            SetFocus(planet, *available_foci.begin());
+            planet->SetFocus(*available_foci.begin());
 
         planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);

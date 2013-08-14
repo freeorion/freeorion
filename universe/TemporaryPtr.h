@@ -5,6 +5,8 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/serialization/access.hpp>
 
+template <class T> class EnableTemporaryFromThis;
+
 template <class T>
 class TemporaryPtr {
 public:
@@ -19,8 +21,15 @@ public:
     
     template<class Y>
     TemporaryPtr& operator =(const TemporaryPtr<Y>& rhs) {
-        m_ptr = rhs.m_ptr;
+        if (rhs != *this) {
+            ClearTemporaryPtr(m_ptr.get(), m_ptr.use_count());
+            m_ptr = boost::const_pointer_cast<T>(boost::static_pointer_cast<const T>(rhs.m_ptr)); // TODO: Not sure why this jugglery is needed...
+        }
         return *this;
+    }
+
+    ~TemporaryPtr() {
+        ClearTemporaryPtr(m_ptr.get(), m_ptr.use_count());
     }
     //@}
     
@@ -46,8 +55,30 @@ private:
     template<class Y>
     explicit TemporaryPtr(const boost::shared_ptr<Y>& obj) :
         m_ptr(obj)
-    {}
+    {
+        if (m_ptr)
+            AssignTemporaryPtr(obj.get());
+    }
     //@}
+
+
+    template <class Y>
+    void AssignTemporaryPtr(const EnableTemporaryFromThis<Y>* enabled)
+    { enabled->m_ptr = *this; }
+
+    void AssignTemporaryPtr(...)
+    {}
+
+    template <class T>
+    void ClearTemporaryPtr(const EnableTemporaryFromThis<T>* enabled, long pointer_count) {
+        // This is called whenever a shared_ptr is about to be destroyed, or assigned over.
+        // If there remains only that one, and the one inside \a enabled, then we get rid of that one as well.
+        if (pointer_count == 2)
+            enabled->m_ptr = TemporaryPtr<T>();
+    }
+
+    void ClearTemporaryPtr(...)
+    {}
 
     template <class Y, class R>
     friend bool operator ==(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second);

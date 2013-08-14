@@ -116,9 +116,8 @@ public:
     virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
     virtual std::vector<TemporaryPtr<UniverseObject> >FindObjects() const;            ///< returns objects contained within this object
     virtual std::vector<int>            FindObjectIDs() const;          ///< returns ids of objects contained within this object
-
-    virtual std::vector<std::string>    AvailableFoci(TemporaryPtr<const ResourceCenter> res) const; // Requires a TemporaryPtr to itself to pass into condition evaluation functions.
-    virtual std::vector<std::string>    ApparentAvailableFoci() const; // uses info from 'local' universe object map; should only give a different result if were ever called on Server
+    
+    virtual std::vector<std::string>    AvailableFoci() const;
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }

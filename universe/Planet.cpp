@@ -499,14 +499,11 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     return std::min(current_meter_value + 1.0f, max_meter_value);
 }
 
-std::vector<std::string> Planet::AvailableFoci(TemporaryPtr<const ResourceCenter> res) const {
-    if (this != res)
-        Logger().errorStream() << "Planet::AvailableFoci called with a TemporaryPtr different from itself.";
-
+std::vector<std::string> Planet::AvailableFoci() const {
     std::vector<std::string> retval;
-    TemporaryPtr<const Planet> this_planet = dynamic_ptr_cast<const Planet>(res);
+    TemporaryPtr<const Planet> this_planet = dynamic_ptr_cast<const Planet>(TemporaryFromThis());
     if (!this_planet)
-        return retval;// can only happen if the ObjectMap of the returned universe didn't contain this planet, which would probably indicate an underlying problem
+        return retval;
     ScriptingContext context(this_planet);
     if (const Species* species = GetSpecies(this_planet->SpeciesName())) {
         const std::vector<FocusType>& foci = species->Foci();
@@ -520,14 +517,6 @@ std::vector<std::string> Planet::AvailableFoci(TemporaryPtr<const ResourceCenter
     }
 
     return retval;
-}
-
-std::vector<std::string> Planet::ApparentAvailableFoci() const {
-    std::vector<std::string> retval;
-    TemporaryPtr<const Planet> this_planet = GetUniverse().Objects().Object<Planet>(this->ID());
-    if (!this_planet)
-        return retval;// can only happen if the ObjectMap of the returned universe didn't contain this planet, which would probably indicate an underlying problem
-    return AvailableFoci(this_planet);
 }
 
 const std::string& Planet::FocusIcon(const std::string& focus_name) const {

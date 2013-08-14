@@ -1404,7 +1404,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
     double fields_time = type_timer.elapsed();
 
-    Logger().debugStream() << "Universe::GetEffectsAndTargets Type times: planet species: " << planet_species_time*1000
+    Logger().debugStream() << "Type times: planet species: " << planet_species_time*1000
                            << " ship species: " << ship_species_time*1000
                            << " specials: " << special_time*1000
                            << " techs: " << tech_time*1000

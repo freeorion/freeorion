@@ -620,7 +620,7 @@ private:
             for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
                  planet_it != Objects().const_end<Planet>(); ++planet_it)
             {
-                std::vector<std::string> obj_foci = planet_it->AvailableFoci(*planet_it);
+                std::vector<std::string> obj_foci = planet_it->AvailableFoci();
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
 

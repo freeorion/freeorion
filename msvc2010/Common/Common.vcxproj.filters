@@ -265,6 +265,9 @@
     <ClInclude Include="..\..\combat\ProximityDatabase.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\EnableTemporaryFromThis.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">

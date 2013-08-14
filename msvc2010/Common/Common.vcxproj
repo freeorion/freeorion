@@ -155,6 +155,7 @@
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
+    <ClInclude Include="..\..\universe\EnableTemporaryFromThis.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />

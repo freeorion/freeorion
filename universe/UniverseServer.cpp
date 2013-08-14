@@ -1840,9 +1840,9 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
             species->AddHomeworld(planet->ID());
 
         // find a focus to give planets by default.  use first defined available focus.
-        std::vector<std::string> available_foci = planet->AvailableFoci(planet);
+        std::vector<std::string> available_foci = planet->AvailableFoci();
         if (!available_foci.empty()) {
-            SetFocus(planet, *available_foci.begin());
+            planet->SetFocus(*available_foci.begin());
             Logger().debugStream() << "Set focus to " << *available_foci.begin();
         } else {
             Logger().debugStream() << "No foci available for this planet! (" << planet->ObjectType() << ")";
@@ -2431,9 +2431,9 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci, although this might be buggy since the universe isn't fully
         // created yet at this point in unverse generation.
-        std::vector<std::string> available_foci = home_planet->AvailableFoci(home_planet);
+        std::vector<std::string> available_foci = home_planet->AvailableFoci();
         if (!available_foci.empty())
-            SetFocus(home_planet, *available_foci.begin());
+            home_planet->SetFocus(*available_foci.begin());
 
 
         // give homeworlds starting buildings

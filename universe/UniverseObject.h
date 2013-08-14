@@ -6,6 +6,7 @@
 
 #include "Enums.h"
 #include "TemporaryPtr.h"
+#include "EnableTemporaryFromThis.h"
 #include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>
@@ -35,7 +36,7 @@ struct UniverseObjectVisitor;
   * Signal.  This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
-class FO_COMMON_API UniverseObject {
+class FO_COMMON_API UniverseObject : public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>                          StateChangedSignalBaseType;

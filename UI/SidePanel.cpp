@@ -1553,7 +1553,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        const std::vector<std::string>& available_foci = planet->AvailableFoci(planet);
+        const std::vector<std::string>& available_foci = planet->AvailableFoci();
 
         // refresh items in list
         m_focus_drop->Clear();
@@ -1969,7 +1969,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
 
     std::size_t i = m_focus_drop->IteratorToIndex(selected);
     Logger().debugStream() << "Got selected index (" << i << ")";
-    if (i >= res->AvailableFoci(res).size()) {
+    if (i >= res->AvailableFoci().size()) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
@@ -1977,7 +1977,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
 
     Sound::TempUISoundDisabler sound_disabler;
     Logger().debugStream() << "About to send focus-changed signal.";
-    FocusChangedSignal(res->AvailableFoci(res).at(i));
+    FocusChangedSignal(res->AvailableFoci().at(i));
     Logger().debugStream() << "Done!.";
 }
 
