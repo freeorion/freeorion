@@ -69,12 +69,12 @@ private:
     void AssignTemporaryPtr(...)
     {}
 
-    template <class T>
-    void ClearTemporaryPtr(const EnableTemporaryFromThis<T>* enabled, long pointer_count) {
+    template <class Y>
+    void ClearTemporaryPtr(const EnableTemporaryFromThis<Y>* enabled, long pointer_count) {
         // This is called whenever a shared_ptr is about to be destroyed, or assigned over.
         // If there remains only that one, and the one inside \a enabled, then we get rid of that one as well.
         if (pointer_count == 2)
-            enabled->m_ptr = TemporaryPtr<T>();
+            enabled->m_ptr = TemporaryPtr<Y>();
     }
 
     void ClearTemporaryPtr(...)
@@ -118,7 +118,7 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-    { ar & m_ptr; }
+    { ar & BOOST_SERIALIZATION_NVP(m_ptr); }
 };
 
 template <class Y, class R>
