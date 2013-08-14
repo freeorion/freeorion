@@ -1603,6 +1603,7 @@
 		8250FDE215FCEFC400523C1C /* FieldsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldsParser.cpp; sourceTree = "<group>"; };
 		8250FDE315FCEFDD00523C1C /* Field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Field.cpp; sourceTree = "<group>"; };
 		8250FDE415FCEFDE00523C1C /* Field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Field.h; sourceTree = "<group>"; };
+		8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnableTemporaryFromThis.h; sourceTree = "<group>"; };
 		82592EEB147E365700B840A5 /* CUISlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUISlider.h; sourceTree = "<group>"; };
 		82592EEC147E374500B840A5 /* MersenneTwister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MersenneTwister.h; sourceTree = "<group>"; };
 		82592EED147E376600B840A5 /* RandomTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomTable.h; sourceTree = "<group>"; };
@@ -3154,6 +3155,7 @@
 		471D5CE40A98A3F900DA9C21 /* universe */ = {
 			isa = PBXGroup;
 			children = (
+				8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */,
 				82F06B6417B7C3BD00982965 /* TemporaryPtr.h */,
 				8250FDE315FCEFDD00523C1C /* Field.cpp */,
 				8250FDE415FCEFDE00523C1C /* Field.h */,
