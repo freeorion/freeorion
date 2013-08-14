@@ -3377,15 +3377,23 @@ Tech Researched
 
 SITREP_TECH_UNLOCKED
 %tech% has been unlocked and can now be researched
+SITREP_TECH_UNLOCKED_LABEL
+Tech Unlocked
 
 SITREP_SHIP_PART_UNLOCKED
 %shippart% has been unlocked and can now be produced in ship designs
+SITREP_SHIP_PART_UNLOCKED_LABEL
+Ship Part Unlocked
 
 SITREP_SHIP_HULL_UNLOCKED
 %shiphull% has been unlocked and can now be produced in ship designs
+SITREP_SHIP_HULL_UNLOCKED_LABEL
+Ship Hull Unlocked
 
 SITREP_BUILDING_TYPE_UNLOCKED
 %buildingtype% has been unlocked and can now be produced
+SITREP_BUILDING_TYPE_UNLOCKED_LABEL
+Building Type Unlocked
 
 SITREP_COMBAT_SYSTEM
 A %combat% occurred at %system%.
