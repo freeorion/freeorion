@@ -264,7 +264,6 @@
 		471D5E220A98A9C500DA9C21 /* MapWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CC80A98A3F900DA9C21 /* MapWnd.cpp */; };
 		471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CCA0A98A3F900DA9C21 /* MultiplayerLobbyWnd.cpp */; };
 		471D5E240A98A9C900DA9C21 /* OptionsWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CCC0A98A3F900DA9C21 /* OptionsWnd.cpp */; };
-		471D5E250A98A9CB00DA9C21 /* PlanetDetailWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CCE0A98A3F900DA9C21 /* PlanetDetailWnd.cpp */; };
 		471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CD00A98A3F900DA9C21 /* ProductionWnd.cpp */; };
 		471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */; };
 		471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CD40A98A3F900DA9C21 /* ServerConnectWnd.cpp */; };
@@ -1334,8 +1333,6 @@
 		471D5CCB0A98A3F900DA9C21 /* MultiplayerLobbyWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MultiplayerLobbyWnd.h; sourceTree = "<group>"; };
 		471D5CCC0A98A3F900DA9C21 /* OptionsWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsWnd.cpp; sourceTree = "<group>"; };
 		471D5CCD0A98A3F900DA9C21 /* OptionsWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OptionsWnd.h; sourceTree = "<group>"; };
-		471D5CCE0A98A3F900DA9C21 /* PlanetDetailWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetDetailWnd.cpp; sourceTree = "<group>"; };
-		471D5CCF0A98A3F900DA9C21 /* PlanetDetailWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlanetDetailWnd.h; sourceTree = "<group>"; };
 		471D5CD00A98A3F900DA9C21 /* ProductionWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProductionWnd.cpp; sourceTree = "<group>"; };
 		471D5CD10A98A3F900DA9C21 /* ProductionWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProductionWnd.h; sourceTree = "<group>"; };
 		471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResearchWnd.cpp; sourceTree = "<group>"; };
@@ -3122,8 +3119,6 @@
 				471D5CCB0A98A3F900DA9C21 /* MultiplayerLobbyWnd.h */,
 				471D5CCC0A98A3F900DA9C21 /* OptionsWnd.cpp */,
 				471D5CCD0A98A3F900DA9C21 /* OptionsWnd.h */,
-				471D5CCE0A98A3F900DA9C21 /* PlanetDetailWnd.cpp */,
-				471D5CCF0A98A3F900DA9C21 /* PlanetDetailWnd.h */,
 				471D5CD00A98A3F900DA9C21 /* ProductionWnd.cpp */,
 				471D5CD10A98A3F900DA9C21 /* ProductionWnd.h */,
 				471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */,
@@ -4383,7 +4378,6 @@
 				471D5E220A98A9C500DA9C21 /* MapWnd.cpp in Sources */,
 				471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */,
 				471D5E240A98A9C900DA9C21 /* OptionsWnd.cpp in Sources */,
-				471D5E250A98A9CB00DA9C21 /* PlanetDetailWnd.cpp in Sources */,
 				471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */,
 				471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */,
 				471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */,

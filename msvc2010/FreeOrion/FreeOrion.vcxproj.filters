@@ -189,9 +189,6 @@
     <ClInclude Include="..\..\UI\OptionsWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\PlanetDetailWnd.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\ProductionWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -500,9 +497,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\OptionsWnd.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PlanetDetailWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ProductionWnd.cpp">
