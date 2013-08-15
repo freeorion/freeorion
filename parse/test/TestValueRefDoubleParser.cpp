@@ -84,7 +84,7 @@ const boost::array<std::string, 13> ValueRefDoubleFixture::attributes = {{
     "FleetID",
     "ID",
     "NextSystemID",
-    "NumShips"
+    "NumShips",
     "Owner",
     "PlanetID",
     "PreviousSystemID",
@@ -200,14 +200,27 @@ BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeBracketedReal) {
 }
 
 // XXX value_ref_parser_rule<double> throws an expectation_failure, the enum parser does not. is this intended?
-BOOST_AUTO_TEST_CASE(DoubleLiteralParserErrornousInput) {
-    BOOST_CHECK(!parse("-", result));
-    BOOST_CHECK(!parse("(.20", result));
-    BOOST_CHECK(!parse("(-", result));
-    BOOST_CHECK(!parse("((", result));
-    BOOST_CHECK(!parse("((1.001", result));
-    BOOST_CHECK(!parse("((1)", result));
-    BOOST_CHECK(!parse("(1.5243)))", result));
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserMalformed) {
+    BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(.20", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(-", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((1.001", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((1)", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(1.5243)))", result), std::runtime_error);
+    BOOST_CHECK(!result);
 }
 
 // Multiple operations should be evaluated in a certain order.
@@ -545,31 +558,31 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
 
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParserMalformed) {
     // XXX: Is a trailing dot a valid real number?
-    BOOST_CHECK(!parse("5.", result));
+    BOOST_CHECK_THROW(parse("5.", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("1.1 +", result));
+    BOOST_CHECK_THROW(parse("1.1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("-1. +", result));
+    BOOST_CHECK_THROW(parse("-1. +", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("-5. 2.1", result));
+    BOOST_CHECK_THROW(parse("-5. 2.1", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("5. + - - 2.2", result));
+    BOOST_CHECK_THROW(parse("5. + - - 2.2", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("5.2 *", result));
+    BOOST_CHECK_THROW(parse("5.2 *", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("* 5.11", result));
+    BOOST_CHECK_THROW(parse("* 5.11", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("7.67 / * 5.47", result));
+    BOOST_CHECK_THROW(parse("7.67 / * 5.47", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("7.84 - 5.2 * .3 / - + .22", result));
+    BOOST_CHECK_THROW(parse("7.84 - 5.2 * .3 / - + .22", result), std::runtime_error);
     BOOST_CHECK(!result);
 }
 
@@ -661,13 +674,13 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
 
             boost::array<std::string, 4> phrases = {{
                 // long variant
-                statisticType.first + " Property = " + attribute + " Condition = All",
+                statisticType.second + " Property = " + attribute + " Condition = All",
                 // Check variant with missing "Condition =" keyword.
-                statisticType.first + " Property = " + attribute + " All",
+                statisticType.second + " Property = " + attribute + " All",
                 // Check variant with missing "Property =" keyword.
-                statisticType.first + " " + attribute + " Condition = All",
+                statisticType.second + " " + attribute + " Condition = All",
                 // Check short variant
-                statisticType.first + " " + attribute + " All"
+                statisticType.second + " " + attribute + " All"
             }};
 
             BOOST_FOREACH(const std::string& phrase, phrases) {
@@ -702,13 +715,13 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
 
                 boost::array<std::string, 4> phrases = {{
                     // long variant
-                    statisticType.first + " Property = " + containerType + "." + attribute + " Condition = All",
+                    statisticType.second + " Property = " + containerType + "." + attribute + " Condition = All",
                     // Check variant with missing "Condition =" keyword.
-                    statisticType.first + " Property = " + containerType + "." + attribute + " All",
+                    statisticType.second + " Property = " + containerType + "." + attribute + " All",
                     // Check variant with missing "Property =" keyword.
-                    statisticType.first + " " + containerType + "." + attribute + " Condition = All",
+                    statisticType.second + " " + containerType + "." + attribute + " Condition = All",
                     // Check short variant
-                    statisticType.first + " " + containerType + "." + attribute + " All"
+                    statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
                 BOOST_FOREACH(const std::string& phrase, phrases) {

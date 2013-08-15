@@ -57,7 +57,6 @@ const boost::array<ValueRefIntFixture::ReferenceType, 4>  ValueRefIntFixture::re
     std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
 }};
 
-
 const boost::array<ValueRefIntFixture::StatisticType, 9> ValueRefIntFixture::statisticTypes = {{
     std::make_pair(ValueRef::MAX,     "Max"),
     std::make_pair(ValueRef::MEAN,    "Mean"),
@@ -84,7 +83,7 @@ const boost::array<std::string, 13> ValueRefIntFixture::attributes = {{
     "FleetID",
     "ID",
     "NextSystemID",
-    "NumShips"
+    "NumShips",
     "Owner",
     "PlanetID",
     "PreviousSystemID",
@@ -180,14 +179,27 @@ BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeBracketedReal) {
 }
 
 // XXX value_ref_parser_rule<int> throws an expectation_failure, the enum parser does not. is this intended?
-BOOST_AUTO_TEST_CASE(IntLiteralParserErrornousInput) {
-    BOOST_CHECK(!parse("-", result));
-    BOOST_CHECK(!parse("(1", result));
-    BOOST_CHECK(!parse("(-", result));
-    BOOST_CHECK(!parse("((", result));
-    BOOST_CHECK(!parse("((1", result));
-    BOOST_CHECK(!parse("((1)", result));
-    BOOST_CHECK(!parse("(1)))", result));
+BOOST_AUTO_TEST_CASE(IntLiteralParserMalformed) {
+    BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(1", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(-", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((1", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("((1)", result), std::runtime_error);
+    BOOST_CHECK(!result);
+
+    BOOST_CHECK_THROW(parse("(1)))", result), std::runtime_error);
+    BOOST_CHECK(!result);
 }
 
 // Multiple operations should be evaluated in a certain order.
@@ -514,28 +526,28 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
 }
 
 BOOST_AUTO_TEST_CASE(IntArithmeticParserMalformed) {
-    BOOST_CHECK(!parse("1 +", result));
+    BOOST_CHECK_THROW(parse("1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("-1 +", result));
+    BOOST_CHECK_THROW(parse("-1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("-5 2", result));
+    BOOST_CHECK_THROW(parse("-5 2", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("5 + - - 2", result));
+    BOOST_CHECK_THROW(parse("5 + - - 2", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("5 *", result));
+    BOOST_CHECK_THROW(parse("5 *", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("* 5", result));
+    BOOST_CHECK_THROW(parse("* 5", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("7 / * 5", result));
+    BOOST_CHECK_THROW(parse("7 / * 5", result), std::runtime_error);
     BOOST_CHECK(!result);
 
-    BOOST_CHECK(!parse("7 - 5 * 3 / - + 2", result));
+    BOOST_CHECK_THROW(parse("7 - 5 * 3 / - + 2", result), std::runtime_error);
     BOOST_CHECK(!result);
 }
 
@@ -680,20 +692,20 @@ BOOST_AUTO_TEST_CASE(IntVariableParserMalformed) {
     // All phrases are missing the attribute value.
     BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
         // eg: "Target"
-        BOOST_CHECK_MESSAGE(!parse(reference.second, result), "Successful parsed (should fail): \"" + reference.second + "\"");
+        BOOST_CHECK_THROW(parse(reference.second, result), std::runtime_error);
         BOOST_CHECK(!result);
 
         // eg: "LocalCandidate."
-        BOOST_CHECK_MESSAGE(!parse(reference.second + ".", result), "Successful parsed (should fail): \"" + reference.second + ".\"");
+        BOOST_CHECK_THROW(parse(reference.second + ".", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         BOOST_FOREACH(const std::string& containerType, containerTypes) {
             // eg: "RootCandidate.Planet"
-            BOOST_CHECK_MESSAGE(!parse(reference.second + "." + containerType, result), "Successful parsed (should fail): \"" + reference.second + "." + containerType + "\"");
+            BOOST_CHECK_THROW(parse(reference.second + "." + containerType, result), std::runtime_error);
             BOOST_CHECK(!result);
 
             // eg: "Target.Fleet."
-            BOOST_CHECK_MESSAGE(!parse(reference.second + "." + containerType + ".", result), "Successful parsed (should fail): \"" + reference.second + "." + containerType + ".\"");
+            BOOST_CHECK_THROW(parse(reference.second + "." + containerType + ".", result), std::runtime_error);
             BOOST_CHECK(!result);
         }
     }
@@ -783,58 +795,59 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
 BOOST_AUTO_TEST_CASE(IntStatisticParserMalformed) {
     BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
         // eg: "Number"
-        BOOST_CHECK_MESSAGE(!parse(statisticType.second, result), "Successful parsed (should fail): \"" + statisticType.second + "\"");
+        BOOST_CHECK_THROW(parse(statisticType.second, result), std::runtime_error);
         BOOST_CHECK(!result);
 
         // eg: "Mean Condition"
-        BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Condition", result), "Successful parsed (should fail): \"" + statisticType.second + " Condition\"");
+        BOOST_CHECK_THROW(parse(statisticType.second + " Condition", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         // eg: "RMS Condition ="
-        BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Condition =", result), "Successful parsed (should fail): \"" + statisticType.second + " Condition =\"");
+        BOOST_CHECK_THROW(parse(statisticType.second + " Condition =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         // eg: "Mean Property"
-        BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property", result), "Successful parsed (should fail): \"" + statisticType.second + " Property\"");
+        BOOST_CHECK_THROW(parse(statisticType.second + " Property", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         // eg: "RMS Property ="
-        BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property =", result), "Successful parsed (should fail): \"" + statisticType.second + " Property =\"");
+        BOOST_CHECK_THROW(parse(statisticType.second + " Property =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         BOOST_FOREACH(const std::string& attribute, attributes) {
             // missing or incomplete condition
             // eg: "Mean Owner"
-            BOOST_CHECK_MESSAGE(!parse(statisticType.second + " " + attribute, result), "Successful parsed (should fail): \"" + statisticType.second + " " + attribute + "\"");
+            BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
             // eg: "Mean Property = Owner"
-            BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + attribute, result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + attribute + "\"");
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
             // eg: "Mean Property = Owner Condition"
-            BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + attribute + " Condition", result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + attribute +  + " Condition\"");
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition", result), std::runtime_error);
             BOOST_CHECK(!result);
 
             // eg: "Mean Property = Owner Condition ="
-            BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + attribute + " Condition =", result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + attribute +  + " Condition =\"");
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition =", result), std::runtime_error);
+            BOOST_CHECK(!result);
 
             BOOST_FOREACH(const std::string& containerType, containerTypes) {
                 // eg: "Mean Fleet.Owner"
-                BOOST_CHECK_MESSAGE(!parse(statisticType.second + " " + containerType + "." + attribute, result), "Successful parsed (should fail): \"" + statisticType.second + " " + containerType + "." + attribute + "\"");
-            BOOST_CHECK(!result);
+                BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
+                BOOST_CHECK(!result);
 
                 // eg: "Mean Property = Planet.Owner"
-                BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + containerType + "." + attribute, result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + containerType + "." + attribute + "\"");
-            BOOST_CHECK(!result);
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute, result), std::runtime_error);
+                BOOST_CHECK(!result);
 
                 // eg: "Mean Property = Fleet.Owner Condition"
-                BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition", result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + containerType + "." + attribute +  + " Condition\"");
-            BOOST_CHECK(!result);
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
+                BOOST_CHECK(!result);
 
                 // eg: "Mean Property = Planet.Owner Condition ="
-                BOOST_CHECK_MESSAGE(!parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition =", result), "Successful parsed (should fail): \"" + statisticType.second + " Property = " + containerType + "." + attribute +  + " Condition =\"");
-
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
+                BOOST_CHECK(!result);
             }
         }
     }

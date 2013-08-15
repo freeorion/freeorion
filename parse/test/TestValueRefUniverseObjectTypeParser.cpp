@@ -30,6 +30,14 @@ struct ValueRefUniverseObjectTypeFixture {
         );
     }
 
+    typedef std::pair<ValueRef::ReferenceType, std::string> ReferenceType;
+    typedef std::pair<ValueRef::StatisticType, std::string> StatisticType;
+
+    static const boost::array<ReferenceType, 4>  referenceTypes;
+    static const boost::array<StatisticType, 1>  statisticTypes;
+    static const boost::array<std::string, 3>  containerTypes;
+    static const boost::array<std::string, 1> attributes;
+
     ValueRef::ValueRefBase<UniverseObjectType>* result;
     const ValueRef::Operation<UniverseObjectType>* operation1;
     const ValueRef::Operation<UniverseObjectType>* operation2;
@@ -41,6 +49,27 @@ struct ValueRefUniverseObjectTypeFixture {
     const ValueRef::Statistic<UniverseObjectType>* statistic;
     const ValueRef::Variable<UniverseObjectType>* variable;
 };
+
+const boost::array<ValueRefUniverseObjectTypeFixture::StatisticType, 1> ValueRefUniverseObjectTypeFixture::statisticTypes = {{
+    std::make_pair(ValueRef::MODE,    "Mode")
+}};
+
+const boost::array<ValueRefUniverseObjectTypeFixture::ReferenceType, 4>  ValueRefUniverseObjectTypeFixture::referenceTypes = {{
+    std::make_pair(ValueRef::SOURCE_REFERENCE, "Source"),
+    std::make_pair(ValueRef::EFFECT_TARGET_REFERENCE, "Target"),
+    std::make_pair(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LocalCandidate"),
+    std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
+}};
+
+const boost::array<std::string, 3> ValueRefUniverseObjectTypeFixture::containerTypes = {{
+    "Fleet",
+    "Planet",
+    "System"
+}};
+
+const boost::array<std::string, 1> ValueRefUniverseObjectTypeFixture::attributes = {{
+    "ObjectType"
+}};
 
 BOOST_FIXTURE_TEST_SUITE(ValueRefUniverseObjectTypeParser, ValueRefUniverseObjectTypeFixture)
 
@@ -212,39 +241,22 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidateFleet) {
     );
 }
 
-BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserErrornousInput) {
-    BOOST_CHECK(!parse("Source", result));
-    BOOST_CHECK(!parse("Source .", result));
-    BOOST_CHECK(!parse("Target", result));
-    BOOST_CHECK(!parse("Target .", result));
-    BOOST_CHECK(!parse("Source . System", result));
-    BOOST_CHECK(!parse("Source . System .", result));
-    BOOST_CHECK(!parse("Target . System", result));
-    BOOST_CHECK(!parse("Target . System .", result));
-    BOOST_CHECK(!parse("Source . Planet", result));
-    BOOST_CHECK(!parse("Source . Planet .", result));
-    BOOST_CHECK(!parse("Target . Planet", result));
-    BOOST_CHECK(!parse("Target . Planet .", result));
-    BOOST_CHECK(!parse("Source . Fleet", result));
-    BOOST_CHECK(!parse("Source . Fleet .", result));
-    BOOST_CHECK(!parse("Target . Fleet", result));
-    BOOST_CHECK(!parse("Target . Fleet .", result));
-    BOOST_CHECK(!parse("LocalCandidate", result));
-    BOOST_CHECK(!parse("LocalCandidate .", result));
-    BOOST_CHECK(!parse("RootCandidate", result));
-    BOOST_CHECK(!parse("RootCandidate .", result));
-    BOOST_CHECK(!parse("LocalCandidate . System", result));
-    BOOST_CHECK(!parse("LocalCandidate . System .", result));
-    BOOST_CHECK(!parse("RootCandidate . System", result));
-    BOOST_CHECK(!parse("RootCandidate . System .", result));
-    BOOST_CHECK(!parse("LocalCandidate . Planet", result));
-    BOOST_CHECK(!parse("LocalCandidate . Planet .", result));
-    BOOST_CHECK(!parse("RootCandidate . Planet", result));
-    BOOST_CHECK(!parse("RootCandidate . Planet .", result));
-    BOOST_CHECK(!parse("LocalCandidate . Fleet", result));
-    BOOST_CHECK(!parse("LocalCandidate . Fleet .", result));
-    BOOST_CHECK(!parse("RootCandidate . Fleet", result));
-    BOOST_CHECK(!parse("RootCandidate . Fleet .", result));
+BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserMalformed) {
+    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
+        BOOST_CHECK_THROW(parse(reference.second, result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        BOOST_CHECK_THROW(parse(reference.second + ".", result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        BOOST_FOREACH(const std::string& type, containerTypes) {
+            BOOST_CHECK_THROW(parse(reference.second + "." + type, result), std::runtime_error);
+            BOOST_CHECK(!result);
+
+            BOOST_CHECK_THROW(parse(reference.second + "." + type + ".", result), std::runtime_error);
+            BOOST_CHECK(!result);
+        }
+    }
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
@@ -307,40 +319,65 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
     BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
 }
 
-BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserErrornousInput) {
-    BOOST_CHECK(!parse("Mode", result));
-    BOOST_CHECK(!parse("Mode Property", result));
-    BOOST_CHECK(!parse("Mode Property =", result));
-    BOOST_CHECK(!parse("Mode Property = Fleet", result));
-    BOOST_CHECK(!parse("Mode Property = Fleet .", result));
-    BOOST_CHECK(!parse("Mode Property = Fleet . ObjectType", result));
-    BOOST_CHECK(!parse("Mode Property = Fleet . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode Property = Fleet . ObjectType Condition =", result));
-    BOOST_CHECK(!parse("Mode Fleet", result));
-    BOOST_CHECK(!parse("Mode Fleet .", result));
-    BOOST_CHECK(!parse("Mode Fleet . ObjectType", result));
-    BOOST_CHECK(!parse("Mode Fleet . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode Fleet . ObjectType Condition =", result));
-    BOOST_CHECK(!parse("Mode Property = Planet", result));
-    BOOST_CHECK(!parse("Mode Property = Planet .", result));
-    BOOST_CHECK(!parse("Mode Property = Planet . ObjectType", result));
-    BOOST_CHECK(!parse("Mode Property = Planet . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode Property = Planet . ObjectType Condition =", result));
-    BOOST_CHECK(!parse("Mode Planet", result));
-    BOOST_CHECK(!parse("Mode Planet .", result));
-    BOOST_CHECK(!parse("Mode Planet . ObjectType", result));
-    BOOST_CHECK(!parse("Mode Planet . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode Planet . ObjectType Condition =", result));
-    BOOST_CHECK(!parse("Mode Property = System", result));
-    BOOST_CHECK(!parse("Mode Property = System .", result));
-    BOOST_CHECK(!parse("Mode Property = System . ObjectType", result));
-    BOOST_CHECK(!parse("Mode Property = System . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode Property = System . ObjectType Condition =", result));
-    BOOST_CHECK(!parse("Mode System", result));
-    BOOST_CHECK(!parse("Mode System .", result));
-    BOOST_CHECK(!parse("Mode System . ObjectType", result));
-    BOOST_CHECK(!parse("Mode System . ObjectType Condition", result));
-    BOOST_CHECK(!parse("Mode System . ObjectType Condition =", result));
+BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
+    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
+        // eg: "Number"
+        BOOST_CHECK_THROW(parse(statisticType.second, result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        // eg: "Mean Condition"
+        BOOST_CHECK_THROW(parse(statisticType.second + " Condition", result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        // eg: "RMS Condition ="
+        BOOST_CHECK_THROW(parse(statisticType.second + " Condition =", result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        // eg: "Mean Property"
+        BOOST_CHECK_THROW(parse(statisticType.second + " Property", result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        // eg: "RMS Property ="
+        BOOST_CHECK_THROW(parse(statisticType.second + " Property =", result), std::runtime_error);
+        BOOST_CHECK(!result);
+
+        BOOST_FOREACH(const std::string& attribute, attributes) {
+            // missing or incomplete condition
+            // eg: "Mean Owner"
+            BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
+            BOOST_CHECK(!result);
+
+            // eg: "Mean Property = Owner"
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute, result), std::runtime_error);
+            BOOST_CHECK(!result);
+
+            // eg: "Mean Property = Owner Condition"
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition", result), std::runtime_error);
+            BOOST_CHECK(!result);
+
+            // eg: "Mean Property = Owner Condition ="
+            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition =", result), std::runtime_error);
+            BOOST_CHECK(!result);
+
+            BOOST_FOREACH(const std::string& containerType, containerTypes) {
+                // eg: "Mean Fleet.Owner"
+                BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
+                BOOST_CHECK(!result);
+
+                // eg: "Mean Property = Planet.Owner"
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute, result), std::runtime_error);
+                BOOST_CHECK(!result);
+
+                // eg: "Mean Property = Fleet.Owner Condition"
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
+                BOOST_CHECK(!result);
+
+                // eg: "Mean Property = Planet.Owner Condition ="
+                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
+                BOOST_CHECK(!result);
+            }
+        }
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

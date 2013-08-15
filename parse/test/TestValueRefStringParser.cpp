@@ -78,7 +78,7 @@ const boost::array<std::string, 13> ValueRefStringFixture::attributes = {{
     "FleetID",
     "ID",
     "NextSystemID",
-    "NumShips"
+    "NumShips",
     "Owner",
     "PlanetID",
     "PreviousSystemID",
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(StringLiteralParserSpaceString) {
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<std::string>), typeid(*result));
     value = dynamic_cast<const ValueRef::Constant<std::string>*>(result);
-    BOOST_CHECK_EQUAL(value->Value(), "\"A little bit of text with spaces.\"");
+    BOOST_CHECK_EQUAL(value->Value(), "A little bit of text with spaces.");
 }
 
 BOOST_AUTO_TEST_CASE(StringLiteralParserInteger) {
