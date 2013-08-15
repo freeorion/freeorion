@@ -1,7 +1,11 @@
 Deutsch
 
 #This is the German String Table file for FreeOrion (^= en_svn6098)
-#Übersetzung von Martin Wuttke [thesilentone], Markus Sinner [kroddn] und shivu
+#Übersetzer:
+# Marcel Metz [adrian_broher]
+# shivu
+# Markus Sinner [kroddn]
+# Martin Wuttke [thesilentone]
 
 #################
 #    Common     #
@@ -360,28 +364,28 @@ SD_GRAVITATING1_DESC
 Massives Kriegsschiff bewaffnet und gepanzert mit der neusten Technologie. Preis entsprechend.
 
 SD_COLONY_SHIP
-Kolonieschiff
+Siedlungsschiff
 
 SD_COLONY_SHIP_DESC
-Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Kolonie zu bringen.
+Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Siedlung zu bringen.
 
 SD_OUTPOST_SHIP
-Aussenpostenschiff
+Außenpostenschiff
 
 SD_OUTPOST_SHIP_DESC
-Unbewaffnetes Schiff fähig einen Aussenposten auf einer unbewohnbaren Welt zu erstellen.
+Unbewaffnetes Schiff fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
 
 SD_COLONY_BASE
-Koloniesbasis
+Siedlungsbasis
 
 SD_COLONY_BASE_DESC
-Unbewaffnetes Schiff fähig eine Kolonie in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_OUTPOST_BASE
-Aussenpostenbasis
+Außenpostenbasis
 
 SD_OUTPOST_BASE_DESC
-Unbewaffnetes Schiff fähig einen Aussenposten in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_TROOP_SHIP
 Truppentransporter
@@ -426,7 +430,7 @@ SM_TREE_DESC
 SM_SEED
 Dysonsamen
 SM_SEED_DESC
-Dysonwälder produzieren von Zeit zu Zeit Samen, welche über die Sternenstraßen neue Wälder um andere Sterne gründen können.
+Dysonwälder produzieren von Zeit zu Zeit Samen, welche über die Sternstraßen neue Wälder um andere Sterne gründen können.
 
 SM_FLOATER
 Schwimmer
@@ -558,9 +562,9 @@ SM_ACIREMA_GUARD_DESC
 Ein unbemanntes bewaffnetes Schiff, welches von den Acirema zur Bewachung des Systems gebaut wurde.
 
 SM_EXP_OUTPOST
-Experimentor Aussenpostenschiff
+Experimentor Außenpostenschiff
 SM_EXP_OUTPOST_DESC
-Ein Aussenpostenschiff, welches von den Experimentors gebaut wurde um experimentelle Asurüstung zwischen Galaxien zu transportieren.
+Ein Außenpostenschiff, welches von den Experimentors gebaut wurde um experimentelle Asurüstung zwischen Galaxien zu transportieren.
 
 SM_COSMIC_DRAGON
 Kosmischer Drache
@@ -609,7 +613,7 @@ FN_SCOUT_FLEET
 Kundschafterflotte
 
 FN_COLONY_FLEET
-Kolonieflotte
+Siedlungsflotte
 
 FN_INVASION_FLEET
 Invasionflotte
@@ -743,16 +747,16 @@ OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte verwenden. Kann bei älteren Grafikkarten Abstürze verursachen.
 
 OPTIONS_DB_STARLANE_THICKNESS
-Setzt die Breite der Sternenstraßen in Pixeln fest.
+Setzt die Breite der Sternstraßen in Pixeln fest.
 
 OPTIONS_DB_STARLANE_CORE
-Breitenmultiplikator für die Hauptsternenstraßen des Imperiums.
+Breitenmultiplikator für die Hauptsternstraßen des Imperiums.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Entscheidet ob Sternenstraßen mit der Imperiumsfarbe gefärbt werden solle, wenn dieses Ressourcen über diese Sternenstraßen tauschen kann.
+Entscheidet ob Sternstraßen mit der Imperiumsfarbe gefärbt werden solle, wenn dieses Ressourcen über diese Sternstraßen tauschen kann.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
-Setzt die Grundfarbe in der Sternenstraßen gezeichnet werden.
+Setzt die Grundfarbe in der Sternstraßen gezeichnet werden.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
 Entscheidet ob Flottenversorgungslinien mit Anzeigern in Imperiumsfarbe dargestellt werden sollen.
@@ -1022,7 +1026,7 @@ OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Setzen bewirkt, dass Klicks auf mehrere Flottenknöpfe mehrere Flottenfenster auf einmal öffnen. Ansonsten, bewirkt das öffnen eines Flottenfensters, dass alle bisher geöffneten Flottenfenster geschlossen werden.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Bei Rechtklick auf die Hauptkarte alle offenen Fenster wie beispielsweise das Flottenfenster, oder die Systemansicht schliessen.
+Bei Rechtklick auf die Hauptkarte alle offenen Fenster wie beispielsweise das Flottenfenster, oder die Systemansicht schließen.
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Setzt die Größe des Systemseitenfensters.
@@ -1055,7 +1059,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 Anzahl der Planeten je System, die in der Galaxie erzeugt werden soll.
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Anzahl der Sternenstraßen, die in der Galaxie erzeugt werden sollen.
+Anzahl der Sternstraßen, die in der Galaxie erzeugt werden sollen.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 Die Häufigkeit von Besonderheiten, welche in der Galaxie erzeugt werden soll.
@@ -1116,7 +1120,7 @@ OPTIONS_DB_AUTOSAVE_LIMIT
 Setzt die Höchstzahl von zu behaltenden Spielständen.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
-Swaps results of clicking left and right mouse buttons.
+Tauscht die Funktion der linken und rechten Maustasten.
 
 OPTIONS_DB_MUSIC_VOLUME
 Die Lautstärke (0 bis 255) in welcher Musik gespielt werden soll.
@@ -1137,31 +1141,31 @@ OPTIONS_DB_QUICKSTART
 Beginnt ein neues Schnellstartspiel. Das Hauptmenü wird umgangen.
 
 OPTIONS_DB_AUTO_FIRST_TURN
-Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
+Führt den ersten Zug automatisch aus. Hilfreich für die Fehlersuche, besonders in Kombination mit --quickstart.
 
 OPTIONS_DB_CHECKED_GL_VERSION
 Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werden einige Zeichenoptionen abhängig von der GL Version angepasst, nachdem die Version überprüft wurde.
 
 OPTIONS_DB_RESET_FSSIZE
-Stores whether to reset the stored fullscreen resolution. If false, the stored values are used, but if true, the values are reset to the max the rendering system supports.
+Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Entscheidet ob automatisch erzeugte Texte in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
-Toggles verbose logging of universe contents and effect evaluation.
+Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effektberechnung.
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
-Toggles inclusion of situation report messages with errors.
+Schaltet das Einfügen der Situationsberichte mit Fehlerausgabe ein.
 
 OPTIONS_DB_TECH_DEMO
 Die 3D-Kampf Technologiedemo ausprobieren
 
 OPTIONS_DB_TEST_3D_COMBAT
-Test 3D combat resolution.
+Tested die 3D Kampfauflösung.
 
 OPTIONS_DB_LOAD
-Loads the specified single-player save game.
+Lädt einen angegebenen Einzelspielerspielstand.
 
 #################
 # File Dialog   #
@@ -1305,7 +1309,7 @@ JOIN_GAME_BN
 Einem Spiel beitreten
 
 REFRESH_LIST_BN
-Aktualisieren
+Liste aktualisieren
 
 
 ########################
@@ -1380,7 +1384,7 @@ Anzahl der KI-Spieler
 #Drop-down list labels and choices####
 
 GSETUP_SEED
-Aussaat
+Saat
 GSETUP_RANDOMIZE
 Randomisieren
 GSETUP_STARS
@@ -1390,7 +1394,7 @@ Galaxieform
 GSETUP_AGE
 Galaxiealter
 GSETUP_STARLANE_FREQ
-Häufigkeit von Sternstrassen
+Häufigkeit von Sternstraßen
 GSETUP_PLANET_DENSITY
 Planetendichte
 GSETUP_SPECIALS_FREQ
@@ -1413,11 +1417,11 @@ Haufen
 GSETUP_ELLIPTICAL
 Elliptisch
 GSETUP_IRREGULAR
-Unregelmässig
+Unregelmäßig
 GSETUP_RING
 Ring
 GSETUP_RANDOM
-Zufall
+Zufällig
 
 GSETUP_NONE
 Keine
@@ -1436,7 +1440,7 @@ GSETUP_ANCIENT
 Uralt
 
 GSETUP_BEGINNER
-Anfänger Mode
+Anfängermodus
 GSETUP_TURTLE
 Schildkröte
 GSETUP_DEFENSIVE
@@ -1504,7 +1508,7 @@ OPTIONS_MULTIPLE_FLEET_WNDS
 Mehrere Flottenfenster
 
 OPTIONS_QUICK_CLOSE_WNDS
-Fenster schnell schliessen
+Fenster schnell schließen
 
 OPTIONS_SHOW_SIDEPANEL_PLANETS
 Zeigt das Planeten Seitenfenster
@@ -1552,7 +1556,7 @@ OPTIONS_TOOLTIP_DELAY
 Kurzinfo Wartezeit (ms)
 
 OPTIONS_SWAP_MOUSE_LR
-Swap Mouse Buttons Left-Right
+Tauscht linke und rechte Maustasten
 
 OPTIONS_VIDEO_MODE
 Vollbildmodus
@@ -1576,16 +1580,16 @@ OPTIONS_APP_HEIGHT_WINDOWED
 Fenstermodushöhe
 
 OPTIONS_APP_LEFT_WINDOWED
-Window Left Edge Position
+Position linke Fensterkante
 
 OPTIONS_APP_TOP_WINDOWED
-Window Top Position
+Position obere Fensterkante
 
 OPTIONS_FULLSCREEN
 Vollbild
 
 OPTIONS_FULLSCREEN_MONITOR_ID
-Fullscreen Monitor ID
+Vollkbild Monitor ID
 
 OPTIONS_SHOW_FPS
 Zeige FPS
@@ -1603,7 +1607,7 @@ OPTIONS_CHAT
 Chat
 
 OPTIONS_CHAT_HISTORY
-Chat Verlauf
+Chatverlauf
 
 OPTIONS_CHAT_HIDE
 Chat Ausblendungsverzögerung
@@ -1630,7 +1634,7 @@ OPTIONS_UI_SYSTEM_FOG_SPACING
 Kriegsnebel Rasterlinienabstand
 
 OPTIONS_UI_SYSTEM_CIRCLES
-einschliessende Systemkreise
+einschließende Systemkreise
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
 Relative Größe der Systemkreise
@@ -1687,22 +1691,22 @@ OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Kreise für Aufklärungsreichweite
 
 OPTIONS_GALAXY_MAP_POPUP
-Galaxy map popup menu
+Galaxiekarte Popupmenü
 
 OPTIONS_STARLANES
-Sternenstraßen
+Sternstraßen
 
 OPTIONS_STARLANE_THICKNESS
-Stärke der Sternenstraße
+Breite der Sternstraße
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Farbe der Ressourcensternenstraßen
+Farbe der Ressourcensternstraßen
 
 OPTIONS_FLEET_SUPPLY_LINES
 Flottenversorgungslinien
 
 OPTIONS_FLEET_SUPPLY_LINE_WIDTH
-Flottenversorgungslinien Breite
+Breite der Flottenversorgungslinien
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
 Flottenversorgungslinien Punktabstand
@@ -1711,7 +1715,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Flottenversorgungslinien Punktrate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Grundfarbe Sternenstraßen
+Grundfarbe Sternstraßen
 
 OPTIONS_MUSIC
 Musik
@@ -1726,7 +1730,7 @@ OPTIONS_SOUNDS
 Klänge
 
 OPTIONS_SOUND_CLOSE
-Fenster schliessen
+Fenster schließen
 
 OPTIONS_SOUND_MINIMIZE
 Fenster minimieren
@@ -1750,7 +1754,7 @@ OPTIONS_SOUND_SYSTEM_ROLLOVER
 Systemsymbol darüberfahren
 
 OPTIONS_SOUND_WINDOW
-Fenster Klänge
+Fensterklänge
 
 OPTIONS_SOUND_BUTTON
 Knöpfe Klänge
@@ -1765,7 +1769,7 @@ OPTIONS_SOUND_TYPING
 Tippen
 
 OPTIONS_SOUND_TURN
-Rundenbutton anklicken
+Rundenknopf anklicken
 
 OPTIONS_SOUND_SIDEPANEL
 Seitenfenster öffnen
@@ -1933,20 +1937,20 @@ OPTIONS_AUTO_EFFECT_DESC
 Automatisch generierte Effektbeschreibungen
 
 OPTIONS_VERBOSE_LOGGING_DESC
-Verbose logging for debugging
+Ausführliche Protokollierung zur Fehlersuche
 
 OPTIONS_VERBOSE_SITREP_DESC
-Situation reports with errors
+Statusberichte mit Fehlermeldungen
 
 ##################
 # CombatSetupWnd #
 ##################
 
 AUTO_PLACE_SHIPS
-Auto-Place Ships
+Schiffe automatisch platzieren
 
 REDO_PLACEMENTS
-Redo Placements
+Platzierungen wiederholen
 
 #################
 # Main Map      #
@@ -1992,7 +1996,7 @@ MAP_PRODUCTION_TEXT
 Produktionsausstoss des gesamten Imperiums
 
 MAP_PROD_WASTED_TITLE
-Ungenützte Produktion
+Ungenutzte Produktion
 
 MAP_PROD_WASTED_TEXT
 '''Gesamte Produktion : %1%
@@ -2004,10 +2008,10 @@ MAP_RESEARCH_TITLE
 Forschung
 
 MAP_RESEARCH_TEXT
-Forschungsausstoss des gesamten Imperiums
+Forschungsleistung des gesamten Imperiums
 
 MAP_RES_WASTED_TITLE
-Ungenützte Forschung
+Ungenutzte Forschung
 
 MAP_RES_WASTED_TEXT
 '''Gesamte Forschung : %1%
@@ -2022,22 +2026,22 @@ MAP_POPULATION_COUNT
 %1%: %2%
 
 MAP_DETECTION_TITLE
-Imperiums Erkennung
+Imperiumsortung
 
 MAP_DETECTION_TEXT
-Erkennungsreichweite des Imperiums
+Ortungsreichweite des Imperiums
 
 MAP_TRADE_TITLE
 Handel
 
 MAP_TRADE_TEXT
-Handelsausstoss des gesamten Imperiums. (Handel tut nichts)
+Handelsleistung des gesamten Imperiums. (Handel tut nichts)
 
 MAP_FLEET_TITLE
-Flotte auszählung
+Flottenanzahl
 
 MAP_FLEET_TEXT
-Gesamter Anzahl Schiffe
+Gesamtanzahl Schiffe
 
 #################
 # SidePanel     #
@@ -2094,17 +2098,17 @@ Größe
 PL_COLONIZE
 Besiedeln (%1% / %2%)
 PL_CANCEL_COLONIZE
-Kolonisation aufheben
+Kolonisation abbrechen
 PL_OUTPOST
-Aussenposten plazieren
+Außenposten plazieren
 PL_CANCEL_OUTPOST
-Aussenposten aufheben
+Außenposten abziehen
 PL_INVADE
 Einmarschieren (+%1%)
 PL_CANCEL_INVADE
-Einmarschieren aufheben
+Einmarschieren abbrechen
 PL_SELECT_COLONY_SHIP_INSTRUCTION
-Wähle Kolonieschiff zum Kolonisieren.
+Wähle Siedlungsschiff zum kolonisieren.
 PL_TYPE_SIZE
 %1% %2%
 PL_TYPE_SIZE_ENV
@@ -2128,10 +2132,10 @@ BP_COMPLETE_BUILDING_TOOLTIP
 %2%'''
 
 ORDER_BUIDLING_SCRAP
-Gebäude zerstören
+Gebäude abreißen
 
 ORDER_CANCEL_BUIDLING_SCRAP
-Gebäudezerstörung abbrechen
+Gebäudeabriss abbrechen
 
 ## General Tooltips#########
 
@@ -2227,7 +2231,7 @@ FW_AGGRESSIVE
 System kontrollieren
 
 FW_AGGRESSIVE_DESC
-Flotte blockiert feindliche Systeme und startet den Kampf gegen jedem Feind im System.
+Flotte blockiert feindliche Systeme und startet den Kampf gegen jeden Feind im System.
 
 FW_PASSIVE
 Verbergen
@@ -2275,7 +2279,7 @@ Fremde Flotte
 
 # the name that is used for fleets that no player controls
 FW_ROGUE_FLEET
-Schurken Flotte
+Schurkenflotte
 
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
@@ -2295,7 +2299,7 @@ SHIP_SPEED_STAT_TITLE
 Geschwindigkeit
 
 SHIP_SPEED_STAT_MAIN
-Maximale Reisedistanz entlang der Sternenstraßen pro Runde.
+Maximale Reisedistanz entlang der Sternstraßen pro Runde.
 
 FW_FLEET_FUEL_SUMMARY
 Flottenkraftstoff - Entspricht dem Minimum an Kraftstoff der Schiffe der Flotte.
@@ -2304,16 +2308,16 @@ FW_FLEET_SPEED_SUMMARY
 Flottengeschwindigkeit - Entspricht der minimalen Geschwindigkeit der Schiffe der Flotte.
 
 FW_FLEET_SHIELD_SUMMARY
-Flottenschield - Entspricht der mittleren Schilder der Schiffe der Flotte.
+Flottenschield - Entspricht den mittleren Schildern der Schiffe der Flotte.
 
 FW_FLEET_STRUCTURE_SUMMARY
-Flottenstruktur - Entspricht der Gesamten Struktur der Schiffe der Flotte.
+Flottenstruktur - Entspricht der gesamten Struktur der Schiffe der Flotte.
 
 FW_FLEET_DAMAGE_SUMMARY
-Flottenschaden - Entspricht dem Gesamten Schaden den, die Schiffe der Flotte anrichten.
+Flottenschaden - Entspricht dem gesamten Schaden den die Schiffe der Flotte anrichten.
 
 FW_FLEET_COUNT_SUMMARY
-Flottenanzahl - Entspricht dem Gesamten Anzahl der Schiffe der Flotte.
+Flottenanzahl - Entspricht dem gesamten Anzahl der Schiffe der Flotte.
 
 FW_SPLIT_DAMAGED_FLEET
 Beschädigte Schiffe von der Flotte trennen
@@ -2340,7 +2344,7 @@ ORDER_FLEET_EXPLORE
 Erkunden
 
 ORDER_CANCEL_FLEET_EXPLORE
-Stop Erkundung
+Erkundung beenden
 
 
 ###############
@@ -2360,13 +2364,13 @@ MOD_DESTROY
 Zerstöre
 
 MOD_SET_OWNER
-Set Owner
+Setze Besitzer
 
 MOD_ADD_STARLANE
-Sternenstraße hinzufügen
+Sternstraße hinzufügen
 
 MOD_REMOVE_STARLANE
-Sternenstraße entfernen
+Sternstraße entfernen
 
 ###############
 #  Diplomacy  #
@@ -2441,7 +2445,7 @@ TECH_WND_STATUS_RESEARCHABLE
 Erforschbar
 
 TECH_WND_STATUS_LOCKED
-Verriegelt
+Gesperrt
 
 TECH_WND_UNRESEARCHABLE
 Nicht erforschbar
@@ -2506,7 +2510,7 @@ RESEARCH_INFO_RP
 FP
 
 RESEARCH_QUEUE_PROMPT
-Doppelclick oder shift-click auf einem zugänglichen Objekt um es zur Forschungswarteschlange hinzufügen.
+Klicke doppelt oder mit Shift auf ein verfügbares Objekt um es zur Forschungswarteschlange hinzufügen.
 
 
 ####################
@@ -2578,9 +2582,9 @@ PRODUCTION_QUEUE_REPETITIONS
 PRODUCTION_QUEUE_EMPTY
 '''Die Produktionswarteschlange des Imperiums ist leer.
 
-Um Projekte auf die Produktionswarteschlange zu setzen, muss zuerst ein Planet auf dem Seitenfenster gewählt sein dann ein Objekt der liste anklicken.
+Um Projekte auf die Produktionswarteschlange zu setzen, muss zuerst ein Planet auf dem Seitenfenster ausgewählt sein, bevor ein Objekt auf die Liste hinzugefügt werden kann.
 
-Es ist zu beachten dass Schiffe nur auf einen Planeten mit einer Werft gebaut werden können, und dass Verschiedene Andere Objekte auf Verschiedene Andere Restriktionen auf ihrer Erstellungsorte unterstellt sein können.'''
+Es ist zu beachten, dass Schiffe nur auf einen Planeten mit einer Werft gebaut werden können und dass verschiedene andere Objekte den verschiedenen anderen Einschränkungen ihres Erstellungsortes unterworfen sein können.'''
 
 PRODUCTION_QUEUE_ITEM_LOCATION
 An %1%
@@ -2650,12 +2654,12 @@ ENC_SPECIES_PLANET_TYPE_SUITABILITY
 %1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
-'''%1% eignet sich zur Besiedelung durch diese Spezies.
+'''%1% eignet sich zur Besiedlung durch diese Spezies.
 
 '''
 
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
-'''%1% ist nicht geeignet zur Besiedelung durch diese Spezies. Besiedelungsversuche werden entweder scheitern oder letztendlich aussterben.
+'''%1% ist nicht geeignet zur Besiedlung durch diese Spezies. Besiedlungsversuche werden entweder scheitern oder letztendlich aussterben.
 
 '''
 
@@ -2673,13 +2677,16 @@ ENC_SPECIAL
 Besonderheit
 
 OBJECTS_WITH_SPECIAL
-Objects with Special: 
+Objekte mit Besonderheit: 
 
 ENC_BUILDING_TYPE
 Gebäudetyp
 
 ENC_SPECIES
 Spezies
+
+ENC_FIELD_TYPE
+Feldtyp
 
 ENC_SHIP_DESIGN
 Schiffsentwurf
@@ -2688,10 +2695,10 @@ SHIPS_OF_DESIGN
 Schiffe dieser Klasse: 
 
 NO_SHIPS_OF_DESIGN
-Keine Bekannte Schiffe von dieser Klasse
+Keine Schiffe dieser Klasse bekannt
 
 ENC_INCOMPETE_SHIP_DESIGN
-Unvollständiger Schiffentwürf
+Unvollständiger Schiffentwurf
 
 ENC_EMPIRE
 Imperium
@@ -2700,16 +2707,16 @@ EMPIRE_CAPITAL
 Hauptstadt: 
 
 NO_CAPITAL
-Keine Bekannte Hauptstadt
+Keine Hauptstadt bekannt
 
 EMPIRE_METERS
-Meters:
+Metrik:
 
 OWNED_PLANETS
 Eigene Planeten: 
 
 NO_OWNED_PLANETS_KNOWN
-Keine Eigene Planeten bekannt
+Keine eigene Planeten bekannt
 
 OWNED_FLEETS
 Eigene Flotten: 
@@ -2718,7 +2725,7 @@ OWNED_FLEET_AT_SYSTEM
 %1% an %2%
 
 NO_OWNED_FLEETS_KNOWN
-Keine Eigene Flotten bekannt
+Keine eigene Flotten bekannt
 
 ENC_SHIP
 Schiff
@@ -2733,7 +2740,7 @@ MONSTER_OBJECTS
 Monster: 
 
 NO_MONSTER_OBJECTS
-Keine Bekannte Monster
+Keine Monster bekannt
 
 ENC_FLEET
 Flotte
@@ -2777,9 +2784,9 @@ ENC_COST_AND_TURNS_STR
 ENC_LOCATION_CONDITION_STR
 '''
 
-<u>Location Requirement</u>
+<u>Standortbedingungen</u>
 
-An object%1%'''
+Ein Objekt%1%'''
 
 # auto-generated effects description. %1% will be the auto-generated effects text. This string should
 # provide an appropriate heading to appear before the auto-generated text.
@@ -2802,9 +2809,9 @@ Struktur: %8%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%
 [[encyclopedia STEALTH_TITLE]]: %11%
 Triebstoff Fassungsvermögen: %14%
-Kolonisation Vermögen: %15%
+Besiedlungsvermögen: %15%
 Truppen: %16%
-Geschwindigkeit in Sternenstraße: %13%
+Geschwindigkeit auf Sternstraße: %13%
 '''
 
 ## Temporarily removed
@@ -2816,7 +2823,7 @@ Geschwindigkeit in Sternenstraße: %13%
 ##
 
 ENC_UNLOCKED_BY
-'''<u>Durch Technologie Freigeschaltet:</u>
+'''<u>Durch Technologie freigeschaltet:</u>
 
 '''
 
@@ -2839,13 +2846,13 @@ ENC_COMBAT_LOG
 Kampf logbuch
 
 ENC_COMBAT_LOG_DESCRIPTION_STR
-Combat at %1% on turn %2%:
+Kampf in %1% in Runde %2%:
 
 ENC_COMBAT_ATTACK_STR
-Round %4%: %1% attacks %2% and does %3% damage
+Runde %4%: %1% greift %2% an und erzeugt %3% Schaden
 
 ENC_COMBAT_ATTACK_DESTROY_STR
-Round %4%: %1% attacks %2% and does %3% damage, destroying target
+Runde %4%: %1% greift %2% an und zerstört das Ziel mit %3% Schaden
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
@@ -2856,13 +2863,13 @@ Unbekannt
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
-Spiel Konzepte
+Spielkonzepte
 
 GROWTH_ARTICLE_SHORT_DESC
 Wachstum
 
 OUTPOSTS_ARTICLE_SHORT_DESC
-Aussenposten
+Außenposten
 
 PRODUCTION_ARTICLE_SHORT_DESC
 Produktion
@@ -2877,7 +2884,7 @@ SHIPS_ARTICLE_SHORT_DESC
 Raumschiffe
 
 METER_ARTICLE_SHORT_DESC
-Massstäbe
+Metriken
 
 POPULATION_TITLE_SHORT_DESC
 Bevölkerung
@@ -2889,15 +2896,15 @@ Bevölkerung
 PEACE_TITLE
 Frieden
 PEACE_TEXT
-Frieden is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]] lines, and not to impede colonization.
+Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Parteien sich darauf einigen die Schiffe und Planeten des anderen nicht anzugreifen, nicht die [[encyclopedia SUPPLY_TITLE]]strecken zu behindern sowie die Besiedlung zu erschweren.
 
 OUTPOSTS_TITLE
-Aussenposten
+Außenposten
 OUTPOSTS_TEXT
-'''Aussenposten are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.'''
+'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auf, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
 
 GROWTH_FOCUS_TITLE
-Growth Focus
+Wachstumsfokus
 GROWTH_FOCUS_TEXT
 '''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
 
@@ -3030,7 +3037,7 @@ TELEPATHY_TEXT
 FUEL_TITLE
 Triebstoff
 FUEL_TEXT
-'''Triebstoff erlaubt Schiffe entlang der Sternenstraße zu reisen. Für jede Sternstrasse verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternenstraße reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstrasse ist.'''
+'''Triebstoff erlaubt Schiffe entlang der Sternstraße zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternstraße reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstraße ist.'''
 
 SUPPLY_TITLE
 Versorgung
@@ -3272,6 +3279,45 @@ Ein unbekanntes Ereignis ist aufgetreten.
 FILTERS
 Filter
 
+
+## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing these sitreps to be
+## presented in the SitrepPanel in the order set below.  Sitreps not specified below will appear in
+## the SitrepPanel following those below.
+
+## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
+SITREP_PRIORITY_ORDER
+'''SITREP_VICTORY
+SITREP_VICTORY_DESTRUCTION
+SITREP_VICTORY_CAPTURE
+SITREP_VICTORY_TECH
+SITREP_VICTORY_BIO
+SITREP_EMPIRE_ELIMINATED
+EFFECT_ANCIENT_SHIP
+EFFECT_ANCIENT_BUILDING
+EFFECT_ANCIENT_TECH
+SITREP_TECH_RESEARCHED
+SITREP_PLANET_CAPTURED
+SITREP_PLANET_COLONIZED
+SITREP_PLANET_BOMBARDED_AT_SYSTEM
+SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
+EFFECT_CONC_CAMP_COMLETE
+EFFECT_GAIAN_TERRAFORM
+EFFECT_TERRAFORM
+EFFECT_TAME_MONSTER_HATCHED
+EFFECT_TAME_MONSTER_MATURED
+SITREP_BUILDING_BUILT
+EFFECT_EXOBOT
+SITREP_SHIP_BUILT
+SITREP_SHIP_BATCH_BUILT
+EFFECT_EVACUEES
+EFFECT_PSY_DOM
+SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
+SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
+SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
+SITREP_FLEET_ARRIVED_AT_DESTINATION'''
+## END OF SITREP_PRIORITY_ORDER
+
+
 SITREP_SHIP_BUILT
 %shipdesign% '%ship%' wurde im %system% fertiggestellt.
 SITREP_SHIP_BUILT_LABEL
@@ -3380,7 +3426,7 @@ SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-Die Kolonie auf %planet% wurde ausgelöscht.
+Die Siedlung auf %planet% wurde ausgelöscht.
 SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
 Planet zerstört
 
@@ -3488,6 +3534,11 @@ EFFECT_TAME_MONSTER_HATCHED
 A tamed %predefinedshipdesign% is ready for service at %planet%.
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Monster Hatched
+
+EFFECT_TAME_MONSTER_MATURED
+A tame monster has matured into a more formidable %predefinedshipdesign% in the %system% system.
+EFFECT_TAME_MONSTER_MATURED_LABEL
+Monster Matured
 
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
@@ -5021,7 +5072,7 @@ Aufklärungsreichweite
 METER_BATTLE_SPEED
 Kampfgeschwindigkeit
 METER_STARLANE_SPEED
-Geschwindigkeit in Sternenstraße
+Geschwindigkeit in Sternstraße
 METER_DAMAGE
 Schaden
 METER_ROF
@@ -5183,7 +5234,7 @@ Besiedlung
 PC_BATTLE_SPEED
 Kampf Geschwindigkeit
 PC_STARLANE_SPEED
-Sternenstraße Geschwindigkeit
+Sternstraße Geschwindigkeit
 PC_GENERAL
 General
 
@@ -5506,10 +5557,10 @@ DESC_REMOVE_SPECIAL
 Entfernt die Besonderheit %1% vom Objekt
 
 DESC_ADD_STARLANES
-Creates Sternenstraßen between the target system and the system of objects%1%
+Creates Sternstraßen between the target system and the system of objects%1%
 
 DESC_REMOVE_STARLANES
-Removes Sternenstraßen between the target system and the system of objects%1%
+Removes Sternstraßen between the target system and the system of objects%1%
 
 DESC_SET_STAR_TYPE
 Ändert die Sternenklasse auf %1%
@@ -5821,22 +5872,22 @@ DESC_WITHIN_DISTANCE_NOT
  die nicht innerhalb %1% eines beliebigen %2% Objekts sind
 
 DESC_WITHIN_STARLANE_JUMPS
- die innerhalb von %1% Sternenstraßensprünge Objekt %2% erreichen
+ die innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- die nicht innerhalb von %1% Sternenstraßensprünge Objekt %2% erreichen
+ die nicht innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen
 
 DESC_CAN_ADD_STARLANE_CONNECTION
- that can have Sternenstraßen added connecting to all systems that contain objects%1%
+ that can have Sternstraßen added connecting to all systems that contain objects%1%
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
- that can not have Sternenstraßen added connecting to all systems that contain objects%1%
+ that can not have Sternstraßen added connecting to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
- that can have Sternenstraßen removed that connect to all systems that contain objects%1%
+ that can have Sternstraßen removed that connect to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
- that can not have Sternenstraßen removed that connect to all systems that contain objects%1%
+ that can not have Sternstraßen removed that connect to all systems that contain objects%1%
 
 DESC_EXPLORED_BY_EMPIRE
  erkundet durch das %1% Imperium
@@ -6118,7 +6169,7 @@ Quantum Networking
 LRN_QUANT_NET_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
-A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternenstraßen. This advancement greatly facilitates research throughout the empire.
+A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternstraßen. This advancement greatly facilitates research throughout the empire.
 
 Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted. Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances. When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
 
@@ -6261,7 +6312,7 @@ Automatisierung
 PRO_ROBOTIC_PROD_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
 
-Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Kolonien einsetzen, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Kolonie erhält einen Standartsatz Exobots, welche die frühe Entwicklung der Kolonie maßgeblich beschleunigen.
+Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungn einsetzen, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standartsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
 
 Obwohl das erste grundsätzliche Design von Produkten und der Aufbau von Fabriken noch aktiv überwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele Flaschenhälse beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.'''
 
@@ -6360,9 +6411,9 @@ CON_INFRA_ECOL
 Infrastrukturökologie
 
 CON_INFRA_ECOL_DESC
-'''Increases Sternenstraße Schnelligkeit of your ships by 20 when they are within 50 uus of a controlled planet.
+'''Increases Sternstraße Schnelligkeit of your ships by 20 when they are within 50 uus of a controlled planet.
 
-Der grundlegende Aufbau einer neu errichteten planetaren Kolonie scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Kolonie einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Kolonie errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Kolonie unabdingbar.'''
+Der grundlegende Aufbau einer neu errichteten planetaren Siedlung scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Siedlung einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Siedlung errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Siedlung unabdingbar.'''
 
 CON_ORGANIC_STRC
 Organische Gebäude
@@ -6456,7 +6507,7 @@ SHP_GAL_EXPLO
 Galaktische Erkundung
 
 SHP_GAL_EXPLO_DESC
-Die Entdeckung von Interstellaren Reisen mittels Sternenstraßen leitet eine neue Ära der Entwicklung der Gesellschaft ein. Alte politsche Plänkeleien zwischen Splittergruppen verlieren ihre Bedeutung, wenn die gesamte Zivilisation mit dem unbegrenzten Potential der Sterne konfrontiert ist ... für Wachstum und Wohlstand, oder die totale Vernichtung.
+Die Entdeckung von Interstellaren Reisen mittels Sternstraßen leitet eine neue Ära der Entwicklung der Gesellschaft ein. Alte politsche Plänkeleien zwischen Splittergruppen verlieren ihre Bedeutung, wenn die gesamte Zivilisation mit dem unbegrenzten Potential der Sterne konfrontiert ist ... für Wachstum und Wohlstand, oder die totale Vernichtung.
 
 SHP_SPACE_TACTICS
 Raumtaktik
@@ -6542,7 +6593,7 @@ SHP_DOMESTIC_MONSTER
 Domesticated Mega-Fauna
 
 SHP_DOMESTIC_MONSTER_DESC
-'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternenstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
+'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
 SHP_ENDOCRINE_SYSTEMS
 Mega-Fauna Endocrine Systems
@@ -6708,7 +6759,7 @@ EXOBOT_SHORT_DESC
 Builds Exobot Citizens
 
 STARLANE_SPEED_SHORT_DESC
-Steigert die Sternenstraßegeschwindigkeit
+Steigert die Sternstraßegeschwindigkeit
 
 CON_ORBITAL_CON
 Orbitale Konstruktion
@@ -6741,10 +6792,10 @@ CON_FRC_ENRG_CAMO_DESC
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_PLANET_DRIVE
-Planetary Sternenstraße Drive
+Planetary Sternstraße Drive
 
 CON_PLANET_DRIVE_DESC
-Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternenstraße, it would be possible to move such planets to a safer location in times of necessity.
+Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternstraße, it would be possible to move such planets to a safer location in times of necessity.
 
 CON_STARGATE
 Stargate
@@ -6827,7 +6878,7 @@ LRN_OBSERVATORY_I
 Observatorium
 
 LRN_OBSERVATORY_I_DESC
-Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of Sternenstraßen throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of Sternenstraßen to be identified an monitored.
+Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of Sternstraßen throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of Sternstraßen to be identified an monitored.
 
 LRN_SOLAR_MAN
 Solar Manipulation
@@ -6855,9 +6906,9 @@ LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''By manipulating the dimensional properties of a Sternenstraße, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
+'''By manipulating the dimensional properties of a Sternstraße, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
 
-Alternatively, such a ship may be sent randomly along a completely different Sternenstraße adjacent to the building.'''
+Alternatively, such a ship may be sent randomly along a completely different Sternstraße adjacent to the building.'''
 
 LRN_GATEWAY_VOID
 Gateway to the Void
@@ -6881,7 +6932,7 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''Has a 10% chance of taking control of any enemy ship within one Sternenstraße jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
+'''Has a 10% chance of taking control of any enemy ship within one Sternstraße jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
@@ -7004,7 +7055,7 @@ DEF_SYST_DEF_MINE_3_DESC
 '''Reduces the structure of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.'''
 
 DEF_ROOT_DEFENSE
-Selbstverteidi- gung
+Selbstverteidigung
 
 DEF_ROOT_DEFENSE_DESC
 '''Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 2.
@@ -7293,19 +7344,19 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases Sternenstraße speed by 10. May be added more than once to a hull.
+Better engine parts equate to better engines. Increases Sternstraße speed by 10. May be added more than once to a hull.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Sternenstraße speed by 15. May be added more than once to a hull.
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Sternstraße speed by 15. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstraße speed by 20. May be added more than once to a hull.
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße speed by 20. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Deuteriumtank
@@ -7506,7 +7557,7 @@ Observatorium
 BLD_OBSERVATORY_DESC
 '''One random star will be revealed each turn to the entire galaxy. Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.
 
-An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of Sternenstraßen.'''
+An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of Sternstraßen.'''
 
 BLD_CULTURE_ARCHIVES
 Cultural Archives
@@ -7627,9 +7678,9 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Angriffsbasis
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 Sternenstraße jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 Sternstraße jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four Sternenstraße jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four Sternstraße jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
@@ -7702,7 +7753,7 @@ BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Sternenstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Sternstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
 
@@ -7808,6 +7859,12 @@ BLD_CONC_CAMP_DESC
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
 
+BLD_CONC_CAMP_REMNANT
+Concentration Camp Remnants
+
+BLD_CONC_CAMP_REMNANT_DESC
+Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
+
 BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
@@ -7823,12 +7880,12 @@ BLD_REPLICATORS_DESC
 Only one replication focus can take effect in the empire at one time.'''
 
 BLD_PLANET_DRIVE
-Planetary Sternenstraße Drive
+Planetary Sternstraße Drive
 
 BLD_PLANET_DRIVE_DESC
 '''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
 
-Due to a lack of UI targeting, a second building is currently required on the other end of the Sternenstraße. This building will destroy itself immediately, so that the planet can move to a different target system later.
+Due to a lack of UI targeting, a second building is currently required on the other end of the Sternstraße. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
 To use this building, set the planet to Planet Drive focus, and construct a Planetary Beacon in an adjacent system. The planet will then be moved to that system.'''
 
@@ -7836,7 +7893,7 @@ BLD_PLANET_BEACON
 Planetary Beacon
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the planetary Sternenstraße drive. This building can be built at an outpost.
+Designates the target for the planetary Sternstraße drive. This building can be built at an outpost.
 
 BLD_ART_PLANET
 Künstlicher Planet
@@ -7866,7 +7923,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Sternenstraße Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
+This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Sternstraße Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -7880,7 +7937,7 @@ BLD_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulates the dimensional properties of adjacent Sternenstraßen. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the Sternenstraße in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
+Manipulates the dimensional properties of adjacent Sternstraßen. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the Sternstraße in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
 Stargate
@@ -7899,10 +7956,10 @@ BLD_GAS_GIANT_GEN_DESC
 A power generator designed to harvest the energy of a Gas Giant.'''
 
 BLD_COLONY_BASE
-Koloniesbase
+Siedlungsbase
 
 BLD_COLONY_BASE_DESC
-Erstellt ein Koloniesbase Schiff was zur Besiedlung eines Planetes vom gleichen System benützt werden kann. Kann nur auf Planeten gebaut werden die eine Bevölkerung von 3 oder mehr haben.
+Erstellt ein Siedlungsbase Schiff was zur Besiedlung eines Planetes vom gleichen System benützt werden kann. Kann nur auf Planeten gebaut werden die eine Bevölkerung von 3 oder mehr haben.
 
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
@@ -7912,7 +7969,7 @@ The outpost of the Experimentors, used for carrying out highly advanced experime
 BLD_NOVA_BOMB_ACTIVATOR
 Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
-Activates all Nova Bombs within one Sternenstraße jump.
+Activates all Nova Bombs within one Sternstraße jump.
 
 
 #############################################################
@@ -7920,7 +7977,7 @@ Activates all Nova Bombs within one Sternenstraße jump.
 #############################################################
 
 HULL_DESC
-'''Geschwindigkeit in Sternenstraße: %1%
+'''Geschwindigkeit in Sternstraße: %1%
 Treibstoff Fassungsvermögen: %2%
 Kampfgeschwindigkeit: %3%
 Struktur: %4%'''
@@ -8180,7 +8237,7 @@ FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Increases Sternenstraße Schnelligkeit by 10.
+'''Increases Sternstraße Schnelligkeit by 10.
 
 Better engine parts equate to better engines.'''
 
@@ -8188,7 +8245,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Sternenstraße Schnelligkeit by 15. 
+'''Increases Sternstraße Schnelligkeit by 15. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
@@ -8196,7 +8253,7 @@ FU_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternenstraße Schnelligkeit by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße Schnelligkeit by 20. 
 
 FU_BASIC_TANK
 Zusatz Triebstofftank
@@ -8348,7 +8405,7 @@ Besiedlungsmodul
 CO_COLONY_POD_DESC
 '''Grundlegende Einrichtungen für Siedler um die Reise zu einem neuen Planeten zu überleben. Ermöglicht es einem Schiff neue Welten zu besiedeln.
 
-Alle Kolonieschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
+Alle Siedlungschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
 
 CO_SUSPEND_ANIM_POD
 Kälteschlaf Besiedlungsmodul
@@ -8356,7 +8413,7 @@ Kälteschlaf Besiedlungsmodul
 CO_SUSPEND_ANIM_POD_DESC
 '''Siedler werden während der Reise im Kälteschlaf gehalten, was die Notwendigkeit zur Versorgung beseitigt und die Anzahl der Kolonisten, die transportiert werden können, dramatisch erhöht.
 
-Alle Kolonieschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
+Alle Siedlungschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
 
 CO_OUTPOST_POD
 Outpost Module
@@ -8404,7 +8461,7 @@ SP_NOVA_BOMB
 Nova Bomb
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one Sternenstraße jump away.
+A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one Sternstraße jump away.
 
 
 #############################################################
@@ -8673,10 +8730,10 @@ SH_XENTRONIUM_DESC
 A hull constructed primarily with xentronium. Though small, it has extremely high max structure.
 
 SH_COLONY_BASE
-Koloniesbase Rumpf
+Siedlungsbase Rumpf
 
 SH_COLONY_BASE_DESC
-Ein Rumpf konzipiert zum gründen einer Kolonie auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
+Ein Rumpf konzipiert zum gründen einer Siedlung auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
 
 SH_FLOATER_BODY
 Gebrechlichen Körper
@@ -8904,7 +8961,7 @@ GREAT_WEAPONS
 '''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.'''
+'''+++	Starts with [[tech SHP_WEAPON_2_3]] and three additional ships.'''
 
 BAD_POPULATION
 '''−	Arme Bevölkerung 75%'''
@@ -8921,7 +8978,6 @@ BROAD_EP
 NARROW_EP
 '''−	Narrow Planet Tolerance: flourishes on fewer types.'''
 
-
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -8931,10 +8987,10 @@ STANDARD_CONSTRUCTION_LABEL
 '''%1% Mittelmässige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
 
 STANDARD_COLONY_SUPPLY_LABEL
-'''%2% Mittelmässige Kolonieversorgung'''
+'''%2% Mittelmässige Siedlungversorgung'''
 
 STANDARD_OUTPOST_SUPPLY_LABEL
-'''%2% Mittelmässige Aussenpostenversorgung'''
+'''%2% Mittelmässige Außenpostenversorgung'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Gute Umgebung'''
@@ -9036,7 +9092,7 @@ INDEPENDENT_TROOP_LABEL
 '''Unabhängige Heimatwelt'''
 
 OUTPOST_TROOP_LABEL
-'''Aussenposten'''
+'''Außenposten'''
 
 VERY_BRIGHT_STAR
 '''Very bright star'''
@@ -9077,12 +9133,33 @@ EXCELLENT_VISION_LABEL
 FOCUS_PROTECTION_LABEL
 '''Protection Focus'''
 
+XENOPHOBIC_LABEL_SELF
+'''Xenophobic Frenzy (other species nearby)'''
 
+XENOPHOBIC_LABEL_TRITH_OTHER
+'''Xenophobic Harassment: Trith'''
+
+XENOPHOBIC_LABEL_EAXAW_OTHER
+'''Xenophobic Harassment: Eaxaw'''
 
 #############################################################
 ####                       T A G S                       ####
 #############################################################
 
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
+## in Census popup, and specifies order in which they will be displayed.
+## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
+## since those won't be displayed in the census anyway.  
+
+## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
+CENSUS_TAG_ORDER
+'''LITHIC
+ORGANIC
+PHOTOTROPHIC
+ROBOTIC
+SELF_SUSTAINING
+TELEPATHIC'''
+##STYLISH  // add to tag order list if ever this tag is given a function
 
 ANTIQUATED
 Antiquated
@@ -9110,3 +9187,38 @@ Telepathic
 
 ORBITAL
 Orbital
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+
+### Translator Note: the formatting of capitol name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capitol Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capitol Name Lists
+AI_CAPITOL_NAMES_BEGINNER
+'''Ivory Tower
+Nunnery
+Monastery
+Orphanage Planet'''
+
+AI_CAPITOL_NAMES_TURTLE
+'''Citadel
+Prison World'''
+
+AI_CAPITOL_NAMES_CAUTIOUS
+'''Bastion of the Brave,
+Stronghold'''
+
+AI_CAPITOL_NAMES_TYPICAL
+'''Haven
+Free Trade Zone'''
+AI_CAPITOL_NAMES_AGGRESSIVE
+'''Royal Demesne
+Imperial Court'''
+
+AI_CAPITOL_NAMES_MANIACAL
+'''Throne of Heaven,
+Glorious Revolutionary Planning Center, '''
+### End of Capitol Names Lists
