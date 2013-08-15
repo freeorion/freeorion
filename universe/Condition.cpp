@@ -977,14 +977,19 @@ namespace {
             case AFFIL_SELF:
                 return m_empire_id != ALL_EMPIRES && candidate->OwnedBy(m_empire_id);
                 break;
-            case AFFIL_ENEMY:
-                return m_empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(m_empire_id);
+            case AFFIL_ENEMY: {
+                if (m_empire_id == ALL_EMPIRES)
+                    return true;
+                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                return (status == DIPLO_WAR);
                 break;
+            }
             case AFFIL_ALLY: {
                 if (m_empire_id == ALL_EMPIRES)
                     return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
                 return (status == DIPLO_PEACE);
+                break;
             }
             case AFFIL_ANY:
                 return true;
