@@ -825,7 +825,7 @@ Hull
     starlaneSpeed = 90
     fuel = 2
     stealth = 10
-    structure = 11
+    structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -852,12 +852,14 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
+                SetDetection Value + 10
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 5)
     ]
     icon = "icons/ship_hulls/organic_hull_small.png"
     graphic = "hulls_design/organic_hull.png"
@@ -906,7 +908,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 0
-    structure = 20
+    structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -937,6 +939,12 @@ Hull
             scope = Source
             activation = Source
             effects = SetDetection Value + 50
+            
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
     ]
     icon = "icons/ship_hulls/endomorphic_hull_small.png"
     graphic = "hulls_design/endomorphic_hull.png"
@@ -948,7 +956,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 10
-    structure = 20
+    structure = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -979,12 +987,14 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
+                SetDetection Value + 50
             ]
-
+            
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 50
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 10)
     ]
     icon = "icons/ship_hulls/symbiotic_hull_small.png"
     graphic = "hulls_design/symbiotic_hull.png"
@@ -996,7 +1006,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 30
+    structure = 5
     slots = [
         Slot type = External position = (0.30, 0.50)
         Slot type = External position = (0.45, 0.50)
@@ -1028,12 +1038,14 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
+                SetDetection Value + 50
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 50
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
     ]
     icon = "icons/ship_hulls/protoplasmic_hull_small.png"
     graphic = "hulls_design/protoplasmic_hull.png"
@@ -1045,7 +1057,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 20
+    structure = 5
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1083,12 +1095,14 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
+                SetDetection Value + 50
             ]
-
+            
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 50
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
     ]
     icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/endosymbiotic_hull.png"
@@ -1100,7 +1114,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 0
-    structure = 25
+    structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)        
@@ -1132,6 +1146,12 @@ Hull
             scope = Source
             activation = Source
             effects = SetDetection Value + 75
+            
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 20)
     ]
     icon = "icons/ship_hulls/ravenous_hull_small.png"
     graphic = "hulls_design/ravenous_hull.png"
@@ -1143,7 +1163,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 40
+    structure = 15
     slots = [
         Slot type = External position = (0.30, 0.35)
         Slot type = External position = (0.50, 0.35)
@@ -1176,12 +1196,14 @@ Hull
             effects = [
                 SetStructure Target.MaxStructure
                 SetFuel Value + 0.2
+                SetDetection Value + 75
             ]
-
+            
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 75
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
     ]
     icon = "icons/ship_hulls/bio_adaptive_hull_small.png"
     graphic = "hulls_design/bio_adaptive_hull.png"
@@ -1193,7 +1215,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 57
+    structure = 12
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.25, 0.15)
@@ -1233,6 +1255,7 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
+                SetDetection Value + 50
             ]
     
         EffectsGroup
@@ -1250,11 +1273,12 @@ Hull
                 SetStealth Value + 20
                 SetDetection Value + 50
             ]
-
+            
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 50
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure Value + min(Source.Age*0.2, 45)
     ]
     icon = "icons/ship_hulls/sentient_hull_small.png"
     graphic = "hulls_design/sentient_hull.png"

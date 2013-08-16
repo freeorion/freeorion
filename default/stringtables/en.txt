@@ -9204,6 +9204,9 @@ XENOPHOBIC_LABEL_TRITH_OTHER
 XENOPHOBIC_LABEL_EAXAW_OTHER
 '''Xenophobic Harassment: Eaxaw'''
 
+ORGANIC_GROWTH
+'''Organic Growth'''
+
 #############################################################
 ####                       T A G S                       ####
 #############################################################

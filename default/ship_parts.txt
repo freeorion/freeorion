@@ -251,7 +251,7 @@ Part
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/crystal_plating.png"
+    icon = "icons/ship_parts/diamond_plating.png"
 
 Part
     name = "AR_XENTRONIUM_PLATE"
