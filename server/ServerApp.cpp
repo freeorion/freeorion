@@ -22,6 +22,7 @@
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/SitRepEntry.h"
+#include "../util/ScopedTimer.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -31,6 +32,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/thread/thread.hpp>
+
 
 #include <ctime>
 
@@ -2126,6 +2128,8 @@ namespace {
 }
 
 void ServerApp::PreCombatProcessTurns() {
+
+    ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
     ObjectMap& objects = m_universe.Objects();
 
 
@@ -2253,6 +2257,7 @@ void ServerApp::PreCombatProcessTurns() {
 }
 
 void ServerApp::ProcessCombats() {
+    ScopedTimer timer("ServerApp::ProcessCombats", true);
     Logger().debugStream() << "ServerApp::ProcessCombats";
     m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
 
@@ -2374,6 +2379,9 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 }
 
 void ServerApp::PostCombatProcessTurns() {
+
+    ScopedTimer timer("ServerApp::PostCombatProcessTurns", true);
+
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
