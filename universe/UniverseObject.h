@@ -6,6 +6,7 @@
 
 #include "Enums.h"
 #include "TemporaryPtr.h"
+#include "Predicates.h"
 #include "EnableTemporaryFromThis.h"
 #include "../util/Export.h"
 
@@ -85,8 +86,7 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
-    virtual TemporaryPtr<UniverseObject>
-                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;
 
     int                         CreationTurn() const;               ///< returns game turn on which object was created
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
@@ -133,7 +133,7 @@ public:
 
     /** Performs the movement that this object is responsible for this object's
       * actions during the movement phase of a turn. */
-    virtual void            MovementPhase(TemporaryPtr<UniverseObject> obj) {};
+    virtual void            MovementPhase() {};
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
@@ -173,7 +173,7 @@ protected:
       * is visible to the empire with the specified \a empire_id as determined
       * by the detection and visibility system.  Caller takes ownership of
       * returned pointee. */
-    virtual UniverseObject* Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const = 0;
+    virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
     //@}
 
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects

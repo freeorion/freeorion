@@ -2385,7 +2385,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             if (TemporaryPtr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
-                if (UniverseObject* new_obj = full_object->Clone(full_object, empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
+                if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
                     known_object_map.Insert(new_obj);
             }
 

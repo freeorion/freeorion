@@ -128,7 +128,7 @@ std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::vec
 std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<TemporaryPtr<const UniverseObject> > result;
     for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
-        if (TemporaryPtr<UniverseObject> obj = it->Accept(*it, visitor))
+        if (TemporaryPtr<UniverseObject> obj = it->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
     return result;
@@ -137,7 +137,7 @@ std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const Un
 std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
     std::vector<TemporaryPtr<UniverseObject> > result;
     for (iterator<> it = begin(); it != end(); ++it) {
-        if (TemporaryPtr<UniverseObject> obj = it->Accept(*it, visitor))
+        if (TemporaryPtr<UniverseObject> obj = it->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
     return result;
@@ -146,7 +146,7 @@ std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const Universe
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> result;
     for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
-        if (it->Accept(*it, visitor))
+        if (it->Accept(visitor))
             result.push_back(it->ID());
     }
     return result;

@@ -32,7 +32,7 @@ public:
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
 
     virtual TemporaryPtr<UniverseObject>
-                            Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+                            Accept(const UniverseObjectVisitor& visitor) const;
 
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
@@ -66,10 +66,13 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~Building() {}
 
-    virtual Building*       Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
+    virtual Building*       Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
     //@}
 
 private:
+    TemporaryPtr<Building>          TemporaryFromThis()         { return static_ptr_cast<Building>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const Building>    TemporaryFromThis() const   { return static_ptr_cast<const Building>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+
     std::string m_building_type;
     int         m_planet_id;
     bool        m_ordered_scrapped;

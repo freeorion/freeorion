@@ -100,7 +100,7 @@ public:
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
 
-    virtual TemporaryPtr<UniverseObject>Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -111,7 +111,7 @@ public:
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
     
-    virtual void            MovementPhase(TemporaryPtr<UniverseObject> obj);
+    virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     void                    AddShips(const std::vector<int>& ship_ids);     ///< adds the ships to the fleet
@@ -156,7 +156,7 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~Fleet() {}
 
-    virtual Fleet*          Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
+    virtual Fleet*          Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
     //@}
 
 private:
@@ -165,6 +165,9 @@ private:
 
     ///< returns the subset of m_ships that is visible to empire with id \a empire_id
     ShipIDSet               VisibleContainedObjects(int empire_id) const;
+
+    TemporaryPtr<Fleet>         TemporaryFromThis()         { return static_ptr_cast<Fleet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const Fleet>   TemporaryFromThis() const   { return static_ptr_cast<const Fleet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
 
     ShipIDSet                   m_ships;
     int                         m_moving_to;

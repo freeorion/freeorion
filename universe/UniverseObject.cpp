@@ -246,12 +246,8 @@ Visibility UniverseObject::GetVisibility(int empire_id) const
 const std::string& UniverseObject::PublicName(int empire_id) const
 { return m_name; }
 
-TemporaryPtr<UniverseObject> UniverseObject::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<UniverseObject>(this_obj));
-}
+TemporaryPtr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<UniverseObject>(TemporaryFromThis())); }
 
 void UniverseObject::SetID(int id) {
     m_id = id;

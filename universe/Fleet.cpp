@@ -44,18 +44,14 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     SetOwner(owner);
 }
 
-Fleet* Fleet::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
-    if (this != obj) {
-        Logger().debugStream() << "Fleet::Clone passed a TemporaryPtr to an object other than this.";
-    }
-
+Fleet* Fleet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Fleet* retval = new Fleet();
-    retval->Copy(obj, empire_id);
+    retval->Copy(TemporaryFromThis(), empire_id);
     return retval;
 }
 
@@ -643,12 +639,8 @@ bool Fleet::UnknownRoute() const {
     return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID;
 }
 
-TemporaryPtr<UniverseObject> Fleet::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<Fleet>(static_ptr_cast<const Fleet>(this_obj)));
-}
+TemporaryPtr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<Fleet>(TemporaryFromThis())); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
     //Logger().debugStream() << "Fleet::SetRoute() ";
@@ -825,24 +817,18 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
     m_arrival_starlane = prev; // see comment for ArrivalStarlane()
 }
 
-void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
+void Fleet::MovementPhase() {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
-    TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(obj);
-    if (fleet != this) {
-        Logger().errorStream() << "Fleet::MovementPhase was passed a TemporaryPtr different from itself.";
-        return;
-    }
-
-    Empire* empire = Empires().Lookup(fleet->Owner());
+    Empire* empire = Empires().Lookup(Owner());
     std::set<int> supply_unobstructed_systems;
     if (empire)
         supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(), empire->SupplyUnobstructedSystems().end());
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (empire && empire->SystemHasFleetSupply(fleet->SystemID())) {
-        for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
+    if (empire && empire->SystemHasFleetSupply(SystemID())) {
+        for (Fleet::const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
             if (TemporaryPtr<Ship> ship = GetShip(*ship_it)) {
                 ship->Resupply();
                 if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
@@ -851,9 +837,9 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
         }
     }
 
-    TemporaryPtr<System> current_system = GetSystem(fleet->SystemID());
+    TemporaryPtr<System> current_system = GetSystem(SystemID());
     TemporaryPtr<const System> initial_system = current_system;
-    std::list<MovePathNode> move_path = fleet->MovePath();
+    std::list<MovePathNode> move_path = MovePath();
     std::list<MovePathNode>::const_iterator it = move_path.begin();
     std::list<MovePathNode>::const_iterator next_it = it;
     if (next_it != move_path.end())
@@ -866,9 +852,9 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
         ///update m_arrival_starlane if no blockade, if needed
         // blockade debug logging
         //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at current_system " << current_system->Name() << "("<<SystemID()<<")";
-        if (supply_unobstructed_systems.find(fleet->SystemID()) != supply_unobstructed_systems.end()) {
+        if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
                 //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at current_system " << current_system->Name() << "("<<SystemID()<<")";
-                fleet->m_arrival_starlane = fleet->SystemID();//allows departure via any starlane
+                m_arrival_starlane = SystemID();//allows departure via any starlane
         }
         // in a system.  if there is no system after the current one in the
         // path, or the current and next nodes have the same system id, that
@@ -879,22 +865,22 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
         } else if (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) {
             stopped = true;
             //Logger().debugStream() << "Fleet::MovementPhase stopping due to doubled system at start of path";
-        } else if (fleet->m_arrival_starlane != fleet->SystemID()) {
+        } else if (m_arrival_starlane != SystemID()) {
             int next_sys_id;
             if (next_it->object_id != INVALID_OBJECT_ID) {
                 next_sys_id = next_it->object_id;
             } else {
                 next_sys_id = next_it->lane_end_id;
             }
-            stopped = fleet->BlockadedAtSystem(fleet->SystemID(), next_sys_id);
+            stopped = BlockadedAtSystem(SystemID(), next_sys_id);
         }
 
         if (stopped) {
             // fuel regeneration for ships in stationary fleet
-            if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
-                fleet->FinalDestinationID() == fleet->SystemID())
+            if (FinalDestinationID() == INVALID_OBJECT_ID ||
+                FinalDestinationID() == SystemID())
             {
-                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
+                for (Fleet::const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
                     if (TemporaryPtr<Ship> ship = GetShip(*ship_it))
                         if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                             fuel_meter->AddToCurrent(0.1001f);
@@ -904,8 +890,8 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
             }
             return;
         } else {
-            fleet->m_arrival_starlane = fleet->SystemID();
-            fleet->m_prev_system = fleet->SystemID();
+            m_arrival_starlane = SystemID();
+            m_prev_system = SystemID();
         }
     }
 
@@ -939,10 +925,10 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
             // node is a system.  explore system for all owners of this fleet
             if (empire) {
                 empire->AddExploredSystem(it->object_id);
-                empire->RecordPendingLaneUpdate(it->object_id, fleet->m_prev_system);  // specifies the lane from it->object_id back to m_prev_system is available
+                empire->RecordPendingLaneUpdate(it->object_id, m_prev_system);  // specifies the lane from it->object_id back to m_prev_system is available
             }
 
-            fleet->m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
+            m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
             bool resupply_here = empire ? empire->SystemHasFleetSupply(system->ID()) : false;
 
@@ -950,7 +936,7 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
             if (resupply_here) {
                 //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
-                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
+                for (Fleet::const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
                     TemporaryPtr<Ship> ship = GetShip(*ship_it);
                     assert(ship);
                     ship->Resupply();
@@ -959,12 +945,12 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
 
 
             if (node_is_next_stop) {                    // is system the last node reached this turn?
-                system->Insert(fleet);                       // fleet ends turn at this node.  insert fleet into system
+                system->Insert(TemporaryFromThis());                       // fleet ends turn at this node.  insert fleet into system
                 current_system = system;
                 // blockade debug logging
                 //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at next stop node system " << current_system->Name() << "("<<SystemID()<<")";
-                if (supply_unobstructed_systems.find(fleet->SystemID()) != supply_unobstructed_systems.end()) {
-                    fleet->m_arrival_starlane = fleet->SystemID();//allows departure via any starlane
+                if (supply_unobstructed_systems.find(SystemID()) != supply_unobstructed_systems.end()) {
+                    m_arrival_starlane = SystemID();//allows departure via any starlane
                     //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at (next stop node) system " << system->Name() << "("<<system->ID()<<")";
                 }
                 //Logger().debugStream() << "... ... inserted fleet into system";
@@ -972,7 +958,7 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
             } else {
                 // fleet will continue past this system this turn.
                 //Logger().debugStream() << "... ... moved fleet to system (not inserted)";
-                fleet->m_arrival_starlane = fleet->m_prev_system;
+                m_arrival_starlane = m_prev_system;
                 //Logger().debugStream() << "Fleet::MovementPhase setting m_arrival_starlane for Fleet "<< ID() << " to system just passed: " << system->Name() << "("<<system->ID()<<")";
                 if (!resupply_here) {
                     fuel_consumed += 1.0;
@@ -984,10 +970,10 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
 
         } else {
             // node is not a system.
-            fleet->m_arrival_starlane = fleet->m_prev_system;
+            m_arrival_starlane = m_prev_system;
             //Logger().debugStream() << "Fleet::MovementPhase setting m_arrival_starlane for Fleet "<< ID() << " mid starlane from system ID " << m_prev_system;
             if (node_is_next_stop) {                    // node is not a system, but is it the last node reached this turn?
-                fleet->MoveTo(it->x, it->y);                       // fleet ends turn at this node.  move fleet here
+                MoveTo(it->x, it->y);                   // fleet ends turn at this node.  move fleet here
                 //Logger().debugStream() << "... ... moved fleet to position";
                 break;
             }
@@ -1000,26 +986,26 @@ void Fleet::MovementPhase(TemporaryPtr<UniverseObject> obj) {
     //    Logger().debugStream() << "... (" << it2->x << ", " << it2->y << ") at object id: " << it2->object_id << " eta: " << it2->eta << (it2->turn_end ? " (end of turn)" : " (during turn)");
 
     // update next system
-    if (fleet->m_moving_to != fleet->SystemID() && next_it != move_path.end() && it != move_path.end()) {
+    if (m_moving_to != SystemID() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
             if (GetSystem(next_it->object_id)) {
                 //Logger().debugStream() << "___ setting m_next_system to " << next_it->object_id;
-                fleet->m_next_system = next_it->object_id;
+                m_next_system = next_it->object_id;
                 break;
             }
         }
 
     } else {
         // no more systems on path
-        fleet->m_arrived_this_turn = current_system != initial_system;
-        fleet->m_moving_to = fleet->m_next_system = fleet->m_prev_system = INVALID_OBJECT_ID;
+        m_arrived_this_turn = current_system != initial_system;
+        m_moving_to = m_next_system = m_prev_system = INVALID_OBJECT_ID;
     }
 
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0) {
-        for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it)
+        for (Fleet::const_iterator ship_it = begin(); ship_it != end(); ++ship_it)
             if (TemporaryPtr<Ship> ship = GetShip(*ship_it))
                 if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                     meter->AddToCurrent(-fuel_consumed);

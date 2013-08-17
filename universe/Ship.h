@@ -47,7 +47,7 @@ public:
     const ConsumablesMap&       Missiles() const            { return m_missiles; }
 
     virtual TemporaryPtr<UniverseObject>
-                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+                                Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
@@ -103,13 +103,16 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~Ship() {}
 
-    virtual Ship*   Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
+    virtual Ship*   Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
     //@}
 
 
 private:
     virtual void    PopGrowthProductionResearchPhase();
     virtual void    ClampMeters();
+
+    TemporaryPtr<Ship>          TemporaryFromThis()         { return static_ptr_cast<Ship>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const Ship>    TemporaryFromThis() const   { return static_ptr_cast<const Ship>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
 
     int             m_design_id;
     int             m_fleet_id;

@@ -108,18 +108,14 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     }
 }
 
-Ship* Ship::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
-    if (this != obj) {
-        Logger().debugStream() << "Ship::Clone passed a TemporaryPtr to an object other than this.";
-    }
-
+Ship* Ship::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Ship* retval = new Ship();
-    retval->Copy(obj, empire_id);
+    retval->Copy(TemporaryFromThis(), empire_id);
     return retval;
 }
 
@@ -325,12 +321,8 @@ const std::string& Ship::PublicName(int empire_id) const {
         return UserString("SHIP");
 }
 
-TemporaryPtr<UniverseObject> Ship::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<Ship>(static_ptr_cast<const Ship>(this_obj)));
-}
+TemporaryPtr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<Ship>(TemporaryFromThis())); }
 
 float Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //if (type == METER_FUEL) {

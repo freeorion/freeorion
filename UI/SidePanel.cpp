@@ -2229,7 +2229,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
             int             planet_id = panel->PlanetID();
             TemporaryPtr<const Planet>   planet =    GetPlanet(planet_id);
 
-            if (planet && planet->Accept(planet, *m_valid_selection_predicate)) {
+            if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
                 //std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
             } else {

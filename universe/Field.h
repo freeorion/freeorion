@@ -24,7 +24,7 @@ public:
 
     const std::string&          FieldTypeName() const { return m_type_name; }
     virtual TemporaryPtr<UniverseObject>
-                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+                                Accept(const UniverseObjectVisitor& visitor) const;
 
     bool                        InField(TemporaryPtr<const UniverseObject> obj) const;
     bool                        InField(double x, double y) const;
@@ -48,11 +48,14 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~Field() {}
 
-    virtual Field*              Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Field
+    virtual Field*              Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Field
     //@}
 
 private:
     virtual void                ClampMeters();
+
+    TemporaryPtr<Field>         TemporaryFromThis()         { return static_ptr_cast<Field>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const Field>   TemporaryFromThis() const   { return static_ptr_cast<const Field>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
 
     std::string     m_type_name;
 

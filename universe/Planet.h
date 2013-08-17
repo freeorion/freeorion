@@ -125,7 +125,7 @@ public:
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
     virtual TemporaryPtr<UniverseObject>
-                                Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+                                Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual float               InitialMeterValue(MeterType type) const;
     virtual float               CurrentMeterValue(MeterType type) const;
@@ -182,7 +182,7 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~Planet() {}
 
-    virtual Planet*         Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
+    virtual Planet*         Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
     //@}
 
 private:
@@ -197,6 +197,9 @@ private:
     virtual void            AddMeter(MeterType meter_type)      { UniverseObject::AddMeter(meter_type); }
 
     std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
+
+    TemporaryPtr<Planet>        TemporaryFromThis()         { return static_ptr_cast<Planet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const Planet>  TemporaryFromThis() const   { return static_ptr_cast<const Planet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
 
     PlanetType      m_type;
     PlanetType      m_original_type;

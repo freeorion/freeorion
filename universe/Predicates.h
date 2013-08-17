@@ -114,7 +114,7 @@ TemporaryPtr<T1> universe_object_ptr_cast(TemporaryPtr<T2> ptr)
 
     typedef UniverseObjectSubclassVisitor<T1ConstFreeType> VisitorType;
 
-    return static_ptr_cast<T1ConstFreeType>(ptr->Accept(ptr, VisitorType()));
+    return static_ptr_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
 }
 
 template <class T>

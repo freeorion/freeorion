@@ -102,18 +102,14 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
-    if (this != obj) {
-        Logger().debugStream() << "Planet::Clone passed a TemporaryPtr to an object other than this.";
-    }
-
+Planet* Planet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Planet* retval = new Planet();
-    retval->Copy(obj, empire_id);
+    retval->Copy(TemporaryFromThis(), empire_id);
     return retval;
 }
 
@@ -435,12 +431,8 @@ std::vector<int> Planet::FindObjectIDs() const {
     return retval;
 }
 
-TemporaryPtr<UniverseObject> Planet::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<Planet>(static_ptr_cast<const Planet>(this_obj)));
-}
+TemporaryPtr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<Planet>(TemporaryFromThis())); }
 
 Meter* Planet::GetMeter(MeterType type)
 { return UniverseObject::GetMeter(type); }

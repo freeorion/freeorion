@@ -101,7 +101,7 @@ public:
     int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 
     virtual TemporaryPtr<UniverseObject>
-                            Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const;
+                            Accept(const UniverseObjectVisitor& visitor) const;
 
     const std::string&      OverlayTexture() const      { return m_overlay_texture; }
     double                  OverlaySize() const         { return m_overlay_size; }      ///< size in universe
@@ -185,7 +185,7 @@ protected:
     template <class T> friend void boost::checked_delete(T* x);
     ~System() {}
 
-    virtual System*         Clone(TemporaryPtr<const UniverseObject> obj, int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
+    virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
     //@}
 
 private:
@@ -195,6 +195,9 @@ private:
 
     /** removes object \a obj from this system. */
     void                    Remove(TemporaryPtr<UniverseObject> obj);
+
+    TemporaryPtr<System>        TemporaryFromThis()         { return static_ptr_cast<System>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
+    TemporaryPtr<const System>  TemporaryFromThis() const   { return static_ptr_cast<const System>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
 
     StarType        m_star;
     int             m_orbits;
@@ -252,7 +255,7 @@ std::vector<int> System::FindObjectIDs() const {
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
-            if (obj->Accept(obj, UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
     return retval;
@@ -264,7 +267,7 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit) const {
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
         if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
-            if (obj->Accept(obj, UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
     return retval;

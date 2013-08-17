@@ -41,18 +41,14 @@ Building::Building(int empire_id, const std::string& building_type,
     UniverseObject::Init();
 }
 
-Building* Building::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
-    if (this != obj) {
-        Logger().debugStream() << "Building::Clone passed a TemporaryPtr to an object other than this.";
-    }
-
+Building* Building::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     Building* retval = new Building();
-    retval->Copy(obj, empire_id);
+    retval->Copy(TemporaryFromThis(), empire_id);
     return retval;
 }
 
@@ -114,12 +110,8 @@ std::string Building::Dump() const {
     return os.str();
 }
 
-TemporaryPtr<UniverseObject> Building::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<Building>(static_ptr_cast<const Building>(this_obj)));
-}
+TemporaryPtr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<Building>(TemporaryFromThis())); }
 
 void Building::SetPlanetID(int planet_id) {
     if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))

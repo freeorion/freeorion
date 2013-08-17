@@ -386,7 +386,7 @@ namespace ValueRef {
                 return INVALID_UNIVERSE_OBJECT_TYPE;
             }
             ObjectTypeVisitor v;
-            if (object->Accept(object, v))
+            if (object->Accept(v))
                 return v.m_type;
             else if (dynamic_ptr_cast<const PopCenter>(object))
                 return OBJ_POP_CENTER;

@@ -2210,7 +2210,7 @@ void ServerApp::PreCombatProcessTurns() {
         // save for possible SitRep generation after moving...
         TemporaryPtr<Fleet> fleet = *it;
         if (fleet)
-            fleet->MovementPhase(fleet);
+            fleet->MovementPhase();
     }
 
     // post-movement visibility update

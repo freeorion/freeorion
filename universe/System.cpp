@@ -62,18 +62,14 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     UniverseObject::Init();
 }
 
-System* System::Clone(TemporaryPtr<const UniverseObject> obj, int empire_id) const {
-    if (this != obj) {
-        Logger().debugStream() << "System::Clone passed a TemporaryPtr to an object other than this.";
-    }
-
+System* System::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
     System* retval = new System();
-    retval->Copy(obj, empire_id);
+    retval->Copy(TemporaryFromThis(), empire_id);
     return retval;
 }
 
@@ -296,7 +292,7 @@ std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) con
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second)) {
-            if (obj->Accept(obj, visitor))
+            if (obj->Accept(visitor))
                 retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
@@ -310,7 +306,7 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
         if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second)) {
-            if (obj->Accept(obj, visitor))
+            if (obj->Accept(visitor))
                 retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDsInOrbit couldn't get Object with ID " << it->second;
@@ -341,12 +337,8 @@ System::const_lane_iterator System::begin_lanes() const
 System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
-TemporaryPtr<UniverseObject> System::Accept(TemporaryPtr<const UniverseObject> this_obj, const UniverseObjectVisitor& visitor) const {
-    if (this_obj != this)
-        return TemporaryPtr<UniverseObject>();
-
-    return visitor.Visit(const_ptr_cast<System>(static_ptr_cast<const System>(this_obj)));
-}
+TemporaryPtr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(const_ptr_cast<System>(TemporaryFromThis())); }
 
 int System::Insert(TemporaryPtr<UniverseObject> obj)
 { return Insert(obj, -1); }
