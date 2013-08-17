@@ -6598,7 +6598,7 @@ SHP_SPACE_FLUX_DRIVE_DESC
 Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects.
 
 SHP_CONTGRAV_MAINT
-Contra-Gravitational Maintenance
+Contra Gravitational Maintenance
 
 SHP_CONTGRAV_MAINT_DESC
 When the mass of the ship surpasses a certain threshold, it becomes necessary to consider the gravitational stresses on vital architectural points in the ship's structure. These points will be unable to withstand the gravitational stresses and collapse, destroying the vessel. This necessitates nearly constant maintenance of these points to avoid total structural failure.
@@ -6610,7 +6610,7 @@ SHP_NANOROBO_MAINT_DESC
 Just as nanorobots can be used for production, so also can they be used for maintenance. A hull with a complement of centrally organized nanite engineers would be able to rapidly repair damage, even during combat. Such machines would have great difficulty distinguishing organic beings from a part of the hull in need of repair however, and as such this concept could only be applied to automated hulls.
 
 SHP_MASSPROP_SPEC
-Mass-Propulsion Specialization
+Mass Propulsion Specialization
 
 SHP_MASSPROP_SPEC_DESC
 Traditional propulsion devices operate well on objects of relatively low mass. However, when the mass of a ship approaches that of a small moon, ordinary methods of propulsion are very clumsy and require tremendous amounts of energy. A new approach to propulsion, taking into account the size of the object in question as a fundamental aspect of the system, could allow such vessels to have useful mobility.
