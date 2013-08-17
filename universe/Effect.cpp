@@ -156,12 +156,8 @@ namespace {
     bool PartMatchesEffect(const PartType& part,
                            ShipPartClass part_class,
                            CombatFighterType fighter_type,
-                           const std::string& part_name,
-                           ShipSlotType slot_type)
+                           const std::string& part_name)
     {
-        if (slot_type != INVALID_SHIP_SLOT_TYPE && !part.CanMountInSlotType(slot_type))
-            return false;
-
         if (!part_name.empty())
             return part_name == part.Name();
 
@@ -725,12 +721,10 @@ std::string SetMeter::Dump() const {
 ///////////////////////////////////////////////////////////
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    ShipPartClass part_class,
-                                   const ValueRef::ValueRefBase<double>* value,
-                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+                                   const ValueRef::ValueRefBase<double>* value) :
     m_part_class(part_class),
     m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
     m_part_name(),
-    m_slot_type(slot_type),
     m_meter(meter),
     m_value(value)
 {
@@ -740,24 +734,20 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
 
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    CombatFighterType fighter_type,
-                                   const ValueRef::ValueRefBase<double>* value,
-                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+                                   const ValueRef::ValueRefBase<double>* value) :
     m_part_class(INVALID_SHIP_PART_CLASS),
     m_fighter_type(fighter_type),
     m_part_name(),
-    m_slot_type(slot_type),
     m_meter(meter),
     m_value(value)
 {}
 
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    const std::string& part_name,
-                                   const ValueRef::ValueRefBase<double>* value,
-                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+                                   const ValueRef::ValueRefBase<double>* value) :
     m_part_class(INVALID_SHIP_PART_CLASS),
     m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
     m_part_name(part_name),
-    m_slot_type(slot_type),
     m_meter(meter),
     m_value(value)
 {}
@@ -807,7 +797,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
 
         // verify that found part matches the target part type information for
         // this effect: same name, same class and slot type, or same fighter type
-        if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
+        if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name)) {
             double val = m_value->Eval(ScriptingContext(context, meter->Current()));
             meter->SetCurrent(val);
         }
@@ -874,9 +864,6 @@ std::string SetShipPartMeter::Dump() const {
         retval += " ???";
 
     retval += " value = " + m_value->Dump();
-
-    if (m_slot_type != INVALID_SHIP_SLOT_TYPE)
-        retval += " slottype = " + lexical_cast<std::string>(m_slot_type);
 
     return retval;
 }

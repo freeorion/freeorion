@@ -197,22 +197,19 @@ public:
         there is a ship meter (i.e. specifying PC_FUEL would be illegal). */
     SetShipPartMeter(MeterType meter_type,
                      ShipPartClass part_class,
-                     const ValueRef::ValueRefBase<double>* value,
-                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+                     const ValueRef::ValueRefBase<double>* value);
 
     /** Affects the \a meter_type meters that belong to all PC_FIGHTERS parts
         of type \a fighter_type. */
     SetShipPartMeter(MeterType meter_type,
                      CombatFighterType fighter_type,
-                     const ValueRef::ValueRefBase<double>* value,
-                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+                     const ValueRef::ValueRefBase<double>* value);
 
     /** Affects the \a meter_type meters that belong to all parts named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
                      const std::string& part_name,
-                     const ValueRef::ValueRefBase<double>* value,
-                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+                     const ValueRef::ValueRefBase<double>* value);
 
     virtual ~SetShipPartMeter();
 
@@ -220,14 +217,12 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
     const std::string&  GetPartName() const {return m_part_name;}
-    ShipSlotType        GetShipSlotType() const {return m_slot_type;}
     MeterType           GetMeterType() const {return m_meter;};
 
 private:
     ShipPartClass                         m_part_class;
     CombatFighterType                     m_fighter_type;
     std::string                           m_part_name;
-    ShipSlotType                          m_slot_type;
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_value;
 
@@ -892,7 +887,6 @@ void Effect::SetShipPartMeter::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(m_part_class)
         & BOOST_SERIALIZATION_NVP(m_fighter_type)
         & BOOST_SERIALIZATION_NVP(m_part_name)
-        & BOOST_SERIALIZATION_NVP(m_slot_type)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value);
 }

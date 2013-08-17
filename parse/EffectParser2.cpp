@@ -49,20 +49,17 @@ namespace {
 
             set_ship_part_meter_suffix_1
                 =    parse::label(PartClass_token) >> parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
-                >    parse::label(Value_token)     >  double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_token)  >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _d, _1) ]
+                >    parse::label(Value_token)     >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _1) ]
                 ;
 
             set_ship_part_meter_suffix_2
                 =    parse::label(FighterType_token) >> parse::enum_parser<CombatFighterType>() [ _b = _1 ]
-                >    parse::label(Value_token)       >  double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_token)    >  parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _d, _1) ]
+                >    parse::label(Value_token)       >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _1) ]
                 ;
 
             set_ship_part_meter_suffix_3
                 =    parse::label(PartName_token) > tok.string [ _c = _1 ]
-                >    parse::label(Value_token)    > double_value_ref [ _d = _1 ]
-                >    parse::label(SlotType_token) > parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _d, _1) ]
+                >    parse::label(Value_token)    > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _1) ]
                 ;
 
             set_empire_stockpile
@@ -156,8 +153,7 @@ namespace {
             qi::locals<
                 ShipPartClass,
                 CombatFighterType,
-                std::string,
-                ValueRef::ValueRefBase<double>*
+                std::string
             >,
             parse::skipper_type
         > set_ship_part_meter_suffix_rule;
