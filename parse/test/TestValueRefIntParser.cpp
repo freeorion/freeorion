@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser1) {
     // 1
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation2->LHS()));
     value = dynamic_cast<const ValueRef::Constant<int>*>(operation2->LHS());
-    BOOST_CHECK_EQUAL(value->Value(), 2);
+    BOOST_CHECK_EQUAL(value->Value(), 1);
 
     // 2
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->RHS()));
@@ -282,8 +282,8 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser2) {
     BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
     // 1
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->RHS()));
-    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 1);
 
     // 2
@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser4) {
 
     // 2
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->LHS()));
-    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS());
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 2);
 
     // -7

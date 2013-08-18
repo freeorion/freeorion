@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser1) {
     BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::NEGATE);
 
     // 1.2
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>*), typeid(*operation2->LHS()));
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->LHS()));
     value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 1.2);
 
@@ -304,8 +304,8 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser2) {
     BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
 
     // 1.1
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->RHS()));
-    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 1.1);
 
     // 2.8
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser4) {
 
     // 2.9
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
-    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS());
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 2.9);
 
     // -7.4
@@ -560,27 +560,38 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParserMalformed) {
     // XXX: Is a trailing dot a valid real number?
     BOOST_CHECK_THROW(parse("5.", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("1.1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("-1. +", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("-5. 2.1", result), std::runtime_error);
     BOOST_CHECK(!result);
-
-    BOOST_CHECK_THROW(parse("5. + - - 2.2", result), std::runtime_error);
-    BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("5.2 *", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("* 5.11", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("7.67 / * 5.47", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("7.84 - 5.2 * .3 / - + .22", result), std::runtime_error);
     BOOST_CHECK(!result);
