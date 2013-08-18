@@ -199,6 +199,20 @@ BOOST_AUTO_TEST_CASE(DoubleLiteralParserNegativeBracketedReal) {
     BOOST_CHECK_EQUAL(value->Value(), 6754.2);
 }
 
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserSineOperation) {
+    // XXX: sin not documented, radians or degree as input?
+    BOOST_CHECK(parse("sin(90.0)", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::SINE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 90.0);
+}
+
 // XXX value_ref_parser_rule<double> throws an expectation_failure, the enum parser does not. is this intended?
 BOOST_AUTO_TEST_CASE(DoubleLiteralParserMalformed) {
     BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
