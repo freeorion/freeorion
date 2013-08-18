@@ -113,6 +113,10 @@ void initialize_expression_parsers(
                     > expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] > ')'
                 )
             |   (
+                    lit('-') > function_expr
+                    [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
+                )
+            |   (
                     primary_expr [ _val = _1 ]
                 )
             )
@@ -164,10 +168,6 @@ void initialize_expression_parsers(
                         )
                     )
                     [ _val = _a ]
-                )
-            |   (
-                    lit('-') > multiplicative_expr
-                    [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
                 )
             |   (
                     multiplicative_expr [ _val = _1 ]
