@@ -1,7 +1,5 @@
 #include <boost/test/unit_test.hpp>
 
-#include <stack>
-
 #include "ValueRefParser.h"
 #include "universe/ValueRef.h"
 #include "CommonTest.h"
@@ -17,35 +15,30 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
         delete result;
     }
 
-void assertion_result(bool passed) {
-    if(!passed && result) {
-        std::stack<const ValueRef::ValueRefBase<int>*> stack;
-        stack.push(result);
-        size_t depth = 0;
+    void assertion_result(bool passed) {
+        if(!passed && result) {
+            printTree(result, 0);
 
-        while(!stack.empty()) {
-            const ValueRef::ValueRefBase<int>* top = stack.top();
-            stack.pop();
-            if(operation1 = dynamic_cast<const ValueRef::Operation<int>*>(top)) {
-                std::cout << std::string(depth * 2, ' ') << operation1->GetOpType() << std::endl;
-            }
-
-            if(value = dynamic_cast<const ValueRef::Constant<int>*>(top)) {
-                std::cout << std::string(depth * 2, ' ') << value->Value() << std::endl;
-            }
-
-            if(value && !stack.empty() && !dynamic_cast<const ValueRef::Constant<int>*>(stack.top())) {
-                depth--;
-            }
-
-            if(operation1) {
-                stack.push(operation1->LHS());
-                stack.push(operation1->RHS());
-                depth++;
-            }
+            delete result;
+            result = 0;
         }
     }
-}
+
+    void printTree(const ValueRef::ValueRefBase<int>* root, int depth) {
+        if(depth > 10) {
+            std::cout << "Tree print overflow" << std::endl;
+        }
+
+        if(const ValueRef::Constant<int>* value = dynamic_cast<const ValueRef::Constant<int>*>(root)) {
+            std::cout << std::string(depth * 2, ' ') << value->Value() << std::endl;
+        }
+
+        if(const ValueRef::Operation<int>* operation = dynamic_cast<const ValueRef::Operation<int>*>(root)) {
+            std::cout << std::string(depth * 2, ' ') << operation->GetOpType() << std::endl;
+            printTree(operation->LHS(), depth + 1);
+            printTree(operation->RHS(), depth + 1);
+        }
+    }
 
     bool parse(std::string phrase, ValueRef::ValueRefBase<int>*& result) {
         parse::value_ref_parser_rule<int>::type& rule = parse::value_ref_parser<int>();
@@ -246,15 +239,16 @@ BOOST_AUTO_TEST_CASE(IntLiteralParserMalformed) {
 // Priorities of the same order are evaluated left to right.
 // XXX: Operation Type priorities are not documented.
 
-// Term:
-// -1+2
-// Expected AST:
-// +    #
-// |\   #
-// | \  #
-// -  2 #
-// |    #
-// 1    #
+/*
+Term:
+  -1+2
+
+Expected AST:
+  PLUS
+    NEGATE
+      1
+    2
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser1) {
     BOOST_CHECK(parse("-1+2", result));
 
@@ -280,18 +274,20 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser1) {
 
 }
 
-// Term:
-// -1+2-8+5
-// Expected AST:
-// +   #
-// |\  #
-// - 5 #
-// |\  #
-// + 8 #
-// |\  #
-// - 2 #
-// |   #
-// 1
+/*
+Term:
+  -1+2-8+5
+
+Expected AST:
+  PLUS
+    MINUS
+      PLUS
+        NEGATE
+          1
+        2
+      8
+    5
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser2) {
     BOOST_CHECK(parse("-1+2-8+5", result));
 
@@ -336,14 +332,17 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser2) {
     BOOST_CHECK_EQUAL(value->Value(), 5);
 }
 
-// Term:
-// 4*3+2
-// Expected AST:
-// +    #
-// |\   #
-// * 2  #
-// |\   #
-// 4 3  #
+/*
+Term:
+  4*3+2
+
+Expected AST:
+  PLUS
+    TIMES
+      4
+      3
+    2
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser3) {
     BOOST_CHECK(parse("4*3+2", result));
 
@@ -373,14 +372,19 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser3) {
     BOOST_CHECK_EQUAL(value->Value(), 2);
 }
 
-// Term:
-// -1+2/-7
-// Expected AST:
-//  +        #
-//  |\       #
-// -1 (/)    #
-//    | \    #
-//    2 -7   #
+/*
+Term:
+  -1+2/-7
+
+Expected AST:
+  PLUS
+    NEGATE
+      1
+    DIVIDE
+      2
+      NEGATE
+        7
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser4) {
     BOOST_CHECK(parse("-1+2/-7", result));
 
@@ -420,16 +424,21 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser4) {
     BOOST_CHECK_EQUAL(value->Value(), 7);
 }
 
-// Term:
-// -1/3+-6*7
-// Expected AST:
-//    +        #
-//   / \       #
-// (/)  *      #
-// /\   | \    #
-// - 3  -  7   #
-// |    |      #
-// 1    6      #
+/*
+Term:
+  -1/3+-6*7
+
+Expected AST:
+  PLUS
+    DIVIDE
+      NEGATE
+        1
+      3
+    TIMES
+      NEGATE
+        6
+      7
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser5) {
     BOOST_CHECK(parse("-1/3+-6*7", result));
 

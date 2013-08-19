@@ -21,7 +21,7 @@ std::ostream& std::operator << (std::ostream& stream, const std::type_info& type
 
 std::ostream& std::operator << (std::ostream& stream, const ValueRef::OpType& type) {
 #define VALUE_REF_BRANCH(unused,data,elem) \
-    if(type == ValueRef::elem) stream << "ValueRef::" BOOST_PP_STRINGIZE(elem);
+    if(type == ValueRef::elem) stream << BOOST_PP_STRINGIZE(elem);
 
     BOOST_PP_SEQ_FOR_EACH(VALUE_REF_BRANCH,~,
         (PLUS)
