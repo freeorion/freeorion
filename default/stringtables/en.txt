@@ -8663,7 +8663,11 @@ SH_ORGANIC
 Organic Hull
 
 SH_ORGANIC_DESC
-'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
+'''A living hull with three external slots and one internal slot. 
+The base hull is born with 5 structure, but grows an additional 5 structure over 25 turns.
+[[encyclopedia STEALTH_TITLE]] is high and speed is average. 
+
+Living hulls regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
 
@@ -8679,7 +8683,10 @@ SH_ENDOMORPHIC
 Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
-'''This hull contains non-living multicellular components for greater external modularity. This hull has four external slots and two internal slots. Structure is good and speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
+'''A half living hull with four external slots and two internal slots. 
+The base hull is born with 5 structure, but grows an additional 15 structure over 75 turns.
+
+Speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
 
@@ -8687,7 +8694,10 @@ SH_SYMBIOTIC
 Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
-'''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed. It has two of each internal and external slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
+'''A living hull with two internal and two external slots. Exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed.
+The base hull is born with 10 structure, but grows an additional 10 structure over 50 turns.
+
+Living hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
@@ -8695,7 +8705,12 @@ SH_PROTOPLASMIC
 Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
-'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three internal slots and two external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
+'''A living hull with three internal slots and two external slots. 
+The base hull is born with 5 structure, but grows an additional 25 structure over 125 turns.
+
+Speed and [[encyclopedia STEALTH_TITLE]] are good. 
+
+Living hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
@@ -8703,25 +8718,45 @@ SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
-'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
+'''A living hull with four external slots and three internal slots. 
+The base hull is born with 5 structure, but grows an additional 15 structure over 75 turns.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
+Speed and [[encyclopedia STEALTH_TITLE]] are good. 
+
+Living hull regenerates structure and fuel between combats.
+
+Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
+
+<i>This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles.</i>
+'''
 
 SH_RAVENOUS
 Ravenous Hull
 
 SH_RAVENOUS_DESC
-'''This hull has been raised on the blood of its brethren. It has five external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is low, but speed and structure are high. This hull regenerates neither structure nor fuel between combats.
+'''A non-living organic hull with five external slots and two internal slots. <i>This 'zombie' hull has been built from the blood and parts of its brethren.</i>
+The base hull is born with 5 structure, but grows an additional 20 structure over 100 turns.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
+[[encyclopedia STEALTH_TITLE]] is low, but speed is high. 
+
+This hull does not regenerate structure nor fuel.
+
+Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.
+'''
 
 SH_BIOADAPTIVE
 Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
-'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and three internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
+'''A living hull with three external slots and three internal slots. 
+The base hull is born with 15 structure, but grows an additional 25 structure over 125 turns.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
+[[encyclopedia STEALTH_TITLE]] and speed very high. 
+
+This living hull regenerates structure and fuel completely between combats. <i>It's mind and body in unison, bioadaptives are masters of healing and endurance</i>
+
+Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
+'''
 
 SH_SENTIENT
 Sentient Hull
