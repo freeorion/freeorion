@@ -1,17 +1,51 @@
 #include <boost/test/unit_test.hpp>
 
+#include <stack>
+
 #include "ValueRefParser.h"
 #include "universe/ValueRef.h"
 #include "CommonTest.h"
 
-struct ValueRefDoubleFixture {
+struct ValueRefDoubleFixture: boost::unit_test::test_observer {
     ValueRefDoubleFixture():
-        result(0)
-    {}
+        result(0) {
+        boost::unit_test::framework::register_observer(*this);
+    }
 
     ~ValueRefDoubleFixture() {
+        boost::unit_test::framework::deregister_observer(*this);
         delete result;
     }
+
+void assertion_result(bool passed) {
+    if(!passed && result) {
+        std::stack<const ValueRef::ValueRefBase<double>*> stack;
+        stack.push(result);
+        size_t depth = 0;
+
+        while(!stack.empty()) {
+            const ValueRef::ValueRefBase<double>* top = stack.top();
+            stack.pop();
+            if(operation1 = dynamic_cast<const ValueRef::Operation<double>*>(top)) {
+                std::cout << std::string(depth * 2, ' ') << operation1->GetOpType() << std::endl;
+            }
+
+            if(value = dynamic_cast<const ValueRef::Constant<double>*>(top)) {
+                std::cout << std::string(depth * 2, ' ') << value->Value() << std::endl;
+            }
+
+            if(value && !stack.empty() && !dynamic_cast<const ValueRef::Constant<double>*>(stack.top())) {
+                depth--;
+            }
+
+            if(operation1) {
+                stack.push(operation1->LHS());
+                stack.push(operation1->RHS());
+                depth++;
+            }
+        }
+    }
+}
 
     bool parse(std::string phrase, ValueRef::ValueRefBase<double>*& result) {
         parse::value_ref_parser_rule<double>::type& rule = parse::value_ref_parser<double>();
@@ -56,7 +90,6 @@ const boost::array<ValueRefDoubleFixture::ReferenceType, 4>  ValueRefDoubleFixtu
     std::make_pair(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LocalCandidate"),
     std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
 }};
-
 
 const boost::array<ValueRefDoubleFixture::StatisticType, 9> ValueRefDoubleFixture::statisticTypes = {{
     std::make_pair(ValueRef::MAX,     "Max"),

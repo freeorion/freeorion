@@ -1,20 +1,54 @@
 #include <boost/test/unit_test.hpp>
 
+#include <stack>
+
 #include "ValueRefParser.h"
 #include "universe/ValueRef.h"
 #include "CommonTest.h"
 
-struct ValueRefIntFixture {
+struct ValueRefIntFixture: boost::unit_test::test_observer {
     ValueRefIntFixture():
         result(0) {
+        boost::unit_test::framework::register_observer(*this);
     }
 
     ~ValueRefIntFixture() {
+        boost::unit_test::framework::deregister_observer(*this);
         delete result;
     }
 
-bool parse(std::string phrase, ValueRef::ValueRefBase<int>*& result) {
-    parse::value_ref_parser_rule<int>::type& rule = parse::value_ref_parser<int>();
+void assertion_result(bool passed) {
+    if(!passed && result) {
+        std::stack<const ValueRef::ValueRefBase<int>*> stack;
+        stack.push(result);
+        size_t depth = 0;
+
+        while(!stack.empty()) {
+            const ValueRef::ValueRefBase<int>* top = stack.top();
+            stack.pop();
+            if(operation1 = dynamic_cast<const ValueRef::Operation<int>*>(top)) {
+                std::cout << std::string(depth * 2, ' ') << operation1->GetOpType() << std::endl;
+            }
+
+            if(value = dynamic_cast<const ValueRef::Constant<int>*>(top)) {
+                std::cout << std::string(depth * 2, ' ') << value->Value() << std::endl;
+            }
+
+            if(value && !stack.empty() && !dynamic_cast<const ValueRef::Constant<int>*>(stack.top())) {
+                depth--;
+            }
+
+            if(operation1) {
+                stack.push(operation1->LHS());
+                stack.push(operation1->RHS());
+                depth++;
+            }
+        }
+    }
+}
+
+    bool parse(std::string phrase, ValueRef::ValueRefBase<int>*& result) {
+        parse::value_ref_parser_rule<int>::type& rule = parse::value_ref_parser<int>();
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::_1_type _1;
