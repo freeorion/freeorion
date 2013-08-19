@@ -205,6 +205,20 @@ BOOST_AUTO_TEST_CASE(IntLiteralParserNegativeBracketedReal) {
     BOOST_CHECK_EQUAL(value->Value(), 6754);
 }
 
+BOOST_AUTO_TEST_CASE(DoubleLiteralParserSineOperation) {
+    // XXX: sin not documented, radians or degree as input?
+    BOOST_CHECK(parse("sin(90.0)", result));
+
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<int>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::SINE);
+
+    // XXX: Unary operations have no right hand side or left hand side parameters.
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation1->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 90);
+}
+
 // XXX value_ref_parser_rule<int> throws an expectation_failure, the enum parser does not. is this intended?
 BOOST_AUTO_TEST_CASE(IntLiteralParserMalformed) {
     BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
@@ -488,24 +502,26 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser5) {
     BOOST_CHECK_EQUAL(value->Value(), 7);
 }
 
-// Term:
-// 1+3*-4/6*(9-1)
-// Expected AST:
-//     +      #
-//    /\      #
-//   1  *     # 
-//    / |     #
-//  (/) -     #
-//  /\  |\    #
-// *  6 9 1   #
-// | \        #
-// 3  -       #
-//    |       #
-//    4       #
-//
-//
+/*
+Term:
+  1+3*-4/6*(9-1)
+
+Expected AST:
+  PLUS
+    1
+    TIMES
+      DIVIDE
+        TIMES
+          3
+          NEGATE
+            4
+        6
+      MINUS
+        9
+        1
+*/
 BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
-    BOOST_CHECK(parse("1+3*-4*6*(9-1)", result));
+    BOOST_CHECK(parse("1+3*-4/6*(9-1)", result));
 
     // 1 + (3*-4/6*(9-1))
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*result));
@@ -522,24 +538,24 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
     operation2 = dynamic_cast<const ValueRef::Operation<int>*>(operation1->RHS());
     BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
-    // 3 * (-4/6)
+    // (3*-4) / 6
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation2->LHS()));
     operation3 = dynamic_cast<const ValueRef::Operation<int>*>(operation2->LHS());
-    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::TIMES);
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::DIVIDE);
+
+    // 3 * (-4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation3->LHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::TIMES);
 
     // 3
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->LHS()));
-    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->LHS());
     BOOST_CHECK_EQUAL(value->Value(), 3);
 
-    // (-4) / 6
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation3->RHS()));
-    operation4 = dynamic_cast<const ValueRef::Operation<int>*>(operation3->RHS());
-    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::DIVIDE);
-
     // -4
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation4->LHS()));
-    operation5 = dynamic_cast<const ValueRef::Operation<int>*>(operation4->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<int>), typeid(*operation4->RHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<int>*>(operation4->RHS());
     BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
     // 4
@@ -548,8 +564,8 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
     BOOST_CHECK_EQUAL(value->Value(), 4);
 
     // 6
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation4->RHS()));
-    value = dynamic_cast<const ValueRef::Constant<int>*>(operation4->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<int>), typeid(*operation3->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<int>*>(operation3->RHS());
     BOOST_CHECK_EQUAL(value->Value(), 6);
 
     // 9 - 1
@@ -571,27 +587,38 @@ BOOST_AUTO_TEST_CASE(IntArithmeticParser6) {
 BOOST_AUTO_TEST_CASE(IntArithmeticParserMalformed) {
     BOOST_CHECK_THROW(parse("1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("-1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("-5 2", result), std::runtime_error);
     BOOST_CHECK(!result);
-
-    BOOST_CHECK_THROW(parse("5 + - - 2", result), std::runtime_error);
-    BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("5 *", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("* 5", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("7 / * 5", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 
     BOOST_CHECK_THROW(parse("7 - 5 * 3 / - + 2", result), std::runtime_error);
     BOOST_CHECK(!result);
+    delete result;
+    result = 0;
 }
 
 BOOST_AUTO_TEST_CASE(IntVariableParserCurrentTurn) {

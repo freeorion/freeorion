@@ -244,6 +244,12 @@ BOOST_AUTO_TEST_CASE(DoubleLiteralParserMalformed) {
     BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
     BOOST_CHECK(!result);
 
+    // XXX: Is a trailing dot a valid real number?
+    BOOST_CHECK_THROW(parse("5.", result), std::runtime_error);
+    BOOST_CHECK(!result);
+    delete result;
+    result = 0;
+
     BOOST_CHECK_THROW(parse("(.20", result), std::runtime_error);
     BOOST_CHECK(!result);
 
@@ -557,24 +563,24 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
     operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->RHS());
     BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::TIMES);
 
-    // .4 * (-4.1/6.2)
+    // (.4*-4.1) / 6.2
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->LHS()));
     operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
-    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::TIMES);
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::DIVIDE);
+
+    // .4 * (-4.1)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation3->LHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::TIMES);
 
     // .4
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
-    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->LHS());
     BOOST_CHECK_EQUAL(value->Value(), .4);
 
-    // (-4.1) / 6.2
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation3->RHS()));
-    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation3->RHS());
-    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::DIVIDE);
-
     // -4.1
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation4->LHS()));
-    operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation4->LHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation4->RHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation4->RHS());
     BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::NEGATE);
 
     // 4.1
@@ -583,8 +589,8 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
     BOOST_CHECK_EQUAL(value->Value(), 4.1);
 
     // 6.2
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation4->RHS()));
-    value = dynamic_cast<const ValueRef::Constant<double>*>(operation4->RHS());
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->RHS());
     BOOST_CHECK_EQUAL(value->Value(), 6.2);
 
     // 9 - .1
@@ -604,12 +610,6 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
 }
 
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParserMalformed) {
-    // XXX: Is a trailing dot a valid real number?
-    BOOST_CHECK_THROW(parse("5.", result), std::runtime_error);
-    BOOST_CHECK(!result);
-    delete result;
-    result = 0;
-
     BOOST_CHECK_THROW(parse("1.1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
     delete result;
