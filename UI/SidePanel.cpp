@@ -1174,6 +1174,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return INVALID_OBJECT_ID;
+    if (GetUniverse().GetObjectVisibilityByEmpire(target_planet_id, empire_id) < VIS_PARTIAL_VISIBILITY)
+        return INVALID_OBJECT_ID;
     TemporaryPtr<Planet> target_planet = GetPlanet(target_planet_id);
     if (!target_planet)
         return INVALID_OBJECT_ID;
@@ -1409,7 +1411,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool mine =             planet->OwnedBy(client_empire_id);
     bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.0;
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
-    bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_BASIC_VISIBILITY;
+    bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
