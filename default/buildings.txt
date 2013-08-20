@@ -571,7 +571,7 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Not WithinDistance 500 And [
+            activation = Not WithinDistance 200 And [
                 Ship
                 Not Stationary
             ]
