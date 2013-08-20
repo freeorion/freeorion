@@ -44,6 +44,7 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
         parse::value_ref_parser_rule<double>::type& rule = parse::value_ref_parser<double>();
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
+        boost::spirit::qi::eoi_type eoi;
         boost::spirit::qi::_1_type _1;
 
         std::string::const_iterator begin_phrase = phrase.begin();
@@ -52,7 +53,7 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
         return boost::spirit::qi::phrase_parse(
             lexer.begin(begin_phrase, end_phrase),
             lexer.end(),
-            rule[boost::phoenix::ref(result) = _1],
+            rule[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
     }
@@ -63,7 +64,7 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
     static const boost::array<ReferenceType, 4>  referenceTypes;
     static const boost::array<StatisticType, 9>  statisticTypes;
     static const boost::array<std::string, 3>  containerTypes;
-    static const boost::array<std::string, 13> attributes;
+    static const boost::array<std::string, 36> attributes;
 
     ValueRef::ValueRefBase<double>* result;
     const ValueRef::Operation<double>* operation1;
@@ -102,20 +103,43 @@ const boost::array<std::string, 3> ValueRefDoubleFixture::containerTypes = {{
     "System"
 }};
 
-const boost::array<std::string, 13> ValueRefDoubleFixture::attributes = {{
-    "Age",
-    "CreationTurn",
-    "DesignID",
-    "FinalDestinationID",
-    "FleetID",
-    "ID",
-    "NextSystemID",
-    "NumShips",
-    "Owner",
-    "PlanetID",
-    "PreviousSystemID",
-    "ProducedByEmpireID",
-    "SystemID"
+const boost::array<std::string, 36> ValueRefDoubleFixture::attributes = {{
+    "Industry",
+    "TargetIndustry",
+    "Research",
+    "TargetResearch",
+    "Trade",
+    "TargetTrade",
+    "Construction",
+    "TargetConstruction",
+    "Population",
+    "TargetPopulation",
+    "TargetHappiness",
+    "Happiness",
+    "MaxFuel",
+    "Fuel",
+    "MaxShield",
+    "Shield",
+    "MaxDefense",
+    "Defense",
+    "MaxTroops",
+    "Troops",
+    "RebelTroops",
+    "MaxStructure",
+    "Structure",
+    "Supply",
+    "Stealth",
+    "Detection",
+    "BattleSpeed",
+    "StarlaneSpeed",
+    "TradeStockpile",
+    "DistanceToSource",
+    "X",
+    "Y",
+    "SizeAsDouble",
+    "NextTurnPopGrowth",
+    "Size",
+    "DistanceFromOriginalType"
 }};
 
 BOOST_FIXTURE_TEST_SUITE(ValueRefDoubleParser, ValueRefDoubleFixture)
@@ -680,8 +704,8 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTypeless) {
                 adobe::name_t(attribute.c_str())
             };
 
-            BOOST_CHECK_EQUAL(typeid(ValueRef::StaticCast<int, double>), typeid(*result));
-            if(variable = dynamic_cast<const ValueRef::StaticCast<int, double>*>(result)) {
+            BOOST_CHECK_EQUAL(typeid(ValueRef::Variable<double>), typeid(*result));
+            if(variable = dynamic_cast<const ValueRef::Variable<double>*>(result)) {
                 BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                 BOOST_CHECK_EQUAL_COLLECTIONS(
                     variable->PropertyName().begin(), variable->PropertyName().end(),
@@ -707,8 +731,8 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTyped) {
                     adobe::name_t(attribute.c_str())
                 };
 
-                BOOST_CHECK_EQUAL(typeid(ValueRef::StaticCast<int, double>), typeid(*result));
-                if(variable = dynamic_cast<const ValueRef::StaticCast<int, double>*>(result)) {
+                BOOST_CHECK_EQUAL(typeid(ValueRef::Variable<double>), typeid(*result));
+                if(variable = dynamic_cast<const ValueRef::Variable<double>*>(result)) {
                     BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                     BOOST_CHECK_EQUAL_COLLECTIONS(
                         variable->PropertyName().begin(), variable->PropertyName().end(),
