@@ -3000,7 +3000,7 @@ Empires have a Detection Strength meter.'''
 DETECTION_RANGE_TITLE
 Detection Range
 DETECTION_RANGE_TEXT
-'''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
+'''The Detection Range represents the distance in uu that sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
 Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles in the Galaxy Map section of the Options menu.'''
 
@@ -6473,7 +6473,7 @@ CON_INFRA_ECOL
 Infrastructure Ecology
 
 CON_INFRA_ECOL_DESC
-'''Increases Starlane Speed of your ships by 20 when they are within 50 uus of a controlled planet.
+'''Increases Starlane Speed of your ships by 20 when they are within 50 uu of a controlled planet.
 
 The basic infrastructure of an established planetary system may seem to be created entirely by the colonizers, and to function only according to their designs. In reality, however, the ecology of the system in which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function. Understanding the interaction between natural and artificial components are essential to the development of an optimal and sustainable infrastructure for any system.'''
 
@@ -6851,7 +6851,7 @@ Force-Energy Camouflage
 CON_FRC_ENRG_CAMO_DESC
 '''Increases the [[encyclopedia STEALTH_TITLE]] of all buildings by 20.
 
-Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
+Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible far away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_PLANET_DRIVE
 Planetary Starlane Drive
@@ -7815,7 +7815,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 200 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -7945,7 +7945,7 @@ BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
+'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
 
 Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
@@ -8493,7 +8493,7 @@ SP_DISTORTION_MODULATOR
 Distortion Modulator
 
 SP_DISTORTION_MODULATOR_DESC
-Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max [[encyclopedia STEALTH_TITLE]] reduced by 20. The effect is non-stacking.
+Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects at the same location have max [[encyclopedia STEALTH_TITLE]] reduced by 20. The effect is non-stacking.
 
 SP_CLOUD
 Cloud Generator
