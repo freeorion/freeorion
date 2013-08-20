@@ -3593,7 +3593,7 @@ EFFECT_TAME_MONSTER_HATCHED_LABEL
 Monster Hatched
 
 EFFECT_TAME_MONSTER_MATURED
-At %system%: a powerful tame %predefinedshipdesign% has matured from a lesser form.
+At %system%: a more powerful tame %predefinedshipdesign% has matured from a lesser form.
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Monster Matured
 
