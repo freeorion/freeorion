@@ -534,6 +534,7 @@ Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen P
 
 SM_ASH
 Weltraumvulkan
+SM_ASH_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_DIM
