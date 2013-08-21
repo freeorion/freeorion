@@ -196,6 +196,6 @@ void StringTable_::Load() {
             }
         }
     } else {
-        Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed";
+        Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
     }
 }
