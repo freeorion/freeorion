@@ -111,9 +111,6 @@ private:
     virtual void    PopGrowthProductionResearchPhase();
     virtual void    ClampMeters();
 
-    TemporaryPtr<Ship>          TemporaryFromThis()         { return static_ptr_cast<Ship>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const Ship>    TemporaryFromThis() const   { return static_ptr_cast<const Ship>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     int             m_design_id;
     int             m_fleet_id;
     bool            m_ordered_scrapped;

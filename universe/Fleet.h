@@ -166,9 +166,6 @@ private:
     ///< returns the subset of m_ships that is visible to empire with id \a empire_id
     ShipIDSet               VisibleContainedObjects(int empire_id) const;
 
-    TemporaryPtr<Fleet>         TemporaryFromThis()         { return static_ptr_cast<Fleet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const Fleet>   TemporaryFromThis() const   { return static_ptr_cast<const Fleet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     ShipIDSet                   m_ships;
     int                         m_moving_to;
 

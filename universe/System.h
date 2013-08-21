@@ -196,9 +196,6 @@ private:
     /** removes object \a obj from this system. */
     void                    Remove(TemporaryPtr<UniverseObject> obj);
 
-    TemporaryPtr<System>        TemporaryFromThis()         { return static_ptr_cast<System>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const System>  TemporaryFromThis() const   { return static_ptr_cast<const System>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     StarType        m_star;
     int             m_orbits;
     ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)

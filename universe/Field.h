@@ -54,9 +54,6 @@ protected:
 private:
     virtual void                ClampMeters();
 
-    TemporaryPtr<Field>         TemporaryFromThis()         { return static_ptr_cast<Field>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const Field>   TemporaryFromThis() const   { return static_ptr_cast<const Field>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     std::string     m_type_name;
 
     friend class boost::serialization::access;

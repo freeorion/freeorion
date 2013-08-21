@@ -432,7 +432,7 @@ std::vector<int> Planet::FindObjectIDs() const {
 }
 
 TemporaryPtr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Planet>(TemporaryFromThis())); }
+{ return visitor.Visit(const_ptr_cast<Planet>(static_ptr_cast<const Planet>(TemporaryFromThis()))); }
 
 Meter* Planet::GetMeter(MeterType type)
 { return UniverseObject::GetMeter(type); }

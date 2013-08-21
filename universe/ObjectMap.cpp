@@ -60,7 +60,7 @@ void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire
     if (TemporaryPtr<UniverseObject> destination = this->Object(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        Insert(source->Clone(source)); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        Insert(source->Clone()); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }
 }
 

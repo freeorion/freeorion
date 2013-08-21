@@ -198,9 +198,6 @@ private:
 
     std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 
-    TemporaryPtr<Planet>        TemporaryFromThis()         { return static_ptr_cast<Planet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const Planet>  TemporaryFromThis() const   { return static_ptr_cast<const Planet>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     PlanetType      m_type;
     PlanetType      m_original_type;
     PlanetSize      m_size;

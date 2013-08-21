@@ -70,9 +70,6 @@ protected:
     //@}
 
 private:
-    TemporaryPtr<Building>          TemporaryFromThis()         { return static_ptr_cast<Building>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-    TemporaryPtr<const Building>    TemporaryFromThis() const   { return static_ptr_cast<const Building>(EnableTemporaryFromThis<UniverseObject>::TemporaryFromThis()); }
-
     std::string m_building_type;
     int         m_planet_id;
     bool        m_ordered_scrapped;

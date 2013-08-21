@@ -111,7 +111,7 @@ std::string Building::Dump() const {
 }
 
 TemporaryPtr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Building>(TemporaryFromThis())); }
+{ return visitor.Visit(const_ptr_cast<Building>(static_ptr_cast<const Building>(TemporaryFromThis()))); }
 
 void Building::SetPlanetID(int planet_id) {
     if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))

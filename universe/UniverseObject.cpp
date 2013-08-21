@@ -247,7 +247,7 @@ const std::string& UniverseObject::PublicName(int empire_id) const
 { return m_name; }
 
 TemporaryPtr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<UniverseObject>(TemporaryFromThis())); }
+{ return visitor.Visit(const_ptr_cast<UniverseObject>(TemporaryFromThis()));}
 
 void UniverseObject::SetID(int id) {
     m_id = id;

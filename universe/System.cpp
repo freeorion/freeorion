@@ -338,7 +338,7 @@ System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
 TemporaryPtr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<System>(TemporaryFromThis())); }
+{ return visitor.Visit(const_ptr_cast<System>(static_ptr_cast<const System>(TemporaryFromThis()))); }
 
 int System::Insert(TemporaryPtr<UniverseObject> obj)
 { return Insert(obj, -1); }
