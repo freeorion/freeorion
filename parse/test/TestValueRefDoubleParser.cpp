@@ -633,6 +633,76 @@ BOOST_AUTO_TEST_CASE(DoubleArithmeticParser6) {
     BOOST_CHECK_EQUAL(value->Value(), .1);
 }
 
+/*
+Term:
+  -2^5--(3^-4)
+
+Expected AST:
+  MINUS
+    POWER
+      NEGATE
+        2
+      5
+    NEGATE
+      POWER
+        3
+        NEGATE
+          4
+*/
+BOOST_AUTO_TEST_CASE(DoubleArithmeticParser7) {
+    BOOST_CHECK(parse("-2^5--(3^-4)", result));
+
+    // (-2^5) - (-(3^-4))
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*result));
+    operation1 = dynamic_cast<ValueRef::Operation<double>*>(result);
+    BOOST_CHECK_EQUAL(operation1->GetOpType(), ValueRef::MINUS);
+
+    // (-2) ^ 5
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->LHS()));
+    operation2 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->LHS());
+    BOOST_CHECK_EQUAL(operation2->GetOpType(), ValueRef::EXPONENTIATE);
+
+    // -(2)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation2->LHS()));
+    operation3 = dynamic_cast<const ValueRef::Operation<double>*>(operation2->LHS());
+    BOOST_CHECK_EQUAL(operation3->GetOpType(), ValueRef::NEGATE);
+
+    // 2
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation3->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation3->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 2);
+
+    // 5
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation2->RHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation2->RHS());
+    BOOST_CHECK_EQUAL(value->Value(), 5);
+
+    // -(3^-4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation1->RHS()));
+    operation4 = dynamic_cast<const ValueRef::Operation<double>*>(operation1->RHS());
+    BOOST_CHECK_EQUAL(operation4->GetOpType(), ValueRef::NEGATE);
+
+    // 3 ^ (-4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation4->LHS()));
+    operation5 = dynamic_cast<const ValueRef::Operation<double>*>(operation4->LHS());
+    BOOST_CHECK_EQUAL(operation5->GetOpType(), ValueRef::EXPONENTIATE);
+
+    // 3
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation5->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation5->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 3);
+
+    // -(4)
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Operation<double>), typeid(*operation5->RHS()));
+    operation6 = dynamic_cast<const ValueRef::Operation<double>*>(operation5->RHS());
+    BOOST_CHECK_EQUAL(operation6->GetOpType(), ValueRef::NEGATE);
+
+    // 4
+    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Constant<double>), typeid(*operation6->LHS()));
+    value = dynamic_cast<const ValueRef::Constant<double>*>(operation6->LHS());
+    BOOST_CHECK_EQUAL(value->Value(), 4);
+}
+
 BOOST_AUTO_TEST_CASE(DoubleArithmeticParserMalformed) {
     BOOST_CHECK_THROW(parse("1.1 +", result), std::runtime_error);
     BOOST_CHECK(!result);
