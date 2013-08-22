@@ -2,6 +2,7 @@ Deutsch
 
 #This is the German String Table file for FreeOrion (^= en_svn6098)
 #Übersetzer:
+# Straputsky
 # Marcel Metz [adrian_broher]
 # shivu
 # Markus Sinner [kroddn]
@@ -30,7 +31,7 @@ DONE
 Fertig
 
 CLOSE
-Schliessen
+Schließen
 
 LOAD
 Laden
@@ -97,6 +98,9 @@ NOTHING_VALUE_SYMBOL
 
 UNKNOWN_VALUE_SYMBOL
 ?
+
+UNKNOWN_VALUE_SYMBOL_2
+???
 
 ERROR
 FEHLER
@@ -260,7 +264,7 @@ Typ VI B
 SD_MARK_A7
 Typ VII
 SD_MARK7_DESC
-Patrouillenfregatte mit fortgeschritten Laser.
+Patrouillenfregatte mit fortgeschrittenem Laser.
 
 SD_MARK_A7B
 Typ VII B
@@ -373,25 +377,25 @@ SD_OUTPOST_SHIP
 Außenpostenschiff
 
 SD_OUTPOST_SHIP_DESC
-Unbewaffnetes Schiff fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
+Unbewaffnetes Schiff, fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
 
 SD_COLONY_BASE
 Siedlungsbasis
 
 SD_COLONY_BASE_DESC
-Unbewaffnetes Schiff fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff, nur fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_OUTPOST_BASE
 Außenpostenbasis
 
 SD_OUTPOST_BASE_DESC
-Unbewaffnetes Schiff fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
+Unbewaffnetes Schiff, nur fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_TROOP_SHIP
 Truppentransporter
 
 SD_TROOP_SHIP_DESC
-Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung zur Einnahme eines Planeten.
+Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
 
 SD_DRAGON_TOOTH
 Drachenzahn
@@ -773,6 +777,9 @@ Setzt wie schnell die Punkte der Flottenversorgungslinien gezeichnet werden soll
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Entscheidet ob auf der Galaxiekarte die Aufklärungsreichweite als Kreis um Objekte angezeigt werden.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
+Sets detection circle transparency.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Zwinge den Client dazu keinen Server zu starten, selbst wenn ein Spiel auf dem lokalen Rechner eröffnet wird, im Einzelspielermodus gespielt wird, usw.
@@ -1368,7 +1375,7 @@ GSETUP_GRAPHICS_FILES
 Grafikdateien
 
 GSETUP_PLAYER_NAME
-Name des Spieler
+Name des Spielers
 
 GSETUP_EMPIRE_NAME
 Name des Imperiums
@@ -1386,6 +1393,8 @@ Anzahl der KI-Spieler
 
 GSETUP_SEED
 Saat
+GSETUP_RANDOM_SEED
+Generate a random seed
 GSETUP_RANDOMIZE
 Randomisieren
 GSETUP_STARS
@@ -1395,15 +1404,15 @@ Galaxieform
 GSETUP_AGE
 Galaxiealter
 GSETUP_STARLANE_FREQ
-Häufigkeit von Sternstraßen
+Anzahl Sternstraßen
 GSETUP_PLANET_DENSITY
 Planetendichte
 GSETUP_SPECIALS_FREQ
-Häufigkeit von Besonderheiten
+Anzahl Besonderheiten
 GSETUP_MONSTER_FREQ
-Häufigkeit von Monstern
+Anzahl Monster
 GSETUP_NATIVE_FREQ
-Häufigkeit von Eingeborenen
+Anzahl Eingeborene
 GSETUP_AI_AGGR
 Max KI Aggression
 
@@ -1487,10 +1496,10 @@ GAME_MENU_WINDOW_TITLE
 Menü
 
 GAME_MENU_SAVE
-Spiel speichern
+Speichern
 
 GAME_MENU_LOAD
-Spiel laden
+Laden
 
 GAME_MENU_RESIGN
 Aufgeben
@@ -1690,6 +1699,9 @@ Tarngrenzwertregler der Galaxiekarte
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Kreise für Aufklärungsreichweite
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
+Range circle opacity
 
 OPTIONS_GALAXY_MAP_POPUP
 Galaxiekarte Popupmenü
@@ -1985,7 +1997,7 @@ MAP_BTN_PRODUCTION
 Produktion
 
 MAP_BTN_DESIGN
-Entwerfen
+Schiffsdesign
 
 MAP_BTN_PEDIA
 Pedia
@@ -1994,7 +2006,7 @@ MAP_PRODUCTION_TITLE
 Produktion
 
 MAP_PRODUCTION_TEXT
-Produktionsausstoss des gesamten Imperiums
+Produktionsleistung des gesamten Imperiums
 
 MAP_PROD_WASTED_TITLE
 Ungenutzte Produktion
@@ -2026,6 +2038,12 @@ Volkszählung
 MAP_POPULATION_COUNT
 %1%: %2%
 
+CENSUS_SPECIES_HEADER
+Spezies
+
+CENSUS_TAG_HEADER
+Merkmale
+
 MAP_DETECTION_TITLE
 Imperiumsortung
 
@@ -2039,7 +2057,7 @@ MAP_TRADE_TEXT
 Handelsleistung des gesamten Imperiums. (Handel tut nichts)
 
 MAP_FLEET_TITLE
-Flottenanzahl
+Flottenstärke
 
 MAP_FLEET_TEXT
 Gesamtanzahl Schiffe
@@ -2159,7 +2177,7 @@ TT_INHERENT
 Inhärent
 
 TT_TECH
-%1% Technologie <i>%2%</i>
+Technologie <i>%2%</i>
 
 TT_BUILDING
 %1% Gebäude <i>%2%</i>
@@ -2440,7 +2458,7 @@ TECH_WND_TYPE_REFINEMENTS
 Verfeinerungen
 
 TECH_WND_STATUS_COMPLETED
-Erworben
+Bereits erforscht
 
 TECH_WND_STATUS_RESEARCHABLE
 Erforschbar
@@ -2494,7 +2512,7 @@ PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
 Unterbezahlte Projekte
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projekte auf der Warteliste
+Anzahl der Projekte
 
 
 ###############
@@ -2611,7 +2629,7 @@ DESIGN_WND_STARTS
 Entwurf beginnen mit
 
 DESIGN_WND_HULLS
-Leere Rümpfe
+Schiffshüllen
 
 DESIGN_WND_FINISHED_DESIGNS
 Fertige Entwürfe
@@ -2635,10 +2653,10 @@ DESIGN_WND_DESIGN_DESCRIPTION
 Beschreibung
 
 DESIGN_WND_CONFIRM
-Bestätige neuen Entwurf
+Entwurf bestätigen
 
 DESIGN_WND_CLEAR
-Lösche Teile
+Alles entfernen
 
 DESIGN_DELETE
 Entwurf löschen
@@ -2666,7 +2684,7 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
-Schiffsteil
+Schiffskomponente
 
 ENC_SHIP_HULL
 Schiffsrumpf
@@ -2699,7 +2717,7 @@ NO_SHIPS_OF_DESIGN
 Keine Schiffe dieser Klasse bekannt
 
 ENC_INCOMPETE_SHIP_DESIGN
-Unvollständiger Schiffentwurf
+Unvollständiger Schiffsentwurf
 
 ENC_EMPIRE
 Imperium
@@ -2804,12 +2822,12 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Rumpf: %2%
 Teile: %3%
 
-Gesamter Agriffsschaden: %17%
+Gesamter Angriffsschaden: %17%
 Struktur: %8%
 [[encyclopedia SHIELDS_TITLE]]: %9%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%
 [[encyclopedia STEALTH_TITLE]]: %11%
-Triebstoff Fassungsvermögen: %14%
+Treibstoff Fassungsvermögen: %14%
 Besiedlungsvermögen: %15%
 Truppen: %16%
 Geschwindigkeit auf Sternstraße: %13%
@@ -2841,19 +2859,19 @@ ENC_TECH_DETAIL_TYPE_STR
 %3%
 
 ENC_LOOKUP
-Pedia absuchen %1%
+Pedia durchsuchen %1%
 
 ENC_COMBAT_LOG
-Kampf logbuch
+Kampflogbuch
 
 ENC_COMBAT_LOG_DESCRIPTION_STR
-Kampf in %1% in Runde %2%:
+Kampf bei %1% in Runde %2%:
 
 ENC_COMBAT_ATTACK_STR
-Runde %4%: %1% greift %2% an und erzeugt %3% Schaden
+Runde %4%: %1% greift %2% an und verursacht %3% Schaden
 
 ENC_COMBAT_ATTACK_DESTROY_STR
-Runde %4%: %1% greift %2% an und zerstört das Ziel mit %3% Schaden
+Runde %4%: %1% greift %2% an und zerstört das Ziel durch %3% Schaden
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
@@ -2952,12 +2970,12 @@ HAPPINESS_TEXT
 INFRASTRUCTURE_TITLE
 Infrastruktur
 INFRASTRUCTURE_TEXT
-'''The term Infrastructure refers to technical structures that support a colonized planet: energy, transportation, telecommunication and social services for the citizens.'''
+'''Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.'''
 
 DEFENSE_TITLE
 Verteidigung
 DEFENSE_TEXT
-'''Das Verteidigungsmass eines Planetes wird durch die Stärke der Boden zu Weltraum installierten Waffen. It's comparable to the Damage value of a space ship.'''
+'''Der Verteidigungswert eines Planeten ist vergleichbar mit dem Angriffswert eines Schiffes. Wenn Sie sich einen kolonialisierten Planeten oder einen Außenposten ansehen, finden sie diesen Wert in der letzen Zeile, zusammen mit dem planetaren [[encyclopedia SHIELDS_TITLE]] und den planetaren [[encyclopedia TROOP_TITLE]]'''
 
 SHIELDS_TITLE
 Schild
@@ -2994,9 +3012,9 @@ Space ships and planets have a Detection Range meter. There is the option to dis
 TROOP_TITLE
 Truppen
 TROOP_TEXT
-'''The term Troops combines all kinds of military forces capable of operating on a planets surface.
+'''Der Begriff Truppen umschreibt alle Formen militärischer Einsatzkräfte, denen es möglich ist, auf einer Planetenoberfläche zu operieren.
 
-The Troop meter on a planet represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will. Der Truppenwert des Angreifers ergibt sich aus allen im Orbit befindlichen Schiffen mit Truppenkapseln (es wird die Anzahl der Truppenkapseln gezählt, nicht die Anzahl der Schiffe - Beispiel: 3 Schiffe mit je einer Truppenkapsel sind genauso gut, wie 1 Schiff mit 3 Truppenkapseln). Bei einem Angriff wird automatisch nur die benötigte Anzahl an Schiffen auf den Planeten entsendet. Die restlichen Schiffe verbleiben im Orbit. Ein kleiner Tipp: Truppenschiffe werden nach ihrem Einsatz "aufgebraucht" und verschwinden. Es lohnt daher selten, besonders teure Schiffe mit Truppenkapseln auszurüsten.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
@@ -3035,10 +3053,17 @@ Telepathie
 TELEPATHY_TEXT
 '''Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.'''
 
+XENOPHOBIC_SPECIES_TITLE
+Xenophobic
+XENOPHOBIC_SPECIES_TEXT
+'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
+
+Xenophobic species start with [[tech CON_CONC_CAMP]].'''
+
 FUEL_TITLE
-Triebstoff
+Treibstoff
 FUEL_TEXT
-'''Triebstoff erlaubt Schiffe entlang der Sternstraße zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Triebstoff. Triebstoff wird an kein anderen Moment benützt. Die [[encyclopedia SUPPLY_TITLE]] werden ein Schiff ganz Auftanken. Wenn ein Schiff jenseits der befreundete Sternstraße reist, wird sich der Triebstoff langsam regenerieren wenn das Schiff ausserhalb einer Sternstraße ist.'''
+'''Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[encyclopedia SUPPLY_TITLE]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.'''
 
 SUPPLY_TITLE
 Versorgung
@@ -3067,12 +3092,24 @@ AI_LEVELS_TEXT
 
 AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
 The current prefixes are:
-Turtle: Citadel
-Cautious: Bastion of the Brave
-Moderate: Haven
-Aggressive: Royal Demesne
-Maniacal: Stairway to Heaven
-There is also a "Beginner Mode" KI level, which has the most handicapping. '''
+
+Beginner: 
+[[AI_CAPITOL_NAMES_BEGINNER]]
+
+Turtle: 
+[[AI_CAPITOL_NAMES_TURTLE]]
+
+Cautious: 
+[[AI_CAPITOL_NAMES_CAUTIOUS]]
+
+Moderate: 
+[[AI_CAPITOL_NAMES_TYPICAL]]
+
+Aggressive: 
+[[AI_CAPITOL_NAMES_AGGRESSIVE]]
+
+Maniacal: 
+[[AI_CAPITOL_NAMES_MANIACAL]]'''
 
 ####################
 # Combat Messages  #
@@ -3340,7 +3377,7 @@ SITREP_TECH_RESEARCHED_LABEL
 Technologie erforscht
 
 SITREP_COMBAT_SYSTEM
-Ein Kampf hat in %system% stattgefunden.
+Ein %combat% hat in %system% stattgefunden.
 SITREP_COMBAT_SYSTEM_LABEL
 Kampf auf System
 COMBAT
@@ -3557,9 +3594,9 @@ EFFECT_DERELICT_MAP_LABEL
 Karte aus eines Wrackes
 
 EFFECT_DERELICT_FUEL
-Schiffe sind durch restlichen Triebstoff von verlassene Wracks auf %system% aufgetankt worden.
+Schiffe sind durch restlichen Treibstoff von verlassene Wracks auf %system% aufgetankt worden.
 EFFECT_DERELICT_FUEL_LABEL
-Triebstoff aus Wrack
+Treibstoff aus Wrack
 
 EFFECT_BIOWEAPON
 %system% hat einiges von seiner Bevölkerung durch einen Biologischen Angrif verloren!
@@ -4855,6 +4892,11 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
+STARSPAWN_NEBULA_SPECIAL
+Starspawn Nebula
+STARSPAWN_NEBULA_SPECIAL_DESC
+Systems with this special have a nebula created around them. This nebula may collapse to form a new star.
+
 
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
@@ -4905,23 +4947,23 @@ Unbekannte Sternenklasse
 # PlanetTypes
 
 PT_SWAMP
-sumpfig
+Sumpfig
 PT_TOXIC
-toxisch
+Toxisch
 PT_INFERNO
-vulkanisch
+Vulkanisch
 PT_RADIATED
-verstrahlt
+Verstrahlt
 PT_BARREN
-unfruchtbar
+Unfruchtbar
 PT_TUNDRA
-tundra
+Tundra
 PT_DESERT
-wüstenhaft
+Wüstenhaft
 PT_TERRAN
-erdähnlich
+Erdähnlich
 PT_OCEAN
-ozeanisch
+Ozeanisch
 PT_ASTEROIDS
 Asteroiden
 PT_GASGIANT
@@ -4933,15 +4975,15 @@ Gasriese
 SZ_NOWORLD
 Es gibt nichts zu sehen; weitergehen.
 SZ_TINY
-winzig
+Winzig
 SZ_SMALL
-klein
+Klein
 SZ_MEDIUM
-mittel
+Mittel
 SZ_LARGE
-groß
+Groß
 SZ_HUGE
-gewaltig
+Gewaltig
 SZ_ASTEROIDS
 Asteroiden
 SZ_GASGIANT
@@ -4951,15 +4993,15 @@ Gasriese
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-unbewohnbar
+Unbewohnbar
 PE_HOSTILE
-feindlich
+Feindlich
 PE_POOR
-armseelig
+Armseelig
 PE_ADEQUATE
-adäquat
+Adäquat
 PE_GOOD
-gut
+Gut
 
 
 # FocusTypes
@@ -5023,7 +5065,7 @@ Ziel Infrastruktur
 METER_TARGET_HAPPINESS
 Ziel Zufriedenheit
 METER_MAX_FUEL
-Max Triebstoff
+Max Treibstoff
 METER_MAX_SHIELD
 Max Schild
 METER_MAX_STRUCTURE
@@ -5211,7 +5253,7 @@ Leer
 # Ship Part Classes
 
 PC_SHORT_RANGE
-Kurzstrecke
+Waffen
 PC_MISSILES
 Raketen
 PC_FIGHTERS
@@ -5219,25 +5261,25 @@ Abfangjäger
 PC_POINT_DEFENSE
 Punktverteidigung
 PC_SHIELD
-Schild
+Schilde
 PC_ARMOUR
 Panzerung
 PC_TROOPS
-Bodentruppe
+Truppen
 PC_DETECTION
-Aufklärung
+Sensoren
 PC_STEALTH
 Tarnung
 PC_FUEL
 Treibstoff
 PC_COLONY
-Besiedlung
+Kolonisten
 PC_BATTLE_SPEED
 Kampf Geschwindigkeit
 PC_STARLANE_SPEED
 Sternstraße Geschwindigkeit
 PC_GENERAL
-General
+Sonstiges
 
 
 #############################################################
@@ -6075,7 +6117,7 @@ LRN_ALGO_ELEGANCE
 Algorithmische Eleganz
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all Research focused planets by 0.1 per Population.
+'''Erhöht die [[encyclopedia RESEARCH_TITLE]] auf allen Planeten mit Forschungsfokus um 0.1 pro Einwohner.
 
 Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.'''
 
@@ -6091,7 +6133,7 @@ LRN_PSIONICS
 Psionik
 
 LRN_PSIONICS_DESC
-'''[[encyclopedia RESEARCH_TITLE]] cost is greatly reduced for empires that include a telepathic species.
+'''Die Forschungskosten für diese Technologie werden stark reduziert, wenn die eigene Spezies telepathisch veranlagt ist.
 
 Durch tiefe Einsicht oder künstliche Erweiterungen kann das Gehirn Fähigkeiten entwickeln, mit deren Hilfe es ohne Einschränkungen durch den physischen Körpers direkt mit dem umliegenden Universum interagieren kann. Kräfte wie z. B. Telepathie, Empathie, Hellsicht, Prescience, Psychokinese und Psychoenergese ersetzen banale biologische oder technische Alternativen. Die Anwendungen dieser Kräfte, u. a. Gedankenkontrolle, Persönlichkeitsveränderung und Besessen, haben eine tiefgreifende Bedeutung für die Beziehung zwischen begabten und unbegabten Wesen.'''
 
@@ -6099,7 +6141,7 @@ LRN_ARTIF_MINDS
 Künstliches Bewusstsein
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
+'''Erhöht die [[encyclopedia RESEARCH_TITLE]] auf allen Planeten um 2.
 
 Während herkömmliche Computer nahezu unfassbare Intelligenz und Rechenfähigkeiten besitzen, fehlen ihnen entscheidende Qualitäten wie Selbsterkenntnis, Bewußtsein oder Gefühl. Auch wenn diese Züge schwer erfassbar bleiben, so können doch angemesse Nachbildungen hergestellt werden. Diese Erkenntnisse eröffnen ungeahnte Möglichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
 
@@ -6200,7 +6242,7 @@ GRO_GENETIC_ENG_DESC
 Die genetische Palette ist so vielfältig wie die Lebensformen, von denen sie sich ableitet. Gene können entfernt, kopiert und wieder in ein Genom eingebracht werden; so können transgene Organismen mit Eigenschaftskombinationen geschaffen werden, die in der Natur zuvor nicht vorkamen. Außerdem können Gene vor ihrer Wiedereinbringung durch direkte Veränderung des Basenkodes modifiziert werden; so können völlig neue Gene erzeugt werden. Diese Methoden sind jedoch auf kleine Veränderungen von in der Forschung verfügbaren Genen beschränkt.
 
 CON_ENV_ENCAPSUL
-Umwelteindämmung
+Habitate
 
 CON_ENV_ENCAPSUL_DESC
 Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Besiedelung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbstständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
@@ -6209,7 +6251,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-Durch die ersten domestizierten Tiere oder Agrarpflanzen lernen Gesellschaften die Vorteile symbiotischer Beziehungen mit anderen Spezies kennen. Später werden oft Bakterien oder natürliche Parasiten für medizinische Zwecke eingesetzt. Bei diesen Frühformen hat die dominante Spezies komplette Kontrolle über die Beziehung, bei der nur der "gezüchtete" Organismus seinem Besitzer dient. Wahre Symbiose liegt aber nur dann vor, wenn beide Organismen zusammen leben und das Schicksal des Einen vom Anderen abhängt, die Gesamtsumme größer ist als die Summe der Einzelteile.
+'''Erhöht die maximale Bevölkerung von Planeten des Typs <i>[[PE_GOOD]]</i>, <i>[[PE_ADEQUATE]]</i> oder <i>[[PE_POOR]]</i>, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
 
 GRO_GENETIC_MED
 Genetische Medizin
@@ -6218,7 +6260,7 @@ GRO_GENETIC_MED_DESC
 Traditionelle Gentherapie verändert den genetischen Kode und bringt ihn dann in den zu modifizierenden Organismus ein. Solche Methoden können auch bei gealterten Individuen angewandt werden. Das Ziel dieser Behandlung kann eine kosmetische oder anderweitig gewinnbringende Veränderung sein, aber auch eine korrektive, präventive oder zeitlich kritische medizinische Behandlung. Durch die Verkürzung der Zeit zwischen Anwendung und Ergebnis einer Behandlung von Generationen hin zu Monaten, Tagen oder Stunden erweitert sich die Zahl und das Ausmaß der Möglichkeiten für den Einsatz dieser Methoden.
 
 GRO_LIFECYCLE_MAN
-Lebenszyklusmanipulation
+Lebenszyklus Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
 '''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
@@ -6226,7 +6268,7 @@ GRO_LIFECYCLE_MAN_DESC
 Die meisten komplexen Organismen durchschreiten während ihres Lebens physiologische Stadien, manchmal abgegrenzt durch Metamorphose oder auch kaum wahrnehmlich durch einen langsamen Altersprozess. In vielen Fällen sind eines oder mehrere dieser Stadien, zumindest zu einer gewissen Zeit, nützlicher und wünschenswerter als andere. Durch exakte Kontrolle hormonaler und mentaler Mechanismen wird es möglich, Lebensstadien drastisch zu verkürzen oder herauszuzögern, wodurch in einem Bruchteil des natürlichen Zeitrahmens voll entwickelte Individuen geschaffen werden können und die existierenden Individuen ihre Funktionalität niemals einbüßen und so praktisch unsterblich werden.'''
 
 GRO_ADV_ECOMAN
-Advanced Ecomanipulation
+Verbesserte Ökomanipulation
 
 GRO_ADV_ECOMAN_DESC
 Even in an artificial environment, weather patterns and natural ecological cycles can get out of control, causing large amounts of damage. By introducing stabilizing factors, incidents of destructive ecological forces in artificial environments can be reduced, allowing large-scale environmental modifications.
@@ -6235,7 +6277,7 @@ GRO_XENO_GENETICS
 Xenogenetik
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Adequate & Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_ADEQUATE]] & [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -6259,7 +6301,7 @@ GRO_XENO_HYBRIDS
 Xenohybridisierung
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and Hostile Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
+'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -6272,7 +6314,7 @@ GRO_NANO_CYBERNET_DESC
 Der nächste Schritt nach der Anwendung von Nanotechnologie zur Heilung von Defekten oder Verletzungen ist, natürliche biochemische Systeme mit verbesserten, künstlichen Erweiterungen auszubauen oder sie ganz zu ersetzen. Statt verlorene Glieder nachzuzüchten oder beschädigte Organe zu reparieren, können solche Erweiterungen rasch und einfach neue Organe nachwachsen lassen. Antiquierte biologische Systeme, vom Muskelgewebe und Sehnen hin zu Organellen oder Enzymen, können ersetzt werden; das ermöglicht dem Organismus deutlich erhöhte Stärke, Ausdauer und Flexibilität.
 
 GRO_TRANSORG_SENT
-Trans-Organic Sentience
+Transorganisches Bewusstsein
 
 GRO_TRANSORG_SENT_DESC
 Sentience as we know it is always observed as being inextricably tied to biological life. By grasping the true nature and origin of sentience itself, it would be possible to create conscious entities that could not possibly be classified as life as we know it.
@@ -6281,14 +6323,14 @@ GRO_ENERGY_META
 Transmetabolismus
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5, den maximalen [[encyclopedia SHIELDS_TITLE]] auf allen Planeten um 5, die maximale [[encyclopedia INDUSTRY_TITLE]] auf allen Planeten mit Industriefokus um 0.2 pro Bevölkerung, sowie die maximale [[encyclopedia RESEARCH_TITLE]] auf allen Planeten mit Forschungsfokus um 0.5 pro Bevölkerung.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
 Die letzte Stufe der physischen Entwicklung ist, das Physische ein für allemal zu überschreiten. Ohne Körper können Individuen und die Gesellschaft sich völlig frei bewegen, entwickeln und leben, ohne unnötige Behinderung durch physische Einschränkungen des Körpers und ineffiziente Stoffwechselprozesse, die Energie für die Aufrechterhaltung der Homöostase verschwenden.'''
 
 PRO_MICROGRAV_MAN
-Mikrogravitationsproduktion
+Mikrogravitation
 
 PRO_MICROGRAV_MAN_DESC
 '''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
@@ -6409,10 +6451,10 @@ CON_ARCH_PSYCH_DESC
 Die Form eines Gebäudes oder Wohnraums sollte sich nicht nur an den physikalischen Einschränkungen der Baumaterialien orientieren; der psychologische Effekt auf einen Bewohner innen oder einen Betracher außen ist das, was einen Entwurf erfolgreich macht, und nicht die Stärke einer Mauer oder die Festigkeit eines Fundaments.
 
 CON_INFRA_ECOL
-Infrastrukturökologie
+Verbesserte Infrastruktur
 
 CON_INFRA_ECOL_DESC
-'''Increases Sternstraße Schnelligkeit of your ships by 20 when they are within 50 uus of a controlled planet.
+'''Erhöht die Geschwindigkeit von Schiffen auf Sternstraßen um 20, wenn sie sich in einer Entfernung von 50 uus eines Planeten des Imperiums befinden.
 
 Der grundlegende Aufbau einer neu errichteten planetaren Siedlung scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Siedlung einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Siedlung errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Siedlung unabdingbar.'''
 
@@ -6428,12 +6470,12 @@ CON_METRO_INFRA
 Metroplex Infrastruktur
 
 CON_METRO_INFRA_DESC
-'''Increases [[encyclopedia INFRASTRUCTURE_TITLE]] by 10. Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
+'''Erhöht die [[encyclopedia INFRASTRUCTURE_TITLE]] eines Planeten um 10. Dies gilt nicht für Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].
 
 Wenn die gesamte Oberfläche einer Welt bebaut ist, muss die weitere Entwicklung über- und unterhalb der bestehenden Gebäude stattfinden. Die Stabilität untergrabener oder überbauter Gebäude muss gewährleistet sein; Versorgungs- und Transportwege müssen hinsichtlich steigender Bevölkerungsdichten überdacht werden. Desweiteren müssen neuartige stilistische und funktionale Aspekte bedacht werden, um sicherzustellen, dass die neuen Ebenen auch mit den alten im Gesamtbild zusammenpassen.'''
 
 CON_ARCH_MONOFILS
-Monofilamentarchitektur
+Monofilament Architektur
 
 CON_ARCH_MONOFILS_DESC
 Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, können die Dauerhaftigkeit und Kostengünstigkeit traditioneller Baumethoden verbessern. Die Fähigkeit, diese stärker belastbaren Materialien in vorher unmögliche Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderung der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
@@ -6455,10 +6497,10 @@ The flexibility and versatility of force-energy structures permits a colonies bu
 Wenn Kräfte und Energie so manipuliert werden können, dass sie dieselbe Funktionalität wie feste Oberflächen besitzen, gibt es keinen entscheidenden Grund dafür, physikalische Materialien zur Konstruktion von Gebäuden einzusetzen. Gebäude aus purer Energie haben zahlreiche Vorteile, wie z. B. einfacher Umbau, Widerstandsfähigkeit, Transportabilität und neuartige Designmöglichkeiten.'''
 
 CON_CONTGRAV_ARCH
-Schwerkraftarchitektur
+Schwerkraft Architektur
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
+'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] auf allen Kolonien und Außenposten um 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -6468,7 +6510,7 @@ CON_GAL_INFRA
 Galaktische Infrastruktur
 
 CON_GAL_INFRA_DESC
-'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
+'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] auf allen Kolonien und Außenposten um 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -6489,16 +6531,16 @@ CON_TRANS_ARCH_DESC
 Der Inbegriff von Design vereint optimale Funktionalität mit Formschönheit. Eine transzendiertes Gebäude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch überwältige Größe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloße Einfachheit und Zweckdienlichkeit.'''
 
 CON_ORBITAL_HAB
-Orbital Habitation
+Orbitale Wohnanlagen
 
 CON_ORBITAL_HAB_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
 
 CON_NDIM_STRC
 N-Dimensionale Gebäude
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
+'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -6766,7 +6808,7 @@ CON_ORBITAL_CON
 Orbitale Konstruktion
 
 CON_ORBITAL_CON_DESC
-'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
+'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] in allen Kolonien und Außenposten um 1.
 
 Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mikrogravitation dagegen ist diese beliebig. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen für die errichtbaren Gebäudetypen und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. Außerdem muss die Inneneinrichtung von Räumen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhängiges Innendesign zu entwerfen, werden diese Räume anfänglich hauptsächlich von Personen verwandt, die an die Oberfläche von Planeten gewohnt und angepasst sind. Ein stufenweiser Übergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.'''
 
@@ -6774,12 +6816,12 @@ CON_SUBTER_CONST
 Unterirdische Konstruktion
 
 CON_SUBTER_CONST_DESC
-'''Erhöht die [[encyclopedia INFRASTRUCTURE_TITLE]] um 10. Diese Technologie kann Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]] verbessern.
+'''Erhöht die [[encyclopedia INFRASTRUCTURE_TITLE]] um 10. Dieser Bonus wirkt nicht bei Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].
 
 Wenn der Platz knapp wird, ist die Fähigkeit abwärts oder aufwärts zu bauen ein unschätzbarer Vorteil. So können ganze unterirdische Städte und Anlagen errichtet und gewartet werden, wie es auch möglich wird planetenweite unterirdische Transportwege aufzubauen.'''
 
 CON_CONC_CAMP
-Concentration Camps
+Arbeitslager
 
 CON_CONC_CAMP_DESC
 Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
@@ -6793,7 +6835,7 @@ CON_FRC_ENRG_CAMO_DESC
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_PLANET_DRIVE
-Planetary Sternstraße Drive
+Planetarer Sternenantrieb
 
 CON_PLANET_DRIVE_DESC
 Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternstraße, it would be possible to move such planets to a safer location in times of necessity.
@@ -6817,10 +6859,10 @@ CON_PALACE_EXCLUDE_DESC
 Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
 
 GRO_SUBTER_HAB
-Subterranean Habitation
+Unterirdische Wohnanlagen
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.'''
+'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5. Dieser Bonus wirkt nicht bei Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].'''
 
 GRO_GENOME_BANK
 Genombank
@@ -6862,7 +6904,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
+''''''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_HOSTILE]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -6924,7 +6966,7 @@ LRN_ENCLAVE_VOID_DESC
 Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bevölkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse könnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen können und an das ganze Imperium weiterleiten können.
 
 LRN_ART_BLACK_HOLE
-Artificial Black Hole
+Künstliches schwarzes Loch
 
 LRN_ART_BLACK_HOLE_DESC
 By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
@@ -6970,122 +7012,122 @@ SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET_1
-Planetare Verteidigungs- netz 1
+Planetares Abwehrnetz 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Erhöht das max [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5.
+'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5.
 
-Mit der galaktischen Erkundung trift die Möglichkeit, neue Rassen zu entdecken zu - und auch neue Feinde. Indem mehrere bewaffnete Verteidigung Basen in einer Umlaufbahn um den Planeten platziert werden, ist es möglich ihr einer defensiven Fähigkeiten zu geben, ohne die Notwendigkeit Schiffe dafür zu benützen.'''
+Mit der galaktischen Erkundung steigt die Möglichkeit, neue Rassen zu treffen - und auch neue Feinde. Indem mehrere bewaffnete Kampfstationen in einer Umlaufbahn um den Planeten platziert werden, ist es möglich den Planeten auch ohne Schiffe zu verteidigen.'''
 
 DEF_DEFENSE_NET_2
-Planetare Verteidigungs- netz 2
+Planetares Abwehrnetz 2
 
 DEF_DEFENSE_NET_2_DESC
-'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15, cumulative with [[tech DEF_DEFENSE_NET_1]].'''
+'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 15, zusätzlich zu [[tech DEF_DEFENSE_NET_1]].'''
 
 DEF_DEFENSE_NET_3
-Planetare Verteidigungs- netz 3
+Planetares Abwehrnetz 3
 
 DEF_DEFENSE_NET_3_DESC
-'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 25, cumulative with prerequisite defense network techs.'''
+'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 25, zusätzlich zu allen vorhergehenden Abwehrnetzen.'''
 
 DEF_DEFENSE_NET_REGEN_1
-Defense Network Regeneration 1
+Abwehrnetz Regeneration 1
 
 DEF_DEFENSE_NET_REGEN_1_DESC
-'''Increases planets' [[encyclopedia DEFENSE_TITLE]] by 10% of its max value each turn, up to the max value.
+'''Regeneriert jede Runde 10% des maximalen Wertes der planetaren [[encyclopedia DEFENSE_TITLE]].
 
-Defense regeneration allows a planet's defenses to function on turns after they have been destroyed by orbital bombardment; regeneration would otherwise not occur until a turn passed without bombardment.'''
+Die Erforschung regenerierender Abwehrnetze ermöglicht es einem Planeten, seine Verteidungseinrichtungen am Ende jeder Runde zu reparieren. Normalerweise können sich Abwehrnetze erst regenerieren, wenn in der Runde zuvor kein planetares Bombardement stattgefunden hat.'''
 
 DEF_DEFENSE_NET_REGEN_2
-Defense Network Regeneration 2
+Abwehrnetz Regeneration 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-'''Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' infrastructure, each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].'''
+'''Regeneriert die planetare [[encyclopedia DEFENSE_TITLE]] jede Runde zusätzlich um 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_PLAN_BARRIER_SHLD_1
-Planetary Barrier Shield 1
+Planetarer Schutzschild 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' infrastructure.'''
+'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 30, zusätzlich zur [[tech LRN_FORCE_FIELD]] und regeneriert den Schild jede Runde um 1 plus 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_PLAN_BARRIER_SHLD_2
-Planetary Barrier Shield 2
+Planetarer Schutzschild 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' infrastructure.'''
+'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 60. Die Schildregeneration pro Runde erhöht sich auf 1 plus 100% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_PLAN_BARRIER_SHLD_3
-Planetary Barrier Shield 3
+Planetarer Schutzschild 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' infrastructure.'''
+'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 90. Die Schildregeneration pro Runde erhöht sich auf 1 plus 200% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_PLAN_BARRIER_SHLD_4
-Planetary Barrier Shield 4
+Planetarer Schutzschild 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' infrastructure.'''
+'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 250% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_PLAN_BARRIER_SHLD_5
-Planetary Barrier Shield 5
+Planetarer Schutzschild 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' infrastructure.'''
+'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 500% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 DEF_SYST_DEF_MINE_1
-System Defense Mines 1
+Systemweites Minennetz 1
 
 DEF_SYST_DEF_MINE_1_DESC
-'''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
+'''Reduziert die Panzerung aller feindlichen Schiffe um 2 pro Runde, wenn sie sich in Systemen mit von Ihnen bewohnten Kolonien aufhalten.
 
-The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
+Wenn keine befreundeten Schiffe in einem Planetensystem vorhanden sind, ist es ein leichtes für feindliche Schiffe, die Planeten des Systems von jeglichem Warenverkehr abzuschneiden - ohne sich in die Reichweite der planetaren Verteidigungseinrichtungen zu begeben. Ein Netzwerk aus im System verteilten Abwehrminen kann dabei helfen, diese Taktik zunichte zu machen. Feindliche Schiffe werden jede Runde, in der sie in einem mit Abwehrminen geschützten System verweilen, beschädigt.
 
-Mines regenerate each turn, so are not depleted by use.'''
+Abwehrminen regenerieren sich vollständig jede Runde, können sich also niemals erschöpfen.'''
 
 DEF_SYST_DEF_MINE_2
-System Defense Mines 2
+Systemweites Minennetz 2
 
 DEF_SYST_DEF_MINE_2_DESC
-'''Reduces the structure of enemy ships by an additional 4 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].'''
+'''Reduziert die Panzerung von feindlichen Schiffen um weitere 4 pro Runde, zusätzlich zu [[tech DEF_SYST_DEF_MINE_1]].'''
 
 DEF_SYST_DEF_MINE_3
-System Defense Mines 3
+Systemweites Minennetz 3
 
 DEF_SYST_DEF_MINE_3_DESC
-'''Reduces the structure of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.'''
+'''Reduziert die Panzerung von feindlichen Schiffen um weitere 8 pro Runde, zusätzlich zu allen vorhergehenden Technologien.'''
 
 DEF_ROOT_DEFENSE
 Selbstverteidigung
 
 DEF_ROOT_DEFENSE_DESC
-'''Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 2.
+'''Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 2.
 
-Das Konzept von 'Selbstverteidigung' ist der Grundstein zu manschem Weg um Technologisch vorwärtzkommen.'''
+Das Konzept der 'Grundlegenden Verteidigung' ist die Basis vieler Möglichkeiten zu technologischem Fortschritt.'''
 
 DEF_GARRISON_1
-Planetaren Garnison 1
+Planetare Bodentruppen 1
 
 DEF_GARRISON_1_DESC
-Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 5.
+Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 5.
 
 DEF_GARRISON_2
-Planetaren Garnison 2
+Planetare Bodentruppen 2
 
 DEF_GARRISON_2_DESC
-Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 10.
+Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 10.
 
 DEF_GARRISON_3
-Planetaren Garnison 3
+Planetare Bodentruppen 3
 
 DEF_GARRISON_3_DESC
-Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 15.
+Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 15.
 
 DEF_GARRISON_4
-Planetaren Garnison 4
+Planetare Bodentruppen 4
 
 DEF_GARRISON_4_DESC
-Erhöht das max der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 20.
+Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 20.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -7853,10 +7895,10 @@ BLD_NEUTRONIUM_SYNTH_DESC
 An ancient building designed long ago to synthesize neutronium.'''
 
 BLD_CONC_CAMP
-Concentration Camps
+Arbeitslager
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
+'''Verringert die Bevölkerung eines Planeten jede Runde um 3 und erhöht die maximale [[encyclopedia INDUSTRY_TITLE]] des Planeten um das fünffache seiner Bevölkerung.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
 
@@ -7957,10 +7999,10 @@ BLD_GAS_GIANT_GEN_DESC
 A power generator designed to harvest the energy of a Gas Giant.'''
 
 BLD_COLONY_BASE
-Siedlungsbase
+Siedlungsbasis
 
 BLD_COLONY_BASE_DESC
-Erstellt ein Siedlungsbase Schiff was zur Besiedlung eines Planetes vom gleichen System benützt werden kann. Kann nur auf Planeten gebaut werden die eine Bevölkerung von 3 oder mehr haben.
+Erstellt ein Siedlungsbasisschiff, welches zur Besiedlung eines Planetes im gleichen System genutzt werden kann. Kann nur auf Planeten gebaut werden, die eine Bevölkerung von 3 oder mehr haben.
 
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
@@ -7990,7 +8032,7 @@ PART_DESC_STRENGTH
 Stärke: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Angriffschaden: %1%'''
+'''Angriffsschaden: %1%'''
 
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
@@ -8257,7 +8299,7 @@ FU_SINGULARITY_ENGINE_CORE_DESC
 A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße Schnelligkeit by 20. 
 
 FU_BASIC_TANK
-Zusatz Triebstofftank
+Zusatz Treibstofftank
 
 FU_BASIC_TANK_DESC
 Erlaubt einen zusätzlichen Sprung.
@@ -8266,13 +8308,13 @@ FU_DEUTERIUM_TANK
 Deuterium-Tank
 
 FU_DEUTERIUM_TANK_DESC
-Kleine Steigerung von Schiffsreichweite durch eine verbesserte Triebstoffkapazität. Sperrig und verwundbar durch Beschuss.
+Kleine Steigerung von Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Sperrig und verwundbar durch Beschuss.
 
 FU_ANTIMATTER_TANK
 Antimaterietank
 
 FU_ANTIMATTER_TANK_DESC
-Moderate Steigerung von Schiffsreichweite durch eine verbesserte Triebstoffkapazität. Kompakt und geringe Masse.
+Moderate Steigerung von Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
@@ -8703,26 +8745,26 @@ SH_SOLAR_DESC
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
 
 SH_BASIC_SMALL
-Kleiner Basisrumpf
+Kleiner Standardrumpf
 SH_BASIC_SMALL_DESC
-'''Ein kleiner interstellarer Basisrumpf. Verglichen mit anderen Basisrümpfen, kann er einen Sprung mehr ausführen.
+'''Ein kleiner interstellarer Standardrumpf. Verglichen mit anderen Standardrümpfen, kann er einen Sprung mehr ausführen.
 
-Benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] auf dem Planet wo es gebaut werden soll.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
 
 SH_BASIC_MEDIUM
-Mittel-grosser Basisrumpf
+Mittelgroßer Standardrumpf
 SH_BASIC_MEDIUM_DESC
-'''Ein mittel-grosser interstellaren Basisrumpf.
+'''Ein mittelgroßer Schiffsrumpf für interstellare Reisen.
 
-Benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] auf dem Planet wo es gebaut werden soll.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
 
 SH_STANDARD
-Grosser Basisrumpf
+Großer Basisrumpf
 
 SH_STANDARD_DESC
-'''Ein grosser interstellaren Basisrumpf.
+'''Ein großer Schiffsrumpf für interstellare Reisen.
 
-Benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] auf dem Planet wo es gebaut werden soll.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
 
 SH_XENTRONIUM
 Xentronium Hull
@@ -8731,7 +8773,7 @@ SH_XENTRONIUM_DESC
 A hull constructed primarily with xentronium. Though small, it has extremely high max structure.
 
 SH_COLONY_BASE
-Siedlungsbase Rumpf
+Siedlungsbasis Rumpf
 
 SH_COLONY_BASE_DESC
 Ein Rumpf konzipiert zum gründen einer Siedlung auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
@@ -9012,7 +9054,7 @@ SELF_SUSTAINING_LABEL
 '''Self-Sustaining'''
 
 TUNNELS_LABEL
-'''Subterranean Bonus'''
+'''Unterirdische Tunnel/Wohnanlagen Bonus'''
 
 GAIA_LABEL
 '''Gaia Bonus'''
@@ -9114,10 +9156,10 @@ HOMEWORLD_BONUS
 '''Heimatwelt'''
 
 ORBITAL_HAB_LABEL
-'''Orbital Habitation'''
+'''Orbitale Wohnanlagen'''
 
 NDIM_STRC_LABEL
-'''N-Dimensional Structures'''
+'''N-Dimensionale Strukturen'''
 
 WEAK_VISION_LABEL
 '''Schwache Sicht'''
