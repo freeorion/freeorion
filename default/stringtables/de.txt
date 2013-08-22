@@ -6251,7 +6251,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Erhöht die maximale Bevölkerung von Planeten des Typs <i>[[PE_GOOD]]</i>, <i>[[PE_ADEQUATE]]</i> oder <i>[[PE_POOR]]</i>, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
+'''Erhöht die maximale Bevölkerung von Planeten des Typs [[PE_GOOD]]>, [[PE_ADEQUATE]] oder [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
 
 GRO_GENETIC_MED
 Genetische Medizin
