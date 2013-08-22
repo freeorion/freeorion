@@ -2975,7 +2975,7 @@ INFRASTRUCTURE_TEXT
 DEFENSE_TITLE
 Verteidigung
 DEFENSE_TEXT
-'''Der Verteidigungswert eines Planeten ist vergleichbar mit dem Angriffswert eines Schiffes. Wenn Sie sich einen kolonialisierten Planeten oder einen Außenposten ansehen, finden sie diesen Wert in der letzen Zeile, zusammen mit dem planetaren [[encyclopedia SHIELDS_TITLE]] und den planetaren [[encyclopedia TROOP_TITLE]]'''
+'''Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.'''
 
 SHIELDS_TITLE
 Schild
@@ -3014,7 +3014,7 @@ Truppen
 TROOP_TEXT
 '''Der Begriff Truppen umschreibt alle Formen militärischer Einsatzkräfte, denen es möglich ist, auf einer Planetenoberfläche zu operieren.
 
-Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will. Der Truppenwert des Angreifers ergibt sich aus allen im Orbit befindlichen Schiffen mit Truppenkapseln (es wird die Anzahl der Truppenkapseln gezählt, nicht die Anzahl der Schiffe - Beispiel: 3 Schiffe mit je einer Truppenkapsel sind genauso gut, wie 1 Schiff mit 3 Truppenkapseln). Bei einem Angriff wird automatisch nur die benötigte Anzahl an Schiffen auf den Planeten entsendet. Die restlichen Schiffe verbleiben im Orbit. Ein kleiner Tipp: Truppenschiffe werden nach ihrem Einsatz "aufgebraucht" und verschwinden. Es lohnt daher selten, besonders teure Schiffe mit Truppenkapseln auszurüsten.'''
+Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
