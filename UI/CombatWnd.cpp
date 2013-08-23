@@ -816,31 +816,28 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 #endif
 
         // a sample system
-        std::vector<Planet*> planets;
-        // This code is basically never used, and it's in my way right now, so I'm just commenting it out. ~ Bigjoe5
-        //planets.push_back(new Planet(planet_types[0], planet_sizes[0]));
-        //planets.push_back(new Planet(planet_types[1], planet_sizes[1]));
-        //planets.push_back(new Planet(planet_types[2], planet_sizes[2]));
-        //planets.push_back(new Planet(planet_types[3], planet_sizes[3]));
-        //planets.push_back(new Planet(planet_types[4], planet_sizes[4]));
-        //planets.push_back(new Planet(planet_types[5], planet_sizes[5]));
-        //planets.push_back(new Planet(planet_types[6], planet_sizes[6]));
-        //planets.push_back(new Planet(planet_types[7], planet_sizes[7]));
-        //planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
-        //planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
+        std::vector<TemporaryPtr<Planet> > planets;
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[0], planet_sizes[0]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[1], planet_sizes[1]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[2], planet_sizes[2]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[3], planet_sizes[3]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[4], planet_sizes[4]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[5], planet_sizes[5]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[6], planet_sizes[6]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[7], planet_sizes[7]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[8], planet_sizes[8]));
+        planets.push_back(GetUniverse().CreatePlanet(planet_types[9], planet_sizes[9]));
 
         CombatData* combat_data = new CombatData;
-        // This too.
-        /*combat_data->m_system = new System(star_type, planets.size(), "Sample", 0.0, 0.0);
-        TemporaryPtr<System> system = combat_data->m_system;
-        std::map<int, UniverseObject*>& combat_universe = combat_data->m_combat_universe;
+        combat_data->m_system = GetUniverse().CreateSystem(star_type, planets.size(), "Sample", 0.0, 0.0);
+        std::map<int, TemporaryPtr<UniverseObject> >& combat_universe = combat_data->m_combat_universe;
         for (std::size_t i = 0; i < planets.size(); ++i) {
-            Planet* planet = planets[i];
-            GetUniverse().InsertID(planet, planet_ids[i]);
+            TemporaryPtr<Planet> planet = planets[i];
+            //GetUniverse().InsertID(planet, planet_ids[i]);
             combat_universe[planet_ids[i]] = planet;
-            system.Insert(planet_ids[i], i);
-            assert(system.Contains(i));
-        }*/
+            combat_data->m_system->Insert(planet_ids[i], i);
+            assert(combat_data->m_system->Contains(i));
+        }
 
         std::vector<CombatSetupGroup> setup_groups;
         InitCombat(*combat_data, setup_groups);
