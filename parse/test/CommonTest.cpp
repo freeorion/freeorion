@@ -42,3 +42,8 @@ std::ostream& std::operator << (std::ostream& stream, const ValueRef::OpType& ty
     return stream;
 }
 
+void print_expectation_failure(const boost::spirit::qi::expectation_failure<parse::token_iterator>& ex) {
+    std::stringstream result;
+    result << "Expected a " << ex.what_ << ", found instead \"" << std::string(ex.first->matched().begin(), ex.first->matched().end()) << "\"";
+    throw std::runtime_error(result.str());
+}
