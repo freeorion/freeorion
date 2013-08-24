@@ -2132,10 +2132,24 @@ PL_TYPE_SIZE
 %1% %2%
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
-PL_STEALTHY
+PL_NO_VISIBILITY
+Planet ist momentan nicht sichtbar.
+PL_BASIC_VISIBILITY
+Planet ist vor Sensoren verdeckt.
+PL_LAST_TURN_SEEN
+Zuletzt gesehen in Runde %1%.
+PL_LAST_TURN_SCANNED
+Zuletzt gescannt in Runde %1%.
+PL_NEVER_SEEN
+Dieser Planet hat nie von Ihrem Reich gesehen geworden.
+PL_NEVER_SCANNED
+Dieser Planet hat nie von Ihrem Reich gescannt geworden.
+PL_NOT_IN_RANGE
+Dieser Planet ist außerhalb der Aufklärungsreichweite.
+PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Neuste bekannte Tarnung (%1%) übersteigt die [[DETECTION_TITLE]] (%2%).
-PL_STEALTHY_NO_INFO
-Geringe Sichtbarkeit.
+PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
+Neuste bekannte Tarnung ist nicht aktuell.  Tatsächliche Tarnung übersteigt die [[DETECTION_TITLE]].
 
 ## Resources Panel ##########
 

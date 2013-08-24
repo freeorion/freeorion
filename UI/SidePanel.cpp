@@ -513,7 +513,6 @@ private:
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
     StarType                m_star_type;
-    float                   m_empire_detection_strength;///< the detection strength of the viewing empire.
 
     boost::signals::connection  m_planet_connection;
 };
@@ -800,8 +799,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_military_panel(0),
     m_buildings_panel(0),
     m_specials_panel(0),
-    m_star_type(star_type),
-    m_empire_detection_strength(0)
+    m_star_type(star_type)
 {
     SetName(UserString("PLANET_PANEL"));
 
@@ -874,14 +872,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
     GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
-
-
-    // get viewing empire's detection strength
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (client_empire_id != ALL_EMPIRES) {
-        Empire* client_empire = Empires().Lookup(client_empire_id);
-        m_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
-    }
 
 
     // create planet name control
@@ -1615,19 +1605,73 @@ void SidePanel::PlanetPanel::Refresh() {
     
     // set stealth browse text
     ClearBrowseInfoWnd();
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY) {
-        float stealth = planet->CurrentMeterValue(METER_STEALTH);
 
-        std::string info;
-        if (stealth > m_empire_detection_strength) {
-            info = boost::io::str(FlexibleFormat(UserString("PL_STEALTHY")) %
-                                                 boost::lexical_cast<std::string>(stealth)      %
-                                                 boost::lexical_cast<std::string>(m_empire_detection_strength));
+    if (client_empire_id != ALL_EMPIRES) {
+        Empire* client_empire = Empires().Lookup(client_empire_id);
+        Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
+        Universe::VisibilityTurnMap visibility_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
+        float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
+        float apparent_stealth = planet->CurrentMeterValue(METER_STEALTH);
+
+        std::string visibility_info;
+        std::string detection_info;
+
+        if (visibility == VIS_NO_VISIBILITY) {
+            visibility_info = UserString("PL_NO_VISIBILITY");
+
+            Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+            if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
+                visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SEEN")) %
+                                                                        boost::lexical_cast<std::string>(last_turn_visible_it->second));
+            }
+            else {
+                visibility_info += "  " + UserString("PL_NEVER_SEEN");
+                Logger().errorStream() << "Empire " << client_empire_id << " knows about planet " << planet->Name() <<
+                                          " (id: " << m_planet_id << ") without having seen it before!";
+            }
+
+            TemporaryPtr<System> system = GetSystem(planet->SystemID());
+            if (system && system->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
+                detection_info = UserString("PL_NOT_IN_RANGE");
+            }
+            else if (apparent_stealth > client_empire_detection_strength) {
+                detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
+                                                boost::lexical_cast<std::string>(apparent_stealth)                  %
+                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+            }
+            else {
+                detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
+                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+            }
+
+            std::string info = visibility_info + "\n\n" + detection_info;
+            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
         }
-        else {
-            info = boost::io::str(FlexibleFormat(UserString("PL_STEALTHY_NO_INFO")));
+        else if (visibility == VIS_BASIC_VISIBILITY) {
+            visibility_info = UserString("PL_BASIC_VISIBILITY");
+
+            Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_PARTIAL_VISIBILITY);
+            if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
+                visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SCANNED")) %
+                                                                        boost::lexical_cast<std::string>(last_turn_visible_it->second));
+            }
+            else {
+                visibility_info += "  " + UserString("PL_NEVER_SCANNED");
+            }
+            
+            if (apparent_stealth > client_empire_detection_strength) {
+                detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
+                                                boost::lexical_cast<std::string>(apparent_stealth)                  %
+                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+            }
+            else {
+                detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
+                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+            }
+
+            std::string info = visibility_info + "\n\n" + detection_info;
+            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
         }
-        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
     }
 
 

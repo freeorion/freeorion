@@ -2127,10 +2127,24 @@ PL_TYPE_SIZE
 %1% %2%
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
-PL_STEALTHY
+PL_NO_VISIBILITY
+Planet is not currently visible.
+PL_BASIC_VISIBILITY
+Planet is obscured from sensors.
+PL_LAST_TURN_SEEN
+Last seen on turn %1%.
+PL_LAST_TURN_SCANNED
+Last scanned on turn %1%.
+PL_NEVER_SEEN
+This planet has never been seen by your empire.
+PL_NEVER_SCANNED
+This planet has never been thoroughly scanned by your empire.
+PL_NOT_IN_RANGE
+This planet is out of range of your empire's scanners.
+PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
-PL_STEALTHY_NO_INFO
-Low visibility.
+PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
+Latest known stealth is out of date.  Actual stealth exceeds [[DETECTION_TITLE]].
 
 ## Resources Panel ##########
 
