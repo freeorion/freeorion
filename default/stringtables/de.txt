@@ -2135,17 +2135,17 @@ PL_TYPE_SIZE_ENV
 PL_NO_VISIBILITY
 Planet ist momentan nicht sichtbar.
 PL_BASIC_VISIBILITY
-Planet ist vor Sensoren verdeckt.
+Planet ist für Sensoren nicht abtastbar.
 PL_LAST_TURN_SEEN
 Zuletzt gesehen in Runde %1%.
 PL_LAST_TURN_SCANNED
-Zuletzt gescannt in Runde %1%.
+Zuletzt abgetastet in Runde %1%.
 PL_NEVER_SEEN
-Dieser Planet hat nie von Ihrem Reich gesehen geworden.
+Planet wurde nie von Ihrem Reich gesehen.
 PL_NEVER_SCANNED
-Dieser Planet hat nie von Ihrem Reich gescannt geworden.
+Planet wurde nie von Ihrem Reich abgetastet.
 PL_NOT_IN_RANGE
-Dieser Planet ist außerhalb der Aufklärungsreichweite.
+Dieser Planet ist außerhalb der Aufklärungsreichweite Ihres Imperiums.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Neuste bekannte Tarnung (%1%) übersteigt die [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
