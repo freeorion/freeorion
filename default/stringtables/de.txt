@@ -2141,9 +2141,9 @@ Zuletzt gesehen in Runde %1%.
 PL_LAST_TURN_SCANNED
 Zuletzt abgetastet in Runde %1%.
 PL_NEVER_SEEN
-Planet wurde nie von Ihrem Reich gesehen.
+Planet wurde nie von Ihrem Imperium gesehen.
 PL_NEVER_SCANNED
-Planet wurde nie von Ihrem Reich abgetastet.
+Planet wurde nie von Ihrem Imperium abgetastet.
 PL_NOT_IN_RANGE
 Dieser Planet ist außerhalb der Aufklärungsreichweite Ihres Imperiums.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
