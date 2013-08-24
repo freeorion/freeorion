@@ -513,6 +513,7 @@ private:
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
     StarType                m_star_type;
+    float                   m_empire_detection_strength;///< the detection strength of the viewing empire.
 
     boost::signals::connection  m_planet_connection;
 };
@@ -799,7 +800,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_military_panel(0),
     m_buildings_panel(0),
     m_specials_panel(0),
-    m_star_type(star_type)
+    m_star_type(star_type),
+    m_empire_detection_strength(0)
 {
     SetName(UserString("PLANET_PANEL"));
 
@@ -808,6 +810,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
     }
+    
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // create planet name text
 
@@ -850,6 +854,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
+        // TODO: ^^ This isn't the stone age anymore - we have tags now, and an annoying hard-coded tag is probably at least a step up.
         if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
             has_shipyard = true;
             break;
@@ -868,8 +873,15 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     else
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
-
     GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
+
+
+    // get viewing empire's detection strength
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (client_empire_id != ALL_EMPIRES) {
+        Empire* client_empire = Empires().Lookup(client_empire_id);
+        m_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();
+    }
 
 
     // create planet name control
@@ -1600,6 +1612,23 @@ void SidePanel::PlanetPanel::Refresh() {
         m_buildings_panel->Refresh();
     if (m_specials_panel)
         m_specials_panel->Update();
+    
+    // set stealth browse text
+    ClearBrowseInfoWnd();
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY) {
+        float stealth = planet->CurrentMeterValue(METER_STEALTH);
+
+        std::string info;
+        if (stealth > m_empire_detection_strength) {
+            info = boost::io::str(FlexibleFormat(UserString("PL_STEALTHY")) %
+                                                 boost::lexical_cast<std::string>(stealth)      %
+                                                 boost::lexical_cast<std::string>(m_empire_detection_strength));
+        }
+        else {
+            info = boost::io::str(FlexibleFormat(UserString("PL_STEALTHY_NO_INFO")));
+        }
+        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
+    }
 
 
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal,

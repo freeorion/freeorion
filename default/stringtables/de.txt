@@ -2132,6 +2132,10 @@ PL_TYPE_SIZE
 %1% %2%
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
+PL_STEALTHY
+Neuste bekannte Tarnung (%1%) übersteigt die [[DETECTION_TITLE]] (%2%).
+PL_STEALTHY_NO_INFO
+Geringe Sichtbarkeit.
 
 ## Resources Panel ##########
 
