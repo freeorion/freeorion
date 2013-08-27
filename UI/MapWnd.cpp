@@ -108,7 +108,7 @@ namespace {
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),            false,      Validator<bool>());
         db.Add("UI.optimized-system-rendering",     UserStringNop("OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING"),        true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                     6.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
+        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                     4.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),       true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),           3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
@@ -116,7 +116,7 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
-        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),        false,      Validator<bool>());
+        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),        true,      Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                     true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
