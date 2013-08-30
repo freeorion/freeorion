@@ -136,8 +136,11 @@
     <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
+    <ClCompile Include="..\..\parse\Tokens.cpp" />
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp" />
+    <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
+    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h" />
@@ -153,6 +156,7 @@
     <ClInclude Include="..\..\parse\ParseImpl.h" />
     <ClInclude Include="..\..\parse\ReportParseError.h" />
     <ClInclude Include="..\..\parse\ShipPartStatsParser.h" />
+    <ClInclude Include="..\..\parse\Tokens.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />
     <ClInclude Include="..\..\parse\ValueRefParserImpl.h" />
   </ItemGroup>

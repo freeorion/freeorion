@@ -161,7 +161,6 @@ add_library(freeorioncommon
     universe/Enums.cpp
     universe/Fleet.cpp
     universe/Meter.cpp
-    universe/Names.cpp
     universe/ObjectMap.cpp
     universe/Planet.cpp
     universe/PopCenter.cpp
@@ -203,9 +202,6 @@ add_library(freeorioncommon
     util/i18n.cpp
     util/VarText.cpp
     util/XMLDoc.cpp
-    GG/src/adobe/memory.cpp
-    GG/src/adobe/name.cpp
-    GG/src/adobe/string_pool.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 

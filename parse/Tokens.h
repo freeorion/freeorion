@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef _Names_h_
-#define _Names_h_
+#ifndef _Tokens_h_
+#define _Tokens_h_
 
 #include <GG/adobe/name.hpp>
 

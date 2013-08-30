@@ -10,6 +10,7 @@ if (NOT BUILD_TESTS)
 endif ()
 
 add_library(freeorionparse
+    Tokens.cpp
     Lexer.cpp
     ReportParseError.cpp
     Int.cpp
@@ -51,6 +52,8 @@ add_library(freeorionparse
     AlignmentsParser.cpp
     EncyclopediaParser.cpp
     KeymapParser.cpp
+    ../GG/src/adobe/name.cpp
+    ../GG/src/adobe/string_pool.cpp
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

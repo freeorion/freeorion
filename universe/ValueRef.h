@@ -2,7 +2,6 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
-#include "Names.h"
 #include "Condition.h"
 #include "../util/Export.h"
 

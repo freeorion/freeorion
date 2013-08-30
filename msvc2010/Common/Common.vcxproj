@@ -161,7 +161,6 @@
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\InhibitableSignal.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
-    <ClInclude Include="..\..\universe\Names.h" />
     <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />
@@ -216,9 +215,6 @@
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\memory.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
@@ -236,7 +232,6 @@
     <ClCompile Include="..\..\universe\Field.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />
-    <ClCompile Include="..\..\universe\Names.cpp" />
     <ClCompile Include="..\..\universe\ObjectMap.cpp" />
     <ClCompile Include="..\..\universe\Planet.cpp" />
     <ClCompile Include="..\..\universe\PopCenter.cpp" />

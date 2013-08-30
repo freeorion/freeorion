@@ -45,9 +45,6 @@
     <Filter Include="Source Files\cmake">
       <UniqueIdentifier>{6ffe6d1e-98f6-4958-9efb-3ceb8ff2c1c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\adobe">
-      <UniqueIdentifier>{b19ff882-0104-4fb0-9dda-efe425822fa0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\util\Serialize.ipp">
@@ -104,9 +101,6 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Meter.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\Names.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\ObjectMap.h">
@@ -369,9 +363,6 @@
     <ClCompile Include="..\..\universe\Meter.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\Names.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\ObjectMap.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
@@ -464,15 +455,6 @@
     </ClCompile>
     <ClCompile Include="..\..\util\Version.cpp">
       <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\memory.cpp">
-      <Filter>Source Files\adobe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp">
-      <Filter>Source Files\adobe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
-      <Filter>Source Files\adobe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\ScopedTimer.cpp">
       <Filter>Source Files\util</Filter>
