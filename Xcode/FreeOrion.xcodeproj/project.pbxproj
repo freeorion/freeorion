@@ -150,9 +150,6 @@
 		3A7604B31749A15500363653 /* ConditionParser4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */; };
 		3A7604B41749A16200363653 /* BuildingsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */; };
 		3A7604B51749A17300363653 /* AlignmentsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */; };
-		3A7604BE1749B2FF00363653 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
-		3A7604C41749B39300363653 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
-		3A7604CB1749B48200363653 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		3ABEAB3A1749BFE000E34912 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821CB90915F8C15A00D48537 /* liblog4cpp.a */; };
 		3ABEAB3B1749BFED00E34912 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
@@ -364,7 +361,6 @@
 		8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
-		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
 		825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */; };
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
@@ -379,6 +375,9 @@
 		82C07479149DE7CE00E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C0747C149DE80300E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C0747F149DE83000E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
+		82C560CE17D0CB4E00FE3B35 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
+		82C560CF17D0CB4E00FE3B35 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
+		82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C560D117D0CC2F00FE3B35 /* Tokens.cpp */; };
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
@@ -662,15 +661,6 @@
 		348D0F5C1194D6230034C679 /* EntityRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityRenderer.h; sourceTree = "<group>"; };
 		349724D70F49C9220015C864 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogre.framework; sourceTree = "<group>"; };
 		34972B590F49CB100015C864 /* COPYING.OPENSTEER */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.OPENSTEER; sourceTree = "<group>"; };
-		34972B5B0F49CB100015C864 /* contact.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = contact.html; sourceTree = "<group>"; };
-		34972B5C0F49CB100015C864 /* doc.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = doc.html; sourceTree = "<group>"; };
-		34972B5D0F49CB100015C864 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
-		34972B5F0F49CB100015C864 /* beta_250a.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = beta_250a.gif; sourceTree = "<group>"; };
-		34972B600F49CB100015C864 /* beta_90a.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = beta_90a.gif; sourceTree = "<group>"; };
-		34972B610F49CB100015C864 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = favicon.ico; sourceTree = "<group>"; };
-		34972B620F49CB100015C864 /* typical_SteerTest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = typical_SteerTest.png; sourceTree = "<group>"; };
-		34972B630F49CB100015C864 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		34972B640F49CB100015C864 /* stref.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = stref.html; sourceTree = "<group>"; };
 		34972BE60F49CBE80015C864 /* ChatWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChatWnd.cpp; sourceTree = "<group>"; };
 		34972BE70F49CBE80015C864 /* ChatWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatWnd.h; sourceTree = "<group>"; };
 		34972BE80F49CBE80015C864 /* CollisionMeshConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionMeshConverter.cpp; sourceTree = "<group>"; };
@@ -824,7 +814,6 @@
 		34BAB1310FC5CF9E00EF792E /* group_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = group_factory.hpp; sourceTree = "<group>"; };
 		34BAB1320FC5CF9E00EF792E /* image_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image_factory.hpp; sourceTree = "<group>"; };
 		34BAB1330FC5CF9E00EF792E /* label_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = label_factory.hpp; sourceTree = "<group>"; };
-		34BAB1340FC5CF9E00EF792E /* link_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = link_factory.hpp; sourceTree = "<group>"; };
 		34BAB1350FC5CF9E00EF792E /* number_unit.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = number_unit.hpp; sourceTree = "<group>"; };
 		34BAB1360FC5CF9E00EF792E /* optional_connect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optional_connect.hpp; sourceTree = "<group>"; };
 		34BAB1370FC5CF9E00EF792E /* optional_panel_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optional_panel_factory.hpp; sourceTree = "<group>"; };
@@ -837,7 +826,6 @@
 		34BAB13E0FC5CF9E00EF792E /* platform_group.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_group.hpp; sourceTree = "<group>"; };
 		34BAB13F0FC5CF9E00EF792E /* platform_image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_image.hpp; sourceTree = "<group>"; };
 		34BAB1400FC5CF9E00EF792E /* platform_label.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_label.hpp; sourceTree = "<group>"; };
-		34BAB1410FC5CF9E00EF792E /* platform_link.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_link.hpp; sourceTree = "<group>"; };
 		34BAB1420FC5CF9E00EF792E /* platform_metrics.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_metrics.hpp; sourceTree = "<group>"; };
 		34BAB1430FC5CF9E00EF792E /* platform_optional_panel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_optional_panel.hpp; sourceTree = "<group>"; };
 		34BAB1440FC5CF9E00EF792E /* platform_panel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = platform_panel.hpp; sourceTree = "<group>"; };
@@ -1128,7 +1116,6 @@
 		3A5105531748D68B00DC258B /* i18n.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i18n.h; sourceTree = "<group>"; };
 		3A5105551748D6A600DC258B /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		3A5105561748D6A700DC258B /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
-		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
 		471023400CEF3AAB00A7DF2B /* Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
@@ -1315,7 +1302,6 @@
 		471D5CB30A98A3F900DA9C21 /* CUIStyle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CUIStyle.h; sourceTree = "<group>"; };
 		471D5CB60A98A3F900DA9C21 /* CUIWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CUIWnd.cpp; sourceTree = "<group>"; };
 		471D5CB70A98A3F900DA9C21 /* CUIWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CUIWnd.h; sourceTree = "<group>"; };
-		471D5CB90A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		471D5CBA0A98A3F900DA9C21 /* FleetButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FleetButton.cpp; sourceTree = "<group>"; };
 		471D5CBB0A98A3F900DA9C21 /* FleetButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FleetButton.h; sourceTree = "<group>"; };
 		471D5CBC0A98A3F900DA9C21 /* FleetWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FleetWnd.cpp; sourceTree = "<group>"; };
@@ -1356,7 +1342,6 @@
 		471D5CE60A98A3F900DA9C21 /* Building.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Building.h; sourceTree = "<group>"; };
 		471D5CE70A98A3F900DA9C21 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
 		471D5CE80A98A3F900DA9C21 /* Condition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Condition.h; sourceTree = "<group>"; };
-		471D5CED0A98A3F900DA9C21 /* designer_effects_doc.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = designer_effects_doc.txt; sourceTree = "<group>"; };
 		471D5CEE0A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		471D5CEF0A98A3F900DA9C21 /* Effect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Effect.cpp; sourceTree = "<group>"; };
 		471D5CF00A98A3F900DA9C21 /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Effect.h; sourceTree = "<group>"; };
@@ -1607,8 +1592,6 @@
 		82592EED147E376600B840A5 /* RandomTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomTable.h; sourceTree = "<group>"; };
 		82592EEE147E37FB00B840A5 /* EffectAccounting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectAccounting.h; sourceTree = "<group>"; };
 		82592EEF147E381B00B840A5 /* EffectAccounting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectAccounting.cpp; sourceTree = "<group>"; };
-		82592EF1147E387100B840A5 /* Names.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Names.cpp; sourceTree = "<group>"; };
-		82592EF2147E387100B840A5 /* Names.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Names.h; sourceTree = "<group>"; };
 		82592EF3147E387100B840A5 /* ObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectMap.cpp; sourceTree = "<group>"; };
 		82592EF4147E387100B840A5 /* ObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectMap.h; sourceTree = "<group>"; };
 		82592EF7147E38ED00B840A5 /* ValueRefFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefFwd.h; sourceTree = "<group>"; };
@@ -1628,7 +1611,6 @@
 		825936E4147E3B1B00B840A5 /* EnumParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumParser.cpp; sourceTree = "<group>"; };
 		825936E5147E3B1B00B840A5 /* EnumParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumParser.h; sourceTree = "<group>"; };
 		825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FleetPlansParser.cpp; sourceTree = "<group>"; };
-		825936E7147E3B1B00B840A5 /* generate_error_prefixes.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_error_prefixes.py; sourceTree = "<group>"; };
 		825936E8147E3B1B00B840A5 /* Int.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Int.cpp; sourceTree = "<group>"; };
 		825936E9147E3B1B00B840A5 /* Int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int.h; sourceTree = "<group>"; };
 		825936EA147E3B1B00B840A5 /* IntValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntValueRefParser.cpp; sourceTree = "<group>"; };
@@ -1641,7 +1623,6 @@
 		825936F1147E3B1B00B840A5 /* Parse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parse.cpp; sourceTree = "<group>"; };
 		825936F2147E3B1B00B840A5 /* Parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parse.h; sourceTree = "<group>"; };
 		825936F3147E3B1B00B840A5 /* ParseImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseImpl.h; sourceTree = "<group>"; };
-		825936F4147E3B1B00B840A5 /* permute_labels.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = permute_labels.py; sourceTree = "<group>"; };
 		825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetEnvironmentValueRefParser.cpp; sourceTree = "<group>"; };
 		825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetSizeValueRefParser.cpp; sourceTree = "<group>"; };
 		825936F7147E3B1B00B840A5 /* PlanetTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlanetTypeValueRefParser.cpp; sourceTree = "<group>"; };
@@ -1659,17 +1640,12 @@
 		82593704147E3B1C00B840A5 /* buildings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings; sourceTree = "<group>"; };
 		82593705147E3B1C00B840A5 /* buildings_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings_errors; sourceTree = "<group>"; };
 		82593706147E3B1C00B840A5 /* buildings_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildings_permutations; sourceTree = "<group>"; };
-		82593707147E3B1C00B840A5 /* capture_result_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = capture_result_enumerators; sourceTree = "<group>"; };
-		82593709147E3B1C00B840A5 /* combat_fighter_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = combat_fighter_type_enumerators; sourceTree = "<group>"; };
 		8259370A147E3B1C00B840A5 /* condition_parser_1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_1; sourceTree = "<group>"; };
 		8259370B147E3B1C00B840A5 /* condition_parser_1_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_1_errors; sourceTree = "<group>"; };
 		8259370C147E3B1C00B840A5 /* condition_parser_2 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_2; sourceTree = "<group>"; };
 		8259370D147E3B1C00B840A5 /* condition_parser_2_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_2_errors; sourceTree = "<group>"; };
 		8259370E147E3B1C00B840A5 /* condition_parser_3 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_3; sourceTree = "<group>"; };
 		8259370F147E3B1C00B840A5 /* condition_parser_3_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = condition_parser_3_errors; sourceTree = "<group>"; };
-		82593710147E3B1C00B840A5 /* double_arithmetic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_arithmetic; sourceTree = "<group>"; };
-		82593711147E3B1C00B840A5 /* double_arithmetic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_arithmetic_errors; sourceTree = "<group>"; };
-		82593712147E3B1C00B840A5 /* double_arithmetic_evaluated */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_arithmetic_evaluated; sourceTree = "<group>"; };
 		82593713147E3B1C00B840A5 /* double_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_statistic; sourceTree = "<group>"; };
 		82593714147E3B1C00B840A5 /* double_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_statistic_errors; sourceTree = "<group>"; };
 		82593715147E3B1C00B840A5 /* double_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_variable; sourceTree = "<group>"; };
@@ -1677,18 +1653,9 @@
 		82593717147E3B1C00B840A5 /* double_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = double_variable_errors; sourceTree = "<group>"; };
 		82593718147E3B1C00B840A5 /* effect_parser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = effect_parser; sourceTree = "<group>"; };
 		82593719147E3B1C00B840A5 /* effect_parser_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = effect_parser_errors; sourceTree = "<group>"; };
-		8259371A147E3B1C00B840A5 /* empire_affiliation_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empire_affiliation_type_enumerators; sourceTree = "<group>"; };
 		8259371B147E3B1C00B840A5 /* fleet_plans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fleet_plans; sourceTree = "<group>"; };
 		8259371C147E3B1C00B840A5 /* fleet_plans_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fleet_plans_errors; sourceTree = "<group>"; };
 		8259371D147E3B1C00B840A5 /* fleet_plans_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fleet_plans_permutations; sourceTree = "<group>"; };
-		8259371E147E3B1C00B840A5 /* int_arithmetic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_arithmetic; sourceTree = "<group>"; };
-		8259371F147E3B1C00B840A5 /* int_arithmetic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_arithmetic_errors; sourceTree = "<group>"; };
-		82593720147E3B1C00B840A5 /* int_arithmetic_evaluated */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_arithmetic_evaluated; sourceTree = "<group>"; };
-		82593721147E3B1C00B840A5 /* int_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_statistic; sourceTree = "<group>"; };
-		82593722147E3B1C00B840A5 /* int_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_statistic_errors; sourceTree = "<group>"; };
-		82593723147E3B1C00B840A5 /* int_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_variable; sourceTree = "<group>"; };
-		82593724147E3B1C00B840A5 /* int_variable_arithmetic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_variable_arithmetic; sourceTree = "<group>"; };
-		82593725147E3B1C00B840A5 /* int_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = int_variable_errors; sourceTree = "<group>"; };
 		82593726147E3B1C00B840A5 /* items */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = items; sourceTree = "<group>"; };
 		82593727147E3B1C00B840A5 /* items_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = items_errors; sourceTree = "<group>"; };
 		82593728147E3B1C00B840A5 /* items_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = items_permutations; sourceTree = "<group>"; };
@@ -1697,21 +1664,17 @@
 		8259372B147E3B1C00B840A5 /* monster_fleet_plans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monster_fleet_plans; sourceTree = "<group>"; };
 		8259372C147E3B1C00B840A5 /* monster_fleet_plans_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monster_fleet_plans_errors; sourceTree = "<group>"; };
 		8259372D147E3B1C00B840A5 /* monster_fleet_plans_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monster_fleet_plans_permutations; sourceTree = "<group>"; };
-		8259372E147E3B1C00B840A5 /* non_ship_part_meter_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = non_ship_part_meter_type_enumerators; sourceTree = "<group>"; };
 		8259372F147E3B1C00B840A5 /* planet_environment_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_constant; sourceTree = "<group>"; };
-		82593730147E3B1C00B840A5 /* planet_environment_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_enumerators; sourceTree = "<group>"; };
 		82593731147E3B1C00B840A5 /* planet_environment_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_statistic; sourceTree = "<group>"; };
 		82593732147E3B1C00B840A5 /* planet_environment_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_statistic_errors; sourceTree = "<group>"; };
 		82593733147E3B1C00B840A5 /* planet_environment_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_variable; sourceTree = "<group>"; };
 		82593734147E3B1C00B840A5 /* planet_environment_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_environment_variable_errors; sourceTree = "<group>"; };
 		82593735147E3B1C00B840A5 /* planet_size_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_constant; sourceTree = "<group>"; };
-		82593736147E3B1C00B840A5 /* planet_size_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_enumerators; sourceTree = "<group>"; };
 		82593737147E3B1C00B840A5 /* planet_size_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_statistic; sourceTree = "<group>"; };
 		82593738147E3B1C00B840A5 /* planet_size_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_statistic_errors; sourceTree = "<group>"; };
 		82593739147E3B1C00B840A5 /* planet_size_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_variable; sourceTree = "<group>"; };
 		8259373A147E3B1C00B840A5 /* planet_size_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_size_variable_errors; sourceTree = "<group>"; };
 		8259373B147E3B1C00B840A5 /* planet_type_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_type_constant; sourceTree = "<group>"; };
-		8259373C147E3B1C00B840A5 /* planet_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_type_enumerators; sourceTree = "<group>"; };
 		8259373D147E3B1C00B840A5 /* planet_type_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_type_statistic; sourceTree = "<group>"; };
 		8259373E147E3B1C00B840A5 /* planet_type_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_type_statistic_errors; sourceTree = "<group>"; };
 		8259373F147E3B1C00B840A5 /* planet_type_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = planet_type_variable; sourceTree = "<group>"; };
@@ -1721,10 +1684,8 @@
 		82593743147E3B1C00B840A5 /* ship_designs_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_designs_permutations; sourceTree = "<group>"; };
 		82593744147E3B1C00B840A5 /* ship_hulls */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_hulls; sourceTree = "<group>"; };
 		82593745147E3B1C00B840A5 /* ship_hulls_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_hulls_errors; sourceTree = "<group>"; };
-		82593746147E3B1C00B840A5 /* ship_part_class_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_part_class_enumerators; sourceTree = "<group>"; };
 		82593747147E3B1C00B840A5 /* ship_parts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_parts; sourceTree = "<group>"; };
 		82593748147E3B1C00B840A5 /* ship_parts_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_parts_errors; sourceTree = "<group>"; };
-		82593749147E3B1C00B840A5 /* ship_slot_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_slot_type_enumerators; sourceTree = "<group>"; };
 		8259374A147E3B1C00B840A5 /* specials */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = specials; sourceTree = "<group>"; };
 		8259374B147E3B1C00B840A5 /* specials_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = specials_errors; sourceTree = "<group>"; };
 		8259374C147E3B1C00B840A5 /* specials_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = specials_permutations; sourceTree = "<group>"; };
@@ -1732,31 +1693,19 @@
 		8259374E147E3B1C00B840A5 /* species_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = species_errors; sourceTree = "<group>"; };
 		8259374F147E3B1C00B840A5 /* species_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = species_permutations; sourceTree = "<group>"; };
 		82593750147E3B1C00B840A5 /* star_type_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_constant; sourceTree = "<group>"; };
-		82593751147E3B1C00B840A5 /* star_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_enumerators; sourceTree = "<group>"; };
 		82593752147E3B1C00B840A5 /* star_type_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_statistic; sourceTree = "<group>"; };
 		82593753147E3B1C00B840A5 /* star_type_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_statistic_errors; sourceTree = "<group>"; };
 		82593754147E3B1C00B840A5 /* star_type_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_variable; sourceTree = "<group>"; };
 		82593755147E3B1C00B840A5 /* star_type_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = star_type_variable_errors; sourceTree = "<group>"; };
-		82593756147E3B1C00B840A5 /* statistic_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = statistic_type_enumerators; sourceTree = "<group>"; };
-		82593757147E3B1C00B840A5 /* string_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_constant; sourceTree = "<group>"; };
-		82593758147E3B1C00B840A5 /* string_constant_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_constant_errors; sourceTree = "<group>"; };
 		82593759147E3B1C00B840A5 /* string_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_statistic; sourceTree = "<group>"; };
 		8259375A147E3B1C00B840A5 /* string_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_statistic_errors; sourceTree = "<group>"; };
 		8259375B147E3B1C00B840A5 /* string_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_variable; sourceTree = "<group>"; };
 		8259375C147E3B1C00B840A5 /* string_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = string_variable_errors; sourceTree = "<group>"; };
-		8259375D147E3B1C00B840A5 /* tech_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tech_type_enumerators; sourceTree = "<group>"; };
 		8259375E147E3B1C00B840A5 /* techs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = techs; sourceTree = "<group>"; };
 		8259375F147E3B1C00B840A5 /* techs_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = techs_errors; sourceTree = "<group>"; };
 		82593760147E3B1C00B840A5 /* techs_permutations */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = techs_permutations; sourceTree = "<group>"; };
 		82593761147E3B1C00B840A5 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test.cpp; sourceTree = "<group>"; };
 		82593762147E3B1C00B840A5 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
-		82593763147E3B1C00B840A5 /* universe_object_type_constant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_constant; sourceTree = "<group>"; };
-		82593764147E3B1C00B840A5 /* universe_object_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_enumerators; sourceTree = "<group>"; };
-		82593765147E3B1C00B840A5 /* universe_object_type_statistic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_statistic; sourceTree = "<group>"; };
-		82593766147E3B1C00B840A5 /* universe_object_type_statistic_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_statistic_errors; sourceTree = "<group>"; };
-		82593767147E3B1C00B840A5 /* universe_object_type_variable */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_variable; sourceTree = "<group>"; };
-		82593768147E3B1C00B840A5 /* universe_object_type_variable_errors */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = universe_object_type_variable_errors; sourceTree = "<group>"; };
-		82593769147E3B1C00B840A5 /* unlockable_item_type_enumerators */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unlockable_item_type_enumerators; sourceTree = "<group>"; };
 		8259376A147E3B1C00B840A5 /* UniverseObjectTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseObjectTypeValueRefParser.cpp; sourceTree = "<group>"; };
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
@@ -1775,6 +1724,8 @@
 		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
 		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
 		82C07438149DE46200E76876 /* freeorionparse.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = freeorionparse.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		82C560D117D0CC2F00FE3B35 /* Tokens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tokens.cpp; sourceTree = "<group>"; };
+		82C560D217D0CC2F00FE3B35 /* Tokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tokens.h; sourceTree = "<group>"; };
 		82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeModeratorAction.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
@@ -1959,12 +1910,7 @@
 		34972B5A0F49CB100015C864 /* doc */ = {
 			isa = PBXGroup;
 			children = (
-				34972B5B0F49CB100015C864 /* contact.html */,
-				34972B5C0F49CB100015C864 /* doc.html */,
-				34972B5D0F49CB100015C864 /* Doxyfile */,
 				34972B5E0F49CB100015C864 /* images */,
-				34972B630F49CB100015C864 /* index.html */,
-				34972B640F49CB100015C864 /* stref.html */,
 			);
 			path = doc;
 			sourceTree = "<group>";
@@ -1972,10 +1918,6 @@
 		34972B5E0F49CB100015C864 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				34972B5F0F49CB100015C864 /* beta_250a.gif */,
-				34972B600F49CB100015C864 /* beta_90a.gif */,
-				34972B610F49CB100015C864 /* favicon.ico */,
-				34972B620F49CB100015C864 /* typical_SteerTest.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -2226,7 +2168,6 @@
 				34BAB1310FC5CF9E00EF792E /* group_factory.hpp */,
 				34BAB1320FC5CF9E00EF792E /* image_factory.hpp */,
 				34BAB1330FC5CF9E00EF792E /* label_factory.hpp */,
-				34BAB1340FC5CF9E00EF792E /* link_factory.hpp */,
 				34BAB1350FC5CF9E00EF792E /* number_unit.hpp */,
 				34BAB1360FC5CF9E00EF792E /* optional_connect.hpp */,
 				34BAB1370FC5CF9E00EF792E /* optional_panel_factory.hpp */,
@@ -2239,7 +2180,6 @@
 				34BAB13E0FC5CF9E00EF792E /* platform_group.hpp */,
 				34BAB13F0FC5CF9E00EF792E /* platform_image.hpp */,
 				34BAB1400FC5CF9E00EF792E /* platform_label.hpp */,
-				34BAB1410FC5CF9E00EF792E /* platform_link.hpp */,
 				34BAB1420FC5CF9E00EF792E /* platform_metrics.hpp */,
 				34BAB1430FC5CF9E00EF792E /* platform_optional_panel.hpp */,
 				34BAB1440FC5CF9E00EF792E /* platform_panel.hpp */,
@@ -2640,7 +2580,6 @@
 		4710233B0CEF3AAB00A7DF2B /* doc */ = {
 			isa = PBXGroup;
 			children = (
-				4710233C0CEF3AAB00A7DF2B /* Doxyfile */,
 				4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */,
 			);
 			path = doc;
@@ -3144,7 +3083,6 @@
 		471D5CB80A98A3F900DA9C21 /* doc */ = {
 			isa = PBXGroup;
 			children = (
-				471D5CB90A98A3F900DA9C21 /* Doxyfile */,
 			);
 			path = doc;
 			sourceTree = "<group>";
@@ -3158,8 +3096,6 @@
 				8250FDE415FCEFDE00523C1C /* Field.h */,
 				82B4313314A74E07003EEE42 /* UniverseServer.cpp */,
 				82592EF7147E38ED00B840A5 /* ValueRefFwd.h */,
-				82592EF1147E387100B840A5 /* Names.cpp */,
-				82592EF2147E387100B840A5 /* Names.h */,
 				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
 				82592EF4147E387100B840A5 /* ObjectMap.h */,
 				82592EEF147E381B00B840A5 /* EffectAccounting.cpp */,
@@ -3211,7 +3147,6 @@
 		471D5CEC0A98A3F900DA9C21 /* doc */ = {
 			isa = PBXGroup;
 			children = (
-				471D5CED0A98A3F900DA9C21 /* designer_effects_doc.txt */,
 				471D5CEE0A98A3F900DA9C21 /* Doxyfile */,
 			);
 			path = doc;
@@ -3568,6 +3503,8 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				82C560D117D0CC2F00FE3B35 /* Tokens.cpp */,
+				82C560D217D0CC2F00FE3B35 /* Tokens.h */,
 				829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */,
 				822B16B51642A6F8000ADE58 /* EffectParser3.cpp */,
 				822B16B61642A6F8000ADE58 /* EffectParser4.cpp */,
@@ -3596,7 +3533,6 @@
 				825936E4147E3B1B00B840A5 /* EnumParser.cpp */,
 				825936E5147E3B1B00B840A5 /* EnumParser.h */,
 				825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */,
-				825936E7147E3B1B00B840A5 /* generate_error_prefixes.py */,
 				825936E8147E3B1B00B840A5 /* Int.cpp */,
 				825936E9147E3B1B00B840A5 /* Int.h */,
 				825936EA147E3B1B00B840A5 /* IntValueRefParser.cpp */,
@@ -3609,7 +3545,6 @@
 				825936F1147E3B1B00B840A5 /* Parse.cpp */,
 				825936F2147E3B1B00B840A5 /* Parse.h */,
 				825936F3147E3B1B00B840A5 /* ParseImpl.h */,
-				825936F4147E3B1B00B840A5 /* permute_labels.py */,
 				825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */,
 				825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */,
 				825936F7147E3B1B00B840A5 /* PlanetTypeValueRefParser.cpp */,
@@ -3638,17 +3573,12 @@
 				82593704147E3B1C00B840A5 /* buildings */,
 				82593705147E3B1C00B840A5 /* buildings_errors */,
 				82593706147E3B1C00B840A5 /* buildings_permutations */,
-				82593707147E3B1C00B840A5 /* capture_result_enumerators */,
-				82593709147E3B1C00B840A5 /* combat_fighter_type_enumerators */,
 				8259370A147E3B1C00B840A5 /* condition_parser_1 */,
 				8259370B147E3B1C00B840A5 /* condition_parser_1_errors */,
 				8259370C147E3B1C00B840A5 /* condition_parser_2 */,
 				8259370D147E3B1C00B840A5 /* condition_parser_2_errors */,
 				8259370E147E3B1C00B840A5 /* condition_parser_3 */,
 				8259370F147E3B1C00B840A5 /* condition_parser_3_errors */,
-				82593710147E3B1C00B840A5 /* double_arithmetic */,
-				82593711147E3B1C00B840A5 /* double_arithmetic_errors */,
-				82593712147E3B1C00B840A5 /* double_arithmetic_evaluated */,
 				82593713147E3B1C00B840A5 /* double_statistic */,
 				82593714147E3B1C00B840A5 /* double_statistic_errors */,
 				82593715147E3B1C00B840A5 /* double_variable */,
@@ -3656,18 +3586,9 @@
 				82593717147E3B1C00B840A5 /* double_variable_errors */,
 				82593718147E3B1C00B840A5 /* effect_parser */,
 				82593719147E3B1C00B840A5 /* effect_parser_errors */,
-				8259371A147E3B1C00B840A5 /* empire_affiliation_type_enumerators */,
 				8259371B147E3B1C00B840A5 /* fleet_plans */,
 				8259371C147E3B1C00B840A5 /* fleet_plans_errors */,
 				8259371D147E3B1C00B840A5 /* fleet_plans_permutations */,
-				8259371E147E3B1C00B840A5 /* int_arithmetic */,
-				8259371F147E3B1C00B840A5 /* int_arithmetic_errors */,
-				82593720147E3B1C00B840A5 /* int_arithmetic_evaluated */,
-				82593721147E3B1C00B840A5 /* int_statistic */,
-				82593722147E3B1C00B840A5 /* int_statistic_errors */,
-				82593723147E3B1C00B840A5 /* int_variable */,
-				82593724147E3B1C00B840A5 /* int_variable_arithmetic */,
-				82593725147E3B1C00B840A5 /* int_variable_errors */,
 				82593726147E3B1C00B840A5 /* items */,
 				82593727147E3B1C00B840A5 /* items_errors */,
 				82593728147E3B1C00B840A5 /* items_permutations */,
@@ -3676,21 +3597,17 @@
 				8259372B147E3B1C00B840A5 /* monster_fleet_plans */,
 				8259372C147E3B1C00B840A5 /* monster_fleet_plans_errors */,
 				8259372D147E3B1C00B840A5 /* monster_fleet_plans_permutations */,
-				8259372E147E3B1C00B840A5 /* non_ship_part_meter_type_enumerators */,
 				8259372F147E3B1C00B840A5 /* planet_environment_constant */,
-				82593730147E3B1C00B840A5 /* planet_environment_enumerators */,
 				82593731147E3B1C00B840A5 /* planet_environment_statistic */,
 				82593732147E3B1C00B840A5 /* planet_environment_statistic_errors */,
 				82593733147E3B1C00B840A5 /* planet_environment_variable */,
 				82593734147E3B1C00B840A5 /* planet_environment_variable_errors */,
 				82593735147E3B1C00B840A5 /* planet_size_constant */,
-				82593736147E3B1C00B840A5 /* planet_size_enumerators */,
 				82593737147E3B1C00B840A5 /* planet_size_statistic */,
 				82593738147E3B1C00B840A5 /* planet_size_statistic_errors */,
 				82593739147E3B1C00B840A5 /* planet_size_variable */,
 				8259373A147E3B1C00B840A5 /* planet_size_variable_errors */,
 				8259373B147E3B1C00B840A5 /* planet_type_constant */,
-				8259373C147E3B1C00B840A5 /* planet_type_enumerators */,
 				8259373D147E3B1C00B840A5 /* planet_type_statistic */,
 				8259373E147E3B1C00B840A5 /* planet_type_statistic_errors */,
 				8259373F147E3B1C00B840A5 /* planet_type_variable */,
@@ -3700,10 +3617,8 @@
 				82593743147E3B1C00B840A5 /* ship_designs_permutations */,
 				82593744147E3B1C00B840A5 /* ship_hulls */,
 				82593745147E3B1C00B840A5 /* ship_hulls_errors */,
-				82593746147E3B1C00B840A5 /* ship_part_class_enumerators */,
 				82593747147E3B1C00B840A5 /* ship_parts */,
 				82593748147E3B1C00B840A5 /* ship_parts_errors */,
-				82593749147E3B1C00B840A5 /* ship_slot_type_enumerators */,
 				8259374A147E3B1C00B840A5 /* specials */,
 				8259374B147E3B1C00B840A5 /* specials_errors */,
 				8259374C147E3B1C00B840A5 /* specials_permutations */,
@@ -3711,31 +3626,19 @@
 				8259374E147E3B1C00B840A5 /* species_errors */,
 				8259374F147E3B1C00B840A5 /* species_permutations */,
 				82593750147E3B1C00B840A5 /* star_type_constant */,
-				82593751147E3B1C00B840A5 /* star_type_enumerators */,
 				82593752147E3B1C00B840A5 /* star_type_statistic */,
 				82593753147E3B1C00B840A5 /* star_type_statistic_errors */,
 				82593754147E3B1C00B840A5 /* star_type_variable */,
 				82593755147E3B1C00B840A5 /* star_type_variable_errors */,
-				82593756147E3B1C00B840A5 /* statistic_type_enumerators */,
-				82593757147E3B1C00B840A5 /* string_constant */,
-				82593758147E3B1C00B840A5 /* string_constant_errors */,
 				82593759147E3B1C00B840A5 /* string_statistic */,
 				8259375A147E3B1C00B840A5 /* string_statistic_errors */,
 				8259375B147E3B1C00B840A5 /* string_variable */,
 				8259375C147E3B1C00B840A5 /* string_variable_errors */,
-				8259375D147E3B1C00B840A5 /* tech_type_enumerators */,
 				8259375E147E3B1C00B840A5 /* techs */,
 				8259375F147E3B1C00B840A5 /* techs_errors */,
 				82593760147E3B1C00B840A5 /* techs_permutations */,
 				82593761147E3B1C00B840A5 /* test.cpp */,
 				82593762147E3B1C00B840A5 /* test.h */,
-				82593763147E3B1C00B840A5 /* universe_object_type_constant */,
-				82593764147E3B1C00B840A5 /* universe_object_type_enumerators */,
-				82593765147E3B1C00B840A5 /* universe_object_type_statistic */,
-				82593766147E3B1C00B840A5 /* universe_object_type_statistic_errors */,
-				82593767147E3B1C00B840A5 /* universe_object_type_variable */,
-				82593768147E3B1C00B840A5 /* universe_object_type_variable_errors */,
-				82593769147E3B1C00B840A5 /* unlockable_item_type_enumerators */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -4059,9 +3962,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A7604BE1749B2FF00363653 /* name.cpp in Sources */,
-				3A7604C41749B39300363653 /* memory.cpp in Sources */,
-				3A7604CB1749B48200363653 /* string_pool.cpp in Sources */,
 				3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */,
 				34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */,
 				34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */,
@@ -4119,7 +4019,6 @@
 				34B9F92E0F634A03005BF6A4 /* Obstacle.cpp in Sources */,
 				34B9F92F0F634A03005BF6A4 /* PathingEngine.cpp in Sources */,
 				82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */,
-				82592EF5147E387100B840A5 /* Names.cpp in Sources */,
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
@@ -4354,6 +4253,9 @@
 				3A76049E1749A0A300363653 /* TechsParser.cpp in Sources */,
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
+				82C560CE17D0CB4E00FE3B35 /* name.cpp in Sources */,
+				82C560CF17D0CB4E00FE3B35 /* string_pool.cpp in Sources */,
+				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
