@@ -1,3 +1,22 @@
+v0.4.3 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+New Features / Improvements:
+
+
+Content:
+
+
+Graphics / GUI:
+
+
+Balancing:
+ ~ Switched the 'Weapons' series species picks to give a bonus/malus to any ship weapons.
+
+Bugs:
+
+
+
+
 v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:

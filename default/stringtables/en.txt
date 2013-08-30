@@ -3880,7 +3880,7 @@ Prefer Terran planets.
 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
-[[ULTIMATE_WEAPONS]]
+[[GREAT_WEAPONS]]
 '''
 
 SP_EAXAW_DESC
@@ -4041,7 +4041,7 @@ Prefer Desert planets.
 [[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
                 
-[[GREAT_WEAPONS]]
+[[GOOD_WEAPONS]]
         
 [[BAD_DETECTION]]
 [[GOOD_STEALTH]]
@@ -9070,13 +9070,16 @@ ULTIMATE_STEALTH
 '''+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.'''
+'''-	Does 50% less damage with ship weaponry.'''
+
+GOOD_WEAPONS
+'''+	Does 25% more damage with ship weaponry.'''
 
 GREAT_WEAPONS
-'''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
+'''++	Does 50% more damage with ship weaponry.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_2_3]] and three additional ships.'''
+'''+++	Does double damage with ship weaponry.'''
 
 BAD_POPULATION
 '''−	Bad Population 75%'''
