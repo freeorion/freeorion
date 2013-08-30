@@ -54,7 +54,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_token)),
+                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -71,7 +71,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_token)),
+                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 new ValueRef::Constant<double>(increase)
             );
         std::string stacking_group = (allow_stacking ? "" :

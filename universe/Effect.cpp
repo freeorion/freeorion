@@ -175,13 +175,6 @@ namespace {
         return false;
     }
 
-    std::vector<adobe::name_t> TargetOwnerVec() {
-        std::vector<adobe::name_t> retval(2);
-        retval[0] = Target_token;
-        retval[1] = Owner_token;
-        return retval;
-    }
-
     void LoadSystemNames(std::list<std::string>& names) {
         boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
         while (ifs) {
@@ -873,7 +866,7 @@ std::string SetShipPartMeter::Dump() const {
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec())),
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_meter(meter),
     m_value(value)
 {}
@@ -939,7 +932,7 @@ std::string SetEmpireMeter::Dump() const
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
                                        const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec())),
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_stockpile(stockpile),
     m_value(value)
 {}
@@ -1005,7 +998,7 @@ std::string SetEmpireStockpile::Dump() const {
 // SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapital::SetEmpireCapital() :
-    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id) :
@@ -2534,7 +2527,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>
                                              ValueRef::ValueRefBase<double>* research_progress) :
     m_tech_name(tech_name),
     m_research_progress(research_progress),
-    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
@@ -2618,7 +2611,7 @@ std::string SetEmpireTechProgress::Dump() const {
 ///////////////////////////////////////////////////////////
 GiveEmpireTech::GiveEmpireTech(const std::string& tech_name) :
     m_tech_name(tech_name),
-    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
 GiveEmpireTech::GiveEmpireTech(const std::string& tech_name,
