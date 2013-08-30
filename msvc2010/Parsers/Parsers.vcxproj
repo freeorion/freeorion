@@ -137,6 +137,7 @@
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h" />

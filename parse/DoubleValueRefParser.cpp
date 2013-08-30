@@ -56,33 +56,31 @@ namespace {
                 |    tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
                 ;
 
+            free_variable
+                =   (
+                        tok.Value_
+                    |   tok.UniverseCentreX_
+                    |   tok.UniverseCentreY_
+                        // add more object-independent ValueRef int functions here
+                    ) [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
+                ;
+
             variable
                 = (
                         variable_scope [ push_back(_a, _1) ] > '.'
                     >  -(container_type [ push_back(_a, _1) ] > '.')
                     >   (
-                            variable_name
-                            [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
-                        |   int_var_variable_name()
-                            [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
+                            variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
+                        |   int_var_variable_name() [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
                         )
                   )
                 | (
                         tok.CurrentTurn_
                         [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
                   )
-                | ((
-                        tok.Value_
-                    |   tok.UniverseCentreX_
-                    |   tok.UniverseCentreY_
-                    // add more object-independent ValueRef int functions here
-                   )
-                   [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
-                  )
                 ;
 
             initialize_numeric_statistic_parser<double>(statistic, variable_name);
-
             initialize_expression_parsers<double>(function_expr,
                                                   exponential_expr,
                                                   multiplicative_expr,
@@ -97,6 +95,7 @@ namespace {
             primary_expr
                 =   '(' > expr > ')'
                 |   constant
+                |   free_variable
                 |   variable
                 |   statistic
                 |   int_statistic
@@ -106,6 +105,7 @@ namespace {
             constant.name("real number constant");
 
 
+            free_variable.name("free integer variable");
             variable.name("real number variable");
             statistic.name("real number statistic");
             int_statistic.name("integer statistic");
@@ -119,6 +119,7 @@ namespace {
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
             debug(constant);
+            debug(free_variable);
             debug(variable);
             debug(statistic);
             debug(int_statistic);
@@ -137,6 +138,7 @@ namespace {
 
         name_token_rule     variable_name;
         rule                constant;
+        variable_rule       free_variable;
         variable_rule       variable;
         statistic_rule      statistic;
         rule                int_statistic;

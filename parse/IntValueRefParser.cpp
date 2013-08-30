@@ -56,25 +56,16 @@ namespace {
                 |   tok.int_ [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
 
-            variable
+            free_variable
                 =   (
-                        (
-                            variable_scope [ push_back(_a, _1) ] > '.'
-                        >  -(container_type [ push_back(_a, _1) ] > '.')
-                        >   variable_name [ push_back(_a, _1) ]
-                        )
-                    |   (
-                            tok.CurrentTurn_
-                        |   tok.Value_
-                            // add more object-independent ValueRef int functions here
-                        )
-                        [ push_back(_a, _1) ]
-                    )
-                    [ _val = new_<ValueRef::Variable<int> >(_a) ]
+                        tok.CurrentTurn_
+                    |   tok.Value_
+                        // add more object-independent ValueRef int functions here
+                    ) [ push_back(_a, _1), _val = new_<ValueRef::Variable<int> >(_a) ]
                 ;
 
+            initialize_bound_variable_parser<int>(bound_variable, variable_name);
             initialize_numeric_statistic_parser<int>(statistic, variable_name);
-
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
                                                multiplicative_expr,
@@ -85,7 +76,8 @@ namespace {
             primary_expr
                 =   '(' > expr > ')'
                 |   constant
-                |   variable
+                |   free_variable
+                |   bound_variable
                 |   statistic
                 ;
 
@@ -93,9 +85,9 @@ namespace {
             container_type.name("Planet, System, or Fleet");
             variable_name.name("integer variable name (e.g., FleetID)");
             constant.name("integer constant");
-            variable.name("integer variable");
+            free_variable.name("free integer variable");
+            bound_variable.name("bound integer variable");
             statistic.name("integer statistic");
-            //double_statistic.name("real number statistic");
             function_expr.name("integer function expression");
             exponential_expr.name("integer exponential expression");
             multiplicative_expr.name("integer multiplication expression");
@@ -108,7 +100,8 @@ namespace {
             debug(container_type);
             debug(variable_name);
             debug(constant);
-            debug(variable);
+            debug(free_variable);
+            debug(bound_variable);
             debug(statistic);
             debug(negate_expr);
             debug(multiplicative_expr);
@@ -125,9 +118,9 @@ namespace {
 
         name_token_rule     variable_name;
         rule                constant;
-        variable_rule       variable;
+        variable_rule       free_variable;
+        variable_rule       bound_variable;
         statistic_rule      statistic;
-        //rule                double_statistic;
         expression_rule     function_expr;
         expression_rule     exponential_expr;
         expression_rule     multiplicative_expr;

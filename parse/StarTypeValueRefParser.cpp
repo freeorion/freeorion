@@ -24,30 +24,25 @@ namespace {
                 =    parse::enum_parser<StarType>() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
                 ;
 
-            variable
-                =    variable_scope [ push_back(_a, _1) ] > '.'
-                >   -(container_type [ push_back(_a, _1) ] > '.')
-                >    variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<StarType> >(_a) ]
-                ;
-
+            initialize_bound_variable_parser<StarType>(bound_variable, variable_name);
             initialize_nonnumeric_statistic_parser<StarType>(statistic, variable_name);
 
             primary_expr
                 %=   constant
-                |    variable
+                |    bound_variable
                 |    statistic
                 ;
 
             variable_name.name("StarType variable name (e.g., StarType)");
             constant.name("StarType");
-            variable.name("StarType variable");
+            bound_variable.name("StarType variable");
             statistic.name("StarType statistic");
             primary_expr.name("StarType expression");
 
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
             debug(constant);
-            debug(variable);
+            debug(bound_variable);
             debug(statistic);
             debug(primary_expr);
 #endif
@@ -59,7 +54,7 @@ namespace {
 
         name_token_rule variable_name;
         rule constant;
-        variable_rule variable;
+        variable_rule bound_variable;
         statistic_rule statistic;
         rule primary_expr;
     };

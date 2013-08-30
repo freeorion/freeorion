@@ -34,6 +34,8 @@ namespace { struct string_parser_rules {
                         ]
                 ;
 
+            free_variable
+                =   tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<std::string> >(_a) ] ;
             variable
                 = (
                         variable_scope [ push_back(_a, _1) ] > '.'
@@ -47,10 +49,7 @@ namespace { struct string_parser_rules {
                             [ push_back(_a, _1), _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_a)) ]
                         )
                     )
-                | (
-                        tok.CurrentTurn_ [ push_back(_a, _1), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_a)) ]
-                    |  tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<std::string> >(_a) ]
-                    )
+                | tok.CurrentTurn_ [ push_back(_a, _1), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_a)) ]
                 ;
 
             initialize_nonnumeric_statistic_parser<std::string>(statistic, variable_name);
@@ -65,6 +64,7 @@ namespace { struct string_parser_rules {
 
             expr
                 %=   constant
+                |    free_variable
                 |    variable
                 |    int_statistic
                 |    double_statistic
@@ -73,6 +73,7 @@ namespace { struct string_parser_rules {
 
             variable_name.name("string variable name (e.g., Name)");
             constant.name("string");
+            free_variable.name("free string variable");
             variable.name("string variable");
             statistic.name("string statistic");
             int_statistic.name("integer statistic");
@@ -82,6 +83,7 @@ namespace { struct string_parser_rules {
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
             debug(constant);
+            debug(free_variable);
             debug(variable);
             debug(statistic);
             debug(int_statistic);
@@ -96,6 +98,7 @@ namespace { struct string_parser_rules {
 
         name_token_rule variable_name;
         rule            constant;
+        variable_rule   free_variable;
         variable_rule   variable;
         statistic_rule  statistic;
         rule            int_statistic;

@@ -188,6 +188,24 @@ const name_token_rule&              double_var_variable_name();
 const statistic_rule<double>::type& double_var_statistic();
 
 template <typename T>
+void initialize_bound_variable_parser(
+    typename variable_rule<T>::type& bound_variable,
+    const name_token_rule& variable_name)
+{
+    qi::_1_type _1;
+    qi::_a_type _a;
+    qi::_val_type _val;
+    using phoenix::new_;
+    using phoenix::push_back;
+
+    bound_variable
+        =   variable_scope [ push_back(_a, _1) ] > '.'
+        > -(container_type [ push_back(_a, _1) ] > '.')
+        >   variable_name  [ push_back(_a, _1), _val = new_<ValueRef::Variable<T> >(_a) ]
+        ;
+}
+
+template <typename T>
 void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
     const name_token_rule& variable_name)

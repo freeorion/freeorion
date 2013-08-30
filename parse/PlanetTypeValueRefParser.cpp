@@ -27,30 +27,25 @@ namespace {
                 =    parse::enum_parser<PlanetType>() [ _val = new_<ValueRef::Constant<PlanetType> >(_1) ]
                 ;
 
-            variable
-                =    variable_scope [ push_back(_a, _1) ] > '.'
-                >   -(container_type [ push_back(_a, _1) ] > '.')
-                >    variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<PlanetType> >(_a) ]
-                ;
-
+            initialize_bound_variable_parser<PlanetType>(bound_variable, variable_name);
             initialize_nonnumeric_statistic_parser<PlanetType>(statistic, variable_name);
 
             primary_expr
                 %=   constant
-                |    variable
+                |    bound_variable
                 |    statistic
                 ;
 
             variable_name.name("PlanetType variable name (e.g., PlanetType)");
             constant.name("PlanetType");
-            variable.name("PlanetType variable");
+            bound_variable.name("PlanetType variable");
             statistic.name("PlanetType statistic");
             primary_expr.name("PlanetType expression");
 
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
             debug(constant);
-            debug(variable);
+            debug(bound_variable);
             debug(statistic);
             debug(primary_expr);
 #endif
@@ -62,7 +57,7 @@ namespace {
 
         name_token_rule variable_name;
         rule constant;
-        variable_rule variable;
+        variable_rule bound_variable;
         statistic_rule statistic;
         rule primary_expr;
     };

@@ -22,30 +22,25 @@ namespace {
                 =    parse::enum_parser<PlanetEnvironment>() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
                 ;
 
-            variable
-                =    variable_scope [ push_back(_a, _1) ] > '.'
-                >   -(container_type [ push_back(_a, _1) ] > '.')
-                >    variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<PlanetEnvironment> >(_a) ]
-                ;
-
+            initialize_bound_variable_parser<PlanetEnvironment>(bound_variable, variable_name);
             initialize_nonnumeric_statistic_parser<PlanetEnvironment>(statistic, variable_name);
 
             primary_expr
                 %=   constant
-                |    variable
+                |    bound_variable
                 |    statistic
                 ;
 
             variable_name.name("PlanetEnvironment variable name (e.g., PlanetEnvironment)");
             constant.name("PlanetEnvironment");
-            variable.name("PlanetEnvironment variable");
+            bound_variable.name("PlanetEnvironment variable");
             statistic.name("PlanetEnvironment statistic");
             primary_expr.name("PlanetEnvironment expression");
 
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
             debug(constant);
-            debug(variable);
+            debug(bound_variable);
             debug(statistic);
             debug(primary_expr);
 #endif
@@ -57,7 +52,7 @@ namespace {
 
         name_token_rule variable_name;
         rule constant;
-        variable_rule variable;
+        variable_rule bound_variable;
         statistic_rule statistic;
         rule primary_expr;
     };
