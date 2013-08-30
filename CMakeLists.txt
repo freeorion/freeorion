@@ -228,6 +228,12 @@ target_link_libraries(freeorioncommon
     log4cpp
 )
 
+set_target_properties(freeorioncommon
+    PROPERTIES
+    DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
+    COMPILE_FLAGS "-fvisibility=hidden"
+)
+
 ########################################
 # Recurse Into Sources                 #
 ########################################

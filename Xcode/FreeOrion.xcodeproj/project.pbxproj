@@ -4608,6 +4608,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -4767,6 +4768,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -4941,6 +4943,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -5122,6 +5125,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -5350,6 +5354,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -5584,6 +5589,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
+					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
