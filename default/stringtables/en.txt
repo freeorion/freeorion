@@ -9069,7 +9069,7 @@ GREAT_STEALTH
 ULTIMATE_STEALTH
 '''+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
-GOOD_WEAPONS
+BAD_WEAPONS
 '''-	Does 50% less damage with ship weaponry.'''
 
 GOOD_WEAPONS
