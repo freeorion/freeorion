@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeLiteralParserField) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSource) {
     BOOST_CHECK(parse("Source.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("Source"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Source", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSource) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserTarget) {
     BOOST_CHECK(parse("Target.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("Target"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Target", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserTarget) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidate) {
     BOOST_CHECK(parse("LocalCandidate.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("LocalCandidate"), adobe::name_t("ObjectType") };
+    std::string property[] = { "LocalCandidate", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidate) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidate) {
     BOOST_CHECK(parse("RootCandidate.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("RootCandidate"), adobe::name_t("ObjectType") };
+    std::string property[] = { "RootCandidate", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidate) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserFleetSource) {
     BOOST_CHECK(parse("Source.Fleet.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("Source"), adobe::name_t("Fleet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Source", "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserFleetSource) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSytemTarget) {
     BOOST_CHECK(parse("Target.System.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("Target"), adobe::name_t("System"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Target", "System", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSytemTarget) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidatePlanet) {
     BOOST_CHECK(parse("LocalCandidate.Planet.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("LocalCandidate"), adobe::name_t("Planet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "LocalCandidate", "Planet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidatePlanet) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidateFleet) {
     BOOST_CHECK(parse("RootCandidate.Fleet.ObjectType", result));
-    adobe::name_t property[] = { adobe::name_t("RootCandidate"), adobe::name_t("Fleet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "RootCandidate", "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserMalformed) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
     BOOST_CHECK(parse("Mode Property = Fleet.ObjectType Condition = All", result));
-    adobe::name_t property[] = { adobe::name_t("Fleet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
     statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
     BOOST_CHECK(parse("Mode Property = Planet.ObjectType All", result));
-    adobe::name_t property[] = { adobe::name_t("Planet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Planet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
     statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserSystem) {
     BOOST_CHECK(parse("Mode System.ObjectType Condition = All", result));
-    adobe::name_t property[] = { adobe::name_t("System"), adobe::name_t("ObjectType") };
+    std::string property[] = { "System", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
     statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserSystem) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
     BOOST_CHECK(parse("Mode Fleet.ObjectType All", result));
-    adobe::name_t property[] = { adobe::name_t("Fleet"), adobe::name_t("ObjectType") };
+    std::string property[] = { "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
     statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);

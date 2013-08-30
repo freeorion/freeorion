@@ -42,7 +42,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        adobe::name_t(("Current" + meter_str).c_str()) == var->PropertyName()[0];
+                        ("Current" + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -53,7 +53,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        adobe::name_t(("Current" + meter_str).c_str()) == var->PropertyName()[0];
+                        ("Current" + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;

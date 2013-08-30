@@ -16,14 +16,12 @@
 #include "../util/Random.h"
 #include "../util/Logger.h"
 
-#include <GG/adobe/closed_hash.hpp>
-
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
 namespace {
-    TemporaryPtr<const UniverseObject> FollowReference(std::vector<adobe::name_t>::const_iterator first,
-                                          std::vector<adobe::name_t>::const_iterator last,
+    TemporaryPtr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
+                                          std::vector<std::string>::const_iterator last,
                                           ValueRef::ReferenceType ref_type,
                                           const ScriptingContext& context)
     {
@@ -43,16 +41,16 @@ namespace {
         }
 
         while (first != last) {
-            adobe::name_t property_name = *first;
-            if (property_name == Planet_token) {
+            std::string property_name = *first;
+            if (property_name == "Planet") {
                 if (TemporaryPtr<const Building> b = universe_object_ptr_cast<const Building>(obj))
                     obj = GetPlanet(b->PlanetID());
                 else
                     obj = TemporaryPtr<const UniverseObject>();
-            } else if (property_name == System_token) {
+            } else if (property_name == "System") {
                 if (obj)
                     obj = GetSystem(obj->SystemID());
-            } else if (property_name == Fleet_token) {
+            } else if (property_name == "Fleet") {
                 if (TemporaryPtr<const Ship> s = universe_object_ptr_cast<const Ship>(obj))
                     obj = GetFleet(s->FleetID());
                 else
@@ -82,49 +80,49 @@ namespace {
         mutable UniverseObjectType m_type;
     };
 
-    MeterType NameToMeter(adobe::name_t name) {
-        typedef adobe::closed_hash_map<adobe::name_t, MeterType> NameToMeterMap;
+    MeterType NameToMeter(std::string name) {
+        typedef std::map<std::string, MeterType> NameToMeterMap;
         static NameToMeterMap map;
         static bool once = true;
         if (once) {
-            map[Population_token] = METER_POPULATION;
-            map[TargetPopulation_token] = METER_TARGET_POPULATION;
-            map[Industry_token] = METER_INDUSTRY;
-            map[TargetIndustry_token] = METER_TARGET_INDUSTRY;
-            map[Research_token] = METER_RESEARCH;
-            map[TargetResearch_token] = METER_TARGET_RESEARCH;
-            map[Trade_token] = METER_TRADE;
-            map[TargetTrade_token] = METER_TARGET_TRADE;
-            map[Construction_token] = METER_CONSTRUCTION;
-            map[TargetConstruction_token] = METER_TARGET_CONSTRUCTION;
-            map[Happiness_token] = METER_HAPPINESS;
-            map[TargetHappiness_token] = METER_TARGET_HAPPINESS;
-            map[MaxFuel_token] = METER_MAX_FUEL;
-            map[Fuel_token] = METER_FUEL;
-            map[MaxStructure_token] = METER_MAX_STRUCTURE;
-            map[Structure_token] = METER_STRUCTURE;
-            map[MaxShield_token] = METER_MAX_SHIELD;
-            map[Shield_token] = METER_SHIELD;
-            map[MaxDefense_token] = METER_MAX_DEFENSE;
-            map[Defense_token] = METER_DEFENSE;
-            map[MaxTroops_token] = METER_MAX_TROOPS;
-            map[Troops_token] = METER_TROOPS;
-            map[RebelTroops_token] = METER_REBEL_TROOPS;
-            map[Supply_token] = METER_SUPPLY;
-            map[Stealth_token] = METER_STEALTH;
-            map[Detection_token] = METER_DETECTION;
-            map[BattleSpeed_token] = METER_BATTLE_SPEED;
-            map[StarlaneSpeed_token] = METER_STARLANE_SPEED;
-            map[Damage_token] = METER_DAMAGE;
-            map[ROF_token] = METER_ROF;
-            map[Range_token] = METER_RANGE;
-            map[Speed_token] = METER_SPEED;
-            map[Capacity_token] = METER_CAPACITY;
-            map[AntiShipDamage_token] = METER_ANTI_SHIP_DAMAGE;
-            map[AntiFighterDamage_token] = METER_ANTI_FIGHTER_DAMAGE;
-            map[LaunchRate_token] = METER_LAUNCH_RATE;
-            map[FighterWeaponRange_token] = METER_FIGHTER_WEAPON_RANGE;
-            map[Size_token] = METER_SIZE;
+            map["Population"] = METER_POPULATION;
+            map["TargetPopulation"] = METER_TARGET_POPULATION;
+            map["Industry"] = METER_INDUSTRY;
+            map["TargetIndustry"] = METER_TARGET_INDUSTRY;
+            map["Research"] = METER_RESEARCH;
+            map["TargetResearch"] = METER_TARGET_RESEARCH;
+            map["Trade"] = METER_TRADE;
+            map["TargetTrade"] = METER_TARGET_TRADE;
+            map["Construction"] = METER_CONSTRUCTION;
+            map["TargetConstruction"] = METER_TARGET_CONSTRUCTION;
+            map["Happiness"] = METER_HAPPINESS;
+            map["TargetHappiness"] = METER_TARGET_HAPPINESS;
+            map["MaxFuel"] = METER_MAX_FUEL;
+            map["Fuel"] = METER_FUEL;
+            map["MaxStructure"] = METER_MAX_STRUCTURE;
+            map["Structure"] = METER_STRUCTURE;
+            map["MaxShield"] = METER_MAX_SHIELD;
+            map["Shield"] = METER_SHIELD;
+            map["MaxDefense"] = METER_MAX_DEFENSE;
+            map["Defense"] = METER_DEFENSE;
+            map["MaxTroops"] = METER_MAX_TROOPS;
+            map["Troops"] = METER_TROOPS;
+            map["RebelTroops"] = METER_REBEL_TROOPS;
+            map["Supply"] = METER_SUPPLY;
+            map["Stealth"] = METER_STEALTH;
+            map["Detection"] = METER_DETECTION;
+            map["BattleSpeed"] = METER_BATTLE_SPEED;
+            map["StarlaneSpeed"] = METER_STARLANE_SPEED;
+            map["Damage"] = METER_DAMAGE;
+            map["ROF"] = METER_ROF;
+            map["Range"] = METER_RANGE;
+            map["Speed"] = METER_SPEED;
+            map["Capacity"] = METER_CAPACITY;
+            map["AntiShipDamage"] = METER_ANTI_SHIP_DAMAGE;
+            map["AntiFighterDamage"] = METER_ANTI_FIGHTER_DAMAGE;
+            map["LaunchRate"] = METER_LAUNCH_RATE;
+            map["FighterWeaponRange"] = METER_FIGHTER_WEAPON_RANGE;
+            map["Size"] = METER_SIZE;
             once = false;
         }
         MeterType retval = INVALID_METER_TYPE;
@@ -135,7 +133,7 @@ namespace {
     }
 }
 
-std::string ValueRef::ReconstructName(const std::vector<adobe::name_t>& property_name,
+std::string ValueRef::ReconstructName(const std::vector<std::string>& property_name,
                                       ValueRef::ReferenceType ref_type)
 {
     std::string retval;
@@ -287,7 +285,7 @@ namespace ValueRef {
     template <>
     PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(PlanetSize)
 
@@ -298,11 +296,11 @@ namespace ValueRef {
         }
 
         if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
-            if (property_name == PlanetSize_token)
+            if (property_name == "PlanetSize")
                 return p->Size();
-            else if (property_name == NextLargerPlanetSize_token)
+            else if (property_name == "NextLargerPlanetSize")
                 return p->NextLargerPlanetSize();
-            else if (property_name == NextSmallerPlanetSize_token)
+            else if (property_name == "NextSmallerPlanetSize")
                 return p->NextSmallerPlanetSize();
         }
 
@@ -313,7 +311,7 @@ namespace ValueRef {
     template <>
     PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(PlanetType)
 
@@ -324,17 +322,17 @@ namespace ValueRef {
         }
 
         if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
-            if (property_name == PlanetType_token)
+            if (property_name == "PlanetType")
                 return p->Type();
-            else if (property_name == OriginalType_token)
+            else if (property_name == "OriginalType")
                 return p->OriginalType();
-            else if (property_name == NextCloserToOriginalPlanetType_token)
+            else if (property_name == "NextCloserToOriginalPlanetType")
                 return p->NextCloserToOriginalPlanetType();
-            else if (property_name == NextBetterPlanetType_token)
+            else if (property_name == "NextBetterPlanetType")
                 return p->NextBetterPlanetTypeForSpecies();
-            else if (property_name == ClockwiseNextPlanetType_token)
+            else if (property_name == "ClockwiseNextPlanetType")
                 return p->ClockwiseNextPlanetType();
-            else if (property_name == CounterClockwiseNextPlanetType_token)
+            else if (property_name == "CounterClockwiseNextPlanetType")
                 return p->CounterClockwiseNextPlanetType();
         }
 
@@ -345,11 +343,11 @@ namespace ValueRef {
     template <>
     PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(PlanetEnvironment)
 
-        if (property_name == PlanetEnvironment_token) {
+        if (property_name == "PlanetEnvironment") {
             TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
                 Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
@@ -366,11 +364,11 @@ namespace ValueRef {
     template <>
     UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(UniverseObjectType)
 
-        if (property_name == ObjectType_token) {
+        if (property_name == "ObjectType") {
             TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
                 Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
@@ -392,7 +390,7 @@ namespace ValueRef {
     template <>
     StarType Variable<StarType>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(StarType)
 
@@ -403,11 +401,11 @@ namespace ValueRef {
         }
 
         if (TemporaryPtr<const System> s = universe_object_ptr_cast<const System>(object)) {
-            if (property_name == StarType_token)
+            if (property_name == "StarType")
                 return s->GetStarType();
-            else if (property_name == NextOlderStarType_token)
+            else if (property_name == "NextOlderStarType")
                 return s->NextOlderStarType();
-            else if (property_name == NextYoungerStarType_token)
+            else if (property_name == "NextYoungerStarType")
                 return s->NextYoungerStarType();
         }
 
@@ -418,15 +416,15 @@ namespace ValueRef {
     template <>
     double Variable<double>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(float)
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
-            if (property_name == CurrentTurn_token) {
+            if (property_name == "CurrentTurn") {
                 return CurrentTurn();
-            } else if (property_name == UniverseCentreX_token |
-                       property_name == UniverseCentreY_token)
+            } else if (property_name == "UniverseCentreX" |
+                       property_name == "UniverseCentreY")
             {
                 return GetUniverse().UniverseWidth() / 2;
             }
@@ -448,11 +446,11 @@ namespace ValueRef {
             if (object->GetMeter(meter_type))
                 return object->InitialMeterValue(meter_type);
 
-        } else if (property_name == TradeStockpile_token) {
+        } else if (property_name == "TradeStockpile") {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
 
-        } else if (property_name == DistanceToSource_token) {
+        } else if (property_name == "DistanceToSource") {
             if (!context.source) {
                 Logger().errorStream() << "ValueRef::Variable<double>::Eval can't find distance to source because no source was passed";
                 return 0.0;
@@ -461,25 +459,25 @@ namespace ValueRef {
             double delta_y = object->Y() - context.source->Y();
             return std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
-        } else if (property_name == X_token) {
+        } else if (property_name == "X") {
             return object->X();
 
-        } else if (property_name == Y_token) {
+        } else if (property_name == "Y") {
             return object->Y();
 
-        } else if (property_name == SizeAsDouble_token) {
+        } else if (property_name == "SizeAsDouble") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->SizeAsInt();
 
-        } else if (property_name == DistanceFromOriginalType_token) {
+        } else if (property_name == "DistanceFromOriginalType") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->DistanceFromOriginalType();
 
-        } else if (property_name == NextTurnPopGrowth_token) {
+        } else if (property_name == "NextTurnPopGrowth") {
             if (TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(object))
                 return pop->NextTurnPopGrowth();
 
-        } else if (property_name == CurrentTurn_token) {
+        } else if (property_name == "CurrentTurn") {
             return CurrentTurn();
 
         }
@@ -491,12 +489,12 @@ namespace ValueRef {
     template <>
     int Variable<int>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(int)
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
-            if (property_name == CurrentTurn_token)
+            if (property_name == "CurrentTurn")
                 return CurrentTurn();
 
             // add more non-object reference int functions here
@@ -511,75 +509,75 @@ namespace ValueRef {
             return 0;
         }
 
-        if (property_name == Owner_token) {
+        if (property_name == "Owner") {
             return object->Owner();
-        } else if (property_name == ID_token) {
+        } else if (property_name == "ID") {
             return object->ID();
-        } else if (property_name == CreationTurn_token) {
+        } else if (property_name == "CreationTurn") {
             return object->CreationTurn();
-        } else if (property_name == Age_token) {
+        } else if (property_name == "Age") {
             return object->AgeInTurns();
-        } else if (property_name == ProducedByEmpireID_token) {
+        } else if (property_name == "ProducedByEmpireID") {
             if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->ProducedByEmpireID();
             else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->ProducedByEmpireID();
             else
                 return ALL_EMPIRES;
-        } else if (property_name == DesignID_token) {
+        } else if (property_name == "DesignID") {
             if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->DesignID();
             else
                 return ShipDesign::INVALID_DESIGN_ID;
-        } else if (property_name == Species_token) {
+        } else if (property_name == "Species") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
             else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
             else
                 return -1;
-        } else if (property_name == FleetID_token) {
+        } else if (property_name == "FleetID") {
             if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->FleetID();
             else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->ID();
             else
                 return INVALID_OBJECT_ID;
-        } else if (property_name == PlanetID_token) {
+        } else if (property_name == "PlanetID") {
             if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->PlanetID();
             else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->ID();
             else
                 return INVALID_OBJECT_ID;
-        } else if (property_name == SystemID_token) {
+        } else if (property_name == "SystemID") {
             return object->SystemID();
-        } else if (property_name == FinalDestinationID_token) {
+        } else if (property_name == "FinalDestinationID") {
             if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->FinalDestinationID();
             else
                 return INVALID_OBJECT_ID;
-        } else if (property_name == NextSystemID_token) {
+        } else if (property_name == "NextSystemID") {
             if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->NextSystemID();
             else
                 return INVALID_OBJECT_ID;
-        } else if (property_name == PreviousSystemID_token) {
+        } else if (property_name == "PreviousSystemID") {
             if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->PreviousSystemID();
             else
                 return INVALID_OBJECT_ID;
-        } else if (property_name == NumShips_token) {
+        } else if (property_name == "NumShips") {
             if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
                 return fleet->NumShips();
             else
                 return 0;
-        } else if (property_name == LastTurnBattleHere_token) {
+        } else if (property_name == "LastTurnBattleHere") {
             if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(object))
                 return system->LastTurnBattleHere();
             else
                 return INVALID_GAME_TURN;
-        } else if (property_name == Orbit_token) {
+        } else if (property_name == "Orbit") {
             if (TemporaryPtr<const System> system = GetSystem(object->SystemID()))
                 return system->OrbitOfObjectID(object->ID());
             return -1;
@@ -592,7 +590,7 @@ namespace ValueRef {
     template <>
     std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     {
-        const adobe::name_t& property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(std::string)
 
@@ -608,17 +606,17 @@ namespace ValueRef {
             return "";
         }
 
-        if (property_name == Name_token) {
+        if (property_name == "Name") {
             return object->Name();
-        } else if (property_name == Species_token) {
+        } else if (property_name == "Species") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->SpeciesName();
             else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->SpeciesName();
-        } else if (property_name == BuildingType_token) {
+        } else if (property_name == "BuildingType") {
             if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->BuildingTypeName();
-        } else if (property_name == Focus_token) {
+        } else if (property_name == "Focus") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->Focus();
         }

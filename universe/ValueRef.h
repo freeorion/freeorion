@@ -155,7 +155,7 @@ struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 
     virtual bool                        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
     ReferenceType                       GetReferenceType() const;
-    const std::vector<adobe::name_t>&   PropertyName() const;
+    const std::vector<std::string>&     PropertyName() const;
     virtual T                           Eval(const ScriptingContext& context) const;
     virtual bool                        RootCandidateInvariant() const;
     virtual bool                        LocalCandidateInvariant() const;
@@ -166,9 +166,10 @@ struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 
 protected:
     Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name);
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
 
     mutable ReferenceType       m_ref_type;
-    std::vector<adobe::name_t>  m_property_name;
+    std::vector<std::string>    m_property_name;
 
 private:
     friend class boost::serialization::access;
@@ -311,7 +312,7 @@ private:
 };
 
 namespace ValueRef {
-    FO_COMMON_API std::string ReconstructName(const std::vector<adobe::name_t>& property_name,
+    FO_COMMON_API std::string ReconstructName(const std::vector<std::string>& property_name,
                                 ReferenceType ref_type);
 }
 
@@ -412,11 +413,17 @@ void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
+
+inline std::string name_tToString(const adobe::name_t& name) {
+    return std::string(name.c_str());
+}
+
 template <class T>
 ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name) :
     m_ref_type(),
-    m_property_name(property_name.begin(), property_name.end())
+    m_property_name()
 {
+    std::transform(property_name.begin(), property_name.end(), std::back_inserter(m_property_name), name_tToString);
     assert(!property_name.empty());
     adobe::name_t ref_type_name = property_name.front();
     if (ref_type_name == Source_token) {
@@ -440,10 +447,18 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
 }
 
 template <class T>
+ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
+    m_ref_type(ref_type),
+    m_property_name(property_name.begin(), property_name.end())
+{}
+
+template <class T>
 ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name) :
     m_ref_type(ref_type),
-    m_property_name(property_name)
-{}
+    m_property_name()
+{
+    std::transform(property_name.begin(), property_name.end(), std::back_inserter(m_property_name), name_tToString);
+}
 
 template <class T>
 bool ValueRef::Variable<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
@@ -461,7 +476,7 @@ ValueRef::ReferenceType ValueRef::Variable<T>::GetReferenceType() const
 { return m_ref_type; }
 
 template <class T>
-const std::vector<adobe::name_t>& ValueRef::Variable<T>::PropertyName() const
+const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
 { return m_property_name; }
 
 template <class T>
@@ -532,23 +547,8 @@ template <class Archive>
 void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
-        & BOOST_SERIALIZATION_NVP(m_ref_type);
-
-    std::vector<std::string> property_name(m_property_name.size());
-
-    if (Archive::is_saving) {
-        for (std::size_t i = 0; i < property_name.size(); ++i) {
-            property_name[i] = m_property_name[i].c_str();
-        }
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(property_name);
-
-    if (Archive::is_loading) {
-        for (std::size_t i = 0; i < property_name.size(); ++i) {
-            m_property_name[i] = adobe::name_t(property_name[i].c_str());
-        }
-    }
+        & BOOST_SERIALIZATION_NVP(m_ref_type)
+        & BOOST_SERIALIZATION_NVP(m_property_name);
 }
 
 ///////////////////////////////////////////////////////////

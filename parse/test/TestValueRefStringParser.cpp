@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(StringLiteralParserReal) {
 
 BOOST_AUTO_TEST_CASE(StringVariableParserCurrentTurn) {
     BOOST_CHECK(parse("CurrentTurn", result));
-    adobe::name_t property[] = { adobe::name_t("CurrentTurn") };
+    std::string property[] = { "CurrentTurn" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
     variable = dynamic_cast<const ValueRef::StringCast<int>*>(result);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(StringLiteralParserMalformed) {
 
 BOOST_AUTO_TEST_CASE(StringVariableParserValue) {
     BOOST_CHECK(parse("Value", result));
-    adobe::name_t property[] = { adobe::name_t("Value") };
+    std::string property[] = { "Value" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<std::string>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<std::string>*>(result);
@@ -157,9 +157,9 @@ BOOST_AUTO_TEST_CASE(StringVariableParserTypeless) {
         BOOST_FOREACH(const std::string& attribute, attributes) {
             std::string phrase = reference.second + "." + attribute;
             BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
-            adobe::name_t property[] = {
-                adobe::name_t(reference.second.c_str()),
-                adobe::name_t(attribute.c_str())
+            std::string property[] = {
+                reference.second,
+                attribute
             };
 
             BOOST_CHECK_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
@@ -183,10 +183,10 @@ BOOST_AUTO_TEST_CASE(StringVariableParserTyped) {
             BOOST_FOREACH(const std::string& attribute, attributes) {
                 std::string phrase = reference.second + "." + type + "." + attribute;
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
-                adobe::name_t property[] = {
-                    adobe::name_t(reference.second.c_str()),
-                    adobe::name_t(type.c_str()),
-                    adobe::name_t(attribute.c_str())
+                std::string property[] = {
+                    reference.second,
+                    type,
+                    attribute
                 };
 
                 BOOST_CHECK_EQUAL(typeid(ValueRef::StringCast<int>), typeid(*result));
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(StringVariableParserTyped) {
 BOOST_AUTO_TEST_CASE(StringStatisticParserTypeless) {
     BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
         BOOST_FOREACH(const std::string& attribute, attributes) {
-            adobe::name_t property[] = { adobe::name_t(attribute.c_str()) };
+            std::string property[] = { attribute };
 
             boost::array<std::string, 4> phrases = {{
                 // long variant
@@ -248,9 +248,9 @@ BOOST_AUTO_TEST_CASE(StringStatisticParserTyped) {
     BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
         BOOST_FOREACH(const std::string& containerType, containerTypes) {
             BOOST_FOREACH(const std::string& attribute, attributes) {
-                adobe::name_t property[] = {
-                    adobe::name_t(containerType.c_str()),
-                    adobe::name_t(attribute.c_str())
+                std::string property[] = {
+                    containerType,
+                    attribute
                 };
 
                 boost::array<std::string, 4> phrases = {{
