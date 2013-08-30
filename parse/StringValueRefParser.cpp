@@ -38,8 +38,8 @@ namespace { struct string_parser_rules {
                 =   tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<std::string> >(_a) ] ;
             variable
                 = (
-                        variable_scope [ push_back(_a, _1) ] > '.'
-                    >  -(container_type [ push_back(_a, _1) ] > '.')
+                        variable_scope()  [ push_back(_a, _1) ] > '.'
+                    >  -(container_type() [ push_back(_a, _1) ] > '.')
                     >   (
                             variable_name
                             [ push_back(_a, _1), _val = new_<ValueRef::Variable<std::string> >(_a) ]

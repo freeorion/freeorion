@@ -1,9 +1,5 @@
 #include "ValueRefParserImpl.h"
 
-
-name_token_rule variable_scope;
-name_token_rule container_type;
-
 namespace {
     struct int_parser_rules {
         int_parser_rules() {
@@ -15,19 +11,6 @@ namespace {
             using phoenix::static_cast_;
 
             const parse::lexer& tok = parse::lexer::instance();
-
-            variable_scope
-                =   tok.Source_
-                |   tok.Target_
-                |   tok.LocalCandidate_
-                |   tok.RootCandidate_
-                ;
-
-            container_type
-                =   tok.Planet_
-                |   tok.System_
-                |   tok.Fleet_
-                ;
 
             // TODO: Should we apply elements of this list only to certain
             // objects? For example, if one writes "Source.Planet.",
@@ -81,8 +64,6 @@ namespace {
                 |   statistic
                 ;
 
-            variable_scope.name("Source, Target, LocalCandidate, or RootCandidate");
-            container_type.name("Planet, System, or Fleet");
             variable_name.name("integer variable name (e.g., FleetID)");
             constant.name("integer constant");
             free_variable.name("free integer variable");
@@ -96,8 +77,6 @@ namespace {
             primary_expr.name("integer expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(variable_scope);
-            debug(container_type);
             debug(variable_name);
             debug(constant);
             debug(free_variable);

@@ -67,8 +67,8 @@ namespace {
 
             variable
                 = (
-                        variable_scope [ push_back(_a, _1) ] > '.'
-                    >  -(container_type [ push_back(_a, _1) ] > '.')
+                        variable_scope() [ push_back(_a, _1) ] > '.'
+                    >  -(container_type() [ push_back(_a, _1) ] > '.')
                     >   (
                             variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
                         |   int_var_variable_name() [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]

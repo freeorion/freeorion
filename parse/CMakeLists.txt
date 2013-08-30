@@ -24,6 +24,7 @@ add_library(freeorionparse
     PlanetEnvironmentValueRefParser.cpp
     UniverseObjectTypeValueRefParser.cpp
     StarTypeValueRefParser.cpp
+    ValueRefParserImpl.cpp
     ConditionParser.cpp
     ConditionParser1.cpp
     ConditionParser2.cpp

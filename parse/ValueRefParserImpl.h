@@ -180,8 +180,8 @@ void initialize_expression_parsers(
         ;
 }
 
-extern name_token_rule              variable_scope;
-extern name_token_rule              container_type;
+const name_token_rule&              variable_scope();
+const name_token_rule&              container_type();
 const name_token_rule&              int_var_variable_name();
 const statistic_rule<int>::type&    int_var_statistic();
 const name_token_rule&              double_var_variable_name();
@@ -199,9 +199,9 @@ void initialize_bound_variable_parser(
     using phoenix::push_back;
 
     bound_variable
-        =   variable_scope [ push_back(_a, _1) ] > '.'
-        > -(container_type [ push_back(_a, _1) ] > '.')
-        >   variable_name  [ push_back(_a, _1), _val = new_<ValueRef::Variable<T> >(_a) ]
+        =   variable_scope() [ push_back(_a, _1) ] > '.'
+        > -(container_type() [ push_back(_a, _1) ] > '.')
+        >   variable_name    [ push_back(_a, _1), _val = new_<ValueRef::Variable<T> >(_a) ]
         ;
 }
 
@@ -235,7 +235,7 @@ void initialize_numeric_statistic_parser(
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_token)
                    >>       eps [ push_back(_a, val(LocalCandidate_token)) ]
-                   >>       -(container_type [ push_back(_a, _1) ] >> '.')
+                   >>       -(container_type() [ push_back(_a, _1) ] >> '.')
                    >>       variable_name [ push_back(_a, _1) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
@@ -266,7 +266,7 @@ void initialize_nonnumeric_statistic_parser(
                   tok.Mode_ [ _b = ValueRef::MODE ]
               >>  parse::label(Property_token)
               >>        eps [ push_back(_a, val(LocalCandidate_token)) ]
-              >>        -(container_type [ push_back(_a, _1) ] > '.')
+              >>        -(container_type() [ push_back(_a, _1) ] > '.')
               >>        variable_name [ push_back(_a, _1) ]
               >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
              )
