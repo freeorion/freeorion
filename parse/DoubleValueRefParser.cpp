@@ -5,7 +5,10 @@ namespace {
         double_parser_rules() {
             qi::_1_type _1;
             qi::_a_type _a;
+            qi::_b_type _b;
             qi::_val_type _val;
+            using phoenix::bind;
+            using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
             using phoenix::static_cast_;
@@ -57,26 +60,28 @@ namespace {
                 ;
 
             free_variable
-                =   (
-                        tok.Value_
-                    |   tok.UniverseCentreX_
+                =
+                        tok.Value_ [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
+                    |
+                    (
+                        tok.UniverseCentreX_
                     |   tok.UniverseCentreY_
                         // add more object-independent ValueRef int functions here
-                    ) [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
+                    ) [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
                 ;
 
             variable
                 = (
-                        variable_scope() [ push_back(_a, _1) ] > '.'
-                    >  -(container_type() [ push_back(_a, _1) ] > '.')
+                        variable_scope() [ _b = _1 ] > '.'
+                    >  -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
                     >   (
-                            variable_name [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
-                        |   int_var_variable_name() [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
+                            variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<double> >(_b, _a) ]
+                        |   int_var_variable_name() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
                         )
                   )
                 | (
                         tok.CurrentTurn_
-                        [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
+                        [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
                   )
                 ;
 

@@ -3,13 +3,15 @@
 namespace {
     struct variable_parser_rules {
         variable_parser_rules() {
+            qi::_val_type _val;
+
             const parse::lexer& tok = parse::lexer::instance();
 
             variable_scope
-                =   tok.Source_
-                |   tok.Target_
-                |   tok.LocalCandidate_
-                |   tok.RootCandidate_
+                =   tok.Source_         [ _val = ValueRef::SOURCE_REFERENCE ]
+                |   tok.Target_         [ _val = ValueRef::EFFECT_TARGET_REFERENCE ]
+                |   tok.LocalCandidate_ [ _val = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE ]
+                |   tok.RootCandidate_  [ _val = ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE ]
                 ;
 
             container_type
@@ -27,7 +29,7 @@ namespace {
 #endif
         }
 
-        name_token_rule variable_scope;
+        reference_token_rule variable_scope;
         name_token_rule container_type;
     };
 
@@ -37,7 +39,7 @@ namespace {
     }
 }
 
-const name_token_rule& variable_scope()
+const reference_token_rule& variable_scope()
 { return get_variable_parser_rules().variable_scope; }
 
 const name_token_rule& container_type()

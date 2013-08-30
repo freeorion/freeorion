@@ -6,6 +6,8 @@ namespace {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_val_type _val;
+            using phoenix::bind;
+            using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
             using phoenix::static_cast_;
@@ -39,12 +41,10 @@ namespace {
                 |   tok.int_ [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
 
+            // add more object-independent ValueRef int functions here
             free_variable
-                =   (
-                        tok.CurrentTurn_
-                    |   tok.Value_
-                        // add more object-independent ValueRef int functions here
-                    ) [ push_back(_a, _1), _val = new_<ValueRef::Variable<int> >(_a) ]
+                =   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
+                |   tok.Value_       [ _val = new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
                 ;
 
             initialize_bound_variable_parser<int>(bound_variable, variable_name);

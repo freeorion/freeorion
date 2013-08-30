@@ -151,8 +151,6 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
-    Variable(const std::vector<adobe::name_t>& property_name);
-    Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name);
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
 
     virtual bool                        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
@@ -184,7 +182,7 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
 {
-    Statistic(const std::vector<adobe::name_t>& property_name,
+    Statistic(const std::vector<std::string>& property_name,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
 
@@ -413,51 +411,11 @@ void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 
-inline std::string name_tToString(const adobe::name_t& name) {
-    return std::string(name.c_str());
-}
-
-template <class T>
-ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name) :
-    m_ref_type(),
-    m_property_name()
-{
-    std::transform(property_name.begin(), property_name.end(), std::back_inserter(m_property_name), name_tToString);
-    assert(!property_name.empty());
-    adobe::name_t ref_type_name = property_name.front();
-    if (ref_type_name == Source_token) {
-        m_ref_type = SOURCE_REFERENCE;
-        m_property_name.erase(m_property_name.begin());
-    } else if (ref_type_name == Target_token) {
-        m_ref_type = EFFECT_TARGET_REFERENCE;
-        m_property_name.erase(m_property_name.begin());
-    } else if (ref_type_name == Value_token) {
-        m_ref_type = EFFECT_TARGET_VALUE_REFERENCE;
-        m_property_name.erase(m_property_name.begin());
-    } else if (ref_type_name == LocalCandidate_token) {
-        m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
-        m_property_name.erase(m_property_name.begin());
-    } else if (ref_type_name == RootCandidate_token) {
-        m_ref_type = CONDITION_ROOT_CANDIDATE_REFERENCE;
-        m_property_name.erase(m_property_name.begin());
-    } else {
-        m_ref_type = NON_OBJECT_REFERENCE;
-    }
-}
-
 template <class T>
 ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
     m_ref_type(ref_type),
     m_property_name(property_name.begin(), property_name.end())
 {}
-
-template <class T>
-ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name) :
-    m_ref_type(ref_type),
-    m_property_name()
-{
-    std::transform(property_name.begin(), property_name.end(), std::back_inserter(m_property_name), name_tToString);
-}
 
 template <class T>
 bool ValueRef::Variable<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
@@ -554,7 +512,7 @@ void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Statistic<T>::Statistic(const std::vector<adobe::name_t>& property_name,
+ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
                                   StatisticType stat_type,
                                   const Condition::ConditionBase* sampling_condition) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),

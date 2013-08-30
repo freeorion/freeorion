@@ -26,6 +26,12 @@ namespace std {
 
 typedef qi::rule<
     parse::token_iterator,
+    ValueRef::ReferenceType (),
+    parse::skipper_type
+> reference_token_rule;
+
+typedef qi::rule<
+    parse::token_iterator,
     adobe::name_t (),
     parse::skipper_type
 > name_token_rule;
@@ -36,7 +42,10 @@ struct variable_rule
     typedef qi::rule<
         parse::token_iterator,
         ValueRef::Variable<T>* (),
-        qi::locals<std::vector<adobe::name_t> >,
+        qi::locals<
+            std::vector<std::string>,
+            ValueRef::ReferenceType
+        >,
         parse::skipper_type
     > type;
 };
@@ -48,7 +57,7 @@ struct statistic_rule
         parse::token_iterator,
         ValueRef::Statistic<T>* (),
         qi::locals<
-            std::vector<adobe::name_t>,
+            std::vector<std::string>,
             ValueRef::StatisticType,
             Condition::ConditionBase*
         >,
@@ -180,7 +189,7 @@ void initialize_expression_parsers(
         ;
 }
 
-const name_token_rule&              variable_scope();
+const reference_token_rule&         variable_scope();
 const name_token_rule&              container_type();
 const name_token_rule&              int_var_variable_name();
 const statistic_rule<int>::type&    int_var_statistic();
@@ -194,14 +203,17 @@ void initialize_bound_variable_parser(
 {
     qi::_1_type _1;
     qi::_a_type _a;
+    qi::_b_type _b;
     qi::_val_type _val;
+    using phoenix::bind;
+    using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
 
     bound_variable
-        =   variable_scope() [ push_back(_a, _1) ] > '.'
-        > -(container_type() [ push_back(_a, _1) ] > '.')
-        >   variable_name    [ push_back(_a, _1), _val = new_<ValueRef::Variable<T> >(_a) ]
+        =   variable_scope() [ _b = _1 ] > '.'
+        > -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
+        >   variable_name    [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
 
@@ -218,6 +230,8 @@ void initialize_numeric_statistic_parser(
     qi::_c_type _c;
     qi::_val_type _val;
     qi::eps_type eps;
+    using phoenix::bind;
+    using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
     using phoenix::val;
@@ -234,9 +248,8 @@ void initialize_numeric_statistic_parser(
               |   (
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_token)
-                   >>       eps [ push_back(_a, val(LocalCandidate_token)) ]
-                   >>       -(container_type() [ push_back(_a, _1) ] >> '.')
-                   >>       variable_name [ push_back(_a, _1) ]
+                   >>       -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] >> '.')
+                   >>       variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
              )
@@ -257,6 +270,8 @@ void initialize_nonnumeric_statistic_parser(
     qi::_c_type _c;
     qi::_val_type _val;
     qi::eps_type eps;
+    using phoenix::bind;
+    using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
     using phoenix::val;
@@ -265,9 +280,8 @@ void initialize_nonnumeric_statistic_parser(
         =    (
                   tok.Mode_ [ _b = ValueRef::MODE ]
               >>  parse::label(Property_token)
-              >>        eps [ push_back(_a, val(LocalCandidate_token)) ]
-              >>        -(container_type() [ push_back(_a, _1) ] > '.')
-              >>        variable_name [ push_back(_a, _1) ]
+              >>        -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
+              >>        variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ]
               >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
