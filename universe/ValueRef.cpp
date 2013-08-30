@@ -141,17 +141,8 @@ std::string ValueRef::ReconstructName(const std::vector<adobe::name_t>& property
     std::string retval;
     switch (ref_type) {
     case ValueRef::SOURCE_REFERENCE:                    retval = "Source";          break;
-    case ValueRef::EFFECT_TARGET_REFERENCE: {
-        // "Value" is actually a reference to the target object, but we
-        // don't want to output "Target.Value", so if "Value" is the
-        // property name, skip prepending "Target".  Otherwise, prepend
-        // target as with other direct object references.
-        if (property_name.back() == Value_token)
-            retval = "Value";
-        else
-            retval = "Target";
-        break;
-    }
+    case ValueRef::EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
+    case ValueRef::EFFECT_TARGET_VALUE_REFERENCE:       retval = "Value";           break;
     case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
     case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
     case ValueRef::NON_OBJECT_REFERENCE:                retval = "";                break;
@@ -279,7 +270,7 @@ namespace ValueRef {
 namespace ValueRef {
 
 #define IF_CURRENT_VALUE(T)                                                \
-    if (property_name == Value_token) {                                     \
+    if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
         if (context.current_value.empty())                                 \
             throw std::runtime_error(                                      \
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \

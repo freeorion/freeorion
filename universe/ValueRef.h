@@ -421,12 +421,19 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
     adobe::name_t ref_type_name = property_name.front();
     if (ref_type_name == Source_token) {
         m_ref_type = SOURCE_REFERENCE;
-    } else if (ref_type_name == Value_token || ref_type_name == Target_token) {
+        m_property_name.erase(m_property_name.begin());
+    } else if (ref_type_name == Target_token) {
         m_ref_type = EFFECT_TARGET_REFERENCE;
+        m_property_name.erase(m_property_name.begin());
+    } else if (ref_type_name == Value_token) {
+        m_ref_type = EFFECT_TARGET_VALUE_REFERENCE;
+        m_property_name.erase(m_property_name.begin());
     } else if (ref_type_name == LocalCandidate_token) {
         m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
+        m_property_name.erase(m_property_name.begin());
     } else if (ref_type_name == RootCandidate_token) {
         m_ref_type = CONDITION_ROOT_CANDIDATE_REFERENCE;
+        m_property_name.erase(m_property_name.begin());
     } else {
         m_ref_type = NON_OBJECT_REFERENCE;
     }
@@ -467,7 +474,7 @@ bool ValueRef::Variable<T>::LocalCandidateInvariant() const
 
 template <class T>
 bool ValueRef::Variable<T>::TargetInvariant() const
-{ return m_ref_type != EFFECT_TARGET_REFERENCE; }
+{ return m_ref_type != EFFECT_TARGET_REFERENCE && m_ref_type != EFFECT_TARGET_VALUE_REFERENCE; }
 
 template <class T>
 bool ValueRef::Variable<T>::SourceInvariant() const
@@ -479,13 +486,8 @@ std::string ValueRef::Variable<T>::Description() const
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size() - 1)));
     switch (m_ref_type) {
     case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
-    case EFFECT_TARGET_REFERENCE: {
-        if (m_property_name.back() == Value_token)
-                                                formatter % UserString("DESC_VAR_VALUE");
-        else
-                                                formatter % UserString("DESC_VAR_TARGET");
-        break;
-    }
+    case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
+    case EFFECT_TARGET_VALUE_REFERENCE:         formatter % UserString("DESC_VAR_VALUE");           break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE:   formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:    formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
     case NON_OBJECT_REFERENCE:                  formatter % "";                                     break;
