@@ -1049,8 +1049,8 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Setzt ob Planeten im Seitenfenster gezeigt werden sollen.
 
 OPTIONS_DB_GAMESETUP_SEED
-'''Die Aussaat wird zur zufälligen Erzeugung der Galaxie verwendet.
-Galaxien die mit den gleichen Einstellungen und die gleichen Aussaat erzeugt worden sind, werden identisch sein.'''
+'''Die Saat wird zur zufälligen Erzeugung der Galaxie verwendet.
+Galaxien, welche mit den gleichen Einstellungen und die gleichen Saat erzeugt worden sind, werden identisch sein.'''
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Die ungefähre Anzahl der Systeme, die in der Galaxie  erzeugt werden soll.
@@ -1070,13 +1070,13 @@ OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 Anzahl der Sternstraßen, die in der Galaxie erzeugt werden sollen.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Die Häufigkeit von Besonderheiten, welche in der Galaxie erzeugt werden soll.
+Wie häufig Besonderheiten in der Galaxie auftreten sollen.
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
-Wie Häufig Monster in der Galaxie die erzeugt werden soll, auftreten sollen.
+Wie häufig Monster in der Galaxie auftreten sollen.
 
 OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-Wie Häufig Eingeborenen in der Galaxie die erzeugt werden soll, auftreten sollen.
+Wie häufig Eingeborene in der Galaxie auftreten sollen.
 
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 Die maximale Aggressionsstufe für KI Gegner.
@@ -1317,7 +1317,7 @@ JOIN_GAME_BN
 Einem Spiel beitreten
 
 REFRESH_LIST_BN
-Liste aktualisieren
+Aktualisieren
 
 
 ########################
@@ -1368,7 +1368,7 @@ Spiel starten
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Galaxie erstellen
+Galaxie erzeugen
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -1394,7 +1394,7 @@ Anzahl der KI-Spieler
 GSETUP_SEED
 Saat
 GSETUP_RANDOM_SEED
-Generate a random seed
+Erzeuge eine zufällige Saat
 GSETUP_RANDOMIZE
 Randomisieren
 GSETUP_STARS
@@ -1408,11 +1408,11 @@ Anzahl Sternstraßen
 GSETUP_PLANET_DENSITY
 Planetendichte
 GSETUP_SPECIALS_FREQ
-Anzahl Besonderheiten
+Häufigkeit Besonderheiten
 GSETUP_MONSTER_FREQ
-Anzahl Monster
+Häufigkeit Monster
 GSETUP_NATIVE_FREQ
-Anzahl Eingeborene
+Häufigkeit Eingeborene
 GSETUP_AI_AGGR
 Max KI Aggression
 
@@ -5466,16 +5466,16 @@ DESC_VAR_CREATIONTURN
 Zug der Erschaffung
 
 DESC_VAR_DESIGNID
-design id
+ID des Entwurfes
 
 DESC_VAR_FLEETID
-fleet id
+ID der Flotte
 
 DESC_VAR_PLANETID
-planet id
+ID des Planeten
 
 DESC_VAR_SYSTEMID
-system id
+ID des Systems
 
 DESC_VAR_FINALDESTINATIONID
 final destination id
@@ -5487,22 +5487,22 @@ DESC_VAR_PREVIOUSSYSTEMID
 previous system id
 
 DESC_VAR_NUMSHIPS
-number of ships
+Anzahl der Schiffe
 
 DESC_VAR_CURRENTTURN
 Aktueller Zug
 
 DESC_VAR_NAME
-name
+Name
 
 DESC_VAR_SPECIES
-species
+Spezies
 
 DESC_VAR_BUILDINGTYPE
 building type name
 
 DESC_VAR_FOCUS
-focus
+Fokus
 
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
@@ -5579,13 +5579,13 @@ DESC_SIMPLE_SET_METER
 %1% %2%%3%
 
 DESC_COMPLEX_SET_METER
-Set %1% to %2%
+Setze %1% auf %2%
 
 DESC_SET_SHIP_PART_METER
-Set %1% for %2% to %3%
+Setze %1% für %2% auf %3%
 
 DESC_SET_EMPIRE_METER
-Set %2% of the %1% empire to %3%
+Setze %2% des %1% Imperiums auf %3%
 
 
 # others
@@ -5711,10 +5711,10 @@ DESC_EMPIRE_AFFILIATION_NOT
  die nicht zu einem %1% des Imperiums %2% gehören
 
 DESC_EMPIRE_AFFILIATION_ANY
- that belongs to any empire
+ die zu irgendeinem Imperium gehören
 
 DESC_EMPIRE_AFFILIATION_ANY_NOT
- that does not belong to an empire
+ die nicht zu einem Imperium gehören
 
 DESC_SOURCE
  that is the source object
