@@ -454,7 +454,7 @@ bool ValueRef::Variable<T>::SourceInvariant() const
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
-    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size() - 1)));
+    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
     switch (m_ref_type) {
     case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
     case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
