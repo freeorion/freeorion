@@ -1211,6 +1211,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = AND [
+        TargetPopulation low = 1
         Not Contains Building "BLD_STARGATE"
         OwnedBy TheEmpire Source.Owner
     ]
