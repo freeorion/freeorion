@@ -375,11 +375,12 @@
 		82C07479149DE7CE00E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C0747C149DE80300E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C0747F149DE83000E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
-		82C560CE17D0CB4E00FE3B35 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
-		82C560CF17D0CB4E00FE3B35 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C560D117D0CC2F00FE3B35 /* Tokens.cpp */; };
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
+		82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
+		82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
+		82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */; };
@@ -4029,6 +4030,9 @@
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
 				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
 				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
+				82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */,
+				82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */,
+				82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4253,8 +4257,6 @@
 				3A76049E1749A0A300363653 /* TechsParser.cpp in Sources */,
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
-				82C560CE17D0CB4E00FE3B35 /* name.cpp in Sources */,
-				82C560CF17D0CB4E00FE3B35 /* string_pool.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
