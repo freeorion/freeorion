@@ -90,7 +90,7 @@ def ratePlanetaryPiloting(pid):
     planet = universe.getPlanet(pid)
     if (not planet) or (not planet.speciesName):
       return 0.0
-    thisSPec = fo.getSpecies(planet.speciesName)
+    thisSpec = fo.getSpecies(planet.speciesName)
     if not thisSpec:
       return 0.0
     return ratePilotingTag(thisSpec.tags)
