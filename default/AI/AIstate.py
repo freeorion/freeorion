@@ -477,7 +477,7 @@ class AIstate(object):
         else:
             fleet = fo.getUniverse().getFleet(fleetID)
             if not fleet:
-                return 0 #TODO: also ensure any info for that fleet is deleted
+                return {} #TODO: also ensure any info for that fleet is deleted
             status = {'rating':self.rateFleet(fleetID),  'sysID':fleet.systemID,  'nships':len(fleet.shipIDs)}
             self.fleetStatus[fleetID] = status
             return status['rating']
@@ -553,7 +553,7 @@ class AIstate(object):
                 total_enemy_weights += count
                 continue
             structure_tally += count * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
-            eshields = enemy_stats.get('shields',  0)
+            eshields = estats.get('shields',  0)
             tempattacktally=0
             tempstruc = estats.get('structure', 1)
             total_enemy_weights += count * tempstruc
