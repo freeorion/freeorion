@@ -960,7 +960,7 @@ def generateProductionOrders():
                             res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                             print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     except:
-                        print "problem queueing BLD_SOL_ORB_GEN at planet",  useloc,  "of system ",  useSys
+                        print "problem queueing BLD_SOL_ORB_GEN at planet",  useLoc,  "of system ",  useSys
                         pass
 
     bldName = "BLD_ART_BLACK_HOLE"
@@ -1005,7 +1005,7 @@ def generateProductionOrders():
                             res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                             print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     except:
-                        print "problem queueing %s at planet"%bldName,  useloc,  "of system ",  useSys
+                        print "problem queueing %s at planet"%bldName,  useLoc,  "of system ",  useSys
 
     bldName = "BLD_BLACK_HOLE_POW_GEN"
     if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.cautious:
@@ -1036,7 +1036,7 @@ def generateProductionOrders():
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                 except:
-                    print "problem queueing BLD_BLACK_HOLE_POW_GEN at planet",  useloc,  "of system ",  useSys
+                    print "problem queueing BLD_BLACK_HOLE_POW_GEN at planet",  useLoc,  "of system ",  useSys
                     pass
 
     bldName = "BLD_ENCLAVE_VOID"
@@ -1109,7 +1109,7 @@ def generateProductionOrders():
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                 except:
-                    print "problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet",  useloc,  "of system ",  useSys
+                    print "problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet",  useLoc,  "of system ",  useSys
                     pass
 
     bldName = "BLD_NEUTRONIUM_FORGE"

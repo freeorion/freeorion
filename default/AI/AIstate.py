@@ -553,7 +553,7 @@ class AIstate(object):
                 total_enemy_weights += count
                 continue
             structure_tally += count * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
-            eshields = enemystats.get('shields',  0)
+            eshields = enemy_stats.get('shields',  0)
             tempattacktally=0
             tempstruc = estats.get('structure', 1)
             total_enemy_weights += count * tempstruc

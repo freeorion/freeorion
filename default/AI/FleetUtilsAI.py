@@ -8,7 +8,6 @@ __AIShipRoleTypeNames = AIShipRoleType()
 __AIFleetMissionTypeNames = AIFleetMissionType()
 
 def clearShipDesignInfo():
-    __designRoles.clear()
     __designStats.clear()
 
 def statsMeetReq(stats,  reqs,  reqName):
