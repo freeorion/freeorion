@@ -13,7 +13,7 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     empireID = fo.empireID()
     # determine system where fleet will be or where is if is going nowhere
     lastSystemAITarget = fleetAITarget.getRequiredSystemAITargets()[0]
-    # for every system which fleet wanted to visit, determine systems to visit and create move orders 
+    # for every system which fleet wanted to visit, determine systems to visit and create move orders
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
         #print "checking system targets"
@@ -52,10 +52,10 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     startSysID = fromSystemAITarget.getTargetID()
     targetSysID = toSystemAITarget.getTargetID()
     shortPath= list( pathFunc(startSysID, targetSysID, empireID) )
-    suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ] 
+    suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ]
     unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
     retPath=[]
-    #print "getting path from %s to %s "%(PlanetUtilsAI.sysNameIDs([  startSysID ]), PlanetUtilsAI.sysNameIDs([  targetSysID ])  ), 
+    #print "getting path from %s to %s "%(PlanetUtilsAI.sysNameIDs([  startSysID ]), PlanetUtilsAI.sysNameIDs([  targetSysID ])  ),
     #print " ::: found initial path  %s having suppliedStops  %s and  unsuppliedStops  %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sysNameIDs( shortPath[:] ),  suppliedStops,  unsuppliedStops,  fuel)
     if False:
         if  targetSysID in fleetSupplyableSystemIDs:
@@ -66,17 +66,17 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
             print "target in Ring 2,  has enough aggression is ",  foAI.foAIstate.aggression >=fo.aggression.typical
         elif targetSysID in annexableRing3:
             print "target in Ring 2,  has enough aggression is ",   foAI.foAIstate.aggression >=fo.aggression.aggressive
-    if  ( len( unsuppliedStops) == 0 or  
-                targetSysID in fleetSupplyableSystemIDs and len( unsuppliedStops) < fuel or 
+    if  ( len( unsuppliedStops) == 0 or
+                targetSysID in fleetSupplyableSystemIDs and len( unsuppliedStops) < fuel or
                 targetSysID in annexableRing1 and len( unsuppliedStops) < fuel or
-                foAI.foAIstate.aggression >=fo.aggression.typical  and targetSysID in annexableRing2 and len( unsuppliedStops) < fuel -1 or 
+                foAI.foAIstate.aggression >=fo.aggression.typical  and targetSysID in annexableRing2 and len( unsuppliedStops) < fuel -1 or
                 foAI.foAIstate.aggression >=fo.aggression.aggressive  and targetSysID in annexableRing3 and len( unsuppliedStops) < fuel -2 ):
         retPath =  [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
     else:
-        #print " getting path from 'canTravelToSystemAndReturnToResupply' ", 
+        #print " getting path from 'canTravelToSystemAndReturnToResupply' ",
         retPath =  canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=True)
     return retPath
- 
+
 def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=False):
     "check if fleet can travel from starting system to wanted system"
 

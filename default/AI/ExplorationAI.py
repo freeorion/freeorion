@@ -8,14 +8,14 @@ import PlanetUtilsAI
 from random import shuffle
 
 graphFlags={}
-__interiorExploredSystemIDs = {} # explored systems whose neighbors are also all 
+__interiorExploredSystemIDs = {} # explored systems whose neighbors are also all
 __borderExploredSystemIDs = {}
 __borderUnexploredSystemIDs = {}
 currentScoutFleetIDs = []
 
 def dictFromMap(map):
     return dict(  [  (el.key(),  el.data() ) for el in map ] )
-    
+
 def getBorderExploredSystemIDs():
     return list( __borderExploredSystemIDs )
 
@@ -33,7 +33,7 @@ def getCurrentExplorationInfo(verbose=True):
         if len(aiFleetMission.getAIMissionTypes()) == 0:
             availableScouts.append(fleetID)
         else:
-            targets = [targ.getTargetID() for targ in  aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION) ] 
+            targets = [targ.getTargetID() for targ in  aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION) ]
             if verbose:
                 if len(targets)==0:
                     print "problem determining existing exploration target systems from targets:\n%s"%(aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
@@ -48,15 +48,15 @@ def assignScoutsToExploreSystems():
     capitalSysID = PlanetUtilsAI.getCapitalSysID()
     # order fleets to explore
     #explorableSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)
-    explorableSystemIDs =  list(__borderUnexploredSystemIDs) 
-    if not explorableSystemIDs: 
+    explorableSystemIDs =  list(__borderUnexploredSystemIDs)
+    if not explorableSystemIDs:
         return
     expSystemsByDist = sorted(  map( lambda x: ( universe.linearDistance(capitalSysID, x),  x) ,  explorableSystemIDs ) )
     print "Exploration system considering following system-distance pairs:\n %s"%("[ "+ ",  ".join(["%3d : %5.1f"%(sys, dist) for dist, sys in expSystemsByDist]) +" ]")
     exploreList = [sysID for dist, sysID in expSystemsByDist ]
 
     alreadyCovered,  availableScouts  = getCurrentExplorationInfo()
-    
+
 
     print "explorable sys IDs: %s"%exploreList
     print "already targeted: %s"%alreadyCovered
@@ -77,7 +77,7 @@ def assignScoutsToExploreSystems():
             print "Skipping exploration of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             continue
         foundFleets=[]
-        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
+        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[],
                                                      fleetPoolSet = availableScouts,   fleetList=foundFleets,  verbose=False)
         if thisFleetList==[]:
             print "seem to have run out of scouts while trying to cover sysID %d"%thisSysID
@@ -92,11 +92,11 @@ def assignScoutsToExploreSystems():
             print "sysID %d too far out for fleet ( ID %d ) to readch"%(thisSysID,  fleetID)
             availableScouts.update(thisFleetList)
     print "sent scouting fleets to sysIDs : %s"%sentList
-    return 
+    return
     """
     #TODO: consider matching sys to closest scout, also consider rejecting scouts that would travel a blockaded  path
     sentList=[]
-    sysList=  list(explorableSystemIDs) 
+    sysList=  list(explorableSystemIDs)
     shuffle( sysList ) #so that a monster defended system wont always be selected  early
     fleetList = list(availableScouts)
     isys= -1
@@ -106,7 +106,7 @@ def assignScoutsToExploreSystems():
         fleetID =  fleetList[ jfleet ]
         while ( isys  < len(sysList) -1) :
             isys += 1
-            sysID = sysList[ isys] 
+            sysID = sysList[ isys]
             aiFleetMission = foAI.foAIstate.getAIFleetMission( fleetID )
             aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sysID )
             # add exploration mission to fleet with target unexplored system and this system is in range
@@ -132,7 +132,7 @@ def getHomeSystemID():
 
 def followVisSystemConnections(startSystemID,  homeSystemID):
     universe = fo.getUniverse()
-    systemIDs = universe.systemIDs 
+    systemIDs = universe.systemIDs
     empireID = foAI.foAIstate.empireID
     empire = fo.getEmpire()
     explorationList=[  startSystemID ]
@@ -142,7 +142,7 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
             continue
         graphFlags[curSystemID] = 1
         system=universe.getSystem(curSystemID)
-        if not system: 
+        if not system:
             sysName=foAI.foAIstate.systemStatus.get(curSystemID, {}).get('name',  "name unknown")
         else:
             sysName = system.name or foAI.foAIstate.systemStatus.get(curSystemID, {}).get('name',  "name unknown")
@@ -158,7 +158,7 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
         isVisible = ( universe.getVisibilityTurns(curSystemID,  empireID)[fo.visibility.partial] > 0 ) # more precisely, this means HAS BEEN visible
         #print "previous visTurns result: %s"% ([val for val in universe.getVisibilityTurns(curSystemID,  empireID)],  )
         #print "new visTurns result: %s"% (dictFromMap( universe.getVisibilityTurnsMap(curSystemID,  empireID)),  )
-        isConnected = universe.systemsConnected(curSystemID, homeSystemID, -1)  #self.empireID) 
+        isConnected = universe.systemsConnected(curSystemID, homeSystemID, -1)  #self.empireID)
         statusStr += " -- is %s partially visible "%(["not",  ""][isVisible])
         statusStr += " -- is %s visibly connected to homesystem "%(["not",  ""][isConnected])
         if isVisible:
@@ -238,7 +238,7 @@ def updateExploredSystems():
             newlyExplored.append(sysID)
         else:
             stillUnexplored.append(sysID)
-            
+
     neighborList=[]
     dummy=[]
     for idList, nextList in [ (newlyExplored,  neighborList),  (neighborList,  dummy) ]:
@@ -256,7 +256,7 @@ def updateExploredSystems():
                     del __borderExploredSystemIDs[sysID]
             else:
                 __borderExploredSystemIDs[sysID] = 1
-                
+
     for sysID in stillUnexplored:
         neighbors = list(  universe.getImmediateNeighbors(sysID,  empireID) )
         anyExplored=False
@@ -265,5 +265,5 @@ def updateExploredSystems():
                 anyExplored=True
         if anyExplored:
             __borderUnexploredSystemIDs[sysID] = 1
-        
+
     return newlyExplored

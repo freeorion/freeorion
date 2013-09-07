@@ -38,14 +38,14 @@ def getInvasionFleets():
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
-    
+
     primeInvadableSystemIDs = set(ColonisationAI.annexableSystemIDs)
     primeInvadablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(primeInvadableSystemIDs)
 
     # get competitor planets
     exploredSystemIDs = empire.exploredSystemIDs
     exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
-    
+
     visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
     visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
     accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
@@ -54,7 +54,7 @@ def getInvasionFleets():
     #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
     allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs)#need these for unpopulated outposts
     # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
-    
+
     allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)#need this for natives
     print "All Visible and accessible Populated PlanetIDs (including this empire's):              " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
 
@@ -68,7 +68,7 @@ def getInvasionFleets():
     print "Current Invasion Targeted SystemIDs:       " + str(PlanetUtilsAI.sysNameIDs(AIstate.invasionTargetedSystemIDs))
     invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
     allInvasionTargetedSystemIDs = PlanetUtilsAI.getSystems(invasionTargetedPlanetIDs)
- 
+
     # export invasion targeted systems for other AI modules
     AIstate.invasionTargetedSystemIDs = allInvasionTargetedSystemIDs
     print "Current Invasion Targeted PlanetIDs:       " + str(PlanetUtilsAI.planetNameIDs(invasionTargetedPlanetIDs))
@@ -78,7 +78,7 @@ def getInvasionFleets():
         print "Available Invasion Fleets:           0"
     else:
         print "Invasion FleetIDs:                 " + str(FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION))
- 
+
     numInvasionFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(invasionFleetIDs))
     print "Invasion Fleets Without Missions:    " + str(numInvasionFleets)
 
@@ -139,30 +139,30 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
     "return the invasion value of a planet"
     detail = []
-    buildingValues = {"BLD_IMPERIAL_PALACE":                    1000, 
-                                            "BLD_CULTURE_ARCHIVES":                 1000, 
-                                            "BLD_SHIPYARD_BASE":                        100, 
-                                            "BLD_SHIPYARD_ORG_ORB_INC":     200, 
-                                            "BLD_SHIPYARD_ORG_XENO_FAC": 200, 
-                                            "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": 200, 
-                                            "BLD_SHIPYARD_CON_NANOROBO": 300, 
-                                            "BLD_SHIPYARD_CON_GEOINT":      400, 
-                                            "BLD_SHIPYARD_CON_ADV_ENGINE": 1000, 
-                                            "BLD_SHIPYARD_AST":                             300, 
-                                            "BLD_SHIPYARD_AST_REF":                     1000, 
-                                            "BLD_SHIPYARD_ENRG_COMP":           500, 
-                                            "BLD_SHIPYARD_ENRG_SOLAR":          1500, 
-                                            "BLD_INDUSTRY_CENTER":                   500, 
-                                            "BLD_GAS_GIANT_GEN":                           200, 
-                                            "BLD_SOL_ORB_GEN":                              800, 
-                                            "BLD_BLACK_HOLE_POW_GEN":       2000, 
-                                            "BLD_ENCLAVE_VOID":                             500, 
-                                            "BLD_NEUTRONIUM_EXTRACTOR": 2000, 
-                                            "BLD_NEUTRONIUM_SYNTH":             2000, 
-                                            "BLD_NEUTRONIUM_FORGE":             1000, 
-                                            "BLD_CONC_CAMP":                                    100, 
-                                            "BLD_BIOTERROR_PROJECTOR":      1000, 
-                                            "BLD_SHIPYARD_ENRG_COMP":         3000, 
+    buildingValues = {"BLD_IMPERIAL_PALACE":                    1000,
+                                            "BLD_CULTURE_ARCHIVES":                 1000,
+                                            "BLD_SHIPYARD_BASE":                        100,
+                                            "BLD_SHIPYARD_ORG_ORB_INC":     200,
+                                            "BLD_SHIPYARD_ORG_XENO_FAC": 200,
+                                            "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": 200,
+                                            "BLD_SHIPYARD_CON_NANOROBO": 300,
+                                            "BLD_SHIPYARD_CON_GEOINT":      400,
+                                            "BLD_SHIPYARD_CON_ADV_ENGINE": 1000,
+                                            "BLD_SHIPYARD_AST":                             300,
+                                            "BLD_SHIPYARD_AST_REF":                     1000,
+                                            "BLD_SHIPYARD_ENRG_COMP":           500,
+                                            "BLD_SHIPYARD_ENRG_SOLAR":          1500,
+                                            "BLD_INDUSTRY_CENTER":                   500,
+                                            "BLD_GAS_GIANT_GEN":                           200,
+                                            "BLD_SOL_ORB_GEN":                              800,
+                                            "BLD_BLACK_HOLE_POW_GEN":       2000,
+                                            "BLD_ENCLAVE_VOID":                             500,
+                                            "BLD_NEUTRONIUM_EXTRACTOR": 2000,
+                                            "BLD_NEUTRONIUM_SYNTH":             2000,
+                                            "BLD_NEUTRONIUM_FORGE":             1000,
+                                            "BLD_CONC_CAMP":                                    100,
+                                            "BLD_BIOTERROR_PROJECTOR":      1000,
+                                            "BLD_SHIPYARD_ENRG_COMP":         3000,
                                             }
     #TODO: add more factors, as used for colonization
     universe = fo.getUniverse()
@@ -178,7 +178,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
 
     if planetPartialVisTurn < sysPartialVisTurn:
         return 0, 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
-        
+
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species: #this call iterates over this Empire's available species with which it could colonize after an invasion
@@ -192,7 +192,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         bval = buildingValues.get(bldType,  50)
         bldTally += bval
         detail.append("%s: %d"%(bldType,  bval))
-        
+
         capitolID = PlanetUtilsAI.getCapital()
         if capitolID:
             homeworld = universe.getPlanet(capitolID)
@@ -201,14 +201,14 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                 evalSystemID = planet.systemID
                 leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
             maxJumps =  leastJumpsPath
-        
+
     troops = planet.currentMeterValue(fo.meterType.troops)
     maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
-    
+
     popTSize = planet.currentMeterValue(fo.meterType.targetPopulation)#TODO: adjust for empire tech
     planetSpecials = list(planet.specials)
     pSysID = planet.systemID#TODO: check star value
-    
+
     pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
     sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
     sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
@@ -248,7 +248,7 @@ def getPlanetPopulation(planetID):
 
     planet = universe.getPlanet(planetID)
     planetPopulation = planet.currentMeterValue(fo.meterType.population)
- 
+
     if planet == None: return 0
     else:
         return planetPopulation
@@ -262,11 +262,11 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         troopsPerBestShip = 2*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
-        
+
     #sortedTargets=sorted( [  ( pscore-ptroops/2 ,  pID,  pscore,  ptroops) for pID,  pscore,  ptroops in evaluatedPlanets ] ,  reverse=True)
 
     invasionPool=set(invasionPool)
-    for  pID,  pscore,  ptroops in evaluatedPlanets: # 
+    for  pID,  pscore,  ptroops in evaluatedPlanets: #
         if not invasionPool: return
         planet=universe.getPlanet(pID)
         if not planet: continue
@@ -275,7 +275,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         podsNeeded= int(math.ceil( (ptroops+1.1)/2.0)+0.0001)
         foundStats={}
         minStats= {'rating':0, 'troopPods':podsNeeded}
-        targetStats={'rating':10,'troopPods':podsNeeded+2} 
+        targetStats={'rating':10,'troopPods':podsNeeded+2}
         theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPoolSet=invasionPool,   fleetList=foundFleets,  verbose=False)
         if theseFleets == []:
             if not FleetUtilsAI.statsMeetReqs(foundStats,  minStats):

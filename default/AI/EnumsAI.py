@@ -46,29 +46,29 @@ class AIPriorityType(object):
     PRIORITY_PRODUCTION_ORBITAL_COLONISATION = 22
 
     AIPriorityNames = [
-            "RESOURCE_GROWTH", 
-            "slot_empty", 
-            "RESOURCE_PRODUCTION", 
-            "RESOURCE_RESEARCH", 
-            "RESOURCE_TRADE", 
-            "RESOURCE_CONSTRUCTION", 
-            "PRODUCTION_EXPLORATION", 
-            "PRODUCTION_OUTPOST", 
-            "PRODUCTION_COLONISATION", 
-            "PRODUCTION_INVASION", 
-            "PRODUCTION_MILITARY", 
-            "PRODUCTION_BUILDINGS", 
-            "RESEARCH_LEARNING", 
-            "RESEARCH_GROWTH", 
-            "RESEARCH_PRODUCTION", 
-            "RESEARCH_CONSTRUCTION", 
-            "RESEARCH_ECONOMICS", 
-            "RESEARCH_SHIPS", 
-            "RESEARCH_DEFENSE", 
-            "PRODUCTION_ORBITAL_DEFENSE", 
-            "PRODUCTION_ORBITAL_INVASION", 
-            "PRODUCTION_ORBITAL_OUTPOST", 
-            "PRODUCTION_ORBITAL_COLONISATION", 
+            "RESOURCE_GROWTH",
+            "slot_empty",
+            "RESOURCE_PRODUCTION",
+            "RESOURCE_RESEARCH",
+            "RESOURCE_TRADE",
+            "RESOURCE_CONSTRUCTION",
+            "PRODUCTION_EXPLORATION",
+            "PRODUCTION_OUTPOST",
+            "PRODUCTION_COLONISATION",
+            "PRODUCTION_INVASION",
+            "PRODUCTION_MILITARY",
+            "PRODUCTION_BUILDINGS",
+            "RESEARCH_LEARNING",
+            "RESEARCH_GROWTH",
+            "RESEARCH_PRODUCTION",
+            "RESEARCH_CONSTRUCTION",
+            "RESEARCH_ECONOMICS",
+            "RESEARCH_SHIPS",
+            "RESEARCH_DEFENSE",
+            "PRODUCTION_ORBITAL_DEFENSE",
+            "PRODUCTION_ORBITAL_INVASION",
+            "PRODUCTION_ORBITAL_OUTPOST",
+            "PRODUCTION_ORBITAL_COLONISATION",
             "INVALID" ]
 
     def name(self, mtype):
@@ -89,7 +89,7 @@ def getAIPriorityResearchTypes():
     return __getInterval(12, 18)
 def getAIPriorityTypes():
     return __getInterval(0, 18)
-   
+
 
 class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_INVALID = -1
@@ -120,9 +120,9 @@ class AIFleetMissionType(object):
     FLEET_MISSION_ORBITAL_OUTPOST = 14
     FLEET_MISSION_ORBITAL_COLONISATION = 15
 
-    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure', 
+    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'invalid']
-    
+
     def name(self, mtype):
         try:
             name=self.MissionTypeNames[mtype]
@@ -202,15 +202,15 @@ class AIShipDesignTypes(object):
     outpostShip = {"SD_OUTPOST_SHIP":"A", "Outposter":"B"}
     troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C",  "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
     #  [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')), (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
-    attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G",  "Obliterator":"H", 
-                                    "Atlas":"EA",  "Pele":"EB",  "Xena":"EC", 
+    attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G",  "Obliterator":"H",
+                                    "Atlas":"EA",  "Pele":"EB",  "Xena":"EC",
                                     }
-    
+
     colonyBase={"SD_COLONY_BASE":"A",  "NestBase":"B"}
     outpostBase={"SD_OUTPOST_BASE":"A",  "OutpostBase":"B"}
     troopBase={"SpaceInvaders":"A"}
     defenseBase={"Decoy":"A", "OrbitalGrid":"B",  "OrbitalShield":"C",  "OrbitalMultiShield":"D"}
-    
+
 class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1
     SHIP_ROLE_MILITARY_ATTACK = 0
@@ -226,7 +226,7 @@ class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_BASE_INVASION = 10
     SHIP_ROLE_BASE_OUTPOST = 11
     SHIP_ROLE_BASE_COLONISATION = 12
-    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil', 
+    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil',
                                             'baseDef',  'baseInvasion',  'baseOutpost',  'baseColony',  'invalid']
     def name(self, roletype):
         try:
@@ -267,7 +267,7 @@ class AIEmpireProductionTypes(object):
     BT_BUILDING=1 #,             ///< a Building object is being built
     BT_SHIP = 2 #,                 ///< a Ship object is being built
     NUM_BUILD_TYPES =3
-    
+
 class AIProductionDemandType(object):
     PRODUCTION_DEMAND_INVALID = -1
     PRODUCTION_DEMAND_SHIP = 0

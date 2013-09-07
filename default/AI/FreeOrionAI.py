@@ -1,6 +1,6 @@
 
-# pylint: disable=line-too-long 
-""" The FreeOrionAI module contains the methods which can be made by the C AIInterface; 
+# pylint: disable=line-too-long
+""" The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code"""
 
 import os
@@ -35,13 +35,13 @@ def UserString(label,  default=None): #this name left with C naming style for co
     else:
         return table_string
 
-_aggressions = {fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",  
-             fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"} 
-_capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),  fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),  
+_aggressions = {fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",
+             fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
+_capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),  fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
-_timerEntries = ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",  
+_timerEntries = ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",
                         "ResearchAI",  "ProductionAI",  "ResourcesAI",  "Cleanup"]
 _timerBucketEntries = ["Server_Processing",  "AI_Planning"]
 
@@ -56,7 +56,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
     "called by client to initialize AI "
     print "Initialized FreeOrion Python AI"
     print(sys.path)
-    
+
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
@@ -92,7 +92,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
             timerbucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
             _timerBucketFile = open(timerbucketpath,  'w')
             _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
-            _lastTurnTimestamp = time() 
+            _lastTurnTimestamp = time()
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empire_id-1),  'w')
                 ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI._timerEntries)+"\n")
@@ -133,7 +133,7 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
             timerBucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
             _timerBucketFile = open(timerBucketpath,  'w')
             _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
-            _lastTurnTimestamp = time() 
+            _lastTurnTimestamp = time()
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"% (empire_id-1),  'w')
                 ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI._timerEntries)+"\n")
@@ -174,7 +174,7 @@ def handleDiplomaticMessage(message): # pylint: disable=invalid-name
         replyRecipient = message.sender
         proposalSenderPlayer = fo.empirePlayerID(message.sender)
         fo.sendChatMessage(proposalSenderPlayer,  "So,  the Terran Hairless Plains Ape advising your empire wishes to scratch its belly for a while?")
-        if (  (foAIstate.aggression==fo.aggression.beginner )  or  
+        if (  (foAIstate.aggression==fo.aggression.beginner )  or
                 (foAIstate.aggression!=fo.aggression.maniacal ) and (  random.random() < 1.0/ (((foAIstate.aggression +0.01)*fo.currentTurn()/2)**0.5)  )):
             fo.sendChatMessage(proposalSenderPlayer,  "OK, Peace offer accepted.")
             reply = fo.diplomaticMessage(replySender, replyRecipient, fo.diplomaticMessageType.acceptProposal)
@@ -208,13 +208,13 @@ def generateOrders(): # pylint: disable=invalid-name
     print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID-1) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+_aggressions.get(foAIstate.aggression,  "?") + " Turn: " + str(fo.currentTurn())
     empireColor = empire.colour
     print "EmpireColors: %d %d %d %d"% (empireColor.r,  empireColor.g,  empireColor.b,  empireColor.a)
-    if planet: 
-        print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName 
+    if planet:
+        print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName
     else:
         print "CapitalID: None Currently      Name: None     Species: None "
     print "***************************************************************************"
     print "***************************************************************************"
-    
+
     if fo.currentTurn() == 1:
         declareWarOnAll()
 
@@ -223,7 +223,7 @@ def generateOrders(): # pylint: disable=invalid-name
 
     #updateShipDesigns()   #should not be needed anymore;
     #updateFleetsRoles()
-    
+
     foAIstate.clean() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs
     foAIstate.reportSystemThreats()
     # ...missions
@@ -233,59 +233,59 @@ def generateOrders(): # pylint: disable=invalid-name
 
     # call AI modules
     timer = [time()]
-    try: 
+    try:
         PriorityAI.calculatePriorities()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc() # try traceback.print_exc()
     timer.append( time()  )
-    try: 
+    try:
         ExplorationAI.assignScoutsToExploreSystems()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         ColonisationAI.assignColonyFleetsToColonise()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         InvasionAI.assignInvasionFleetsToInvade()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         MilitaryAI.assignMilitaryFleetsToSystems()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         ResearchAI.generateResearchOrders()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         ProductionAI.generateProductionOrders()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
-        ResourcesAI.generateResourcesOrders()    
-    except: 
+    try:
+        ResourcesAI.generateResourcesOrders()
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    try: 
+    try:
         foAIstate.afterTurnCleanup()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
@@ -301,10 +301,10 @@ def generateOrders(): # pylint: disable=invalid-name
         _timerBucketFile.write(  _timerBucketFileFmt% tuple( [ fo.currentTurn(),  (turnStartTime-_lastTurnTimestamp)*1000, (turnEndTime-turnStartTime)*1000   ]) +'\n')
         _timerBucketFile.flush()
         _lastTurnTimestamp = time()
-        
-    try: 
+
+    try:
         fo.doneTurn()
-    except: 
+    except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 #
@@ -319,13 +319,13 @@ def splitNewFleets(): # pylint: disable=invalid-name
     print "--------------------"
     print "Map of Missions  keyed by ID:"
     for item in  foAIstate.getFleetMissionsMap().items():
-        print " %4d : %s "% item 
+        print " %4d : %s "% item
     print "--------------------"
     # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
     knownFleets = foAIstate.getFleetRolesMap().keys()
     foAIstate.newlySplitFleets.clear()
     splitableFleets = []
-    for fleetID in FleetUtilsAI.getEmpireFleetIDs(): 
+    for fleetID in FleetUtilsAI.getEmpireFleetIDs():
         if fleetID  in  knownFleets: #not a new fleet
             continue
         else:
@@ -354,7 +354,7 @@ def updateShipDesigns(): # pylint: disable=invalid-name
     for fleetID in universe.fleetIDs:
         fleet = universe.getFleet(fleetID)
         if fleet:
-            for shipID in fleet.shipIDs: 
+            for shipID in fleet.shipIDs:
                 ship = universe.getShip(shipID)
                 if ship and ship.design:
                     foAIstate.getShipRole(ship.design.id)
@@ -364,7 +364,7 @@ def updateFleetsRoles(): # pylint: disable=invalid-name
     "updating fleet role records"
     print ("Updating fleet role records")
     # assign roles to fleets
-    for fleetID in FleetUtilsAI.getEmpireFleetIDs(): 
+    for fleetID in FleetUtilsAI.getEmpireFleetIDs():
         foAIstate.getFleetRole(fleetID) #force assessment if not previously known
 
 def declareWarOnAll(): # pylint: disable=invalid-name

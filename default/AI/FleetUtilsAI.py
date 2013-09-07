@@ -10,7 +10,7 @@ __AIFleetMissionTypeNames = AIFleetMissionType()
 def clearShipDesignInfo():
     __designRoles.clear()
     __designStats.clear()
-    
+
 def statsMeetReq(stats,  reqs,  reqName):
     if stats.get(reqName,  0) < reqs.get(reqName, 0):
         return False
@@ -41,14 +41,14 @@ def countPartsFleetwide(fleetID,  partsList):
                 tally += 1
     return tally
 
-def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, 
+def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList,
                                                             takeAny=False,  extendSearch=True,  triedFleets=set([]),  verbose=False,  depth=0): #implements breadth-first search through systems
     if verbose:
         print "getFleetsForMission: (nships:%1d,  targetStats:%s,  minStats:%s, curStats:%s,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
                                                                                                                                         nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
     universe = fo.getUniverse()
     if not (systemsToCheck and fleetPoolSet):
-        if verbose: 
+        if verbose:
             print "no more systems or fleets to check"
         if takeAny or ( statsMeetReqs(curStats,  minStats)  and ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships)):
             return fleetList
@@ -62,9 +62,9 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
     while fleetsHere !=[]:
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
-        if not fleet: 
-            "in getFleetsForMission,  fleetID %d appers invalid; cannot retrieve"%fleetID 
-            fleetPoolSet.remove(  fleetID) 
+        if not fleet:
+            "in getFleetsForMission,  fleetID %d appers invalid; cannot retrieve"%fleetID
+            fleetPoolSet.remove(  fleetID)
             continue
         if len (list(fleet.shipIDs)) > 1:
             newFleets = splitFleet(fleetID) # try splitting fleet
@@ -72,7 +72,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             fleetsHere.extend(newFleets)
         meetsSpeciesReq=False
         needsSpecies=False
-        if (species != ""): 
+        if (species != ""):
             needsSpecies=True
         hasSpecies=""
         for shipID in fleet.shipIDs:
@@ -86,7 +86,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         needsTroops =  'troopPods' in targetStats
         if needsTroops:
             hasPods =  countPartsFleetwide(fleetID,  ["GT_TROOP_POD"])
-        
+
         useFleet = ( ( not needsSpecies and not hasSpecies) or  meetsSpeciesReq )  and (  (  needsTroops  and   hasPods >0)  or ( not needsTroops and hasPods==0   )  )
         if useFleet:
             fleetList.append(fleetID)
@@ -94,11 +94,11 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             thisRating=foAI.foAIstate.getRating(fleetID)
             curStats['attack'] = curStats.get('attack',  0) + thisRating['attack']
             curStats['health'] = curStats.get('health',  0) + thisRating['health']
-            curStats['rating'] = curStats['attack'] * curStats['health'] 
+            curStats['rating'] = curStats['attack'] * curStats['health']
             if 'troopPods' in targetStats:
                 curStats['troopPods'] = curStats.get('troopPods',  0) + countPartsFleetwide(fleetID,  ["GT_TROOP_POD"])
             if  ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships ) and statsMeetReqs(curStats,  targetStats)    :
-                if verbose: 
+                if verbose:
                     print  "returning fleetlist: %s"%fleetList
                 return fleetList
     # finished loop without meeting reqs
@@ -119,7 +119,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         #                            targetStats,  curStats,  species,  systemsToCheck,  systemsChecked,  fleetPoolSet,  fleetList))
         return []
 import traceback
-    
+
 def splitFleet(fleetID):
     "splits a fleet into its ships"
 
@@ -181,8 +181,8 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
             break
     for shipID in fleetA.shipIDs:
         thisShip=universe.getShip(shipID)
-        if (not thisShip) or  ( thisShip.isMonster != BHasMonster ) : 
-            continue  
+        if (not thisShip) or  ( thisShip.isMonster != BHasMonster ) :
+            continue
         stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
         thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
         if (remainingRating['attack'] -stats['attack'])*(remainingRating['health'] -( stats['structure'] + stats['shields'] ))  < leaveRating:
@@ -327,7 +327,7 @@ def assessFleetRole(fleetID):
         selectedRole= AIFleetMissionType.FLEET_MISSION_MILITARY
     else:
         selectedRole= AIShipRoleType.SHIP_ROLE_INVALID
-    #print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
+    #print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),
     #                                                                           shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
     return selectedRole
 
@@ -337,19 +337,19 @@ def assessShipDesignRole(design):
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
-            
+
     if design.parts.__contains__("CO_COLONY_POD") or design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
         if design.starlaneSpeed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
-            
+
     if design.parts.__contains__("GT_TROOP_POD"):
         if design.starlaneSpeed > 0:
             return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_INVASION
-            
+
     if design.starlaneSpeed == 0:
         string1 =  "Ship Design %s has partslist %s"%(design.name(False),  [part for part in design.parts])
         if len(design.parts)==0 or  design.parts[0] in [ "SH_DEFENSE_GRID", "SH_DEFLECTOR" ,  "SH_MULTISPEC" ] or (len(design.parts)==1 and design.parts[0]==''):
@@ -357,8 +357,8 @@ def assessShipDesignRole(design):
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
             #print string1,  "-- classifying as Invalid"
-            return AIShipRoleType.SHIP_ROLE_INVALID        
-            
+            return AIShipRoleType.SHIP_ROLE_INVALID
+
     stats = foAI.foAIstate.getDesignIDStats(design.id)
     rating = stats['attack'] * ( stats['structure'] + stats['shields'] )
     scoutNames = AIShipDesignTypes.explorationShip.keys()
@@ -459,7 +459,7 @@ def generateAIFleetOrdersForAIFleetMissions():
         print "General Military targets:  None"
     for militaryAIFleetMission in militaryAIFleetMissions:
         print "    " + str(militaryAIFleetMission)
-        
+
     secureAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_SECURE])
     if len( secureAIFleetMissions) >0:
         print "Secure targets: "
@@ -467,7 +467,7 @@ def generateAIFleetOrdersForAIFleetMissions():
         print "Secure targets:  None"
     for secureAIFleetMission in secureAIFleetMissions:
         print "    " + str(secureAIFleetMission)
-        
+
     orbDefenseAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE])
     if len( orbDefenseAIFleetMissions) >0:
         print "Orbital Defense targets: "

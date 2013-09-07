@@ -34,7 +34,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             universe = fo.getUniverse()
             fleetID = self.getAITargetID()
             fleet = universe.getFleet(fleetID)
-            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  (fleet and fleet.name) or "Fleet Invalid",   
+            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  (fleet and fleet.name) or "Fleet Invalid",
                                                                                                  AIFleetMissionTypeNames.name(aiFleetMissionType) ,  (fleet and len(fleet.shipIDs)) or 0,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
             targets = self.getAITargets(aiFleetMissionType)
             for target in targets:
@@ -99,17 +99,17 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         fleetRoleB =  foAI.foAIstate.getFleetRole(fleetID)
         mainMissionType = mainMissionTypeList[0]
         if mainMissionType not in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_LAST_STAND ,  
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, 
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, 
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE, 
-                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE, 
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_LAST_STAND ,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE,
+                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE,
                                                                     ]:
             return
         universe = fo.getUniverse()
-        empireID = fo.empireID() 
+        empireID = fo.empireID()
         fleetB = universe.getFleet(fleetID)
         systemID = fleetB.systemID
         if systemID == -1:
@@ -128,15 +128,15 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         else:
             mMT0=mainMissionTargets[0]
             mMT0ID = mMT0.getTargetID()
-        if len(mainMissionTargets)>1: 
+        if len(mainMissionTargets)>1:
             pass
             print "\tConsidering merging fleets into  fleet  %d, but it has multiple targets: %s"%(fleetID,  str(mainMissionTargets))
         sys1=universe.getSystem(systemID)
         sysName = (sys1 and sys1.name) or "unknown"
-        compatibileRolesMap={ EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:         [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE], 
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY:                               [EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY], 
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:        [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION], 
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION:                              [EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION], 
+        compatibileRolesMap={ EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:         [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE],
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY:                               [EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY],
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:        [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION],
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION:                              [EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION],
                                                                 }
         for fid in otherFleetsHere:
             fleetRoleA = foAI.foAIstate.getFleetRole(fid)
@@ -161,9 +161,9 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             else:
                 f2MType = (f2Mission.getAIMissionTypes()+[-1])[0]
                 f2Targets = f2Mission.getAITargets(f2MType)
-                if len(f2Targets)>1: 
+                if len(f2Targets)>1:
                     pass
-                elif len(f2Targets)==0 and ( (fleetB.speed > 0) or (fleet2.speed == 0)  ): 
+                elif len(f2Targets)==0 and ( (fleetB.speed > 0) or (fleet2.speed == 0)  ):
                     #print "\t\t\t ** Considering merging  fleetA (id: %4d)  into fleetB (id %d  ) and former has no targets, will take it.  FleetA mission was %s   "%(fid, fleetID,   f2Mission)
                     doMerge=True
                 else:
@@ -175,16 +175,16 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         neighbors = foAI.foAIstate.systemStatus.get(systemID,  {}).get('neighbors', [])
                         if (targetB==systemID) and mMT0ID in neighbors: #consider 'borrowing' for work in neighbor system
                             if f2MType  in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE, 
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE,
                                                                 ]:
                                 #continue
-                                if f2MType  in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,  
+                                if f2MType  in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
                                                                     EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE, #actually, currently this is probably the onle one of all four that should really be possibile in this situation
                                                                     ]:
-                                    needLeft = 1.5*sum( [  sysStat.get('fleetThreat', 0) for sysStat in 
-                                                                                                          [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in  
+                                    needLeft = 1.5*sum( [  sysStat.get('fleetThreat', 0) for sysStat in
+                                                                                                          [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
                                                                                                           [ nid for nid in foAI.foAIstate.systemStatus.get(systemID, {}).get('neighbors', []) if nid != mMT0ID    ]   ]  ] )
                                     fBRating = foAI.foAIstate.getRating(fid)
                                     if (needLeft < fBRating.get('overall', 0)) and fBRating.get('nships', 0)>1 :
@@ -293,10 +293,10 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                     thisSysID = aiFleetOrder.getTargetAITarget().getTargetID()
                     thisStatus = foAI.foAIstate.systemStatus.setdefault(thisSysID, {})
                     if ( thisStatus.get('monsterThreat', 0) >  fo.currentTurn() * ProductionAI.curBestMilShipRating()/4.0 )   :
-                        if ( ( (self.getAIMissionTypes() + [-1] )[0] not in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,   
-                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
-                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE, 
+                        if ( ( (self.getAIMissionTypes() + [-1] )[0] not in [  EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
+                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
+                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE,
                                                                                     ])  or
                              (  aiFleetOrder !=   self.getAIFleetOrders()[-1]  )   # if this move order is not this mil fleet's final destination, and blocked by Big Monster, release and hope for more effective reassignment
                              ):
@@ -341,7 +341,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_MILITARY:
                     lastSystTarget = lastOrder.getTargetAITarget().getTargetID()
                     # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.getAIMissionTypes())  or   # not doing this until decide a way to release from a SECURE mission
-                    if   (lastSystTarget in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + 
+                    if   (lastSystTarget in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs +
                                                                                                                                                 AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs))): #consider a secure mission
                         secureType="Unidentified"
                         if   (lastSystTarget in AIstate.colonyTargetedSystemIDs):
@@ -367,16 +367,16 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         print "\t\t %s"%aiFleetOrder2
                     self.clearAIFleetOrders()
                     self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
-                    if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,  
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
+                    if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
                                                                                                                         EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
                         allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  round="Fleet %d Reassignment"%fleetID)
                         if allocations:
                             MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
                 else:
-                    #TODO: evaluate releasing a smaller portion or none of the ships 
+                    #TODO: evaluate releasing a smaller portion or none of the ships
                     sysStatus = foAI.foAIstate.systemStatus.setdefault(lastSystTarget, {})
                     newFleets=[]
                     if (sysStatus.get('totalThreat',  0) == 0):
@@ -386,10 +386,10 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         print "Threat remains in target system; NOT releasing any ships."
                     newMilFleets = []
                     for fleetID in newFleets:
-                        if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,  
-                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
-                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
+                        if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
                                                                                                                             EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
                             newMilFleets.append(fleetID)
                     allocations=[]
@@ -397,7 +397,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  round="Fleet Reassignment %s"%newMilFleets)
                     if allocations:
                         MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=newMilFleets,  allocations=allocations)
-                        
+
     def generateAIFleetOrders(self):
         "generates AIFleetOrders from fleets targets to accomplish"
 
@@ -433,9 +433,9 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         if systemID >= 0:
             # system in where fleet is
             systemAITarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_SYSTEM, systemID)
-            # if mission aiTarget has required system where fleet is, then generate aiFleetOrder from this aiTarget 
+            # if mission aiTarget has required system where fleet is, then generate aiFleetOrder from this aiTarget
             aiMissionTypes = self.getAIMissionTypes()
-            # for all targets in all mission types get required systems to visit 
+            # for all targets in all mission types get required systems to visit
             for aiFleetMissionType in aiMissionTypes:
                 aiTargets = self.getAITargets(aiFleetMissionType)
                 for aiTarget in aiTargets:

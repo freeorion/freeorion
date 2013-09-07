@@ -67,7 +67,7 @@ class AITarget(object):
         "returns describing string"
         target= self.getTargetObj()
         if target is None:
-            targetName = "%4d"%self.__targetID__ 
+            targetName = "%4d"%self.__targetID__
         else:
             targetName = target.name
         return "{ %7s : [%4d] %9s}"%(AITargetTypeNames.name(self.__aiTargetType__ ),  self.__targetID__ ,  targetName)

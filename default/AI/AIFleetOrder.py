@@ -80,7 +80,7 @@ class AIFleetOrder(object):
                     else:#try to get order cancelled out
                         self.__setExecuted()
                         self.__setExecutionCompleted()
-                    
+
             # colonise
             elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 # with ship
@@ -187,7 +187,7 @@ class AIFleetOrder(object):
                 return True
 
         return False
-    
+
     def canIssueOrder(self,  considerMergers=False,  verbose=False):
         "if FleetOrder can be issued now"
 
@@ -218,7 +218,7 @@ class AIFleetOrder(object):
             mainFleetMission=foAI.foAIstate.getAIFleetMission(fleetID)
             mainMissionType = (mainFleetMission.getAIMissionTypes() + [-1])[0]
             msgP1 = "** %s  -- Mission Type  %s , current loc sys %d  - %s"%(  self,   AIFleetMissionTypeNames.name(mainMissionType),  systemID,  sysName )
-            print msgP1 
+            print msgP1
 
         #
         # outpost
@@ -273,7 +273,7 @@ class AIFleetOrder(object):
                 return True
             return False
         #
-        # split fleet 
+        # split fleet
         #
         elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
             fleet2 = universe.getFleet(self.getSourceAITarget().getTargetID())
@@ -286,10 +286,10 @@ class AIFleetOrder(object):
             #targetID = self.getTargetAITarget().getTargetID()
             #TODO: figure out better way to have invasions (& possibly colonizations) require visibility on target without needing visibility of all intermediate systems
             if False and mainMissionType not in [  AIFleetMissionType.FLEET_MISSION_ATTACK,     #TODO: consider this later
-                                                                            AIFleetMissionType.FLEET_MISSION_MILITARY, 
-                                                                            AIFleetMissionType.FLEET_MISSION_SECURE, 
-                                                                            AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
-                                                                            AIFleetMissionType.FLEET_MISSION_EXPLORATION, 
+                                                                            AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                            AIFleetMissionType.FLEET_MISSION_SECURE,
+                                                                            AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
+                                                                            AIFleetMissionType.FLEET_MISSION_EXPLORATION,
                                                                         ]:
                 if  not (universe.getVisibility(targetID,  foAI.foAIstate.empireID) >= fo.visibility.partial):
                     #if not targetID in  interior systems
@@ -312,7 +312,7 @@ class AIFleetOrder(object):
                 #myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fleetID, {}).get('rating', 0)  for fleetID in foAI.foAIstate.militaryFleetIDs   if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ])
                 myOtherFleetsRatings =   [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {})  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ]
                 #myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0)  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ])
-                myOtherFleetsRating =   foAI.foAIstate.systemStatus.get( targetID, {}).get('myFleetRating', 0) 
+                myOtherFleetsRating =   foAI.foAIstate.systemStatus.get( targetID, {}).get('myFleetRating', 0)
                 if  (myOtherFleetsRating > safetyFactor* threat) or (myOtherFleetsRating + fleetRating  > 1.5*safetyFactor*threat):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)

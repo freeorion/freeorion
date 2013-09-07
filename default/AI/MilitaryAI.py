@@ -25,7 +25,7 @@ def tryAgain(milFleetIDs,  tryReset=False,  round=""):
         thisMission.clearAITargets(-1)
     getMilitaryFleets(tryReset=tryReset,  round=round)
     return
-    
+
 def ratingNeeded(target,  current=0):
     if current >= target:
         return 0
@@ -55,11 +55,11 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
         allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
     if tryReset and ((fo.currentTurn()+empireID) % 10 ==0) and round=="Main":
         tryAgain(allMilitaryFleetIDs,  tryReset=False,  round = round+" Reset")
-    
+
     milShips = 0
     for fid in allMilitaryFleetIDs:
         milShips += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
-        
+
     thisTotMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  allMilitaryFleetIDs   )  )
     if "Main" in round:
         totMilRating = thisTotMilRating
@@ -67,7 +67,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
         print "%s Round Total Military Rating: %d"%(round,  totMilRating)
         print "---------------------------------"
         foAI.foAIstate.militaryRating=totMilRating
-        
+
     milFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs))
     availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  milFleetIDs   )  )
     if "Main" in round:
@@ -77,12 +77,12 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
     remainingMilRating = availMilRating
     allocations = []
     allocationGroups={}
-    
+
     if milFleetIDs == []:
         if "Main" in round:
             MilitaryAllocations = []
         return []
-        
+
     #for each system, get total rating of fleets assigned to it
     alreadyAssignedRating={}
     assignedAttack={}
@@ -103,7 +103,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
         assignedAttack[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('attack', 0)
         assignedHP[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('health', 0)
     for sysID in universe.systemIDs:
-        mydefenses =  foAI.foAIstate.systemStatus.get(sysID,  {}).get( 'mydefenses', {} ) 
+        mydefenses =  foAI.foAIstate.systemStatus.get(sysID,  {}).get( 'mydefenses', {} )
         mypattack = mydefenses.get('attack', 0)
         myphealth = mydefenses.get('health',  0)
         alreadyAssignedRating[sysID] = ( assignedAttack[sysID]  + mypattack ) * ( assignedHP[sysID] + myphealth )
@@ -115,7 +115,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
     else:
         capitalPlanet=None
     #TODO: if no owned planets try to capture one!
-    if  capitalPlanet:  
+    if  capitalPlanet:
         capitalSysID = capitalPlanet.systemID
     else: # should be rare, but so as to not break code below, pick a randomish  mil-centroid  system
         capitalSysID=None #unless we can find one to use
@@ -150,15 +150,15 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
     else:
         threatBias = 0
 
-    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression] 
-    
-    topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20] 
+    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression]
+
+    topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20]
     topTargetSystems = []
     for sysID in   AIstate.invasionTargetedSystemIDs + PlanetUtilsAI.getSystems(  topTargetPlanets  ):
         if sysID not in topTargetSystems:
             topTargetSystems.append(sysID) #doing this rather than set, to preserve order
 
-    # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )    
+    # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )
     #================================
     #--------Capital Threat ----------
     capitalThreat = safetyFactor*(2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in ['totalThreat',  'neighborThreat']] ))
@@ -170,8 +170,8 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
             return
     if neededRating > 0:
         newAlloc = min(remainingMilRating,  neededRating )
-        allocations.append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  ) 
-        allocationGroups.setdefault('capitol',  []).append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  ) 
+        allocations.append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  )
+        allocationGroups.setdefault('capitol',  []).append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  )
         remainingMilRating -= newAlloc
     if "Main" in round or newAlloc >0:
         if verboseMilReporting:
@@ -188,7 +188,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
             print "-----------------"
     newAlloc=0
     if len( empireOccupiedSystemIDs ) > 0:
-        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['totalThreat',  'neighborThreat']] ))  
+        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['totalThreat',  'neighborThreat']] ))
                                                                                                                                                 for oSID in empireOccupiedSystemIDs ]
         totocSysThreat = sum( [thrt  for sid,  thrt in ocSysTotThreat] )
         totCurAlloc = sum( [alreadyAssignedRating[sid]  for sid,  thrt in ocSysTotThreat] )
@@ -336,7 +336,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
                 if nID in targetableIDs:
                     otherTargetedSystemIDs.append(sysID)
                     break
-        
+
     if "Main" in round:
         if verboseMilReporting:
             print "Blockade Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
@@ -539,7 +539,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
         try:
             totAlloc = sum( [alloc for sid,  alloc,  takeAny,  maxAlloc  in allocations ] )
         except:
-            print "error unpacking sid,  alloc,  takeAny, maxAlloc  from ", allocations 
+            print "error unpacking sid,  alloc,  takeAny, maxAlloc  from ", allocations
         factor =(2.0* remainingMilRating ) / ( totAlloc  + 0.1)
         #print "Remaining military strength allocation %d will be allocated  as %.1f %% surplus allocation to top current priorities"%(remainingMilRating,  100*factor)
         print "%s Round Remaining military strength allocation %d will be allocated  as surplus allocation to top current priorities"%(round,  remainingMilRating)
@@ -565,7 +565,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
     else:
         AIstate.militarySystemIDs = list( set([sid for sid, alloc,  minalloc,  takeAny  in newAllocations]).union( AIstate.militarySystemIDs) )
     return newAllocations
-    
+
 def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
     "return list of military targeted systems"
 
@@ -627,7 +627,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=[]):
     # assign military fleets to military theater systems
     global MilitaryAllocations
     universe = fo.getUniverse()
-    
+
     doingMain =  (useFleetIDList==None)
     if doingMain:
         baseDefenseIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
@@ -671,7 +671,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=[]):
         foundFleets = []
         foundStats={}
         try:
-            theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], 
+            theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[],
                                                             fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
         except:
             continue
@@ -685,7 +685,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=[]):
             else:
                 theseFleets = foundFleets
                 #rating = sum( map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) )
-                ratings = map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) 
+                ratings = map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets )
                 rating = sum([fr.get('attack', 0) for fr in ratings]) * sum([fr.get('health', 0) for fr in ratings])
                 if doingMain  and verboseMilReporting:
                     if rating < minMilAllocations.get(sysID,  0):

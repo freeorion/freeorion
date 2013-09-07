@@ -52,7 +52,7 @@ def getCapital(): # if no current capital returns planet with biggest pop
     popMap.sort()
     return popMap[-1][-1]
 
-def getCapitalSysID(): 
+def getCapitalSysID():
     capID = getCapital()
     if capID is None:
         return -1
@@ -69,7 +69,7 @@ def getPlanetsInSystemsIDs(systemIDs):
     for systemID in systemIDs:
         thesePlanets=set(foAI.foAIstate.systemStatus.get(systemID, {}).get('planets', {}).keys())
         system = universe.getSystem(systemID)
-        if system != None: 
+        if system != None:
             thesePlanets.update(list(system.planetIDs))
         planetIDs.extend(list(thesePlanets)) # added list
 
@@ -84,11 +84,11 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
         #even if our universe says we own it, if we can't see it we must have lost it
-        if planet and (not planet.unowned) and planet.ownedBy(empireID) and (universe.getVisibility(planetID,  empireID) >= fo.visibility.partial):  
+        if planet and (not planet.unowned) and planet.ownedBy(empireID) and (universe.getVisibility(planetID,  empireID) >= fo.visibility.partial):
             result.append(planetID)
 
     return result
-    
+
 
 def getTypePlanetEmpireOwned(planetType):
     "return list of specific type planets owned by empireID"
@@ -121,7 +121,7 @@ def getAllOwnedPlanetIDs(planetIDs):
                 allOwnedPlanetIDs.append(planetID)
 
     return allOwnedPlanetIDs
-    
+
 def getPopulatedPlanetIDs(planetIDs):
     universe = fo.getUniverse()
     pops=[]
