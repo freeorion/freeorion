@@ -803,6 +803,7 @@ void ProductionQueue::Update() {
         if (remove) {
             // remove unbuildable items from the simulated queue, since they'll never finish...
             m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
+            m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;   // turns left is indeterminate for this item
             sim_queue.erase(sim_queue.begin() + i);
             sim_queue_element_groups.erase(sim_queue_element_groups.begin() + i);
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
@@ -872,6 +873,11 @@ void ProductionQueue::Update() {
             double element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
             double element_per_turn_limit = item_cost / std::max(build_turns, 1);
             double additional_pp_to_complete_element = element_total_cost - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
+            if (additional_pp_to_complete_element < EPSILON) {
+                m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = 1;
+                m_queue[sim_queue_original_indices[i]].turns_left_to_completion = 1;
+                continue;
+            }
 
             unsigned int max_turns = std::max(std::max(build_turns, 1), 1 + int(additional_pp_to_complete_element/ppStillAvailable[firstTurnPPAvailable-1]));
             max_turns = std::min(max_turns, DP_TURNS - firstTurnPPAvailable +1);
