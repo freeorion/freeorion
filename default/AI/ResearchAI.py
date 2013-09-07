@@ -110,9 +110,9 @@ def generateResearchOrders():
         print ""
     if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
         if foAI.foAIstate.aggression <=fo.aggression.typical:
-            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
+            newtech = TechsListsAI.primary_meta_techs(index = empireID % 2)
         else:
-            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%3 )
+            newtech = TechsListsAI.primary_meta_techs(index = empireID % 3)
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)
@@ -145,7 +145,7 @@ def generateResearchOrders():
                 print "    Error: exception triggered and caught:  ",  traceback.format_exc()
         if foAI.foAIstate.aggression <= fo.aggression.cautious:
             researchQueueList = getResearchQueueTechs()
-            defTechs=TechsListsAI.defenseTechs1()
+            defTechs = TechsListsAI.defense_techs_1()
             for defTech in defTechs:
                 if   defTech not in researchQueueList[:5]  and  empire.getTechStatus(defTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(defTech, min(3,  len(researchQueueList)))
@@ -258,7 +258,7 @@ def getPossibleProjects():
         if empire.getTechStatus(techname) == fo.techStatus.researchable:
             preliminaryProjects.append(techname)
 
-    unusableTechs = TechsListsAI.unusableTechsList()
+    unusableTechs = TechsListsAI.unusable_techs()
     possibleProjects = (set(preliminaryProjects)-set(unusableTechs))
 
     return possibleProjects

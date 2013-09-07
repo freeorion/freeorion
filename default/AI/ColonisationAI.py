@@ -247,7 +247,7 @@ def getColonyFleets():
     availableGrowthSpecials.clear()
     activeGrowthSpecials.clear()
     empirePlanetsWithGrowthSpecials.clear()
-    if empire.getTechStatus(TechsListsAI.exobotTechName) == fo.techStatus.complete:
+    if empire.getTechStatus(TechsListsAI.EXOBOT_TECH_NAME) == fo.techStatus.complete:
         empireColonizers["SP_EXOBOT"]=[]# get it into colonizer list even if no colony yet
     empireSpeciesSystems.clear()
 
