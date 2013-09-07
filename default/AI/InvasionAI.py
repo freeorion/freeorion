@@ -177,7 +177,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empireID)).get(fo.visibility.partial, -9999)
 
     if planetPartialVisTurn < sysPartialVisTurn:
-            return 0, 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
+        return 0, 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
         
     specName=planet.speciesName
     species=fo.getSpecies(specName)
@@ -224,9 +224,9 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         if planet.owner== -1:
         #if  (pmaxShield <10):
             if ( sysFThrt < 0.5*ProductionAI.curBestMilShipRating() ):
-               if ( sysMThrt < 3*ProductionAI.curBestMilShipRating()):
+                if ( sysMThrt < 3*ProductionAI.curBestMilShipRating()):
                     supplyVal = 50
-               else:
+                else:
                     supplyVal = 20
             else:
                 supplyVal *= int( min(1, ProductionAI.curBestMilShipRating() /  sysFThrt )  )

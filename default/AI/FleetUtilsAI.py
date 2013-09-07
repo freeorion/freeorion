@@ -13,7 +13,7 @@ def clearShipDesignInfo():
     
 def statsMeetReq(stats,  reqs,  reqName):
     if stats.get(reqName,  0) < reqs.get(reqName, 0):
-            return False
+        return False
     return True
 
 def statsMeetReqs(stats,  reqs):
@@ -133,7 +133,7 @@ def splitFleet(fleetID):
     if not fleet.ownedBy(empireID): return []
 
     if len(list(fleet.shipIDs)) <= 1:  # fleet with only one ship cannot be split
-       return []
+        return []
     shipIDs = list( fleet.shipIDs )
     for shipID in shipIDs[1:]:
         newFleetID = fo.issueNewFleetOrder("Fleet %d"%(shipID), shipID)
@@ -159,61 +159,61 @@ def splitFleet(fleetID):
     return newfleets
 
 def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  context=""):
-        universe = fo.getUniverse()
-        fleetA = universe.getFleet(fleetA_ID)
-        sysID=fleetA.systemID
-        fleetB = universe.getFleet(fleetB_ID)
-        if not fleetA or not fleetB:
-            return 0
-        success = True
-        initRating = foAI.foAIstate.getRating(fleetA_ID)
-        remainingRating = initRating.copy()
-        transferredRating = 0
-        transferredAttack=0
-        transferredHealth=0
-        BHasMonster=False
-        for shipID in fleetB.shipIDs:
-            thisShip=universe.getShip(shipID)
-            if (not thisShip):
-               continue
-            if  thisShip.isMonster:
-                BHasMonster = True
-                break
-        for shipID in fleetA.shipIDs:
-            thisShip=universe.getShip(shipID)
-            if (not thisShip) or  ( thisShip.isMonster != BHasMonster ) : 
-                continue  
-            stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
-            thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
-            if (remainingRating['attack'] -stats['attack'])*(remainingRating['health'] -( stats['structure'] + stats['shields'] ))  < leaveRating:
-                continue
-            #remainingRating -= thisRating
-            remainingRating['attack'] -= stats['attack']
-            remainingRating['health'] -= ( stats['structure'] + stats['shields'] )
-            thisSuccess =  ( fo.issueFleetTransferOrder(shipID,  fleetB_ID) )#returns a zero if transfer failure
-            if thisSuccess:
-                transferredRating += thisRating
-                transferredAttack += stats['attack']
-                transferredHealth += ( stats['structure'] + stats['shields'] )
-            else:
-                print "\t\t\t\t *** attempted transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
-            success = success and thisSuccess
-            if needRating !=0 and needRating <=  transferredAttack*transferredHealth:  #transferredRating:
-                break
-        fleetA = universe.getFleet(fleetA_ID)
-        if (not fleetA) or fleetA.empty  or fleetA_ID in universe.destroyedObjectIDs(fo.empireID()):
-            #print "\t\t\t\t\tdeleting fleet info for old fleet %d after transfers into fleet %d"%(fleetA_ID,  fleetB_ID)
-            foAI.foAIstate.deleteFleetInfo(fleetA_ID)
+    universe = fo.getUniverse()
+    fleetA = universe.getFleet(fleetA_ID)
+    sysID=fleetA.systemID
+    fleetB = universe.getFleet(fleetB_ID)
+    if not fleetA or not fleetB:
+        return 0
+    success = True
+    initRating = foAI.foAIstate.getRating(fleetA_ID)
+    remainingRating = initRating.copy()
+    transferredRating = 0
+    transferredAttack=0
+    transferredHealth=0
+    BHasMonster=False
+    for shipID in fleetB.shipIDs:
+        thisShip=universe.getShip(shipID)
+        if (not thisShip):
+            continue
+        if  thisShip.isMonster:
+            BHasMonster = True
+            break
+    for shipID in fleetA.shipIDs:
+        thisShip=universe.getShip(shipID)
+        if (not thisShip) or  ( thisShip.isMonster != BHasMonster ) : 
+            continue  
+        stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
+        thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
+        if (remainingRating['attack'] -stats['attack'])*(remainingRating['health'] -( stats['structure'] + stats['shields'] ))  < leaveRating:
+            continue
+        #remainingRating -= thisRating
+        remainingRating['attack'] -= stats['attack']
+        remainingRating['health'] -= ( stats['structure'] + stats['shields'] )
+        thisSuccess =  ( fo.issueFleetTransferOrder(shipID,  fleetB_ID) )#returns a zero if transfer failure
+        if thisSuccess:
+            transferredRating += thisRating
+            transferredAttack += stats['attack']
+            transferredHealth += ( stats['structure'] + stats['shields'] )
         else:
-            newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
-            if  success : #and ( newARating==remainingRating) :
-                #print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
-                pass
-            else:
-                #print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
-                pass
-        foAI.foAIstate.updateFleetRating(fleetB_ID)
-        return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
+            print "\t\t\t\t *** attempted transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
+        success = success and thisSuccess
+        if needRating !=0 and needRating <=  transferredAttack*transferredHealth:  #transferredRating:
+            break
+    fleetA = universe.getFleet(fleetA_ID)
+    if (not fleetA) or fleetA.empty  or fleetA_ID in universe.destroyedObjectIDs(fo.empireID()):
+        #print "\t\t\t\t\tdeleting fleet info for old fleet %d after transfers into fleet %d"%(fleetA_ID,  fleetB_ID)
+        foAI.foAIstate.deleteFleetInfo(fleetA_ID)
+    else:
+        newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
+        if  success : #and ( newARating==remainingRating) :
+            #print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+            pass
+        else:
+            #print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
+            pass
+    foAI.foAIstate.updateFleetRating(fleetB_ID)
+    return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
 
 def fleetHasShipWithRole(fleetID, shipRole):
     "returns True if a ship with shipRole is in the fleet"

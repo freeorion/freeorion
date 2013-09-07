@@ -91,7 +91,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
 
     def checkMergers(self,  fleetID=None,  context=""):
         if fleetID==None:
-                        fleetID = self.getAITargetID()
+            fleetID = self.getAITargetID()
         #mainFleetMission=foAI.foAIstate.getAIFleetMission(fleetID)
         mainMissionTypeList = self.getAIMissionTypes()  #normally, currently, should only be one
         if len( mainMissionTypeList ) != 1:
@@ -271,7 +271,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                     if  ( (planet.currentMeterValue(fo.meterType.population) >0) or  not ( planet.unowned  or planet.ownedBy(fo.empireID()) ) ) :
                         clearAll =True
                 elif not planet.unowned:
-                        clearAll =True
+                    clearAll =True
                 if clearAll:
                     print "   %s"%(aiFleetOrder)
                     print "Fleet %d had a target planet that is no longer valid for this mission; aborting."%(self.getAITargetID() )

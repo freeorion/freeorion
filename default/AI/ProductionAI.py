@@ -1297,15 +1297,15 @@ def generateProductionOrders():
             else:
                 print "element %s will never be completed as currently stands, but will remain on queue  "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
-                 thisSpec=universe.getPlanet(element.locationID).speciesName
-                 queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
-             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
-                 queuedOutpostShips+=  element.remaining*element.blocksize
-             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
-                 queuedOutpostShips+=  element.remaining*element.blocksize
-             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
-                 queuedTroopShips+=  element.remaining*element.blocksize
+            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
+                thisSpec=universe.getPlanet(element.locationID).speciesName
+                queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
+            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
+                queuedOutpostShips+=  element.remaining*element.blocksize
+            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
+                queuedOutpostShips+=  element.remaining*element.blocksize
+            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+                queuedTroopShips+=  element.remaining*element.blocksize
     if queuedColonyShips:
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:
@@ -1545,8 +1545,8 @@ def generateProductionOrders():
                 if totalPP > 10* perTurnCost :
                     leadingBlockPP = 0
                     for elem in [productionQueue[elemi] for elemi in range(0,  min(4,  productionQueue.size))]:
-                            cost,  time =   empire.productionCostAndTime( elem )
-                            leadingBlockPP +=  elem.blocksize *cost/time  
+                        cost,  time =   empire.productionCostAndTime( elem )
+                        leadingBlockPP +=  elem.blocksize *cost/time  
                     if leadingBlockPP > 0.5* totalPP or  (militaryEmergency and thisPriority==EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY  ):
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
         print ""

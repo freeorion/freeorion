@@ -372,10 +372,10 @@ def getColonyFleets():
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-             if foAI.foAIstate.getShipRole(element.designID) in  [    EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ,  
+            if foAI.foAIstate.getShipRole(element.designID) in  [    EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ,  
                                                                                                                                         EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION ] :
-                 buildPlanet = universe.getPlanet(element.locationID)
-                 queuedBases.append(buildPlanet.systemID)
+                buildPlanet = universe.getPlanet(element.locationID)
+                queuedBases.append(buildPlanet.systemID)
 
     evaluatedColonyPlanetIDs = list(set(unOwnedPlanetIDs).union(empireOutpostIDs) - set(colonyTargetedPlanetIDs) )
     
@@ -392,7 +392,7 @@ def getColonyFleets():
                     system=universe.getSystem(sysID)
                     for pid3 in system.planetIDs:
                         if (pid3 not in empirePopCtrs):
-                             foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid3,  [pid2,  -1])
+                            foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid3,  [pid2,  -1])
                     break
     
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)

@@ -635,7 +635,7 @@ class AIstate(object):
                 if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.curBestMilShipRating():
                     makeAggressive=True
             else:
-                    makeAggressive=True
+                makeAggressive=True
             fo.issueAggressionOrder(fleetID,  makeAggressive)
             return role
 

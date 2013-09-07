@@ -168,8 +168,8 @@ def calculateExplorationPriority():
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
-                 queuedScoutShips += element.remaining * element.blocksize
+            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
+                queuedScoutShips += element.remaining * element.blocksize
 
     milShips = MilitaryAI.milShips
     scoutsNeeded = max(0,  min( 4+int(milShips/5),    4+int(fo.currentTurn()/50) ,  2+ numUnexploredSystems**0.5 ) - numScouts - queuedScoutShips )
@@ -254,9 +254,9 @@ def calculateInvasionPriority():
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-             if foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_INVASION] :
-                 design = fo.getShipDesign(element.designID)
-                 queuedTroopPods += element.remaining*element.blocksize * list(design.parts).count("GT_TROOP_POD") 
+            if foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_INVASION] :
+                design = fo.getShipDesign(element.designID)
+                queuedTroopPods += element.remaining*element.blocksize * list(design.parts).count("GT_TROOP_POD") 
     bestShip,  bestDesign,  buildChoices = ProductionAI.getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
     if bestDesign:
         troopsPerBestShip = troopsPerPod*(  list(bestDesign.parts).count("GT_TROOP_POD") )
@@ -323,9 +323,9 @@ def calculateMilitaryPriority():
             
         threatRoot = status.get('fleetThreat', 0)**0.5 + status.get('planetThreat', 0)**0.5 + monsterThreat**0.5
         if sysID in mySystems:
-             threatRoot +=  (0.3* status.get('neighborThreat', 0))**0.5   
+            threatRoot +=  (0.3* status.get('neighborThreat', 0))**0.5   
         else:
-             threatRoot +=  (0.1* status.get('neighborThreat', 0))**0.5   
+            threatRoot +=  (0.1* status.get('neighborThreat', 0))**0.5   
         threat = threatRoot**2
         unmetThreat += max( 0,  threat - myRating )
         shipsNeeded += math.ceil( max(0,   (threatRoot/cSRR)- (myRating/curShipRating)**0.5 ) )

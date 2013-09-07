@@ -161,40 +161,40 @@ def getAIFleetOrderTypes():
     return __getInterval(0, 10)
 
 def getFleetOrderTypeForMission(aiFleetMissionType,  option=None):
-        if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
-            return AIFleetOrderType.ORDER_MOVE
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
-            return AIFleetOrderType.ORDER_OUTPOST
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
-            return AIFleetOrderType.ORDER_COLONISE
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: #not really supported in this fashion currently
-            return AIFleetOrderType.ORDER_SPLIT_FLEET 
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: #not really supported in this fashion currently
-            return AIFleetOrderType.ORDER_MERGE_FLEET
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: # currently same as MILITARY
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ATTACK:                # currently same as MILITARY
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_DEFEND:            # currently same as MILITARY
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_LAST_STAND:    # currently same as MILITARY
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
-            return AIFleetOrderType.ORDER_INVADE
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MILITARY:
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SECURE: # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
-            return AIFleetOrderType.ORDER_MILITARY
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
-            return AIFleetOrderType.ORDER_DEFEND
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:
-            return AIFleetOrderType.ORDER_INVADE
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST:
-            return AIFleetOrderType.ORDER_OUTPOST
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION:
-            return AIFleetOrderType.ORDER_COLONISE
-        else: 
-            return AIFleetOrderType.ORDER_INVALID
+    if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
+        return AIFleetOrderType.ORDER_MOVE
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+        return AIFleetOrderType.ORDER_OUTPOST
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
+        return AIFleetOrderType.ORDER_COLONISE
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: #not really supported in this fashion currently
+        return AIFleetOrderType.ORDER_SPLIT_FLEET
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: #not really supported in this fashion currently
+        return AIFleetOrderType.ORDER_MERGE_FLEET
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: # currently same as MILITARY
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ATTACK:                # currently same as MILITARY
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_DEFEND:            # currently same as MILITARY
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_LAST_STAND:    # currently same as MILITARY
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
+        return AIFleetOrderType.ORDER_INVADE
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MILITARY:
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SECURE: # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+        return AIFleetOrderType.ORDER_MILITARY
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
+        return AIFleetOrderType.ORDER_DEFEND
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:
+        return AIFleetOrderType.ORDER_INVADE
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST:
+        return AIFleetOrderType.ORDER_OUTPOST
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION:
+        return AIFleetOrderType.ORDER_COLONISE
+    else:
+        return AIFleetOrderType.ORDER_INVALID
 
 class AIShipDesignTypes(object):
     explorationShip = {"SD_SCOUT":"A",  "Scout":"B",  "Tracker":"C"}

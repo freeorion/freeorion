@@ -200,18 +200,18 @@ def generateResearchOrders():
                     print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s  to enable LRN_XENOARCH,  got result %d"%(xenoTech, res)
                     
     if  empire.getTechStatus("SHP_WEAPON_4_1" ) == fo.techStatus.complete:
-                thisTech=fo.getTech("SHP_WEAPON_4_1")
-                if thisTech:
-                    missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq in researchQueueList] 
-                    if  len(missingPrereqs) > 2 :
-                        for preReq in sorted(missingPrereqs,  reverse=True)[2:]: #leave plasma 4 and 3
-                            if preReq not in researchQueueList:
-                                break
-                            res = fo.issueDequeueTechOrder(preReq)
-                        researchQueueList = getResearchQueueTechs()
-                        if "SHP_WEAPON_4_2" in researchQueueList: #(should be)
-                            idx = researchQueueList.index("SHP_WEAPON_4_2")
-                            res=fo.issueEnqueueTechOrder("SHP_WEAPON_4_2",  max(0,  idx-15) )
+        thisTech=fo.getTech("SHP_WEAPON_4_1")
+        if thisTech:
+            missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq in researchQueueList] 
+            if  len(missingPrereqs) > 2 :
+                for preReq in sorted(missingPrereqs,  reverse=True)[2:]: #leave plasma 4 and 3
+                    if preReq not in researchQueueList:
+                        break
+                    res = fo.issueDequeueTechOrder(preReq)
+                researchQueueList = getResearchQueueTechs()
+                if "SHP_WEAPON_4_2" in researchQueueList: #(should be)
+                    idx = researchQueueList.index("SHP_WEAPON_4_2")
+                    res=fo.issueEnqueueTechOrder("SHP_WEAPON_4_2",  max(0,  idx-15) )
 
 def generateResearchOrders_old():
     "generate research orders"
