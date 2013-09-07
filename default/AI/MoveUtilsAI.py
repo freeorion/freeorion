@@ -12,13 +12,13 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     # TODO: add priority
     empireID = fo.empireID()
     # determine system where fleet will be or where is if is going nowhere
-    lastSystemAITarget = fleetAITarget.getRequiredSystemAITargets()[0]
+    lastSystemAITarget = fleetAITarget.get_required_system_ai_targets()[0]
     # for every system which fleet wanted to visit, determine systems to visit and create move orders
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
         #print "checking system targets"
-        systemAITargets = canTravelToSystem(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)
-        #print "making path with %d targets: "%len(systemAITargets) ,   PlanetUtilsAI.sysNameIDs( [sysTarg. getTargetID() for sysTarg in systemAITargets])
+        systemAITargets = canTravelToSystem(fleetAITarget.target_id, lastSystemAITarget, aiTarget, empireID)
+        #print "making path with %d targets: "%len(systemAITargets) ,   PlanetUtilsAI.sysNameIDs( [sysTarg.target_id for sysTarg in systemAITargets])
         if len(systemAITargets) > 0:
             # for every system required to visit create move order
             for systemAITarget in systemAITargets:
@@ -28,10 +28,10 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
                 aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_MOVE, fleetAITarget, systemAITarget)
                 result.append(aiFleetOrder)
         else:
-            startSysID = lastSystemAITarget.getTargetID()
-            targetSysID = aiTarget.getTargetID()
+            startSysID = lastSystemAITarget.target_id
+            targetSysID = aiTarget.target_id
             if startSysID != targetSysID:
-                print "fleetID: " + str(fleetAITarget.getTargetID()) + " can't travel to target:" + str(aiTarget)
+                print "fleetID: " + str(fleetAITarget.target_id) + " can't travel to target:" + str(aiTarget)
 
     return result
 
@@ -43,14 +43,14 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     fleet = universe.getFleet(fleetID)
     maxFuel = int(fleet.maxFuel)
     fuel = int(fleet.fuel)
-    if fuel < 1.0 or fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
+    if fuel < 1.0 or fromSystemAITarget.target_id == toSystemAITarget.target_id:
         return []
     if foAI.foAIstate.aggression<=fo.aggression.typical or True: #TODO: sort out if shortestPath leaves off some intermediate destinations
         pathFunc=universe.leastJumpsPath
     else:
         pathFunc=universe.shortestPath
-    startSysID = fromSystemAITarget.getTargetID()
-    targetSysID = toSystemAITarget.getTargetID()
+    startSysID = fromSystemAITarget.target_id
+    targetSysID = toSystemAITarget.target_id
     shortPath= list( pathFunc(startSysID, targetSysID, empireID) )
     suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ]
     unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
@@ -81,7 +81,7 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
     "check if fleet can travel from starting system to wanted system"
 
     systemAITargets = []
-    if not fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
+    if not fromSystemAITarget.target_id == toSystemAITarget.target_id:
         # get supplyable systems
         empire = fo.getEmpire()
         fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
@@ -94,12 +94,12 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
             print "   fleet ID %d  has  %.1f fuel  to get from %s    to  %s"%(fleetID,  fuel,  fromSystemAITarget,  toSystemAITarget )
 
         # try to find path without going resupply first
-        supplySystemAITarget = getNearestSuppliedSystem(toSystemAITarget.getTargetID(), empireID)
+        supplySystemAITarget = getNearestSuppliedSystem(toSystemAITarget.target_id, empireID)
         __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget)
         # resupply in system first is required to find path
-        if not(fromSystemAITarget.getTargetID() in fleetSupplyableSystemIDs) and len(systemAITargets) == 0:
+        if not(fromSystemAITarget.target_id in fleetSupplyableSystemIDs) and len(systemAITargets) == 0:
             # add supply system to visit
-            fromSystemAITarget = getNearestSuppliedSystem(fromSystemAITarget.getTargetID(), empireID)
+            fromSystemAITarget = getNearestSuppliedSystem(fromSystemAITarget.target_id, empireID)
             systemAITargets.append(fromSystemAITarget)
             # find path from supplied system to wanted system
             __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, maxFuel, supplySystemAITarget)
@@ -132,10 +132,10 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
     result = True
     # try to find if there is possible path to wanted system from system
     newTargets = resultSystemAITargets[:]
-    if fromSystemAITarget.isValid() and toSystemAITarget.isValid() and supplySystemAITarget.isValid():
+    if fromSystemAITarget.valid and toSystemAITarget.valid and supplySystemAITarget.valid:
         universe = fo.getUniverse()
-        leastJumpsPath = universe.leastJumpsPath(fromSystemAITarget.getTargetID(), toSystemAITarget.getTargetID(), empireID)
-        fromSystemID = fromSystemAITarget.getTargetID()
+        leastJumpsPath = universe.leastJumpsPath(fromSystemAITarget.target_id, toSystemAITarget.target_id, empireID)
+        fromSystemID = fromSystemAITarget.target_id
         for systemID in leastJumpsPath:
             if not fromSystemID == systemID:
                 if fromSystemID in fleetSupplyableSystemIDs:
@@ -146,7 +146,7 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
 
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
-                if True or ((not systemID == toSystemAITarget.getTargetID()) and (systemID in fleetSupplyableSystemIDs)):#TODO:   restructure
+                if True or ((not systemID == toSystemAITarget.target_id) and (systemID in fleetSupplyableSystemIDs)):#TODO:   restructure
                     newTargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
 
                 if fuel < 0:
@@ -159,7 +159,7 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
     # if there is path to wanted system, then also if there is path back to supplyable system
     if result == True:
         # jump from A to B means leastJumpsPath=[A,B], but minJumps=1
-        minJumps = len(universe.leastJumpsPath(toSystemAITarget.getTargetID(), supplySystemAITarget.getTargetID(), empireID)) - 1
+        minJumps = len(universe.leastJumpsPath(toSystemAITarget.target_id, supplySystemAITarget.target_id, empireID)) - 1
 
         if minJumps > fuel:
             # print "fleetID:" + str(fleetID) + " fuel:" + str(fuel) + " required: " + str(minJumps)
@@ -177,7 +177,7 @@ def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):
 
     # find nearest supplied system
     empireID = fo.empireID()
-    suppliedSystemAITarget = getNearestSuppliedSystem(currentSystemAITarget.getTargetID(), empireID)
+    suppliedSystemAITarget = getNearestSuppliedSystem(currentSystemAITarget.target_id, empireID)
 
     # create resupply AIFleetOrder
     aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_RESUPPLY, fleetAITarget, suppliedSystemAITarget)

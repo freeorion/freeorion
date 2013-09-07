@@ -33,7 +33,7 @@ def getCurrentExplorationInfo(verbose=True):
         if len(aiFleetMission.getAIMissionTypes()) == 0:
             availableScouts.append(fleetID)
         else:
-            targets = [targ.getTargetID() for targ in  aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION) ]
+            targets = [targ.target_id for targ in  aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION) ]
             if verbose:
                 if len(targets)==0:
                     print "problem determining existing exploration target systems from targets:\n%s"%(aiFleetMission.getAITargets(AIFleetMissionType.FLEET_MISSION_EXPLORATION))

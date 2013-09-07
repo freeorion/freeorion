@@ -425,8 +425,8 @@ class AIstate(object):
         aiFleetMissions = self.getAllAIFleetMissions()
         deletedFleetIDs = []
         for aiFleetMission in aiFleetMissions:
-            if not(aiFleetMission.getAITargetID() in fleetIDs):
-                deletedFleetIDs.append(aiFleetMission.getAITargetID())
+            if not(aiFleetMission.target_id in fleetIDs):
+                deletedFleetIDs.append(aiFleetMission.target_id)
         for deletedFleetID in deletedFleetIDs:
             self.__removeAIFleetMission(deletedFleetID)
 
@@ -760,8 +760,8 @@ class AIstate(object):
                         mainMissionTargets = mainFleetMission.getAITargets(mainMissionType)
                         if mainMissionTargets:
                             mMT0=mainMissionTargets[0]
-                            if mMT0.getAITargetType()==AITargetType.TARGET_SYSTEM:
-                                status['sysID'] = mMT0.getTargetID() #hmm, but might still be a fair ways from here
+                            if mMT0.target_type == AITargetType.TARGET_SYSTEM:
+                                status['sysID'] = mMT0.target_id #hmm, but might still be a fair ways from here
         self.shipCount = shipCount
         print "------------------------"
         print "Empire Ship Count: ",  shipCount

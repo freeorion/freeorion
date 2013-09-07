@@ -96,10 +96,10 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  round="Main"):
         for aiFleetMissionType in aiFleetMission.getAIMissionTypes():
             aiTargets = aiFleetMission.getAITargets(aiFleetMissionType)
             for aiTarget in aiTargets:
-                sysTargets.extend(aiTarget.getRequiredSystemAITargets())
+                sysTargets.extend(aiTarget.get_required_system_ai_targets())
         if not sysTargets: #shouldn't really be possible
             continue
-        lastSys = sysTargets[-1].getTargetID() # will count this fleet as assigned to last system in target list
+        lastSys = sysTargets[-1].target_id # will count this fleet as assigned to last system in target list
         assignedAttack[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('attack', 0)
         assignedHP[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('health', 0)
     for sysID in universe.systemIDs:

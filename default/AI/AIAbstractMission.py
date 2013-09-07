@@ -21,15 +21,17 @@ class AIAbstractMission(object):
 
         return self.__aiTarget
 
-    def getAITargetID(self):
+    @property
+    def target_id(self):
         "return id"
 
-        return self.getAITarget().getTargetID()
+        return self.getAITarget().target_id
 
-    def getAITargetType(self):
+    @property
+    def target_type(self):
         "return mission AITargetType"
 
-        return self.getAITarget().getAITargetType()
+        return self.getAITarget().target_type
 
     def getAIMissionType(self):
         "return AIMissionType"
@@ -112,7 +114,7 @@ class AIAbstractMission(object):
 
         if other == None:
             return False
-        if self.getAITargetID() == other.getAITargetID():
+        if self.target_id == other.target_id:
             return True
         return False
 
@@ -121,7 +123,7 @@ class AIAbstractMission(object):
 
         if other == None:
             return False
-        if self.getAIMissionType() == other.getAIMissionType() and self.getAITargetType() == self.getAITargetType():
+        if self.getAIMissionType() == other.getAIMissionType() and self.target_type == self.target_type:
             return self.__cmp__(other) == 0
 
         print "NOT IMPLEMENTED AIAbstractMission eq\n"

@@ -2,46 +2,26 @@ import EnumsAI
 from EnumsAI import AITargetType
 import freeOrionAIInterface as fo
 
-AITargetTypeNames = AITargetType()
+AI_TARGET_TYPE_NAMES = AITargetType()
 
 class AITarget(object):
     "stores information about AI target - its id and type"
 
-    def __init__(self, aiTargetType, targetID):
+    def __init__(self, target_type, target_id):
         "constructor"
 
-        self.__aiTargetType__ = aiTargetType
-        self.__targetID__ = targetID
-
-    def getTargetID(self):
-        "getter"
-
-        return self.__targetID__
-
-    def getAITargetType(self):
-        "getter"
-
-        return self.__aiTargetType__
-
-    def setTargetID(self, value):
-        "setter"
-
-        self.__targetID__ = value
-
-    def setAITargetType(self, value):
-        "setter"
-
-        self.__aiTargetType__ = value
+        self.target_type = target_type
+        self.target_id = target_id
 
     def __cmp__(self, other):
         "compares AITargets"
 
-        if self.getTargetID() < other.getTargetID():
+        if self.target_id < other.target_id:
             return - 1
-        elif self.getTargetID() == other.getTargetID():
-            if self.getAITargetType() < other.getAITargetType():
+        elif self.target_id == other.target_id:
+            if self.target_type < other.target_type:
                 return - 1
-            elif self.getAITargetType() == other.getAITargetType():
+            elif self.target_type == other.target_type:
                 return 0
             return 1
         return 1
@@ -65,92 +45,75 @@ class AITarget(object):
 
     def __str__(self):
         "returns describing string"
-        target= self.getTargetObj()
+        target = self.target_obj
         if target is None:
-            targetName = "%4d"%self.__targetID__
+            target_name = "%4d" % self.target_id
         else:
-            targetName = target.name
-        return "{ %7s : [%4d] %9s}"%(AITargetTypeNames.name(self.__aiTargetType__ ),  self.__targetID__ ,  targetName)
+            target_name = target.name
+        return "{ %7s : [%4d] %9s}" % (
+            AI_TARGET_TYPE_NAMES.name(self.target_type),
+            self.target_id,
+            target_name
+        )
 
-    def getTargetObj(self):
-        "returns target UniverseObject for fleets, systems, planets, buildings; None for other targets"
+    @property
+    def target_obj(self):
+        """
+        returns target UniverseObject for fleets, systems, planets, buildings;
+        None for other targets
+        """
         universe = fo.getUniverse()
-        if self.__aiTargetType__ == AITargetType.TARGET_FLEET  :
-            return universe.getFleet(self.__targetID__ )
-        elif self.__aiTargetType__ == AITargetType.TARGET_SYSTEM  :
-            return universe.getSystem(self.__targetID__ )
-        elif self.__aiTargetType__ == AITargetType.TARGET_PLANET  :
-            return universe.getPlanet(self.__targetID__ )
-        elif self.__aiTargetType__ == AITargetType.TARGET_BUILDING  :
-            return universe.getBuilding(self.__targetID__ )
-        else:
-            return None
+        target = None
+        if self.target_type == AITargetType.TARGET_FLEET:
+            target = universe.getFleet(self.target_id)
+        elif self.target_type == AITargetType.TARGET_SYSTEM:
+            target = universe.getSystem(self.target_id)
+        elif self.target_type == AITargetType.TARGET_PLANET:
+            target = universe.getPlanet(self.target_id)
+        elif self.target_type == AITargetType.TARGET_BUILDING:
+            target = universe.getBuilding(self.target_id)
+        return target
 
-    def isValid(self):
+    def valid(self):
         "returns if this object is valid"
 
-        if self.getTargetID() == None or self.getAITargetType() == None or EnumsAI.checkValidity(self.getTargetID()) == False:
+        if self.target_id == None or self.target_type == None or \
+                EnumsAI.checkValidity(self.target_id) == False:
             return False
 
-        universe = fo.getUniverse()
-        if AITargetType.TARGET_FLEET == self.getAITargetType():
-            fleet = universe.getFleet(self.getTargetID())
-            if fleet == None:
-                return False
-            return True
-
-        elif AITargetType.TARGET_SYSTEM == self.getAITargetType():
-            system = universe.getSystem(self.getTargetID())
-            if system == None:
-                return False
-            return True
-
-        elif AITargetType.TARGET_PLANET == self.getAITargetType():
-            planet = universe.getPlanet(self.getTargetID())
-            if planet == None:
-                return False
-            return True
-
-        elif AITargetType.TARGET_BUILDING == self.getAITargetType():
-            building = universe.getBuilding(self.getTargetID())
-            if building == None:
-                return False
-            return True
-
-        elif AITargetType.TARGET_EMPIRE == self.getAITargetType():
-            empireIDs = fo.AllEmpireIDs()
-            if (empireIDs == None) or (not self.getTargetID() in empireIDs):
-                return False
-            return True
+        if AITargetType.TARGET_EMPIRE == self.target_type:
+            return self.target_id in fo.AllEmpireIDs()
+        else:
+            return None != self.target_obj
 
         return False
 
-    def getRequiredSystemAITargets(self):
+    def get_required_system_ai_targets(self):
         "returns all system AITargets required to visit in this object"
 
         # TODO: add parameter turn
 
         result = []
-        if AITargetType.TARGET_SYSTEM == self.getAITargetType():
+        if AITargetType.TARGET_SYSTEM == self.target_type:
             result.append(self)
 
-        elif AITargetType.TARGET_PLANET == self.getAITargetType():
+        elif AITargetType.TARGET_PLANET == self.target_type:
             universe = fo.getUniverse()
-            planet = universe.getPlanet(self.getTargetID())
-            aiTarget = AITarget(AITargetType.TARGET_SYSTEM, planet.systemID)
+            planet = universe.getPlanet(self.target_id)
+            ai_target = AITarget(AITargetType.TARGET_SYSTEM, planet.systemID)
 
-            result.append(aiTarget)
+            result.append(ai_target)
 
-        elif AITargetType.TARGET_FLEET == self.getAITargetType():
+        elif AITargetType.TARGET_FLEET == self.target_type:
             # Fleet systemID is where is fleet going.
             # If fleet is going nowhere, then it is location of fleet
             universe = fo.getUniverse()
-            fleet = universe.getFleet(self.getTargetID())
-            systemID = fleet.nextSystemID
-            if (systemID == -1):
-                systemID = fleet.systemID
-            aiTarget = AITarget(AITargetType.TARGET_SYSTEM, systemID)
+            fleet = universe.getFleet(self.target_id)
+            system_id = fleet.nextSystemID
+            if (system_id == -1):
+                system_id = fleet.systemID
+            ai_target = AITarget(AITargetType.TARGET_SYSTEM, system_id)
 
-            result.append(aiTarget)
+            result.append(ai_target)
 
         return result

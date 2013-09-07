@@ -492,8 +492,8 @@ def issueAIFleetOrdersForAIFleetMissions():
         round += 1
         print "issuing fleet orders Round %d:"%round
         for aiFleetMission in aiFleetMissions:
-            fleetID = aiFleetMission.getAITargetID()
-            fleet = aiFleetMission.getAITarget().getTargetObj()
+            fleetID = aiFleetMission.target_id
+            fleet = aiFleetMission.getAITarget().target_obj
             if (not fleet) or ( len(fleet.shipIDs)==0)  or fleetID in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
                 continue
             aiFleetMission.issueAIFleetOrders()
