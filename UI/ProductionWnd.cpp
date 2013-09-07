@@ -319,7 +319,7 @@ namespace {
         m_progress_bar(0),
         m_quantityBox(0),
         m_blockBox(0),
-        m_in_progress(build.allocated_pp),
+        m_in_progress(build.allocated_pp || build.turns_left_to_next_item==1),
         m_total_turns(turns),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)

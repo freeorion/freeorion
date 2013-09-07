@@ -888,6 +888,7 @@ void ProductionQueue::Update() {
                 allocation = std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1]);
                 allocation = std::max(allocation, 0.0);     // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
                 element.progress += allocation;   // add turn's allocation
+                additional_pp_to_complete_element = element_total_cost - element.progress;
                 ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
                 if (ppStillAvailable[firstTurnPPAvailable+j-1] <= EPSILON ) {
                     ppStillAvailable[firstTurnPPAvailable+j-1] = 0;
