@@ -268,7 +268,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" ]
+    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -304,7 +304,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = ["ORGANIC" "XENOPHOBIC"]
+    tags = ["ORGANIC" "XENOPHOBIC" "AI_TAG_GREAT_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -386,7 +386,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ROBOTIC" "AI_TAG_BAD_INDUSTRY" ]
+    tags = [ "ROBOTIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -426,7 +426,7 @@ Species
     CanProduceShips
     CanColonize
     
-    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" ]
+    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -649,7 +649,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" ]
+    tags = [ "ORGANIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_BAD_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -687,7 +687,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = [ "ORGANIC" "AI_TAG_GOOD_WEAPONS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -835,7 +835,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_RESEARCH" ]
+    tags = [ "ORGANIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_GREAT_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

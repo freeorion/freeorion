@@ -112,7 +112,7 @@ def generateResearchOrders():
         if foAI.foAIstate.aggression <=fo.aggression.typical:
             newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         else:
-            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
+            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%3 )
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)

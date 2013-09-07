@@ -1,4 +1,5 @@
 import copy
+import math
 
 import freeOrionAIInterface as fo
 
@@ -40,6 +41,7 @@ empireStars={}
 popCtrIDs=[]
 outpostIDs=[]
 outpostSystemIDs=[]
+piloting_grades = {}
 
 def dictFromMap(map):
     return dict(  [  (el.key(),  el.data() ) for el in map ] )
@@ -61,7 +63,7 @@ class AIstate(object):
         self.__aiMissionsByFleetID = {}
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
-        self.__designStats={}
+        self.designStats={}
         self.__priorityByType = {}
 
         #self.__explorableSystemByType = {}
@@ -483,20 +485,103 @@ class AIstate(object):
     def updateFleetRating(self, fleetID):
         return self.getRating(fleetID,  forceNew=True)
 
-    def getDesignStats(self,  design):
-        if design:
-            return self.getDesignIDStats(design.id)
+    def get_piloting_grades(self,  species_name):
+        if species_name in piloting_grades:
+            return piloting_grades[species_name]
+        weapons_grade=""
+        shields_grade=""
+        if species_name == "":
+            spec_tags = []
         else:
-            return  {'attack':0, 'structure':0, 'shields':0}
+            species = fo.getSpecies(species_name)
+            if species:
+                spec_tags = species.tags
+            else:
+                print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
+                spec_tags = []
+        for tag in spec_tags:
+            if "AI_TAG" not in tag:
+                continue
+            tag_parts = tag.split('_')
+            tag_type = tag_parts[3]
+            if tag_type == 'WEAPONS':
+                weapons_grade = tag_parts[2]
+            elif tag_type == 'SHIELDS':
+                shields_grade = tag_parts[2]
+        piloting_grades[species_name] = (weapons_grade,  shields_grade)
+        return (weapons_grade,  shields_grade)
+
+    def weight_attacks(self,  attacks,  grade):
+        "re-weights attacks based on species piloting grade"
+        #TODO: make more accurate based off weapons lists
+        weight = {'NO':1e-8,  'BAD': 0.75,  '':1.0,  'GOOD':1.25,  'GREAT':1.5,  'ULTIMATE':2.0}.get(grade,  1.0)
+        newattacks = {}
+        for attack, count in attacks.items():
+            newattacks[ attack * weight ] = count
+        return newattacks
+
+    def weight_shields(self,  shields,  grade):
+        "re-weights shields based on species defense bonus"
+        offset = {'NO':0,  'BAD': 0,  '':0,  'GOOD':1.0,  'GREAT':0,  'ULTIMATE':0}.get(grade,  0)
+        return shields + offset
+
+    def get_weighted_design_stats(self,  design_id,  species_name=""):
+        "rate a  design, including species pilot effects"
+        weapons_grade,  shields_grade = self.get_piloting_grades(species_name)
+        design_stats = dict( self.getDesignIDStats(design_id) ) #new dict so we don't modify our original data
+        myattacks = self.weight_attacks(design_stats.get('attacks', {}),  weapons_grade)
+        #mystructure = design_stats.get('structure', 1)
+        myshields = self.weight_shields(design_stats.get('shields', 0),  shields_grade)
+        design_stats['attack'] = sum([a * b for a, b in myattacks.items()])
+        design_stats['shields'] = myshields
+        return design_stats
+
+    def get_weighted_rating(self,  ship_stats, enemy_stats=[ (1, {}) ] ):
+        "rate a ship w/r/t a particular enemy"
+        myattacks = ship_stats.get('attacks', {})
+        mystructure = ship_stats.get('structure', 1)
+        myshields = ship_stats.get('shields', 0)
+        total_enemy_weights = 0
+        attack_tally=0
+        structure_tally = 0
+        for enemygroup in enemy_stats:
+            count = enemygroup[0]
+            estats = enemygroup[1]
+            if estats == {}:
+                attack_tally += count * sum([ a * b for a, b in myattacks.items()])
+                structure_tally += count * (mystructure + myshields * sum(myattacks.values))
+                total_enemy_weights += count
+                continue
+            structure_tally += count * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
+            eshields = enemystats.get('shields',  0)
+            tempattacktally=0
+            tempstruc = estats.get('structure', 1)
+            total_enemy_weights += count * tempstruc
+            for attack in myattacks:
+                adjustedattack = max(0,  attack-eshields)
+                nattacks = myattacks[attack]
+                thisattack = min(tempstruc,  nattacks*adjustedattack)
+                tempattacktally += thisattack
+                tempstruc -= thisattack
+                if tempstruc <= 0:
+                    break
+            attack_tally += count * tempattacktally
+
     def getDesignIDStats(self,  designID):
         if designID is None:
-            return  {'attack':0, 'structure':0, 'shields':0}
-        elif designID in self.__designStats:
-            return self.__designStats[designID]
+            return  {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
+        elif designID in self.designStats:
+            return self.designStats[designID]
+        design = fo.getShipDesign(designID)
+        if design:
+            attacks = {}
+            for attack in list(design.directFireStats):
+                attacks[attack] = attacks.get(attack,  0) + 1
+            stats = {'attack':design.attack, 'structure':design.structure, 'shields':design.shields,  'attacks':attacks}
         else:
-            stats=FleetUtilsAI.assessDesignIDStats(designID)
-            self.__designStats[designID] = stats
-            return stats
+            stats = {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
+        self.designStats[designID] = stats
+        return stats
 
     def getShipRole(self, shipDesignID):
         "returns ship role for given designID, assesses and adds as needed"

@@ -14,21 +14,26 @@ import EnumsAI
 
 
 empireSpecies = {}
+empireSpeciesByPlanet = {}
 empireSpeciesSystems={}
 empireColonizers = {}
 empireShipBuilders={}
+empireShipyards = {}
 availableGrowthSpecials={}
 empirePlanetsWithGrowthSpecials={}
 activeGrowthSpecials={}
 empireMetabolisms={}
-annexableSystemIDs=set([])
-annexableRing1=set([])
-annexableRing2=set([])
-annexableRing3=set([])
-annexablePlanetIDs=set([])
+annexableSystemIDs=set()
+annexableRing1=set()
+annexableRing2=set()
+annexableRing3=set()
+annexablePlanetIDs=set()
 curBestMilShipRating = 20
 allColonyOpportunities = {}
 gotRuins=False
+curBestPilotRating = 1e-8
+curMidPilotRating = 1e-8
+pilotRatings = {}
 
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
@@ -57,9 +62,11 @@ def dictFromMap(map):
 def resetCAIGlobals():
     global curBestMilShipRating
     empireSpecies.clear()
+    empireSpeciesByPlanet.clear()
     empireSpeciesSystems.clear()
     empireColonizers.clear()
     empireShipBuilders.clear()
+    empireShipyards.clear()
     activeGrowthSpecials.clear()
     annexableSystemIDs.clear()
     annexableRing1.clear()
@@ -69,8 +76,27 @@ def resetCAIGlobals():
     curBestMilShipRating = 20
     allColonyOpportunities.clear()
 
+def ratePilotingTag(tagList):
+    grade = 2.0
+    grades = {'NO':1e-8, 'BAD':0.75, 'GOOD':4.0,  'GREAT':6.0,  'ULTIMATE':12.0 }
+    for tag in [tag1 for tag1 in tagList if (("AI_TAG" in tag1) and ("WEAPONS" in tag1)) ]:
+        tagParts = tag.split('_')
+        tagType = tagParts[3]
+        grade = grades.get(tagParts[2],  1.0)
+    return grade
+
+def ratePlanetaryPiloting(pid):
+    universe = fo.getUniverse()
+    planet = universe.getPlanet(pid)
+    if (not planet) or (not planet.speciesName): 
+      return 0.0
+    thisSPec = fo.getSpecies(planet.speciesName)
+    if not thisSpec:
+      return 0.0
+    return ratePilotingTag(thisSpec.tags)
+
 def getColonyFleets():
-    global  curBestMilShipRating,  gotRuins
+    global  curBestMilShipRating,  gotRuins, curBestPilotRating, curMidPilotRating
     
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
     
@@ -211,10 +237,12 @@ def getColonyFleets():
     oldEmpSpec = {}
     oldEmpSpec.update(empireSpecies)
     empireSpecies.clear()
+    empireSpeciesByPlanet.clear()
     oldEmpCol= {}
     oldEmpCol.update(empireColonizers)
     empireColonizers.clear()
     empireShipBuilders.clear()
+    empireShipyards.clear()
     empireMetabolisms.clear()
     availableGrowthSpecials.clear()
     activeGrowthSpecials.clear()
@@ -229,16 +257,23 @@ def getColonyFleets():
             print "Error empire has apparently lost sight of former colony at planet %d but doesn't realize it"%pID
             continue
         pSpecName=planet.speciesName
+        empireSpeciesByPlanet[pID] = pSpecName
         if pID not in oldPopCtrs:
             if  (AIFocusType.FOCUS_MINING in planet.availableFoci): 
                 fo.issueChangeFocusOrder(pID, AIFocusType.FOCUS_MINING)
                 print "Changing focus of newly acquired planet ID %d : %s  to mining "%(pID,  planet.name ) #stale code left as an example; Mining no longer an option
         if planet.currentMeterValue(fo.meterType.population)>0 :
             empireSpecies.setdefault(pSpecName,  []).append(pID)
+    pilotRatings.clear()
     print "\n"+"Empire species roster:"
     for specName in empireSpecies:
         thisSpec=fo.getSpecies(specName)
+        pilotVal = 0
         if thisSpec:
+            if thisSpec.canProduceShips:
+                pilotVal = ratePilotingTag(list(thisSpec.tags) )
+                if specName == "SP_ACIREMA":
+                    pilotVal += 1
             thisMetab = [ tag for tag in thisSpec.tags if tag in  AIDependencies.metabolims]
             shipyards=[]
             for pID in empireSpecies[specName]:
@@ -258,17 +293,29 @@ def getColonyFleets():
                         if planet.focus == AIFocusType.FOCUS_GROWTH:
                             activeGrowthSpecials.setdefault(special,  []).append(pID)
                 if  thisSpec.canProduceShips:
+                    pilotRatings[pID] = pilotVal
                     if "BLD_SHIPYARD_BASE" in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
                         shipyards.append(pID)
                 empireSpeciesSystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pID)
             if thisSpec.canProduceShips:
                 empireShipBuilders[specName]=shipyards
+                empireShipyards.update( [(yard, pilotVal) for yard in shipyards] )
                 if thisSpec.canColonize:
                     empireColonizers[specName]=shipyards
             print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(specName,  empireSpecies[specName],  ["not", ""][thisSpec.canColonize and thisSpec.canProduceShips], len(shipyards),  list(thisSpec.tags))
         else:
             print "Unable to retrieve info for Species named %s"%specName
     print""
+    if len(pilotRatings) != 0:
+        ratingList=sorted(pilotRatings.values(), reverse=True)
+        curBestPilotRating = ratingList[0]
+        if len(pilotRatings) == 1:
+            curMidPilotRating = ratingList[0]
+        else:
+            curMidPilotRating = ratingList[1+int(len(ratingList)/5)]
+    else:
+      curBestPilotRating = 1e-8
+      curMidPilotRating = 1e-8
     if empireSpecies!=oldEmpSpec:
         print "Old empire species: %s  ; new empire species: %s"%(oldEmpSpec,  empireSpecies)
     if empireColonizers!=oldEmpCol:
@@ -481,10 +528,20 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
 
 def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = []):
     "returns the colonisation value of a planet"
+    retval = 0
+    discountMultiplier = 20.0
     species=fo.getSpecies(specName or "") #in case None is passed as specName
+    pilotVal = 0
+    if species and species.canProduceShips:
+        pilotVal = ratePilotingTag(species.tags)
+        if pilotVal > curBestPilotRating:
+            pilotVal *= 2
+        if pilotVal > 2:
+            retval += discountMultiplier*5*pilotVal
+            detail.append("Pilot Val %.1f"%discountMultiplier*50)
+
     if detail != []:
         detail = []
-    discountMultiplier = 20.0
     priorityScaling=1.0
     maxGGGs=1
     if empire.productionPoints <100:
@@ -578,13 +635,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                     detail.append( "PRO_NEUTRONIUM_EXTRACTION Backup  %.1f"%(20* discountMultiplier*backupFactor  )  )
         if (empire.getTechStatus("SHP_ENRG_BOUND_MAN") == fo.techStatus.complete) or (  "SHP_ENRG_BOUND_MAN"  in empireResearchList[:6])  :    
             if system.starType in [fo.starType.blackHole,  fo.starType.blue] :
+                initVal=100*discountMultiplier*(pilotVal or 1)
                 if len (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) )    ==0:
-                    colonyStarBonus +=100*discountMultiplier #pretty rare planets, good for generator
-                    detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(100* discountMultiplier  )  )
+                    colonyStarBonus += initVal #pretty rare planets, good for energy shipyards
+                    detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(initVal  )  )
                 elif  planet.systemID not in (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) ):
-                    colonyStarBonus +=50*discountMultiplier*backupFactor #still has extra value as an alternate location for generators & for bnlocking enemies generators
-                    detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(50* discountMultiplier*backupFactor  )  )
-    retval = starBonus
+                    colonyStarBonus +=0.5*initVal*backupFactor #still has extra value as an alternate location for energy shipyard
+                    detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(0.5*initVal*backupFactor  )  )
+    retval +=starBonus
     
     planetSpecials = list(planet.specials)
     if "ECCENTRIC_ORBIT_SPECIAL" in planet.specials:
@@ -620,7 +678,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                     retval += astVal
                     if astVal >0:
                         detail.append( "AsteroidMining %.1f"%(astVal  )  )
-            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:3]) :
+            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:5]) :
                 if system:
                     astVal=0
                     for pid in system.planetIDs:
@@ -669,8 +727,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     else: #colonization mission
         if not species:
             return 0
-            
-        if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
+
+        if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ):
             retval += discountMultiplier*50
             detail.append("Undepleted Ruins %.1f"%discountMultiplier*50)
 
@@ -701,6 +759,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         miningBonus=0
         perGGG=2*10*discountMultiplier
         planetSize = planet.size
+
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
             gotAsteroids=False
             for pid  in [id for id in system.planetIDs if id != planetID]:
@@ -709,12 +768,12 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                     if p2.size== fo.planetSize.asteroids and not gotAsteroids :
                         gotAsteroids = True
                         if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
-                            asteroidBonus = 2*5*discountMultiplier
-                            detail.append( "Asteroid mining from %s  %.1f"%(p2.name,    2*discountMultiplier*5  )  )
-                        if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:3]) :
+                            asteroidBonus = 10*discountMultiplier
+                            detail.append( "Asteroid mining from %s  %.1f"%(p2.name,    10*discountMultiplier  )  )
+                        if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:8]) :
                             if species and species.canProduceShips:
-                                asteroidBonus += 20*discountMultiplier
-                                detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    2*discountMultiplier*20  )  )
+                                asteroidBonus += 20*discountMultiplier*pilotVal
+                                detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    discountMultiplier*20*pilotVal  )  )
                     if p2.size== fo.planetSize.gasGiant :
                         GGPresent=True
                         if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):

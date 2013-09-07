@@ -359,7 +359,7 @@ def assessShipDesignRole(design):
             #print string1,  "-- classifying as Invalid"
             return AIShipRoleType.SHIP_ROLE_INVALID        
             
-    stats = foAI.foAIstate.getDesignStats(design)
+    stats = foAI.foAIstate.getDesignIDStats(design.id)
     rating = stats['attack'] * ( stats['structure'] + stats['shields'] )
     scoutNames = AIShipDesignTypes.explorationShip.keys()
     if  ( "SD_SCOUT" in design.name(False)  )  or  ( design.name(False).split('-')[0] in scoutNames )    :
