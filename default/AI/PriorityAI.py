@@ -1,7 +1,7 @@
 import math
 import random
 
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 import AIstate
 import ColonisationAI
@@ -161,7 +161,7 @@ def calculateExplorationPriority():
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    numUnexploredSystems =  len( ExplorationAI.__borderUnexploredSystemIDs   )  #len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+    numUnexploredSystems =  len( ExplorationAI.borderUnexploredSystemIDs   )  #len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     numScouts = sum( [  foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in  ExplorationAI.currentScoutFleetIDs] ) #    FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     productionQueue = empire.productionQueue
     queuedScoutShips=0
@@ -171,7 +171,7 @@ def calculateExplorationPriority():
             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
                 queuedScoutShips += element.remaining * element.blocksize
 
-    milShips = MilitaryAI.milShips
+    milShips = MilitaryAI.num_milships
     scoutsNeeded = max(0,  min( 4+int(milShips/5),    4+int(fo.currentTurn()/50) ,  2+ numUnexploredSystems**0.5 ) - numScouts - queuedScoutShips )
     explorationPriority = int(40*scoutsNeeded)
 

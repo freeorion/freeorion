@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 import AIFleetOrder
 import AITarget
@@ -372,7 +372,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                                                                                                                         EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
                                                                                                                         EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
                                                                                                                         EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
-                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  round="Fleet %d Reassignment"%fleetID)
+                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  thisround="Fleet %d Reassignment"%fleetID)
                         if allocations:
                             MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
                 else:
@@ -394,7 +394,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                             newMilFleets.append(fleetID)
                     allocations=[]
                     if newMilFleets:
-                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  round="Fleet Reassignment %s"%newMilFleets)
+                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  thisround="Fleet Reassignment %s"%newMilFleets)
                     if allocations:
                         MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=newMilFleets,  allocations=allocations)
 

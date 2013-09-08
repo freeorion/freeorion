@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import EnumsAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AIShipDesignTypes
@@ -41,7 +41,9 @@ def countPartsFleetwide(fleetID,  partsList):
     return tally
 
 def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList,
-                                                            takeAny=False,  extendSearch=True,  triedFleets=set([]),  verbose=False,  depth=0): #implements breadth-first search through systems
+                                                            takeAny=False,  extendSearch=True,  triedFleets=None,  verbose=False,  depth=0): #implements breadth-first search through systems
+    if triedFleets is None:
+        triedFleets = set()
     if verbose:
         print "getFleetsForMission: (nships:%1d,  targetStats:%s,  minStats:%s, curStats:%s,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
                                                                                                                                         nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
@@ -62,7 +64,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
         if not fleet:
-            "in getFleetsForMission,  fleetID %d appers invalid; cannot retrieve"%fleetID
+            print "in getFleetsForMission,  fleetID %d appears invalid; cannot retrieve"%fleetID
             fleetPoolSet.remove(  fleetID)
             continue
         if len (list(fleet.shipIDs)) > 1:
@@ -486,10 +488,10 @@ def issueAIFleetOrdersForAIFleetMissions():
     print ""
     universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
-    round = 0
-    while (round <3):
-        round += 1
-        print "issuing fleet orders Round %d:"%round
+    thisround = 0
+    while (thisround <3):
+        thisround += 1
+        print "issuing fleet orders Round %d:"%thisround
         for aiFleetMission in aiFleetMissions:
             fleetID = aiFleetMission.target_id
             fleet = aiFleetMission.getAITarget().target_obj

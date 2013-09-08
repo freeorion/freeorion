@@ -2,7 +2,7 @@ import math
 import traceback
 import random
 
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 
 import AIstate
@@ -32,8 +32,8 @@ hullStats = {
 
 doDoubleShields=False
 
-def dictFromMap(map):
-    return dict(  [  (el.key(),  el.data() ) for el in map ] )
+def dictFromMap(this_map):
+    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
 def curBestMilShipRating():
@@ -228,11 +228,11 @@ def addScoutDesigns():
     is1,  is2  = "FU_BASIC_TANK",  "SH_DEFLECTOR"
 
     nb,  hull =  designNameBases[1]+"-%1d-%1d",   "SH_ORGANIC"
-    for id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb%(id, 0),  desc,  "SH_BASIC_SMALL",  [ db%id],  "",  model)   ]
+    for d_id in [1, 2, 3, 4]:
+        newScoutDesigns += [ (nb%(d_id, 0),  desc,  "SH_BASIC_SMALL",  [ db%d_id],  "",  model)   ]
     nb,  hull =  designNameBases[2]+"-%1d-%1d",   "SH_ENDOMORPHIC"
-    #for id in [3, 4]:
-    #    newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
+    #for d_id in [3, 4]:
+    #    newScoutDesigns += [ (nb%(d_id, iw),  desc,  hull,  [ db%d_id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
     addDesigns(shipType,   newScoutDesigns,  shipProdPriority)
 
 def addOrbitalDefenseDesigns():
@@ -410,8 +410,8 @@ def addOutpostDesigns():
     op = "CO_OUTPOST_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
-    for id in [1, 2]:
-        newOutpostDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  op],  "",  model)    for iw in [2, 3, 4] ]
+    for p_id in [1, 2]:
+        newOutpostDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, "",  op],  "",  model)    for iw in [2, 3, 4] ]
     addDesigns(shipType,   newOutpostDesigns,  shipProdPriority)
 
 def addColonyDesigns():
@@ -424,12 +424,12 @@ def addColonyDesigns():
     cp,  cp2 = "CO_COLONY_POD",  "CO_SUSPEND_ANIM_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
-    for id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, "", db%id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
+    for p_id in [1, 2, 3]:
+        newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, "", db%p_id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
 
     nb =  designNameBases[2]+"%1d_%1d"
-    for id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in [3.4]  ]
+    for p_id in [1, 2, 3]:
+        newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, "",  cp2],  "",  model)    for iw in [3.4]  ]
     addDesigns(shipType,   newColonyDesigns,  shipProdPriority)
 
 def generateProductionOrders():
@@ -1497,6 +1497,7 @@ def generateProductionOrders():
                 bestDesignID,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  loc)
             elif thisPriority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 selector = random.random()
+                choice = milBuildChoices[0] #milBuildChoices can't be empty due to earlier check
                 for choice in milBuildChoices:
                     if choice[0] >= selector:
                         break
@@ -1517,11 +1518,11 @@ def generateProductionOrders():
                 if ratingRatio < 0.1:
                     locPlanet = universe.getPlanet(loc)
                     if locPlanet:
-                      pname = locPlanet.name
-                      thisRating = ColonisationAI.ratePlanetaryPiloting(loc)
-                      ratingRatio = float(thisRating) / ColonisationAI.curBestPilotRating
-                      qualifier = ["", "suboptimal"][ratingRatio < 1.0]
-                      print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f"%(loc, pname, qualifier, thisRating, ratingRatio)
+                        pname = locPlanet.name
+                        thisRating = ColonisationAI.ratePlanetaryPiloting(loc)
+                        ratingRatio = float(thisRating) / ColonisationAI.curBestPilotRating
+                        qualifier = ["", "suboptimal"][ratingRatio < 1.0]
+                        print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f"%(loc, pname, qualifier, thisRating, ratingRatio)
                 while ( totalPP > 40*perTurnCost):
                     numShips *= 2
                     perTurnCost *= 2

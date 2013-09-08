@@ -1,5 +1,5 @@
 #get these declared first to help avoid import circularities
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 import AIDependencies
 import AITarget
@@ -57,8 +57,8 @@ nestValMap = {
               "JUGGERNAUT_NEST_SPECIAL":20,
               }
 
-def dictFromMap(map):
-    return dict(  [  (el.key(),  el.data() ) for el in map ] )
+def dictFromMap(this_map):
+    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 def resetCAIGlobals():
     global curBestMilShipRating
     empireSpecies.clear()
@@ -89,18 +89,18 @@ def ratePlanetaryPiloting(pid):
     universe = fo.getUniverse()
     planet = universe.getPlanet(pid)
     if (not planet) or (not planet.speciesName):
-      return 0.0
+        return 0.0
     thisSpec = fo.getSpecies(planet.speciesName)
     if not thisSpec:
-      return 0.0
+        return 0.0
     return ratePilotingTag(thisSpec.tags)
 
 def getColonyFleets():
+    "examines known planets, collects various colonization data, to be later used to send colony fleets"
     global  curBestMilShipRating,  gotRuins, curBestPilotRating, curMidPilotRating
 
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
 
-    "get colony fleets"
 
     allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     AIstate.colonyFleetIDs[:] = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allColonyFleetIDs)
@@ -314,8 +314,8 @@ def getColonyFleets():
         else:
             curMidPilotRating = ratingList[1+int(len(ratingList)/5)]
     else:
-      curBestPilotRating = 1e-8
-      curMidPilotRating = 1e-8
+        curBestPilotRating = 1e-8
+        curMidPilotRating = 1e-8
     if empireSpecies!=oldEmpSpec:
         print "Old empire species: %s  ; new empire species: %s"%(oldEmpSpec,  empireSpecies)
     if empireColonizers!=oldEmpCol:
@@ -493,8 +493,10 @@ def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
 
     return outpostTargetedPlanets
 
-def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=[],  returnAll=False): #TODO: clean up supplyable versus annexable
+def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=None,  returnAll=False): #TODO: clean up supplyable versus annexable
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
+    if detail is None:
+        detail = []
     origDetail = detail
     planetValues = {}
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
@@ -526,8 +528,10 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
                 #print best[0][2]
     return planetValues
 
-def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = []):
+def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = None):
     "returns the colonisation value of a planet"
+    if detail is None:
+        detail = []
     retval = 0
     discountMultiplier = 20.0
     species=fo.getSpecies(specName or "") #in case None is passed as specName
@@ -762,7 +766,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
 
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
             gotAsteroids=False
-            for pid  in [id for id in system.planetIDs if id != planetID]:
+            for pid  in [temp_id for temp_id in system.planetIDs if temp_id != planetID]:
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size== fo.planetSize.asteroids and not gotAsteroids :

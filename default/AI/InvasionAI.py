@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 import AIDependencies
@@ -11,8 +11,8 @@ import ProductionAI
 import ColonisationAI
 import MilitaryAI
 
-def dictFromMap(map):
-    return dict(  [  (el.key(),  el.data() ) for el in map ] )
+def dictFromMap(thismap):
+    return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
 
 def getInvasionFleets():
     "get invasion fleets"
@@ -150,7 +150,6 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                                             "BLD_SHIPYARD_CON_ADV_ENGINE": 1000,
                                             "BLD_SHIPYARD_AST":                             300,
                                             "BLD_SHIPYARD_AST_REF":                     1000,
-                                            "BLD_SHIPYARD_ENRG_COMP":           500,
                                             "BLD_SHIPYARD_ENRG_SOLAR":          1500,
                                             "BLD_INDUSTRY_CENTER":                   500,
                                             "BLD_GAS_GIANT_GEN":                           200,

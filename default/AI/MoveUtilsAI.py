@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import AITargetType, AIFleetOrderType
 import AITarget

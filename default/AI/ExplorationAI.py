@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
+import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
@@ -8,16 +8,16 @@ import PlanetUtilsAI
 from random import shuffle
 
 graphFlags={}
-__interiorExploredSystemIDs = {} # explored systems whose neighbors are also all
-__borderExploredSystemIDs = {}
-__borderUnexploredSystemIDs = {}
+interiorExploredSystemIDs = {} # explored systems whose neighbors are also all
+borderExploredSystemIDs = {}
+borderUnexploredSystemIDs = {}
 currentScoutFleetIDs = []
 
-def dictFromMap(map):
-    return dict(  [  (el.key(),  el.data() ) for el in map ] )
+def dictFromMap(this_map):
+    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 
 def getBorderExploredSystemIDs():
-    return list( __borderExploredSystemIDs )
+    return list( borderExploredSystemIDs )
 
 def updateScoutFleets():
     currentScoutFleetIDs[:] = []
@@ -48,7 +48,7 @@ def assignScoutsToExploreSystems():
     capitalSysID = PlanetUtilsAI.getCapitalSysID()
     # order fleets to explore
     #explorableSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)
-    explorableSystemIDs =  list(__borderUnexploredSystemIDs)
+    explorableSystemIDs =  list(borderUnexploredSystemIDs)
     if not explorableSystemIDs:
         return
     expSystemsByDist = sorted(  map( lambda x: ( universe.linearDistance(capitalSysID, x),  x) ,  explorableSystemIDs ) )
@@ -233,8 +233,8 @@ def updateExploredSystems():
             foAI.foAIstate.exploredSystemIDs[sysID] = 1
             sys=universe.getSystem(sysID)
             print "Moved system %d ( %s ) from unexplored list to explored list"%( sysID,  (sys and sys.name) or "name unknown")
-            if sysID in __borderUnexploredSystemIDs:
-                del __borderUnexploredSystemIDs[sysID]
+            if sysID in borderUnexploredSystemIDs:
+                del borderUnexploredSystemIDs[sysID]
             newlyExplored.append(sysID)
         else:
             stillUnexplored.append(sysID)
@@ -251,11 +251,11 @@ def updateExploredSystems():
                 else:
                     nextList.append(neighborID)
             if allExplored:
-                __interiorExploredSystemIDs[sysID] = 1
-                if (sysID  in __borderExploredSystemIDs) :
-                    del __borderExploredSystemIDs[sysID]
+                interiorExploredSystemIDs[sysID] = 1
+                if (sysID  in borderExploredSystemIDs) :
+                    del borderExploredSystemIDs[sysID]
             else:
-                __borderExploredSystemIDs[sysID] = 1
+                borderExploredSystemIDs[sysID] = 1
 
     for sysID in stillUnexplored:
         neighbors = list(  universe.getImmediateNeighbors(sysID,  empireID) )
@@ -264,6 +264,6 @@ def updateExploredSystems():
             if neighborID  in foAI.foAIstate.exploredSystemIDs: #consider changing to unexplored test -- when it matters, unexplored will be smaller than explored, but need to not get previously untreated neighbors
                 anyExplored=True
         if anyExplored:
-            __borderUnexploredSystemIDs[sysID] = 1
+            borderUnexploredSystemIDs[sysID] = 1
 
     return newlyExplored

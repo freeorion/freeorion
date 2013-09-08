@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import TechsListsAI
 from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
@@ -11,7 +11,6 @@ import random
 inProgressTechs={}
 
 def generateResearchOrders():
-    global inProgressTechs
     "generate research orders"
 
     universe=fo.getUniverse()

@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
@@ -137,7 +137,6 @@ def tallyStream(curVal,  targetVal,  nTurns,  force=False):
 
 def setPlanetResourceFoci(): #+
     "set resource focus of planets "
-    global __timerFile
     newFoci = {}
 
     print "\n============================"
@@ -354,7 +353,6 @@ def setPlanetResourceFoci(): #+
             resourceTimerFile.flush()
 
 def generateResourcesOrders(): #+
-    global __timerFile
     "generate resources focus orders"
 
     timer= [ time() ]

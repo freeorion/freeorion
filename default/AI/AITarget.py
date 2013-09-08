@@ -1,6 +1,6 @@
 import EnumsAI
 from EnumsAI import AITargetType
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 AI_TARGET_TYPE_NAMES = AITargetType()
 
