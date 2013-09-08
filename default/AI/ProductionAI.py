@@ -1292,10 +1292,11 @@ def generateProductionOrders():
         print "    " + blockStr + element.name+" requiring " + str(element.turnsLeft) + " more turns;  alloc: %.2f PP"%element.allocation + " with cum. progress of  %.1f"%element.progress + " being built at " + universe.getObject(element.locationID).name
         if element.turnsLeft == -1:
             if element.locationID not in AIstate.popCtrIDs+AIstate.outpostIDs:
-                dequeueList.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
-                print "element %s will never be completed as stands and location %d no longer owned; deleting from queue "%(element.name,  element.locationID)
+                #dequeueList.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
+                #print "element %s will never be completed as stands and location %d no longer owned; deleting from queue "%(element.name,  element.locationID)
+                print "element %s will never be completed as stands and location %d no longer owned; could consider deleting from queue "%(element.name,  element.locationID) #TODO:
             else:
-                print "element %s will never be completed as currently stands, but will remain on queue  "%element.name
+                print "element %s is projected to never be completed as currently stands, but will remain on queue  "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
                 thisSpec=universe.getPlanet(element.locationID).speciesName

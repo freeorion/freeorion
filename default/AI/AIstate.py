@@ -271,7 +271,23 @@ class AIstate(object):
             enemyRating=0
             monsterRatings=[]
             lostFleetRating=0
-            enemyRatings =  [self.rateFleet(fid) for fid in localEnemyFleetIDs  ]
+            #enemyRatings =  [self.rateFleet(fid) for fid in localEnemyFleetIDs  ]
+            enemyRatings = []
+            for fid in localEnemyFleetIDs:
+                oldstyle_rating = self.old_rate_fleet(fid)
+                newstyle_rating = self.rateFleet(fid)
+                enemyRatings.append(newstyle_rating)
+                if oldstyle_rating.get('overall', 0) != newstyle_rating.get('overall', 0):
+                    loc = ""
+                    fleetname = ""
+                    fleet = universe.getFleet(fid)
+                    if fleet:
+                        fleetname = fleet.name
+                        sysID = fleet.systemID
+                        system = universe.getSystem(sysID)
+                        if system:
+                            loc = " at %s" % system.name
+                    print "AiState.updateSystemStatus for fleet %s id (%d)%s got different newstyle rating (%s) and oldstyle rating (%s)" % (fleetname, fid, loc, newstyle_rating, oldstyle_rating)
             enemyAttack = sum( [rating.get('attack', 0) for rating in enemyRatings])
             enemyHealth = sum( [rating.get('health', 0) for rating in enemyRatings])
             enemyRating =  enemyAttack * enemyHealth
@@ -445,8 +461,37 @@ class AIstate(object):
             if mission.hasTarget(aiFleetMissionType, aiTarget):
                 return True
         return False
+        
+    def rateFleet(self, fleetID,  enemy_stats=None):
+        if enemy_stats is None:
+            enemy_stats=[ (1, {}) ]
+        universe=fo.getUniverse()
+        fleet=universe.getFleet(fleetID)
+        if fleet and (not fleet.aggressive) and fleet.ownedBy(self.empireID):
+            pass
+            #fleet.setAggressive(True)
+        if not fleet:
+            return {}
+        rating=0
+        attack=0
+        health=0
+        nships=0
+        for shipID in fleet.shipIDs:
+            #could approximate by design, but checking  meters has better current accuracy
+            ship = universe.getShip(shipID)
+            if not ship:
+                continue
+            stats = self.get_weighted_design_stats(ship.designID,  ship.speciesName)
+            structure = ship.currentMeterValue(fo.meterType.structure)
+            stats['structure'] = structure
+            self.adjust_stats_vs_enemy(stats,  enemy_stats)
+            rating += stats['attack'] * stats['structure']
+            attack += stats['attack']
+            health += stats['structure']
+            nships+=1
+        return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
-    def rateFleet(self, fleetID):
+    def old_rate_fleet(self, fleetID):
         universe=fo.getUniverse()
         fleet=universe.getFleet(fleetID)
         if fleet and (not fleet.aggressive) and fleet.ownedBy(self.empireID):
@@ -471,6 +516,7 @@ class AIstate(object):
         return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
     def getRating(self,  fleetID,  forceNew=False):
+        "returns a dict with various rating info"
         if (fleetID in self.fleetStatus) and not forceNew:
             return self.fleetStatus[fleetID].get('rating', {} )
         else:
@@ -529,16 +575,17 @@ class AIstate(object):
         weapons_grade,  shields_grade = self.get_piloting_grades(species_name)
         design_stats = dict( self.getDesignIDStats(design_id) ) #new dict so we don't modify our original data
         myattacks = self.weight_attacks(design_stats.get('attacks', {}),  weapons_grade)
+        design_stats['attacks'] = myattacks
         #mystructure = design_stats.get('structure', 1)
         myshields = self.weight_shields(design_stats.get('shields', 0),  shields_grade)
         design_stats['attack'] = sum([a * b for a, b in myattacks.items()])
         design_stats['shields'] = myshields
         return design_stats
 
-    def get_weighted_rating(self,  ship_stats, enemy_stats=None):
-        "rate a ship w/r/t a particular enemy"
+    def adjust_stats_vs_enemy(self,  ship_stats, enemy_stats=None ):
+        "rate a ship w/r/t a particular enemy, adjusts ship_stats in place"
         if enemy_stats is None:
-            enemy_stats=[ (1, {}) ]
+            enemy_stats = [ (1, {}) ]
         myattacks = ship_stats.get('attacks', {})
         mystructure = ship_stats.get('structure', 1)
         myshields = ship_stats.get('shields', 0)
@@ -550,23 +597,29 @@ class AIstate(object):
             estats = enemygroup[1]
             if estats == {}:
                 attack_tally += count * sum([ a * b for a, b in myattacks.items()])
-                structure_tally += count * (mystructure + myshields * sum(myattacks.values))
+                structure_tally += count * (mystructure + myshields * sum(myattacks.values())) #uses num of my attacks for proxy calc of structure help from shield
                 total_enemy_weights += count
                 continue
-            structure_tally += count * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
             eshields = estats.get('shields',  0)
             tempattacktally=0
-            tempstruc = estats.get('structure', 1)
-            total_enemy_weights += count * tempstruc
-            for attack in myattacks:
+            tempstruc = max(1e-4, estats.get('structure', 1))
+            thisweight = count * tempstruc
+            total_enemy_weights += thisweight
+            structure_tally += thisweight * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
+            for attack, nattacks in myattacks:
                 adjustedattack = max(0,  attack-eshields)
-                nattacks = myattacks[attack]
                 thisattack = min(tempstruc,  nattacks*adjustedattack)
                 tempattacktally += thisattack
                 tempstruc -= thisattack
                 if tempstruc <= 0:
                     break
-            attack_tally += count * tempattacktally
+            attack_tally += thisweight * tempattacktally
+        weighted_attack = attack_tally / total_enemy_weights
+        weighted_structure = structure_tally / total_enemy_weights
+        ship_stats['attack'] = weighted_attack
+        ship_stats['structure'] = weighted_structure
+        ship_stats['weighted'] = True
+        return ship_stats
 
     def getDesignIDStats(self,  designID):
         if designID is None:
