@@ -1,7 +1,7 @@
 import copy
 import math
 
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo # pylint: disable=import-error
 
 import AIFleetMission
 import EnumsAI
@@ -43,8 +43,8 @@ outpostIDs=[]
 outpostSystemIDs=[]
 piloting_grades = {}
 
-def dictFromMap(map):
-    return dict(  [  (el.key(),  el.data() ) for el in map ] )
+def dictFromMap(this_map):
+    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 
 # AIstate class
 class AIstate(object):
@@ -108,7 +108,6 @@ class AIstate(object):
         del self.qualifyingColonyBaseTargets
 
     def clean(self):
-        global invasionTargets
         "turn start AIstate cleanup"
 
         fleetsLostBySystem.clear()
@@ -536,8 +535,10 @@ class AIstate(object):
         design_stats['shields'] = myshields
         return design_stats
 
-    def get_weighted_rating(self,  ship_stats, enemy_stats=[ (1, {}) ] ):
+    def get_weighted_rating(self,  ship_stats, enemy_stats=None):
         "rate a ship w/r/t a particular enemy"
+        if enemy_stats is None:
+            enemy_stats=[ (1, {}) ]
         myattacks = ship_stats.get('attacks', {})
         mystructure = ship_stats.get('structure', 1)
         myshields = ship_stats.get('shields', 0)
