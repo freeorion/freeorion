@@ -523,11 +523,12 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-            const ObjectMap& known_objects = Objects();
-            for (ObjectMap::const_iterator<> obj_it = known_objects.const_begin();
-                 obj_it != known_objects.const_end(); ++obj_it)
-            {
-                all_tags.insert(obj_it->Tags().begin(), obj_it->Tags().end());
+            const ObjectMap& objects = GetUniverse().Objects();
+
+            for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
+                TemporaryPtr<const UniverseObject> obj = *it;
+                std::set<std::string> tags = obj->Tags();
+                all_tags.insert(tags.begin(), tags.end());
             }
 
             GG::ListBox::iterator row_it = m_string_drop->end();
