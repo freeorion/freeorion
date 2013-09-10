@@ -93,6 +93,7 @@ class AIstate(object):
         self.shipCount = 4
         self.misc={}
         self.qualifyingColonyBaseTargets={}
+        self.qualifyingOutpostBaseTargets={}
 
     def __del__(self):
         "destructor"
@@ -106,6 +107,7 @@ class AIstate(object):
         del self.newlySplitFleets
         del self.misc
         del self.qualifyingColonyBaseTargets
+        del self.qualifyingOutpostBaseTargets
 
     def clean(self):
         "turn start AIstate cleanup"
@@ -730,6 +732,7 @@ class AIstate(object):
         outpostSystemIDs[:] = []
         ResourcesAI.lastFociCheck[0]=0
         self.qualifyingColonyBaseTargets.clear()
+        self.qualifyingOutpostBaseTargets.clear()
 
     def __cleanFleetRoles(self,  justResumed=False):
         "removes fleetRoles if a fleet has been lost, and update fleet Ratings"

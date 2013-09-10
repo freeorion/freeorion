@@ -368,54 +368,78 @@ def getColonyFleets():
     colonyCost= AIDependencies.colonyPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
     outpostCost= AIDependencies.outpostPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
     productionQueue = empire.productionQueue
-    queuedBases=[]
+    queued_outpost_bases=[]
+    queued_colony_bases=[]
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-            if foAI.foAIstate.getShipRole(element.designID) in  [    EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ,
-                                                                                                                                        EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION ] :
+            if foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ] :
                 buildPlanet = universe.getPlanet(element.locationID)
-                queuedBases.append(buildPlanet.systemID)
+                queued_outpost_bases.append(buildPlanet.systemID)
+            elif foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION ] :
+                buildPlanet = universe.getPlanet(element.locationID)
+                queued_colony_bases.append(buildPlanet.systemID)
 
-    evaluatedColonyPlanetIDs = list(set(unOwnedPlanetIDs).union(empireOutpostIDs) - set(colonyTargetedPlanetIDs) )
-
-    for pid in evaluatedColonyPlanetIDs:
-        if pid in  foAI.foAIstate.qualifyingColonyBaseTargets: continue
+    evaluatedColonyPlanetIDs = list(set(unOwnedPlanetIDs).union(empireOutpostIDs) - set(colonyTargetedPlanetIDs) ) # places for possible colonyBase
+    
+    #foAI.foAIstate.qualifyingOutpostBaseTargets.clear() #don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
+    #foAI.foAIstate.qualifyingColonyBaseTargets.clear()
+    cost_ratio = 120 #TODO: temp ratio; reest to 12 *; consider different ratio
+    for pid in evaluatedColonyPlanetIDs: #TODO: reorganize
+        if pid in  foAI.foAIstate.qualifyingOutpostBaseTargets: 
+            continue
         planet = universe.getPlanet(pid)
-        if not planet: continue
+        if not planet: 
+            continue
         sysID = planet.systemID
         for pid2 in empireSpeciesSystems.get(sysID,  {}).get('pids', []):
             planet2 = universe.getPlanet(pid2)
-            if not planet2: continue
+            if not planet2: 
+                continue
             if planet2.speciesName  in empireColonizers:
-                if  outpostCost <  12 * availPP_BySys.get(sysID,  0): #TODO: consider different ratio
-                    system=universe.getSystem(sysID)
-                    for pid3 in system.planetIDs:
-                        if (pid3 not in empirePopCtrs):
-                            foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid3,  [pid2,  -1])
-                    break
+                if  colonyCost <  cost_ratio * availPP_BySys.get(sysID,  0): 
+                    foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: check other local colonizers for better score
+                if  (pid not in empireOutpostIDs): 
+                    foAI.foAIstate.qualifyingOutpostBaseTargets.setdefault(pid,  [pid2,  -1])
+                break
 
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
 
-    reservedBaseTargets = foAI.foAIstate.qualifyingColonyBaseTargets.keys()
+    reserved_outpost_base_targets = foAI.foAIstate.qualifyingOutpostBaseTargets.keys()
+    max_queued_outpost_bases = max(1,  int(2*empire.productionPoints / outpostCost))
+    print "considering possible outpost bases at %s" % (reserved_outpost_base_targets)
     if ( empire.getTechStatus(AIDependencies.outposting_tech) == fo.techStatus.complete):
-        for pid in (set(reservedBaseTargets) - set(outpostTargetedPlanetIDs)):
-            if pid not in unOwnedPlanetIDs: continue
-            if  foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] != -1: continue  #already building for here
-            loc = foAI.foAIstate.qualifyingColonyBaseTargets[pid][0]
-            if 100 < evaluatePlanet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, []):
-                bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST,  loc)
-                if not bestShip:
-                    print "Error: no outpost base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
-                    continue
-                #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
-                retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
-                print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planetNameIDs([loc]),  PlanetUtilsAI.planetNameIDs([pid]))
-                if retval !=0:
-                    foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] = loc
-                    #res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+        for pid in (set(reserved_outpost_base_targets) - set(outpostTargetedPlanetIDs)):
+            if len(queued_outpost_bases) >=max_queued_outpost_bases:
+                print "too many queued outpost bases to build any more now"
+                break
+            if pid not in unOwnedPlanetIDs: 
+                continue
+            if  foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1: 
+                continue  #already building for here
+            loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
+            this_score = evaluatePlanet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, [])
+            planet = universe.getPlanet(pid)
+            if this_score == 0:
+                #print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc,  this_score)
+                continue
+            print "Potential outpost base for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc,  this_score)
+            if this_score < 100:
+                print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc,  this_score)
+                continue
+            bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST,  loc)
+            if not bestShip:
+                print "Error: no outpost base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
+                continue
+            #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
+            retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
+            print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planetNameIDs([loc]),  PlanetUtilsAI.planetNameIDs([pid]))
+            if retval !=0:
+                foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] = loc
+                queued_outpost_bases.append((planet and planet.systemID) or -1)
+                #res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) #TODO: evaluate move to front
 
-    evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reservedBaseTargets))
+    evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
 
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
@@ -1000,8 +1024,8 @@ def assignColonyFleetsToColonise():
         if not fleet: continue
         sysID = fleet.systemID
         system = universe.getSystem(sysID)
-        availPlanets = set(system.planetIDs).intersection(set( foAI.foAIstate.qualifyingColonyBaseTargets.keys()))
-        targets = [pid for pid in availPlanets if foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] != -1 ]
+        availPlanets = set(system.planetIDs).intersection(set( foAI.foAIstate.qualifyingOutpostBaseTargets.keys()))
+        targets = [pid for pid in availPlanets if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1 ]
         if not targets:
             print "Error found no valid target for outpost base in system %s (%d)"%(system.name,  sysID)
             continue
@@ -1012,7 +1036,7 @@ def assignColonyFleetsToColonise():
             if rating[0]>bestScore:
                 bestScore = rating[0]
                 targetID = pid
-        foAI.foAIstate.qualifyingColonyBaseTargets[targetID][1] = -1 #TODO: should probably delete
+        foAI.foAIstate.qualifyingOutpostBaseTargets[targetID][1] = -1 #TODO: should probably delete
         aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, targetID)
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fid)
         aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, aiTarget)
