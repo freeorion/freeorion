@@ -2071,7 +2071,7 @@ XENOPHOBIC_SELF
                     WithinStarlaneJumps 5 Source
                     Not Contains Building "BLD_CONC_CAMP"
                     Not Species Source.Species
-                    Not TargetPopulation low = 0 high = 0
+                    Not TargetPopulation low = -999 high = 0
                 ]
             ]
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
@@ -2094,7 +2094,7 @@ XENOPHOBIC_SELF
                     WithinStarlaneJumps 5 Source
                     VisibleToEmpire Source.Owner
                     Not Species Source.Species
-                    Not TargetPopulation low = 0 high = 0
+                    Not TargetPopulation low = -999 high = 0
                 ]
                 ) ) )
 
