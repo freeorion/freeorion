@@ -7708,7 +7708,7 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.  It may be built at an outpost.
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
 
