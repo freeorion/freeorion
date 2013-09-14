@@ -6,6 +6,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "QueueListBox.h"
+#include "SidePanel.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
@@ -356,9 +357,12 @@ namespace {
 
         // get location indicator text
         std::string location_text;
-        if (w > GG::X(300))
-            if (TemporaryPtr<const UniverseObject> location = GetUniverseObject(build.location))
-                location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
+        bool system_selected = false;
+        if (TemporaryPtr<const UniverseObject> location = GetUniverseObject(build.location)) {
+            system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
+            if (w > GG::X(300))
+                location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name())+" ";
+        }
 
         // create and arrange widgets to display info
         GG::Y top(MARGIN);
@@ -384,7 +388,18 @@ namespace {
         m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
-        m_location_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+        GG::Clr location_clr = clr;
+        boost::shared_ptr<GG::Font> location_font = font;
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* this_client_empire = Empires().Lookup(client_empire_id);
+        if (this_client_empire && system_selected) {
+            location_font = ClientUI::GetBoldFont(); //
+            //location_clr = m_in_progress ? GG::LightColor(this_client_empire->Color()) : this_client_empire->Color();
+            location_clr = this_client_empire->Color();
+            m_location_text = new ShadowedTextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, location_font, location_clr, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+        } else {
+            m_location_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, location_font, location_clr, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+        }
 
         top += m_name_text->Height();
         left = GG::X(GRAPHIC_SIZE + MARGIN*2);
@@ -575,8 +590,13 @@ void ProductionWnd::SelectPlanet(int planet_id)
 void ProductionWnd::SelectDefaultPlanet()
 { m_build_designator_wnd->SelectDefaultPlanet(); }
 
-void ProductionWnd::SelectSystem(int system_id)
-{ m_build_designator_wnd->SelectSystem(system_id); }
+void ProductionWnd::SelectSystem(int system_id) { 
+    if (system_id != SidePanel::SystemID()) {
+        m_build_designator_wnd->SelectSystem(system_id); 
+        // refresh so as to correctly highlight builds for selected system
+        Update();
+    }
+}
 
 void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
