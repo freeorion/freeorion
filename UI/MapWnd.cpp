@@ -1747,8 +1747,8 @@ void MapWnd::RenderVisibilityRadii() {
         }
         glStencilFunc(GL_GREATER, 0x2, 0xff);
         glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
-        circle_colour.a = 64;
-        glColor(circle_colour);
+        circle_colour.a = 84;
+        glColor(GG::LightColor(GG::LightColor(circle_colour)));
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
                       0.0, TWO_PI, false);
