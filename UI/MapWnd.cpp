@@ -8,6 +8,7 @@
 #include "PlayerListWnd.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "CUIDrawUtil.h"
 #include "FleetButton.h"
 #include "FleetWnd.h"
 #include "InfoPanels.h"
@@ -1747,8 +1748,9 @@ void MapWnd::RenderVisibilityRadii() {
         }
         glStencilFunc(GL_GREATER, 0x2, 0xff);
         glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
-        circle_colour.a = 84;
-        glColor(GG::LightColor(GG::LightColor(circle_colour)));
+        circle_colour.a = std::min(255, circle_colour.a + 80);
+        AdjustBrightness(circle_colour, 2.0, true);
+        glColor(circle_colour);
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
                       0.0, TWO_PI, false);
@@ -4600,6 +4602,7 @@ void MapWnd::ShowProduction() {
     m_pedia_panel->SetIndex();
 
     // show the production window
+    m_production_wnd->Update();
     m_production_wnd->Show();
     m_in_production_view_mode = true;
     HideAllPopups();

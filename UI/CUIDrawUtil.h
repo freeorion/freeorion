@@ -5,11 +5,15 @@
 #include <GG/Clr.h>
 #include <GG/PtRect.h>
 
-/** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged */
-void AdjustBrightness(GG::Clr& color, int amount);
+/** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged 
+  * if \a jointly_capped is true then, if the original \a amount would out any of the rgb channel values above 255, 
+  * \a amount for all channels is reduced so that the highest resulting rgb channel value is 255.   */
+void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped=false);
 
-/** adjusts the intensity of the color up or down by multiplying the non-alpa channels by \a amount */
-void AdjustBrightness(GG::Clr& color, double amount);
+/** adjusts the intensity of the color up or down by multiplying the non-alpa channels by \a amount  
+  * if \a jointly_capped is true then, if the original \a amount would out any of the rgb channel values above 255, 
+  * \a amount for all channels is reduced so that the highest resulting rgb channel value is 255.   */
+void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped=false);
 
 /** returns fully opaque (max alpha channel) version of the color */
 GG::Clr OpaqueColor(const GG::Clr& color);
