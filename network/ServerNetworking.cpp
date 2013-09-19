@@ -158,9 +158,12 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
-            if (TRACE_EXECUTION)
+            if (TRACE_EXECUTION) {
                 Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
-                                       << "received message " << m_incoming_message;
+                                       << "received message of type " << m_incoming_message.Type()
+                                       << "; and size "<< m_incoming_message.Size();
+                //Logger().debugStream() << "     Full message: " << m_incoming_message;
+            }
             if (EstablishedPlayer()) {
                 EventSignal(boost::bind(m_player_message_callback,
                                         m_incoming_message,
