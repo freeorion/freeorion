@@ -55,7 +55,7 @@ Species
     Native
     CanProduceShips
     
-    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GOOD_RESEARCH" ]
+    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_GOOD_SHIELDS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -2246,6 +2246,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
                 Planet
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                Not Homeworld name = RootCandidate.Species
                 Number low = 1 condition = And [
                     Source
                     Planet
