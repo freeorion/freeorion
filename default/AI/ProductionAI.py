@@ -424,12 +424,14 @@ def addColonyDesigns():
     cp,  cp2 = "CO_COLONY_POD",  "CO_SUSPEND_ANIM_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
+    ar1,  ar2,  ar3,  ar4,  ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE",   "AR_NEUTRONIUM_PLATE"
     for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, "", db%p_id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
+        newColonyDesigns += [ (nb%(p_id, iw)+"S",  desc,  hull,  [ srb%iw, ar1, db%p_id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
+        newColonyDesigns += [ (nb%(p_id, iw)+"Z",  desc,  hull,  [ srb%iw, ar2, db%p_id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
 
-    nb =  designNameBases[2]+"%1d_%1d"
+    nb =  designNameBases[2]+"%1d_%1dZ"
     for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, "",  cp2],  "",  model)    for iw in [3.4]  ]
+        newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, ar2,  cp2],  "",  model)    for iw in [3.4]  ]
     addDesigns(shipType,   newColonyDesigns,  shipProdPriority)
 
 def generateProductionOrders():
@@ -488,9 +490,8 @@ def generateProductionOrders():
     if (currentTurn==1) and (productionQueue.totalSpent < totalPP):
         bestDesignID,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
         if bestDesignID:
-            retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, buildChoices[0])
-            if retval:
-                fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  2)
+            for scout_count in range(5):
+                retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, buildChoices[0])
         fo.updateProductionQueue()
 
     movedCapital=False
