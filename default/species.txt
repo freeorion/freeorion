@@ -1085,7 +1085,7 @@ Species
     
     //CanColonize
     
-    Tags = [ "ROBOTIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_RESEARCH" ]
+    Tags = [ "ROBOTIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS"]
     
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
@@ -1205,7 +1205,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_GOOD_INDUSTRY" ]
+    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_BAD_WEAPONS"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -2070,8 +2070,11 @@ XENOPHOBIC_SELF
                     OwnedBy TheEmpire Source.Owner
                     WithinStarlaneJumps 5 Source
                     Not Contains Building "BLD_CONC_CAMP"
-                    Not Species Source.Species
-                    Not TargetPopulation low = -999 high = 0
+                    Not OR [ 
+                        Species Source.Species
+                        Species "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
                 ]
             ]
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
@@ -2093,8 +2096,11 @@ XENOPHOBIC_SELF
                     PopulationCenter
                     WithinStarlaneJumps 5 Source
                     VisibleToEmpire Source.Owner
-                    Not Species Source.Species
-                    Not TargetPopulation low = -999 high = 0
+                    Not OR [ 
+                        Species Source.Species
+                        Species "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
                 ]
                 ) ) )
 
@@ -2104,23 +2110,16 @@ XENOPHOBIC_OTHER_BEGIN
 '''     EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 WithinStarlaneJumps 5 Source  
                 Not Contains Building "BLD_CONC_CAMP"
-                Not Species Source.Species
-                Not TargetPopulation low = 0 high = 0
-            ]
-            activation = And [
-                PopulationCenter
-                Number low = 1 high = 999 And [
-                    PopulationCenter
-                    OwnedBy TheEmpire Source.Owner
-                    WithinStarlaneJumps 5 Source
-                    Not Contains Building "BLD_CONC_CAMP"
-                    Not Species Source.Species 
-                    Not TargetPopulation low = 0 high = 0                    
+                Not OR [ 
+                    Species Source.Species
+                    Species "SP_EXOBOT"
                 ]
+                Not Population high = 0
             ]
+            activation = PopulationCenter
 '''
 
 XENOPHOBIC_OTHER_END
