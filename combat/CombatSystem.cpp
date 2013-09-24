@@ -583,11 +583,13 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         // ensure something can attack and something can be attacked
         if (valid_attacker_object_ids.empty()) {
-            Logger().debugStream() << "Nothing left can attack; combat over";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "Nothing left can attack; combat over";
             break;
         }
         if (empire_valid_target_object_ids.empty()) {
-            Logger().debugStream() << "Nothing left can be attacked; combat over";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "Nothing left can be attacked; combat over";
             break;
         }
         // empires may have valid targets, but nothing to attack with.  If all
@@ -602,15 +604,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             }
         }
         if (!someone_can_attack_something) {
-            Logger().debugStream() << "No empire has valid targets and something to attack with; combat over.";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "No empire has valid targets and something to attack with; combat over.";
             break;
         }
 
-        Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
+        if (GetOptionsDB().Get<bool>("verbose-logging"))
+            Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
 
         // select attacking object in battle
         int attacker_idx = RandInt(0, valid_attacker_object_ids.size() - 1);
-        Logger().debugStream() << "Battle round " << round << " attacker index: " << attacker_idx << " of " << valid_attacker_object_ids.size() - 1;
+        if (GetOptionsDB().Get<bool>("verbose-logging"))
+            Logger().debugStream() << "Battle round " << round << " attacker index: " << attacker_idx << " of " << valid_attacker_object_ids.size() - 1;
         std::set<int>::const_iterator attacker_it = valid_attacker_object_ids.begin();
         std::advance(attacker_it, attacker_idx);
         assert(attacker_it != valid_attacker_object_ids.end());
@@ -621,7 +626,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << attacker_id;
             continue;
         }
-        Logger().debugStream() << "Attacker: " << attacker->Name();
+        if (GetOptionsDB().Get<bool>("verbose-logging"))
+            Logger().debugStream() << "Attacker: " << attacker->Name();
 
 
         TemporaryPtr<Ship> attack_ship = universe_object_ptr_cast<Ship>(attacker);
@@ -636,15 +642,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             for (std::vector<PartAttackInfo>::const_iterator part_it = weapons.begin();
                  part_it != weapons.end(); ++part_it)
             {
-                Logger().debugStream() << "weapon: " << part_it->part_type_name <<
+                if (GetOptionsDB().Get<bool>("verbose-logging")) {
+                    Logger().debugStream() << "weapon: " << part_it->part_type_name <<
                                           " attack: " << part_it->part_attack;
+                }
             }
         } else if (attack_planet) { // treat planet defenses as short range
             weapons.push_back(PartAttackInfo(PC_SHORT_RANGE, "", attack_planet->CurrentMeterValue(METER_DEFENSE)));
         }
 
         if (weapons.empty()) {
-            Logger().debugStream() << "no weapons' can't attack";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "no weapons' can't attack";
             continue;   // no ability to attack!
         }
 
@@ -652,7 +661,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
              weapon_it != weapons.end(); ++weapon_it)
         {
             // select object from valid targets for this object's owner   TODO: with this weapon...
-            Logger().debugStream() << "Attacking with weapon " << weapon_it->part_type_name << " with power " << weapon_it->part_attack;
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "Attacking with weapon " << weapon_it->part_type_name << " with power " << weapon_it->part_attack;
 
             // get valid targets set for attacker owner.  need to do this for
             // each weapon that is attacking, as the previous shot might have
@@ -661,7 +671,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
             std::map<int, std::set<int> >::iterator target_vec_it = empire_valid_target_object_ids.find(attacker_owner_id);
             if (target_vec_it == empire_valid_target_object_ids.end() || target_vec_it->second.empty()) {
-                Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
+                if (GetOptionsDB().Get<bool>("verbose-logging"))
+                    Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
                 break;
             }
 
@@ -673,15 +684,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                     target_it != valid_target_ids.end(); ++target_it)
             { id_list += boost::lexical_cast<std::string>(*target_it) + " "; }
 
-            Logger().debugStream() << "Valid targets for attacker with id: " << attacker_owner_id
+            if (GetOptionsDB().Get<bool>("verbose-logging")) { 
+                Logger().debugStream() << "Valid targets for attacker with id: " << attacker_owner_id
                                     << " owned by empire: " << attacker_owner_id
                                     << " :  " << id_list;
+            }
             // END DEBUG
 
 
             // select target object
             int target_idx = RandInt(0, valid_target_ids.size() - 1);
-            Logger().debugStream() << " ... target index: " << target_idx << " of " << valid_target_ids.size() - 1;
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << " ... target index: " << target_idx << " of " << valid_target_ids.size() - 1;
             std::set<int>::const_iterator target_it = valid_target_ids.begin();
             std::advance(target_it, target_idx);
             assert(target_it != valid_target_ids.end());
@@ -692,7 +706,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                 Logger().errorStream() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
             }
-            Logger().debugStream() << "Target: " << target->Name();
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "Target: " << target->Name();
 
 
             // do actual attacks, and mark attackers as valid targets for attacked object's owners
@@ -718,7 +733,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             // check for destruction of target object
             if (target->ObjectType() == OBJ_SHIP) {
                 if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
-                    Logger().debugStream() << "!! Target Ship is destroyed!";
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "!! Target Ship is destroyed!";
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
                     // all empires in battle know object was destroyed
@@ -727,7 +743,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                     {
                         int empire_id = *it;
                         if (empire_id != ALL_EMPIRES) {
-                            Logger().debugStream() << "Giving knowledge of destroyed object " << target_id << " to empire " << empire_id;
+                            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                                Logger().debugStream() << "Giving knowledge of destroyed object " << target_id << " to empire " << empire_id;
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
@@ -747,7 +764,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
             } else if (target->ObjectType() == OBJ_PLANET) {
                 if (!ObjectCanAttack(target) && valid_attacker_object_ids.find(target_id)!=valid_attacker_object_ids.end()) {
-                    Logger().debugStream() << "!! Target Planet defenses knocked out, can no longer attack";
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "!! Target Planet defenses knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
@@ -755,7 +773,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
                 {
-                    Logger().debugStream() << "!! Target Planet is entirely knocked out of battle";
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "!! Target Planet is entirely knocked out of battle";
 
                     // remove disabled planet's ID from lists of valid targets
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
@@ -778,7 +797,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             {
                 if (target_vec_it->second.empty()) {
                     temp.erase(target_vec_it->first);
-                    Logger().debugStream() << "No valid targets left for empire with id: " << target_vec_it->first;
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "No valid targets left for empire with id: " << target_vec_it->first;
                 }
             }
             empire_valid_target_object_ids = temp;
@@ -789,7 +809,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             {
                 if (target_vec_it->second.empty()) {
                     temp.erase(target_vec_it->first);
-                    Logger().debugStream() << "No valid attacking objects left for empire with id: " << target_vec_it->first;
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "No valid attacking objects left for empire with id: " << target_vec_it->first;
                 }
             }
             empire_valid_attacker_object_ids = temp;
@@ -805,16 +826,17 @@ void AutoResolveCombat(CombatInfo& combat_info) {
          it != combat_info.empire_known_objects.end(); ++it)
     { it->second.Copy(combat_info.objects); }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
-    Logger().debugStream() << "combat event log:";
-    for (std::vector<AttackEvent>::const_iterator it = combat_info.combat_events.begin();
-         it != combat_info.combat_events.end(); ++it)
-    {
-        Logger().debugStream() << "rnd: " << it->round << " : "
-                               << it->attacker_id << " -> " << it->target_id << " : "
-                               << it->damage
-                               << (it->target_destroyed ? " (destroyed)" : "");
+        Logger().debugStream() << "combat event log:";
+        for (std::vector<AttackEvent>::const_iterator it = combat_info.combat_events.begin();
+            it != combat_info.combat_events.end(); ++it)
+        {
+            Logger().debugStream() << "rnd: " << it->round << " : "
+                                << it->attacker_id << " -> " << it->target_id << " : "
+                                << it->damage
+                                << (it->target_destroyed ? " (destroyed)" : "");
+        }
     }
 }
