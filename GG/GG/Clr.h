@@ -80,6 +80,18 @@ inline bool operator==(const Clr& rhs, const Clr& lhs)
 inline bool operator!=(const Clr& rhs, const Clr& lhs)
 { return !(rhs == lhs); }
 
+/** Clr comparisons */
+inline bool operator<(const Clr& lhs, const Clr& rhs)
+{
+    if (rhs.r != lhs.r)
+        return rhs.r < lhs.r;
+    if (rhs.g != lhs.g)
+        return rhs.g < lhs.g;
+    if (rhs.b != lhs.b)
+        return rhs.b < lhs.b;
+    return rhs.a < lhs.a;
+}
+
 } // namespace GG
 
 #endif

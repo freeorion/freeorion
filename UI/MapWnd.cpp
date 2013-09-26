@@ -73,18 +73,6 @@ namespace {
     const int       LAYOUT_MARGIN = 5;
     const GG::Y     TOOLBAR_HEIGHT(32);
 
-    struct ClrLess {
-        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs) const {
-            if (rhs.r != lhs.r)
-                return rhs.r < lhs.r;
-            if (rhs.g != lhs.g)
-                return rhs.g < lhs.g;
-            if (rhs.b != lhs.b)
-                return rhs.b < lhs.b;
-            return rhs.a < lhs.a;
-        }
-    };
-
     double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
             Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
@@ -144,9 +132,8 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     // returns an int-int pair that doesn't depend on the order of parameters
-    std::pair<int, int> UnorderedIntPair(int one, int two) {
-        return std::make_pair(std::min(one, two), std::max(one, two));
-    }
+    std::pair<int, int> UnorderedIntPair(int one, int two)
+    { return std::make_pair(std::min(one, two), std::max(one, two)); }
 
     /* Loads background starfield textures int \a background_textures  */
     void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
@@ -1692,7 +1679,7 @@ void MapWnd::RenderVisibilityRadii() {
         }
     }
 
-    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess> circles;
+    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > > circles;
     for (std::map<std::pair<int, std::pair<double, double> >, float>::const_iterator it =
             empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
@@ -1733,7 +1720,7 @@ void MapWnd::RenderVisibilityRadii() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
-    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess>::iterator it = circles.begin();
+    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
          it != circles.end(); ++it)
     {
         glClear(GL_STENCIL_BUFFER_BIT);
