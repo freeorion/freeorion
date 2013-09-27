@@ -469,6 +469,47 @@ namespace {
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
 }
+//////////////////////////////////////////////////
+// ProdQueueListBox                                  //
+//////////////////////////////////////////////////
+/** List of starting points for designs, such as empty hulls, existing designs
+  * kept by this empire or seen elsewhere in the universe, design template
+  * scripts or saved (on disk) designs from previous games. */
+class ProdQueueListBox : public QueueListBox {
+public:
+    ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str);
+
+private: 
+    void ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+};
+
+ProdQueueListBox::ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str):
+    QueueListBox(x, y, w, h, drop_type_str, prompt_str)
+{
+    GG::Connect(GG::ListBox::RightClickedSignal,     &ProdQueueListBox::ItemRightClicked,    this);
+}
+
+/** create popup menu with a Delete Item command to provide same functionality as
+ * DoubleClick since under laggy conditions it DoubleClick can have trouble
+ * being interpreted correctly (can instead be treated as simply two unrelated left clicks) */
+void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"), 1, false, false));
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, GG::CLR_RED,
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // delete item
+            // emit a signal so that the ProductionWnd can take necessary steps
+            DoubleClickedSignal(it);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
 
 
 //////////////////////////////////////////////////
@@ -491,7 +532,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
                                                           static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     }
 
-    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4,
+    m_queue_lb = new ProdQueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4,
                                   ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 

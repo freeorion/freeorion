@@ -7,7 +7,7 @@
 
 #include <GG/ListBox.h>
 
-class QueueListBox;
+class ProdQueueListBox;
 class ProductionInfoPanel;
 class BuildDesignatorWnd;
 
@@ -81,7 +81,7 @@ private:
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
     ProductionInfoPanel*        m_production_info_panel;
-    QueueListBox*               m_queue_lb;
+    ProdQueueListBox*           m_queue_lb;
     BuildDesignatorWnd*         m_build_designator_wnd;
     bool                        m_enabled;
 

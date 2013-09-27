@@ -2621,6 +2621,8 @@ Note that ships can only be built on planets with a shipyard, and that various o
 PRODUCTION_QUEUE_ITEM_LOCATION
 At %1%
 
+DELETE_QUEUE_ITEM
+Delete Item from Queue
 
 ###############
 #  DesignWnd  #
