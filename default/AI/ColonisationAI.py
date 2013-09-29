@@ -19,6 +19,7 @@ empireSpeciesSystems={}
 empireColonizers = {}
 empireShipBuilders={}
 empireShipyards = {}
+empire_dry_docks = {}
 availableGrowthSpecials={}
 empirePlanetsWithGrowthSpecials={}
 activeGrowthSpecials={}
@@ -67,6 +68,7 @@ def resetCAIGlobals():
     empireColonizers.clear()
     empireShipBuilders.clear()
     empireShipyards.clear()
+    empire_dry_docks.clear()
     activeGrowthSpecials.clear()
     annexableSystemIDs.clear()
     annexableRing1.clear()
@@ -243,6 +245,7 @@ def getColonyFleets():
     empireColonizers.clear()
     empireShipBuilders.clear()
     empireShipyards.clear()
+    empire_dry_docks.clear()
     empireMetabolisms.clear()
     availableGrowthSpecials.clear()
     activeGrowthSpecials.clear()
@@ -278,7 +281,8 @@ def getColonyFleets():
             shipyards=[]
             for pID in empireSpecies[specName]:
                 planet=universe.getPlanet(pID)
-                if not planet: continue
+                if not planet: 
+                    continue
                 for metab in thisMetab:
                     #prev = empireMetabolisms.get(metab,  [0.0,  0.0] )
                     prev = empireMetabolisms.get(metab,  0.0 )
@@ -292,10 +296,13 @@ def getColonyFleets():
                         availableGrowthSpecials.setdefault(special,  []).append(pID)
                         if planet.focus == AIFocusType.FOCUS_GROWTH:
                             activeGrowthSpecials.setdefault(special,  []).append(pID)
+                buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
                 if  thisSpec.canProduceShips:
                     pilotRatings[pID] = pilotVal
-                    if "BLD_SHIPYARD_BASE" in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
+                    if "BLD_SHIPYARD_BASE" in buildings_here:
                         shipyards.append(pID)
+                if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
+                    empire_dry_docks.setdefault(planet.systemID,  []).append(pID)
                 empireSpeciesSystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pID)
             if thisSpec.canProduceShips:
                 empireShipBuilders[specName]=shipyards
@@ -551,6 +558,33 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
                 planetValues[planetID] = best[0][:2]
                 #print best[0][2]
     return planetValues
+    
+def next_turn_pop_change(cur_pop,  target_pop):
+    "population change calc taken from PopCenter.cpp"
+    pop_change = 0
+    if (target_pop > cur_pop):
+        pop_change = cur_pop * (target_pop + 1 - cur_pop) / 100
+        pop_change = min(pop_change, target_pop - cur_pop)
+    else:
+        pop_change = -(cur_pop - target_pop) / 10
+        pop_change = max(pop_change, target_pop - cur_pop)
+    return pop_change;
+
+def project_ind_val(init_pop,  max_pop_size,  init_industry,  max_ind_factor,  flat_industry,  discountMultiplier):
+    "returns a discouted value for a projected industry stream over time with changing population"
+    discount_factor = 0.95
+    if discountMultiplier > 1.0:
+        discount_factor = 1.0 - 1.0/discountMultiplier
+    cur_pop = float(init_pop)
+    cur_ind = float(init_industry)
+    ind_val = 0
+    val_factor = 1.0
+    for turn in range(50):
+        cur_pop += next_turn_pop_change(cur_pop,  max_pop_size)
+        cur_ind =  min(cur_ind + 1,  max(0,  cur_ind - 1,  flat_industry + cur_pop * max_ind_factor))
+        val_factor *= discount_factor
+        ind_val += val_factor * cur_ind
+    return ind_val
 
 def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = None):
     "returns the colonisation value of a planet"
@@ -566,12 +600,12 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             pilotVal *= 2
         if pilotVal > 2:
             retval += discountMultiplier*5*pilotVal
-            detail.append("Pilot Val %.1f"%discountMultiplier*50)
+            detail.append("Pilot Val %.1f"%(discountMultiplier*5*pilotVal))
 
     if detail != []:
         detail = []
     priorityScaling=1.0
-    maxGGGs=1
+    maxGGGs=1 #if goes above 1 need some other adjustments below
     if empire.productionPoints <100:
         backupFactor = 0.0
     else:
@@ -783,31 +817,47 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         retval += colonyStarBonus
         asteroidBonus=0
         gasGiantBonus=0
-        GGPresent=False
+        flat_industry = 0
         miningBonus=0
-        perGGG=2*10*discountMultiplier
+        perGGG=10
         planetSize = planet.size
 
+        gotAsteroids=False
+        gotOwnedAsteroids = False
+        gotGG = False
+        gotOwnedGG = False
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
-            gotAsteroids=False
             for pid  in [temp_id for temp_id in system.planetIDs if temp_id != planetID]:
                 p2 = universe.getPlanet(pid)
                 if p2:
-                    if p2.size== fo.planetSize.asteroids and not gotAsteroids :
+                    if p2.size== fo.planetSize.asteroids:
                         gotAsteroids = True
-                        if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
-                            asteroidBonus = 10*discountMultiplier
-                            detail.append( "Asteroid mining from %s  %.1f"%(p2.name,    10*discountMultiplier  )  )
-                        if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:8]) :
-                            if species and species.canProduceShips:
-                                asteroidBonus += 20*discountMultiplier*pilotVal
-                                detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    discountMultiplier*20*pilotVal  )  )
-                    if p2.size== fo.planetSize.gasGiant :
-                        GGPresent=True
-                        if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):
-                            gasGiantBonus += perGGG
-                            detail.append( "GGG  from %s  %.1f"%(p2.name,    perGGG  )  )
-        gasGiantBonus = min( gasGiantBonus,  maxGGGs * perGGG )
+                        if p2.owner != -1:
+                            gotOwnedAsteroids = True
+                    if p2.size== fo.planetSize.gasGiant:
+                        gotGG = True
+                        if p2.owner != -1:
+                            gotOwnedGG = True
+        if gotAsteroids:
+            if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
+                if gotOwnedAsteroids: #can be quickly captured
+                    flat_industry += 5 #will go into detailed industry projection
+                    detail.append( "Asteroid mining ~ %.1f"%(5*discountMultiplier  )  )
+                else: #uncertain when can be outposted
+                    asteroidBonus = 2.5*discountMultiplier #give partial value
+                    detail.append( "Asteroid mining %.1f"%(5*discountMultiplier  )  )
+            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:8]) :
+                if species and species.canProduceShips:
+                    asteroidBonus += 30*discountMultiplier*pilotVal
+                    detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    discountMultiplier*20*pilotVal  )  )
+        if gotGG:
+            if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):
+                if gotOwnedGG:
+                    flat_industry += perGGG #will go into detailed industry projection
+                    detail.append( "GGG ~  %.1f"%( perGGG * discountMultiplier  )  )
+                else:
+                    gasGiantBonus = 0.5 * perGGG * discountMultiplier
+                    detail.append( "GGG  %.1f"%( 0.5 * perGGG * discountMultiplier  )  )
         if   (planet.size==fo.planetSize.gasGiant):
             if not (species and species.name  ==  "SP_SUPER_TEST"):
                 detail.append("Can't Settle GG" )
@@ -895,13 +945,13 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         if planetID in species.homeworlds:  #TODO: check for homeworld growth focus
             popSizeMod+=2
 
-        popSize = planetSize * popSizeMod * popTagMod
-        detail.append("baseMaxPop size*psm %d * %d * %.2f = %d"%(planetSize,  popSizeMod, popTagMod,   popSize) )
+        max_pop_size = planetSize * popSizeMod * popTagMod
+        detail.append("baseMaxPop size*psm %d * %d * %.2f = %d"%(planetSize,  popSizeMod, popTagMod,   max_pop_size) )
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
-            popSize -= 4
+            max_pop_size -= 4
             detail.append("DIM_RIFT_MASTER_SPECIAL(maxPop-4)")
-        detail.append("maxPop %.1f"%popSize)
+        detail.append("maxPop %.1f"%max_pop_size)
 
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
             if special in planetSpecials:
@@ -924,11 +974,21 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             if (empire.getTechStatus(tech) == fo.techStatus.complete):
                 indMult += indTechMap[tech]
         indVal = 0
+        max_ind_factor = 0
         if (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete):
             fixedInd += discountMultiplier * 5
         if AIFocusType.FOCUS_INDUSTRY  in species.foci:
-            indVal += discountMultiplier * basePopInd * popSize*miningBonus
-            indVal += discountMultiplier * basePopInd * popSize * indMult
+            #indVal += discountMultiplier * basePopInd * max_pop_size*miningBonus
+            #indVal += discountMultiplier * basePopInd * max_pop_size * indMult
+            max_ind_factor += basePopInd * miningBonus
+            max_ind_factor += basePopInd * indMult
+        cur_pop = 1.0 #assume an initial colonization vale 
+        if planet.speciesName != "":
+            cur_pop = planet.currentMeterValue(fo.meterType.population)
+        elif  empire.getTechStatus("GRO_LIFECYCLE_MAN") == fo.techStatus.complete :
+            cur_pop = 3.0 
+        cur_industry = planet.currentMeterValue(fo.meterType.industry)
+        indVal = project_ind_val(cur_pop,  max_pop_size,  cur_industry,  max_ind_factor, flat_industry, discountMultiplier)
         detail.append("indVal %.1f"%indVal)
         # used to give preference to closest worlds
         empireID = empire.empireID
@@ -949,15 +1009,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
 
         basePopRes = 0.2 #will also be doubling value of research, below
         if AIFocusType.FOCUS_RESEARCH in species.foci:
-            researchBonus += discountMultiplier*2*basePopRes*popSize
+            researchBonus += discountMultiplier*2*basePopRes*max_pop_size
             if ( "ANCIENT_RUINS_SPECIAL" in planet.specials )  or ( "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials ):
-                researchBonus += discountMultiplier*2*basePopRes*popSize*5
+                researchBonus += discountMultiplier*2*basePopRes*max_pop_size*5
                 detail.append("Ruins Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
                 researchBonus += discountMultiplier*2*10    #TODO: do actual calc
                 detail.append("COMPUTRONIUM_SPECIAL")
 
-        if popSize <= 0:
+        if max_pop_size <= 0:
             detail.append("Non-positive population projection for species '%s',  so no colonization value"%(species and species.name))
             return 0
 

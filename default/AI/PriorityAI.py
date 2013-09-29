@@ -237,13 +237,26 @@ def calculateInvasionPriority():
     global allottedInvasionTargets
     troopsPerPod=2
     empire=fo.getEmpire()
+    multiplier = 1
+    
+    if len(foAI.foAIstate.colonisablePlanetIDs) > 0:
+        bestColonyScore = max( 2,  foAI.foAIstate.colonisablePlanetIDs[0][1][0] )
+    else:
+        bestColonyScore = 2
 
     if foAI.foAIstate.aggression==fo.aggression.beginner and fo.currentTurn()<150:
         return 0
 
     allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
-    totalVal= sum( [pscore for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] )
-    troopsNeeded= sum( [(trp+4) for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] )
+    totalVal = 0
+    troopsNeeded = 0
+    for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets]:
+        if pscore > bestColonyScore:
+            multiplier += 1
+            totalVal += 2 * pscore
+        else:
+            totalVal += pscore
+        troopsNeeded += trp+4
 
     if totalVal == 0:
         return 0
@@ -270,7 +283,7 @@ def calculateInvasionPriority():
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)
 
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
-    invasionPriority = 30+ 150*max(0,  troopShipsNeeded )
+    invasionPriority = multiplier * (30+ 150*max(0,  troopShipsNeeded ))
     if invasionPriority < 0:
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:

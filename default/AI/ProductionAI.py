@@ -1250,6 +1250,30 @@ def generateProductionOrders():
                     queuedLocs.append( planet.systemID )
                     break
 
+    bldName = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+    if empire.buildingTypeAvailable(bldName):
+        bldType = fo.getBuildingType(bldName)
+        queued_locs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+        drydock_locs={}
+        drydock_locs.update([(sys_id,  True) for sys_id in queued_locs + list(ColonisationAI.empire_dry_docks)])
+        max_dock_builds = int(0.5 + empire.productionPoints/80)
+        for sys_id,  pids in ColonisationAI.empireSpeciesSystems.items(): #TODO: sort/prioritize in some fashion
+            if len(queued_locs)>= max_dock_builds:
+                break
+            if sys_id in drydock_locs:
+                continue
+            for pid in pids:
+                if pid not in ColonisationAI.empireShipyards:
+                    continue
+                planet = universe.getPlanet(pid)
+                res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, planet.name,  res)
+                if res:
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                    print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+                    queued_locs.append( planet.systemID )
+                    break
+
     bldName = "BLD_EVACUATION"
     bldType = fo.getBuildingType(bldName)
     for pid in AIstate.popCtrIDs:
