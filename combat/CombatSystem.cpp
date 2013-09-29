@@ -270,7 +270,8 @@ namespace {
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
         AttackEvent attack(round, attacker->ID(), target->ID(), damage,
@@ -308,10 +309,12 @@ namespace {
             return;
         }
 
-        Logger().debugStream() << "AttackShipPlanet: attacker: " << attacker->Name() << " damage: " << damage
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+            Logger().debugStream() << "AttackShipPlanet: attacker: " << attacker->Name() << " damage: " << damage
                                << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
                                                                  << " defense: " << target_defense->Current()
                                                                  << " infra: " << target_construction->Current();
+        }
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to defense.
@@ -330,15 +333,18 @@ namespace {
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
         if (defense_damage >= 0) {
             target_defense->AddToCurrent(-defense_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
         AttackEvent attack(round, attacker->ID(), target->ID(), damage, false);
@@ -367,16 +373,19 @@ namespace {
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
-        Logger().debugStream() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+            Logger().debugStream() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
                                << "  target: " << target->Name() << " shield: " << target_shield->Current()
                                                                  << " structure: " << target_structure->Current();
+        }
 
         damage = std::max(0.0f, damage - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
         AttackEvent attack(round, attacker->ID(), target->ID(), damage,
@@ -387,7 +396,8 @@ namespace {
     }
 
     void AttackPlanetPlanet(TemporaryPtr<Planet> attacker, TemporaryPtr<Planet> target, CombatInfo& combat_info, int round) {
-        Logger().debugStream() << "AttackPlanetPlanet does nothing!";
+        if (GetOptionsDB().Get<bool>("verbose-logging"))
+            Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
     }
 
