@@ -1,4 +1,4 @@
-# installation of scipy probably necessary to get pylab
+# pylab is part of matplotlib -- http://matplotlib.org/
 from pylab import *
 import os
 import sys
