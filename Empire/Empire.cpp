@@ -2500,23 +2500,23 @@ void Empire::CheckProductionProgress() {
     std::map<int, std::vector<TemporaryPtr<Ship> > >  system_new_ships;
 
     // preprocess the queue to get all the costs and times of all items
+    // at every location at which they are being produced,
     // before doing any generation of new objects or other modifications
     // of the gamestate. this will ensure that the cost of items doesn't
     // change while the queue is being processed, so that if there is
     // sufficent PP to complete an object at the start of a turn,
     // items above it on the queue getting finished don't increase the
     // cost and result in it not being finished that turn.
-    std::map<ProductionQueue::ProductionItem, std::pair<double, int> > queue_item_costs_and_times;
+    std::map<std::pair<ProductionQueue::ProductionItem, int>,
+             std::pair<double, int> >                           queue_item_costs_and_times;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         ProductionQueue::Element& elem = m_production_queue[i];
-        queue_item_costs_and_times[elem.item] = ProductionCostAndTime(elem);
+        queue_item_costs_and_times[std::make_pair(elem.item, elem.location)] = ProductionCostAndTime(elem);
     }
 
-    for (std::map<ProductionQueue::ProductionItem, std::pair<double, int> >::const_iterator
-         it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
-    {
-        Logger().debugStream() << it->first.design_id << " : " << it->second.first;
-    }
+    //for (std::map<ProductionQueue::ProductionItem, std::pair<double, int> >::const_iterator
+    //     it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
+    //{ Logger().debugStream() << it->first.design_id << " : " << it->second.first; }
 
 
     // go through queue, updating production progress.  If a production item is
@@ -2528,7 +2528,8 @@ void Empire::CheckProductionProgress() {
         ProductionQueue::Element& elem = m_production_queue[i];
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = queue_item_costs_and_times[elem.item];
+        boost::tie(item_cost, build_turns) =
+            queue_item_costs_and_times[std::make_pair(elem.item, elem.location)];
         item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
