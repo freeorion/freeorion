@@ -861,8 +861,11 @@ void ProductionQueue::Update() {
         {
             firstTurnPPAvailable += turnJump;
             turnJump = 0;
-            if (firstTurnPPAvailable > DP_TURNS)
+            if (firstTurnPPAvailable > DP_TURNS) {
+                Logger().debugStream()  << "ProductionQueue::Update: Projections for Resource Group halted at " 
+                                        << DP_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
                 break; // this resource group is allocated-out for span of simulation; remaining items in group left as never completing
+            }
 
             unsigned int i = *el_it;
             ProductionQueue::Element& element = dpsim_queue[i];
@@ -929,11 +932,10 @@ void ProductionQueue::Update() {
     } // resource groups loop
 
     dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
-    dp_time = (dp_time_end - dp_time_start).total_nanoseconds();
-    (void)dp_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
-
-    //dp_time = dpsim_queue_timer.elapsed() * 1000;
-    // Logger().debugStream() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
+    dp_time = (dp_time_end - dp_time_start).total_microseconds();
+    if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME)
+        Logger().debugStream()  << "ProductionQueue::Update: Projections timed out after " << dp_time 
+                                << " microseconds; all remaining items in queue marked completing 'Never'.";
 
     ProductionQueueChangedSignal();
 }
