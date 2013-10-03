@@ -483,9 +483,11 @@ class AIstate(object):
             ship = universe.getShip(shipID)
             if not ship:
                 continue
-            stats = self.get_weighted_design_stats(ship.designID,  ship.speciesName)
+            stats = dict(self.get_weighted_design_stats(ship.designID,  ship.speciesName))
             structure = ship.currentMeterValue(fo.meterType.structure)
+            shields = ship.currentMeterValue(fo.meterType.shield)
             stats['structure'] = structure
+            stats['shields'] = shields
             self.adjust_stats_vs_enemy(stats,  enemy_stats)
             rating += stats['attack'] * stats['structure']
             attack += stats['attack']
@@ -579,7 +581,7 @@ class AIstate(object):
         myattacks = self.weight_attacks(design_stats.get('attacks', {}),  weapons_grade)
         design_stats['attacks'] = myattacks
         #mystructure = design_stats.get('structure', 1)
-        myshields = self.weight_shields(design_stats.get('shields', 0),  shields_grade)
+        myshields = self.weight_shields(design_stats.get('shields', 0),  shields_grade) #designs currently return zero shield value
         design_stats['attack'] = sum([a * b for a, b in myattacks.items()])
         design_stats['shields'] = myshields
         return design_stats
@@ -599,7 +601,7 @@ class AIstate(object):
             estats = enemygroup[1]
             if estats == {}:
                 attack_tally += count * sum([ a * b for a, b in myattacks.items()])
-                structure_tally += count * (mystructure + myshields * sum(myattacks.values())) #uses num of my attacks for proxy calc of structure help from shield
+                structure_tally += count * (mystructure + myshields * 3*sum(myattacks.values())) #uses num of my attacks for proxy calc of structure help from shield
                 total_enemy_weights += count
                 continue
             eshields = estats.get('shields',  0)
@@ -633,7 +635,19 @@ class AIstate(object):
             attacks = {}
             for attack in list(design.directFireStats):
                 attacks[attack] = attacks.get(attack,  0) + 1
-            stats = {'attack':design.attack, 'structure':design.structure, 'shields':design.shields,  'attacks':attacks}
+            parts = design.parts
+            shields = 0
+            if "SH_BLACK" in parts:
+                shields = 20
+            elif "SH_MULTISPEC" in parts:
+                shields = 15
+            elif "SH_PLASMA" in parts:
+                shields = 12
+            elif "SH_DEFLECTOR" in parts:
+                shields = 7
+            elif "SH_DEFENSE_GRID" in parts:
+                shields = 4
+            stats = {'attack':design.attack, 'structure':design.structure, 'shields':shields,  'attacks':attacks}
         else:
             stats = {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
         self.designStats[designID] = stats
