@@ -224,6 +224,16 @@ namespace {
     }
 }
 
+bool BuildingType::ProductionCostTimeLocationInvariant() const {
+    if (CHEAP_AND_FAST_BUILDING_PRODUCTION)
+        return true;
+    if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
+        return false;
+    if (m_production_time && !m_production_time->LocalCandidateInvariant())
+        return false;
+    return true;
+}
+
 double BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
         return 1.0;

@@ -207,9 +207,12 @@ public:
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     const PartTypeStats&    Stats() const           { return m_stats; }             ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
+
+    bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     double                  ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
+
     const std::set<std::string>& Tags() const    { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
@@ -414,6 +417,7 @@ public:
     double              TroopCapacity() const   { return 0.0; }                 ///< returns the troop capacity of hull
     double              Detection() const       { return 0.0; }                 ///< returns detection ability of hull
 
+    bool                ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     double              ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this hull
     int                 ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this hull
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
@@ -520,6 +524,7 @@ public:
 
     int                             DesignedOnTurn() const  { return m_designed_on_turn; };     ///< returns turn on which design was created
 
+    bool                            ProductionCostTimeLocationInvariant() const;                ///< returns true if the production cost and time are invariant (does not depend on) the location
     double                          ProductionCost(int empire_id, int location_id) const;       ///< returns the total cost to build a ship of this design
     double                          PerTurnCost(int empire_id, int location_id) const;          ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
     int                             ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design

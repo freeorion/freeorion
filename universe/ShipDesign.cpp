@@ -464,6 +464,16 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     return false;
 }
 
+bool PartType::ProductionCostTimeLocationInvariant() const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION)
+        return true;
+    if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
+        return false;
+    if (m_production_time && !m_production_time->LocalCandidateInvariant())
+        return false;
+    return true;
+}
+
 double PartType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
         return 1.0;
@@ -545,6 +555,16 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
 // HullType:: and PartType::ProductionCost and ProductionTime are almost identical.
 // Chances are, the same is true of buildings and techs as well.
 // TODO: Eliminate duplication
+bool HullType::ProductionCostTimeLocationInvariant() const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION)
+        return true;
+    if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
+        return false;
+    if (m_production_time && !m_production_time->LocalCandidateInvariant())
+        return false;
+    return true;
+}
+
 double HullType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
         return 1.0;
@@ -726,6 +746,25 @@ const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */)
         return UserString(m_description);
     else
         return m_description;
+}
+
+bool ShipDesign::ProductionCostTimeLocationInvariant() const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION)
+        return true;
+    // as seen in ShipDesign::ProductionCost, the location is passed as the
+    // local candidate in the ScriptingContext
+
+    // check hull and all parts
+    if (const HullType* hull = GetHullType(m_hull))
+        if (!hull->ProductionCostTimeLocationInvariant())
+            return false;
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
+        if (const PartType* part = GetPartType(*it))
+            if (!part->ProductionCostTimeLocationInvariant())
+                return false;
+
+    // if hull and all parts are invariant, so is whole design
+    return true;
 }
 
 double ShipDesign::ProductionCost(int empire_id, int location_id) const {

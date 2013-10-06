@@ -128,9 +128,12 @@ public:
     const std::string&              Name() const            { return m_name; }              ///< returns the unique name for this type of building
     const std::string&              Description() const     { return m_description; }       ///< returns a text description of this type of building
     std::string                     Dump() const;                                           ///< returns a data file format representation of this object
+
+    bool                            ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     double                          ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building
     double                          PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building
+
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
     double                          MaintenanceCost() const { return 0.0; }                 ///< returns the number of monetary points required per turn to operate this building
     const std::set<std::string>& Tags() const               { return m_tags; }
