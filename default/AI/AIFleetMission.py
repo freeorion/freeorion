@@ -379,7 +379,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                     #TODO: evaluate releasing a smaller portion or none of the ships
                     sysStatus = foAI.foAIstate.systemStatus.setdefault(last_sys_target, {})
                     newFleets=[]
-                    threat_present = (sysStatus.get('totalThreat',  0) != 0) and (sysStatus.get('neighborThreat',  0) != 0)
+                    threat_present = (sysStatus.get('totalThreat',  0) != 0) or (sysStatus.get('neighborThreat',  0) != 0)
                     target_system = universe.getSystem(last_sys_target)
                     if (not threat_present) and target_system:
                         for pid in target_system.planetIDs:
