@@ -130,13 +130,14 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
     "creates a dictionary that takes planetIDs as key and their invasion score as value"
 
     planetValues = {}
+    secureAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE])
 
     for planetID in planetIDs:
-        planetValues[planetID] = evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire)
+        planetValues[planetID] = evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions)
 
     return planetValues
 
-def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
+def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions):
     "return the invasion value of a planet"
     detail = []
     buildingValues = {"BLD_IMPERIAL_PALACE":                    1000,
@@ -204,9 +205,22 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     troops = planet.currentMeterValue(fo.meterType.troops)
     maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
 
-    popTSize = planet.currentMeterValue(fo.meterType.targetPopulation)#TODO: adjust for empire tech
-    planetSpecials = list(planet.specials)
-    pSysID = planet.systemID#TODO: check star value
+    pSysID = planet.systemID
+    this_system = universe.getSystem(pSysID)
+    secure_targets = [pSysID] + list(this_system.planetIDs)
+    system_secured = False
+    for mission in secureAIFleetMissions:
+        if system_secured:
+            break
+        secure_fleet_id = mission.target_id
+        s_fleet = universe.getFleet(secure_fleet_id)
+        if (not s_fleet) or (s_fleet.systemID != pSysID):
+            continue
+        for ai_target in mission.getAITargets(EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE):
+            target_obj = ai_target.target_obj
+            if (target_obj is not None) and target_obj.id in secure_targets:
+                system_secured = True
+                break
 
     pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
     sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
@@ -231,7 +245,10 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                 supplyVal *= int( min(1, ProductionAI.curBestMilShipRating() /  sysFThrt )  )
     threatFactor = min(1,  0.2*MilitaryAI.totMilRating/(sysTotThrt+0.001))**2  #devalue invasions that would require too much military force
     buildTime=4
-    plannedTroops = min(troops+maxJumps+buildTime,  maxTroops)
+    if system_secured:
+        plannedTroops = troops
+    else:
+        plannedTroops = min(troops+maxJumps+buildTime,  maxTroops)
     if ( empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete ):
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
@@ -271,10 +288,10 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         if not planet: continue
         sysID = planet.systemID
         foundFleets = []
-        podsNeeded= int(math.ceil( (ptroops+1.1)/2.0)+0.0001)
+        podsNeeded= math.ceil( (ptroops+0.05)/2.0)
         foundStats={}
         minStats= {'rating':0, 'troopPods':podsNeeded}
-        targetStats={'rating':10,'troopPods':podsNeeded+2}
+        targetStats={'rating':10,'troopPods':podsNeeded+1}
         theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPoolSet=invasionPool,   fleetList=foundFleets,  verbose=False)
         if theseFleets == []:
             if not FleetUtilsAI.statsMeetReqs(foundStats,  minStats):

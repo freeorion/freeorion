@@ -14,8 +14,8 @@ resourceTimerFile=None
 doResourceTiming=True
 __timerEntries1=["TopResources",  "SetCapital",  "SetPlanets",  "SetAsteroids",  "SetGiants",  "PrintResources" ]
 __timerEntries2=["getPlanets",  "Filter",  "Priority",  "Shuffle",  "Targets",  "Loop" ]
-_timerEntries = __timerEntries2
-__timerFileFmt = "%8d"+ (len(_timerEntries)*"\t %8d")
+timer_entries = __timerEntries2
+__timerFileFmt = "%8d"+ (len(timer_entries)*"\t %8d")
 
 oldTargets={}
 newTargets={}
@@ -341,14 +341,14 @@ def setPlanetResourceFoci(): #+
     print "Current Output (turn %4d) RP/PP : %.2f  ( %.1f / %.1f )"%(fo.currentTurn(),  aRP/ (aPP + 0.0001), aRP,  aPP ), "\n------------------------"
 
     timer.append( time() ) #end
-    if doResourceTiming and _timerEntries==__timerEntries2:
+    if doResourceTiming and timer_entries==__timerEntries2:
         times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
         timeFmt = "%30s: %8d msec  "
         print "ResourcesAI Time Requirements:"
-        for mod,  modTime in zip(_timerEntries,  times):
+        for mod,  modTime in zip(timer_entries,  times):
             print timeFmt%((30*' '+mod)[-30:],  int(1000*modTime))
         if resourceTimerFile:
-            print "len times: %d  ;  len entries: %d "%(len(times),  len(_timerEntries))
+            print "len times: %d  ;  len entries: %d "%(len(times),  len(timer_entries))
             resourceTimerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
             resourceTimerFile.flush()
 
@@ -375,11 +375,11 @@ def generateResourcesOrders(): #+
     printResourcesPriority()
     timer.append( time() )
 
-    if doResourceTiming and _timerEntries==__timerEntries1:
+    if doResourceTiming and timer_entries==__timerEntries1:
         times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
         timeFmt = "%30s: %8d msec  "
         print "ResourcesAI Time Requirements:"
-        for mod,  modTime in zip(_timerEntries,  times):
+        for mod,  modTime in zip(timer_entries,  times):
             print timeFmt%((30*' '+mod)[-30:],  int(1000*modTime))
         if resourceTimerFile:
             resourceTimerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')

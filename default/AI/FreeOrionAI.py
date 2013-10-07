@@ -41,13 +41,13 @@ _capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
-_timerEntries = ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",
+timerEntries  = ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",
                         "ResearchAI",  "ProductionAI",  "ResourcesAI",  "Cleanup"]
 _timerBucketEntries = ["Server_Processing",  "AI_Planning"]
 
 _timerFile = None
 _timerBucketFile = None
-_timerFileFmt = "%8d"+ (len(_timerEntries)*"\t %8d")
+_timerFileFmt = "%8d"+ (len(timerEntries )*"\t %8d")
 _timerBucketFileFmt = "%8d"+ (len(_timerBucketEntries)*"\t %8d")
 _lastTurnTimestamp = 0
 
@@ -88,14 +88,14 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
         if os.path.exists("timers") and os.path.isdir("timers"):
             timerpath = "timers"+os.path.sep+"timer_%02d.dat"% (empire_id-1)
             _timerFile = open(timerpath,  'w')
-            _timerFile.write("Turn\t" + "\t".join(_timerEntries) +'\n')
+            _timerFile.write("Turn\t" + "\t".join(timerEntries ) +'\n')
             timerbucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
             _timerBucketFile = open(timerbucketpath,  'w')
             _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
             _lastTurnTimestamp = time()
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empire_id-1),  'w')
-                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI._timerEntries)+"\n")
+                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timer_entries)+"\n")
             print "timer file saved at " + timerpath
     except:
         _timerFile = None
@@ -129,14 +129,14 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
         if os.path.exists("timers") and os.path.isdir("timers"):
             timerpath = "timers"+os.path.sep+"timer_%02d.dat"% (empire_id-1)
             _timerFile = open(timerpath,  'w')
-            _timerFile.write("Turn\t" + "\t".join(_timerEntries) +'\n')
+            _timerFile.write("Turn\t" + "\t".join(timerEntries ) +'\n')
             timerBucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
             _timerBucketFile = open(timerBucketpath,  'w')
             _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
             _lastTurnTimestamp = time()
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"% (empire_id-1),  'w')
-                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI._timerEntries)+"\n")
+                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timer_entries)+"\n")
             print "timer file saved at "+timerpath
     except:
         _timerFile = None
@@ -292,7 +292,7 @@ def generateOrders(): # pylint: disable=invalid-name
     turnEndTime = time()
     timeFmt = "%30s: %8d msec  "
     print "AI Module Time Requirements:"
-    for mod,  modTime in zip(_timerEntries,  times):
+    for mod,  modTime in zip(timerEntries ,  times):
         print timeFmt % ((30*' '+mod)[-30:],  int(1000*modTime))
     if _timerFile:
         _timerFile.write(  _timerFileFmt% tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')

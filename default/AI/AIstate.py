@@ -747,6 +747,14 @@ class AIstate(object):
         ResourcesAI.lastFociCheck[0]=0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
+        #self.reset_invasions()
+        
+    def reset_invasions(self):
+        "useful when testing changes to invasion planning"
+        invasionAIFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
+        for mission in invasionAIFleetMissions:
+            mission.clearAIFleetOrders()
+            mission.clearAITargets(([-1]+ mission.getAIMissionTypes()[:1])[-1])
 
     def __cleanFleetRoles(self,  justResumed=False):
         "removes fleetRoles if a fleet has been lost, and update fleet Ratings"

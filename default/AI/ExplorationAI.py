@@ -93,6 +93,7 @@ def assignScoutsToExploreSystems():
             availableScouts.update(thisFleetList)
     print "sent scouting fleets to sysIDs : %s"%sentList
     return
+    # pylint: disable=pointless-string-statement
     """
     #TODO: consider matching sys to closest scout, also consider rejecting scouts that would travel a blockaded  path
     sentList=[]

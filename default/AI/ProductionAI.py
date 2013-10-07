@@ -205,9 +205,11 @@ def addTroopDesigns():
     nb,  hull =  designNameBases[1]+"%1d",   "SH_BASIC_MEDIUM"
     newTroopDesigns += [ (nb%(1),  desc,  hull,  3*[tp],  "",  model) ]
     nb,  hull =  designNameBases[1]+"%1d",   "SH_ORGANIC"
-    newTroopDesigns += [ (nb%(iw),  desc,  hull,  [srb%iw]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
+    newTroopDesigns += [ (nb%(2),  desc,  hull,  4*[tp],  "",  model) ]
+    #newTroopDesigns += [ (nb%(iw),  desc,  hull,  [srb%iw]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
     nb,  hull =  designNameBases[1]+"%1d",   "SH_STATIC_MULTICELLULAR"
-    newTroopDesigns += [ (nb%(iw+3),  desc,  hull,  [srb%iw]+ 4*[tp],  "",  model) for iw in [2, 3, 4] ]
+    #newTroopDesigns += [ (nb%(0) +"0",  desc,  hull,  5*[tp],  "",  model) for iw in [2, 3, 4] ]
+    #newTroopDesigns += [ (nb%(iw+3),  desc,  hull,  [srb%iw]+ 4*[tp],  "",  model) for iw in [2, 3, 4] ]
 
     ar1,  ar2,  ar3 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
     arL=[ar1,  ar2,  ar3]
@@ -215,6 +217,7 @@ def addTroopDesigns():
         nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
         #newTroopDesigns += [ (nb%(ari,  iw),  desc,  hull,  [srb%iw,  arL[ari]]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
         nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_ENDOMORPHIC"
+        newTroopDesigns += [ (nb%(ari,  0),  desc,  hull,  [arL[ari]]+ 5*[tp],  "",  model) ]
         #newTroopDesigns += [ (nb%(ari,  iw+3),  desc,  hull,  [srb%iw,  arL[ari]]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
     addDesigns(shipType,   newTroopDesigns,  shipProdPriority)
 

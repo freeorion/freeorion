@@ -568,7 +568,7 @@ def next_turn_pop_change(cur_pop,  target_pop):
     else:
         pop_change = -(cur_pop - target_pop) / 10
         pop_change = max(pop_change, target_pop - cur_pop)
-    return pop_change;
+    return pop_change
 
 def project_ind_val(init_pop,  max_pop_size,  init_industry,  max_ind_factor,  flat_industry,  discountMultiplier):
     "returns a discouted value for a projected industry stream over time with changing population"
