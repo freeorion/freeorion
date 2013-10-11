@@ -171,7 +171,6 @@ bool ClientNetworking::ConnectToServer(
     tcp::resolver resolver(m_io_service);
     tcp::resolver::query query(tcp::v4(), ip_address,
                                boost::lexical_cast<std::string>(MESSAGE_PORT),
-                               boost::asio::ip::resolver_query_base::address_configured |
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;

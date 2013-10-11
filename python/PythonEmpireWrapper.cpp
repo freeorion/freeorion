@@ -50,8 +50,8 @@ namespace {
     const std::string&  NameFromProductionQueueElement(const ProductionQueue::Element& element)         { return element.item.name; }
     int                 DesignIDFromProductionQueueElement(const ProductionQueue::Element& element)     { return element.item.design_id; }
 
-    bool                (Empire::*BuildableItemBuilding)(BuildType, const std::string&, int) const =    &Empire::BuildableItem;
-    bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                       &Empire::BuildableItem;
+    bool                (Empire::*BuildableItemBuilding)(BuildType, const std::string&, int) const =    &Empire::ProducibleItem;
+    bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                       &Empire::ProducibleItem;
 
     const ProductionQueue::Element&
                             (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =      &ProductionQueue::operator[];

@@ -138,18 +138,9 @@ struct FO_COMMON_API ProductionQueue {
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
-        bool operator<(const ProductionItem& rhs) const {
-            if (build_type < rhs.build_type)
-                return true;
-            if (build_type > rhs.build_type)
-                return false;
-            if (build_type == BT_BUILDING)
-                return name < rhs.name;
-            else if (build_type == BT_SHIP)
-                return design_id < rhs.design_id;
+        bool CostIsProductionLocationInvariant() const;             ///< indicates whether production location can change the cost of this item. This is useful for cachcing cost results per-location or once for all locations.
 
-            return false;
-        }
+        bool operator<(const ProductionItem& rhs) const;
 
         BuildType   build_type;
 
@@ -341,9 +332,9 @@ public:
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::Element& element) const;
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
-    bool                    BuildableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                    BuildableItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                    BuildableItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    ProducibleItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    ProducibleItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
 
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 

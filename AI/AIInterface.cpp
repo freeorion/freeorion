@@ -638,7 +638,7 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
-        if (!empire->BuildableItem(BT_BUILDING, item_name, location_id)) {
+        if (!empire->ProducibleItem(BT_BUILDING, item_name, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
             return 0;
         }
@@ -653,7 +653,7 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
-        if (!empire->BuildableItem(BT_SHIP, design_id, location_id)) {
+        if (!empire->ProducibleItem(BT_SHIP, design_id, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }

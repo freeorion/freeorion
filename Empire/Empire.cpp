@@ -155,7 +155,7 @@ namespace {
             //Logger().debugStream() << "group has " << group_pp_available << " PP available";
 
             // see if item is buildable this turn...
-            if (!empire->BuildableItem(queue_element.item, queue_element.location)) {
+            if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
                 // can't be built at this location this turn.
                 queue_element.allocated_pp = 0.0;
                 //Logger().debugStream() << "item can't be built at location this turn";
@@ -501,6 +501,35 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
     }
 }
 
+bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const {
+    if (build_type == BT_BUILDING) {
+        const BuildingType* type = GetBuildingType(name);
+        if (!type)
+            return true;
+        return type->ProductionCostTimeLocationInvariant();
+
+    } else if (build_type == BT_SHIP) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return true;
+        return design->ProductionCostTimeLocationInvariant();
+    }
+    return false;
+}
+
+bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const {
+    if (build_type < rhs.build_type)
+        return true;
+    if (build_type > rhs.build_type)
+        return false;
+    if (build_type == BT_BUILDING)
+        return name < rhs.name;
+    else if (build_type == BT_SHIP)
+        return design_id < rhs.design_id;
+
+    return false;
+}
+
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
@@ -792,7 +821,7 @@ void ProductionQueue::Update() {
 
         // if any removal condition is met, remove item from queue
         bool remove = false;
-        if (group.empty() || !empire->BuildableItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
+        if (group.empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
             remove = true;
         } else {
             std::map<std::set<int>, double>::const_iterator available_it = available_pp.find(group);
@@ -1315,7 +1344,8 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
     } else if (item.build_type == BT_SHIP) {
         const ShipDesign* design = GetShipDesign(item.design_id);
         if (design)
-            return std::make_pair(design->ProductionCost(m_id, location_id), design->ProductionTime(m_id, location_id));
+            return std::make_pair(design->ProductionCost(m_id, location_id),
+                                  design->ProductionTime(m_id, location_id));
         return std::make_pair(-1.0, -1);
     }
     Logger().errorStream() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
@@ -1325,10 +1355,10 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
 bool Empire::HasExploredSystem(int ID) const
 { return (m_explored_systems.find(ID) != m_explored_systems.end()); }
 
-bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const {
+bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int location) const {
     // special case to check for ships being passed with names, not design ids
     if (build_type == BT_SHIP)
-        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
 
     if (build_type == BT_BUILDING && !BuildingTypeAvailable(name))
         return false;
@@ -1346,15 +1376,15 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         return building_type->ProductionLocation(m_id, location);
 
     } else {
-        Logger().errorStream() << "Empire::BuildableItem was passed an invalid BuildType";
+        Logger().errorStream() << "Empire::ProducibleItem was passed an invalid BuildType";
         return false;
     }
 }
 
-bool Empire::BuildableItem(BuildType build_type, int design_id, int location) const {
+bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) const {
     // special case to check for buildings being passed with ids, not names
     if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
+        throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id))
         return false;
@@ -1372,18 +1402,18 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         return ship_design->ProductionLocation(m_id, location);
 
     } else {
-        Logger().errorStream() << "Empire::BuildableItem was passed an invalid BuildType";
+        Logger().errorStream() << "Empire::ProducibleItem was passed an invalid BuildType";
         return false;
     }
 }
 
-bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int location) const {
+bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, int location) const {
     if (item.build_type == BT_BUILDING)
-        return BuildableItem(item.build_type, item.name, location);
+        return ProducibleItem(item.build_type, item.name, location);
     else if (item.build_type == BT_SHIP)
-        return BuildableItem(item.build_type, item.design_id, location);
+        return ProducibleItem(item.build_type, item.design_id, location);
     else
-        throw std::invalid_argument("Empire::BuildableItem was passed a ProductionItem with an invalid BuildType");
+        throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
     return false;
 }
 
@@ -2063,7 +2093,7 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
-    if (!BuildableItem(build_type, name, location))
+    if (!ProducibleItem(build_type, name, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
@@ -2077,7 +2107,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
-    if (!BuildableItem(build_type, design_id, location))
+    if (!ProducibleItem(build_type, design_id, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
@@ -2513,12 +2543,18 @@ void Empire::CheckProductionProgress() {
              std::pair<double, int> >                           queue_item_costs_and_times;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         ProductionQueue::Element& elem = m_production_queue[i];
-        queue_item_costs_and_times[std::make_pair(elem.item, elem.location)] = ProductionCostAndTime(elem);
+
+        // for items that don't depend on location, only store cost/time once
+        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+
+        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
+            queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
     }
 
-    //for (std::map<ProductionQueue::ProductionItem, std::pair<double, int> >::const_iterator
-    //     it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
-    //{ Logger().debugStream() << it->first.design_id << " : " << it->second.first; }
+    for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<double, int> >::const_iterator
+         it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
+    { Logger().debugStream() << it->first.first.design_id << " : " << it->second.first; }
 
 
     // go through queue, updating production progress.  If a production item is
@@ -2530,8 +2566,13 @@ void Empire::CheckProductionProgress() {
         ProductionQueue::Element& elem = m_production_queue[i];
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) =
-            queue_item_costs_and_times[std::make_pair(elem.item, elem.location)];
+
+        // for items that don't depend on location, only store cost/time once
+        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+
+        boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+
         item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
@@ -2561,7 +2602,7 @@ void Empire::CheckProductionProgress() {
                 // check location condition before each building is created, so
                 // that buildings being produced can prevent subsequent
                 // buildings completions on the same turn from going through
-                if (!this->BuildableItem(elem.item, elem.location)) {
+                if (!this->ProducibleItem(elem.item, elem.location)) {
                     Logger().debugStream() << "Location test failed for building " << elem.item.name << " on planet " << planet->Name();
                     break;
                 }
@@ -2593,7 +2634,7 @@ void Empire::CheckProductionProgress() {
                 // check location condition before each ship is created, so
                 // that ships being produced can prevent subsequent
                 // ship completions on the same turn from going through
-                if (!this->BuildableItem(elem.item, elem.location))
+                if (!this->ProducibleItem(elem.item, elem.location))
                     break;
 
                 // get species for this ship.  use popcenter species if build

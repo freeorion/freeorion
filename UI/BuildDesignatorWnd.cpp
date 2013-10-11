@@ -286,7 +286,7 @@ namespace {
             push_back(m_panel);
 
             if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-                if (!empire->BuildableItem(m_item, m_location_id)) {
+                if (!empire->ProducibleItem(m_item, m_location_id)) {
                     this->Disable(true);
                     m_panel->Disable(true);
                 }
@@ -664,7 +664,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool producible_here = empire->BuildableItem(BT_BUILDING, name, m_production_location);
+    bool producible_here = empire->ProducibleItem(BT_BUILDING, name, m_production_location);
 
     if (producible_here)
         return m_availabilities_shown.first;
@@ -687,7 +687,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool producible_here = empire->BuildableItem(BT_SHIP, design_id, m_production_location);
+    bool producible_here = empire->ProducibleItem(BT_SHIP, design_id, m_production_location);
 
     if (producible_here)
         return m_availabilities_shown.first;
@@ -1102,7 +1102,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::str
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->BuildableItem(build_type, item, BuildLocation()))
+    if (empire && empire->ProducibleItem(build_type, item, BuildLocation()))
         AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
 }
 
@@ -1110,7 +1110,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id,
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->BuildableItem(build_type, design_id, BuildLocation()))
+    if (empire && empire->ProducibleItem(build_type, design_id, BuildLocation()))
         AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());
 }
 
