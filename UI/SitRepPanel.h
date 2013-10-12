@@ -8,6 +8,7 @@ namespace GG {
     class Button;
     class ListBox;
 }
+class SitRepEntry;
 
 
 class SitRepPanel : public CUIWnd {
@@ -41,6 +42,8 @@ private:
     void            FilterClicked();
 
     void            DoLayout();
+
+    void            GetTurnSitrepsFromEmpire(std::list<SitRepEntry>& append_list, int empire_id) const;
 
     GG::ListBox*            m_sitreps_lb;
     GG::Button*             m_prev_turn_button;
