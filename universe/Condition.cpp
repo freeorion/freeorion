@@ -6467,23 +6467,50 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 }
 
 bool Condition::And::RootCandidateInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->RootCandidateInvariant())
+    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
+        return m_root_candidate_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->RootCandidateInvariant()) {
+            m_root_candidate_invariant = VARIANT;
             return false;
+        }
+    }
+    m_root_candidate_invariant = INVARIANT;
     return true;
 }
 
 bool Condition::And::TargetInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->TargetInvariant())
+    if (m_target_invariant != UNKNOWN_INVARIANCE)
+        return m_target_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->TargetInvariant()) {
+            m_target_invariant = VARIANT;
             return false;
+        }
+    }
+    m_target_invariant = INVARIANT;
     return true;
 }
 
 bool Condition::And::SourceInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->SourceInvariant())
+    if (m_source_invariant != UNKNOWN_INVARIANCE)
+        return m_source_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant()) {
+            m_source_invariant = VARIANT;
             return false;
+        }
+    }
+    m_source_invariant = INVARIANT;
     return true;
 }
 
@@ -6582,23 +6609,50 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 }
 
 bool Condition::Or::RootCandidateInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->RootCandidateInvariant())
+    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
+        return m_root_candidate_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->RootCandidateInvariant()) {
+            m_root_candidate_invariant = VARIANT;
             return false;
+        }
+    }
+    m_root_candidate_invariant = INVARIANT;
     return true;
 }
 
 bool Condition::Or::TargetInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->TargetInvariant())
+    if (m_target_invariant != UNKNOWN_INVARIANCE)
+        return m_target_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->TargetInvariant()) {
+            m_target_invariant = VARIANT;
             return false;
+        }
+    }
+    m_target_invariant = INVARIANT;
     return true;
 }
 
 bool Condition::Or::SourceInvariant() const {
-    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-        if (!(*it)->SourceInvariant())
+    if (m_source_invariant != UNKNOWN_INVARIANCE)
+        return m_source_invariant == INVARIANT;
+
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant()) {
+            m_source_invariant = VARIANT;
             return false;
+        }
+    }
+    m_source_invariant = INVARIANT;
     return true;
 }
 
@@ -6665,14 +6719,26 @@ void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     }
 }
 
-bool Condition::Not::RootCandidateInvariant() const
-{ return m_operand->RootCandidateInvariant(); }
+bool Condition::Not::RootCandidateInvariant() const {
+    if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
+        return m_root_candidate_invariant == INVARIANT;
+    m_root_candidate_invariant = m_operand->RootCandidateInvariant() ? INVARIANT: VARIANT;
+    return m_root_candidate_invariant == INVARIANT;
+}
 
-bool Condition::Not::TargetInvariant() const
-{ return m_operand->TargetInvariant(); }
+bool Condition::Not::TargetInvariant() const {
+    if (m_target_invariant != UNKNOWN_INVARIANCE)
+        return m_target_invariant == INVARIANT;
+    m_target_invariant = m_operand->TargetInvariant() ? INVARIANT: VARIANT;
+    return m_target_invariant == INVARIANT;
+}
 
-bool Condition::Not::SourceInvariant() const
-{ return m_operand->SourceInvariant(); }
+bool Condition::Not::SourceInvariant() const {
+    if (m_source_invariant != UNKNOWN_INVARIANCE)
+        return m_source_invariant == INVARIANT;
+    m_source_invariant = m_operand->SourceInvariant() ? INVARIANT: VARIANT;
+    return m_source_invariant == INVARIANT;
+}
 
 std::string Condition::Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(true); }
