@@ -32,6 +32,8 @@ annexablePlanetIDs=set()
 curBestMilShipRating = 20
 allColonyOpportunities = {}
 gotRuins=False
+gotAst = False
+gotGG = False
 curBestPilotRating = 1e-8
 curMidPilotRating = 1e-8
 pilotRatings = {}
@@ -99,7 +101,7 @@ def ratePlanetaryPiloting(pid):
 
 def getColonyFleets():
     "examines known planets, collects various colonization data, to be later used to send colony fleets"
-    global  curBestMilShipRating,  gotRuins, curBestPilotRating, curMidPilotRating
+    global  curBestMilShipRating,  gotRuins, gotAst,  gotGG,  curBestPilotRating, curMidPilotRating
 
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
 
@@ -217,6 +219,10 @@ def getColonyFleets():
             AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
             if "ANCIENT_RUINS_SPECIAL" in planet.specials:
                 gotRuins = True
+            if planet.size == fo.planetSize.asteroids:
+                gotAst = True
+            elif planet.size == fo.planetSize.gasGiant:
+                gotGG = True
     AIstate.empireStars.clear()
     for sysID in AIstate.colonizedSystems:
         system = universe.getSystem(sysID)
@@ -724,57 +730,66 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 retval+=nestVal
                 detail.append( "%s  %.1f"%(special,  nestVal  )  )
         if   ( planet.size  ==  fo.planetSize.asteroids ):
+            astVal = 0
             if (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ):
-                if system:
-                    astVal=0
-                    for pid in system.planetIDs:
-                        otherPlanet=universe.getPlanet(pid)
-                        if otherPlanet.size == fo.planetSize.asteroids:
-                            if pid==planetID:
-                                continue
-                            elif pid < planetID:
-                                astVal=0
-                                break
-                        elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
-                            astVal+=5 * discountMultiplier
-                    retval += astVal
-                    if astVal >0:
-                        detail.append( "AsteroidMining %.1f"%(astVal  )  )
-            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:5]) :
-                if system:
-                    astVal=0
-                    for pid in system.planetIDs:
-                        otherPlanet=universe.getPlanet(pid)
-                        if otherPlanet.size == fo.planetSize.asteroids:
-                            if pid==planetID:
-                                continue
-                            elif pid < planetID:
-                                astVal=0
-                                break
-                        elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
-                            otherSpecies = fo.getSpecies(otherPlanet.speciesName)
-                            if otherSpecies and otherSpecies.canProduceShips:
-                                astVal+=20 * discountMultiplier
-                    retval += astVal
-                    if astVal >0:
-                        detail.append( "AsteroidShipBuilding %.1f"%(astVal  )  )
-        if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) )):
+                per_ast = 5
+            else:
+                per_ast = 2.5
             if system:
-                GGList=[]
-                orbGenVal=0
-                GGDetail=[]
                 for pid in system.planetIDs:
                     otherPlanet=universe.getPlanet(pid)
-                    if otherPlanet.size== fo.planetSize.gasGiant:
-                        GGList.append(pid)
-                    if  pid!=planetID and otherPlanet.owner==empire.empireID and (AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
-                        orbGenVal+=2*10*discountMultiplier
-                        GGDetail.append( "GGG  for %s  %.1f"%(otherPlanet.name,    discountMultiplier*10  )  )
-                if planetID in sorted(GGList)[:maxGGGs]:
-                    retval += orbGenVal
-                    detail.extend( GGDetail )
-                else:
-                    detail.append( "Won't GGG")
+                    if otherPlanet.size == fo.planetSize.asteroids:
+                        if pid==planetID:
+                            continue
+                        elif pid < planetID:
+                            astVal=0
+                            break
+                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                        astVal+= per_ast * discountMultiplier
+                retval += astVal
+                if astVal >0:
+                    detail.append( "AsteroidMining %.1f"%(astVal  )  )
+            astVal=0
+            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:5]) :
+                per_ast = 20
+            else:
+                per_ast = 10
+            if system:
+                for pid in system.planetIDs:
+                    otherPlanet=universe.getPlanet(pid)
+                    if otherPlanet.size == fo.planetSize.asteroids:
+                        if pid==planetID:
+                            continue
+                        elif pid < planetID:
+                            astVal=0
+                            break
+                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                        otherSpecies = fo.getSpecies(otherPlanet.speciesName)
+                        if otherSpecies and otherSpecies.canProduceShips:
+                            astVal+= per_ast * discountMultiplier
+                retval += astVal
+                if astVal >0:
+                    detail.append( "AsteroidShipBuilding %.1f"%(astVal  )  )
+        if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) )):
+            per_GG = 20
+        else:
+            per_GG = 10
+        if system:
+            GGList=[]
+            orbGenVal=0
+            GGDetail=[]
+            for pid in system.planetIDs:
+                otherPlanet=universe.getPlanet(pid)
+                if otherPlanet.size== fo.planetSize.gasGiant:
+                    GGList.append(pid)
+                if  pid!=planetID and otherPlanet.owner==empire.empireID and (AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
+                    orbGenVal+= per_GG*discountMultiplier
+                    GGDetail.append( "GGG  for %s  %.1f"%(otherPlanet.name,    discountMultiplier*per_GG  )  )
+            if planetID in sorted(GGList)[:maxGGGs]:
+                retval += orbGenVal
+                detail.extend( GGDetail )
+            else:
+                detail.append( "Won't GGG")
         thrtFactor = 1.0
         if ( foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0) )> 2*curBestMilShipRating:
             thrtFactor = 0.5

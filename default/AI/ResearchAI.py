@@ -149,13 +149,13 @@ def generateResearchOrders():
                 if   defTech not in researchQueueList[:5]  and  empire.getTechStatus(defTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(defTech, min(3,  len(researchQueueList)))
                     print "Empire is very defensive,  so attempted to fast-track %s,  got result %d"%(defTech, res)
-        if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+        if False and foAI.foAIstate.aggression >= fo.aggression.aggressive: #with current stats of Conc Camps, disabling this fast-track
             researchQueueList = getResearchQueueTechs()
             if "CON_CONC_CAMP" in researchQueueList:
                 insertIdx = min(40,  researchQueueList.index("CON_CONC_CAMP"))
             else:
                 insertIdx=max(0,  min(40, len(researchQueueList)-10))
-            if "SHP_ASTEROID_HULLS" in researchQueueList:
+            if "SHP_DEFLECTOR_SHIELD" in researchQueueList:
                 insertIdx = min(insertIdx,  researchQueueList.index("SHP_ASTEROID_HULLS"))
             for ccTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP"]:
                 if   ccTech not in researchQueueList[:insertIdx+1]  and  empire.getTechStatus(ccTech) != fo.techStatus.complete:
@@ -191,12 +191,38 @@ def generateResearchOrders():
                 print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%(singTech, res)
         researchQueueList = getResearchQueueTechs()
 
-    if ColonisationAI.gotRuins:
-        if empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete  and "LRN_XENOARCH" not in researchQueueList[:4]:
-            for xenoTech in [  "LRN_XENOARCH",  "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ,  "LRN_ALGO_ELEGANCE"]:
-                if (empire.getTechStatus(xenoTech) != fo.techStatus.complete) and (  xenoTech  not in researchQueueList[:4])  :
-                    res=fo.issueEnqueueTechOrder(xenoTech,0)
-                    print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s  to enable LRN_XENOARCH,  got result %d"%(xenoTech, res)
+    if ColonisationAI.gotGG and empire.getTechStatus("PRO_ORBITAL_GEN") != fo.techStatus.complete  and "PRO_ORBITAL_GEN" not in researchQueueList[:4]:
+        if "CON_ORBITAL_CON" in researchQueueList:
+            insert_idx = 1+ researchQueueList.index("CON_ORBITAL_CON")
+        else:
+            insert_idx = 0
+        res=fo.issueEnqueueTechOrder("PRO_ORBITAL_GEN",insert_idx)
+        print "GasGiant: have colonized a gas giant, so attempted to fast-track %s, got result %d"%("PRO_ORBITAL_GEN", res)
+        researchQueueList = getResearchQueueTechs()
+            
+    if ColonisationAI.gotAst and empire.getTechStatus("SHP_ASTEROID_HULLS") != fo.techStatus.complete  and "SHP_ASTEROID_HULLS" not in researchQueueList[:3]:
+        if "CON_ORBITAL_CON" in researchQueueList:
+            insert_idx = 1+ researchQueueList.index("CON_ORBITAL_CON")
+        else:
+            insert_idx = 0
+        for ast_tech in ["SHP_ASTEROID_HULLS", "PRO_MICROGRAV_MAN"]:
+            if (empire.getTechStatus(ast_tech) != fo.techStatus.complete) and (  ast_tech  not in researchQueueList[:insert_idx+2])  :
+                res=fo.issueEnqueueTechOrder(ast_tech,insert_idx)
+                print "Asteroids: have colonized an asteroid belt, so attempted to fast-track %s ,  got result %d"%(ast_tech, res)
+        researchQueueList = getResearchQueueTechs()
+            
+    if ColonisationAI.gotRuins and empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete  and "LRN_XENOARCH" not in researchQueueList[:4]:
+        if "LRN_ARTIF_MINDS" in researchQueueList:
+            insert_idx = 5+ researchQueueList.index("LRN_ARTIF_MINDS")
+        elif "SPY_DETECT_2" in researchQueueList:
+            insert_idx = 1+ researchQueueList.index("SPY_DETECT_2")
+        else:
+            insert_idx = 0
+        for xenoTech in [  "LRN_XENOARCH",  "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ,  "LRN_ALGO_ELEGANCE"]:
+            if (empire.getTechStatus(xenoTech) != fo.techStatus.complete) and (  xenoTech  not in researchQueueList[:4])  :
+                res=fo.issueEnqueueTechOrder(xenoTech,insert_idx)
+                print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s  to enable LRN_XENOARCH,  got result %d"%(xenoTech, res)
+        researchQueueList = getResearchQueueTechs()
 
     if  empire.getTechStatus("SHP_WEAPON_4_1" ) == fo.techStatus.complete:
         thisTech=fo.getTech("SHP_WEAPON_4_1")
