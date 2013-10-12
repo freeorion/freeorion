@@ -1211,6 +1211,7 @@ public:
     { return !m_collapsed_objects.empty(); }
 
     void            SetFilterCondition(Condition::ConditionBase* condition) {
+        delete m_filter_condition;
         m_filter_condition = condition;
         Refresh();
     }
@@ -1234,7 +1235,7 @@ public:
         if (!obj)
             return false;
 
-        if (!m_filter_condition->Eval(obj))
+        if (m_filter_condition && !m_filter_condition->Eval(obj))
             return false;
 
         int object_id = obj->ID();
