@@ -1088,6 +1088,8 @@ namespace ValueRef {
 template <class T>
 bool ValueRef::Operation<T>::RootCandidateInvariant() const
 {
+    if (m_op_type == RANDOM_UNIFORM)
+        return false;
     if (m_operand1 && !m_operand1->RootCandidateInvariant())
         return false;
     if (m_operand2 && !m_operand2->RootCandidateInvariant())
@@ -1098,6 +1100,8 @@ bool ValueRef::Operation<T>::RootCandidateInvariant() const
 template <class T>
 bool ValueRef::Operation<T>::LocalCandidateInvariant() const
 {
+    if (m_op_type == RANDOM_UNIFORM)
+        return false;
     if (m_operand1 && !m_operand1->LocalCandidateInvariant())
         return false;
     if (m_operand2 && !m_operand2->LocalCandidateInvariant())
@@ -1108,6 +1112,8 @@ bool ValueRef::Operation<T>::LocalCandidateInvariant() const
 template <class T>
 bool ValueRef::Operation<T>::TargetInvariant() const
 {
+    if (m_op_type == RANDOM_UNIFORM)
+        return false;
     if (m_operand1 && !m_operand1->TargetInvariant())
         return false;
     if (m_operand2 && !m_operand2->TargetInvariant())
@@ -1118,6 +1124,8 @@ bool ValueRef::Operation<T>::TargetInvariant() const
 template <class T>
 bool ValueRef::Operation<T>::SourceInvariant() const
 {
+    if (m_op_type == RANDOM_UNIFORM)
+        return false;
     if (m_operand1 && !m_operand1->SourceInvariant())
         return false;
     if (m_operand2 && !m_operand2->SourceInvariant())
