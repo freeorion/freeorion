@@ -149,49 +149,12 @@ namespace {
 // implementation data types
 struct GG::GUIImpl
 {
-    GUIImpl() :
-        m_focus_wnd(0),
-        m_mouse_pos(X(-1000), Y(-1000)),
-        m_mouse_rel(X(0), Y(0)),
-        m_mod_keys(),
-        m_button_down_repeat_delay(250),
-        m_button_down_repeat_interval(66),
-        m_last_button_down_repeat_time(0),
-        m_double_click_interval(500),
-        m_min_drag_time(250),
-        m_min_drag_distance(5),
-        m_prev_button_press_time(-1),
-        m_prev_wnd_under_cursor(0),
-        m_prev_wnd_under_cursor_time(-1),
-        m_curr_wnd_under_cursor(0),
-        m_drag_wnds(),
-        m_curr_drag_wnd_dragged(false),
-        m_curr_drag_wnd(0),
-        m_curr_drag_drop_here_wnd(0),
-        m_wnd_region(WR_NONE),
-        m_browse_target(0),
-        m_drag_drop_originating_wnd(0),
-        m_mouse_lr_swap(false),
-        m_delta_t(0),
-        m_rendering_drag_drop_wnds(false),
-        m_FPS(-1.0),
-        m_calc_FPS(false),
-        m_max_FPS(0.0),
-        m_double_click_wnd(0),
-        m_double_click_start_time(-1),
-        m_double_click_time(-1),
-        m_style_factory(new StyleFactory()),
-        m_render_cursor(false),
-        m_cursor(),
-        m_save_as_png_wnd(0)
-    {
-        m_button_state[0] = m_button_state[1] = m_button_state[2] = false;
-        m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
-    }
+    GUIImpl();
 
     void HandlePress(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleDrag(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
+    void ClearState();
 
     std::string  m_app_name;              // the user-defined name of the apllication
 
@@ -268,6 +231,46 @@ struct GG::GUIImpl
     const Wnd* m_save_as_png_wnd;
     std::string m_save_as_png_filename;
 };
+
+GUIImpl::GUIImpl() :
+    m_focus_wnd(0),
+    m_mouse_pos(X(-1000), Y(-1000)),
+    m_mouse_rel(X(0), Y(0)),
+    m_mod_keys(),
+    m_button_down_repeat_delay(250),
+    m_button_down_repeat_interval(66),
+    m_last_button_down_repeat_time(0),
+    m_double_click_interval(500),
+    m_min_drag_time(250),
+    m_min_drag_distance(5),
+    m_prev_button_press_time(-1),
+    m_prev_wnd_under_cursor(0),
+    m_prev_wnd_under_cursor_time(-1),
+    m_curr_wnd_under_cursor(0),
+    m_drag_wnds(),
+    m_curr_drag_wnd_dragged(false),
+    m_curr_drag_wnd(0),
+    m_curr_drag_drop_here_wnd(0),
+    m_wnd_region(WR_NONE),
+    m_browse_target(0),
+    m_drag_drop_originating_wnd(0),
+    m_mouse_lr_swap(false),
+    m_delta_t(0),
+    m_rendering_drag_drop_wnds(false),
+    m_FPS(-1.0),
+    m_calc_FPS(false),
+    m_max_FPS(0.0),
+    m_double_click_wnd(0),
+    m_double_click_start_time(-1),
+    m_double_click_time(-1),
+    m_style_factory(new StyleFactory()),
+    m_render_cursor(false),
+    m_cursor(),
+    m_save_as_png_wnd(0)
+{
+    m_button_state[0] = m_button_state[1] = m_button_state[2] = false;
+    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
+}
 
 void GUIImpl::HandlePress(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {
@@ -535,6 +538,40 @@ void GUIImpl::HandleRelease(unsigned int mouse_button, const GG::Pt& pos, int cu
     m_curr_drag_wnd = 0;
 }
 
+void GUIImpl::ClearState()
+{
+    m_focus_wnd = 0;
+    m_mouse_pos = GG::Pt(X(-1000), Y(-1000));
+    m_mouse_rel = GG::Pt(X(0), Y(0));
+    m_mod_keys = Flags<ModKey>();
+    m_last_button_down_repeat_time = 0;
+
+    m_prev_wnd_drag_position = Pt();
+    m_browse_info_wnd.reset();
+    m_browse_target = 0;
+
+    m_prev_button_press_time = -1;
+    m_prev_wnd_under_cursor = 0;
+    m_prev_wnd_under_cursor_time = -1;
+    m_curr_wnd_under_cursor = 0;
+
+    m_button_state[0] = m_button_state[1] = m_button_state[2] = false;
+    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
+
+    m_curr_drag_wnd_dragged = false;
+    m_curr_drag_wnd = 0;
+    m_curr_drag_drop_here_wnd = 0;
+    m_wnd_region = WR_NONE;
+    m_browse_target = 0;
+    m_drag_drop_originating_wnd = 0;
+    m_curr_wnd_under_cursor = 0;
+
+    m_delta_t = 0;
+
+    m_double_click_wnd = 0;
+    m_double_click_start_time = -1;
+    m_double_click_time = -1;
+}
 
 // static member(s)
 GUI*                       GUI::s_gui = 0;
@@ -790,6 +827,9 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         break;
     }
 }
+
+void GUI::ClearEventState()
+{ s_impl->ClearState(); }
 
 void GUI::SetFocusWnd(Wnd* wnd)
 {

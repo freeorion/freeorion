@@ -894,8 +894,11 @@ void HumanClientApp::HandleWindowClose() {
     Exit(0);
 }
 
-void HumanClientApp::HandleFocusChange()
-{ Logger().debugStream() << "HumanClientApp::HandleFocusChange()"; }
+void HumanClientApp::HandleFocusChange() {
+    Logger().debugStream() << "HumanClientApp::HandleFocusChange()";
+    CancelDragDrop();
+    ClearEventState();
+}
 
 void HumanClientApp::StartGame() {
     m_game_started = true;

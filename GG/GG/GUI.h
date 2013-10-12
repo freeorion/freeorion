@@ -224,6 +224,7 @@ public:
         handlers. */
     virtual void   HandleSystemEvents() = 0;
     void           HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel); ///< event handler for GG events
+    void           ClearEventState();
 
     void           SetFocusWnd(Wnd* wnd);        ///< sets the input focus window to \a wnd
     virtual void   Wait(unsigned int ms);        ///< suspends the GUI thread for \a ms milliseconds.  Singlethreaded GUI subclasses may do nothing here, or may pause for \a ms milliseconds.
