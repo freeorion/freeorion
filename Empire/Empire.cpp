@@ -122,6 +122,20 @@ namespace {
         if (!empire)
             return;
 
+        // cache production item costs and times
+        std::map<std::pair<ProductionQueue::ProductionItem, int>,
+                 std::pair<double, int> >                           queue_item_costs_and_times;
+        for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
+            ProductionQueue::Element& elem = *it;
+
+            // for items that don't depend on location, only store cost/time once
+            int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+            std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+
+            if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
+                queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
+        }
+
 
         int i = 0;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
@@ -164,9 +178,11 @@ namespace {
 
 
             // get max contribution per turn and turns to build at max contribution rate
+            int location_id = (queue_element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : queue_element.location);
+            std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             double item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue_element);
+            boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             //Logger().debugStream() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
             item_cost *= queue_element.blocksize;
@@ -692,9 +708,11 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
     if (!empire)
         return end();
     for (const_iterator it = begin(); it != end(); ++it) {
+
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
+
         item_cost *= it->blocksize;
         double maxPerTurn = item_cost / std::max(build_turns,1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
@@ -846,7 +864,7 @@ void ProductionQueue::Update() {
     // "Dynamic Programming" version of queue simulator -- copy the queue simulator containers at this point, after removal of unbuildable items,
     // perform dynamic programming calculation of completion times, then after regular simulation is done compare results
 
-    //init production queue to 'never' status
+    // initialize production queue to 'never' status
     for (ProductionQueue::QueueType::iterator queue_it = m_queue.begin(); queue_it != m_queue.end(); ++queue_it) {
         queue_it->turns_left_to_next_item = -1;     // -1 is sentinel value indicating never to be complete.  ProductionWnd checks for turns to completeion less than 0 and displays "NEVER" when appropriate
         queue_it->turns_left_to_completion = -1;
@@ -871,6 +889,23 @@ void ProductionQueue::Update() {
     for (unsigned int i = 0; i < dpsim_queue.size(); ++i)
         elementsByGroup[sim_queue_element_groups[i]].push_back(i);
 
+
+    // cache production item costs and times
+    std::map<std::pair<ProductionQueue::ProductionItem, int>,
+                std::pair<double, int> >                           queue_item_costs_and_times;
+    for (ProductionQueue::iterator it = m_queue.begin(); it != m_queue.end(); ++it) {
+        ProductionQueue::Element& elem = *it;
+
+        // for items that don't depend on location, only store cost/time once
+        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
+
+        if (queue_item_costs_and_times.find(key) == queue_item_costs_and_times.end())
+            queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
+    }
+
+
+    // within each group, allocate PP to queue items
     for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin();
          groups_it != available_pp.end(); ++groups_it)
     {
@@ -898,9 +933,15 @@ void ProductionQueue::Update() {
 
             unsigned int i = *el_it;
             ProductionQueue::Element& element = dpsim_queue[i];
+
+            // get cost and time from cache
+            int location_id = (element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : element.location);
+            std::pair<ProductionQueue::ProductionItem, int> key(element.item, location_id);
             double item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element);
+            boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+
+
             item_cost *= element.blocksize;
             double element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
             double element_per_turn_limit = item_cost / std::max(build_turns, 1);
@@ -911,8 +952,11 @@ void ProductionQueue::Update() {
                 continue;
             }
 
-            unsigned int max_turns = std::max(std::max(build_turns, 1), 1 + int(additional_pp_to_complete_element/ppStillAvailable[firstTurnPPAvailable-1]));
-            max_turns = std::min(max_turns, DP_TURNS - firstTurnPPAvailable +1);
+            unsigned int max_turns = std::max(std::max(build_turns, 1),
+                1 + static_cast<int>(additional_pp_to_complete_element /
+                                     ppStillAvailable[firstTurnPPAvailable-1]));
+
+            max_turns = std::min(max_turns, DP_TURNS - firstTurnPPAvailable + 1);
 
             double allocation;
             //Logger().debugStream() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
@@ -1003,10 +1047,13 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
     const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
         return end();
+
     for (iterator it = begin(); it != end(); ++it) {
+
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
+
         item_cost *= it->blocksize;
         double maxPerTurn = item_cost / std::max(build_turns,1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
@@ -2541,8 +2588,8 @@ void Empire::CheckProductionProgress() {
     // cost and result in it not being finished that turn.
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
              std::pair<double, int> >                           queue_item_costs_and_times;
-    for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
-        ProductionQueue::Element& elem = m_production_queue[i];
+    for (ProductionQueue::iterator it = m_production_queue.begin(); it != m_production_queue.end(); ++it) {
+        ProductionQueue::Element& elem = *it;
 
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
@@ -2552,9 +2599,9 @@ void Empire::CheckProductionProgress() {
             queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
     }
 
-    for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<double, int> >::const_iterator
-         it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
-    { Logger().debugStream() << it->first.first.design_id << " : " << it->second.first; }
+    //for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<double, int> >::const_iterator
+    //     it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
+    //{ Logger().debugStream() << it->first.first.design_id << " : " << it->second.first; }
 
 
     // go through queue, updating production progress.  If a production item is
