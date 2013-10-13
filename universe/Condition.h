@@ -81,7 +81,6 @@ namespace Condition {
     struct WithinDistance;
     struct WithinStarlaneJumps;
     struct CanAddStarlaneConnection;
-    struct CanRemoveStarlaneConnection;
     struct ExploredByEmpire;
     struct Stationary;
     struct FleetSupplyableByEmpire;
@@ -1586,34 +1585,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches objects that are in systems that could have starlanes removed from
-  * between them and all (not just one) of the systems containing (or that are)
-  * one of the objects matched by \a condition.  "Could have starlanes removed"
-  * means there is a lane between those systems, and that removing that lane
-  * will not break starlane-network connectivity between the systems on either
-  * end of the lane. */
-struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase {
-    CanRemoveStarlaneConnection(const ConditionBase* condition) :
-        m_condition(condition)
-    {}
-    virtual ~CanRemoveStarlaneConnection();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-
-private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
-
-    const ConditionBase*               m_condition;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBase {
@@ -2148,13 +2119,6 @@ void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int v
 
 template <class Archive>
 void Condition::CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_condition);
-}
-
-template <class Archive>
-void Condition::CanRemoveStarlaneConnection::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
