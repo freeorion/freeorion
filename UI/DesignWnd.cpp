@@ -43,6 +43,8 @@ namespace {
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "external_slot.png", true);
         else if (slot_type == SL_INTERNAL)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "internal_slot.png", true);
+        else if (slot_type == SL_CORE)
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "core_slot.png", true);
         else
             return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
@@ -53,6 +55,7 @@ namespace {
         if (part) {
             bool ex = part->CanMountInSlotType(SL_EXTERNAL);
             bool in = part->CanMountInSlotType(SL_INTERNAL);
+            bool co = part->CanMountInSlotType(SL_CORE);
 
             if (ex && in)
                 return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "independent_part.png", true);
@@ -60,6 +63,8 @@ namespace {
                 return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "external_part.png", true);
             else if (in)
                 return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "internal_part.png", true);
+            else if (co)
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "core_part.png", true);
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
@@ -1556,9 +1561,16 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // set up empty slot tool tip
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), ((slot_type == SL_EXTERNAL) ? UserString("SL_EXTERNAL") : UserString("SL_INTERNAL")), UserString("SL_TOOLTIP_DESC"))));
+    std::string title_text;
+    if (slot_type == SL_EXTERNAL)
+        title_text = UserString("SL_EXTERNAL");
+    else if (slot_type == SL_INTERNAL)
+        title_text = UserString("SL_INTERNAL");
+    else if (slot_type == SL_CORE)
+        title_text = UserString("SL_CORE");
 
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), title_text, UserString("SL_TOOLTIP_DESC"))));
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
@@ -1684,9 +1696,19 @@ void SlotControl::SetPart(const PartType* part_type) {
                     boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-        // set part occupying slot's tool tip to say slot type as well
+        // set part occupying slot's tool tip to say slot type
+        std::string title_text;
+        if (m_slot_type == SL_EXTERNAL)
+            title_text = UserString("SL_EXTERNAL");
+        else if (m_slot_type == SL_INTERNAL)
+            title_text = UserString("SL_INTERNAL");
+        else if (m_slot_type == SL_CORE)
+            title_text = UserString("SL_CORE");
+
         m_part_control->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartIcon(part_type->Name()), UserString(part_type->Name()) + " (" + ((m_slot_type == SL_EXTERNAL) ? UserString("SL_EXTERNAL") : UserString("SL_INTERNAL")) + ")", UserString(part_type->Description()))));
+            new IconTextBrowseWnd(ClientUI::PartIcon(part_type->Name()),
+                                  UserString(part_type->Name()) + " (" + title_text + ")",
+                                  UserString(part_type->Description()))));
     }
 }
 
@@ -1939,12 +1961,11 @@ bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<i
     return true;
 }
 
-int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part)
-{
+int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     int result = -1;
-
     if (!part)
         return result;
+
     for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
         const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
@@ -1957,12 +1978,12 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part)
     return result;
 }
 
-std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part)
-{
+std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
     // result.first = swap_slot, result.second = empty_slot
     std::pair<int, int> result = std::make_pair(-1, -1);
 
-    if (!part)
+    // TODO: allow for swapping of core slot parts
+    if (!part || (!part->CanMountInSlotType(SL_EXTERNAL) && !part->CanMountInSlotType(SL_INTERNAL)))
         return result;
 
     for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
@@ -1973,11 +1994,12 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
             result.second = i;
 
         // Find a slot that has a part that can be mounted in both slots
-        // And that we are compatible with 
-        if (part_type && part_type->CanMountInSlotType(SL_EXTERNAL) && part_type->CanMountInSlotType(SL_INTERNAL)
-                        && part->CanMountInSlotType(slot_type)) {   
-            result.first = i;
-        }
+        // And that we are compatible with
+        if (part_type &&
+            part_type->CanMountInSlotType(SL_EXTERNAL) &&
+            part_type->CanMountInSlotType(SL_INTERNAL) &&
+            part->CanMountInSlotType(slot_type))
+        { result.first = i; }
     }
     return result;
 }

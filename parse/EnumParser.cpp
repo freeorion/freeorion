@@ -205,6 +205,7 @@ namespace parse {
         static enum_parser_rule<ShipSlotType>::type retval
             =    tok.External_ [ _val = SL_EXTERNAL ]
             |    tok.Internal_ [ _val = SL_INTERNAL ]
+            |    tok.Core_     [ _val = SL_CORE ]
             ;
         static bool once = true;
         if (once) {

@@ -561,6 +561,7 @@ enum ShipSlotType {
     INVALID_SHIP_SLOT_TYPE = -1,
     SL_EXTERNAL,            ///< external slots.  more easily damaged
     SL_INTERNAL,            ///< internal slots.  more protected, fewer in number
+    SL_CORE,
     NUM_SHIP_SLOT_TYPES
 };
 
@@ -569,6 +570,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(INVALID_SHIP_SLOT_TYPE)
     GG_ENUM_MAP_INSERT(SL_EXTERNAL)
     GG_ENUM_MAP_INSERT(SL_INTERNAL)
+    GG_ENUM_MAP_INSERT(SL_CORE)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(ShipSlotType)

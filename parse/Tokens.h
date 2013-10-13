@@ -58,6 +58,7 @@
     (Construction)                              \
     (ContainedBy)                               \
     (Contains)                                  \
+    (Core)                                      \
     (Cos)                                       \
     (Count)                                     \
     (CountUnique)                               \

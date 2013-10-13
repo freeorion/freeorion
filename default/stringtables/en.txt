@@ -5291,6 +5291,8 @@ SL_EXTERNAL
 External Slot
 SL_INTERNAL
 Internal Slot
+SL_CORE
+Core Slot
 SL_TOOLTIP_DESC
 Empty
 
