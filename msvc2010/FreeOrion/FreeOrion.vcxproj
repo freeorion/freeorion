@@ -133,6 +133,7 @@
     <ClInclude Include="..\..\UI\FleetWnd.h" />
     <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
     <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h" />
+    <ClInclude Include="..\..\UI\GraphControl.h" />
     <ClInclude Include="..\..\UI\InfoPanels.h" />
     <ClInclude Include="..\..\UI\InGameMenu.h" />
     <ClInclude Include="..\..\UI\IntroScreen.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="..\..\UI\FleetWnd.cpp" />
     <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />
     <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp" />
+    <ClCompile Include="..\..\UI\GraphControl.cpp" />
     <ClCompile Include="..\..\UI\InfoPanels.cpp" />
     <ClCompile Include="..\..\UI\InGameMenu.cpp" />
     <ClCompile Include="..\..\UI\IntroScreen.cpp" />

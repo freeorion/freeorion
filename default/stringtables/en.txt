@@ -2698,6 +2698,12 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''
 
 # types of things that can be shown in encyclopedia
+ENC_TEST
+Test
+
+ENC_GRAPH
+Graph
+
 ENC_SHIP_PART
 Ship Part
 

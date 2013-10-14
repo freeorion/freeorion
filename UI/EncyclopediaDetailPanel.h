@@ -16,6 +16,7 @@ class UniverseObject;
 class Empire;
 class ShipDesign;
 class CUIMultiEdit;
+class GraphControl;
 template <class T> class TemporaryPtr;
 namespace GG {
     class TextControl;
@@ -104,6 +105,8 @@ private:
     GG::Button*         m_index_button;
     GG::Button*         m_back_button;
     GG::Button*         m_next_button;
+
+    GraphControl*       m_graph;
 };
 
 

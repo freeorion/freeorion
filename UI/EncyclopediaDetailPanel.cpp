@@ -1,6 +1,9 @@
 #include "EncyclopediaDetailPanel.h"
 
 #include "CUIControls.h"
+#include "DesignWnd.h"
+#include "Encyclopedia.h"
+#include "GraphControl.h"
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
@@ -22,8 +25,6 @@
 #include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
-#include "DesignWnd.h"
-#include "Encyclopedia.h"
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
@@ -66,6 +67,7 @@ namespace {
         std::multimap<std::string, std::string> sorted_entries_list;
 
         if (dir_name == "ENC_INDEX") {
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_TEST"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TEST") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n"));
@@ -86,6 +88,9 @@ namespace {
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
             { sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n")); }
+
+        } else if (dir_name == "ENC_TEST") {
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n"));
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
@@ -246,7 +251,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_summary_text(0),
     m_description_box(0),
     m_icon(0),
-    m_other_icon(0)
+    m_other_icon(0),
+    m_graph(0)
 {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
@@ -285,6 +291,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
+
+    m_graph = new GraphControl(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    AttachChild(m_graph);
 
     AttachChild(m_name_text);
     AttachChild(m_cost_text);
@@ -331,6 +340,10 @@ void EncyclopediaDetailPanel::DoLayout() {
     lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
     m_description_box->SizeMove(ul, lr);
 
+    // graph
+    m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr);
+    MoveChildUp(m_graph);
+
     // "back" button
     ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8, Height() - BORDER_BOTTOM*2 - PTS);
     lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8, Height() - BORDER_BOTTOM*2);
@@ -358,6 +371,7 @@ void EncyclopediaDetailPanel::DoLayout() {
         ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_other_icon->SizeMove(ul, lr);
     }
+
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
 
@@ -589,6 +603,7 @@ void EncyclopediaDetailPanel::Refresh() {
     m_summary_text->Clear();
     m_cost_text->Clear();
     m_description_box->Clear();
+    m_graph->Hide();
 
     const Encyclopedia& encyclopedia = GetEncyclopedia();
 
@@ -612,9 +627,14 @@ void EncyclopediaDetailPanel::Refresh() {
     const ObjectMap& objects = Objects();
 
     if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
-        // attempt to treat as a directory
         detailed_description = PediaDirText(m_items_it->second);
-        if (!detailed_description.empty()) {
+
+        // attempt to treat as graph
+        if (m_items_it->second == "ENC_GRAPH") {
+            m_graph->Show();
+
+        } else if (!detailed_description.empty()) {
+            // attempt to treat as a directory
             name = UserString(m_items_it->second);
 
         } else {

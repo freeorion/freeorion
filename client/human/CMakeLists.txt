@@ -95,6 +95,7 @@ set(freeorion_SOURCES
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp
+    ../../UI/GraphControl.cpp
     ../../UI/InGameMenu.cpp
     ../../UI/InfoPanels.cpp
     ../../UI/IntroScreen.cpp
