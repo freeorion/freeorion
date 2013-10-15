@@ -2059,6 +2059,7 @@ void MapWnd::InitTurn() {
     }
 
     m_moderator_wnd->Refresh();
+    m_pedia_panel->Refresh();
 }
 
 void MapWnd::MidTurnUpdate() {

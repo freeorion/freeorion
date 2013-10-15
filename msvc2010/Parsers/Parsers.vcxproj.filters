@@ -152,6 +152,9 @@
     <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
       <Filter>Source Files\adobe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\EmpireStatsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">

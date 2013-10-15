@@ -49,6 +49,7 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
 
         GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
+        GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
     }
 }
 
@@ -138,6 +139,7 @@ struct TextLinker::Link {
 ///////////////////////////////////////
 // static(s)
 const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
+const std::string TextLinker::GRAPH_TAG("graph");
 
 TextLinker::TextLinker() :
     m_rollover_link(-1)
@@ -262,7 +264,8 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::SHIP_PART_TAG ||
                     tag->tag_name == VarText::SPECIES_TAG ||
                     tag->tag_name == VarText::FIELD_TYPE_TAG ||
-                    tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG)
+                    tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG ||
+                    tag->tag_name == TextLinker::GRAPH_TAG)
                 {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {

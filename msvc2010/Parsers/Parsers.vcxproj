@@ -90,7 +90,8 @@
       <OutputFile>../../Parsers.dll</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
-      <AdditionalDependencies></AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
     <Lib>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
@@ -111,6 +112,7 @@
     <ClCompile Include="..\..\parse\EffectParser2.cpp" />
     <ClCompile Include="..\..\parse\EffectParser3.cpp" />
     <ClCompile Include="..\..\parse\EffectParser4.cpp" />
+    <ClCompile Include="..\..\parse\EmpireStatsParser.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />

@@ -91,11 +91,7 @@ void GraphControl::SetRange(double x1, double x2, double y1, double y2) {
     double old_y_max = y2;
     m_y_max = y2;
 
-    if (m_x_min != old_x_min ||
-        m_y_min != old_y_min ||
-        m_x_max != old_x_max ||
-        m_y_max != old_y_max)
-    { DoLayout(); }
+    DoLayout();
 }
 
 void GraphControl::AutoSetRange() {
@@ -165,6 +161,7 @@ void GraphControl::Render() {
 
     GG::BeginScissorClipping(ul, lr);
     glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
 
     if (m_show_lines) {
         glLineWidth(2.0f);
@@ -204,6 +201,7 @@ void GraphControl::Render() {
     }
 
     glColor(GG::CLR_WHITE);
+    glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     GG::EndScissorClipping();
 }

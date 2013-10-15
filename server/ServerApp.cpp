@@ -683,6 +683,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
+    m_universe.UpdateStatRecords();
+
     // send new game start messages
     Logger().debugStream() << "ServerApp::NewGameInit: Sending GameStartMessages to players";
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
@@ -2128,10 +2130,8 @@ namespace {
 }
 
 void ServerApp::PreCombatProcessTurns() {
-
     ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
     ObjectMap& objects = m_universe.Objects();
-
 
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
@@ -2379,7 +2379,6 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 }
 
 void ServerApp::PostCombatProcessTurns() {
-
     ScopedTimer timer("ServerApp::PostCombatProcessTurns", true);
 
     EmpireManager& empires = Empires();
@@ -2567,6 +2566,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     CheckForEmpireEliminationOrVictory();
 
+    m_universe.UpdateStatRecords();
 
 
     // indicate that the clients are waiting for their new gamestate

@@ -43,6 +43,7 @@ namespace {
     const std::string UNIVERSE_OBJECT = "universe object";
     const std::string PLANET_SUITABILITY_REPORT = "planet suitability report";
     const std::string COMBAT_LOG = "combat log";
+    const std::string GRAPH = "data graph";
 }
 
 namespace {
@@ -67,7 +68,6 @@ namespace {
         std::multimap<std::string, std::string> sorted_entries_list;
 
         if (dir_name == "ENC_INDEX") {
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_TEST"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TEST") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n"));
@@ -84,13 +84,11 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),       LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n"));
 
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
             { sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n")); }
-
-        } else if (dir_name == "ENC_TEST") {
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n"));
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
@@ -221,7 +219,15 @@ namespace {
                     LinkTaggedIDText(VarText::FIELD_ID_TAG, field_it->ID(), field_name) + "  "));
             }
 
+        } else if (dir_name == "ENC_GRAPH") {
+            const std::map<std::string, std::map<int, std::map<int, double> > >&
+                stat_records = universe.GetStatRecords();
+            for (std::map<std::string, std::map<int, std::map<int, double> > >::const_iterator
+                 it = stat_records.begin(); it != stat_records.end(); ++it)
+            { sorted_entries_list.insert(std::make_pair(UserString(it->first),   LinkTaggedText(TextLinker::GRAPH_TAG, it->first) + "\n")); }
+
         } else {
+            // list categories
             std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it =
                 encyclopedia.articles.find(dir_name);
             if (category_it != encyclopedia.articles.end()) {
@@ -465,7 +471,10 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             this->SetSpecies(data);
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
             this->SetText(data, false);
+        } else if (link_type == TextLinker::GRAPH_TAG) {
+            this->SetGraph(data);
         }
+
     } catch (const boost::bad_lexical_cast&) {
         Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
     }
@@ -508,6 +517,8 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
 
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
             this->SetText(data, false);
+        } else if (link_type == TextLinker::GRAPH_TAG) {
+            this->SetGraph(data);
         }
     } catch (const boost::bad_lexical_cast&) {
         Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -628,12 +639,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
         detailed_description = PediaDirText(m_items_it->second);
-
-        // attempt to treat as graph
-        if (m_items_it->second == "ENC_GRAPH") {
-            m_graph->Show();
-
-        } else if (!detailed_description.empty()) {
+        if (!detailed_description.empty()) {
             // attempt to treat as a directory
             name = UserString(m_items_it->second);
 
@@ -1427,6 +1433,42 @@ void EncyclopediaDetailPanel::Refresh() {
                                         % it->damage
                                         % it->round) + "\n";
         }
+
+    } else if (m_items_it->first == TextLinker::GRAPH_TAG) {
+        const std::string& graph_id = m_items_it->second;
+
+        const std::map<std::string, std::map<int, std::map<int, double> > >&
+            stat_records = GetUniverse().GetStatRecords();
+
+        std::map<std::string, std::map<int, std::map<int, double> > >::const_iterator
+            stat_name_it = stat_records.find(graph_id);
+        if (stat_name_it != stat_records.end()) {
+            const std::map<int, std::map<int, double> >& empire_lines = stat_name_it->second;
+            m_graph->Clear();
+
+            // add lines for each empire
+            for (std::map<int, std::map<int, double> >::const_iterator empire_it = empire_lines.begin();
+                 empire_it != empire_lines.end(); ++empire_it)
+            {
+                int empire_id = empire_it->first;
+
+                GG::Clr empire_clr = GG::CLR_WHITE;
+                if (const Empire* empire = Empires().Lookup(empire_id))
+                    empire_clr = empire->Color();
+
+                const std::map<int, double>& empire_line = empire_it->second;
+                // convert formats...
+                std::vector<std::pair<double, double> > line_data_pts;
+                for (std::map<int, double>::const_iterator line_it = empire_line.begin();
+                     line_it != empire_line.end(); ++line_it)
+                { line_data_pts.push_back(std::make_pair<double, double>(line_it->first, line_it->second)); }
+
+                m_graph->AddSeries(line_data_pts, empire_clr);
+            }
+
+            m_graph->AutoSetRange();
+            m_graph->Show();
+        }
     }
 
     // Create Icons
@@ -1663,6 +1705,9 @@ void EncyclopediaDetailPanel::SetIncompleteDesign(boost::weak_ptr<const ShipDesi
         Refresh();
     }
 }
+
+void EncyclopediaDetailPanel::SetGraph(const std::string& graph_id)
+{ AddItem(TextLinker::GRAPH_TAG, graph_id); }
 
 void EncyclopediaDetailPanel::SetIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }

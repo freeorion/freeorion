@@ -341,6 +341,7 @@
     (StarlaneSpeed)                             \
     (StarType)                                  \
     (Stationary)                                \
+    (Statistic)                                 \
     (StDev)                                     \
     (Stealth)                                   \
     (Structure)                                 \

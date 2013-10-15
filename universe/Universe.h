@@ -217,6 +217,9 @@ public:
       * to grant their owners victory. */
     const std::multimap<int, std::string>&  GetMarkedForVictory() const {return m_marked_for_victory;}
 
+    const std::map<std::string, std::map<int, std::map<int, double> > >&
+                                            GetStatRecords() const { return m_stat_records; }
+
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
@@ -374,6 +377,8 @@ public:
     /** Sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     void            InhibitUniverseObjectSignals(bool inhibit = true);
+
+    void            UpdateStatRecords();
     //@}
 
 
@@ -418,7 +423,7 @@ public:
 
     TemporaryPtr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
     TemporaryPtr<Building> CreateBuilding(int empire_id, const std::string& building_type,
-                       int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+                                          int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
 
     TemporaryPtr<Field> CreateField(int id = INVALID_OBJECT_ID);
     TemporaryPtr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
@@ -426,16 +431,14 @@ public:
 
 private:
     template <typename T>
-    class distance_matrix
-    {
+    class distance_matrix {
     public:
         typedef boost::numeric::ublas::symmetric_matrix<
             T,
             boost::numeric::ublas::lower
         > storage_type;
 
-        struct const_row_ref
-        {
+        struct const_row_ref {
             const_row_ref(std::size_t i, const storage_type& m) : m_i(i), m_m(m) {}
             T operator[](std::size_t j) const { return m_m(m_i, j); }
         private:
@@ -443,8 +446,7 @@ private:
             const storage_type& m_m;
         };
 
-        struct row_ref
-        {
+        struct row_ref {
             row_ref(std::size_t i, storage_type& m) : m_i(i), m_m(m) {}
             T& operator[](std::size_t j) { return m_m(m_i, j); }
         private:
@@ -591,8 +593,11 @@ private:
 
     double                          m_universe_width;
     bool                            m_inhibit_universe_object_signals;
-    int                             m_encoding_empire;
-    bool                            m_all_objects_visible;
+    int                             m_encoding_empire;                  ///< used during serialization to globally set what empire knowledge to use
+    bool                            m_all_objects_visible;              ///< flag set to skip visibility tests and make everything visible to all players
+
+    std::map<std::string, std::map<int, std::map<int, double> > >
+                                    m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all

@@ -73,6 +73,7 @@ public:
     void            SetDesign(const std::string& design_id);
     void            SetItem(const ShipDesign* design);
     void            SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design);
+    void            SetGraph(const std::string& graph_id);
     void            SetIndex();
 
     void            Refresh();

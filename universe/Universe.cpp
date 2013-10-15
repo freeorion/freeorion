@@ -408,6 +408,16 @@ struct Universe::GraphImpl {
     EmpireViewSystemGraphMap    empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
 };
 
+
+namespace EmpireStatistics {
+    const std::map<std::string, const ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
+        static std::map<std::string, const ValueRef::ValueRefBase<double>*> s_stats;
+        if (s_stats.empty())
+        { parse::statistics(GetResourceDir() / "empire_statistics.txt", s_stats); }
+        return s_stats;
+    }
+}
+
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
@@ -2833,6 +2843,77 @@ const bool& Universe::UniverseObjectSignalsInhibited()
 
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
+
+namespace {
+    // Looks like there are at least 4 SourceForEmpire functions lying around:
+    // one in ShipDesign, one in Tech, one in Building, one here...
+    // TODO: Eliminate duplication
+    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            return TemporaryPtr<const UniverseObject>();
+        }
+        // get a source object, which is owned by the empire with the passed-in
+        // empire id.  this is used in conditions to reference which empire is
+        // doing the building.  Ideally this will be the capital, but any object
+        // owned by the empire will work.
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        // no capital?  scan through all objects to find one owned by this empire
+        if (!source) {
+            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+                if (obj_it->OwnedBy(empire_id)) {
+                    source = *obj_it;
+                    break;
+                }
+            }
+        }
+        return source;
+    }
+}
+
+void Universe::UpdateStatRecords() {
+    int current_turn = CurrentTurn();
+    if (current_turn == INVALID_GAME_TURN)
+        return;
+    if (current_turn == 0)
+        m_stat_records.clear();
+
+    const EmpireManager& empires = Empires();
+    const std::map<std::string, const ValueRef::ValueRefBase<double>*>& stats = EmpireStatistics::GetEmpireStats();
+
+    std::map<int, TemporaryPtr<const UniverseObject> > empire_sources;
+    for (EmpireManager::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
+    { empire_sources[empire_it->first] = SourceForEmpire(empire_it->first); }
+    
+
+    // process each stat
+    for (std::map<std::string, const ValueRef::ValueRefBase<double>*>::const_iterator
+         stat_it = stats.begin(); stat_it != stats.end(); ++stat_it)
+    {
+        const std::string& stat_name = stat_it->first;
+
+        const ValueRef::ValueRefBase<double>* value_ref = stat_it->second;
+        if (!value_ref)
+            continue;
+
+        std::map<int, std::map<int, double> >& stat_records = m_stat_records[stat_name];
+
+        // calculate stat for each empire, store in records for current turn
+        for (std::map<int, TemporaryPtr<const UniverseObject> >::const_iterator empire_it = empire_sources.begin();
+             empire_it != empire_sources.end(); ++empire_it)
+        {
+            int empire_id = empire_it->first;
+
+            if (value_ref->SourceInvariant()) {
+                stat_records[empire_id][current_turn] = value_ref->Eval();
+                continue;
+            }
+
+            stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_it->second));
+        }
+    }
+}
 
 void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {

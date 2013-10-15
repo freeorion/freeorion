@@ -36,6 +36,7 @@ add_library(freeorionparse
     EffectParser2.cpp
     EffectParser3.cpp
     EffectParser4.cpp
+    EmpireStatsParser.cpp
     FieldsParser.cpp
     Parse.cpp
     BuildingsParser.cpp

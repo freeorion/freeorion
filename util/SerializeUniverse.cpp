@@ -81,6 +81,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     Logger().debugStream() << "Universe::serialize : (de)serializing last allocated ids";
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
+    Logger().debugStream() << "Universe::serialize : (de)serializing stats";
+    ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
     Logger().debugStream() << "Universe::serialize : (de)serializing done";
 
     if (Archive::is_saving::value) {

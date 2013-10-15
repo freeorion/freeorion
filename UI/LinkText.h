@@ -17,6 +17,7 @@ public:
     mutable boost::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
 
     static const std::string ENCYCLOPEDIA_TAG;
+    static const std::string GRAPH_TAG;
 
 protected:
     void        Render_();

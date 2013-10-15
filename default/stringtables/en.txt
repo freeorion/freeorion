@@ -2677,6 +2677,19 @@ DESIGN_DELETE
 Delete Design
 
 
+################
+## Statistics ##
+################
+SHIP_COUNT
+Ship Count
+    
+PP_OUTPUT
+Production Output
+
+RP_OUTPUT
+Research Output
+
+
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
