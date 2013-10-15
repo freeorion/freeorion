@@ -1469,6 +1469,9 @@ void EncyclopediaDetailPanel::Refresh() {
             m_graph->AutoSetRange();
             m_graph->Show();
         }
+
+        name = UserString(m_items_it->second);
+        general_type = UserString("ENC_GRAPH");
     }
 
     // Create Icons
