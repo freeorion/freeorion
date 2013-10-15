@@ -53,7 +53,7 @@ Hull
     stealth = 5
     structure = 5
     slots = [
-        Slot type = Core position = (0.50, 0.45)
+        Slot type = External position = (0.50, 0.45)
     ]
     buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2

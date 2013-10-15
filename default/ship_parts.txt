@@ -19,7 +19,7 @@ Part
     damage = 3
     ROF = 1
     range = 50
-    mountableSlotTypes = Core
+    mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
