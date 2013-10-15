@@ -133,6 +133,7 @@ namespace FreeOrionPython {
         enum_<ShipSlotType>("shipSlotType")
             .value("external",      SL_EXTERNAL)
             .value("internal",      SL_INTERNAL)
+            .value("core",          SL_CORE)
         ;
         enum_<ShipPartClass>("shipPartClass")
             .value("shortRange",    PC_SHORT_RANGE)
