@@ -21,9 +21,9 @@
 
 namespace {
     TemporaryPtr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
-                                          std::vector<std::string>::const_iterator last,
-                                          ValueRef::ReferenceType ref_type,
-                                          const ScriptingContext& context)
+                                                       std::vector<std::string>::const_iterator last,
+                                                       ValueRef::ReferenceType ref_type,
+                                                       const ScriptingContext& context)
     {
         //Logger().debugStream() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
         //    << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
@@ -434,10 +434,11 @@ namespace ValueRef {
             return 0.0;
         }
 
-        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                                       m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object =
+            FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<double>::Eval unable to follow reference: "
+                                   << ReconstructName(m_property_name, m_ref_type);
             return 0.0;
         }
 
@@ -502,8 +503,8 @@ namespace ValueRef {
             return 0;
         }
 
-        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                                       m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object =
+            FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0;
@@ -600,7 +601,8 @@ namespace ValueRef {
             return "";
         }
 
-        TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        TemporaryPtr<const UniverseObject> object =
+            FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return "";
