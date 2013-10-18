@@ -88,6 +88,10 @@ public:
     /** Returns the text displayed in this control. */
     const std::string& Text() const;
 
+    /** Returns the text displayed in this control between the specified
+        position \a from through position \a to. */
+    std::string Text(CPSize from, CPSize to) const;
+
     /** Returns the text format (vertical and horizontal justification, use of
         word breaks and line wrapping, etc.) */
     Flags<TextFormat> GetTextFormat() const;

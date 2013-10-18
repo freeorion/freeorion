@@ -83,6 +83,9 @@ public:
         to one past the last selected one). */
     const std::pair<CPSize, CPSize>& CursorPosn() const;
 
+    /** Returns the text that is selected in this control. */
+    std::string SelectedText() const;
+
     /** Returns the color used to render the iterior of the control. */
     Clr InteriorColor() const;
 

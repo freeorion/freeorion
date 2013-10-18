@@ -84,6 +84,18 @@ Pt TextControl::MinUsableSize() const
 const std::string& TextControl::Text() const
 { return m_text; }
 
+std::string TextControl::Text(CPSize from, CPSize to) const
+{
+    if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
+        return "";
+    CPSize low = std::max(CPSize(0), std::min(from, to));
+    CPSize high = std::min(Length(), std::max(from, to));
+
+    std::string::const_iterator it = m_text.begin() + Value(low);
+    std::string::const_iterator end_it = m_text.begin() + Value(high);
+    return std::string(it, end_it);
+}
+
 Flags<TextFormat> TextControl::GetTextFormat() const
 { return m_format; }
 
