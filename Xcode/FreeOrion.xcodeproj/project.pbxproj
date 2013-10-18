@@ -369,6 +369,7 @@
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
+		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
 		82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9D445180C53FE0032F86D /* GraphControl.cpp */; };
 		82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BEB657159853B300B024CB /* Diplomacy.cpp */; };
@@ -1720,6 +1721,7 @@
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
+		829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireStatsParser.cpp; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
 		82B9D445180C53FE0032F86D /* GraphControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphControl.cpp; sourceTree = "<group>"; };
 		82B9D446180C53FE0032F86D /* GraphControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphControl.h; sourceTree = "<group>"; };
@@ -3509,6 +3511,7 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */,
 				82C560D117D0CC2F00FE3B35 /* Tokens.cpp */,
 				82C560D217D0CC2F00FE3B35 /* Tokens.h */,
 				829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */,
@@ -4263,6 +4266,7 @@
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
+				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
