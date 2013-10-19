@@ -4253,6 +4253,7 @@ void MapWnd::Cleanup() {
     HideSitRep();
     HidePedia();
     HideObjects();
+    HideModeratorActions();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();
