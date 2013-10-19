@@ -193,7 +193,7 @@ def calculateColonisationPriority():
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
-    numColonisablePlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisablePlanetIDs if score > 60 ][:allottedColonyTargets] )
+    numColonisablePlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisablePlanetIDs if score > 60 ][:allottedColonyTargets+2] )
     if (numColonisablePlanetIDs == 0): return 1
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -299,7 +299,7 @@ def calculateMilitaryPriority():
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitalID = PlanetUtilsAI.getCapital()
-    if capitalID:
+    if capitalID is not None and capitalID != -1:
         homeworld = universe.getPlanet(capitalID)
     else:
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships

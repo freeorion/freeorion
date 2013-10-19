@@ -8,6 +8,9 @@ AIFleetMissionTypeNames = AIFleetMissionType()
 
 dumpTurn=0
 
+def dictFromMap(thismap):
+    return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
+
 class AIFleetOrder(object):
     "Stores information about orders which can be executed"
 
@@ -75,7 +78,10 @@ class AIFleetOrder(object):
                 # colonise planet
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().target_type:
                     planet = universe.getPlanet(self.getTargetAITarget().target_id)
-                    if planet.unowned:
+                    system = universe.getSystem(planet.systemID)
+                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    if (planetPartialVisTurn == sysPartialVisTurn) and planet.unowned:
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
                         self.__setExecuted()
@@ -96,7 +102,11 @@ class AIFleetOrder(object):
                 # colonise planet
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().target_type:
                     planet = universe.getPlanet(self.getTargetAITarget().target_id)
-                    if planet.unowned or  (planet.ownedBy(fo.empireID()) and   planet.currentMeterValue(fo.meterType.population)==0 ):
+                    system = universe.getSystem(planet.systemID)
+                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
+
+                    if (planetPartialVisTurn == sysPartialVisTurn) and ( planet.unowned or  (planet.ownedBy(fo.empireID()) and   planet.currentMeterValue(fo.meterType.population)==0 )):
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
                         self.__setExecuted()
@@ -297,6 +307,8 @@ class AIFleetOrder(object):
                     return False
 
             systemID = fleet.systemID
+            if systemID == targetID:
+                return True #already there so no point to worry about threat
             sys1=universe.getSystem(systemID)
             sys1Name = (sys1 and sys1.name) or "unknown"
             targ1 = universe.getSystem(targetID)

@@ -51,7 +51,10 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
         pathFunc=universe.shortestPath
     startSysID = fromSystemAITarget.target_id
     targetSysID = toSystemAITarget.target_id
-    shortPath= list( pathFunc(startSysID, targetSysID, empireID) )
+    if (startSysID != -1) and (targetSysID != -1):
+        shortPath= list( pathFunc(startSysID, targetSysID, empireID) )
+    else:
+        shortPath = []
     suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ]
     unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
     retPath=[]
@@ -119,10 +122,11 @@ def getNearestSuppliedSystem(startSystemID, empireID):
         minJumps = 9999 # infinity
         supplySystemID = -1
         for systemID in fleetSupplyableSystemIDs:
-            leastJumpsPath = universe.leastJumpsPath(startSystemID, systemID, empireID)
-            if len(leastJumpsPath) < minJumps:
-                minJumps = len(leastJumpsPath)
-                supplySystemID = systemID
+            if (startSystemID != -1) and (systemID != -1):
+                leastJumpsPath = universe.leastJumpsPath(startSystemID, systemID, empireID)
+                if len(leastJumpsPath) < minJumps:
+                    minJumps = len(leastJumpsPath)
+                    supplySystemID = systemID
 
         return AITarget.AITarget(AITargetType.TARGET_SYSTEM, supplySystemID)
 
@@ -134,7 +138,11 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
     newTargets = resultSystemAITargets[:]
     if fromSystemAITarget.valid and toSystemAITarget.valid and supplySystemAITarget.valid:
         universe = fo.getUniverse()
-        leastJumpsPath = universe.leastJumpsPath(fromSystemAITarget.target_id, toSystemAITarget.target_id, empireID)
+        if (fromSystemAITarget.target_id != -1) and (toSystemAITarget.target_id != -1):
+            leastJumpsPath = universe.leastJumpsPath(fromSystemAITarget.target_id, toSystemAITarget.target_id, empireID)
+        else:
+            leastJumpsPath = []
+            result = False
         fromSystemID = fromSystemAITarget.target_id
         for systemID in leastJumpsPath:
             if not fromSystemID == systemID:

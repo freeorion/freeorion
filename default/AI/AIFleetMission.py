@@ -15,6 +15,9 @@ import MilitaryAI
 AIFleetMissionTypeNames = EnumsAI.AIFleetMissionType()
 AIShipRoleTypeNames = EnumsAI.AIShipRoleType()
 
+def dictFromMap(thismap):
+    return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
+
 class AIFleetMission(AIAbstractMission.AIAbstractMission):
     '''
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
@@ -320,16 +323,19 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 universe=fo.getUniverse()
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_COLONISE:
                     planet = universe.getPlanet(lastOrder.getTargetAITarget().target_id)
+                    system = universe.getSystem(planet.systemID)
+                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
                     pop=planet.currentMeterValue(fo.meterType.population)
-                    if pop==0:
-                        print "Fleet %d has tentatively completed its colonize mission but will wait to confirm population."%(self.target_id)
+                    if (planetPartialVisTurn == sysPartialVisTurn) and pop==0:
+                        print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population."%(self.target_id)
                         print "    Order details are %s"%lastOrder
                         print "    Order is valid: %s ; is Executed : %s  ; is execution completed: %s "%(lastOrder.isValid(),  lastOrder.isExecuted(),  lastOrder.isExecutionCompleted())
                         if not lastOrder.isValid():
                             sourceT = lastOrder.getSourceAITarget()
                             targT = lastOrder.getTargetAITarget()
                             print "        source target validity: %s   ; target target validity: %s "%(sourceT.valid, targT.valid)
-                            if EnumsAI.AITargetType.TARGET_SHIP == sourceT:
+                            if EnumsAI.AITargetType.TARGET_SHIP == sourceT.target_type:
                                 shipID = sourceT.target_id
                                 ship = universe.getShip(shipID)
                                 if not ship:
@@ -341,8 +347,8 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_MILITARY:
                     last_sys_target = lastOrder.getTargetAITarget().target_id
                     # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.getAIMissionTypes())  or   # not doing this until decide a way to release from a SECURE mission
-                    if   (last_sys_target in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs +
-                                                                                                                                                AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs))): #consider a secure mission
+                    secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
+                    if   (last_sys_target in secure_targets) : #consider a secure mission
                         secureType="Unidentified"
                         if   (last_sys_target in AIstate.colonyTargetedSystemIDs):
                             secureType  = "Colony"

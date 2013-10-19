@@ -28,7 +28,7 @@ def getCapital(): # if no current capital returns planet with biggest pop
     empire = fo.getEmpire()
     if empire == None:
         print "Danger Danger! FO can't find an empire for me!!!!"
-        return None
+        return -1
     empireID = empire.empireID
     capitalID = empire.capitalID
     homeworld = universe.getPlanet(capitalID)
@@ -45,7 +45,7 @@ def getCapital(): # if no current capital returns planet with biggest pop
         if empireOwnedPlanetIDs:
             return empireOwnedPlanetIDs[0]
         else:
-            return None
+            return -1
     popMap = []
     for planetID in peopledPlanets:
         popMap.append( ( universe.getPlanet(planetID).currentMeterValue(fo.meterType.population) ,  planetID) )
@@ -54,7 +54,7 @@ def getCapital(): # if no current capital returns planet with biggest pop
 
 def getCapitalSysID():
     capID = getCapital()
-    if capID is None:
+    if capID is None or capID==-1:
         return -1
     else:
         return fo.getUniverse().getPlanet(capID).systemID

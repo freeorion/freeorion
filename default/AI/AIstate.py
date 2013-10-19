@@ -76,8 +76,8 @@ class AIstate(object):
         self.empireID = empire.empireID
         self.origHomeworldID = empire.capitalID
         homeworld = universe.getPlanet(self.origHomeworldID)
-        self.origSpeciesName = homeworld.speciesName
-        self.origHomeSystemID = homeworld.systemID
+        self.origSpeciesName = (homeworld and homeworld.speciesName) or ""
+        self.origHomeSystemID = (homeworld and homeworld.systemID) or -1
         self.visBorderSystemIDs = {self.origHomeSystemID:1}
         self.visInteriorSystemIDs= {}
         self.expBorderSystemIDs = {self.origHomeSystemID:1}
@@ -94,8 +94,15 @@ class AIstate(object):
         self.misc={}
         self.qualifyingColonyBaseTargets={}
         self.qualifyingOutpostBaseTargets={}
+        self.qualifyingTroopBaseTargets={}
+        
+    def __setstate__(self, state_dict):
+        self.__dict__.update(state_dict)   # update attributes
+        for dict_attrib in ['qualifyingColonyBaseTargets',  'qualifyingOutpostBaseTargets',  'qualifyingTroopBaseTargets']:
+            if dict_attrib not in state_dict:
+                self.__dict__[dict_attrib] = {}
 
-    def __del__(self):
+    def __del__(self): #TODO: confirm if anything about bosst interface really requires this
         "destructor"
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
@@ -108,6 +115,7 @@ class AIstate(object):
         del self.misc
         del self.qualifyingColonyBaseTargets
         del self.qualifyingOutpostBaseTargets
+        del self.qualifyingTroopBaseTargets
 
     def clean(self):
         "turn start AIstate cleanup"
@@ -601,7 +609,14 @@ class AIstate(object):
             estats = enemygroup[1]
             if estats == {}:
                 attack_tally += count * sum([ a * b for a, b in myattacks.items()])
-                structure_tally += count * (mystructure + myshields * 3*sum(myattacks.values())) #uses num of my attacks for proxy calc of structure help from shield
+                attack_total = sum( [num * max(0,  a_key - myshields) for a_key,  num in myattacks.items()] )
+                attack_net = max(sum( [num * max(0,  a_key - myshields) for a_key,  num in myattacks.items()] ),  0.1 * attack_total) #TODO: reconsider capping at 10-fold boost
+                #attack_diff = attack_total - attack_net
+                if attack_net > 0: #will be unless no attacks at all, due to above calc
+                    shield_boost = mystructure * (attack_tally / attack_net)
+                else:
+                    shield_boost = 0
+                structure_tally += count * (mystructure + shield_boost) #uses num of my attacks for proxy calc of structure help from shield
                 total_enemy_weights += count
                 continue
             eshields = estats.get('shields',  0)
@@ -609,7 +624,16 @@ class AIstate(object):
             tempstruc = max(1e-4, estats.get('structure', 1))
             thisweight = count * tempstruc
             total_enemy_weights += thisweight
-            structure_tally += thisweight * max(mystructure,  min(estats.get('attacks', {})) - myshields ) #
+            e_attacks = estats.get('attacks', {})
+            #structure_tally += thisweight * max(mystructure,  min(e_attacks) - myshields ) #TODO: improve shielded attack calc
+            attack_total = sum( [num * max(0,  a_key - myshields) for a_key,  num in e_attacks.items()] )
+            attack_net = max(sum( [num * max(0,  a_key - myshields) for a_key,  num in e_attacks.items()] ),  0.1 * attack_total) #TODO: reconsider approach
+            #attack_diff = attack_total - attack_net
+            if attack_net > 0: #will be unless no attacks at all, due to above calc
+                shield_boost = mystructure * (attack_tally / attack_net)
+            else:
+                shield_boost = 0
+            structure_tally += thisweight * (mystructure + shield_boost) 
             for attack, nattacks in myattacks:
                 adjustedattack = max(0,  attack-eshields)
                 thisattack = min(tempstruc,  nattacks*adjustedattack)
@@ -631,6 +655,7 @@ class AIstate(object):
         elif designID in self.designStats:
             return self.designStats[designID]
         design = fo.getShipDesign(designID)
+        detect_bonus = 0
         if design:
             attacks = {}
             for attack in list(design.directFireStats):
@@ -647,7 +672,15 @@ class AIstate(object):
                 shields = 7
             elif "SH_DEFENSE_GRID" in parts:
                 shields = 4
-            stats = {'attack':design.attack, 'structure':design.structure, 'shields':shields,  'attacks':attacks}
+            if "DT_DETECTOR_4" in parts:
+                detect_bonus = 4
+            elif "DT_DETECTOR_3" in parts:
+                detect_bonus = 3
+            elif "DT_DETECTOR_2" in parts:
+                detect_bonus = 2
+            elif "DT_DETECTOR_1" in parts:
+                detect_bonus = 1
+            stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields,  'attacks':attacks}
         else:
             stats = {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
         self.designStats[designID] = stats
@@ -747,6 +780,7 @@ class AIstate(object):
         ResourcesAI.lastFociCheck[0]=0
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
+        self.qualifyingTroopBaseTargets.clear()
         #self.reset_invasions()
         
     def reset_invasions(self):

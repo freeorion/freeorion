@@ -49,7 +49,7 @@ def assignScoutsToExploreSystems():
     # order fleets to explore
     #explorableSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)
     explorableSystemIDs =  list(borderUnexploredSystemIDs)
-    if not explorableSystemIDs:
+    if not explorableSystemIDs or (capitalSysID == -1):
         return
     expSystemsByDist = sorted(  map( lambda x: ( universe.linearDistance(capitalSysID, x),  x) ,  explorableSystemIDs ) )
     print "Exploration system considering following system-distance pairs:\n %s"%("[ "+ ",  ".join(["%3d : %5.1f"%(sys, dist) for dist, sys in expSystemsByDist]) +" ]")

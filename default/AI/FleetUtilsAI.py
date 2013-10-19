@@ -313,10 +313,10 @@ def assessFleetRole(fleetID):
         selectedRole= AIFleetMissionType.FLEET_MISSION_OUTPOST
     elif AIShipRoleType.SHIP_ROLE_BASE_OUTPOST in shipRoles:
         selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
-    elif AIShipRoleType.SHIP_ROLE_BASE_DEFENSE in shipRoles:
-        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
     elif AIShipRoleType.SHIP_ROLE_BASE_INVASION in shipRoles:
         selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION
+    elif AIShipRoleType.SHIP_ROLE_BASE_DEFENSE in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
     elif AIShipRoleType.SHIP_ROLE_MILITARY_INVASION in shipRoles:
         selectedRole= AIFleetMissionType.FLEET_MISSION_INVASION
     ####
@@ -402,6 +402,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Military Fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
     print "Orbital Defense Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE))
     print "Outpost Base Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
+    print "Invasion Base Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION))
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
     print "Unclassifyable Fleets  : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVALID))
 
@@ -451,6 +452,14 @@ def generateAIFleetOrdersForAIFleetMissions():
     else:
         print "Invasion targets:  None"
     for invasionAIFleetMission in invasionAIFleetMissions:
+        print "    " + str(invasionAIFleetMission)
+
+    troopBaseAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION])
+    if len( troopBaseAIFleetMissions) >0:
+        print "Invasion Base targets (must have been interrupted by combat): "
+    else:
+        print "Invasion Base targets:  None (as expected, due to expected timing of order submission and execution)"
+    for invasionAIFleetMission in troopBaseAIFleetMissions:
         print "    " + str(invasionAIFleetMission)
 
     militaryAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_MILITARY])

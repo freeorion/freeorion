@@ -213,9 +213,9 @@ def generateResearchOrders():
             
     if ColonisationAI.gotRuins and empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete  and "LRN_XENOARCH" not in researchQueueList[:4]:
         if "LRN_ARTIF_MINDS" in researchQueueList:
-            insert_idx = 5+ researchQueueList.index("LRN_ARTIF_MINDS")
+            insert_idx = 7+ researchQueueList.index("LRN_ARTIF_MINDS")
         elif "SPY_DETECT_2" in researchQueueList:
-            insert_idx = 1+ researchQueueList.index("SPY_DETECT_2")
+            insert_idx = max(0, researchQueueList.index("SPY_DETECT_2") -2 )
         else:
             insert_idx = 0
         for xenoTech in [  "LRN_XENOARCH",  "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ,  "LRN_ALGO_ELEGANCE"]:

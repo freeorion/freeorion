@@ -72,7 +72,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
     planet_id = PlanetUtilsAI.getCapital()
     planet = None
     universe = fo.getUniverse()
-    if planet_id is not None:
+    if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
         new_name = random.choice(_capitols.get(aggression,  [""]).split('\n')).strip() + " " + planet.name
         print "Capitol City Names are: ",  _capitols

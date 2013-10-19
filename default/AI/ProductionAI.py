@@ -40,11 +40,18 @@ def curBestMilShipRating():
     if (fo.currentTurn()+1) in bestMilRatingsHistory:
         bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
-        bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
+        milBuildChoices = getBestShipRatings()
+        if milBuildChoices == []:
+            return 0.00001
+        top = milBuildChoices[0]
+        bestDesignID,  bestDesign,  buildChoices = top[2],  top[3],  [top[0]]
+        #bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
         if bestDesign is None:
             return 0.00001  #  empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
-        stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
-        bestMilRatingsHistory[ fo.currentTurn() ] = stats['attack'] * ( stats['structure'] + stats['shields'] )
+        #stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
+        stats = foAI.foAIstate.get_weighted_design_stats(bestDesignID,  ColonisationAI.empireSpeciesByPlanet.get(buildChoices[0],  ''))
+        foAI.foAIstate.adjust_stats_vs_enemy(stats)
+        bestMilRatingsHistory[ fo.currentTurn() ] = stats['attack'] * stats['structure']
     return bestMilRatingsHistory[ fo.currentTurn() ]
 
 def getBestShipInfo(priority,  loc=None):
@@ -268,6 +275,7 @@ def addMarkDesigns():
     srb3 = "SR_WEAPON_3_%1d"
     srb4 = "SR_WEAPON_4_%1d"
     clk = "ST_CLOAK_%1d"
+    db = "DT_DETECTOR_%1d"
     if1  = "FU_BASIC_TANK"
     is1,  is2,  is3,  is4,  is5 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR", "SH_PLASMA",   "SH_MULTISPEC",  "SH_BLACK"
     isList=["", is1, is2, is3, is4, is5]
@@ -363,23 +371,32 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(4, iw+8),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
 
         nb,  hull =  designNameBases[5]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb%iw]  +5*[""] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb2%iw]+5*[""] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  [srb%iw]  +3*[""] +2*[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  [srb2%iw]+3*[""] +2*[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [2,  3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb%iw]  +4*[""] +[db%1] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb2%iw]+4*[""] +[db%1] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  [srb%iw]  +2*[""] +2*[ar2]+[db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  [srb2%iw]+2*[""] +2*[ar2]+[db%1]+ [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  [srb2%iw]+2*[""] +2*[ar2]+[db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(6, isp )    ,  desc,  hull,  [srb2%4] +2*[""] +2*[ar2]+[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2] ]
+        newMarkDesigns += [ (nb%(7, isp )    ,  desc,  hull,  3*[srb2%4] +2*[ar2] +[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2,  3,  4] ]
         nb,  hull =  designNameBases[6]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb3%iw]+4*[""] +[ar2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +2*[ar3]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  3*[srb3%iw]+3*[ar3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb3%iw]+2*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb3%iw]+2*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +[ar2] + [db%2] + [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb3%iw]+2*[""] +2*[ar3]+ [db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  3*[srb3%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(7, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
         nb,  hull =  designNameBases[7]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb4%iw]+2*[ar4]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is2,  if1, if1],  "",  model)    for iw in [1, 2] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [1, 2] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1, 2] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1, 2] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(7, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(8, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(9, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(10, iw)    ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
 
         if False and foAI.foAIstate.aggression >fo.aggression.typical:
             hull =  "SH_SENTIENT"
@@ -445,7 +462,7 @@ def generateProductionOrders():
     empire = fo.getEmpire()
     universe = fo.getUniverse()
     capitolID = PlanetUtilsAI.getCapital()
-    if capitolID == None:
+    if capitolID is None or capitolID == -1:
         homeworld=None
         capitolSysID=None
     else:
@@ -500,6 +517,13 @@ def generateProductionOrders():
     movedCapital=False
     bldgExpense=0.0
     bldgRatio = [ 0.4,  0.35,  0.30  ][fo.empireID()%3]
+    print "Buildings present on all owned planets:"
+    for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
+        planet = universe.getPlanet(pid)
+        if planet:
+            print "%30s: %s"%(planet.name,  [universe.getObject(bldg).name for bldg in planet.buildingIDs])
+    print
+
     if not homeworld:
         print "if no capitol, no place to build, should get around to capturing or colonizing a new one"#TODO
     else:
@@ -510,7 +534,7 @@ def generateProductionOrders():
             tags=",".join( thisObj.tags)
             specials=",".join(thisObj.specials)
             print  "%8s | %20s | type:%20s | tags:%20s | specials: %20s | owner:%d "%(bldg,  thisObj.name,  "_".join(thisObj.buildingTypeName.split("_")[-2:])[:20],  tags,  specials,  thisObj.owner )
-
+        print 
         capitalBldgs = [universe.getObject(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
         #possibleBuildingTypeIDs = [bldTID for bldTID in empire.availableBuildingTypes if   fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id)]
@@ -548,7 +572,7 @@ def generateProductionOrders():
             queuedBldgNames=[ bldg.name for bldg in capitolQueuedBldgs ]
 
             if ( totalPP >40 or currentTurn > 40 ) and ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
-                res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
+                res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d"%res
                 if res:
                     cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
@@ -556,7 +580,7 @@ def generateProductionOrders():
 
             if  ("BLD_SHIPYARD_BASE" in possibleBuildingTypes) and ("BLD_SHIPYARD_BASE" not in (capitalBldgs+queuedBldgNames)):
                 try:
-                    res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", empire.capitalID)
+                    res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", homeworld.id)
                     print "Enqueueing BLD_SHIPYARD_BASE, with result %d"%res
                 except:
                     print "Error: cant build shipyard at new capital,  probably no population; we're hosed"
@@ -565,7 +589,7 @@ def generateProductionOrders():
             for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ]:
                 if  (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                     try:
-                        res=fo.issueEnqueueBuildingProductionOrder(bldName, empire.capitalID)
+                        res=fo.issueEnqueueBuildingProductionOrder(bldName, homeworld.id)
                         print "Enqueueing %s at capitol, with result %d"%(bldName,  res)
                         if res:
                             cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
@@ -578,7 +602,7 @@ def generateProductionOrders():
             for bldName in [ "BLD_SHIPYARD_ORG_XENO_FAC",  "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"   ]:
                 if  ( totalPP >30 or currentTurn > 30 ) and (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                     try:
-                        res=fo.issueEnqueueBuildingProductionOrder(bldName, empire.capitalID)
+                        res=fo.issueEnqueueBuildingProductionOrder(bldName, homeworld.id)
                         print "Enqueueing %s at capitol, with result %d"%(bldName,  res)
                         if res:
                             cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
@@ -592,7 +616,7 @@ def generateProductionOrders():
             if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in queuedBldgNames):
                 if  len( ColonisationAI.empireColonizers.get("SP_EXOBOT", []))==0  or numExobotShips==0: #don't have an exobot shipyard yet
                     try:
-                        res=fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
+                        res=fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", homeworld.id)
                         print "Enqueueing BLD_EXOBOT_SHIP, with result %d"%res
                         if res:
                             res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
@@ -601,8 +625,8 @@ def generateProductionOrders():
                         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
             if  ("BLD_IMPERIAL_PALACE" in possibleBuildingTypes) and ("BLD_IMPERIAL_PALACE" not in (capitalBldgs+queuedBldgNames)):
-                res=fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", empire.capitalID)
-                print "Enqueueing BLD_IMPERIAL_PALACE, with result %d"%res
+                res=fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
+                print "Enqueueing BLD_IMPERIAL_PALACE at %s, with result %d"%(homeworld.name,  res)
                 if res:
                     res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                     print "Requeueing BLD_IMPERIAL_PALACE to front of build queue, with result %d"%res
@@ -610,7 +634,7 @@ def generateProductionOrders():
 
             # ok, BLD_NEUTRONIUM_SYNTH is not currently unlockable, but just in case...   ;-p
             if  ("BLD_NEUTRONIUM_SYNTH" in possibleBuildingTypes) and ("BLD_NEUTRONIUM_SYNTH" not in (capitalBldgs+queuedBldgNames)):
-                res=fo.issueEnqueueBuildingProductionOrder("BLD_NEUTRONIUM_SYNTH", empire.capitalID)
+                res=fo.issueEnqueueBuildingProductionOrder("BLD_NEUTRONIUM_SYNTH", homeworld.id)
                 print "Enqueueing BLD_NEUTRONIUM_SYNTH, with result %d"%res
                 if res:
                     res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
@@ -948,6 +972,8 @@ def generateProductionOrders():
                 else:
                     distanceMap={}
                     for sysID in best_locs: #want to build close to capitol for defense
+                        if sysID == -1:
+                            continue
                         try:
                             distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
                         except:
@@ -983,6 +1009,8 @@ def generateProductionOrders():
             else:
                 distanceMap={}
                 for sysID in AIstate.empireStars.get(fo.starType.red,  []):
+                    if sysID == -1:
+                        continue
                     try:
                         distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
                     except:
@@ -1026,6 +1054,8 @@ def generateProductionOrders():
             else:
                 distanceMap={}
                 for sysID in AIstate.empireStars.get(fo.starType.blackHole,  []):
+                    if sysID == -1:
+                        continue
                     try:
                         distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
                     except:
@@ -1098,6 +1128,8 @@ def generateProductionOrders():
             else:
                 distanceMap={}
                 for sysID in AIstate.empireStars.get(fo.starType.neutron,  []):
+                    if sysID == -1:
+                        continue
                     try:
                         distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
                     except:

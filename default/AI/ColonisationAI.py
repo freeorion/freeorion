@@ -62,6 +62,7 @@ nestValMap = {
 
 def dictFromMap(this_map):
     return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
+    
 def resetCAIGlobals():
     global curBestMilShipRating
     empireSpecies.clear()
@@ -399,8 +400,6 @@ def getColonyFleets():
     #foAI.foAIstate.qualifyingColonyBaseTargets.clear()
     cost_ratio = 120 #TODO: temp ratio; reest to 12 *; consider different ratio
     for pid in evaluatedColonyPlanetIDs: #TODO: reorganize
-        if pid in  foAI.foAIstate.qualifyingOutpostBaseTargets: 
-            continue
         planet = universe.getPlanet(pid)
         if not planet: 
             continue
@@ -409,12 +408,12 @@ def getColonyFleets():
             planet2 = universe.getPlanet(pid2)
             if not planet2: 
                 continue
-            if planet2.speciesName  in empireColonizers:
-                if  colonyCost <  cost_ratio * availPP_BySys.get(sysID,  0): 
-                    foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: check other local colonizers for better score
+            if (pid not in  foAI.foAIstate.qualifyingOutpostBaseTargets) and (planet2.speciesName  in empireColonizers):
                 if  (pid not in empireOutpostIDs): 
                     foAI.foAIstate.qualifyingOutpostBaseTargets.setdefault(pid,  [pid2,  -1])
-                break
+            if (pid not in  foAI.foAIstate.qualifyingColonyBaseTargets) and (planet2.speciesName  in empireColonizers):
+                if  colonyCost <  cost_ratio * availPP_BySys.get(sysID,  0): 
+                    foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: check other local colonizers for better score
 
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
 
@@ -635,6 +634,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         return 0
     detail.append("%s : "%planet.name )
     system = universe.getSystem(planet.systemID)
+    
+    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  empire.empireID)).get(fo.visibility.partial, -9999)
+    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empire.empireID)).get(fo.visibility.partial, -9999)
+
+    if planetPartialVisTurn < sysPartialVisTurn:
+        print "Colonization AI couldn't get current info on planet id %d (was stealthed at last sighting)"%planetID
+        return 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
+    
     tagList=[]
     starBonus=0
     colonyStarBonus=0
@@ -839,7 +846,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
 
         gotAsteroids=False
         gotOwnedAsteroids = False
-        gotGG = False
+        got_GG = False
         gotOwnedGG = False
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
             for pid  in [temp_id for temp_id in system.planetIDs if temp_id != planetID]:
@@ -850,7 +857,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                         if p2.owner != -1:
                             gotOwnedAsteroids = True
                     if p2.size== fo.planetSize.gasGiant:
-                        gotGG = True
+                        got_GG = True
                         if p2.owner != -1:
                             gotOwnedGG = True
         if gotAsteroids:
@@ -865,7 +872,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 if species and species.canProduceShips:
                     asteroidBonus += 30*discountMultiplier*pilotVal
                     detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    discountMultiplier*20*pilotVal  )  )
-        if gotGG:
+        if got_GG:
             if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):
                 if gotOwnedGG:
                     flat_industry += perGGG #will go into detailed industry projection
@@ -1009,13 +1016,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         empireID = empire.empireID
         capitalID = PlanetUtilsAI.getCapital()
         homeworld = universe.getPlanet(capitalID)
+        distanceFactor = 0
         if homeworld:
             homeSystemID = homeworld.systemID
             evalSystemID = planet.systemID
-            leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-            distanceFactor = 1.001 / (leastJumpsPath + 1)
-        else:
-            distanceFactor = 0
+            if (homeSystemID != -1) and (evalSystemID != -1):
+                leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+                #leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+                distanceFactor = 1.001 / (leastJumpsPath + 1)
 
         for special in [ spec for spec in  planetSpecials if spec in AIDependencies.metabolimBoosts]:
             gbonus =  discountMultiplier  * basePopInd  * indMult * empireMetabolisms.get( AIDependencies.metabolimBoosts[special] , 0)#  due to growth applicability to other planets
@@ -1111,10 +1119,11 @@ def assignColonyFleetsToColonise():
             if rating[0]>bestScore:
                 bestScore = rating[0]
                 targetID = pid
-        foAI.foAIstate.qualifyingOutpostBaseTargets[targetID][1] = -1 #TODO: should probably delete
-        aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, targetID)
-        aiFleetMission = foAI.foAIstate.getAIFleetMission(fid)
-        aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, aiTarget)
+        if targetID != -1:
+            foAI.foAIstate.qualifyingOutpostBaseTargets[targetID][1] = -1 #TODO: should probably delete
+            aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, targetID)
+            aiFleetMission = foAI.foAIstate.getAIFleetMission(fid)
+            aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, aiTarget)
 
     # assign fleet targets to colonisable planets
     sendColonyShips(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)

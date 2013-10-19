@@ -153,6 +153,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression]
 
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20]
+    topTargetPlanets.extend( foAI.foAIstate.qualifyingTroopBaseTargets.keys() )
     topTargetSystems = []
     for sysID in   AIstate.invasionTargetedSystemIDs + PlanetUtilsAI.getSystems(  topTargetPlanets  ):
         if sysID not in topTargetSystems:
@@ -606,14 +607,15 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
     empireID = empire.empireID
     capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
+    distanceFactor=0
     if homeworld:
         homeSystemID = homeworld.systemID
         evalSystemID = system.systemID
-        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-        distanceFactor = 1.001/(leastJumpsPath + 1)
+        if (homeSystemID != -1) and (evalSystemID != -1):
+            leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+            distanceFactor = 1.001/(leastJumpsPath + 1)
     else:
         homeSystemID=-1
-        distanceFactor=0
 
     if systemID == homeSystemID:
         return 10
