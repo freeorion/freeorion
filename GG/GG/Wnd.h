@@ -575,7 +575,6 @@ public:
         If no layout exists for the window, this has no effect. */
     void SetLayoutCellMargin(unsigned int margin);
 
-
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
         operation are rendered twice -- once in-place as normal, once in the
         location of the drag operation, attached to the cursor.  Such Wnds may

@@ -26,12 +26,12 @@
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Config.h>
-#include <GG/Control.h>
 #include <GG/Cursor.h>
 #include <GG/EventPump.h>
 #include <GG/Layout.h>
 #include <GG/PluginInterface.h>
 #include <GG/StyleFactory.h>
+#include <GG/Edit.h>
 #include <GG/Timer.h>
 #include <GG/ZList.h>
 #include <GG/utf8/checked.h>
@@ -230,6 +230,8 @@ struct GG::GUIImpl
 
     const Wnd* m_save_as_png_wnd;
     std::string m_save_as_png_filename;
+
+    std::string m_clipboard_text;
 };
 
 GUIImpl::GUIImpl() :
@@ -266,7 +268,8 @@ GUIImpl::GUIImpl() :
     m_style_factory(new StyleFactory()),
     m_render_cursor(false),
     m_cursor(),
-    m_save_as_png_wnd(0)
+    m_save_as_png_wnd(0),
+    m_clipboard_text()
 {
     m_button_state[0] = m_button_state[1] = m_button_state[2] = false;
     m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
@@ -1057,6 +1060,37 @@ void GUI::RenderCursor(bool render)
 
 void GUI::SetCursor(const boost::shared_ptr<Cursor>& cursor)
 { s_impl->m_cursor = cursor; }
+
+const std::string& GUI::ClipboardText() const
+{ return s_impl->m_clipboard_text; }
+
+void GUI::SetClipboardText(const std::string& text)
+{ s_impl->m_clipboard_text = text; }
+
+void GUI::CopyFocusWndText()
+{
+    const Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return;
+    CopyWndText(focus_wnd);
+}
+
+void GUI::CopyWndText(const Wnd* wnd)
+{
+    // presently only TextControl copying is supported.
+
+    if (const TextControl* text_control = dynamic_cast<const TextControl*>(wnd)) {
+        if (const Edit* edit_control = dynamic_cast<const Edit*>(text_control)) {
+            // if TextControl is an Edit, it may have a subset of its text
+            // selected. in that case, only copy the selected text. if nothing
+            // is selected, revert to copying the full text of the TextControl.
+            std::string selected_text = edit_control->SelectedText();
+            if (!selected_text.empty())
+                SetClipboardText(selected_text);
+        }
+        SetClipboardText(text_control->Text());
+    }
+}
 
 GUI* GUI::GetGUI()
 { return s_gui; }
