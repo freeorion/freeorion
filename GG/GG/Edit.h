@@ -130,6 +130,9 @@ public:
     virtual void SelectAll();
 
     virtual void SetText(const std::string& str);
+
+    /** Replaces selected text with, or inserts at cursor, the text in \a text. */
+    virtual void AcceptPastedText(const std::string& text);
     //@}
 
 protected:

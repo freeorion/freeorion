@@ -1085,11 +1085,28 @@ void GUI::CopyWndText(const Wnd* wnd)
             // selected. in that case, only copy the selected text. if nothing
             // is selected, revert to copying the full text of the TextControl.
             std::string selected_text = edit_control->SelectedText();
-            if (!selected_text.empty())
+            if (!selected_text.empty()) {
                 SetClipboardText(selected_text);
+                return;
+            }
         }
         SetClipboardText(text_control->Text());
     }
+}
+
+void GUI::PasteFocusWndText(const std::string& text)
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return;
+    PasteWndText(focus_wnd, text);
+}
+
+void GUI::PasteWndText(Wnd* wnd, const std::string& text)
+{
+    // presently only pasting into Edit wnds is supported
+    if (Edit* edit_control = dynamic_cast<Edit*>(wnd))
+        edit_control->AcceptPastedText(text);
 }
 
 GUI* GUI::GetGUI()

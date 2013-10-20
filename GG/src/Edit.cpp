@@ -100,7 +100,10 @@ const std::pair<CPSize, CPSize>& Edit::CursorPosn() const
 { return m_cursor_pos; }
 
 std::string Edit::SelectedText() const
-{ return Text(m_cursor_pos.first, m_cursor_pos.second); }
+{
+    //std::cout << Text(m_cursor_pos.first, m_cursor_pos.second) << std::endl;
+    return Text(m_cursor_pos.first, m_cursor_pos.second);
+}
 
 Clr Edit::InteriorColor() const
 { return m_int_color; }
@@ -224,6 +227,22 @@ void Edit::SetText(const std::string& str)
     }
 
     m_recently_edited = true;
+}
+
+void Edit::AcceptPastedText(const std::string& text)
+{
+    if (!Interactive())
+        return;
+
+    if (MultiSelected()) {
+        ClearSelected();
+        m_cursor_pos.second = m_cursor_pos.first;
+    }
+
+    Insert(0, m_cursor_pos.first, text);
+
+    m_cursor_pos.second += text.length();
+    m_cursor_pos.first = m_cursor_pos.second;
 }
 
 bool Edit::MultiSelected() const
@@ -430,7 +449,8 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
             std::string translated_code_point;
             GetTranslatedCodePoint(key, key_code_point, mod_keys, translated_code_point);
             if (!translated_code_point.empty() &&
-                !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META))) {
+                !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META)))
+            {
                 if (MultiSelected())
                     ClearSelected();
                 Insert(0, m_cursor_pos.first, translated_code_point);

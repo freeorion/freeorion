@@ -328,9 +328,11 @@ public:
     void RenderCursor(bool render); ///< set this to true iff the GUI should render the cursor
     void SetCursor(const boost::shared_ptr<Cursor>& cursor); ///< sets the currently-installed cursor
 
-    virtual void SetClipboardText(const std::string& text); ///< sets text stored in clipboard
-    virtual void CopyFocusWndText();                        ///< copies current focus Wnd as text to clipboard
-    virtual void CopyWndText(const Wnd* wnd);               ///< copies \a wnd as text to clipboard
+    virtual void SetClipboardText(const std::string& text);         ///< sets text stored in clipboard
+    virtual void CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
+    virtual void CopyWndText(const Wnd* wnd);                       ///< copies \a wnd as text to clipboard
+    virtual void PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd
+    virtual void PasteWndText(Wnd* wnd, const std::string& text);   ///< attempts to paste \a text into the Wnd \a wnd
     //@}
 
     static GUI*  GetGUI();                ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
