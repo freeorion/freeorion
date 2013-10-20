@@ -1064,18 +1064,21 @@ void GUI::SetCursor(const boost::shared_ptr<Cursor>& cursor)
 const std::string& GUI::ClipboardText() const
 { return s_impl->m_clipboard_text; }
 
-void GUI::SetClipboardText(const std::string& text)
-{ s_impl->m_clipboard_text = text; }
+bool GUI::SetClipboardText(const std::string& text)
+{
+    s_impl->m_clipboard_text = text;
+    return true;
+}
 
-void GUI::CopyFocusWndText()
+bool GUI::CopyFocusWndText()
 {
     const Wnd* focus_wnd = FocusWnd();
     if (!focus_wnd)
-        return;
-    CopyWndText(focus_wnd);
+        return false;
+    return CopyWndText(focus_wnd);
 }
 
-void GUI::CopyWndText(const Wnd* wnd)
+bool GUI::CopyWndText(const Wnd* wnd)
 {
     // presently only TextControl copying is supported.
 
@@ -1087,26 +1090,36 @@ void GUI::CopyWndText(const Wnd* wnd)
             std::string selected_text = edit_control->SelectedText();
             if (!selected_text.empty()) {
                 SetClipboardText(selected_text);
-                return;
+                return true;
             }
         }
         SetClipboardText(text_control->Text());
+        return true;
     }
+    return false;
 }
 
-void GUI::PasteFocusWndText(const std::string& text)
+bool GUI::PasteFocusWndText(const std::string& text)
 {
     Wnd* focus_wnd = FocusWnd();
     if (!focus_wnd)
-        return;
-    PasteWndText(focus_wnd, text);
+        return false;
+    return PasteWndText(focus_wnd, text);
 }
 
-void GUI::PasteWndText(Wnd* wnd, const std::string& text)
+bool GUI::PasteWndText(Wnd* wnd, const std::string& text)
 {
     // presently only pasting into Edit wnds is supported
-    if (Edit* edit_control = dynamic_cast<Edit*>(wnd))
+    if (Edit* edit_control = dynamic_cast<Edit*>(wnd)) {
         edit_control->AcceptPastedText(text);
+        return true;
+    }
+    return false;
+}
+
+bool GUI::PasteFocusWndClipboardText()
+{
+    return PasteFocusWndText(s_impl->m_clipboard_text);
 }
 
 GUI* GUI::GetGUI()

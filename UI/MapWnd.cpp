@@ -5111,6 +5111,14 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     m_keyboard_accelerator_signals.insert(
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
                     &MapWnd::ZoomToNextFleet, this));
+
+    // Keys for copy / paste
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c, GG::MOD_KEY_CTRL),
+                    &GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v, GG::MOD_KEY_CTRL),
+                    &GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()));
 }
 
 void MapWnd::DisconnectKeyboardAcceleratorSignals() {
@@ -5126,7 +5134,7 @@ void MapWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
 
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN,   GG::MOD_KEY_CTRL);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
 
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2);
@@ -5152,16 +5160,24 @@ void MapWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
+
+    // Copy / Paste
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c, GG::MOD_KEY_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, GG::MOD_KEY_CTRL);
 }
 
 void MapWnd::DisableAlphaNumAccels() {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
-         i != GG::GUI::GetGUI()->accel_end(); ++i) {
+         i != GG::GUI::GetGUI()->accel_end(); ++i)
+    {
         if (i->second != 0) // we only want to disable mod_keys without modifiers
-            continue; 
+            continue;
+
         GG::Key key = i->first;
-        if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
-            (key >= GG::GGK_0 && key <= GG::GGK_9)) {
+        GG::Flags<GG::ModKey> mod_keys = i->second;
+        if ((key >= GG::GGK_a && key <= GG::GGK_z) ||
+            (key >= GG::GGK_0 && key <= GG::GGK_9))
+        {
             m_disabled_accels_list.insert(key);
         }
         m_disabled_accels_list.insert(GG::GGK_KP_ENTER);

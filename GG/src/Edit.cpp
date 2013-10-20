@@ -234,15 +234,24 @@ void Edit::AcceptPastedText(const std::string& text)
     if (!Interactive())
         return;
 
+    bool emit_signal = false;
+
     if (MultiSelected()) {
         ClearSelected();
+        emit_signal = true;
         m_cursor_pos.second = m_cursor_pos.first;
     }
 
-    Insert(0, m_cursor_pos.first, text);
+    if (!text.empty()) {
+        Insert(0, m_cursor_pos.first, text);
+        emit_signal = true;
+    }
 
-    m_cursor_pos.second += text.length();
-    m_cursor_pos.first = m_cursor_pos.second;
+    if (emit_signal) {
+        m_cursor_pos.second += text.length();       // moves cursor to end of pasted text
+        m_cursor_pos.first = m_cursor_pos.second;   // ensures nothing is selected after pasting
+        EditedSignal(Text());                       // notifies rest of GUI of change to text in this Edit
+    }
 }
 
 bool Edit::MultiSelected() const
