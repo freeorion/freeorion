@@ -258,12 +258,14 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
 
         # TODO: priority
         ordersCompleted = True
+        print "--------------"
         print "Checking orders for fleet %d   (on turn %d)"%(self.target_id,  fo.currentTurn())
-        #print "\t\t\t Full Orders are:"
-        #for aiFleetOrder2 in self.getAIFleetOrders():
-        #    print "\t\t\t\t %s"%aiFleetOrder2
+        print "\t Full Orders are:"
+        for aiFleetOrder2 in self.getAIFleetOrders():
+            print "\t\t %s"%aiFleetOrder2
+        print "/t/t------"
         for aiFleetOrder in self.getAIFleetOrders():
-            #print "   %s"%(aiFleetOrder)
+            print "  checking Order: %s"%(aiFleetOrder)
             clearAll=False
             if aiFleetOrder.getAIFleetOrderType() in [EnumsAI.AIFleetOrderType.ORDER_COLONISE,  EnumsAI.AIFleetOrderType.ORDER_OUTPOST]:#TODO: invasion?
                 universe=fo.getUniverse()
@@ -367,20 +369,23 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 else:
                     loc=fleet.nextSystemID
                 if clearAll:
-                    print "Fleet %d has completed its mission; clearing all orders and targets." % self.target_id
-                    print "Full set of orders were:"
-                    for aiFleetOrder2 in self.getAIFleetOrders():
-                        print "\t\t %s"%aiFleetOrder2
-                    self.clearAIFleetOrders()
-                    self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
-                    if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
-                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
-                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  thisround="Fleet %d Reassignment"%fleetID)
-                        if allocations:
-                            MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
+                    if orders:
+                        print "Fleet %d has completed its mission; clearing all orders and targets." % self.target_id
+                        print "Full set of orders were:"
+                        for aiFleetOrder2 in orders:
+                            print "\t\t %s"%aiFleetOrder2
+                        self.clearAIFleetOrders()
+                        self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
+                        if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
+                            allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  thisround="Fleet %d Reassignment"%fleetID)
+                            if allocations:
+                                MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
+                    else: #no orders
+                        print "No Current Orders"
                 else:
                     #TODO: evaluate releasing a smaller portion or none of the ships
                     sysStatus = foAI.foAIstate.systemStatus.setdefault(last_sys_target, {})

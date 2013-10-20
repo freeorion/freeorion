@@ -29,12 +29,15 @@ def countPartsFleetwide(fleetID,  partsList):
     tally=0
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleetID)
-    if not fleet:  return 0
+    if not fleet:  
+        return 0
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
-        if not ship: continue
+        if not ship: 
+            continue
         design = ship.design
-        if not design: continue
+        if not design: 
+            continue
         for part in design.parts:
             if part in partsList:
                 tally += 1
@@ -229,11 +232,12 @@ def fleetHasShipWithRole(fleetID, shipRole):
             return True
     return False
 
-def getShipIDWithRole(fleetID, shipRole):
+def getShipIDWithRole(fleetID, shipRole,  verbose = True):
     "returns a ship with the specified role in the fleet"
 
     if not fleetHasShipWithRole(fleetID, shipRole):
-        print "No ship with role " + __AIShipRoleTypeNames.name(shipRole) + " found."
+        if verbose:
+            print "No ship with role " + __AIShipRoleTypeNames.name(shipRole) + " found."
         return None
 
     universe = fo.getUniverse()

@@ -263,12 +263,12 @@ class AIFleetOrder(object):
         #
         elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():#TODO: check for separate fleet holding invasion ships
             if AITargetType.TARGET_FLEET == self.getSourceAITarget().target_type:
-                shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION)
+                shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  False)
                 if shipID is None:
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().target_id)
-            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0 or planet.owner==-1):# native planets currently shouldnt have shields, but a bug sometimes makes it look like they do
+            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0):
                 return True
             return False
         #
@@ -414,6 +414,8 @@ class AIFleetOrder(object):
                                     print "Universe Dump to debug invasions:"
                                     universe.dump()
                                 break
+                if result:
+                    print "Successfully ordered troop ship(s) to invade %s, with detail%s "%(planetName,  detailStr)
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
                 shipID = None

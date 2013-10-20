@@ -315,15 +315,13 @@ def calculateMilitaryPriority():
     unmetThreat = 0.0
     currentTurn=fo.currentTurn()
     shipsNeeded=0
+    defenses_needed = 0
     for sysID in mySystems.union(targetSystems) :
         status=foAI.foAIstate.systemStatus.get( sysID,  {} )
-        myAttack,  myHealth =0, 0
-        for fid in status.get('myfleets', []) :
-            rating= foAI.foAIstate.fleetStatus.get(fid,  {}).get('rating', {})
-            myAttack += rating.get('attack', 0)
-            myHealth += rating.get('health', 0)
-        myRating = myAttack*myHealth
+        myRating = status.get('myFleetRating',  0)
+        my_defenses = status.get('mydefenses',  {}).get('overall', 0)
         baseMonsterThreat = status.get('monsterThreat', 0)
+        #scale monster threat so that in early - mid game big monsters don't over-drive military production
         if currentTurn>200:
             monsterThreat = baseMonsterThreat
         elif currentTurn>100:
@@ -333,15 +331,11 @@ def calculateMilitaryPriority():
                 monsterThreat = 2000 + (currentTurn/100.0 - 1) *(baseMonsterThreat-2000)
         else:
             monsterThreat = 0
-
-        threatRoot = status.get('fleetThreat', 0)**0.5 + status.get('planetThreat', 0)**0.5 + monsterThreat**0.5
         if sysID in mySystems:
-            threatRoot +=  (0.3* status.get('neighborThreat', 0))**0.5
+            threatRoot = status.get('fleetThreat', 0)**0.5 + 0.8*status.get('max_neighbor_threat', 0)**0.5 + 0.2*status.get('neighborThreat', 0)**0.5 + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
         else:
-            threatRoot +=  (0.1* status.get('neighborThreat', 0))**0.5
-        threat = threatRoot**2
-        unmetThreat += max( 0,  threat - myRating )
-        shipsNeeded += math.ceil( max(0,   (threatRoot/cSRR)- (myRating/curShipRating)**0.5 ) )
+            threatRoot = status.get('fleetThreat', 0)**0.5  + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
+        shipsNeeded += math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
 
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
     militaryPriority = int( 40 + max(0,  75*shipsNeeded) )

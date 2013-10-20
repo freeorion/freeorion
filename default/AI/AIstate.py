@@ -373,13 +373,17 @@ class AIstate(object):
             neighborDict = dictFromMap( universe.getSystemNeighborsMap(sysID,  self.empireID) )
             neighbors = neighborDict.keys()
             sysStatus['neighbors'] = neighborDict
+            max_n_threat = 0
             if system:
                 threat=0
                 for neighborID in neighbors:
                     neighborStatus= self.systemStatus.get(neighborID,  {})
                     nfthreat = neighborStatus.get('fleetThreat', 0)
+                    if nfthreat > max_n_threat:
+                        max_n_threat = nfthreat
                     threat += nfthreat
                 sysStatus['neighborThreat'] = int( threat + 0.5 )
+                sysStatus['max_neighbor_threat'] = int(max_n_threat)
             else:
                 sysStatus['neighborThreat'] = 0.9*sysStatus.get('neighborThreat',  0) # if no current info, leave as previous with partial reduction, or 0 if no previous rating
 
