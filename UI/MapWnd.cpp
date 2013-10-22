@@ -5112,7 +5112,10 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
                     &MapWnd::ZoomToNextFleet, this));
 
-    // Keys for copy / paste
+    // Keys for cut / copy / paste
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x, GG::MOD_KEY_CTRL),
+                    &GG::GUI::CutFocusWndText, GG::GUI::GetGUI()));
     m_keyboard_accelerator_signals.insert(
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c, GG::MOD_KEY_CTRL),
                     &GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()));
@@ -5162,6 +5165,7 @@ void MapWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
 
     // Copy / Paste
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x, GG::MOD_KEY_CTRL);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c, GG::MOD_KEY_CTRL);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, GG::MOD_KEY_CTRL);
 }

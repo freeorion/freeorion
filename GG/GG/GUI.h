@@ -334,6 +334,8 @@ public:
     virtual bool PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd
     virtual bool PasteWndText(Wnd* wnd, const std::string& text);   ///< attempts to paste \a text into the Wnd \a wnd
     bool         PasteFocusWndClipboardText();                      ///< attempts to paste clipboard contents into the current focus Wnd
+    virtual bool CutFocusWndText();                                 ///< copies current focus Wnd as text to clipboard, then pastes an empty string into that Wnd
+    virtual bool CutWndText(Wnd* wnd);                              ///< copies \a wnd as text to clipboard, then pastes an empty string to that Wnd
     //@}
 
     static GUI*  GetGUI();                ///< allows any GG code access to GUI framework by calling GUI::GetGUI()

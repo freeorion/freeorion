@@ -1122,6 +1122,19 @@ bool GUI::PasteFocusWndClipboardText()
     return PasteFocusWndText(s_impl->m_clipboard_text);
 }
 
+bool GUI::CutFocusWndText()
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+    return CutWndText(focus_wnd);
+}
+
+bool GUI::CutWndText(Wnd* wnd)
+{
+    return CopyWndText(wnd) && PasteWndText(wnd, "");
+}
+
 GUI* GUI::GetGUI()
 { return s_gui; }
 
