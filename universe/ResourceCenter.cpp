@@ -17,14 +17,16 @@ namespace {
 }
 
 ResourceCenter::ResourceCenter() :
-    m_focus("")
+    m_focus(""),
+    m_last_turn_focus_changed(BEFORE_FIRST_TURN)
 {}
 
 ResourceCenter::~ResourceCenter()
 {}
 
 ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
-    m_focus(rhs.m_focus)
+    m_focus(rhs.m_focus),
+    m_last_turn_focus_changed(rhs.m_last_turn_focus_changed)
 {}
 
 void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis) {
@@ -37,6 +39,7 @@ void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visi
 
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         this->m_focus = copied_object->m_focus;
+        this->m_last_turn_focus_changed = copied_object->m_last_turn_focus_changed;
     }
 }
 
@@ -51,10 +54,20 @@ void ResourceCenter::Init() {
     AddMeter(METER_TARGET_TRADE);
     AddMeter(METER_TARGET_CONSTRUCTION);
     m_focus.clear();
+    m_last_turn_focus_changed = INVALID_GAME_TURN;
 }
 
 const std::string& ResourceCenter::Focus() const
 { return m_focus; }
+
+int ResourceCenter::TurnsSinceFocusChange() const {
+    if (m_last_turn_focus_changed == INVALID_GAME_TURN)
+        return 0;
+    int current_turn = CurrentTurn();
+    if (current_turn = INVALID_GAME_TURN)
+        return 0;
+    return current_turn - m_last_turn_focus_changed;
+}
 
 std::vector<std::string> ResourceCenter::AvailableFoci() const
 { return std::vector<std::string>(); }
@@ -64,7 +77,7 @@ const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) cons
 
 std::string ResourceCenter::Dump() const {
     std::stringstream os;
-    os << "ResourceCenter focus: " << m_focus;
+    os << "ResourceCenter focus: " << m_focus << " last changed on turn: " << m_last_turn_focus_changed;
     return os.str();
 }
 
@@ -115,6 +128,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
     std::vector<std::string> avail_foci = AvailableFoci();
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
         m_focus = focus;
+        m_last_turn_focus_changed = CurrentTurn();
         ResourceCenterChangedSignal();
         return;
     }
@@ -123,6 +137,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
 
 void ResourceCenter::ClearFocus() {
     m_focus.clear();
+    m_last_turn_focus_changed = CurrentTurn();
     ResourceCenterChangedSignal();
 }
 
@@ -154,6 +169,7 @@ void ResourceCenter::ResourceCenterClampMeters() {
 
 void ResourceCenter::Reset() {
     m_focus.clear();
+    m_last_turn_focus_changed = INVALID_GAME_TURN;
 
     GetMeter(METER_INDUSTRY)->Reset();
     GetMeter(METER_RESEARCH)->Reset();

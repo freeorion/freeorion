@@ -30,9 +30,10 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Focus() const;                                          ///< current focus to which this ResourceCenter is set
-    virtual std::vector<std::string>AvailableFoci() const;                                  ///< focus settings available to this ResourceCenter
-    virtual const std::string&      FocusIcon(const std::string& focus_name) const;         ///< icon representing focus with name \a focus_name for this ResourceCenter
+    const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
+    int                             TurnsSinceFocusChange() const;                  ///< number of turns since focus was last changed.
+    virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
+    virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
 
     std::string     Dump() const;
 
@@ -64,6 +65,7 @@ protected:
 
 private:
     std::string m_focus;
+    int         m_last_turn_focus_changed;
 
     virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
     virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -80,7 +82,8 @@ private:
 template <class Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_focus);
+    ar  & BOOST_SERIALIZATION_NVP(m_focus)
+        & BOOST_SERIALIZATION_NVP(m_last_turn_focus_changed);
 }
 
 #endif // _ResourceCenter_h_

@@ -371,6 +371,7 @@
     (Troops)                                    \
     (Tundra)                                    \
     (Turn)                                      \
+    (TurnsSinceFocusChange)                     \
     (Type)                                      \
     (Uninhabitable)                             \
     (UniverseCentreX)                           \

@@ -518,6 +518,11 @@ namespace ValueRef {
             return object->CreationTurn();
         } else if (property_name == "Age") {
             return object->AgeInTurns();
+        } else if (property_name == "TurnsSinceFocusChange") {
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+                return planet->TurnsSinceFocusChange();
+            else
+                return 0;
         } else if (property_name == "ProducedByEmpireID") {
             if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->ProducedByEmpireID();
