@@ -132,7 +132,7 @@ def calculateResearchPriority():
             researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < cutoffs[1]:
             researchPriority = settings[1] * industryPriority# med-high research
-        elif fo.currentTurn() < cutoffs[2]:
+        elif (fo.currentTurn() < cutoffs[2]) or (empire.getTechStatus("PRO_ORBITAL_GEN") != fo.techStatus.complete):
             researchPriority = settings[2] * industryPriority # med-high  industry
         else:
             researchQueue = list(empire.researchQueue)
@@ -147,6 +147,14 @@ def calculateResearchPriority():
                 researchPriority = 0.5 * researchPriority # closing in on end of research
             elif len(researchQueue) <20:
                 researchPriority = 0.7*researchPriority # high  industry , low research
+                
+    if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
+            (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
+            (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
+        if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete):
+            researchPriority = min(researchPriority,  0.2*industryPriority) # high  industry , very very low research
+        else:
+            researchPriority = min(researchPriority,  0.25*industryPriority) # high  industry , very low research
 
     print  ""
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)

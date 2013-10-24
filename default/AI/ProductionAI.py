@@ -379,37 +379,40 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(6, isp )    ,  desc,  hull,  [srb2%4] +2*[""] +2*[ar2]+[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2] ]
         newMarkDesigns += [ (nb%(7, isp )    ,  desc,  hull,  3*[srb2%4] +2*[ar2] +[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2,  3,  4] ]
         nb,  hull =  designNameBases[6]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +[ar2] + [db%2] + [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb3%iw]+2*[""] +2*[ar3]+ [db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  3*[srb3%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(7, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is2,  if1, if1],  "",  model)    for iw in [1] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [1] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  [srb3%iw]+3*[""] +[ar2] + [db%2] + [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  [srb3%iw]+2*[""] +2*[ar3]+ [db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(7, iw)      ,  desc,  hull,  3*[srb3%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(8, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(9, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(10, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(11, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
         nb,  hull =  designNameBases[7]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is2,  if1, if1],  "",  model)    for iw in [1, 2] ]
-        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [1, 2] ]
-        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1, 2] ]
-        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1, 2] ]
-        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(6, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(7, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(8, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(9, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(10, iw)    ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(6, iw)    ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
 
         if False and foAI.foAIstate.aggression >fo.aggression.typical:
             hull =  "SH_SENTIENT"
-            for cld in [2, 3]:
+            for cld in [1, 2, 3]:
                 nb =  designNameBases[8]+"-%%1xa%1d-%%1x"%cld
+                this_cloak = [ "if1", clk%cld ][ cld > 1 ] # fuel or a cloak
                 for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar4] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar4] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [3, 4] ]
+                    newMarkDesigns += [ (nb%(isd-2, 0),    desc,  hull,  4*[srb4%iw]+2*[ar4] + [ isList[isd],  if1, this_cloak],  "",  model)    for iw in [1] ]
+                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar4] + [ isList[isd],  if1, this_cloak],  "",  model)    for iw in [3, 4] ]
+                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar4] + [ isList[isd],  if1,  this_cloak],  "",  model)    for iw in [2, 3, 4] ]
 
                 nb =  designNameBases[8]+"-%%1xb%1d-%%1x"%cld
                 for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar5] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar5] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [3, 4] ]
+                    newMarkDesigns += [ (nb%(isd-2, 0),    desc,  hull,  4*[srb4%iw]+2*[ar5] + [ isList[isd],  if1,  this_cloak],  "",  model)    for iw in [1] ]
+                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar5] + [ isList[isd],  if1,  this_cloak],  "",  model)    for iw in [4] ]
+                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar5] + [ isList[isd],  if1,  this_cloak],  "",  model)    for iw in [2, 3, 4] ]
 
 
         if foAI.foAIstate.aggression >fo.aggression.typical:

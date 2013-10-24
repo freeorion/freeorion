@@ -51,15 +51,21 @@ def getInvasionFleets():
     if homeSystemID != -1:
         accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  (sysID != -1 ) and universe.systemsConnected(sysID, homeSystemID, empireID) ]
     else:
-        accessibleSystemIDs = [] #TODO: check if any troop ships still owned, use their system as home system
+        print "Invasion Warning: this empire has no identifiable homeworld,  will therefor treat all visible planets as accessible."
+        accessibleSystemIDs = visibleSystemIDs #TODO: check if any troop ships still owned, use their system as home system
     acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
+    print "Accessible Systems: " + str(PlanetUtilsAI.sysNameIDs(accessibleSystemIDs))
+    print
 
     #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
     allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs)#need these for unpopulated outposts
     # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
 
     allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)#need this for natives
-    print "All Visible and accessible Populated PlanetIDs (including this empire's):              " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
+    print "All Visible and accessible Populated PlanetIDs (including this empire's): " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
+    print
+    print "Prime Invadable Target Systems: " + str(PlanetUtilsAI.sysNameIDs(primeInvadableSystemIDs))
+    print
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)

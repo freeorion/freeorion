@@ -201,7 +201,8 @@ class AIShipDesignTypes(object):
     colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}
     outpostShip = {"SD_OUTPOST_SHIP":"A", "Outposter":"B"}
     troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C",  "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
-    #  [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')), (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
+    #  [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')), 
+    #   (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
     attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G",  "Obliterator":"H",
                                     "Atlas":"EA",  "Pele":"EB",  "Xena":"EC",
                                     }
