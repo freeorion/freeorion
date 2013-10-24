@@ -151,9 +151,6 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\binreloc.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\DataTable.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

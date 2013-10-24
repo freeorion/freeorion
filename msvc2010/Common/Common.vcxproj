@@ -178,7 +178,6 @@
     <ClInclude Include="..\..\universe\ValueRef.h" />
     <ClInclude Include="..\..\universe\ValueRefFwd.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
-    <ClInclude Include="..\..\util\binreloc.h" />
     <ClInclude Include="..\..\util\DataTable.h" />
     <ClInclude Include="..\..\util\Directories.h" />
     <ClInclude Include="..\..\util\GLStateComparator.h" />
