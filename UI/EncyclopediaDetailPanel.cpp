@@ -313,6 +313,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
 
     DoLayout();
 
+    MoveChildUp(m_graph);
+
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
@@ -348,7 +350,6 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     // graph
     m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr);
-    MoveChildUp(m_graph);
 
     // "back" button
     ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8, Height() - BORDER_BOTTOM*2 - PTS);
@@ -614,7 +615,7 @@ void EncyclopediaDetailPanel::Refresh() {
     m_summary_text->Clear();
     m_cost_text->Clear();
     m_description_box->Clear();
-    m_graph->Hide();
+    DetachChild(m_graph);
 
     const Encyclopedia& encyclopedia = GetEncyclopedia();
 
@@ -1467,6 +1468,7 @@ void EncyclopediaDetailPanel::Refresh() {
             }
 
             m_graph->AutoSetRange();
+            AttachChild(m_graph);
             m_graph->Show();
         }
 
