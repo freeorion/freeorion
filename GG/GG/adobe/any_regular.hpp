@@ -685,7 +685,10 @@ public:
 #endif
 };
 
-#ifndef ADOBE_NO_DOCUMENTATION
+// disabled due to reports of problems on some architectures, and apparent
+// lack of necessity for FreeOrion
+//#ifndef ADOBE_NO_DOCUMENTATION
+#if 0
     BOOST_STATIC_ASSERT((sizeof(any_regular_t) == 16 + sizeof(void*)));
 #endif
 
