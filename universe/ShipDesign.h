@@ -213,10 +213,10 @@ public:
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
 
-    const std::set<std::string>& Tags() const    { return m_tags; }
+    const std::set<std::string>& Tags() const       { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
-    { return m_effects; }                                                           ///< returns the EffectsGroups that encapsulate the effects this part has
+                                                    { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects this part has
     const std::string&      Icon() const            { return m_icon; }              ///< returns icon graphic that represents part in UI
     //@}
 
