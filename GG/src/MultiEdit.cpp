@@ -598,15 +598,17 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
 void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (!Disabled() && m_vscroll) {
-        for (int i = 0; i < move; ++i) {
-            m_vscroll->ScrollLineDecr();
-            SignalScroll(*m_vscroll, i == move - 1);
-        }
-        for (int i = 0; i < -move; ++i) {
-            m_vscroll->ScrollLineIncr();
-            SignalScroll(*m_vscroll, i == -move - 1);
-        }
+    if (Disabled() || !m_vscroll)
+        return;
+
+    // repeatedly increment scroll position for the requested number of moves.
+    for (int i = 0; i < move; ++i) {
+        m_vscroll->ScrollLineDecr(2);
+        SignalScroll(*m_vscroll, i == move - 1);
+    }
+    for (int i = 0; i < -move; ++i) {
+        m_vscroll->ScrollLineIncr(2);
+        SignalScroll(*m_vscroll, i == -move - 1);
     }
 }
 

@@ -101,8 +101,8 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
     AttachChild(m_decr);
     AttachChild(m_incr);
     AttachChild(m_tab);
-    Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineDecrImpl, this, true));
-    Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrImpl, this, true));
+    Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
+    Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     m_tab->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
@@ -232,11 +232,11 @@ void Scroll::ScrollTo(int p)
     MoveTabToPosn();
 }
 
-void Scroll::ScrollLineIncr()
-{ ScrollLineIncrImpl(false); }
+void Scroll::ScrollLineIncr(int lines)
+{ ScrollLineIncrDecrImpl(false, lines); }
 
-void Scroll::ScrollLineDecr()
-{ ScrollLineDecrImpl(false); }
+void Scroll::ScrollLineDecr(int lines)
+{ ScrollLineIncrDecrImpl(false, -lines); }
 
 void Scroll::ScrollPageIncr()
 {
@@ -411,27 +411,25 @@ void Scroll::MoveTabToPosn()
                   Pt(X(static_cast<int>(tab_location)), m_tab->RelativeUpperLeft().y));
 }
 
-void Scroll::ScrollLineIncrImpl(bool signal)
+void Scroll::ScrollLineIncrDecrImpl(bool signal, int lines)
 {
     int old_posn = m_posn;
-    if (static_cast<int>(m_posn + m_line_sz) <= static_cast<int>(m_range_max - m_page_sz))
-        m_posn += m_line_sz;
-    else
-        m_posn = m_range_max - (m_page_sz - 1);
-    MoveTabToPosn();
-    if (signal && old_posn != m_posn) {
-        ScrolledSignal(m_posn, m_posn + m_page_sz, m_range_min, m_range_max);
-        ScrolledAndStoppedSignal(m_posn, m_posn + m_page_sz, m_range_min, m_range_max);
-    }
-}
+    int move = lines * m_line_sz;
 
-void Scroll::ScrollLineDecrImpl(bool signal)
-{
-    int old_posn = m_posn;
-    if (static_cast<int>(m_posn - m_line_sz) >= m_range_min)
-        m_posn -= m_line_sz;
-    else
-        m_posn = m_range_min;
+    if (move == 0) {
+        return;
+    } else if (move > 0) {
+        if (static_cast<int>(m_posn + move) <= static_cast<int>(m_range_max - m_page_sz))
+            m_posn += move;
+        else
+            m_posn = m_range_max - (m_page_sz - 1);
+    } else {
+        if (static_cast<int>(m_posn + move) >= m_range_min)
+            m_posn += move;
+        else
+            m_posn = m_range_min;
+    }
+
     MoveTabToPosn();
     if (signal && old_posn != m_posn) {
         ScrolledSignal(m_posn, m_posn + m_page_sz, m_range_min, m_range_max);

@@ -103,8 +103,8 @@ public:
     void           SetPageSize(unsigned int page); ///< sets the size of a line page in the scroll. This is the number of logical units the tab moves when either of the page-up or page-down areas is clicked.
 
     void           ScrollTo(int p);  ///< scrolls the control to a certain spot
-    void           ScrollLineIncr(); ///< scrolls the control down (or right) by a line
-    void           ScrollLineDecr(); ///< scrolls the control up (or left) by a line
+    void           ScrollLineIncr(int lines = 1); ///< scrolls the control down (or right) by \a lines lines
+    void           ScrollLineDecr(int lines = 1); ///< scrolls the control up (or left) by \a lines lines
     void           ScrollPageIncr(); ///< scrolls the control down (or right) by a page
     void           ScrollPageDecr(); ///< scrolls the control up (or left) by a page
     //@}
@@ -136,8 +136,7 @@ protected:
 private:
     void              UpdatePosn();        ///< adjusts m_posn due to a tab-drag
     void              MoveTabToPosn();     ///< adjusts tab due to a button click, PgUp, etc.
-    void              ScrollLineIncrImpl(bool signal);
-    void              ScrollLineDecrImpl(bool signal);
+    void              ScrollLineIncrDecrImpl(bool signal, int lines);
 
     Clr               m_int_color;   ///< color inside border of slide area
     const Orientation m_orientation; ///< vertical or horizontal scroll? (use enum for these declared above)
