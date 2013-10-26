@@ -2040,9 +2040,12 @@ BAD_POPULATION
     
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+            ]
             accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
+            effects = SetTargetPopulation Value -0.25*abs(Value) 
 '''
 
 GOOD_POPULATION
@@ -2050,9 +2053,12 @@ GOOD_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+            ]
             accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
+            effects = SetTargetPopulation Value +0.25*abs(Value) 
 '''
 
 
