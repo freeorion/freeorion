@@ -6164,6 +6164,103 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
 }
 
 ///////////////////////////////////////////////////////////
+// OrderedBombarded                               //
+///////////////////////////////////////////////////////////
+Condition::OrderedBombarded::~OrderedBombarded()
+{ delete m_by_object_id; }
+
+bool Condition::OrderedBombarded::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::OrderedBombarded& rhs_ = static_cast<const Condition::OrderedBombarded&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_by_object_id)
+
+    return true;
+}
+
+namespace {
+    struct OrderedBombardedSimpleMatch {
+        OrderedBombardedSimpleMatch(int by_object_id) :
+            m_by_object_id(by_object_id)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            // todo: this
+            return false;
+        }
+
+        int m_by_object_id;
+    };
+}
+
+void Condition::OrderedBombarded::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                       SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_by_object_id) ||
+                            (m_by_object_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate empire id once, and use to check all candidate objects
+        TemporaryPtr<const UniverseObject> no_object;
+        int by_object_id = m_by_object_id->Eval(ScriptingContext(parent_context, no_object));
+        EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(by_object_id));
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OrderedBombarded::RootCandidateInvariant() const
+{ return m_by_object_id->RootCandidateInvariant(); }
+
+bool Condition::OrderedBombarded::TargetInvariant() const
+{ return m_by_object_id->TargetInvariant(); }
+
+bool Condition::OrderedBombarded::SourceInvariant() const
+{ return m_by_object_id->SourceInvariant(); }
+
+std::string Condition::OrderedBombarded::Description(bool negated/* = false*/) const {
+    //std::string empire_str;
+    //if (m_empire_id) {
+    //    int empire_id = ALL_EMPIRES;
+    //    if (ValueRef::ConstantExpr(m_empire_id))
+    //        empire_id = m_empire_id->Eval();
+    //    if (const Empire* empire = Empires().Lookup(empire_id))
+    //        empire_str = empire->Name();
+    //    else
+    //        empire_str = m_empire_id->Description();
+    //}
+
+    //return str(FlexibleFormat((!negated)
+    //           ? UserString("DESC_SUPPLY_CONNECTED_FLEET")
+    //           : UserString("DESC_SUPPLY_CONNECTED_FLEET_NOT"))
+    //           % empire_str);
+    return "";
+}
+
+std::string Condition::OrderedBombarded::Dump() const
+{ return DumpIndent() + "OrderedBombarded by_object_id = " + m_by_object_id->Dump(); }
+
+bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) const {
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "OrderedBombarded::Match passed no candidate object";
+        return false;
+    }
+
+    int by_object_id = m_by_object_id->Eval(local_context);
+
+    return OrderedBombardedSimpleMatch(by_object_id)(candidate);
+}
+
+///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
 Condition::And::~And() {

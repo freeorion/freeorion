@@ -97,6 +97,7 @@ namespace Condition {
     struct CreatedOnTurn;
     struct CanColonize;
     struct CanProduceShips;
+    struct OrderedBombarded;
 }
 
 /** Returns a single string which describes a vector of Conditions. If multiple
@@ -1692,6 +1693,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API Condition::CanColonize : public Condition::ConditionBase {
     CanColonize() : ConditionBase() {}
     virtual ~CanColonize() {}
@@ -1710,6 +1712,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API Condition::CanProduceShips : public Condition::ConditionBase {
     CanProduceShips() : ConditionBase() {}
     virtual ~CanProduceShips() {}
@@ -1727,6 +1730,35 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** Matches the object, if any, that the object with id \a by_object_id has been
+  * ordered to bombard. */
+struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBase {
+    OrderedBombarded(const ValueRef::ValueRefBase<int>* by_object_id) :
+        m_by_object_id(by_object_id)
+    {}
+    virtual ~OrderedBombarded();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>*  m_by_object_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
@@ -2162,6 +2194,13 @@ template <class Archive>
 void Condition::CanProduceShips::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::OrderedBombarded::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_by_object_id);
 }
 
 template <class Archive>

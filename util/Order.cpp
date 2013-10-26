@@ -601,6 +601,105 @@ bool InvadeOrder::UndoImpl() const {
 
 
 ////////////////////////////////////////////////
+// BombardOrder
+////////////////////////////////////////////////
+BombardOrder::BombardOrder() :
+    Order(),
+    m_ship(INVALID_OBJECT_ID),
+    m_planet(INVALID_OBJECT_ID)
+{}
+
+BombardOrder::BombardOrder(int empire, int ship, int planet) :
+    Order(empire),
+    m_ship(ship),
+    m_planet(planet)
+{}
+
+void BombardOrder::ExecuteImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        return;
+    }
+    if (!ship->HasTroops()) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't invade";
+        return;
+    }
+    if (!ship->OwnedBy(empire_id)) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        return;
+    }
+
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        return;
+    }
+    if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given unpopulated planet";
+        return;
+    }
+    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet with shield > 0";
+        return;
+    }
+    if (planet->OwnedBy(empire_id)) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        return;
+    }
+    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        return;
+    }
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        //return;
+    }
+
+    int ship_system_id = ship->SystemID();
+    if (ship_system_id == INVALID_OBJECT_ID) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given id of ship not in a system";
+        return;
+    }
+    int planet_system_id = planet->SystemID();
+    if (ship_system_id != planet_system_id) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        return;
+    }
+
+    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
+    Logger().debugStream() << "BombardOrder::ExecuteImpl set for ship "<< m_ship<<" "<<ship->Name()<<" to invade planet "<<m_planet<<" "<<planet->Name();    
+    ship->SetInvadePlanet(m_planet);
+}
+
+bool BombardOrder::UndoImpl() const {
+    TemporaryPtr<Planet> planet = GetPlanet(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "BombardOrder::UndoImpl couldn't get planet with id " << m_planet;
+        return false;
+    }
+
+    TemporaryPtr<Ship> ship = GetShip(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "BombardOrder::UndoImpl couldn't get ship with id " << m_ship;
+        return false;
+    }
+    if (ship->OrderedInvadePlanet() != m_planet) {
+        Logger().errorStream() << "BombardOrder::UndoImpl ship is not about to invade planet";
+        return false;
+    }
+
+    planet->SetIsAboutToBeInvaded(false);
+    ship->ClearInvadePlanet();
+
+    return true;
+}
+
+
+////////////////////////////////////////////////
 // DeleteFleetOrder
 ////////////////////////////////////////////////
 DeleteFleetOrder::DeleteFleetOrder() :

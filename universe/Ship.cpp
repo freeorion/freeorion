@@ -19,6 +19,7 @@ Ship::Ship() :
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
+    m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_produced_by_empire_id(ALL_EMPIRES)
 {}
@@ -30,6 +31,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
+    m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id)
@@ -158,6 +160,7 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
                 this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
+                this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
                 this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
                 this->m_part_meters =               copied_ship->m_part_meters;
                 this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
@@ -298,6 +301,9 @@ bool Ship::HasTroops() const {
     const ShipDesign* design = Design();
     return design && design->HasTroops();
 }
+
+bool Ship::CanBombard() const
+{ return true; }    // TODO: this
 
 float Ship::Speed() const
 { return CurrentMeterValue(METER_STARLANE_SPEED); }
@@ -492,9 +498,8 @@ void Ship::SetColonizePlanet(int planet_id) {
         fleet->StateChangedSignal();
 }
 
-void Ship::ClearColonizePlanet() {
-    SetColonizePlanet(INVALID_OBJECT_ID);
-}
+void Ship::ClearColonizePlanet()
+{ SetColonizePlanet(INVALID_OBJECT_ID); }
 
 void Ship::SetInvadePlanet(int planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
@@ -504,9 +509,19 @@ void Ship::SetInvadePlanet(int planet_id) {
         fleet->StateChangedSignal();
 }
 
-void Ship::ClearInvadePlanet() {
-    SetInvadePlanet(INVALID_OBJECT_ID);
+void Ship::ClearInvadePlanet()
+{ SetInvadePlanet(INVALID_OBJECT_ID); }
+
+void Ship::SetBombardPlanet(int planet_id) {
+    if (planet_id == m_ordered_bombard_planet_id) return;
+    m_ordered_bombard_planet_id = planet_id;
+    StateChangedSignal();
+    if (TemporaryPtr<Fleet> fleet = GetFleet(this->FleetID()))
+        fleet->StateChangedSignal();
 }
+
+void Ship::ClearBombardPlanet()
+{ SetBombardPlanet(INVALID_OBJECT_ID); }
 
 void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();

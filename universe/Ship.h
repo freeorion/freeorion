@@ -40,6 +40,7 @@ public:
     bool                        IsArmed() const;
     bool                        CanColonize() const;
     bool                        HasTroops() const;
+    bool                        CanBombard() const;
     const std::string&          SpeciesName() const         { return m_species_name; }
     float                       Speed() const;
 
@@ -54,6 +55,7 @@ public:
     bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
     int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
     int                         OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
+    int                         OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
     int                         LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
     const PartMeterMap&         PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
@@ -85,6 +87,9 @@ public:
     void            ClearColonizePlanet();                                      ///< marks ship to colonize no planets
     void            SetInvadePlanet(int planet_id);                             ///< marks ship to invade the indicated planet
     void            ClearInvadePlanet();                                        ///< marks ship to invade no planets
+    void            SetBombardPlanet(int planet_id);                            ///< marks ship to bombard the indicated planet
+    void            ClearBombardPlanet();                                       ///< marks ship to bombard no planets
+
     void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -116,6 +121,7 @@ private:
     bool            m_ordered_scrapped;
     int             m_ordered_colonize_planet_id;
     int             m_ordered_invade_planet_id;
+    int             m_ordered_bombard_planet_id;
     int             m_last_turn_active_in_combat;
     ConsumablesMap  m_fighters;
     ConsumablesMap  m_missiles;
