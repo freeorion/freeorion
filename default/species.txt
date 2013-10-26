@@ -2519,7 +2519,12 @@ BAD_INDUSTRY
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                TargetIndustry Low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value*[[BAD_MULTIPLIER]]
 '''
@@ -2528,12 +2533,14 @@ AVERAGE_INDUSTRY
 '''        EffectsGroup
             scope = Source
             activation = And [
+                Source
                 Planet
+                TargetIndustry Low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
-            
+           
         EffectsGroup                    // removes residual production from a dead planet
             scope = Source
             activation = And [
@@ -2548,7 +2555,12 @@ GOOD_INDUSTRY
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                TargetIndustry Low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value*[[GOOD_MULTIPLIER]]
 '''
@@ -2558,7 +2570,12 @@ GREAT_INDUSTRY
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                TargetIndustry Low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
 '''
@@ -2568,7 +2585,12 @@ ULTIMATE_INDUSTRY
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                TargetIndustry Low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value*[[ULTIMATE_MULTIPLIER]]
 '''
@@ -2584,7 +2606,11 @@ BAD_RESEARCH
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
             accountinglabel = "BAD_RESEARCH_LABEL"
             effects = SetTargetResearch Value*[[BAD_MULTIPLIER]]
 '''
@@ -2593,12 +2619,13 @@ AVERAGE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = And [
+                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
             effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
-            
+           
         EffectsGroup      // removes residual production from a dead planet
             scope = Source
             activation = And [
@@ -2613,7 +2640,11 @@ GOOD_RESEARCH
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
             effects = SetTargetResearch Value*[[GOOD_MULTIPLIER]]
 '''
@@ -2623,7 +2654,11 @@ GREAT_RESEARCH
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
             effects = SetTargetResearch Value*[[GREAT_MULTIPLIER]]
 '''
@@ -2633,7 +2668,11 @@ ULTIMATE_RESEARCH
 
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
             accountinglabel = "ULTIMATE_RESEARCH_LABEL"
             effects = SetTargetResearch Value*[[ULTIMATE_MULTIPLIER]]
 '''
