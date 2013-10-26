@@ -530,7 +530,7 @@ Part
     name = "FU_SINGULARITY_ENGINE_CORE"
     description = "FU_SINGULARITY_ENGINE_CORE_DESC"
     class = General
-    mountableSlotTypes = Internal
+    mountableSlotTypes = Core
     buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
@@ -579,7 +579,7 @@ Part
     description = "FU_ZERO_FUEL_DESC"
     class = Fuel
     capacity = 0
-    mountableSlotTypes = Internal
+    mountableSlotTypes = Core
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
