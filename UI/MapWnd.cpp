@@ -2755,33 +2755,53 @@ void MapWnd::ShowCombatLog(int log_id) {
 }
 
 void MapWnd::ShowTech(const std::string& tech_name) {
-    if (!m_research_wnd->Visible())
-        ToggleResearch();
-    m_research_wnd->ShowTech(tech_name);
+    if (m_research_wnd->Visible()) {
+        m_research_wnd->ShowTech(tech_name);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetTech(tech_name);
+    }
 }
 
 void MapWnd::ShowBuildingType(const std::string& building_type_name) {
-    if (!m_production_wnd->Visible())
-        ToggleProduction();
-    m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
+    if (m_production_wnd->Visible()) {
+        m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetBuildingType(building_type_name);
+    }
 }
 
 void MapWnd::ShowPartType(const std::string& part_type_name) {
-    if (!m_design_wnd->Visible())
-        ToggleDesign();
-    m_design_wnd->ShowPartTypeInEncyclopedia(part_type_name);
+    if (m_design_wnd->Visible()) {
+        m_design_wnd->ShowPartTypeInEncyclopedia(part_type_name);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetPartType(part_type_name);
+    }
 }
 
 void MapWnd::ShowHullType(const std::string& hull_type_name) {
-    if (!m_design_wnd->Visible())
-        ToggleDesign();
-    m_design_wnd->ShowHullTypeInEncyclopedia(hull_type_name);
+    if (m_design_wnd->Visible()) {
+        m_design_wnd->ShowHullTypeInEncyclopedia(hull_type_name);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetHullType(hull_type_name);
+    }
 }
 
 void MapWnd::ShowShipDesign(int design_id) {
-    if (!m_production_wnd->Visible())
-        ToggleProduction();
-    m_production_wnd->ShowShipDesignInEncyclopedia(design_id);
+    if (m_production_wnd->Visible()) {
+        m_production_wnd->ShowShipDesignInEncyclopedia(design_id);
+    } else {
+        if (!m_pedia_panel->Visible())
+            TogglePedia();
+        m_pedia_panel->SetDesign(design_id);
+    }
 }
 
 void MapWnd::ShowSpecial(const std::string& special_name) {
