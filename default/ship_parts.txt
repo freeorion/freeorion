@@ -579,7 +579,7 @@ Part
     description = "FU_ZERO_FUEL_DESC"
     class = Fuel
     capacity = 0
-    mountableSlotTypes = Core
+    mountableSlotTypes = [Core Internal]
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
