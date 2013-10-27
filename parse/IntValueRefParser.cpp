@@ -34,6 +34,7 @@ namespace {
                 |   tok.LastTurnBattleHere_
                 |   tok.Orbit_
                 |   tok.Species_
+                |   tok.TurnsSinceFocusChange_
                 ;
 
             constant
