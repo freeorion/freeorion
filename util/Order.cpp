@@ -571,7 +571,8 @@ void InvadeOrder::ExecuteImpl() const {
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    Logger().debugStream() << "InvadeOrder::ExecuteImpl set for ship "<< m_ship<<" "<<ship->Name()<<" to invade planet "<<m_planet<<" "<<planet->Name();    
+    Logger().debugStream() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
+                           << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
 }
@@ -624,8 +625,8 @@ void BombardOrder::ExecuteImpl() const {
         Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->HasTroops()) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't invade";
+    if (ship->TotalWeaponsDamage() <= 0) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't attack / bombard";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
@@ -636,14 +637,6 @@ void BombardOrder::ExecuteImpl() const {
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get planet with id " << m_planet;
-        return;
-    }
-    if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given unpopulated planet";
-        return;
-    }
-    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet with shield > 0";
         return;
     }
     if (planet->OwnedBy(empire_id)) {
@@ -671,8 +664,10 @@ void BombardOrder::ExecuteImpl() const {
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    Logger().debugStream() << "BombardOrder::ExecuteImpl set for ship "<< m_ship<<" "<<ship->Name()<<" to invade planet "<<m_planet<<" "<<planet->Name();    
-    ship->SetInvadePlanet(m_planet);
+    Logger().debugStream() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                           << ship->Name() << " to bombard planet " << m_planet << " " << planet->Name();
+    planet->SetIsAboutToBeBombarded(true);
+    ship->SetBombardPlanet(m_planet);
 }
 
 bool BombardOrder::UndoImpl() const {
@@ -687,13 +682,13 @@ bool BombardOrder::UndoImpl() const {
         Logger().errorStream() << "BombardOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
-    if (ship->OrderedInvadePlanet() != m_planet) {
-        Logger().errorStream() << "BombardOrder::UndoImpl ship is not about to invade planet";
+    if (ship->OrderedBombardPlanet() != m_planet) {
+        Logger().errorStream() << "BombardOrder::UndoImpl ship is not about to bombard planet";
         return false;
     }
 
-    planet->SetIsAboutToBeInvaded(false);
-    ship->ClearInvadePlanet();
+    planet->SetIsAboutToBeBombarded(false);
+    ship->ClearBombardPlanet();
 
     return true;
 }

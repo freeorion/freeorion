@@ -2123,6 +2123,10 @@ PL_CANCEL_INVADE
 Cancel Invasion
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Select colony ship to colonize.
+PL_BOMBARD
+Bombard
+PL_CANCEL_BOMBARD
+Cancel Bombarding
 PL_TYPE_SIZE
 %1% %2%
 PL_TYPE_SIZE_ENV

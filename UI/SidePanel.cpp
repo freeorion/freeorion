@@ -431,6 +431,22 @@ namespace {
         return retval;
     }
 
+    /** Returns map from planet ID to issued bombard orders affecting it. There
+      * may be multiple ships bombarding a single planet. */
+    std::map<int, std::set<int> > PendingBombardOrders() {
+        std::map<int, std::set<int> > retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(it->second)) {
+                retval[order->PlanetID()].insert(it->first);
+            }
+        }
+        return retval;
+    }
+
     /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
         std::map<int, int> retval;
@@ -493,6 +509,7 @@ private:
     void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
     void                    ClickColonize();                    ///< called if colonize button is pressed
     void                    ClickInvade();                      ///< called if invade button is pressed
+    void                    ClickBombard();                     ///< called if bombard button is pressed
 
     void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
@@ -501,6 +518,7 @@ private:
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
     CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet
+    CUIButton*              m_bombard_button;           ///< btn which can be pressed to bombard this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
@@ -788,6 +806,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_env_size(0),
     m_colonize_button(0),
     m_invade_button(0),
+    m_bombard_button(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
@@ -921,11 +940,17 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_colonize_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_invade_button =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+    m_invade_button =   new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
                                       UserString("PL_INVADE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_invade_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
+
+    m_bombard_button =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+                                      UserString("PL_BOMBARD"), ClientUI::GetFont(),
+                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
+                                      ClientUI::TextColor(), GG::INTERACTIVE);
+    GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);
 
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
@@ -938,6 +963,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 SidePanel::PlanetPanel::~PlanetPanel() {
     delete m_colonize_button;
     delete m_invade_button;
+    delete m_bombard_button;
     delete m_env_size;
     delete m_focus_drop;
     delete m_population_panel;
@@ -973,6 +999,9 @@ void SidePanel::PlanetPanel::DoLayout() {
     } else if (m_invade_button && m_invade_button->Parent() == this) {
         m_invade_button->MoveTo(GG::Pt(left, y));
         y += m_invade_button->Height() + EDGE_PAD;
+    } else if (m_bombard_button && m_bombard_button->Parent() == this) {
+        m_bombard_button->MoveTo(GG::Pt(left, y));
+        y += m_bombard_button->Height() + EDGE_PAD;
     }
 
     if (m_focus_drop && m_focus_drop->Parent() == this) {
@@ -1124,7 +1153,7 @@ namespace {
     std::set<TemporaryPtr<const Ship> > ValidSelectedInvasionShips(int system_id) {
         std::set<TemporaryPtr<const Ship> > retval;
 
-        // if not looking in a valid system, no valid colony ship can be available
+        // if not looking in a valid system, no valid invasion ship can be available
         if (system_id == INVALID_OBJECT_ID)
             return retval;
 
@@ -1133,6 +1162,23 @@ namespace {
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
             if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(*ss_it))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                    retval.insert(ship);
+
+        return retval;
+    }
+
+    std::set<TemporaryPtr<const Ship> > ValidSelectedBombardShips(int system_id) {
+        std::set<TemporaryPtr<const Ship> > retval;
+
+        // if not looking in a valid system, no valid bombard ship can be available
+        if (system_id == INVALID_OBJECT_ID)
+            return retval;
+
+        // is there a valid single selected ship in the active FleetWnd?
+        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
+            if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+                if (ship->SystemID() == system_id && (ship->TotalWeaponsDamage() > 0.0f) && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     retval.insert(ship);
 
         return retval;
@@ -1364,6 +1410,9 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_invade_button);
         delete m_invade_button;         m_invade_button = 0;
 
+        DetachChild(m_bombard_button);
+        delete m_bombard_button;        m_bombard_button = 0;
+
         DetachChild(m_specials_panel);
         delete m_specials_panel;        m_specials_panel = 0;
 
@@ -1392,6 +1441,10 @@ void SidePanel::PlanetPanel::Refresh() {
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
 
+    std::set<TemporaryPtr<const Ship> > bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
+    if (bombard_ships.empty()) {
+        // todo: auto select some?
+    }
 
     std::string colony_ship_species_name;
     const ShipDesign* design = 0;
@@ -1420,9 +1473,13 @@ void SidePanel::PlanetPanel::Refresh() {
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
     bool can_colonize =     selected_colony_ship && (colonizable  && colony_ship_capacity > 0.0 || (outpostable && colony_ship_capacity == 0.0));
 
-    bool being_invaded =    planet->IsAboutToBeInvaded();
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
+
+    bool being_invaded =    planet->IsAboutToBeInvaded();
     bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
+
+    bool being_bombarded =  planet->IsAboutToBeBombarded();
+    bool bombardable =      at_war_with_me && visible && !being_bombarded && !bombard_ships.empty();
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_population_panel);
@@ -1447,6 +1504,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
+    DetachChild(m_bombard_button);
     DetachChild(m_focus_drop);
 
     std::string species_name;
@@ -1470,13 +1528,16 @@ void SidePanel::PlanetPanel::Refresh() {
 
     if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
         // hide everything
+    }
 
-    } else if (can_colonize) {
-        // show colonize button; in case the chosen colony ship is not actually selected, but has been chosen by 
-        // AutomaticallyChosenColonyShip, determine what population capacity to put on the conolnize buttone by
-        // temporarily setting ownership (for tech) and species of the planet, reading the target population,
-        // then setting the planet back as it was.  The results are cached for the duration of the turn 
-        // in the colony_projections map.
+    if (can_colonize) {
+        // show colonize button; in case the chosen colony ship is not actually
+        // selected, but has been chosen by AutomaticallyChosenColonyShip,
+        // determine what population capacity to put on the conolnize buttone by
+        // temporarily setting ownership (for tech) and species of the planet,
+        // reading the target population, then setting the planet back as it was.
+        // The results are cached for the duration of the turn in the
+        // colony_projections map.
         AttachChild(m_colonize_button);
         double planet_capacity;
         std::pair<int,int> this_pair = std::make_pair<int,int>(selected_colony_ship->ID(), m_planet_id);
@@ -1528,8 +1589,9 @@ void SidePanel::PlanetPanel::Refresh() {
         AttachChild(m_colonize_button);
         if (m_colonize_button)
             m_colonize_button->SetText(UserString("PL_CANCEL_COLONIZE"));
+    }
 
-    } else if (invadable) {
+    if (invadable) {
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
@@ -1550,6 +1612,19 @@ void SidePanel::PlanetPanel::Refresh() {
         AttachChild(m_invade_button);
         if (m_invade_button)
             m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
+    }
+
+    if (bombardable) {
+        // show bombard button
+        AttachChild(m_bombard_button);
+        if (m_bombard_button)
+            m_bombard_button->SetText(UserString("PL_BOMBARD"));
+
+    } else if (being_bombarded) {
+        // show bombard cancel button
+        AttachChild(m_bombard_button);
+        if (m_bombard_button)
+            m_bombard_button->SetText(UserString("PL_CANCEL_BOMBARD"));
     }
 
     m_env_size->SetText(env_size_text);
@@ -1602,7 +1677,7 @@ void SidePanel::PlanetPanel::Refresh() {
         m_buildings_panel->Refresh();
     if (m_specials_panel)
         m_specials_panel->Update();
-    
+
     // set stealth browse text
     ClearBrowseInfoWnd();
 
@@ -1884,7 +1959,7 @@ void SidePanel::PlanetPanel::Select(bool selected) {
 }
 
 namespace {
-    void CancelColonizeInvadeScrapShipOrders(TemporaryPtr<const Ship> ship) {
+    void CancelColonizeInvadeBombardScrapShipOrders(TemporaryPtr<const Ship> ship) {
         if (!ship)
             return;
 
@@ -1928,11 +2003,23 @@ namespace {
                 }
             }
         }
+
+        // is selected ship order to bombard?  If so, recind that order
+        if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+               if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(it->second)) {
+                    if (order->ShipID() == ship->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
     }
 }
 
 void SidePanel::PlanetPanel::ClickColonize() {
-    // order or cancel colonization, depending on whether it has previosuly
+    // order or cancel colonization, depending on whether it has previously
     // been ordered
 
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
@@ -1965,14 +2052,15 @@ void SidePanel::PlanetPanel::ClickColonize() {
             return;
         }
 
-        CancelColonizeInvadeScrapShipOrders(ship);
+        CancelColonizeInvadeBombardScrapShipOrders(ship);
+
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
             new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
     }
 }
 
 void SidePanel::PlanetPanel::ClickInvade() {
-    // order or cancel invasion, depending on whether it has previosuly
+    // order or cancel invasion, depending on whether it has previously
     // been ordered
 
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
@@ -2011,10 +2099,57 @@ void SidePanel::PlanetPanel::ClickInvade() {
             if (!ship)
                 continue;
 
-            CancelColonizeInvadeScrapShipOrders(ship);
+            CancelColonizeInvadeBombardScrapShipOrders(ship);
 
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                 new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
+        }
+    }
+}
+
+void SidePanel::PlanetPanel::ClickBombard() {
+    // order or cancel bombard, depending on whether it has previously
+    // been ordered
+
+    TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
+    if (!planet ||
+        !m_order_issuing_enabled ||
+        (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
+    { return; }
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return;
+
+    std::map<int, std::set<int> > pending_bombard_orders = PendingBombardOrders();
+    std::map<int, std::set<int> >::const_iterator it = pending_bombard_orders.find(m_planet_id);
+
+    if (it != pending_bombard_orders.end()) {
+        const std::set<int>& planet_bombard_orders = it->second;
+        // cancel previous bombard orders for this planet
+        for (std::set<int>::const_iterator o_it = planet_bombard_orders.begin();
+             o_it != planet_bombard_orders.end(); ++o_it)
+        { HumanClientApp::GetApp()->Orders().RecindOrder(*o_it); }
+
+    } else {
+        // order selected bombard ships to bombard planet
+        std::set<TemporaryPtr<const Ship> > bombard_ships = ValidSelectedBombardShips(planet->SystemID());
+
+        if (bombard_ships.empty()) {
+            // todo: auto select some?
+        }
+
+        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = bombard_ships.begin();
+             ship_it != bombard_ships.end(); ++ship_it)
+        {
+            TemporaryPtr<const Ship> ship = *ship_it;
+            if (!ship)
+                continue;
+
+            CancelColonizeInvadeBombardScrapShipOrders(ship);
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                new BombardOrder(empire_id, ship->ID(), m_planet_id)));
         }
     }
 }
@@ -2061,6 +2196,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 
     m_colonize_button->Disable(!enable);
     m_invade_button->Disable(!enable);
+    m_bombard_button->Disable(!enable);
 
     m_population_panel->EnableOrderIssuing(enable);
     m_resource_panel->EnableOrderIssuing(enable);

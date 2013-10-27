@@ -572,6 +572,7 @@ ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     m_scrap_indicator(0),
     m_colonize_indicator(0),
     m_invade_indicator(0),
+    m_bombard_indicator(0),
     m_scanline_control(0),
     m_ship_name_text(0),
     m_design_name_text(0),
@@ -654,6 +655,9 @@ void ShipDataPanel::SetShipIcon() {
     delete m_invade_indicator;
     m_invade_indicator = 0;
 
+    delete m_bombard_indicator;
+    m_bombard_indicator = 0;
+
     delete m_scanline_control;
     m_scanline_control = 0;
 
@@ -686,6 +690,11 @@ void ShipDataPanel::SetShipIcon() {
         boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
         m_invade_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), invade_texture, DataPanelIconStyle());
         AttachChild(m_invade_indicator);
+    }
+    if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
+        boost::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
+        m_bombard_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), bombard_texture, DataPanelIconStyle());
+        AttachChild(m_bombard_indicator);
     }
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     if (ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
@@ -786,6 +795,8 @@ void ShipDataPanel::DoLayout() {
         m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     if (m_invade_indicator)
         m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_bombard_indicator)
+        m_bombard_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 

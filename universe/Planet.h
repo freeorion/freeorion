@@ -116,12 +116,13 @@ public:
     virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
     virtual std::vector<TemporaryPtr<UniverseObject> >FindObjects() const;            ///< returns objects contained within this object
     virtual std::vector<int>            FindObjectIDs() const;          ///< returns ids of objects contained within this object
-    
+
     virtual std::vector<std::string>    AvailableFoci() const;
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
     bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
+    bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
     virtual TemporaryPtr<UniverseObject>
@@ -163,6 +164,9 @@ public:
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
     void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
+    void            SetIsAboutToBeBombarded(bool b);    ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
+    void            ResetIsAboutToBeBombarded();        ///< Marks planet as not being bombarded
+
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
 
     void            SetSurfaceTexture(const std::string& texture);
@@ -177,7 +181,7 @@ protected:
     /** \name Structors */ //@{
     Planet();                                   ///< default ctor
     Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size
-    
+
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
     ~Planet() {}
@@ -211,6 +215,7 @@ private:
     bool            m_just_conquered;
     bool            m_is_about_to_be_colonized;
     bool            m_is_about_to_be_invaded;
+    bool            m_is_about_to_be_bombarded;
     int             m_last_turn_attacked_by_ship;
 
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects

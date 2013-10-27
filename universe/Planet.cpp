@@ -64,6 +64,7 @@ Planet::Planet() :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
+    m_is_about_to_be_bombarded(false),
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
@@ -86,6 +87,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
+    m_is_about_to_be_bombarded(false),
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
@@ -147,6 +149,7 @@ void Planet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
+                this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
                 this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
@@ -201,6 +204,8 @@ std::string Planet::Dump() const {
         os << " (About to be Invaded)";
     if (m_just_conquered)
         os << " (Just Conquered)";
+    if (m_is_about_to_be_bombarded)
+        os << " (About to be Bombarded)";
     os << " last attacked on turn: " << m_last_turn_attacked_by_ship;
 
     return os.str();
@@ -612,6 +617,7 @@ void Planet::Reset() {
     m_just_conquered = false;
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
+    m_is_about_to_be_bombarded = false;
 }
 
 void Planet::Depopulate() {
@@ -682,6 +688,16 @@ void Planet::SetIsAboutToBeInvaded(bool b) {
 
 void Planet::ResetIsAboutToBeInvaded()
 { SetIsAboutToBeInvaded(false); }
+
+void Planet::SetIsAboutToBeBombarded(bool b) {
+    bool initial_status = m_is_about_to_be_bombarded;
+    if (b == initial_status) return;
+    m_is_about_to_be_bombarded = b;
+    StateChangedSignal();
+}
+
+void Planet::ResetIsAboutToBeBombarded()
+{ SetIsAboutToBeBombarded(false); }
 
 void Planet::SetLastTurnAttackedByShip(int turn)
 { m_last_turn_attacked_by_ship = turn; }
