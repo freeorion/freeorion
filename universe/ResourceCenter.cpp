@@ -64,7 +64,7 @@ int ResourceCenter::TurnsSinceFocusChange() const {
     if (m_last_turn_focus_changed == INVALID_GAME_TURN)
         return 0;
     int current_turn = CurrentTurn();
-    if (current_turn = INVALID_GAME_TURN)
+    if (current_turn == INVALID_GAME_TURN)
         return 0;
     return current_turn - m_last_turn_focus_changed;
 }
