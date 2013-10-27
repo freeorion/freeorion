@@ -1076,7 +1076,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, objects_vec);
-    
+
     // Apply and record effect meter adjustments
     ExecuteEffects(targets_causes, true, true, false, false);
 

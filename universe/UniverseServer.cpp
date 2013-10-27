@@ -2171,7 +2171,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
             Logger().debugStream() << "... system name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
 
             for (unsigned int j = 0; j < homeworld_planet_ids.size(); ++j) {
-                Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
+                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
                 TemporaryPtr<Planet> homeworld = GetPlanet(homeworld_planet_ids[j]);
                 if (!homeworld) {
                     Logger().errorStream() << "couldn't find homeworld!";
