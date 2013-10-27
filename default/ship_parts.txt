@@ -27,6 +27,11 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = OrderedBombardedBy condition = Source
+            stackinggroup = "TEST_DEPOPULATION_STACK"
+            effects = SetPopulation Value / 2
     icon = "icons/ship_parts/mass-driver-1.png"
     
 Part
