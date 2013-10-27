@@ -2031,6 +2031,7 @@ AVERAGE_POPULATION
         
         // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
         
+        [[FOCUS_CHANGE_PENALTY]]
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 '''
@@ -2040,10 +2041,7 @@ BAD_POPULATION
     
         EffectsGroup
             scope = Source
-            activation = And [
-                Source
-                Planet
-            ]
+            activation = Planet
             accountinglabel = "BAD_POPULATION_LABEL"
             effects = SetTargetPopulation Value -0.25*abs(Value) 
 '''
@@ -2053,10 +2051,7 @@ GOOD_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Source
-                Planet
-            ]
+            activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
             effects = SetTargetPopulation Value +0.25*abs(Value) 
 '''
@@ -2067,6 +2062,7 @@ XENOPHOBIC_SELF
         scope = Source
         activation = Turn high = 0
         GiveEmpireTech name = "CON_CONC_CAMP"
+
      EffectsGroup
             scope = Source
             activation = And [
@@ -2089,6 +2085,7 @@ XENOPHOBIC_SELF
                 SetTargetIndustry Value*0.2 - 1
                 SetTargetResearch Value*0.9
             ]
+
      EffectsGroup
             scope = Source
             activation = And [
@@ -2401,6 +2398,25 @@ PHOTOTROPHIC_BONUS
             effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
 '''
 // Population end
+
+FOCUS_CHANGE_PENALTY
+'''
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus "FOCUS_INDUSTRY"
+            ]
+            effects = SetIndustry Value - max(0, 3 - Target.TurnsSinceFocusChange)
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus "FOCUS_RESEARCH"
+            ]
+            effects = SetResearch Value - max(0, 3 - Target.TurnsSinceFocusChange)
+'''
 
 ADVANCED_FOCUS_EFFECTS
 '''     EffectsGroup
