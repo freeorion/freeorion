@@ -174,8 +174,9 @@ bool Condition::ConditionBase::operator==(const Condition::ConditionBase& rhs) c
     return true;
 }
 
-void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                    ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
+                                    ObjectSet& matches, ObjectSet& non_matches,
+                                    SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
 void Condition::ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches,
@@ -285,8 +286,9 @@ std::string Condition::Number::Dump() const {
     return retval;
 }
 
-void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Number::Eval(const ScriptingContext& parent_context,
+                             ObjectSet& matches, ObjectSet& non_matches,
+                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the
@@ -422,7 +424,10 @@ bool Condition::Turn::operator==(const Condition::ConditionBase& rhs) const {
     return true;
 }
 
-void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const {
+void Condition::Turn::Eval(const ScriptingContext& parent_context,
+                           ObjectSet& matches, ObjectSet& non_matches,
+                           SearchDomain search_domain/* = NON_MATCHES*/) const
+{
     // if ValueRef for low or high range limits depend on local candidate, then
     // they must be evaluated per-candidate.
     // if there already is a root candidate, then this condition's parameters
@@ -713,8 +718,9 @@ namespace {
     }
 }
 
-void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                                     Condition::ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context,
+                                     Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
@@ -914,8 +920,9 @@ std::string Condition::SortedNumberOf::Dump() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                          ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::All::Eval(const ScriptingContext& parent_context,
+                          ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     if (search_domain == NON_MATCHES) {
         // move all objects from non_matches to matches
@@ -1006,7 +1013,8 @@ namespace {
     };
 }
 
-void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context,
+                                        ObjectSet& matches, ObjectSet& non_matches,
                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (!m_empire_id || ValueRef::ConstantExpr(m_empire_id)) ||
@@ -1227,7 +1235,8 @@ namespace {
     };
 }
 
-void Condition::Homeworld::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Homeworld::Eval(const ScriptingContext& parent_context,
+                                ObjectSet& matches, ObjectSet& non_matches,
                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -1511,7 +1520,8 @@ namespace {
     };
 }
 
-void Condition::Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Type::Eval(const ScriptingContext& parent_context,
+                           ObjectSet& matches, ObjectSet& non_matches,
                            SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_type) ||
@@ -1627,7 +1637,8 @@ namespace {
     };
 }
 
-void Condition::Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Building::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -1803,7 +1814,8 @@ namespace {
     };
 }
 
-void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
@@ -1962,7 +1974,8 @@ namespace {
     };
 }
 
-void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context,
+                                    ObjectSet& matches, ObjectSet& non_matches,
                                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
@@ -2069,7 +2082,8 @@ namespace {
     };
 }
 
-void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Contains::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -2191,7 +2205,8 @@ namespace {
     };
 }
 
-void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::ContainedBy::Eval(const ScriptingContext& parent_context,
+                                  ObjectSet& matches, ObjectSet& non_matches,
                                   SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -2308,8 +2323,9 @@ namespace {
     };
 }
 
-void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::InSystem::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_system_id || ValueRef::ConstantExpr(m_system_id) ||
                             (m_system_id->LocalCandidateInvariant() &&
@@ -2410,8 +2426,9 @@ namespace {
     };
 }
 
-void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ObjectID::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_object_id || ValueRef::ConstantExpr(m_object_id) ||
                             (m_object_id->LocalCandidateInvariant() &&
@@ -2521,7 +2538,8 @@ namespace {
     };
 }
 
-void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::PlanetType::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -2698,7 +2716,8 @@ namespace {
     };
 }
 
-void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::PlanetSize::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -2873,8 +2892,9 @@ namespace {
     };
 }
 
-void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                        ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
+                                        ObjectSet& matches, ObjectSet& non_matches,
+                                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -3054,7 +3074,8 @@ namespace {
     };
 }
 
-void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Species::Eval(const ScriptingContext& parent_context,
+                              ObjectSet& matches, ObjectSet& non_matches,
                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -3295,7 +3316,8 @@ namespace {
     };
 }
 
-void Condition::Enqueued::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -3494,7 +3516,8 @@ namespace {
     };
 }
 
-void Condition::FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::FocusType::Eval(const ScriptingContext& parent_context,
+                                ObjectSet& matches, ObjectSet& non_matches,
                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -3659,8 +3682,9 @@ namespace {
     };
 }
 
-void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::StarType::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -3869,8 +3893,9 @@ namespace {
     };
 }
 
-void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                    ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context,
+                                    ObjectSet& matches, ObjectSet& non_matches,
+                                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -3997,8 +4022,9 @@ namespace {
     };
 }
 
-void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context,
+                                         ObjectSet& matches, ObjectSet& non_matches,
+                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -4152,8 +4178,9 @@ namespace {
     };
 }
 
-void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context,
+                                         ObjectSet& matches, ObjectSet& non_matches,
+                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_design_id) ||
                             (m_design_id->LocalCandidateInvariant() &&
@@ -4241,8 +4268,9 @@ namespace {
     };
 }
 
-void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                       ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context,
+                                       ObjectSet& matches, ObjectSet& non_matches,
+                                       SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -4330,8 +4358,9 @@ namespace {
     };
 }
 
-void Condition::Chance::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Chance::Eval(const ScriptingContext& parent_context,
+                             ObjectSet& matches, ObjectSet& non_matches,
+                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_chance) ||
                             (m_chance->LocalCandidateInvariant() &&
@@ -4469,8 +4498,9 @@ namespace {
     }
 }
 
-void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::MeterValue::Eval(const ScriptingContext& parent_context,
+                                 ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -4594,8 +4624,9 @@ namespace {
     };
 }
 
-void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
+                                         ObjectSet& matches, ObjectSet& non_matches,
+                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -4728,8 +4759,9 @@ namespace {
     };
 }
 
-void Condition::EmpireMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::EmpireMeterValue::Eval(const ScriptingContext& parent_context,
+                                       ObjectSet& matches, ObjectSet& non_matches,
+                                       SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
                              (!m_low || m_low->LocalCandidateInvariant()) &&
@@ -4880,8 +4912,9 @@ namespace {
     };
 }
 
-void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                           ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
+                                           ObjectSet& matches, ObjectSet& non_matches,
+                                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -5112,8 +5145,9 @@ namespace {
     };
 }
 
-void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                      ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context,
+                                      ObjectSet& matches, ObjectSet& non_matches,
+                                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -5220,8 +5254,9 @@ namespace {
     };
 }
 
-void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                     ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::WithinDistance::Eval(const ScriptingContext& parent_context,
+                                     ObjectSet& matches, ObjectSet& non_matches,
+                                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
                             parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -5448,8 +5483,8 @@ namespace {
     };
 }
 
-void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                          ObjectSet& non_matches,
+void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
+                                          ObjectSet& matches, ObjectSet& non_matches,
                                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
@@ -5678,7 +5713,8 @@ namespace {
     };
 }
 
-void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context,
+                                       ObjectSet& matches, ObjectSet& non_matches,
                                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
@@ -5821,7 +5857,8 @@ namespace {
     };
 }
 
-void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
+                                              ObjectSet& matches, ObjectSet& non_matches,
                                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
@@ -5944,8 +5981,9 @@ namespace {
     };
 }
 
-void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                                                      ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_context,
+                                                      ObjectSet& matches, ObjectSet& non_matches,
+                                                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -6167,7 +6205,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
 // OrderedBombarded                               //
 ///////////////////////////////////////////////////////////
 Condition::OrderedBombarded::~OrderedBombarded()
-{ delete m_by_object_id; }
+{ delete m_by_object_condition; }
 
 bool Condition::OrderedBombarded::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
@@ -6177,76 +6215,97 @@ bool Condition::OrderedBombarded::operator==(const Condition::ConditionBase& rhs
 
     const Condition::OrderedBombarded& rhs_ = static_cast<const Condition::OrderedBombarded&>(rhs);
 
-    CHECK_COND_VREF_MEMBER(m_by_object_id)
+    CHECK_COND_VREF_MEMBER(m_by_object_condition)
 
     return true;
 }
 
 namespace {
     struct OrderedBombardedSimpleMatch {
-        OrderedBombardedSimpleMatch(int by_object_id) :
-            m_by_object_id(by_object_id)
+        OrderedBombardedSimpleMatch(const Condition::ObjectSet& by_objects) :
+            m_by_objects(by_objects)
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
+            if (m_by_objects.empty())
+                return false;
+            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            if (!planet)
+                return false;
+            int planet_id = planet->ID();
+            if (planet_id == INVALID_OBJECT_ID)
+                return false;
 
-            // todo: this
+            // check if any of the by_objects is ordered to bombard the candidate planet
+            for (Condition::ObjectSet::const_iterator it = m_by_objects.begin();
+                 it != m_by_objects.end(); ++it)
+            {
+                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(*it);
+                if (!ship)
+                    continue;
+                if (ship->OrderedBombardPlanet() == planet_id)
+                    return true;
+            }
             return false;
         }
 
-        int m_by_object_id;
+        const Condition::ObjectSet& m_by_objects;
     };
 }
 
-void Condition::OrderedBombarded::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void Condition::OrderedBombarded::Eval(const ScriptingContext& parent_context,
+                                       ObjectSet& matches, ObjectSet& non_matches,
                                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_by_object_id) ||
-                            (m_by_object_id->LocalCandidateInvariant() &&
-                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
-        // evaluate empire id once, and use to check all candidate objects
+        // evaluate contained objects once and check for all candidates
+        ObjectMap& objects = GetUniverse().Objects();
+
         TemporaryPtr<const UniverseObject> no_object;
-        int by_object_id = m_by_object_id->Eval(ScriptingContext(parent_context, no_object));
-        EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(by_object_id));
+        ScriptingContext local_context(parent_context, no_object);
+
+        // get objects to be considering for matching against subcondition
+        ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(objects.NumObjects());
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
+        ObjectSet subcondition_matches;
+        subcondition_matches.reserve(objects.NumObjects());
+
+        m_by_object_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+
+        EvalImpl(matches, non_matches, search_domain, OrderedBombardedSimpleMatch(subcondition_matches));
     } else {
-        // re-evaluate empire id for each candidate object
+        // re-evaluate contained objects for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
     }
 }
 
 bool Condition::OrderedBombarded::RootCandidateInvariant() const
-{ return m_by_object_id->RootCandidateInvariant(); }
+{ return m_by_object_condition->RootCandidateInvariant(); }
 
 bool Condition::OrderedBombarded::TargetInvariant() const
-{ return m_by_object_id->TargetInvariant(); }
+{ return m_by_object_condition->TargetInvariant(); }
 
 bool Condition::OrderedBombarded::SourceInvariant() const
-{ return m_by_object_id->SourceInvariant(); }
+{ return m_by_object_condition->SourceInvariant(); }
 
 std::string Condition::OrderedBombarded::Description(bool negated/* = false*/) const {
-    //std::string empire_str;
-    //if (m_empire_id) {
-    //    int empire_id = ALL_EMPIRES;
-    //    if (ValueRef::ConstantExpr(m_empire_id))
-    //        empire_id = m_empire_id->Eval();
-    //    if (const Empire* empire = Empires().Lookup(empire_id))
-    //        empire_str = empire->Name();
-    //    else
-    //        empire_str = m_empire_id->Description();
-    //}
+    std::string by_str;
+    if (m_by_object_condition)
+        by_str = m_by_object_condition->Description();
 
-    //return str(FlexibleFormat((!negated)
-    //           ? UserString("DESC_SUPPLY_CONNECTED_FLEET")
-    //           : UserString("DESC_SUPPLY_CONNECTED_FLEET_NOT"))
-    //           % empire_str);
-    return "";
+    return str(FlexibleFormat((!negated)
+               ? UserString("DESC_ORDERED_BOMBARDED")
+               : UserString("DESC_ORDERED_BOMBARDED_NOT"))
+               % by_str);
 }
 
 std::string Condition::OrderedBombarded::Dump() const
-{ return DumpIndent() + "OrderedBombarded by_object_id = " + m_by_object_id->Dump(); }
+{ return DumpIndent() + "OrderedBombarded by_object = " + m_by_object_condition->Dump(); }
 
 bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -6255,9 +6314,19 @@ bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) c
         return false;
     }
 
-    int by_object_id = m_by_object_id->Eval(local_context);
+    ObjectMap& objects = GetUniverse().Objects();
 
-    return OrderedBombardedSimpleMatch(by_object_id)(candidate);
+    // get objects to be considering for matching against subcondition
+    ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(objects.NumObjects());
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
+    ObjectSet subcondition_matches;
+    subcondition_matches.reserve(objects.NumObjects());
+
+    m_by_object_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+
+    return OrderedBombardedSimpleMatch(subcondition_matches)(candidate);
 }
 
 ///////////////////////////////////////////////////////////
@@ -6285,8 +6354,8 @@ bool Condition::And::operator==(const Condition::ConditionBase& rhs) const {
     return true;
 }
 
-void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                          ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
@@ -6425,8 +6494,8 @@ bool Condition::Or::operator==(const Condition::ConditionBase& rhs) const {
     return true;
 }
 
-void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);

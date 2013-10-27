@@ -198,6 +198,7 @@
     (Or)                                        \
     (Orange)                                    \
     (Orbit)                                     \
+    (OrderedBombardedBy)                        \
     (OriginalType)                              \
     (OwnedBy)                                   \
     (Owner)                                     \

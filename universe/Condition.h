@@ -1731,11 +1731,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches the object, if any, that the object with id \a by_object_id has been
-  * ordered to bombard. */
+/** Matches the objects that have been targeted for bombardment by at least one
+  * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBase {
-    OrderedBombarded(const ValueRef::ValueRefBase<int>* by_object_id) :
-        m_by_object_id(by_object_id)
+    OrderedBombarded(const ConditionBase* by_object_condition) :
+        m_by_object_condition(by_object_condition)
     {}
     virtual ~OrderedBombarded();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1752,13 +1752,12 @@ struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBa
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_by_object_id;
+    const ConditionBase*    m_by_object_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
@@ -2200,7 +2199,7 @@ template <class Archive>
 void Condition::OrderedBombarded::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_by_object_id);
+        & BOOST_SERIALIZATION_NVP(m_by_object_condition);
 }
 
 template <class Archive>

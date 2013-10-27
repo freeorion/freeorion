@@ -10,6 +10,10 @@ Part
     buildtime = 1
     tags = "COMFORTABLE"
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = OrderedBombardedBy condition = Source
+            effects = SetMaxTroops Value + 100
     icon = "icons/ship_parts/troops.png"
 
 Part

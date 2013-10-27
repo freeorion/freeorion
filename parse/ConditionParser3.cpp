@@ -46,6 +46,11 @@ namespace {
                 >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
+            ordered_bombarded_by
+                =    tok.OrderedBombardedBy_
+                >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::OrderedBombarded>(_1) ]
+                ;
+
             number
                 =    tok.Number_
                 >>  -(
@@ -143,6 +148,7 @@ namespace {
             start
                 %=   within_distance
                 |    within_starlane_jumps
+                |    ordered_bombarded_by
                 |    number
                 |    turn
                 |    created_on_turn
@@ -157,6 +163,7 @@ namespace {
 
             within_distance.name("WithinDistance");
             within_starlane_jumps.name("WithinStarlaneJumps");
+            ordered_bombarded_by.name("OrderedBombardedBy");
             number.name("Number");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
@@ -171,6 +178,7 @@ namespace {
 #if DEBUG_CONDITION_PARSERS
             debug(within_distance);
             debug(within_starlane_jumps);
+            debug(ordered_bombarded_by);
             debug(number);
             debug(turn);
             debug(created_on_turn);
@@ -238,6 +246,7 @@ namespace {
 
         double_ref_rule within_distance;
         int_ref_rule within_starlane_jumps;
+        parse::condition_parser_rule ordered_bombarded_by;
         int_ref_int_ref_rule number;
         int_ref_int_ref_rule turn;
         int_ref_int_ref_rule created_on_turn;
