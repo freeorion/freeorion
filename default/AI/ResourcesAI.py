@@ -172,8 +172,9 @@ def setPlanetResourceFoci(): #+
                     rankedPlanets=[]
                     for pid in ColonisationAI.availableGrowthSpecials[special]:
                         planet = planetMap[pid]
+                        cur_focus = planet.focus
                         pop = planet.currentMeterValue(fo.meterType.population)
-                        if (pop > metabIncPop - planet.size) or (GFocus not in planet.availableFoci): #not enough benefit to lose local production, or can't put growth focus here
+                        if (pop > metabIncPop - 2*planet.size) or (GFocus not in planet.availableFoci): #not enough benefit to lose local production, or can't put growth focus here
                             continue
                         for special2 in [ "COMPUTRONIUM_SPECIAL"  ]:
                             if special2 in planet.specials:
@@ -181,15 +182,16 @@ def setPlanetResourceFoci(): #+
                         else: #didn't have any specials that would override interest in growth special
                             print "Considering  Growth Focus for %s (%d) with special %s; planet has pop %.1f and %s metabolism incremental pop is %.1f"%(
                                                                                                                                                           planet.name,  pid,  special,  pop,  metab,  metabIncPop)
-                            rankedPlanets.append(  (pop,  pid) )
+                            if cur_focus == GFocus:
+                                pop -=4 #discourage changing current focus to minimize focus-changing penalties
+                            rankedPlanets.append(  (pop,  pid,  cur_focus) )
                     if rankedPlanets == []:
                         continue
                     rankedPlanets.sort()
                     print "Considering  Growth Focus choice for  special %s; possible planet pop,  id pairs are %s"%(metab,  rankedPlanets)
-                    for spSize,  spPID in rankedPlanets: #index 0 should be able to set focus, but just in case...
+                    for spSize,  spPID,  cur_focus in rankedPlanets: #index 0 should be able to set focus, but just in case...
                         result = 1
-                        curFocus = planet.focus
-                        if curFocus != GFocus:
+                        if cur_focus != GFocus:
                             result = fo.issueChangeFocusOrder(spPID, GFocus)
                         if result == 1:
                             if spPID in empirePlanetIDs:
@@ -247,7 +249,7 @@ def setPlanetResourceFoci(): #+
         curTargetPP = 0.001
         curTargetRP = 0.001
         timer.append( time() ) #loop
-        hasForce = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
+        has_force = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
         for pid in newTargets:
             if pid in newFoci:
                 if planetMap[pid].focus == newFoci[pid]:
@@ -260,9 +262,16 @@ def setPlanetResourceFoci(): #+
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
+            if currentFocus[pid] != RFocus:
+                research_penalty = 0
+            else:
+                research_penalty = 1
+            planet = planetMap[pid]
+            pop = planet.currentMeterValue(fo.meterType.population)
+            t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
             #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
-            if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive):
-                if  ( CI > II ) or (   (CR<=RR-1) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1)))):
+            if (not has_force) and (foAI.foAIstate.aggression >= fo.aggression.aggressive) and (pop==t_pop):
+                if  ( CI > II + 8) or (   (CR<=RR-1) and ((RR-IR)>=6) and ( (CR-IR) >= (II-CI-research_penalty) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1)))):
                     curTargetPP += CI -1 #
                     curTargetRP +=  CR+1
                     newFoci[pid] = RFocus
@@ -286,7 +295,8 @@ def setPlanetResourceFoci(): #+
         fociMap={IFocus:"Industry",  RFocus:"Research", MFocus:"Mining",  GFocus:"Growth"}
         gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
         for ratio,  pid in ratios:
-            if priorityRatio < ( curTargetRP/ (curTargetPP + 0.0001)) : #we have enough RP
+            do_research = False#(newFoci[pid]==RFocus)
+            if (priorityRatio < ( curTargetRP/ (curTargetPP + 0.0001)))  and not do_research: #we have enough RP
                 if ratio < 1.1  and foAI.foAIstate.aggression >fo.aggression.cautious :  #but wait, RP is still super cheap relative to PP, maybe will take more RP
                     if priorityRatio < 1.5* ( curTargetRP/ (curTargetPP + 0.0001)) : #yeah, really a glut of RP, stop taking RP
                         break
@@ -296,12 +306,12 @@ def setPlanetResourceFoci(): #+
             RI, RR = newTargets[pid][RFocus]
             #if currentFocus[pid] == MFocus:
             #    II = max( II,  newTargets[pid][MFocus][0] )
-            if gotAlgo and (
+            if do_research or (gotAlgo and (
                    (ratio > 2.0 and curTargetPP < 15) or
                    (ratio > 2.5 and curTargetPP < 25  and II > 5) or
                    (ratio > 3.0 and curTargetPP < 40  and II > 5) or
                    (ratio > 4.0 and curTargetPP < 100  and II > 10)  or
-                   (  (curTargetRP+RR-IR)/max(0.001,  curTargetPP - II+RI) > 2*  priorityRatio  )):  # we already have algo elegance and more RP would be too expensive, or overkill
+                   (  (curTargetRP+RR-IR)/max(0.001,  curTargetPP - II+RI) > 2*  priorityRatio  ))):  # we already have algo elegance and more RP would be too expensive, or overkill
                 if not printedHeader:
                     printedHeader=True
                     print "Rejecting further Research Focus choices  as too expensive:"
