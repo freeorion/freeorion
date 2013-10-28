@@ -2127,6 +2127,22 @@ namespace {
             }
         }
     }
+
+    /** Removes bombardment state info from objects. Actual effects of
+      * bombardment are handled during */
+    void CleanUpBombardmentStateInfo() {
+        for (ObjectMap::iterator<Ship> it = GetUniverse().Objects().begin<Ship>();
+             it != GetUniverse().Objects().end<Ship>(); ++it)
+        { it->ClearBombardPlanet(); }
+        for (ObjectMap::iterator<Planet> it = GetUniverse().Objects().begin<Planet>();
+             it != GetUniverse().Objects().end<Planet>(); ++it)
+        {
+            if (it->IsAboutToBeBombarded()) {
+                //Logger().debugStream() << "CleanUpBombardmentStateInfo: " << it->Name() << " was about to be bombarded";
+                it->ResetIsAboutToBeBombarded();
+            }
+        }
+    }
 }
 
 void ServerApp::PreCombatProcessTurns() {
@@ -2140,6 +2156,10 @@ void ServerApp::PreCombatProcessTurns() {
 
     // inform players of order execution
     m_networking.SendMessage(TurnProgressMessage(Message::PROCESSING_ORDERS));
+
+    // clear bombardment state before executing orders, so result after is only
+    // determined by what orders set.
+    CleanUpBombardmentStateInfo();
 
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -2409,7 +2429,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!BEFORE TURN PROCESSING EFFECTS APPLICATION";
+        Logger().debugStream() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
         Logger().debugStream() << objects.Dump();
     }
 
@@ -2418,7 +2438,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
+        Logger().debugStream() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
         Logger().debugStream() << objects.Dump();
     }
 
@@ -2446,12 +2466,12 @@ void ServerApp::PostCombatProcessTurns() {
         if (!empires.Eliminated(it->first)) {
             Empire* empire = it->second;
             empire->UpdateAvailableLanes();
-            empire->UpdateUnobstructedFleets();  // must be done after *all* noneliminated empires have updated their unobstructed systems
+            empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
         }
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+        Logger().debugStream() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
         Logger().debugStream() << objects.Dump();
     }
 
@@ -2472,9 +2492,10 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+        Logger().debugStream() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
         Logger().debugStream() << objects.Dump();
     }
+
 
     // Execute meter-related effects on objects created this turn, so that new
     // UniverseObjects will have effects applied to them this turn, allowing
@@ -2483,7 +2504,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.ApplyMeterEffectsAndUpdateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING METERS OF ALL OBJECTS";
+        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
         Logger().debugStream() << objects.Dump();
     }
 
