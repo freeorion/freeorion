@@ -2407,7 +2407,7 @@ FOCUS_CHANGE_PENALTY
                 Planet
                 Not Focus "FOCUS_INDUSTRY"
             ]
-            effects = SetIndustry Value - max(0, 2 - Target.TurnsSinceFocusChange)
+            effects = SetIndustry Value - max(0, 1 - Target.TurnsSinceFocusChange)
 
         EffectsGroup
             scope = Source
@@ -2415,7 +2415,7 @@ FOCUS_CHANGE_PENALTY
                 Planet
                 Not Focus "FOCUS_RESEARCH"
             ]
-            effects = SetResearch Value - max(0, 2 - Target.TurnsSinceFocusChange)
+            effects = SetResearch Value - max(0, 1 - Target.TurnsSinceFocusChange)
 '''
 
 ADVANCED_FOCUS_EFFECTS
