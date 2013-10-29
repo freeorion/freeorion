@@ -2945,9 +2945,12 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
 
     objects.Clear();
 
-    if (encoding_empire == ALL_EMPIRES || !ENABLE_VISIBILITY_EMPIRE_MEMORY) {
-        // if encoding for all empires, copy true full universe state (by specifying ALL_EMPIRES)
-        // or if encoding without memory, copy all info visible to specified empire
+    if (encoding_empire == ALL_EMPIRES) {
+        // if encoding for all empires, copy true full universe state, and use the
+        // streamlined option
+        objects.CopyForSerialize(m_objects);
+    } else if (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
+        // if encoding without memory, copy all info visible to specified empire
         objects.Copy(m_objects, encoding_empire);
     } else {
         // if encoding for a specific empire with memory...
@@ -2957,7 +2960,8 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         if (it == m_empire_latest_known_objects.end())
             return;                 // empire has no object knowledge, so there is nothing to send
 
-        objects.Copy(it->second);
+        //the empire_latest_known_objects are already processed for visibility, so can be copied streamlined
+        objects.CopyForSerialize(it->second);
     }
 }
 
@@ -2997,7 +3001,8 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
         {
             int empire_id = it->first;
             const ObjectMap& map = it->second;
-            empire_latest_known_objects[empire_id].Copy(map, ALL_EMPIRES);
+            //the maps in m_empire_latest_known_objects are already processed for visibility, so can be copied fully
+            empire_latest_known_objects[empire_id].CopyForSerialize(map);
         }
         return;
     }

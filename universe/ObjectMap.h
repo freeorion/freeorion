@@ -260,6 +260,11 @@ public:
       * are left unchanged. */
     void                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
+    /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap, in
+     * preparation for serializing this ObjectMap.  The normal object-by-object 
+     * CopyObject process is bypassed and only m_objects is copied, in a direct fashion. */
+    void                CopyForSerialize(const ObjectMap& copied_map);
+
     /** Copies the passed \a object into this ObjectMap, overwriting any
       * existing information about that object or creating a new object in this
       * map as appropriate with UniverseObject::Copy or UniverseObject::Clone.

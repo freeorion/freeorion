@@ -24,7 +24,6 @@
 #define FOR_EACH_MAP(f, ...)              { f(m_objects, ##__VA_ARGS__);            \
                                             FOR_EACH_SPECIALIZED_MAP(f, ##__VA_ARGS__); }
 
-
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
@@ -45,6 +44,14 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
     // on whether there already is a corresponding object in this map
     for (const_iterator<> it = copied_map.const_begin(); it != copied_map.const_end(); ++it)
         this->CopyObject(*it, empire_id);
+}
+
+void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
+    if (&copied_map == this)
+        return;
+
+    // note: the following relies upon only m_objects actually getting serialized by ObjectMap::serialize
+    m_objects.insert(copied_map.m_objects.begin(), copied_map.m_objects.end());
 }
 
 void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire_id/* = ALL_EMPIRES*/) {
