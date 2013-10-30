@@ -671,7 +671,9 @@ br_strcat (const char *str1, const char *str2)
     len1 = strlen (str1);
     len2 = strlen (str2);
 
-    result = (char *) malloc (len1 + len2 + 1);
+    //rounds length up to a 8-byte multiple to prevent extraneous mem checker warnings upon data read
+    //rounding up to 4 byte multiple might be sufficient, but went with 8 to be safe.
+    result = (char *) malloc ((len1 + len2 + 1 + 7) & ~ 0x07); 
     memcpy (result, str1, len1);
     memcpy (result + len1, str2, len2);
     result[len1 + len2] = '\0';
