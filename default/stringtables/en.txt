@@ -3372,8 +3372,11 @@ SITREP_VICTORY_TECH
 SITREP_VICTORY_BIO
 SITREP_EMPIRE_ELIMINATED
 EFFECT_ANCIENT_SHIP
+EFFECT_ANCIENT_SHIP_RUMORS
 EFFECT_ANCIENT_BUILDING
+EFFECT_ANCIENT_BUILDING_RUMORS
 EFFECT_ANCIENT_TECH
+EFFECT_ANCIENT_TECH_RUMORS
 SITREP_TECH_RESEARCHED
 SITREP_TECH_UNLOCKED
 SITREP_SHIP_PART_UNLOCKED
@@ -3593,15 +3596,30 @@ A %predefinedshipdesign% on %planet% was revealed in the Ancient Ruins!
 EFFECT_ANCIENT_SHIP_LABEL
 Ancient Ruins Ship
 
+EFFECT_ANCIENT_SHIP_RUMORS
+Rumors spread through the galaxy that a %predefinedshipdesign% was revealed to a xenoarcheology expedition at Ancient Ruins!
+EFFECT_ANCIENT_SHIP_RUMORS_LABEL
+Ancient Ruins Ship Rumors
+
 EFFECT_ANCIENT_BUILDING
 A %buildingtype% on %planet% was revealed in the Ancient Ruins!
 EFFECT_ANCIENT_BUILDING_LABEL
 Ancient Ruins Building
 
+EFFECT_ANCIENT_BUILDING_RUMORS
+Rumors spread through the galaxy that a %buildingtype% was revealed to a xenoarcheology expedition at Ancient Ruins!
+EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
+Ancient Ruins Building Rumors
+
 EFFECT_ANCIENT_TECH
 %tech% was revealed on %planet% in the Ancient Ruins!
 EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
+
+EFFECT_ANCIENT_TECH_RUMORS
+Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology expedition at Ancient Ruins!
+EFFECT_ANCIENT_TECH_RUMORS_LABEL
+Ancient Ruins Tech Rumors
 
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
