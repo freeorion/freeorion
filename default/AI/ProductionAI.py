@@ -135,7 +135,7 @@ def getBestShipRatings(loc=None):
             cost = shipDesign.productionCost(empireID, pid)
             nattacks = sum( designStats.get('attacks', {1:1}).keys() )
             costRating = (designStats['attack'] * (designStats['structure'] + nattacks*designStats['shields']))/(max( 0.1,  cost))  # TODO: improve shield treatment here
-            if costRating < 0.5* bestCostRating:
+            if costRating < 0.1* bestCostRating:
                 break
             if costRating > localBestCostRating:
                 localBestCostRating = costRating
@@ -280,6 +280,7 @@ def addMarkDesigns():
     is1,  is2,  is3,  is4,  is5 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR", "SH_PLASMA",   "SH_MULTISPEC",  "SH_BLACK"
     isList=["", is1, is2, is3, is4, is5]
     ar1,  ar2,  ar3,  ar4,  ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE",   "AR_NEUTRONIUM_PLATE"
+    arList = ["", ar1, ar2, ar3, ar4, ar5]
 
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]:
         maxEM= 8
@@ -304,6 +305,11 @@ def addMarkDesigns():
     nb,  hull =  designNameBases[2]+"-2z-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar2,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar2,  srb2%iw, srb2%iw,  is2],  "",  model)    for iw in [2, 3, 4] ]
+    
+    nb,  hull =  designNameBases[2]+"-3ms-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[ srb%iw]+[is4],  "",  model)    for iw in [4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  3*[ srb2%iw]+[is4],  "",  model)    for iw in [3, 4] ]
+        
     #nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
     #newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
     #nb,  hull =  designNameBases[2]+"-3z-%1d",   "SH_STATIC_MULTICELLULAR"
@@ -370,15 +376,19 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(4, iw+4),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(4, iw+8),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is5,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
 
-        nb,  hull =  designNameBases[5]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
+        nb,  hull =  designNameBases[5]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
         newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  [srb%iw]  +4*[""] +[db%1] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  [srb2%iw]+4*[""] +[db%1] + [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  [srb%iw]  +2*[""] +2*[ar2]+[db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
         newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  [srb2%iw]+2*[""] +2*[ar2]+[db%1]+ [if1,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(5, iw)      ,  desc,  hull,  [srb2%iw]+2*[""] +2*[ar2]+[db%2]+ [if1,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(6, isp )    ,  desc,  hull,  [srb2%4] +2*[""] +2*[ar2]+[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2] ]
-        newMarkDesigns += [ (nb%(7, isp )    ,  desc,  hull,  3*[srb2%4] +2*[ar2] +[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [1, 2,  3,  4] ]
-        nb,  hull =  designNameBases[6]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
+        newMarkDesigns += [ (nb%(6, isp )    ,  desc,  hull,  [srb2%4] +2*[""] +2*[ar2]+[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [0, 1, 2] ]
+        newMarkDesigns += [ (nb%(7, isp )    ,  desc,  hull,  3*[srb2%4] +2*[ar2] +[db%2]+ [isList[isp],  if1, if1],  "",  model)    for isp in [0, 1, 2,  3] ]
+        for iar in [1, 2]:
+            newMarkDesigns += [ (nb%(8, 2*iar+idb-2 )    ,  desc,  hull,  3*[srb%4] +2*[arList[iar]] +[db%idb]+ [is4,  if1, if1],  "",  model)    for idb in [1, 2] ]
+        newMarkDesigns += [ (nb%(9, iw )    ,  desc,  hull,  3*[srb2%iw] +2*[ar2] +[db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
+        
+        nb,  hull =  designNameBases[6]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
         newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is2,  if1, if1],  "",  model)    for iw in [1] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  3*[srb4%iw]+2*[ar3]+ [db%2]+ [is3,  if1, if1],  "",  model)    for iw in [1] ]
         newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb4%iw]+3*[ar2]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [1] ]
@@ -390,7 +400,8 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(9, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
         newMarkDesigns += [ (nb%(10, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%2]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
         newMarkDesigns += [ (nb%(11, iw)      ,  desc,  hull,  4*[srb3%iw]+1*[ar4]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [3, 4] ]
-        nb,  hull =  designNameBases[7]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #8 , 9, 10 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
+        
+        nb,  hull =  designNameBases[7]+"-%1x-%1x",   "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA",  "Pele":"FB",  "Xena":"FC"
         newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar4]+ [db%3]+ [is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
         newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  4*[srb4%iw]+1*[ar3]+ [db%3]+ [is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
