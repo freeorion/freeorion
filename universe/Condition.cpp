@@ -2316,7 +2316,7 @@ namespace {
             if (m_system_id == INVALID_OBJECT_ID)
                 return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system
             else
-                return candidate->SystemID() == m_system_id;                        // match objects in specified system
+                return candidate->SystemID() == m_system_id;        // match objects in specified system
         }
 
         int m_system_id;
@@ -5229,20 +5229,20 @@ namespace {
     struct WithinDistanceSimpleMatch {
         WithinDistanceSimpleMatch(const Condition::ObjectSet& from_objects, double distance) :
             m_from_objects(from_objects),
-            m_distance(distance)
+            m_distance2(distance*distance)
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            double distance2 = m_distance*m_distance;
-
             // is candidate object close enough to any of the passed-in objects?
-            for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
+            for (Condition::ObjectSet::const_iterator it = m_from_objects.begin();
+                 it != m_from_objects.end(); ++it)
+            {
                 double delta_x = candidate->X() - (*it)->X();
                 double delta_y = candidate->Y() - (*it)->Y();
-                if (delta_x*delta_x + delta_y*delta_y < distance2)
+                if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
                     return true;
             }
 
@@ -5250,7 +5250,7 @@ namespace {
         }
 
         const Condition::ObjectSet& m_from_objects;
-        double m_distance;
+        double m_distance2;
     };
 }
 
