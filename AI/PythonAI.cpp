@@ -136,6 +136,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueFleetTransferOrder",              AIInterface::IssueFleetTransferOrder);
     def("issueColonizeOrder",                   AIInterface::IssueColonizeOrder);
     def("issueInvadeOrder",                     AIInterface::IssueInvadeOrder);
+    def("issueBombardOrder",                    AIInterface::IssueBombardOrder);
     def("issueAggressionOrder",                 AIInterface::IssueAggressionOrder);
     def("issueChangeFocusOrder",                AIInterface::IssueChangeFocusOrder);
     def("issueEnqueueTechOrder",                AIInterface::IssueEnqueueTechOrder);
@@ -154,7 +155,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>());
 
     def("doneTurn",                 AIInterface::DoneTurn);
-    def("userString",               make_function(&UserString,        return_value_policy<copy_const_reference>()));
+    def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
 
 
     //////////////////

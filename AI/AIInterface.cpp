@@ -559,6 +559,73 @@ namespace AIInterface {
         return 1;
     }
 
+    int IssueBombardOrder(int ship_id, int planet_id) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        // make sure ship_id is a ship...
+        TemporaryPtr<const Ship> ship = GetShip(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : passed an invalid ship_id";
+            return 0;
+        }
+
+        // get fleet of ship
+        TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : ship with passed ship_id has invalid fleet_id";
+            return 0;
+        }
+
+        // make sure player owns ship and its fleet
+        if (!fleet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : empire does not own fleet of passed ship";
+            return 0;
+        }
+        if (!ship->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : empire does not own passed ship";
+            return 0;
+        }
+
+        // verify that planet exists and is occupied by another empire
+        TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : no planet with passed planet_id";
+            return 0;
+        }
+        bool owned_by_invader = planet->OwnedBy(empire_id);
+        bool unowned = planet->Unowned();
+        bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
+        bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
+        float shields = planet->CurrentMeterValue(METER_SHIELD);
+        std::string thisSpecies = planet->SpeciesName();
+
+        bool bombardable = !owned_by_invader && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
+        if (!bombardable) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : planet with passed planet_id "<< planet_id <<" and species "<<thisSpecies<<" is  "
+                                   << "not bombardable due to one or more of: owned by invader empire, "
+                                   << "not visible to invader empire.";
+            if (!unowned) 
+                Logger().errorStream() << "AIInterface::IssueBombardOrder : planet (id " << planet_id << ") is not unowned";
+            if (!visible)
+                Logger().errorStream() << "AIInterface::IssueBombardOrder : planet (id " << planet_id << ") is not visible";
+            return 0;
+        }
+
+        // verify that planet is in same system as the fleet
+        if (planet->SystemID() != fleet->SystemID()) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : fleet and planet are not in the same system";
+            return 0;
+        }
+        if (ship->SystemID() == INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueBombardOrder : ship is not in a system";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new BombardOrder(empire_id, ship_id, planet_id)));
+
+        return 1;
+    }
+
     int IssueDeleteFleetOrder() {
         return 0;
     }

@@ -79,6 +79,7 @@ namespace AIInterface {
     int                 IssueFleetTransferOrder(int ship_id, int new_fleet_id);
     int                 IssueColonizeOrder(int ship_id, int planet_id);
     int                 IssueInvadeOrder(int ship_id, int planet_id);
+    int                 IssueBombardOrder(int ship_id, int planet_id);
     int                 IssueDeleteFleetOrder();
     int                 IssueAggressionOrder(int object_id, bool aggressive);
 
