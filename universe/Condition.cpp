@@ -3267,7 +3267,7 @@ namespace {
                 }
             } // else: looking for any production item
 
-            retval += 1;
+            retval += it->blocksize;
         }
         return retval;
     }
