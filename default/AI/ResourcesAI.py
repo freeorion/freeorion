@@ -363,7 +363,7 @@ def setPlanetResourceFoci(): #+
             for pid in id_set:
                 canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
                 oldFocus=currentFocus[pid]
-                newFocus = newFoci[pid]
+                newFocus = newFoci.get(pid,  IFocus)
                 cPP, cRP = currentOutput[pid][IFocus],  currentOutput[pid][RFocus]
                 otPP, otRP= newTargets[pid].get(oldFocus,  (0, 0))
                 ntPP, ntRP = otPP, otRP

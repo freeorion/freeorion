@@ -207,11 +207,25 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
     "creates a dictionary that takes planetIDs as key and their invasion score as value"
 
     planetValues = {}
+    neighbor_values = {}
+    universe = fo.getUniverse()    
     secureAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE])
-
     for planetID in planetIDs:
-        planetValues[planetID] = evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions)
-
+        planetValues[planetID] = neighbor_values.setdefault(planetID, evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions))
+        print "planet %d,  values %s"%(planetID,  planetValues[planetID])
+        planet = universe.getPlanet(planetID)
+        specName = (planet and planet.speciesName) or ""
+        species = fo.getSpecies(specName)
+        if species and species.canProduceShips:
+            system = universe.getSystem(planet.systemID)
+            if not system:
+                continue
+            for pid2 in system.planetIDs:
+                if pid2 == planetID:
+                    continue
+                planet2 = universe.getPlanet(pid2)
+                if planet2 and (planet2.owner != empire.empireID) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)): #TODO check for allies
+                    planetValues[planetID][0] += 0.5 * (neighbor_values.setdefault( pid2, evaluateInvasionPlanet(pid2, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions))[0])
     return planetValues
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions,  verbose=True):
@@ -248,14 +262,14 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     planet = universe.getPlanet(planetID)
     if (planet == None) :  #TODO: exclude planets with stealth higher than empireDetection
         print "invasion AI couldn't access any info for planet id %d"%planetID
-        return 0, 0
+        return [0, 0]
 
     sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  empireID)).get(fo.visibility.partial, -9999)
     planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empireID)).get(fo.visibility.partial, -9999)
 
     if planetPartialVisTurn < sysPartialVisTurn:
         print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)"%planetID
-        return 0, 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
+        return [0, 0]  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
 
     specName=planet.speciesName
     species=fo.getSpecies(specName)
@@ -333,7 +347,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
-    invscore =  threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops
+    invscore =  [ threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops ]
     print invscore, "projected Troop Cost:",  troopCost,  ", threatFactor: ", threatFactor,  ", planet detail ",   detail, "popval,  supplyval,  bldval,  enemyval",   popVal,  supplyVal,  bldTally,  enemyVal
     return   invscore
 

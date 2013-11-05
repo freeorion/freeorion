@@ -28,15 +28,6 @@ def generateResearchOrders():
     print""
 
     researchQueueList = getResearchQueueTechs()
-    if tRP >= 20  and foAI.foAIstate.aggression > fo.aggression.cautious:
-        if (empire.getTechStatus("LRN_PSIONICS") != fo.techStatus.complete)  and ( "LRN_PSIONICS" not in researchQueueList[:5]  )  :
-            for specName in ColonisationAI.empireSpecies:
-                thisSpec=fo.getSpecies(specName)
-                if thisSpec:
-                    if "TELEPATHIC" in list(thisSpec.tags):
-                        res=fo.issueEnqueueTechOrder("LRN_DISTRIB_THOUGHT", 0)
-                        res=fo.issueEnqueueTechOrder("LRN_PSIONICS", 0)
-                        break
 
     if len(foAI.foAIstate.colonisablePlanetIDs)==0:
         bestColonySiteScore = 0
@@ -223,6 +214,18 @@ def generateResearchOrders():
                 res=fo.issueEnqueueTechOrder(xenoTech,insert_idx)
                 print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s  to enable LRN_XENOARCH,  got result %d"%(xenoTech, res)
         researchQueueList = getResearchQueueTechs()
+
+    if (foAI.foAIstate.aggression > fo.aggression.cautious) and( tRP * empire.population() > 1500):
+        if (empire.getTechStatus("LRN_DISTRIB_THOUGHT") != fo.techStatus.complete):
+            for specName in ColonisationAI.empireSpecies:
+                thisSpec=fo.getSpecies(specName)
+                if thisSpec and ("TELEPATHIC" in list(thisSpec.tags)):
+                    for dt_ech in [ "LRN_DISTRIB_THOUGHT", "LRN_PSIONICS", "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ]:
+                        if   dt_ech not in researchQueueList[:4]  and  empire.getTechStatus(dt_ech) != fo.techStatus.complete:
+                            res=fo.issueEnqueueTechOrder(dt_ech, 0)
+                            print "Empire has a telepathic race, so attempted to fast-track %s,  got result %d"%(dt_ech, res)
+                    researchQueueList = getResearchQueueTechs()
+                    break
 
     if  empire.getTechStatus("SHP_WEAPON_4_1" ) == fo.techStatus.complete:
         thisTech=fo.getTech("SHP_WEAPON_4_1")
