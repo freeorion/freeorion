@@ -615,17 +615,50 @@ namespace ValueRef {
 
         if (property_name == "Name") {
             return object->Name();
+
         } else if (property_name == "Species") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->SpeciesName();
             else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
                 return ship->SpeciesName();
+
         } else if (property_name == "BuildingType") {
             if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
                 return building->BuildingTypeName();
+
         } else if (property_name == "Focus") {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->Focus();
+
+        } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
+            const Empire* empire = Empires().Lookup(object->Owner());
+            if (!empire)
+                return "";
+            return empire->LeastExpensiveEnqueuedTech(true);
+
+        } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
+            const Empire* empire = Empires().Lookup(object->Owner());
+            if (!empire)
+                return "";
+            return empire->MostExpensiveEnqueuedTech(true);
+
+        } else if (property_name == "OwnerMostRPCostLeftEnqueuedTech") {
+            const Empire* empire = Empires().Lookup(object->Owner());
+            if (!empire)
+                return "";
+            return empire->MostRPCostLeftEnqueuedTech(true);
+
+        } else if (property_name == "OwnerMostRPSpentEnqueuedTech") {
+            const Empire* empire = Empires().Lookup(object->Owner());
+            if (!empire)
+                return "";
+            return empire->MostRPSpentEnqueuedTech(true);
+
+        } else if (property_name == "OwnerTopPriorityEnqueuedTech") {
+            const Empire* empire = Empires().Lookup(object->Owner());
+            if (!empire)
+                return "";
+            return empire->TopPriorityEnqueuedTech(true);
         }
 
         Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);

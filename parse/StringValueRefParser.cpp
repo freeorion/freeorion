@@ -22,6 +22,11 @@ namespace { struct string_parser_rules {
                 |    tok.Species_
                 |    tok.BuildingType_
                 |    tok.Focus_
+                |    tok.OwnerLeastExpensiveEnqueuedTech_
+                |    tok.OwnerMostExpensiveEnqueuedTech_
+                |    tok.OwnerMostRPCostLeftEnqueuedTech_
+                |    tok.OwnerMostRPSpentEnqueuedTech_
+                |    tok.OwnerTopPriorityEnqueuedTech_
                 ;
 
             constant
@@ -34,7 +39,7 @@ namespace { struct string_parser_rules {
                         |   parse::enum_parser<StarType>()
                         |   tok.double_
                         |   tok.int_
-                        ]
+                     ]
                 ;
 
             free_variable

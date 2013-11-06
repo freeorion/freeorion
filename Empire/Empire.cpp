@@ -1291,23 +1291,23 @@ TechStatus Empire::GetTechStatus(const std::string& name) const {
     return TS_UNRESEARCHABLE;
 }
 
-const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     return EMPTY_STRING;
 }
 

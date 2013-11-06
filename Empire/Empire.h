@@ -301,11 +301,11 @@ public:
     const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
     const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
 
-    const std::string&              TopPriorityEnqueuedTech(bool only_consider_available_techs = false);
-    const std::string&              MostExpensiveEnqueuedTech(bool only_consider_available_techs = false);
-    const std::string&              LeastExpensiveEnqueuedTech(bool only_consider_available_techs = false);
-    const std::string&              MostRPSpentEnqueuedTech(bool only_consider_available_techs = false);
-    const std::string&              MostRPCostLeftEnqueuedTech(bool only_consider_available_techs = false);
+    const std::string&              TopPriorityEnqueuedTech(bool only_consider_available_techs = false) const;
+    const std::string&              MostExpensiveEnqueuedTech(bool only_consider_available_techs = false) const;
+    const std::string&              LeastExpensiveEnqueuedTech(bool only_consider_available_techs = false) const;
+    const std::string&              MostRPSpentEnqueuedTech(bool only_consider_available_techs = false) const;
+    const std::string&              MostRPCostLeftEnqueuedTech(bool only_consider_available_techs = false) const;
 
     const Meter*                                    GetMeter(const std::string& name) const;
     std::map<std::string, Meter>::const_iterator    meter_begin() const { return m_meters.begin(); }
