@@ -1371,6 +1371,7 @@ class TechTreeWnd::TechListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
     TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    virtual ~TechListBox();
     //@}
 
     /** \name Accessors */ //@{
@@ -1526,6 +1527,13 @@ TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         SetColWidth(i, col_widths[i]);
         SetColAlignment(i, GG::ALIGN_LEFT);
     }
+}
+
+TechTreeWnd::TechListBox::~TechListBox() {
+    for (std::multimap<std::string, TechRow*>::iterator it = m_all_tech_rows.begin();
+         it != m_all_tech_rows.end(); ++it)
+    { delete it->second; }
+    m_all_tech_rows.clear();
 }
 
 std::set<std::string> TechTreeWnd::TechListBox::GetCategoriesShown() const

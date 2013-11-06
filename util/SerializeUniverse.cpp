@@ -142,7 +142,7 @@ void Field::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+   ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
         & BOOST_SERIALIZATION_NVP(m_type)
