@@ -523,8 +523,12 @@ def generateProductionOrders():
 
     if (currentTurn==1) and (productionQueue.totalSpent < totalPP):
         bestDesignID,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
+        if len(AIstate.opponentPlanetIDs) == 0:
+            init_scouts = 4
+        else:
+            init_scouts = 0
         if bestDesignID:
-            for scout_count in range(5):
+            for scout_count in range(init_scouts):
                 retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, buildChoices[0])
         fo.updateProductionQueue()
 
@@ -1360,6 +1364,7 @@ def generateProductionOrders():
     #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded
     dequeueList=[]
     fo.updateProductionQueue()
+    can_prioritize_troops = False
     for queue_index  in range( len(productionQueue)):
         element=productionQueue[queue_index]
         blockStr =  "%d x "%element.blocksize              #["a single ",  "in blocks of %d "%element.blocksize][element.blocksize>1]
@@ -1372,15 +1377,19 @@ def generateProductionOrders():
             else:
                 print "element %s is projected to never be completed as currently stands, but will remain on queue  "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
+            this_role = foAI.foAIstate.getShipRole(element.designID)
+            if this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
                 thisSpec=universe.getPlanet(element.locationID).speciesName
                 queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
-            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
+            elif this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
                 queuedOutpostShips+=  element.remaining*element.blocksize
-            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
+            elif this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
                 queuedOutpostShips+=  element.remaining*element.blocksize
-            if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+            elif this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
                 queuedTroopShips+=  element.remaining*element.blocksize
+            elif (this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION) and (queue_index <= 1):
+                if len(AIstate.opponentPlanetIDs) > 0:
+                    can_prioritize_troops = True
     if queuedColonyShips:
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:
@@ -1397,14 +1406,14 @@ def generateProductionOrders():
     nAvailTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in availTroopFleetIDs ] )
     print "Trooper Status turn %d: %d total,  with %d unassigned.  %d queued, compared to %d total Military Attack Ships"%(currentTurn,   nTroopTot,
                                                                                                                    nAvailTroopTot,  queuedTroopShips,  nMilitaryTot)
-    if ( capitolID!=None and currentTurn>=40 and foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('fleetThreat', 0)==0   and
+    if ( capitolID!=None and ((currentTurn>=40) or (can_prioritize_troops)) and foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('fleetThreat', 0)==0   and
                                                                                            foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('neighborThreat', 0)==0):
         bestDesignID,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
         if  buildChoices!=None and  len(buildChoices)>0:
             loc = random.choice(buildChoices)
             prodTime = bestDesign.productionTime(empire.empireID,  loc)
             prodCost=bestDesign.productionCost(empire.empireID,  loc)
-            troopersNeededForcing = max(0,   int( min(0.99+  (currentTurn/20 - nAvailTroopTot)/max(2, prodTime-1),  nMilitaryTot/3 -nTroopTot)))
+            troopersNeededForcing = max(0,   int( min(0.99+  (currentTurn/20.0 - nAvailTroopTot)/max(2, prodTime-1),  nMilitaryTot/3 -nTroopTot)))
             numShips=troopersNeededForcing
             perTurnCost = (float(prodCost) / prodTime)
             if troopersNeededForcing>0  and totalPP > 3*perTurnCost*queuedTroopShips:
@@ -1603,6 +1612,7 @@ def generateProductionOrders():
                     perTurnCost *= 2
             retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
             if retval !=0:
+                prioritized = False
                 print "adding %d new ship(s) at location %s to production queue:  %s; per turn production cost %.1f"%(numShips,  PlanetUtilsAI.planetNameIDs([loc]),   bestDesign.name(True),  perTurnCost)
                 print ""
                 if numShips>1:
@@ -1624,7 +1634,10 @@ def generateProductionOrders():
                         cost,  time =   empire.productionCostAndTime( elem )
                         leadingBlockPP +=  elem.blocksize *cost/time
                     if leadingBlockPP > 0.5* totalPP or  (militaryEmergency and thisPriority==EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY  ):
+                        prioritized = True
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                if (not prioritized) and (priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION):
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
         print ""
     fo.updateProductionQueue()
 
