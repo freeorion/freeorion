@@ -2707,6 +2707,19 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
+        if (it->first == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = GetPredefinedShipDesign(it->second->Eval(context))) {
+                int design_id = design->ID();
+                if (!empire) {
+                    // ensure all empires aware of ship design
+                    for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
+                        GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_it->first);
+                } else if (m_affiliation == AFFIL_SELF) {
+                    // ensure empire has knowledge of the design
+                    GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire->EmpireID());
+                }
+            }
+        }
     }
 
     if (!empire) {
