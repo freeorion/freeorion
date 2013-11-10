@@ -607,7 +607,6 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     turns_left_to_completion(-1)
 {}
 
-
 /////////////////////
 // ProductionQueue //
 /////////////////////
@@ -1292,22 +1291,108 @@ TechStatus Empire::GetTechStatus(const std::string& name) const {
 }
 
 const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
-    return EMPTY_STRING;
+    if (m_research_queue.empty())
+        return EMPTY_STRING;
+    ResearchQueue::const_iterator it = m_research_queue.begin();
+    const std::string& tech = it->name;
+    return tech;
 }
 
 const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
-    return EMPTY_STRING;
+    if (m_research_queue.empty())
+        return EMPTY_STRING;
+    double biggest_cost = -99999.9; // arbitrary small number
+    ResearchQueue::const_iterator best_it = m_research_queue.end();
+
+    for (ResearchQueue::const_iterator it = m_research_queue.begin();
+         it != m_research_queue.end(); ++it)
+    {
+        const Tech* tech = GetTech(it->name);
+        if (!tech)
+            continue;
+        double tech_cost = tech->ResearchCost(m_id);
+        if (tech_cost > biggest_cost) {
+            biggest_cost = tech_cost;
+            best_it = it;
+        }
+    }
+
+    if (best_it != m_research_queue.end())
+    return best_it->name;
 }
 
 const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
-    return EMPTY_STRING;
+    if (m_research_queue.empty())
+        return EMPTY_STRING;
+    double smallest_cost = 9999999.9; // arbitrary large number
+    ResearchQueue::const_iterator best_it = m_research_queue.end();
+
+    for (ResearchQueue::const_iterator it = m_research_queue.begin();
+         it != m_research_queue.end(); ++it)
+    {
+        const Tech* tech = GetTech(it->name);
+        if (!tech)
+            continue;
+        double tech_cost = tech->ResearchCost(m_id);
+        if (tech_cost < smallest_cost) {
+            smallest_cost = tech_cost;
+            best_it = it;
+        }
+    }
+
+    if (best_it != m_research_queue.end())
+    return best_it->name;
 }
 
 const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+    double most_spent = -999999.9;  // arbitrary small number
+    std::map<std::string, double>::const_iterator best_it = m_research_progress.end();
+
+    for (std::map<std::string, double>::const_iterator it = m_research_progress.begin();
+         it != m_research_progress.end(); ++it)
+    {
+        const std::string& tech_name = it->first;
+        if (m_research_queue.find(tech_name) == m_research_queue.end())
+            continue;
+        double rp_spent = it->second;
+        if (rp_spent > most_spent) {
+            best_it = it;
+            most_spent = rp_spent;
+        }
+    }
+
+    if (best_it != m_research_progress.end())
+        return best_it->first;
     return EMPTY_STRING;
 }
 
 const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+    double most_left = -999999.9;  // arbitrary small number
+    std::map<std::string, double>::const_iterator best_it = m_research_progress.end();
+
+    for (std::map<std::string, double>::const_iterator it = m_research_progress.begin();
+         it != m_research_progress.end(); ++it)
+    {
+        const std::string& tech_name = it->first;
+        const Tech* tech = GetTech(tech_name);
+        if (!tech)
+            continue;
+
+        if (m_research_queue.find(tech_name) == m_research_queue.end())
+            continue;
+
+        double rp_spent = it->second;
+        double rp_total_cost = tech->ResearchCost(m_id);
+        double rp_left = std::max(0.0, rp_total_cost - rp_spent);
+
+        if (rp_left > most_left) {
+            best_it = it;
+            most_left = rp_left;
+        }
+    }
+
+    if (best_it != m_research_progress.end())
+        return best_it->first;
     return EMPTY_STRING;
 }
 
