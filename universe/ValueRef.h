@@ -451,8 +451,8 @@ template <class T>
 bool ValueRef::Variable<T>::SourceInvariant() const
 { return m_ref_type != SOURCE_REFERENCE; }
 
-std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
-                                             const std::vector<std::string>& property_names);
+FO_COMMON_API std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
+                                                           const std::vector<std::string>& property_names);
 
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
