@@ -37,29 +37,46 @@ namespace {
             within_distance
                 =    tok.WithinDistance_
                 >    parse::label(Distance_token)  > double_value_ref [ _a = _1 ]
-                >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::WithinDistance>(_a, _1) ]
+                >    parse::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
 
             within_starlane_jumps
                 =    tok.WithinStarlaneJumps_
                 >    parse::label(Jumps_token)     > int_value_ref [ _a = _1 ]
-                >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
+                >    parse::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             ordered_bombarded_by
                 =    tok.OrderedBombardedBy_
-                >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::OrderedBombarded>(_1) ]
+                >    parse::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::OrderedBombarded>(_1) ]
                 ;
 
             number
                 =    tok.Number_
                 >>  -(
-                            parse::label(Low_token) >> int_value_ref [ _a = _1 ]
+                        parse::label(Low_token)   >> int_value_ref [ _a = _1 ]
                      )
                 >>  -(
-                            parse::label(High_token) >> int_value_ref [ _b = _1 ]
+                        parse::label(High_token)  >> int_value_ref [ _b = _1 ]
                      )
-                >    parse::label(Condition_token) > parse::detail::condition_parser [ _val = new_<Condition::Number>(_a, _b, _1) ]
+                >    parse::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::Number>(_a, _b, _1) ]
+                ;
+
+            value_test
+                =
+                    tok.ValueTest_
+                    >> -(
+                            parse::label(Low_token)  >> double_value_ref [ _a = _1 ]
+                        )
+                    >> -(
+                            parse::label(High_token) >> double_value_ref [ _b = _1 ]
+                        )
+                    >> parse::label(Value_token)     >> double_value_ref
+                    [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
                 ;
 
             turn
@@ -150,6 +167,7 @@ namespace {
                 |    within_starlane_jumps
                 |    ordered_bombarded_by
                 |    number
+                |    value_test
                 |    turn
                 |    created_on_turn
                 |    number_of
@@ -165,6 +183,7 @@ namespace {
             within_starlane_jumps.name("WithinStarlaneJumps");
             ordered_bombarded_by.name("OrderedBombardedBy");
             number.name("Number");
+            value_test.name("ValueTest");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
@@ -180,6 +199,7 @@ namespace {
             debug(within_starlane_jumps);
             debug(ordered_bombarded_by);
             debug(number);
+            debug(value_test);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
@@ -195,16 +215,12 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<ValueRef::ValueRefBase<int>*>,
+            qi::locals<
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*
+            >,
             parse::skipper_type
-        > int_ref_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Condition::ConditionBase* (),
-            qi::locals<ValueRef::ValueRefBase<double>*>,
-            parse::skipper_type
-        > double_ref_rule;
+        > double_ref_double_ref_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -244,20 +260,21 @@ namespace {
             parse::skipper_type
         > star_type_vec_rule;
 
-        double_ref_rule within_distance;
-        int_ref_rule within_starlane_jumps;
-        parse::condition_parser_rule ordered_bombarded_by;
-        int_ref_int_ref_rule number;
-        int_ref_int_ref_rule turn;
-        int_ref_int_ref_rule created_on_turn;
-        int_ref_sorting_method_double_ref_rule number_of;
-        parse::condition_parser_rule contains;
-        parse::condition_parser_rule contained_by;
-        star_type_vec_rule star_type;
-        parse::condition_parser_rule random;
-        resource_type_double_ref_rule owner_stockpile;
-        int_ref_rule resource_supply_connected;
-        parse::condition_parser_rule start;
+        double_ref_double_ref_rule              within_distance;
+        int_ref_int_ref_rule                    within_starlane_jumps;
+        parse::condition_parser_rule            ordered_bombarded_by;
+        int_ref_int_ref_rule                    number;
+        double_ref_double_ref_rule              value_test;
+        int_ref_int_ref_rule                    turn;
+        int_ref_int_ref_rule                    created_on_turn;
+        int_ref_sorting_method_double_ref_rule  number_of;
+        parse::condition_parser_rule            contains;
+        parse::condition_parser_rule            contained_by;
+        star_type_vec_rule                      star_type;
+        parse::condition_parser_rule            random;
+        resource_type_double_ref_rule           owner_stockpile;
+        int_ref_int_ref_rule                    resource_supply_connected;
+        parse::condition_parser_rule            start;
     };
 }
 

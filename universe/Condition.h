@@ -98,6 +98,7 @@ namespace Condition {
     struct CanColonize;
     struct CanProduceShips;
     struct OrderedBombarded;
+    struct ValueTest;
 }
 
 /** Returns a single string which describes a vector of Conditions. If multiple
@@ -1759,6 +1760,43 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches all objects if the evaluation of \a value_ref returns a value
+  * within the range between \a low and \a high. */
+struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
+    ValueTest(const ValueRef::ValueRefBase<double>* value_ref,
+              const ValueRef::ValueRefBase<double>* low,
+              const ValueRef::ValueRefBase<double>* high) :
+        m_value_ref(value_ref),
+        m_low(low),
+        m_high(high)
+    {}
+    virtual ~ValueTest();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<double>*  GetValueRef() const { return m_value_ref; }
+    const ValueRef::ValueRefBase<double>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*  High() const { return m_high; }
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<double>*   m_value_ref;
+    const ValueRef::ValueRefBase<double>*   m_low;
+    const ValueRef::ValueRefBase<double>*   m_high;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     And(const std::vector<const ConditionBase*>& operands) :
@@ -2200,6 +2238,15 @@ void Condition::OrderedBombarded::serialize(Archive& ar, const unsigned int vers
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_by_object_condition);
+}
+
+template <class Archive>
+void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_value_ref)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high);
 }
 
 template <class Archive>

@@ -381,6 +381,7 @@
     (Unproducible)                              \
     (Unresearchable)                            \
     (Value)                                     \
+    (ValueTest)                                 \
     (Victory)                                   \
     (VisibleToEmpire)                           \
     (White)                                     \

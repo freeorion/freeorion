@@ -6122,6 +6122,12 @@ DESC_MODE_NUMBER_OF
 DESC_MODE_NUMBER_OF_NOT
  that is not one of %1% objects with the most common value of%2% and%3%
 
+DESC_VALUE_TEST
+ when %1% is between %2% and %3%
+
+DESC_VALUE_TEST_NOT
+ when %1% is not between %2% and %3%
+
 DESC_CONTAINED_BY
  that is contained by an object%1%
 

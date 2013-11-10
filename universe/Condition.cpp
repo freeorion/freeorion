@@ -300,7 +300,8 @@ void Condition::Number::Eval(const ScriptingContext& parent_context,
     if (!(
                 (!m_low || m_low->LocalCandidateInvariant())
              && (!m_high || m_high->LocalCandidateInvariant())
-       ))
+         )
+       )
     {
         Logger().errorStream() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
     } else if (
@@ -6328,6 +6329,140 @@ bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) c
 
     return OrderedBombardedSimpleMatch(subcondition_matches)(candidate);
 }
+
+///////////////////////////////////////////////////////////
+// ValueTest                                             //
+///////////////////////////////////////////////////////////
+Condition::ValueTest::~ValueTest() {
+    delete m_value_ref;
+    delete m_low;
+    delete m_high;
+}
+
+bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ValueTest& rhs_ = static_cast<const Condition::ValueTest&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_value_ref)
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
+
+void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
+                                       ObjectSet& matches, ObjectSet& non_matches,
+                                       SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
+                             (!m_value_ref || m_value_ref->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (simple_eval_safe) {
+        // evaluate value and range limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+
+        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        double value = (m_value_ref ? m_value_ref->Eval(local_context) : 0.0);
+
+        bool in_range = (low <= value && value <= high);
+
+        // transfer objects to or from candidate set, according to whether number of matches was within
+        // the requested range.
+        if (search_domain == MATCHES && !in_range) {
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        }
+        if (search_domain == NON_MATCHES && in_range) {
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        }
+
+    } else {
+        // re-evaluate value and ranges for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::ValueTest::RootCandidateInvariant() const {
+    return (!m_value_ref  || m_value_ref->RootCandidateInvariant()) &&
+           (!m_low        || m_low->RootCandidateInvariant()) &&
+           (!m_high       || m_high->RootCandidateInvariant());
+}
+
+bool Condition::ValueTest::TargetInvariant() const {
+    return (!m_value_ref  || m_value_ref->TargetInvariant()) &&
+           (!m_low        || m_low->TargetInvariant()) &&
+           (!m_high       || m_high->TargetInvariant());
+}
+
+bool Condition::ValueTest::SourceInvariant() const {
+    return (!m_value_ref  || m_value_ref->SourceInvariant()) &&
+           (!m_low        || m_low->SourceInvariant()) &&
+           (!m_high       || m_high->SourceInvariant());
+}
+
+std::string Condition::ValueTest::Description(bool negated/* = false*/) const {
+    std::string value_str;
+    if (m_value_ref)
+        value_str = m_value_ref->Description();
+
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+
+    return str(FlexibleFormat((!negated)
+               ? UserString("DESC_VALUE_TEST")
+               : UserString("DESC_VALUE_TEST_NOT"))
+               % value_str
+               % low_str
+               % high_str);
+}
+
+std::string Condition::ValueTest::Dump() const {
+    std::string retval = DumpIndent() + "ValueTest";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    if (m_value_ref) {
+        retval += " value_ref =\n";
+        ++g_indent;
+            retval += m_value_ref->Dump();
+        --g_indent;
+    }
+    return retval;
+}
+
+bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
+    std::cout << Dump() << std::endl;
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "ValueTest::Match passed no candidate object";
+        return false;
+    }
+    if (!m_value_ref)
+        return false;
+
+    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    double value = (m_value_ref ? m_value_ref->Eval(local_context) : 0);
+
+    return low <= value && value <= high;
+}
+
 
 ///////////////////////////////////////////////////////////
 // And                                                   //
