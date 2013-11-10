@@ -1542,10 +1542,14 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
+    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
          targets_it != targets_causes.end(); ++targets_it)
     {
+        if (log_verbose)
+            Logger().debugStream() << " * * * * * * * * * * * (new effects group log entry)";
+
         TemporaryPtr<const UniverseObject> source = GetUniverseObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects effgrp (source " +
                                  (source ? source->Name() : "No Source!") +
@@ -1577,7 +1581,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             continue;
         Effect::TargetsAndCause filtered_targets_and_cause(targets, targets_and_cause.effect_cause);
 
-        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        if (log_verbose) {
             Logger().debugStream() << "ExecuteEffects effectsgroup: \n" << effects_group->Dump();
             Logger().debugStream() << "ExecuteEffects Targets before: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
@@ -1601,11 +1605,10 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
         }
 
-        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        if (log_verbose) {
             Logger().debugStream() << "ExecuteEffects Targets after: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
                 Logger().debugStream() << " ... " << (*t_it)->Dump();
-            Logger().debugStream() << "         * * * * * *";
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
