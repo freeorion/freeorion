@@ -265,6 +265,38 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
+std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
+                                             const std::vector<std::string>& property_names)
+{
+    std::string names_size = boost::lexical_cast<std::string>(property_names.size());
+    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" +
+                                             names_size));
+
+    switch (ref_type) {
+    case ValueRef::SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;
+    case ValueRef::EFFECT_TARGET_REFERENCE:             formatter % UserString("DESC_VAR_TARGET");          break;
+    case ValueRef::EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
+    case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
+    case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
+    case ValueRef::NON_OBJECT_REFERENCE:                formatter % "";                                     break;
+    default:                                            formatter % "???";                                  break;
+    }
+
+    for (unsigned int i = 0; i < property_names.size(); ++i) {
+        std::string property_string_temp(std::string(property_names[i].c_str()));
+        std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_string_temp));
+        formatter % UserString(stringtable_key);
+        //std::string blag = property_string_temp + "  " +
+        //                   stringtable_key + "  " +
+        //                   UserString(stringtable_key);
+        //std::cerr << blag << std::endl << std::endl;
+    }
+
+    std::string retval = boost::io::str(formatter);
+    //std::cerr << "ret: " << retval << std::endl;
+    return retval;
+}
+
 namespace ValueRef {
 
 #define IF_CURRENT_VALUE(T)                                                \
@@ -761,6 +793,91 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
+namespace ValueRef {
+    template <>
+    std::string Operation<double>::Description() const
+    {
+        if (m_op_type == NEGATE) {
+            //Logger().debugStream() << "Operation is negation";
+            if (const ValueRef::Operation<double>* rhs = dynamic_cast<const ValueRef::Operation<double>*>(m_operand1)) {
+                OpType op_type = rhs->GetOpType();
+                if (op_type == PLUS     || op_type == MINUS ||
+                    op_type == TIMES    || op_type == DIVIDE ||
+                    op_type == NEGATE   || op_type == EXPONENTIATE)
+                return "-(" + m_operand1->Description() + ")";
+            } else {
+                return "-" + m_operand1->Description();
+            }
+        }
+
+        if (m_op_type == ABS)
+            return "abs(" + m_operand1->Description() + ")";
+        if (m_op_type == LOGARITHM)
+            return "log(" + m_operand1->Description() + ")";
+        if (m_op_type == SINE)
+            return "sin(" + m_operand1->Description() + ")";
+        if (m_op_type == COSINE)
+            return "cos(" + m_operand1->Description() + ")";
+        if (m_op_type == MINIMUM)
+            return "min(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+        if (m_op_type == MAXIMUM)
+            return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+        if (m_op_type == RANDOM_UNIFORM)
+            return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+
+
+        bool parenthesize_lhs = false;
+        bool parenthesize_rhs = false;
+        if (const ValueRef::Operation<double>* lhs = dynamic_cast<const ValueRef::Operation<double>*>(m_operand1)) {
+            OpType op_type = lhs->GetOpType();
+            if (
+                (m_op_type == EXPONENTIATE &&
+                 (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+                  op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+                ) ||
+                ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+                 (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+               )
+                parenthesize_lhs = true;
+        }
+        if (const ValueRef::Operation<double>* rhs = dynamic_cast<const ValueRef::Operation<double>*>(m_operand2)) {
+            OpType op_type = rhs->GetOpType();
+            if (
+                (m_op_type == EXPONENTIATE &&
+                 (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+                  op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+                ) ||
+                ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+                 (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+               )
+                parenthesize_rhs = true;
+        }
+
+        std::string retval;
+        if (parenthesize_lhs)
+            retval += '(' + m_operand1->Description() + ')';
+        else
+            retval += m_operand1->Description();
+
+        switch (m_op_type) {
+        case PLUS:          retval += " + "; break;
+        case MINUS:         retval += " - "; break;
+        case TIMES:         retval += " * "; break;
+        case DIVIDE:        retval += " / "; break;
+        case EXPONENTIATE:  retval += " ^ "; break;
+        default:            retval += " ? "; break;
+        }
+
+        if (parenthesize_rhs)
+            retval += '(' + m_operand2->Description() + ')';
+        else
+            retval += m_operand2->Description();
+
+        return retval;
+    }
+}
+
+
 namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const

@@ -660,6 +660,7 @@ std::string SetMeter::Description() const {
                    % op_char
                    % lexical_cast<std::string>(const_operand));
     } else {
+        //std::string temp = m_value->Description();
         return str(FlexibleFormat(UserString("DESC_COMPLEX_SET_METER"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % m_value->Description());
@@ -1708,6 +1709,7 @@ std::string CreateSystem::Dump() const {
     return retval;
 }
 
+
 ///////////////////////////////////////////////////////////
 // Destroy                                               //
 ///////////////////////////////////////////////////////////
@@ -2385,6 +2387,7 @@ std::string MoveTowards::Dump() const {
         return DumpIndent() + "MoveTowards";
 }
 
+
 ///////////////////////////////////////////////////////////
 // SetDestination                                        //
 ///////////////////////////////////////////////////////////
@@ -2498,6 +2501,7 @@ std::string SetAggression::Description() const
 std::string SetAggression::Dump() const
 { return DumpIndent() + (m_aggressive ? "SetAggressive" : "SetPassive") + "\n"; }
 
+
 ///////////////////////////////////////////////////////////
 // Victory                                               //
 ///////////////////////////////////////////////////////////
@@ -2586,10 +2590,14 @@ std::string SetEmpireTechProgress::Description() const {
         } else {
             tech_name = m_tech_name->Description();
         }
+        if (GetTech(tech_name)) {
+            std::string name_temp = tech_name;
+            tech_name = UserString(name_temp);
+        }
     }
 
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_TECH_PROGRESS"))
-               % UserString(tech_name)
+               % tech_name
                % progress_str
                % empire_str);
 }
@@ -2784,6 +2792,7 @@ std::string GenerateSitRepMessage::Dump() const {
     return retval;
 }
 
+
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
@@ -2816,6 +2825,7 @@ std::string SetOverlayTexture::Dump() const {
     retval += "\n";
     return retval;
 }
+
 
 ///////////////////////////////////////////////////////////
 // SetTexture                                 //

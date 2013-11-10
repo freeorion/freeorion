@@ -5507,17 +5507,9 @@ DESC_VAR_FIGHTERWEAPONRANGE
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
-DESC_VAR_MINERALSTOCKPILE
-mineral stockpile
-DESC_VAR_FOODSTOCKPILE
-food stockpile
 
 DESC_VAR_TRADEOUTPUT
 trade output
-DESC_VAR_FOODOUTPUT
-food output
-DESC_VAR_MINERALOUTPUT
-mineral output
 DESC_VAR_INDUSTRYOUTPUT
 industry output
 DESC_VAR_RESEARCHOUTPUT
@@ -5533,10 +5525,10 @@ DESC_VAR_AGE
 age in turns
 
 DESC_VAR_PRODUCEDBYEMPIREID
-producer
+producer empire
 
 DESC_VAR_CREATIONTURN
-turn of creation
+creation turn
 
 DESC_VAR_DESIGNID
 design id
@@ -5577,14 +5569,25 @@ building type name
 DESC_VAR_FOCUS
 focus
 
+DESC_VAR_OWNERLEASTEXPENSIVEENQUEUEDTECH
+owner's least expensive enqueued tech
+
+DESC_VAR_OWNERMOSTEXPENSIVEENQUEUEDTECH
+owner's most expensive enqueued tech
+
+DESC_VAR_OWNERMOSTRPCOSTLEFTENQUEUEDTECH
+owner's enqueued tech with the most RP cost left
+
+DESC_VAR_OWNERMOSTRPSPENTENQUEUEDTECH
+owner's enqueued tech with the most RP spent
+
+DESC_VAR_OWNERTOPPRIORITYENQUEUEDTECH
+owner's top priority enqueued tech
+
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
 
-DESC_VAR_ALLOCATEDFOOD
-allocated food
 
-FoodAllocationForMaxGrowth
-food allocation needed for max growth
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0

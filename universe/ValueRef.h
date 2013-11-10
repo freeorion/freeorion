@@ -152,16 +152,16 @@ struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
 
-    virtual bool                        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
-    ReferenceType                       GetReferenceType() const;
-    const std::vector<std::string>&     PropertyName() const;
-    virtual T                           Eval(const ScriptingContext& context) const;
-    virtual bool                        RootCandidateInvariant() const;
-    virtual bool                        LocalCandidateInvariant() const;
-    virtual bool                        TargetInvariant() const;
-    virtual bool                        SourceInvariant() const;
-    virtual std::string                 Description() const;
-    virtual std::string                 Dump() const;
+    virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    ReferenceType                   GetReferenceType() const;
+    const std::vector<std::string>& PropertyName() const;
+    virtual T                       Eval(const ScriptingContext& context) const;
+    virtual bool                    RootCandidateInvariant() const;
+    virtual bool                    LocalCandidateInvariant() const;
+    virtual bool                    TargetInvariant() const;
+    virtual bool                    SourceInvariant() const;
+    virtual std::string             Description() const;
+    virtual std::string             Dump() const;
 
 protected:
     mutable ReferenceType       m_ref_type;
@@ -451,24 +451,13 @@ template <class T>
 bool ValueRef::Variable<T>::SourceInvariant() const
 { return m_ref_type != SOURCE_REFERENCE; }
 
+std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
+                                             const std::vector<std::string>& property_names);
+
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
-    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
-    switch (m_ref_type) {
-    case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
-    case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
-    case EFFECT_TARGET_VALUE_REFERENCE:         formatter % UserString("DESC_VAR_VALUE");           break;
-    case CONDITION_LOCAL_CANDIDATE_REFERENCE:   formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
-    case CONDITION_ROOT_CANDIDATE_REFERENCE:    formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case NON_OBJECT_REFERENCE:                  formatter % "";                                     break;
-    default:                                    formatter % "???";                                  break;
-    }
-
-    for (unsigned int i = 1; i < m_property_name.size(); ++i)
-        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(std::string(m_property_name[i].c_str())));
-
-    return boost::io::str(formatter);
+    return FormatedDescriptionPropertyNames(m_ref_type, m_property_name);
 }
 
 template <class T>
@@ -1136,7 +1125,6 @@ bool ValueRef::Operation<T>::SourceInvariant() const
 template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
-    //Logger().debugStream() << "ValueRef::Operation<T>::Description()";
     if (m_op_type == NEGATE) {
         //Logger().debugStream() << "Operation is negation";
         if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
@@ -1164,13 +1152,11 @@ std::string ValueRef::Operation<T>::Description() const
         return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
     if (m_op_type == RANDOM_UNIFORM)
         return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
-    //Logger().debugStream() << "Operation is not a function";
 
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
-        //Logger().debugStream() << "operand 1 is operation";
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1183,7 +1169,6 @@ std::string ValueRef::Operation<T>::Description() const
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
-        //Logger().debugStream() << "operand 2 is operation";
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1201,7 +1186,6 @@ std::string ValueRef::Operation<T>::Description() const
         retval += '(' + m_operand1->Description() + ')';
     else
         retval += m_operand1->Description();
-    //Logger().debugStream() << "retval with operand1: " << retval;
 
     switch (m_op_type) {
     case PLUS:          retval += " + "; break;
@@ -1211,15 +1195,18 @@ std::string ValueRef::Operation<T>::Description() const
     case EXPONENTIATE:  retval += " ^ "; break;
     default:            retval += " ? "; break;
     }
-    //Logger().debugStream() << "retval with operation: " << retval;
 
     if (parenthesize_rhs)
         retval += '(' + m_operand2->Description() + ')';
     else
         retval += m_operand2->Description();
-    //Logger().debugStream() << "retval final: " << retval;
 
     return retval;
+}
+
+namespace ValueRef {
+    template <>
+    std::string Operation<double>::Description() const;
 }
 
 template <class T>
