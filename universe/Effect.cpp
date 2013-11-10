@@ -2255,6 +2255,7 @@ std::string MoveInOrbit::Dump() const {
         return DumpIndent() + "MoveInOrbit";
 }
 
+
 ///////////////////////////////////////////////////////////
 // MoveTowards                                           //
 ///////////////////////////////////////////////////////////
@@ -2565,8 +2566,8 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    double value = m_research_progress->Eval(
-        ScriptingContext(context, empire->ResearchProgress(tech_name)));
+    float initial_progress = empire->ResearchProgress(tech_name);
+    double value = m_research_progress->Eval(ScriptingContext(context, initial_progress));
     empire->SetTechResearchProgress(tech_name, value);
 }
 
