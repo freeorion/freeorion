@@ -20,7 +20,7 @@ PopCenter::PopCenter(const std::string& species_name) :
 {}
 
 PopCenter::PopCenter() :
-    m_species_name("")
+    m_species_name()
 {}
 
 PopCenter::~PopCenter()
@@ -73,6 +73,25 @@ float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
         Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
         return meter->Current();
 
+    } else if (meter_type == METER_HAPPINESS) {
+        const Meter* target = GetMeter(METER_TARGET_HAPPINESS);
+        if (!target)
+            return meter->Current();
+        float target_meter_value = target->Current();
+        float current_meter_value = meter->Current();
+
+        // currently meter growth is one per turn.
+        if (target_meter_value > current_meter_value)
+            return std::min(current_meter_value + 1.0f, target_meter_value);
+        else if (target_meter_value < current_meter_value)
+            return std::max(target_meter_value, current_meter_value - 1.0f);
+        else
+            return current_meter_value;
+
+    } else if (meter_type == METER_TARGET_POPULATION) {
+        Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
+        return meter->Current();
+
     } else {
         Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0f;
@@ -95,8 +114,10 @@ float PopCenter::NextTurnPopGrowth() const {
     return pop_change;
 }
 
-void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
-{ GetMeter(METER_TARGET_POPULATION)->ResetCurrent(); }
+void PopCenter::PopCenterResetTargetMaxUnpairedMeters() {
+    GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
+    GetMeter(METER_TARGET_HAPPINESS)->ResetCurrent();
+}
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     float cur_pop = CurrentMeterValue(METER_POPULATION);
@@ -112,6 +133,8 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
         // if population falls below threshold, kill off the remainder
         Depopulate();
     }
+
+    GetMeter(METER_HAPPINESS)->SetCurrent(PopCenterNextTurnMeterValue(METER_HAPPINESS));
 }
 
 void PopCenter::PopCenterClampMeters()
