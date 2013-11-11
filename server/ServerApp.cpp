@@ -1800,8 +1800,21 @@ namespace {
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci.
         std::vector<std::string> available_foci = planet->AvailableFoci();
-        if (!available_foci.empty())
-            planet->SetFocus(*available_foci.begin());
+        if (!available_foci.empty()) {
+            bool found_preference = false;
+            for (std::vector<std::string>::const_iterator it = available_foci.begin();
+                 it != available_foci.end(); ++it)
+            {
+                if (!it->empty() && *it == species->PreferredFocus()) {
+                    planet->SetFocus(*it);
+                    found_preference = true;
+                    break;
+                }
+            }
+
+            if (!found_preference)
+                planet->SetFocus(*available_foci.begin());
+        }
 
         planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);

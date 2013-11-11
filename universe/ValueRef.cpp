@@ -662,6 +662,17 @@ namespace ValueRef {
             if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
                 return planet->Focus();
 
+        } else if (property_name == "PreferredFocus") {
+            const Species* species = 0;
+            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object)) {
+                species = GetSpecies(planet->SpeciesName());
+            } else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object)) {
+                species = GetSpecies(ship->SpeciesName());
+            }
+            if (species)
+                return species->PreferredFocus();
+            return "";
+
         } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)

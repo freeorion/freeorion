@@ -22,6 +22,7 @@ namespace { struct string_parser_rules {
                 |    tok.Species_
                 |    tok.BuildingType_
                 |    tok.Focus_
+                |    tok.PreferredFocus_
                 |    tok.OwnerLeastExpensiveEnqueuedTech_
                 |    tok.OwnerMostExpensiveEnqueuedTech_
                 |    tok.OwnerMostRPCostLeftEnqueuedTech_

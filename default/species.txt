@@ -735,6 +735,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+    
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]

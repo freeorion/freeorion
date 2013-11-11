@@ -226,6 +226,7 @@
     (Population)                                \
     (PopulationCenter)                          \
     (Position)                                  \
+    (PreferredFocus)                            \
     (Prerequisites)                             \
     (PreviousSystemID)                          \
     (Probability)                               \

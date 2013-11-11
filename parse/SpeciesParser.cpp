@@ -53,6 +53,7 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -74,7 +75,7 @@ namespace {
                 >>   (
                             '[' > +focus_type [ push_back(_r1, _1) ] > ']'
                         |   focus_type [ push_back(_r1, _1) ]
-                        )
+                     )
                 ;
 
             effects
@@ -106,16 +107,17 @@ namespace {
 
             species
                 =    tok.Species_
-                >    parse::label(Name_token)                > tok.string [ _a = _1 ]
-                >    parse::label(Description_token)         > tok.string [ _b = _1 ]
-                >    parse::label(Gameplay_Description_token) > tok.string [ _h = _1 ]
+                >    parse::label(Name_token)                   > tok.string [ _a = _1 ]
+                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
+                >    parse::label(Gameplay_Description_token)   > tok.string [ _h = _1 ]
                 >    species_params [ _c = _1]
                 >    parse::detail::tags_parser()(_d)
                 >   -foci(_e)
+                >   -(parse::label(PreferredFocus_token)       >> tok.string [ _i = _1 ])
                 >   -effects(_f)
                 >   -environments(_g)
                 >    parse::label(Graphic_token) > tok.string
-                     [ insert_species(_r1, new_<Species>(_a, _b, _h, _e, _g, _f, _c, _d, _1)) ]
+                     [ insert_species(_r1, new_<Species>(_a, _b, _h, _e, _i, _g, _f, _c, _d, _1)) ]
                 ;
 
             start
@@ -212,6 +214,7 @@ namespace {
                 std::vector<FocusType>,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                 std::map<PlanetType, PlanetEnvironment>,
+                std::string,
                 std::string
             >,
             parse::skipper_type

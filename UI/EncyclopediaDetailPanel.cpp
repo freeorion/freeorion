@@ -994,6 +994,7 @@ void EncyclopediaDetailPanel::Refresh() {
         texture = ClientUI::SpeciesIcon(m_items_it->second);
         general_type = UserString("ENC_SPECIES");
         detailed_description = UserString(species->GameplayDescription());
+
         // inherent species limitations
         detailed_description += "\n";
         if (species->CanProduceShips())
@@ -1005,6 +1006,13 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += UserString("CAN_COLONIZE");
         else
             detailed_description += UserString("CANNNOT_COLONIZE");
+
+        // focus preference
+        if (!species->PreferredFocus().empty()) {
+            detailed_description += "\n\n";
+            detailed_description += UserString("FOCUS_PREFERENCE");
+            detailed_description += UserString(species->PreferredFocus());
+        }
 
         // environmental preferences
         detailed_description += "\n\n";
