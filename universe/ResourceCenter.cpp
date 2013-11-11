@@ -17,7 +17,7 @@ namespace {
 }
 
 ResourceCenter::ResourceCenter() :
-    m_focus(""),
+    m_focus(),
     m_last_turn_focus_changed(BEFORE_FIRST_TURN)
 {}
 
@@ -81,12 +81,12 @@ std::string ResourceCenter::Dump() const {
     return os.str();
 }
 
-double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
+float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter) {
         throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
     }
-    double current_meter_value = meter->Current();
+    float current_meter_value = meter->Current();
 
     MeterType target_meter_type = INVALID_METER_TYPE;
     switch (type) {
@@ -102,20 +102,20 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     case METER_CONSTRUCTION:target_meter_type = METER_TARGET_CONSTRUCTION;  break;
     default:
         Logger().errorStream() << "ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type";
-        return 0.0;
+        return 0.0f;
     }
 
     const Meter* target_meter = GetMeter(target_meter_type);
     if (!target_meter) {
         throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
     }
-    double target_meter_value = target_meter->Current();
+    float target_meter_value = target_meter->Current();
 
     // currently meter growth is one per turn.
     if (target_meter_value > current_meter_value)
-        return std::min(current_meter_value + 1.0, target_meter_value);
+        return std::min(current_meter_value + 1.0f, target_meter_value);
     else if (target_meter_value < current_meter_value)
-        return std::max(target_meter_value, current_meter_value - 1.0);
+        return std::max(target_meter_value, current_meter_value - 1.0f);
     else
         return current_meter_value;
 }

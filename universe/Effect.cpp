@@ -451,7 +451,9 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
                 TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
                 if (!ship)
                     continue;
-                meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
+
+                const std::string& part_name = meter_effect->GetPartName();
+                meter = ship->GetPartMeter(meter_type, part_name);
             }
 
             if (!meter)

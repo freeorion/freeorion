@@ -1016,6 +1016,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
         }
     }
     std::vector<int> objects_vec;
+    objects_vec.reserve(objects_set.size());
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
     UpdateMeterEstimatesImpl(objects_vec);
 }
