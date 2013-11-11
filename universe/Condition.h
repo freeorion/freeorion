@@ -1244,7 +1244,8 @@ private:
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and <= \a high. */
 struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
-    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
+    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low,
+               const ValueRef::ValueRefBase<double>* high) :
         m_meter(meter),
         m_low(low),
         m_high(high)
