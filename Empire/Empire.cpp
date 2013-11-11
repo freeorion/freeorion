@@ -31,17 +31,17 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 namespace {
-    const double EPSILON = 1.0e-5;
+    const float EPSILON = 1.0e-5f;
     const std::string EMPTY_STRING;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
       * nonzero funding to a Tech if it is researchable this turn.  Also
       * determines total number of spent RP (returning by reference in
       * total_RPs_spent) */
-    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_progress,
+    void SetTechQueueElementSpending(float RPs, const std::map<std::string, float>& research_progress,
                                      const std::map<std::string, TechStatus>& research_status,
                                      ResearchQueue::QueueType& queue,
-                                     double& total_RPs_spent, int& projects_in_progress, int empire_id)
+                                     float& total_RPs_spent, int& projects_in_progress, int empire_id)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
@@ -63,11 +63,11 @@ namespace {
             if (status_it->second == TS_RESEARCHABLE) researchable = true;
 
             if (researchable) {
-                std::map<std::string, double>::const_iterator progress_it = research_progress.find(it->name);
-                double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
-                double RPs_needed = tech->ResearchCost(empire_id) - progress;
-                double RPs_per_turn_limit = tech->PerTurnCost(empire_id);
-                double RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
+                std::map<std::string, float>::const_iterator progress_it = research_progress.find(it->name);
+                float progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
+                float RPs_needed = tech->ResearchCost(empire_id) - progress;
+                float RPs_per_turn_limit = tech->PerTurnCost(empire_id);
+                float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
                     it->allocated_rp = RPs_to_spend;
@@ -95,15 +95,15 @@ namespace {
       * location and the amount of minerals and industry produced in the group).
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. */
-    void SetProdQueueElementSpending(std::map<std::set<int>, double> available_pp,
+    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
                                      const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
                                      ProductionQueue::QueueType& queue,
-                                     std::map<std::set<int>, double>& allocated_pp,
+                                     std::map<std::set<int>, float>& allocated_pp,
                                      int& projects_in_progress, int empire_id)
     {
         //Logger().debugStream() << "========SetProdQueueElementSpending========";
         //Logger().debugStream() << "production status: ";
-        //for (std::vector<double>::const_iterator it = production_status.begin(); it != production_status.end(); ++it)
+        //for (std::vector<float>::const_iterator it = production_status.begin(); it != production_status.end(); ++it)
         //    Logger().debugStream() << " ... " << *it;
         //Logger().debugStream() << "queue: ";
         //for (ProductionQueue::QueueType::const_iterator it = queue.begin(); it != queue.end(); ++it)
@@ -124,7 +124,7 @@ namespace {
 
         // cache production item costs and times
         std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                 std::pair<double, int> >                           queue_item_costs_and_times;
+                 std::pair<float, int> >                           queue_item_costs_and_times;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
             ProductionQueue::Element& elem = *it;
 
@@ -149,7 +149,7 @@ namespace {
                 continue;
             }
 
-            std::map<std::set<int>, double>::iterator available_pp_it = available_pp.find(group);
+            std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
             if (available_pp_it == available_pp.end()) {
                 // item is not being built at an object that has access to resources, so it can't be built.
                 //Logger().debugStream() << "no resource sharing group for production queue element";
@@ -157,7 +157,7 @@ namespace {
                 continue;
             }
 
-            double& group_pp_available = available_pp_it->second;
+            float& group_pp_available = available_pp_it->second;
 
 
             // if group has no pp available, can't build anything this turn
@@ -180,24 +180,24 @@ namespace {
             // get max contribution per turn and turns to build at max contribution rate
             int location_id = (queue_element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
-            double item_cost;
+            float item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             //Logger().debugStream() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
             item_cost *= queue_element.blocksize;
             // determine additional PP needed to complete build queue element: total cost - progress
-            double element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards building next item
-            double element_total_cost = item_cost * queue_element.remaining;                        // total PP to build all items in this element
-            double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
-            double element_per_turn_limit = item_cost / std::max(build_turns, 1);
+            float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards building next item
+            float element_total_cost = item_cost * queue_element.remaining;                        // total PP to build all items in this element
+            float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
+            float element_per_turn_limit = item_cost / std::max(build_turns, 1);
 
             // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
             // item cost, which is the max number of PP per turn that can be put towards this item, and by the
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group
-            double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+            float allocation = std::max(std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), group_pp_available), 0.0f);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
 
             //Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
             //Logger().debugStream() << "... allocating " << allocation;
@@ -206,7 +206,7 @@ namespace {
             queue_element.allocated_pp = allocation;
 
             // record alloation in group, if group is not empty
-            allocated_pp[group] += allocation;  // assuming the double indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
+            allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
             group_pp_available -= allocation;
 
             //Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
@@ -239,7 +239,7 @@ bool ResearchQueue::InQueue(const std::string& tech_name) const
 int ResearchQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
 
-double ResearchQueue::TotalRPsSpent() const
+float ResearchQueue::TotalRPsSpent() const
 { return m_total_RPs_spent; }
 
 bool ResearchQueue::empty() const
@@ -281,7 +281,7 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
     return end();
 }
 
-void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_progress) {
+void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress) {
     // status of all techs for this empire
     const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
@@ -323,9 +323,9 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
 
     //record original order & progress
     // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
-    std::map<std::string, double> dp_prog = research_progress;
+    std::map<std::string, float> dp_prog = research_progress;
     std::map< std::string, int > origQueueOrder;
-    std::map<int, double> dpsim_research_progress;
+    std::map<int, float> dpsim_research_progress;
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string tname = m_queue[i].name;
         origQueueOrder[tname] = i;
@@ -364,7 +364,7 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
 
     int dpturns = 0;
     //ppStillAvailable[turn-1] gives the RP still available in this resource pool at turn "turn"
-    std::vector<double> rpStillAvailable(DP_TURNS, RPs );  // initialize to the  full RP allocation for every turn
+    std::vector<float> rpStillAvailable(DP_TURNS, RPs );  // initialize to the  full RP allocation for every turn
 
     while ((dpturns < DP_TURNS) && !(dpResearchableTechs.empty())) {// if we haven't used up our turns and still have techs to process
         ++dpturns;
@@ -386,10 +386,10 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             alreadyProcessed[curTech] = true;
             const std::string& tech_name = m_queue[curTech].name;
             const Tech* tech = GetTech(tech_name);
-            double progress = dpsim_research_progress[curTech];
-            double RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0;
-            double RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0;
-            double RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1]);
+            float progress = dpsim_research_progress[curTech];
+            float RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0;
+            float RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0;
+            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1]);
             progress += RPs_to_spend;
             dpsim_research_progress[curTech] = progress;
             rpStillAvailable[dpturns-1] -= RPs_to_spend;
@@ -400,7 +400,7 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             } else {
                 nextResTechIdx = *(nextResTechIt);
             }
-            double tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0;
+            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0;
             if (tech_cost - EPSILON <= progress) {
                 dpsim_tech_status_map[tech_name] = TS_COMPLETE;
                 dpsimulation_results[curTech] = dpturns;
@@ -618,28 +618,28 @@ ProductionQueue::ProductionQueue(int empire_id) :
 int ProductionQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
 
-double ProductionQueue::TotalPPsSpent() const {
+float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
-    double retval = 0;
-    for (std::map<std::set<int>, double>::const_iterator it = m_object_group_allocated_pp.begin();
+    float retval = 0.0;
+    for (std::map<std::set<int>, float>::const_iterator it = m_object_group_allocated_pp.begin();
          it != m_object_group_allocated_pp.end(); ++it)
     { retval += it->second; }
     return retval;
 }
 
-std::map<std::set<int>, double> ProductionQueue::AvailablePP(
+std::map<std::set<int>, float> ProductionQueue::AvailablePP(
     const boost::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::map<std::set<int>, double> retval;
+    std::map<std::set<int>, float> retval;
     if (!industry_pool) {
         Logger().errorStream() << "ProductionQueue::AvailablePP passed invalid industry resource pool";
         return retval;
     }
 
     // determine available PP (ie. industry) in each resource sharing group of systems
-    std::map<std::set<int>, double> available_industry = industry_pool->Available();
+    std::map<std::set<int>, float> available_industry = industry_pool->Available();
 
-    for (std::map<std::set<int>, double>::const_iterator ind_it = available_industry.begin();
+    for (std::map<std::set<int>, float>::const_iterator ind_it = available_industry.begin();
          ind_it != available_industry.end(); ++ind_it)
     {
         // get group of systems in industry pool
@@ -650,7 +650,7 @@ std::map<std::set<int>, double> ProductionQueue::AvailablePP(
     return retval;
 }
 
-const std::map<std::set<int>, double>& ProductionQueue::AllocatedPP() const
+const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
 
 std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
@@ -662,10 +662,10 @@ std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
         return retval;
     }
 
-    std::map<std::set<int>, double> available_PP_groups = AvailablePP(industry_pool);
+    std::map<std::set<int>, float> available_PP_groups = AvailablePP(industry_pool);
     //std::cout << "available PP groups size: " << available_PP_groups.size() << std::endl;
 
-    for (std::map<std::set<int>, double>::const_iterator avail_it = available_PP_groups.begin();
+    for (std::map<std::set<int>, float>::const_iterator avail_it = available_PP_groups.begin();
          avail_it != available_PP_groups.end(); ++avail_it)
     {
         //std::cout << "available PP groups size: " << avail_it->first.size() << " pp: " << avail_it->second << std::endl;
@@ -674,7 +674,7 @@ std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
             continue;   // can't waste if group has no PP
         const std::set<int>& group = avail_it->first;
         // find this group's allocated PP
-        std::map<std::set<int>, double>::const_iterator alloc_it = m_object_group_allocated_pp.find(group);
+        std::map<std::set<int>, float>::const_iterator alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_it->second)
             retval.insert(avail_it->first);
@@ -708,12 +708,12 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
         return end();
     for (const_iterator it = begin(); it != end(); ++it) {
 
-        double item_cost;
+        float item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
 
         item_cost *= it->blocksize;
-        double maxPerTurn = item_cost / std::max(build_turns,1);
+        float maxPerTurn = item_cost / std::max(build_turns,1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
     }
@@ -740,7 +740,7 @@ void ProductionQueue::Update() {
 
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    std::map<std::set<int>, double> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
 
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int> > queue_element_groups;
@@ -750,7 +750,7 @@ void ProductionQueue::Update() {
         int location_id = element.location;
 
         // search through groups to find object
-        for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin();
+        for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
              true; ++groups_it)
         {
             if (groups_it == available_pp.end()) {
@@ -780,7 +780,7 @@ void ProductionQueue::Update() {
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
-    for (std::map<std::set<int>, double>::const_iterator available_it = available_pp.begin();
+    for (std::map<std::set<int>, float>::const_iterator available_it = available_pp.begin();
          available_it != available_pp.end(); ++available_it)
     {
         if (available_it->second > EPSILON) {
@@ -817,8 +817,8 @@ void ProductionQueue::Update() {
         sim_queue_original_indices[i] = i;
 
 
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-    const double TOO_LONG_TIME = 0.5;   // max time in ms to spend simulating queue
+    const int TOO_MANY_TURNS = 500;     // stop counting turns to completion after this long, to prevent seemingly endless loops
+    const float TOO_LONG_TIME = 0.5f;   // max time in ms to spend simulating queue
 
 
     // remove from simulated queue any items that can't be built due to not
@@ -841,7 +841,7 @@ void ProductionQueue::Update() {
         if (group.empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
             remove = true;
         } else {
-            std::map<std::set<int>, double>::const_iterator available_it = available_pp.find(group);
+            std::map<std::set<int>, float>::const_iterator available_it = available_pp.find(group);
             if (available_it == available_pp.end() || available_it->second < EPSILON)                   // missing group or non-empty group with no PP available
                 remove = true;
         }
@@ -877,7 +877,7 @@ void ProductionQueue::Update() {
     std::vector<unsigned int>   dpsim_queue_original_indices(sim_queue_original_indices); 
 
     const unsigned int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
-    const double DP_TOO_LONG_TIME = TOO_LONG_TIME;   // max time in ms to spend simulating queue
+    const float DP_TOO_LONG_TIME = TOO_LONG_TIME;   // max time in ms to spend simulating queue
 
     // The DP version will do calculations for one resource group at a time
     // unfortunately need to copy code from SetProdQueueElementSpending  in order to work it in more efficiently here
@@ -891,7 +891,7 @@ void ProductionQueue::Update() {
 
     // cache production item costs and times
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                std::pair<double, int> >                           queue_item_costs_and_times;
+                std::pair<float, int> >                           queue_item_costs_and_times;
     for (ProductionQueue::iterator it = m_queue.begin(); it != m_queue.end(); ++it) {
         ProductionQueue::Element& elem = *it;
 
@@ -905,13 +905,13 @@ void ProductionQueue::Update() {
 
 
     // within each group, allocate PP to queue items
-    for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin();
+    for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
          groups_it != available_pp.end(); ++groups_it)
     {
         unsigned int firstTurnPPAvailable = 1; //the first turn any pp in this resource group is available to the next item for this group
         unsigned int turnJump = 0;
         //ppStillAvailable[turn-1] gives the PP still available in this resource pool at turn "turn"
-        std::vector<double> ppStillAvailable(DP_TURNS, groups_it->second );  // initialize to the groups full PP allocation for each turn modeled
+        std::vector<float> ppStillAvailable(DP_TURNS, groups_it->second );  // initialize to the groups full PP allocation for each turn modeled
 
         std::vector<int> &thisGroupsElements = elementsByGroup[ groups_it->first ];
         std::vector<int>::const_iterator groupBegin = thisGroupsElements.begin();
@@ -936,15 +936,15 @@ void ProductionQueue::Update() {
             // get cost and time from cache
             int location_id = (element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(element.item, location_id);
-            double item_cost;
+            float item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
 
 
             item_cost *= element.blocksize;
-            double element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
-            double element_per_turn_limit = item_cost / std::max(build_turns, 1);
-            double additional_pp_to_complete_element = element_total_cost - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
+            float element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
+            float element_per_turn_limit = item_cost / std::max(build_turns, 1);
+            float additional_pp_to_complete_element = element_total_cost - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
             if (additional_pp_to_complete_element < EPSILON) {
                 m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = 1;
                 m_queue[sim_queue_original_indices[i]].turns_left_to_completion = 1;
@@ -957,7 +957,7 @@ void ProductionQueue::Update() {
 
             max_turns = std::min(max_turns, DP_TURNS - firstTurnPPAvailable + 1);
 
-            double allocation;
+            float allocation;
             //Logger().debugStream() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
             for (unsigned int j = 0; j < max_turns; j++) {  // iterate over the turns necessary to complete item
@@ -967,7 +967,7 @@ void ProductionQueue::Update() {
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
                 allocation = std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1]);
-                allocation = std::max(allocation, 0.0);     // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+                allocation = std::max(allocation, 0.0f);     // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
                 element.progress += allocation;   // add turn's allocation
                 additional_pp_to_complete_element = element_total_cost - element.progress;
                 ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
@@ -1049,12 +1049,12 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
 
     for (iterator it = begin(); it != end(); ++it) {
 
-        double item_cost;
+        float item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
 
         item_cost *= it->blocksize;
-        double maxPerTurn = item_cost / std::max(build_turns,1);
+        float maxPerTurn = item_cost / std::max(build_turns,1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
     }
@@ -1154,11 +1154,11 @@ Empire::Empire() :
     m_research_queue(m_id),
     m_production_queue(m_id),
     m_resource_pools(),
-    m_population_pool(),
-    m_maintenance_total_cost(0)
+    m_population_pool()
 { Init(); }
 
-Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color) :
+Empire::Empire(const std::string& name, const std::string& player_name,
+               int empire_id, const GG::Clr& color) :
     m_id(empire_id),
     m_name(name),
     m_player_name(player_name),
@@ -1167,8 +1167,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_research_queue(m_id),
     m_production_queue(m_id),
     m_resource_pools(),
-    m_population_pool(),
-    m_maintenance_total_cost(0)
+    m_population_pool()
 {
     Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour)";
     Init();
@@ -1273,8 +1272,8 @@ bool Empire::ResearchableTech(const std::string& name) const {
 const ResearchQueue& Empire::GetResearchQueue() const
 { return m_research_queue; }
 
-double Empire::ResearchProgress(const std::string& name) const {
-    std::map<std::string, double>::const_iterator it = m_research_progress.find(name);
+float Empire::ResearchProgress(const std::string& name) const {
+    std::map<std::string, float>::const_iterator it = m_research_progress.find(name);
     return (it == m_research_progress.end()) ? 0.0 : it->second;
 }
 
@@ -1301,7 +1300,7 @@ const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_
 const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
-    double biggest_cost = -99999.9; // arbitrary small number
+    float biggest_cost = -99999.9f; // arbitrary small number
     ResearchQueue::const_iterator best_it = m_research_queue.end();
 
     for (ResearchQueue::const_iterator it = m_research_queue.begin();
@@ -1310,7 +1309,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_availabl
         const Tech* tech = GetTech(it->name);
         if (!tech)
             continue;
-        double tech_cost = tech->ResearchCost(m_id);
+        float tech_cost = tech->ResearchCost(m_id);
         if (tech_cost > biggest_cost) {
             biggest_cost = tech_cost;
             best_it = it;
@@ -1318,13 +1317,14 @@ const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_availabl
     }
 
     if (best_it != m_research_queue.end())
-    return best_it->name;
+        return best_it->name;
+    return EMPTY_STRING;
 }
 
 const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
-    double smallest_cost = 9999999.9; // arbitrary large number
+    float smallest_cost = 999999.9f; // arbitrary large number
     ResearchQueue::const_iterator best_it = m_research_queue.end();
 
     for (ResearchQueue::const_iterator it = m_research_queue.begin();
@@ -1333,7 +1333,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_availab
         const Tech* tech = GetTech(it->name);
         if (!tech)
             continue;
-        double tech_cost = tech->ResearchCost(m_id);
+        float tech_cost = tech->ResearchCost(m_id);
         if (tech_cost < smallest_cost) {
             smallest_cost = tech_cost;
             best_it = it;
@@ -1341,20 +1341,21 @@ const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_availab
     }
 
     if (best_it != m_research_queue.end())
-    return best_it->name;
+        return best_it->name;
+    return EMPTY_STRING;
 }
 
 const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
-    double most_spent = -999999.9;  // arbitrary small number
-    std::map<std::string, double>::const_iterator best_it = m_research_progress.end();
+    float most_spent = -999999.9f;  // arbitrary small number
+    std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
 
-    for (std::map<std::string, double>::const_iterator it = m_research_progress.begin();
+    for (std::map<std::string, float>::const_iterator it = m_research_progress.begin();
          it != m_research_progress.end(); ++it)
     {
         const std::string& tech_name = it->first;
         if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
-        double rp_spent = it->second;
+        float rp_spent = it->second;
         if (rp_spent > most_spent) {
             best_it = it;
             most_spent = rp_spent;
@@ -1367,10 +1368,10 @@ const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_
 }
 
 const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
-    double most_left = -999999.9;  // arbitrary small number
-    std::map<std::string, double>::const_iterator best_it = m_research_progress.end();
+    float most_left = -999999.9f;  // arbitrary small number
+    std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
 
-    for (std::map<std::string, double>::const_iterator it = m_research_progress.begin();
+    for (std::map<std::string, float>::const_iterator it = m_research_progress.begin();
          it != m_research_progress.end(); ++it)
     {
         const std::string& tech_name = it->first;
@@ -1381,9 +1382,9 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_availab
         if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
 
-        double rp_spent = it->second;
-        double rp_total_cost = tech->ResearchCost(m_id);
-        double rp_left = std::max(0.0, rp_total_cost - rp_spent);
+        float rp_spent = it->second;
+        float rp_total_cost = tech->ResearchCost(m_id);
+        float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
         if (rp_left > most_left) {
             best_it = it;
@@ -1458,13 +1459,13 @@ bool Empire::ShipHullAvailable(const std::string& name) const
 const ProductionQueue& Empire::GetProductionQueue() const
 { return m_production_queue; }
 
-double Empire::ProductionStatus(int i) const
+float Empire::ProductionStatus(int i) const
 { return (0 <= i && i < static_cast<int>(m_production_queue.size())) ? m_production_queue[i].progress : -1.0; }
 
-std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
+std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
 { return ProductionCostAndTime(element.item, element.location); }
 
-std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item,
+std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item,
                                                      int location_id) const
 {
     if (item.build_type == BT_BUILDING) {
@@ -1582,7 +1583,7 @@ void Empire::EliminationCleanup() {
         it->second->SetObjects(std::vector<int>());
     }
     m_population_pool.SetPopCenters(std::vector<int>());
-    m_maintenance_total_cost = 0;
+
     // m_ship_names_used;
     m_supply_system_ranges.clear();
     m_supply_unobstructed_systems.clear();
@@ -2124,7 +2125,7 @@ Empire::SitRepItr Empire::SitRepBegin() const
 Empire::SitRepItr Empire::SitRepEnd() const
 { return m_sitrep_entries.end(); }
 
-double Empire::ProductionPoints() const
+float Empire::ProductionPoints() const
 { return GetResourcePool(RE_INDUSTRY)->TotalAvailable(); }
 
 const boost::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
@@ -2134,24 +2135,21 @@ const boost::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resou
     return it->second;
 }
 
-double Empire::ResourceStockpile(ResourceType type) const {
+float Empire::ResourceStockpile(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
     return it->second->Stockpile();
 }
 
-double Empire::ResourceMaxStockpile(ResourceType type) const
-{ return 0.0; }
-
-double Empire::ResourceProduction(ResourceType type) const {
+float Empire::ResourceProduction(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceProduction passed invalid ResourceType");
     return it->second->Production();
 }
 
-double Empire::ResourceAvailable(ResourceType type) const {
+float Empire::ResourceAvailable(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
@@ -2161,18 +2159,15 @@ double Empire::ResourceAvailable(ResourceType type) const {
 const PopulationPool& Empire::GetPopulationPool() const
 { return m_population_pool; }
 
-double Empire::Population() const
+float Empire::Population() const
 { return m_population_pool.Population(); }
 
-void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile) {
+void Empire::SetResourceStockpile(ResourceType resource_type, float stockpile) {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
     return it->second->SetStockpile(stockpile);
 }
-
-void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
-{}
 
 void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
     if (name.empty() || TechResearched(name) || m_techs.find(name) != m_techs.end())
@@ -2201,7 +2196,7 @@ void Empire::RemoveTechFromQueue(const std::string& name) {
         m_research_queue.erase(it);
 }
 
-void Empire::SetTechResearchProgress(const std::string& name, double progress) {
+void Empire::SetTechResearchProgress(const std::string& name, float progress) {
     const Tech* tech = GetTech(name);
     if (!tech) {
         Logger().errorStream() << "Empire::SetTechResearchProgress no such tech as: " << name;
@@ -2211,7 +2206,7 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
         return; // can't affect already-researched tech
 
     // set progress
-    double clamped_progress = std::min(tech->ResearchCost(m_id), std::max(0.0, progress));
+    float clamped_progress = std::min(tech->ResearchCost(m_id), std::max(0.0f, progress));
     m_research_progress[name] = clamped_progress;
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn
@@ -2636,7 +2631,7 @@ void Empire::CheckResearchProgress() {
             Logger().errorStream() << "Empire::CheckResearchProgress couldn't find tech on queue, even after sanitizing!";
             continue;
         }
-        double& progress = m_research_progress[it->name];
+        float& progress = m_research_progress[it->name];
         progress += it->allocated_rp;
         if (tech->ResearchCost(m_id) - EPSILON <= progress) {
             AddTech(it->name);
@@ -2672,7 +2667,7 @@ void Empire::CheckProductionProgress() {
     // items above it on the queue getting finished don't increase the
     // cost and result in it not being finished that turn.
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
-             std::pair<double, int> >                           queue_item_costs_and_times;
+             std::pair<float, int> >                           queue_item_costs_and_times;
     for (ProductionQueue::iterator it = m_production_queue.begin(); it != m_production_queue.end(); ++it) {
         ProductionQueue::Element& elem = *it;
 
@@ -2684,7 +2679,7 @@ void Empire::CheckProductionProgress() {
             queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
     }
 
-    //for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<double, int> >::const_iterator
+    //for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int> >::const_iterator
     //     it = queue_item_costs_and_times.begin(); it != queue_item_costs_and_times.end(); ++it)
     //{ Logger().debugStream() << it->first.first.design_id << " : " << it->second.first; }
 
@@ -2696,7 +2691,7 @@ void Empire::CheckProductionProgress() {
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         ProductionQueue::Element& elem = m_production_queue[i];
-        double item_cost;
+        float item_cost;
         int build_turns;
 
         // for items that don't depend on location, only store cost/time once
@@ -2889,7 +2884,7 @@ void Empire::CheckProductionProgress() {
 }
 
 void Empire::CheckTradeSocialProgress()
-{ m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable() - m_maintenance_total_cost); }
+{ m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable()); }
 
 void Empire::SetColor(const GG::Clr& color)
 { m_color = color; }
@@ -2979,22 +2974,12 @@ void Empire::UpdateProductionQueue() {
 void Empire::UpdateTradeSpending() {
     m_resource_pools[RE_TRADE]->Update(); // recalculate total trade production
 
-    // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
-    m_maintenance_total_cost = 0.0;
-
-    std::vector<TemporaryPtr<UniverseObject> > buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
-    for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        TemporaryPtr<Building> building = universe_object_ptr_cast<Building>(*it);
-        if (!building)
-            continue;
-
-        const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
-        if (!building_type)
-            continue;
-
-        //if (building->Operating())
-        m_maintenance_total_cost += building_type->MaintenanceCost();
-    }
+    //std::vector<TemporaryPtr<UniverseObject> > buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
+    //for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
+    //    TemporaryPtr<Building> building = universe_object_ptr_cast<Building>(*it);
+    //    if (!building)
+    //        continue;
+    //}
     m_resource_pools[RE_TRADE]->ChangedSignal();
 }
 

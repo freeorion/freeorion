@@ -107,7 +107,6 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_population_pool)
 
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
-            & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost)
             & BOOST_SERIALIZATION_NVP(m_ship_names_used);
     }
 }

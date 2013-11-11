@@ -45,13 +45,13 @@ struct FO_COMMON_API ResearchQueue {
             allocated_rp(0.0),
             turns_left(0)
         {}
-        Element(const std::string& name_, double spending_, int turns_left_) :
+        Element(const std::string& name_, float spending_, int turns_left_) :
             name(name_),
             allocated_rp(spending_),
             turns_left(turns_left_)
         {}
         std::string name;
-        double      allocated_rp;
+        float       allocated_rp;
         int         turns_left;
     private:
         friend class boost::serialization::access;
@@ -77,7 +77,7 @@ struct FO_COMMON_API ResearchQueue {
     /** \name Accessors */ //@{
     bool            InQueue(const std::string& tech_name) const;    ///< Returns true iff \a tech is in this queue.
     int             ProjectsInProgress() const;         ///< Returns the number of research projects currently (perhaps partially) funded.
-    double          TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
+    float           TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
     int             EmpireID() const { return m_empire_id; }
 
     // STL container-like interface
@@ -100,7 +100,7 @@ struct FO_COMMON_API ResearchQueue {
       * precondition of this function that \a RPs must be greater than some
       * epsilon > 0; see the implementation for the actual value used for
       * epsilon. */
-    void            Update(double RPs, const std::map<std::string, double>& research_progress);
+    void            Update(float RPs, const std::map<std::string, float>& research_progress);
 
     // STL container-like interface
     void            push_back(const std::string& tech_name);
@@ -123,7 +123,7 @@ struct FO_COMMON_API ResearchQueue {
 private:
     QueueType   m_queue;
     int         m_projects_in_progress;
-    double      m_total_RPs_spent;
+    float       m_total_RPs_spent;
     int         m_empire_id;
 
     friend class boost::serialization::access;
@@ -166,9 +166,9 @@ struct FO_COMMON_API ProductionQueue {
         int             blocksize;                  ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
-        double          allocated_pp;               ///< PP allocated to this ProductionQueue Element by Empire production update
-        double          progress;                   ///< PP that has been spent on this production element (will increase by allocation during next turn processing)
-        double          progress_memory;            ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
+        float           allocated_pp;               ///< PP allocated to this ProductionQueue Element by Empire production update
+        float           progress;                   ///< PP that has been spent on this production element (will increase by allocation during next turn processing)
+        float           progress_memory;            ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
         int             blocksize_memory;           ///< used along with progress_memory
         int             turns_left_to_next_item;
         int             turns_left_to_completion;
@@ -192,17 +192,17 @@ struct FO_COMMON_API ProductionQueue {
 
     /** \name Accessors */ //@{
     int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
-    double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
+    float                           TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
     int                             EmpireID() const { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP available in those groups of objects */
-    std::map<std::set<int>, double>         AvailablePP(const boost::shared_ptr<ResourcePool>& industry_pool) const;
+    std::map<std::set<int>, float>         AvailablePP(const boost::shared_ptr<ResourcePool>& industry_pool) const;
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    const std::map<std::set<int>, double>&  AllocatedPP() const;
+    const std::map<std::set<int>, float>&  AllocatedPP() const;
 
     /** Returns sets of object ids that have more available than allocated PP */
     std::set<std::set<int> >                ObjectsWithWastedPP(const boost::shared_ptr<ResourcePool>& industry_pool) const;
@@ -250,7 +250,7 @@ struct FO_COMMON_API ProductionQueue {
 private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
-    std::map<std::set<int>, double> m_object_group_allocated_pp;
+    std::map<std::set<int>, float>  m_object_group_allocated_pp;
     int                             m_empire_id;
 
     friend class boost::serialization::access;
@@ -313,7 +313,7 @@ public:
 
     bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     const       ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
-    double      ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
+    float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
     TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
@@ -324,13 +324,13 @@ public:
     bool        ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
 
     const       ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
-    double      ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
+    float       ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
     /** Returns the total cost per item (blocksize 1) and the minimum number of turns
       * required to produce the indicated item, or (-1.0, -1) if the item is
       * unknown, unavailable, or invalid. */
-    std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::Element& element) const;
-    std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
+    std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::Element& element) const;
+    std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
     bool                    ProducibleItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
     bool                    ProducibleItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
@@ -381,21 +381,15 @@ public:
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
 
-    double                  ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is available industry)
-
-    /** Returns amount of trade empire will spend this turn.  Assumes
-      * Empire::UpdateTradeSpending() has previously been called to determine
-      * this number. */
-    double                  TotalTradeSpending() const {return m_maintenance_total_cost;}
+    float                   ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is available industry)
 
     const boost::shared_ptr<ResourcePool>   GetResourcePool(ResourceType resource_type) const;  ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
-    double                  ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
-    double                  ResourceMaxStockpile(ResourceType type) const;      ///< returns maximum allowed stockpile of resource \a type
-    double                  ResourceProduction(ResourceType type) const;        ///< returns amount of resource \a type being produced by ResourceCenters
-    double                  ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
+    float                   ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
+    float                   ResourceProduction(ResourceType type) const;        ///< returns amount of resource \a type being produced by ResourceCenters
+    float                   ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
 
     const PopulationPool&   GetPopulationPool() const;                          ///< Returns PopulationPool
-    double                  Population() const;                                 ///< returns total Population of empire
+    float                   Population() const;                                 ///< returns total Population of empire
     //@}
 
     /** \name Mutators */ //@{
@@ -418,7 +412,7 @@ public:
       * research queue already. */
     void        RemoveTechFromQueue(const std::string& name);
     /** Sets research progress of tech with \a name to \a progress. */
-    void        SetTechResearchProgress(const std::string& name, double progress);
+    void        SetTechResearchProgress(const std::string& name, float progress);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
@@ -516,8 +510,7 @@ public:
     void        SetName(const std::string& name);               ///< Mutator for empire name
     void        SetPlayerName(const std::string& player_name);  ///< Mutator for empire's player name
 
-    void        SetResourceStockpile(ResourceType resource_type, double stockpile); ///< Sets current \a stockpile amount of indicated \a resource_type
-    void        SetResourceMaxStockpile(ResourceType resource_type, double max);    ///< Sets \a max amount of stockpile of indicated \a resource_typ
+    void        SetResourceStockpile(ResourceType resource_type, float stockpile); ///< Sets current \a stockpile amount of indicated \a resource_type
 
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
@@ -575,7 +568,7 @@ private:
     std::map<std::string, Meter>    m_meters;                   ///< empire meters, including ratings scales used by species to judge empires
 
     ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
-    std::map<std::string, double>   m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
+    std::map<std::string, float>    m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
 
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
 
@@ -589,13 +582,6 @@ private:
 
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >    m_resource_pools;
     PopulationPool                                              m_population_pool;
-
-    /** MAYBE TEMPORARY: Until social projects and/or consequences of unpaid
-      * maintenance is implemented.  Total maintenance on buildings owned by
-      * this empire.  Set by UpdateTradeSpending(), used by
-      * CheckTradeSocialProgress() to deduct maintenance cost from trade
-      * stockpile */
-    double                          m_maintenance_total_cost;
 
     std::map<std::string, int>      m_ship_names_used;                      ///< map from name to number of times used
 

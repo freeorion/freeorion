@@ -102,8 +102,8 @@ public:
     std::string         Dump() const;                                               //!< Returns a text representation of this object
     TechType            Type() const                { return m_type; }              //!< Returns the type (theory/application/refinement) of this tech
     const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
-    double              ResearchCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
-    double              PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
+    float               ResearchCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
+    float               PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
     int                 ResearchTime(int empire_id) const;                          //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
     bool                Researchable() const        { return m_researchable; }      //!< returns whether this tech is researchable by players and appears on the tech tree
 

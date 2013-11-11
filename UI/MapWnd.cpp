@@ -2410,12 +2410,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     if (this_client_empire) {
         const std::set<std::set<int> >& resGroups = this_client_empire->ResourceSupplyGroups();
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
-        std::map<std::set<int>, double> allocatedPP(queue.AllocatedPP());
-        std::map<std::set<int>, double> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+        std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
+        std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
-        for (std::map<std::set<int>, double>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
-            double group_pp = it->second;
-            if (group_pp < 1e-4)
+        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+            float group_pp = it->second;
+            if (group_pp < 1e-4f)
                 continue;
 
             std::string thisPool = "( ";

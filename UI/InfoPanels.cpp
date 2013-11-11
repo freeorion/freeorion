@@ -1558,7 +1558,7 @@ void BuildingsPanel::Update() {
         int total_turns;
         boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
 
-        double progress = std::max(0.0, empire->ProductionStatus(queue_index));
+        double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = total_turns * std::min<double>(1.0, progress / total_cost);
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
                                                        turns_completed, total_turns);

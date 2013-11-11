@@ -56,10 +56,10 @@ namespace {
         if (next_techs.empty())
             return 0;
 
-        double min_price = next_techs[0]->ResearchCost(empire_id);
+        float min_price = next_techs[0]->ResearchCost(empire_id);
         int min_index = 0;
         for (unsigned int i = 0; i < next_techs.size(); ++i) {
-            double price = next_techs[i]->ResearchCost(empire_id);
+            float price = next_techs[i]->ResearchCost(empire_id);
             if (price < min_price) {
                 min_price = price;
                 min_index = i;
@@ -167,7 +167,7 @@ namespace {
     }
 }
 
-double Tech::ResearchCost(int empire_id) const {
+float Tech::ResearchCost(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
     } else {
@@ -182,12 +182,12 @@ double Tech::ResearchCost(int empire_id) const {
 
         } else {
             // if cost depends on a source object, but no such object is present, default to arbitrary large value
-            return 9999999.9;
+            return 999999.9f;
         }
     }
 }
 
-double Tech::PerTurnCost(int empire_id) const
+float Tech::PerTurnCost(int empire_id) const
 { return ResearchCost(empire_id) / std::max(1, ResearchTime(empire_id)); }
 
 int Tech::ResearchTime(int empire_id) const {
@@ -538,7 +538,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
     // compile set of recursive prereqs
     std::list<std::string> prereqs_list;                    // working list of prereqs as being processed.  may contain duplicates
     std::set<std::string> prereqs_set;                      // set of (unique) prereqs leading to tech
-    std::multimap<double, std::string> techs_to_add_map;    // indexed and sorted by cost per turn
+    std::multimap<float, std::string> techs_to_add_map;    // indexed and sorted by cost per turn
 
     // initialize working list with 1st order prereqs
     std::set<std::string> cur_prereqs = tech->Prerequisites();
@@ -555,7 +555,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
         // tech is new, so put it into the set of already-processed prereqs
         prereqs_set.insert(cur_name);
         // and the map of techs, sorted by cost
-        techs_to_add_map.insert(std::pair<double, std::string>(cur_tech->ResearchCost(empire_id), cur_name));
+        techs_to_add_map.insert(std::pair<float, std::string>(cur_tech->ResearchCost(empire_id), cur_name));
 
         // get prereqs of new tech, append to list
         cur_prereqs = cur_tech->Prerequisites();
@@ -564,7 +564,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
     // extract sorted techs into vector, to be passed to signal...
     std::vector<std::string> retval;
-    for (std::multimap<double, std::string>::const_iterator it = techs_to_add_map.begin();
+    for (std::multimap<float, std::string>::const_iterator it = techs_to_add_map.begin();
          it != techs_to_add_map.end(); ++it)
     { retval.push_back(it->second); }
 

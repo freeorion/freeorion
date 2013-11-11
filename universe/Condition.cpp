@@ -379,8 +379,8 @@ bool Condition::Number::SourceInvariant() const {
 
 bool Condition::Number::Match(const ScriptingContext& local_context) const {
     // get acceptable range of subcondition matches for candidate
-    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    double high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
 
     const std::set<int> destroyed_object_ids = GetUniverse().DestroyedObjectIds();
 
@@ -531,8 +531,8 @@ std::string Condition::Turn::Dump() const {
 }
 
 bool Condition::Turn::Match(const ScriptingContext& local_context) const {
-    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
     return (low <= turn && turn <= high);
 }
@@ -623,9 +623,9 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::multimap<double, TemporaryPtr<const UniverseObject> > sort_key_objects;
+        std::multimap<float, TemporaryPtr<const UniverseObject> > sort_key_objects;
         for (Condition::ObjectSet::const_iterator it = from_set.begin(); it != from_set.end(); ++it) {
-            double sort_value = sort_key->Eval(ScriptingContext(context, *it));
+            float sort_value = sort_key->Eval(ScriptingContext(context, *it));
             sort_key_objects.insert(std::make_pair(sort_value, *it));
         }
 
@@ -639,7 +639,7 @@ namespace {
         if (sorting_method == Condition::SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
+            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
                  sorted_it != sort_key_objects.end(); ++sorted_it)
             {
                 TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
@@ -656,7 +656,7 @@ namespace {
         } else if (sorting_method == Condition::SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
                 TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
@@ -671,15 +671,15 @@ namespace {
             }
         } else if (sorting_method == Condition::SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
-            std::map<double, unsigned int> histogram;
-            for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
+            std::map<float, unsigned int> histogram;
+            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
                  sorted_it != sort_key_objects.end(); ++sorted_it)
             {
                 histogram[sorted_it->first]++;
             }
             // invert histogram to index by number of occurances
-            std::multimap<unsigned int, double> inv_histogram;
-            for (std::map<double, unsigned int>::const_iterator hist_it = histogram.begin();
+            std::multimap<unsigned int, float> inv_histogram;
+            for (std::map<float, unsigned int>::const_iterator hist_it = histogram.begin();
                  hist_it != histogram.end(); ++hist_it)
             {
                 inv_histogram.insert(std::make_pair(hist_it->second, hist_it->first));
@@ -687,18 +687,18 @@ namespace {
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
             // keys from from_set to to_set.
-            for (std::multimap<unsigned int, double>::reverse_iterator inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (std::multimap<unsigned int, float>::reverse_iterator inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  inv_hist_it != inv_histogram.rend(); ++inv_hist_it)
             {
-                double cur_sort_key = inv_hist_it->second;
+                float cur_sort_key = inv_hist_it->second;
 
                 // get range of objects with the current sort key
-                std::pair<std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator,
-                          std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator> key_range =
+                std::pair<std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator,
+                          std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator> key_range =
                     sort_key_objects.equal_range(cur_sort_key);
 
                 // loop over range, selecting objects to transfer from from_set to to_set
-                for (std::multimap<double, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = key_range.first;
+                for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
                     TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
@@ -985,24 +985,32 @@ namespace {
             case AFFIL_SELF:
                 return m_empire_id != ALL_EMPIRES && candidate->OwnedBy(m_empire_id);
                 break;
+
             case AFFIL_ENEMY: {
                 if (m_empire_id == ALL_EMPIRES)
                     return true;
+                if (m_empire_id == candidate->Owner())
+                    return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
                 return (status == DIPLO_WAR);
                 break;
             }
+
             case AFFIL_ALLY: {
                 if (m_empire_id == ALL_EMPIRES)
+                    return false;
+                if (m_empire_id == candidate->Owner())
                     return false;
                 DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
                 return (status == DIPLO_PEACE);
                 break;
             }
+
             case AFFIL_ANY:
                 return true;
                 //return !candidate->Unowned();
                 break;
+
             default:
                 return false;
                 break;
@@ -2035,8 +2043,8 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
         Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
         return false;
     }
-    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
-    double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
+    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     return CreatedOnTurnSimpleMatch(low, high)(candidate);
 }
 
@@ -4348,14 +4356,14 @@ bool Condition::Chance::operator==(const Condition::ConditionBase& rhs) const {
 
 namespace {
     struct ChanceSimpleMatch {
-        ChanceSimpleMatch(double chance) :
+        ChanceSimpleMatch(float chance) :
             m_chance(chance)
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const
         { return RandZeroToOne() <= m_chance; }
 
-        double m_chance;
+        float m_chance;
     };
 }
 
@@ -4369,7 +4377,7 @@ void Condition::Chance::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         TemporaryPtr<const UniverseObject> no_object;
-        double chance = std::max(0.0, std::min(1.0, m_chance->Eval(ScriptingContext(parent_context, no_object))));
+        float chance = std::max(0.0, std::min(1.0, m_chance->Eval(ScriptingContext(parent_context, no_object))));
         EvalImpl(matches, non_matches, search_domain, ChanceSimpleMatch(chance));
     } else {
         // re-evaluate empire id for each candidate object
@@ -4405,7 +4413,7 @@ std::string Condition::Chance::Dump() const
 { return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n"; }
 
 bool Condition::Chance::Match(const ScriptingContext& local_context) const {
-    double chance = std::max(0.0, std::min(m_chance->Eval(local_context), 1.0));
+    float chance = std::max(0.0, std::min(m_chance->Eval(local_context), 1.0));
     return RandZeroToOne() <= chance;
 }
 
@@ -4436,7 +4444,7 @@ bool Condition::MeterValue::operator==(const Condition::ConditionBase& rhs) cons
 
 namespace {
     struct MeterValueSimpleMatch {
-        MeterValueSimpleMatch(double low, double high, MeterType meter_type) :
+        MeterValueSimpleMatch(float low, float high, MeterType meter_type) :
             m_low(low),
             m_high(high),
             m_meter_type(meter_type)
@@ -4447,15 +4455,15 @@ namespace {
                 return false;
 
             if (const Meter* meter = candidate->GetMeter(m_meter_type)) {
-                double value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
+                float value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
                 return m_low <= value && value <= m_high;
             }
 
             return false;
         }
 
-        double m_low;
-        double m_high;
+        float m_low;
+        float m_high;
         MeterType m_meter_type;
     };
 
@@ -4510,8 +4518,8 @@ void Condition::MeterValue::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
         EvalImpl(matches, non_matches, search_domain, MeterValueSimpleMatch(low, high, m_meter));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -4562,8 +4570,8 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
         Logger().errorStream() << "MeterValue::Match passed no candidate object";
         return false;
     }
-    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     return MeterValueSimpleMatch(low, high, m_meter)(candidate);
 }
 
@@ -4598,7 +4606,7 @@ bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& r
 namespace {
     struct ShipPartMeterValueSimpleMatch {
         ShipPartMeterValueSimpleMatch(const std::string& ship_part_name,
-                                      MeterType meter, double low, double high) :
+                                      MeterType meter, float low, float high) :
             m_part_name(ship_part_name),
             m_low(low),
             m_high(high),
@@ -4614,13 +4622,13 @@ namespace {
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
             if (!meter)
                 return false;
-            double meter_current = meter->Current();
+            float meter_current = meter->Current();
             return (m_low <= meter_current && meter_current <= m_high);
         }
 
         std::string m_part_name;
-        double      m_low;
-        double      m_high;
+        float      m_low;
+        float      m_high;
         MeterType   m_meter;
     };
 }
@@ -4636,8 +4644,8 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
         EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -4696,8 +4704,8 @@ bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context)
         Logger().errorStream() << "ShipPartMeterValue::Match passed no candidate object";
         return false;
     }
-    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     return ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high)(candidate);
 }
 
@@ -4733,7 +4741,7 @@ bool Condition::EmpireMeterValue::operator==(const Condition::ConditionBase& rhs
 
 namespace {
     struct EmpireMeterValueSimpleMatch {
-        EmpireMeterValueSimpleMatch(int empire_id, double low, double high, const std::string& meter) :
+        EmpireMeterValueSimpleMatch(int empire_id, float low, float high, const std::string& meter) :
             m_empire_id(empire_id),
             m_low(low),
             m_high(high),
@@ -4749,13 +4757,13 @@ namespace {
             const Meter* meter = empire->GetMeter(m_meter);
             if (!meter)
                 return false;
-            double meter_current = meter->Current();
+            float meter_current = meter->Current();
             return (m_low <= meter_current && meter_current <= m_high);
         }
 
         int         m_empire_id;
-        double      m_low;
-        double      m_high;
+        float      m_low;
+        float      m_high;
         std::string m_meter;
     };
 }
@@ -4773,8 +4781,8 @@ void Condition::EmpireMeterValue::Eval(const ScriptingContext& parent_context,
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int empire_id = m_empire_id->Eval(local_context);   // if m_empire_id not set, default to local candidate's owner, which is not target invariant
-        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
         EvalImpl(matches, non_matches, search_domain, EmpireMeterValueSimpleMatch(empire_id, low, high, m_meter));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -4850,8 +4858,8 @@ bool Condition::EmpireMeterValue::Match(const ScriptingContext& local_context) c
     int empire_id = (m_empire_id ? m_empire_id->Eval(local_context) : candidate->Owner());
     if (empire_id == ALL_EMPIRES)
         return false;
-    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     return EmpireMeterValueSimpleMatch(empire_id, low, high, m_meter)(candidate);
 }
 
@@ -4882,7 +4890,7 @@ bool Condition::EmpireStockpileValue::operator==(const Condition::ConditionBase&
 
 namespace {
     struct EmpireStockpileValueSimpleMatch {
-        EmpireStockpileValueSimpleMatch(double low, double high, ResourceType stockpile) :
+        EmpireStockpileValueSimpleMatch(float low, float high, ResourceType stockpile) :
             m_low(low),
             m_high(high),
             m_stockpile(stockpile)
@@ -4900,15 +4908,15 @@ namespace {
                 return false;
 
             if (m_stockpile == RE_TRADE) {
-                double amount = empire->ResourceStockpile(m_stockpile);
+                float amount = empire->ResourceStockpile(m_stockpile);
                 return (m_low <= amount && amount <= m_high);
             }
 
             return false;
         }
 
-        double m_low;
-        double m_high;
+        float m_low;
+        float m_high;
         ResourceType m_stockpile;
     };
 }
@@ -4923,8 +4931,8 @@ void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_contex
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        double low = m_low->Eval(local_context);
-        double high = m_high->Eval(local_context);
+        float low = m_low->Eval(local_context);
+        float high = m_high->Eval(local_context);
         EvalImpl(matches, non_matches, search_domain, EmpireStockpileValueSimpleMatch(low, high, m_stockpile));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -4975,8 +4983,8 @@ bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_contex
         return false;
     }
 
-    double low = m_low->Eval(local_context);
-    double high = m_high->Eval(local_context);
+    float low = m_low->Eval(local_context);
+    float high = m_high->Eval(local_context);
     return EmpireStockpileValueSimpleMatch(low, high, m_stockpile)(candidate);
 }
 
@@ -6368,9 +6376,9 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-        double value = (m_value_ref ? m_value_ref->Eval(local_context) : 0.0);
+        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0.0);
 
         bool in_range = (low <= value && value <= high);
 
@@ -6447,7 +6455,6 @@ std::string Condition::ValueTest::Dump() const {
 }
 
 bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
-    std::cout << Dump() << std::endl;
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ValueTest::Match passed no candidate object";
@@ -6456,9 +6463,9 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
     if (!m_value_ref)
         return false;
 
-    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-    double value = (m_value_ref ? m_value_ref->Eval(local_context) : 0);
+    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0);
 
     return low <= value && value <= high;
 }
