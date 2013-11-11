@@ -456,6 +456,8 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     switch (type) {
     case METER_TARGET_POPULATION:
     case METER_POPULATION:
+    case METER_TARGET_HAPPINESS:
+    case METER_HAPPINESS:
         return PopCenterNextTurnMeterValue(type);
         break;
     case METER_TARGET_INDUSTRY:
