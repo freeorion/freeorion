@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
+import ColonisationAI
 
 def sysNameIDs(sysIDs):
     universe = fo.getUniverse()
@@ -46,12 +47,21 @@ def getCapital(): # if no current capital returns planet with biggest pop
             return empireOwnedPlanetIDs[0]
         else:
             return -1
-    popMap = []
-    for planetID in peopledPlanets:
-        popMap.append( ( universe.getPlanet(planetID).currentMeterValue(fo.meterType.population) ,  planetID) )
-    popMap.sort()
-    return popMap[-1][-1]
-
+    try:
+        for spec_list in [ list(ColonisationAI.empireColonizers),  list(ColonisationAI.empireShipBuilders),  None]:
+            popMap = []
+            for planetID in peopledPlanets:
+                planet = universe.getPlanet(planetID)
+                if (spec_list is not None) and planet.speciesName not in spec_list:
+                    continue
+                popMap.append( ( planet.currentMeterValue(fo.meterType.population) ,  planetID) )
+            if len(popMap) > 0:
+                popMap.sort()
+                return popMap[-1][-1]
+    except:
+        pass
+    return -1 #shouldn't ever reach here
+    
 def getCapitalSysID():
     capID = getCapital()
     if capID is None or capID==-1:
