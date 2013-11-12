@@ -2097,12 +2097,12 @@ GOOD_POPULATION
 
 
 XENOPHOBIC_SELF
-'''  EffectsGroup
-        scope = Source
-        activation = Turn high = 0
-        GiveEmpireTech name = "CON_CONC_CAMP"
-
-     EffectsGroup
+'''     EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            GiveEmpireTech name = "CON_CONC_CAMP"
+    
+        EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
@@ -2124,8 +2124,8 @@ XENOPHOBIC_SELF
                 SetTargetIndustry Value*0.2 - 1
                 SetTargetResearch Value*0.9
             ]
-
-     EffectsGroup
+    
+        EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
@@ -2133,7 +2133,7 @@ XENOPHOBIC_SELF
             ]
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
-            effects = SetTargetPopulation Value* (0.6 + ( 0.4 * ( 0.8^ 
+            effects = SetTargetPopulation Value * (0.6 + (0.4 * (0.8 ^ 
                 Count condition = And [
                     PopulationCenter
                     WithinStarlaneJumps 5 Source
@@ -2145,6 +2145,36 @@ XENOPHOBIC_SELF
                     Not Population high = 0
                 ]
                 ) ) )
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                Number low = 1 high = 999 And [
+                    PopulationCenter
+                    VisibleToEmpire Source.Owner
+                    Not Contains Building "BLD_CONC_CAMP"
+                    Not OR [
+                        Species Source.Species
+                        Species "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps 5 Source
+                ]
+            ]
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            effects =
+                SetTargetHappiness Value - Count condition = And [
+                    PopulationCenter
+                    VisibleToEmpire Source.Owner
+                    Not OR [
+                        Species Source.Species
+                        Species "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps 5 Source
+                ]
 
 '''
 
