@@ -2443,11 +2443,13 @@ AVERAGE_HAPPINESS
         EffectsGroup
             scope = Source
             activation = Planet
+            accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
             effects = SetTargetHappiness Value + 20
         
         EffectsGroup
             scope = Source
             activation = Focus Source.PreferredFocus
+            accountinglabel = "FOCUS_PREFERENCE_LABEL"
             effects = SetTargetHappiness Value + 10
 '''
 

@@ -9335,6 +9335,12 @@ XENOPHOBIC_LABEL_EAXAW_OTHER
 ORGANIC_GROWTH
 '''Organic Growth'''
 
+BASIC_CONTENTEDNESS_LABEL
+General Contentness
+
+FOCUS_PREFERENCE_LABEL
+Preferred Focus Selected
+
 #############################################################
 ####                       T A G S                       ####
 #############################################################
