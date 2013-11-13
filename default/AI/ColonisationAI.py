@@ -37,6 +37,7 @@ gotGG = False
 curBestPilotRating = 1e-8
 curMidPilotRating = 1e-8
 pilotRatings = {}
+colony_status = {}
 
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
@@ -148,32 +149,42 @@ def getColonyFleets():
     print  list(empire.obstructedStarlanes())
 
 
-    annexableSystemIDs.clear()
+    annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexableRing1.clear()
     annexableRing2.clear()
     annexableRing3.clear()
     annexablePlanetIDs.clear()
+    supply_distance = 1
+    for tech in ["CON_ORBITAL_CON", "CON_CONTGRAV_ARCH",  "CON_GAL_INFRA"]:
+        if empire.getTechStatus(tech) == fo.techStatus.complete:
+            supply_distance += 1 
+    if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+            supply_distance += 1 
     for sysID in empire.fleetSupplyableSystemIDs:
-        annexableSystemIDs.add(sysID)
+        annexableSystemIDs.add(sysID) #add fleet supplyable system
         for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-            annexableSystemIDs.add(nID)
-            annexableRing1.add(nID)
-    annexableRing1.difference_update(empire.fleetSupplyableSystemIDs)
-    print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
-    if empire.getTechStatus("CON_ORBITAL_CON") == fo.techStatus.complete:
+            annexableSystemIDs.add(nID) #add immediate neighbor of fleet supplyable system
+    if supply_distance > 1:
+        for sysID in list(annexableSystemIDs):
+            for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+                annexableRing1.add(nID)
+        annexableRing1.difference_update(annexableSystemIDs)
+        annexableSystemIDs.update(annexableRing1)
+        print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
+    if supply_distance > 2:
         for sysID in list(annexableRing1):
             for nID in  universe.getImmediateNeighbors(sysID,  empireID):
                 annexableRing2.add(nID)
         annexableRing2.difference_update(annexableSystemIDs)
         print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
         annexableSystemIDs.update(annexableRing2)
-        if foAI.foAIstate.aggression > fo.aggression.cautious:
-            for sysID in list(annexableRing2):
-                for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-                    annexableRing3.add(nID)
-            annexableRing3.difference_update(annexableSystemIDs)
-            print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
-            annexableSystemIDs.update(annexableRing3)
+    if supply_distance > 3:
+        for sysID in list(annexableRing2):
+            for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+                annexableRing3.add(nID)
+        annexableRing3.difference_update(annexableSystemIDs)
+        print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
+        annexableSystemIDs.update(annexableRing3)
     annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
 
     # get outpost and colonization planets
@@ -207,6 +218,8 @@ def getColonyFleets():
     unOwnedPlanetIDs = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
     print "UnOwned annexable PlanetIDs:             " + str(PlanetUtilsAI.planetNameIDs(unOwnedPlanetIDs))
 
+    colony_status['colonies_under_attack'] = []
+    colony_status['colonies_under_threat'] = []
     empirePopCtrs = set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
     empireOutpostIDs=set(empireOwnedPlanetIDs) - empirePopCtrs
     AIstate.popCtrIDs[:]=list(empirePopCtrs)
@@ -229,6 +242,11 @@ def getColonyFleets():
         system = universe.getSystem(sysID)
         if system:
             AIstate.empireStars.setdefault(system.starType, []).append(sysID)
+        sys_status = foAI.foAIstate.systemStatus.get(sysID,  {})
+        if sys_status.get('fleetThreat') > 0:
+            colony_status['colonies_under_attack'].append(sysID)
+        if sys_status.get('neighborThreat') > 0:
+            colony_status['colonies_under_threat'].append(sysID)
 
     claimedStars = {}
     for sType in AIstate.empireStars:

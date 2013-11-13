@@ -285,20 +285,36 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         bldTally += bval
         detail.append("%s: %d"%(bldType,  bval))
 
-        capitolID = PlanetUtilsAI.getCapital()
-        if capitolID:
-            homeworld = universe.getPlanet(capitolID)
-            if homeworld:
-                homeSystemID = homeworld.systemID
-                evalSystemID = planet.systemID
-                if (homeSystemID != -1) and (evalSystemID != -1):
-                    leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-                    maxJumps =  leastJumpsPath
+    pSysID = planet.systemID
+    capitolID = PlanetUtilsAI.getCapital()
+    leastJumpsPath = []
+    clear_path = True
+    if capitolID:
+        homeworld = universe.getPlanet(capitolID)
+        if homeworld:
+            homeSystemID = homeworld.systemID
+            evalSystemID = planet.systemID
+            if (homeSystemID != -1) and (evalSystemID != -1):
+                leastJumpsPath = list(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+                maxJumps =  len(leastJumpsPath)
+    system_status = foAI.foAIstate.systemStatus.get(pSysID, {})
+    sysFThrt = system_status.get('fleetThreat', 1000 )
+    sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
+    sysPThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('planetThreat', 0 )
+    sysTotThrt = sysFThrt + sysMThrt + sysPThrt
+    max_path_threat = sysFThrt
+    mil_ship_rating = ProductionAI.curBestMilShipRating()
+    for path_sys_id in leastJumpsPath:
+        path_leg_status = foAI.foAIstate.systemStatus.get(path_sys_id,  {})
+        path_leg_threat = path_leg_status.get('fleetThreat', 1000 ) + path_leg_status.get('monsterThreat', 0 )
+        if  path_leg_threat > 0.5 * mil_ship_rating:
+            clear_path = False
+            if path_leg_threat > max_path_threat:
+                max_path_threat = path_leg_threat
 
     troops = planet.currentMeterValue(fo.meterType.troops)
     maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
 
-    pSysID = planet.systemID
     this_system = universe.getSystem(pSysID)
     secure_targets = [pSysID] + list(this_system.planetIDs)
     system_secured = False
@@ -316,27 +332,26 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                 break
 
     pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
-    sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
-    sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
-    sysPThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('planetThreat', 0 )
-    sysTotThrt = sysFThrt + sysMThrt + sysPThrt
     if verbose:
         print "invasion eval of %s  %d --- maxShields %.1f -- sysFleetThreat %.1f  -- sysMonsterThreat %.1f"%(planet.name,  planetID,  pmaxShield,  sysFThrt,  sysMThrt)
     supplyVal=0
     enemyVal=0
     if planet.owner!=-1 : #value in taking this away from an enemy
         enemyVal= 20* (planet.currentMeterValue(fo.meterType.targetIndustry) +  2*planet.currentMeterValue(fo.meterType.targetResearch))
-    if planetID  in fleetSupplyablePlanetIDs: #TODO: extend to rings
+    if pSysID  in ColonisationAI.annexableSystemIDs: #TODO: extend to rings
         supplyVal =  100
-        if planet.owner== -1:
-        #if  (pmaxShield <10):
-            if ( sysFThrt < 0.5*ProductionAI.curBestMilShipRating() ):
-                if ( sysMThrt < 3*ProductionAI.curBestMilShipRating()):
-                    supplyVal = 50
-                else:
-                    supplyVal = 20
-            else:
-                supplyVal *= int( min(1, ProductionAI.curBestMilShipRating() /  sysFThrt )  )
+    elif pSysID in ColonisationAI.annexableRing1:
+        supplyVal =  200
+    elif pSysID in ColonisationAI.annexableRing2:
+        supplyVal =  300
+    elif pSysID in ColonisationAI.annexableRing2:
+        supplyVal =  400
+    if ( max_path_threat > 0.5 * mil_ship_rating ):
+        if ( max_path_threat < 3 * mil_ship_rating ):
+            supplyVal *= 0.5
+        else:
+            supplyVal *= 0.2
+        
     threatFactor = min(1,  0.2*MilitaryAI.totMilRating/(sysTotThrt+0.001))**2  #devalue invasions that would require too much military force
     buildTime=4
     if system_secured:
@@ -347,7 +362,10 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
-    invscore =  [ threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops ]
+    planet_score = threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost)
+    if clear_path:
+        planet_score *= 1.5
+    invscore =  [ planet_score,  plannedTroops ]
     print invscore, "projected Troop Cost:",  troopCost,  ", threatFactor: ", threatFactor,  ", planet detail ",   detail, "popval,  supplyval,  bldval,  enemyval",   popVal,  supplyVal,  bldTally,  enemyVal
     return   invscore
 

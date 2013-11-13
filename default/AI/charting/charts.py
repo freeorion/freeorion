@@ -1,4 +1,6 @@
 # pylab is part of matplotlib -- http://matplotlib.org/
+# for necessary Windows dependencies see http://stackoverflow.com/a/18280786
+
 from pylab import *
 import os
 import sys

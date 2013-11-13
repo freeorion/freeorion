@@ -23,13 +23,15 @@ unmetThreat = 0
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
-    print("calculating priorities")
+    print("checking statuses")
+    # Industry, Research, Colony, Invasion, Military
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, 50) # let this one stay fixed & just adjust Research
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     ColonisationAI.getColonyFleets() # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs  and many other values used by other modules
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
+    print("calculating priorities")
     calculateIndustryPriority()#purely for reporting purposes
 
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
@@ -292,6 +294,12 @@ def calculateInvasionPriority():
 
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
     invasionPriority = multiplier * (30+ 150*max(0,  troopShipsNeeded ))
+    if ColonisationAI.colony_status['colonies_under_attack'] ==[]:
+        if ColonisationAI.colony_status['colonies_under_threat'] ==[]:
+            invasionPriority *= 2.0
+        else:
+            invasionPriority *= 1.5
+        
     if invasionPriority < 0:
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:
