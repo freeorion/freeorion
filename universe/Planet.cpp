@@ -20,19 +20,19 @@
 
 namespace {
     // high tilt is arbitrarily taken to mean 35 degrees or more
-    const double HIGH_TILT_THERSHOLD = 35.0;
+    const float HIGH_TILT_THERSHOLD = 35.0f;
 
-    double SizeRotationFactor(PlanetSize size) {
+    float SizeRotationFactor(PlanetSize size) {
         switch (size) {
-        case SZ_TINY:     return 1.5;
-        case SZ_SMALL:    return 1.25;
-        case SZ_MEDIUM:   return 1.0;
-        case SZ_LARGE:    return 0.75;
-        case SZ_HUGE:     return 0.5;
-        case SZ_GASGIANT: return 0.25;
-        default:          return 1.0;
+        case SZ_TINY:     return 1.5f;
+        case SZ_SMALL:    return 1.25f;
+        case SZ_MEDIUM:   return 1.0f;
+        case SZ_LARGE:    return 0.75f;
+        case SZ_HUGE:     return 0.5f;
+        case SZ_GASGIANT: return 0.25f;
+        default:          return 1.0f;
         }
-        return 1.0;
+        return 1.0f;
     }
 
     static const std::string EMPTY_STRING;
@@ -43,7 +43,7 @@ namespace {
 // Year
 ////////////////////////////////////////////////////////////
 Year::Year(Day d) :
-    TypesafeDouble(d / 360.0)
+    TypesafeFloat(d / 360.0f)
 {}
 
 
@@ -57,10 +57,10 @@ Planet::Planet() :
     m_type(PT_TERRAN),
     m_original_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
-    m_orbital_period(1.0),
-    m_initial_orbital_position(0.0),
-    m_rotational_period(1.0),
-    m_axial_tilt(23.0),
+    m_orbital_period(1.0f),
+    m_initial_orbital_position(0.0f),
+    m_rotational_period(1.0f),
+    m_axial_tilt(23.0f),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
@@ -80,9 +80,9 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_type(type),
     m_original_type(type),
     m_size(size),
-    m_orbital_period(1.0),
-    m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159),
-    m_rotational_period(1.0),
+    m_orbital_period(1.0f),
+    m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159f),
+    m_rotational_period(1.0f),
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
@@ -816,23 +816,23 @@ std::set<int> Planet::VisibleContainedObjects(int empire_id) const {
 
 // free functions
 
-double PlanetRadius(PlanetSize size) {
-    double retval = 0.0;
+float PlanetRadius(PlanetSize size) {
+    float retval = 0.0f;
     switch (size) {
-    case INVALID_PLANET_SIZE: retval = 0.0; break;
-    case SZ_NOWORLD:          retval = 0.0; break;
-    case SZ_TINY:             retval = 2.0; break;
-    case SZ_SMALL:            retval = 3.5; break;
+    case INVALID_PLANET_SIZE: retval = 0.0f; break;
+    case SZ_NOWORLD:          retval = 0.0f; break;
+    case SZ_TINY:             retval = 2.0f; break;
+    case SZ_SMALL:            retval = 3.5f; break;
     default:
-    case SZ_MEDIUM:           retval = 5.0; break;
-    case SZ_LARGE:            retval = 7.0; break;
-    case SZ_HUGE:             retval = 9.0; break;
-    case SZ_ASTEROIDS:        retval = 0.0; break;
-    case SZ_GASGIANT:         retval = 11.0; break; // this one goes to eleven
-    case NUM_PLANET_SIZES:    retval = 0.0; break;
+    case SZ_MEDIUM:           retval = 5.0f; break;
+    case SZ_LARGE:            retval = 7.0f; break;
+    case SZ_HUGE:             retval = 9.0f; break;
+    case SZ_ASTEROIDS:        retval = 0.0f; break;
+    case SZ_GASGIANT:         retval = 11.0f; break; // this one goes to eleven
+    case NUM_PLANET_SIZES:    retval = 0.0f; break;
     };
     return retval;
 }
 
-double AsteroidBeltRadius()
-{ return 12.5; }
+float AsteroidBeltRadius()
+{ return 12.5f; }

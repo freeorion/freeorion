@@ -60,16 +60,16 @@ public:
     std::list<MovePathNode>             MovePath(bool flag_blockades = false) const;              ///< Returns MovePath for fleet's current TravelRoute
     std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
-    double                              Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
-    double                              Structure() const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
-    double                              Shields() const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
-    double                              Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
-    double                              MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
+    float                               Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
+    float                               Structure() const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
+    float                               Shields() const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
+    float                               Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
+    float                               MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
     int                                 FinalDestinationID() const          { return m_moving_to; }     ///< Returns ID of system that this fleet is moving to.
     int                                 PreviousSystemID() const            { return m_prev_system; }   ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int                                 NextSystemID() const                { return m_next_system; }   ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     bool                                BlockadedAtSystem(int start_system_id, int dest_system_id) const; ///< returns true iff this fleet's movement would be blockaded at system.
-    double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
+    float                               Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool                                CanChangeDirectionEnRoute() const   { return false; }           ///< Returns true iff this fleet can change its direction while in interstellar space.
     bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
@@ -151,7 +151,7 @@ protected:
         m_arrival_starlane(INVALID_OBJECT_ID)
     {}
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
-    
+
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
     ~Fleet() {}

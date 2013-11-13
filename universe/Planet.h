@@ -9,70 +9,70 @@
 
 #include "../util/Export.h"
 
-/** A type that is implicitly convertible to and from double, but which is not
+/** A type that is implicitly convertible to and from float, but which is not
     implicitly convertible among other numeric types. */
-class TypesafeDouble {
+class TypesafeFloat {
 public:
-    TypesafeDouble() : m_value(0.0) {}
-    TypesafeDouble(double d) : m_value(d) {}
-    operator double () const { return m_value; }
+    TypesafeFloat() : m_value(0.0f) {}
+    TypesafeFloat(float f) : m_value(f) {}
+    operator float () const { return m_value; }
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
     { ar & BOOST_SERIALIZATION_NVP(m_value); }
 
 private:
-    double m_value;
+    float m_value;
 };
 
 class Day;
 
 /** A value type representing a "year".  A "year" is arbitrarily defined to be 4
     turns. */
-class Year : public TypesafeDouble {
+class Year : public TypesafeFloat {
 public:
-    Year() : TypesafeDouble() {}
-    Year(double d) : TypesafeDouble(d) {}
+    Year() : TypesafeFloat() {}
+    Year(float f) : TypesafeFloat(f) {}
     explicit Year(Day d);
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
 };
 
 /** A value type representing a "day".  A "day" is arbitrarily defined to be
     1/360 of a "year", and 1/90 of a turn. */
-class Day : public TypesafeDouble {
+class Day : public TypesafeFloat {
 public:
-    Day() : TypesafeDouble() {}
-    Day(double d) : TypesafeDouble(d) {}
-    explicit Day(Year y) : TypesafeDouble(y * 360.0) {}
+    Day() : TypesafeFloat() {}
+    Day(float f) : TypesafeFloat(f) {}
+    explicit Day(Year y) : TypesafeFloat(y * 360.0f) {}
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
 };
 
 /** A value type used to represent an angle in radians. */
-class Radian : public TypesafeDouble {
+class Radian : public TypesafeFloat {
 public:
-    Radian() : TypesafeDouble() {}
-    Radian(double d) : TypesafeDouble(d) {}
+    Radian() : TypesafeFloat() {}
+    Radian(float f) : TypesafeFloat(f) {}
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
 };
 
 /** A value type used to represent an angle in degrees. */
-class Degree : public TypesafeDouble {
+class Degree : public TypesafeFloat {
 public:
-    Degree() : TypesafeDouble() {}
-    Degree(double d) : TypesafeDouble(d) {}
+    Degree() : TypesafeFloat() {}
+    Degree(float f) : TypesafeFloat(f) {}
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
 };
 
 /** a class representing a FreeOrion planet. */
@@ -231,11 +231,11 @@ private:
 /** Returns the radius, in tactical combat units, of a planet.  Note that 0.0
     is returned for PlanetSize enumerators that have no size, whereas
     PlanetRadius(SZ_MEDIUM) is returned for unknown values. */
-FO_COMMON_API double PlanetRadius(PlanetSize size);
+FO_COMMON_API float PlanetRadius(PlanetSize size);
 
 /** Returns the radius, in tactical combat units, of the tube in which an
     asteroid belt lies. */
-FO_COMMON_API double AsteroidBeltRadius();
+FO_COMMON_API float AsteroidBeltRadius();
 
 #endif // _Planet_h_
 

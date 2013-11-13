@@ -27,25 +27,25 @@ namespace {
     const Ogre::Real IGNORE_DISTANCE = FLT_MAX;
 
     const Ogre::Real NEAR_CLIP = 0.01f;
-    const Ogre::Real FAR_CLIP = 4.0 * SystemRadius();
+    const Ogre::Real FAR_CLIP = 4.0f * SystemRadius();
 
-    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0 * SystemRadius();
-    const Ogre::Real MIN_ZOOM_IN_DISTANCE = PlanetRadius(SZ_GASGIANT) * 1.05;
+    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0f * SystemRadius();
+    const Ogre::Real MIN_ZOOM_IN_DISTANCE = static_cast<Ogre::Real>(PlanetRadius(SZ_GASGIANT) * 1.05f);
 
     const Ogre::Vector3 INVALID_MAP_LOCATION(FLT_MAX, FLT_MAX, FLT_MAX);
 
     Ogre::Real ZoomFactor(GG::Flags<GG::ModKey> mod_keys)
     {
-        Ogre::Real retval = 1.0;
+        Ogre::Real retval = 1.0f;
         if (mod_keys & GG::MOD_KEY_SHIFT)
-            retval *= 2.0;
+            retval *= 2.0f;
         if (mod_keys & GG::MOD_KEY_CTRL)
-            retval /= 4.0;
+            retval /= 4.0f;
         return retval;
     }
 
     Ogre::Real TotalMove(int move, GG::Flags<GG::ModKey> mod_keys, Ogre::Real current_distance)
-    { return current_distance * 0.25 * ZoomFactor(mod_keys) * -move; }
+    { return current_distance * 0.25f * ZoomFactor(mod_keys) * -move; }
 
     class AnimableCamera :
         public Ogre::AnimableValue

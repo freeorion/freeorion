@@ -185,8 +185,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         return retval;                                      // can't move => path is just this system with explanatory ETA
     }
 
-    double fuel =       Fuel();
-    double max_fuel =   MaxFuel();
+    float fuel =       Fuel();
+    float max_fuel =   MaxFuel();
 
     //Logger().debugStream() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
 
@@ -495,9 +495,9 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
     return std::make_pair(last_stop_eta, first_stop_eta);
 }
 
-double Fleet::Fuel() const {
+float Fleet::Fuel() const {
     if (NumShips() < 1)
-        return 0.0;
+        return 0.0f;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
     float fuel = Meter::LARGE_VALUE;
@@ -519,14 +519,14 @@ double Fleet::Fuel() const {
         } 
     }
     if (is_fleet_scrapped) {
-        fuel = 0.0;
+        fuel = 0.0f;
     }
     return fuel;
 }
 
-double Fleet::MaxFuel() const {
+float Fleet::MaxFuel() const {
     if (NumShips() < 1)
-        return 0.0;
+        return 0.0f;
 
     // determine the maximum amount of fuel that can be stored by the ship in the fleet that
     // can store the least amount of fuel
@@ -549,7 +549,7 @@ double Fleet::MaxFuel() const {
         }
     }
     if (is_fleet_scrapped) {
-        max_fuel = 0.0;
+        max_fuel = 0.0f;
     }
     return max_fuel;
 }
@@ -914,7 +914,7 @@ void Fleet::MovementPhase() {
 
 
     // move fleet in sequence to MovePathNodes it can reach this turn
-    double fuel_consumed = 0.0;
+    float fuel_consumed = 0.0f;
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
@@ -1204,7 +1204,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
     }
 
-    float lowestShipStealth = 99999;
+    float lowestShipStealth = 99999.9f;
     for (std::set<int>::const_iterator ship_it = this->ShipIDs().begin(); ship_it != this->ShipIDs().end(); ++ship_it) {
         TemporaryPtr<const Ship> ship = GetShip(*ship_it);
         if ((ship) && lowestShipStealth > ship->CurrentMeterValue(METER_STEALTH))
@@ -1213,7 +1213,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
     std::vector<int> system_fleet_ids = current_system->FindObjectIDs<Fleet>();
 
-    float monsterDetection = 0;
+    float monsterDetection = 0.0f;
     for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
         TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
         if (!fleet->Unowned())
@@ -1257,12 +1257,12 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
 } 
 
-double Fleet::Speed() const {
+float Fleet::Speed() const {
     if (m_ships.empty())
-        return 0.0;
+        return 0.0f;
 
     bool isFleetScrapped = true;
-    double retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
+    float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
@@ -1274,17 +1274,17 @@ double Fleet::Speed() const {
     }
 
     if (isFleetScrapped)
-        retval = 0.0;
+        retval = 0.0f;
 
     return retval;
 }
 
-double Fleet::Damage() const {
+float Fleet::Damage() const {
     if (m_ships.empty())
-        return 0.0;
+        return 0.0f;
 
     bool isFleetScrapped = true;
-    double retval = 0.0;
+    float retval = 0.0f;
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
@@ -1297,17 +1297,17 @@ double Fleet::Damage() const {
     }
 
     if (isFleetScrapped)
-        retval = 0.0;
+        retval = 0.0f;
 
     return retval;
 }
 
-double Fleet::Structure() const {
+float Fleet::Structure() const {
     if (m_ships.empty())
-        return 0.0;
+        return 0.0f;
 
     bool isFleetScrapped = true;
-    double retval = 0.0;
+    float retval = 0.0f;
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
@@ -1318,28 +1318,28 @@ double Fleet::Structure() const {
     }
 
     if (isFleetScrapped)
-        retval = 0.0;
+        retval = 0.0f;
 
     return retval;
 }
 
-double Fleet::Shields() const {
+float Fleet::Shields() const {
     if (m_ships.empty())
-        return 0.0;
+        return 0.0f;
 
     bool isFleetScrapped = true;
-    double retval = 0.0;
+    float retval = 0.0f;
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
-            if (!ship->OrderedScrapped()) {                
-                retval += ship->CurrentMeterValue(METER_SHIELD);                
+            if (!ship->OrderedScrapped()) {
+                retval += ship->CurrentMeterValue(METER_SHIELD);
                 isFleetScrapped = false;
             }
         }
     }
 
     if (isFleetScrapped)
-        retval = 0.0;
+        retval = 0.0f;
 
     return retval;
 }

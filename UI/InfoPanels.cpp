@@ -169,11 +169,7 @@ namespace {
             break;
 
         case RE_TRADE:
-            // maintenance cost of this object
-            if (building = dynamic_ptr_cast<const Building>(obj))
-                if (const BuildingType* type = GetBuildingType(building->BuildingTypeName()))
-                    return type->MaintenanceCost();
-            return 0.0; // if not a building, doesn't presently consume trade
+            return 0.0;
             break;
 
         case RE_RESEARCH:

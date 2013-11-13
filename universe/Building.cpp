@@ -234,7 +234,7 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-double BuildingType::ProductionCost(int empire_id, int location_id) const {
+float BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
         return 1.0;
     } else {
@@ -243,7 +243,7 @@ double BuildingType::ProductionCost(int empire_id, int location_id) const {
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
-            return 999999.9;    // arbitrary large number
+            return 999999.9f;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
@@ -252,7 +252,7 @@ double BuildingType::ProductionCost(int empire_id, int location_id) const {
     }
 }
 
-double BuildingType::PerTurnCost(int empire_id, int location_id) const
+float BuildingType::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int BuildingType::ProductionTime(int empire_id, int location_id) const {

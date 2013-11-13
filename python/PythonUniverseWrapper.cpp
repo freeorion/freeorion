@@ -515,7 +515,6 @@ namespace FreeOrionPython {
             .def("productionCost",              &BuildingType::ProductionCost)
             .def("productionTime",              &BuildingType::ProductionTime)
             .def("perTurnCost",                 &BuildingType::PerTurnCost)
-            .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
             .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
         ;
