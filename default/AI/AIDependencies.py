@@ -16,5 +16,6 @@ outpostPodCost = 80
 shipUpkeep = 0.01
 
 outposting_tech = "CON_ENV_ENCAPSUL"
+supply_range_techs = ["CON_ORBITAL_CON", "CON_CONTGRAV_ARCH",  "CON_GAL_INFRA"]
 
 

@@ -38,6 +38,8 @@ curBestPilotRating = 1e-8
 curMidPilotRating = 1e-8
 pilotRatings = {}
 colony_status = {}
+pop_map = {}
+empire_status = {'industrialists':0,  'researchers':0} 
 
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
@@ -155,11 +157,11 @@ def getColonyFleets():
     annexableRing3.clear()
     annexablePlanetIDs.clear()
     supply_distance = 1
-    for tech in ["CON_ORBITAL_CON", "CON_CONTGRAV_ARCH",  "CON_GAL_INFRA"]:
+    for tech in AIDependencies.supply_range_techs:
         if empire.getTechStatus(tech) == fo.techStatus.complete:
             supply_distance += 1 
     if foAI.foAIstate.aggression >= fo.aggression.aggressive:
-            supply_distance += 1 
+        supply_distance += 1 
     for sysID in empire.fleetSupplyableSystemIDs:
         annexableSystemIDs.add(sysID) #add fleet supplyable system
         for nID in  universe.getImmediateNeighbors(sysID,  empireID):
@@ -227,6 +229,9 @@ def getColonyFleets():
     AIstate.outpostIDs[:]=list(empireOutpostIDs)
     AIstate.outpostSystemIDs[:]=list(set(PlanetUtilsAI.getSystems(empireOutpostIDs)))
     AIstate.colonizedSystems.clear()
+    pop_map.clear()
+    empire_status.clear()
+    empire_status.update( {'industrialists':0,  'researchers':0} )
     for pid in empireOwnedPlanetIDs:
         planet=universe.getPlanet(pid)
         if planet:
@@ -237,6 +242,12 @@ def getColonyFleets():
                 gotAst = True
             elif planet.size == fo.planetSize.gasGiant:
                 gotGG = True
+            planetPopulation = planet.currentMeterValue(fo.meterType.population)
+            pop_map[pid] = planetPopulation
+            if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
+                empire_status['industrialists'] += planetPopulation
+            elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
+                empire_status['researchers'] += planetPopulation
     AIstate.empireStars.clear()
     for sysID in AIstate.colonizedSystems:
         system = universe.getSystem(sysID)
@@ -766,10 +777,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                     if otherPlanet.size == fo.planetSize.asteroids:
                         if pid==planetID:
                             continue
-                        elif pid < planetID:
+                        elif pid < planetID and planet.unowned:
                             astVal=0
                             break
-                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                    elif otherPlanet.speciesName!="": #and otherPlanet.owner==empire.empireID
                         astVal+= per_ast * discountMultiplier
                 retval += astVal
                 if astVal >0:
@@ -785,10 +796,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                     if otherPlanet.size == fo.planetSize.asteroids:
                         if pid==planetID:
                             continue
-                        elif pid < planetID:
+                        elif pid < planetID  and planet.unowned:
                             astVal=0
                             break
-                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                    elif otherPlanet.speciesName!="": #and otherPlanet.owner==empire.empireID
                         otherSpecies = fo.getSpecies(otherPlanet.speciesName)
                         if otherSpecies and otherSpecies.canProduceShips:
                             astVal+= per_ast * discountMultiplier
@@ -879,19 +890,19 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                         if p2.owner != -1:
                             gotOwnedGG = True
         if gotAsteroids:
-            if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
+            if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:10]) ):
                 if gotOwnedAsteroids: #can be quickly captured
                     flat_industry += 5 #will go into detailed industry projection
                     detail.append( "Asteroid mining ~ %.1f"%(5*discountMultiplier  )  )
                 else: #uncertain when can be outposted
                     asteroidBonus = 2.5*discountMultiplier #give partial value
                     detail.append( "Asteroid mining %.1f"%(5*discountMultiplier  )  )
-            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:8]) :
+            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:11]) :
                 if species and species.canProduceShips:
                     asteroidBonus += 30*discountMultiplier*pilotVal
                     detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    discountMultiplier*20*pilotVal  )  )
         if got_GG:
-            if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):
+            if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:5]) ):
                 if gotOwnedGG:
                     flat_industry += perGGG #will go into detailed industry projection
                     detail.append( "GGG ~  %.1f"%( perGGG * discountMultiplier  )  )

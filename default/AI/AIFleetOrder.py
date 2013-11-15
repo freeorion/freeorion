@@ -325,7 +325,7 @@ class AIFleetOrder(object):
                 myOtherFleetsRatings =   [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {})  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ]
                 #myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0)  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ])
                 myOtherFleetsRating =   foAI.foAIstate.systemStatus.get( targetID, {}).get('myFleetRating', 0)
-                if  (myOtherFleetsRating > safetyFactor* threat) or (myOtherFleetsRating + fleetRating  > 1.5*safetyFactor*threat):
+                if  (myOtherFleetsRating > 1.5 * safetyFactor * threat) or (myOtherFleetsRating + fleetRating  > 2.0 * safetyFactor * threat):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
                     return True

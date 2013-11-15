@@ -10,7 +10,9 @@ import ProductionAI
 import AIAbstractMission
 import EnumsAI
 import MilitaryAI
-
+import InvasionAI
+import PlanetUtilsAI
+import math
 
 AIFleetMissionTypeNames = EnumsAI.AIFleetMissionType()
 AIShipRoleTypeNames = EnumsAI.AIShipRoleType()
@@ -230,7 +232,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 return False
             if aiTarget.target_type == EnumsAI.AITargetType.TARGET_PLANET:
                 planet = universe.getPlanet(aiTarget.target_id)
-                if not planet.unowned or planet.owner!=fleet.owner:
+                if not planet.unowned or planet.owner!=fleet.owner:#TODO remove latter portion of this check in light of invasion retargeting, or else correct logic
                     return True
         elif aiFleetMissionType in [ EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY,  EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE,  EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]:
             universe = fo.getUniverse()
@@ -252,6 +254,93 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             for aiTarget in allAITargets:
                 if not self.isValidFleetMissionAITarget(aiFleetMissionType, aiTarget):
                     self.removeAITarget(aiFleetMissionType, aiTarget)
+                    
+    def check_abort_mission(self,  aiFleetOrder):
+        "checks if current mission should be aborted"
+        abort_mission = False
+        universe=fo.getUniverse()
+        planet = universe.getPlanet(aiFleetOrder.getTargetAITarget().target_id)
+        if  not planet:
+            abort_mission =True
+        elif    ((aiFleetOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_COLONISE) and
+                  ( (planet.currentMeterValue(fo.meterType.population) >0) or  not ( planet.unowned  or planet.ownedBy(fo.empireID()) ) )) :
+            abort_mission =True
+        elif (aiFleetOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_OUTPOST) and (not planet.unowned):
+            abort_mission =True
+        if abort_mission:
+            print "   %s"%(aiFleetOrder)
+            print "Fleet %d had a target planet that is no longer valid for this mission; aborting."%(self.target_id)
+            self.clearAIFleetOrders()
+            self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
+            FleetUtilsAI.splitFleet(self.target_id)
+            return True
+        elif aiFleetOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_INVADE:
+            pass
+        return False
+        
+    def check_retarget_invasion(self):
+        "checks if an invasion mission should be retargeted"
+        universe=fo.getUniverse()
+        empire = fo.getEmpire()
+        empire_id = fo.empireID()
+        fleet_id = self.target_id
+        fleet=universe.getFleet(fleet_id)
+        if fleet.systemID == -1:
+            #next_loc=fleet.nextSystemID
+            return #TODO: still check
+        system = universe.getSystem(fleet.systemID)
+        if not system:
+            return
+        orders=self.getAIFleetOrders()
+        last_sys_target = -1
+        if orders:
+            last_sys_target = orders[-1].getTargetAITarget().target_id
+        if last_sys_target == fleet.systemID:
+            return #TODO: check for best local target
+        open_targets = []
+        already_targeted = InvasionAI.getInvasionTargetedPlanetIDs(system.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, empire_id)
+        for pid in system.planetIDs:
+            if pid in already_targeted or (pid in foAI.foAIstate.qualifyingTroopBaseTargets):
+                continue
+            planet = universe.getPlanet(pid)
+            if planet.unowned or (planet.owner == empire_id):
+                continue
+            if  (planet.currentMeterValue(fo.meterType.shield)) <= 0:
+                open_targets.append(pid)
+        if not open_targets:
+            return
+        troop_pod_tally = FleetUtilsAI.countPartsFleetwide(fleet_id, ["GT_TROOP_POD"])
+        targetID=-1
+        bestScore=-1
+        target_troops = 0
+        #
+        fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+        fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
+        for pid,  rating in InvasionAI.assignInvasionValues(open_targets, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire).items():
+            p_score,  p_troops = rating
+            if p_score>bestScore:
+                if p_troops >= 2*troop_pod_tally:
+                    continue
+                bestScore = p_score
+                targetID = pid
+                target_troops = p_troops
+        if targetID == -1:
+            return
+        
+        newFleets=FleetUtilsAI.splitFleet(fleet_id)
+        self.clearAITargets(-1)#TODO: clear from foAIstate
+        self.clearAIFleetOrders()
+        podsNeeded= max(0,  math.ceil( (target_troops - 2*(FleetUtilsAI.countPartsFleetwide(fleet_id, ["GT_TROOP_POD"]))+0.05)/2.0) )
+        foundStats={}
+        minStats= {'rating':0, 'troopPods':podsNeeded}
+        targetStats={'rating':10,'troopPods':podsNeeded}
+        foundFleets = []
+        theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[fleet.systemID],  systemsChecked=[], fleetPoolSet=set(newFleets),   fleetList=foundFleets,  verbose=False)
+        for fid2 in foundFleets:
+            FleetUtilsAI.mergeFleetAintoB(fid2,  fleet_id)
+        aiTarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_PLANET, targetID)
+        self.addAITarget(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, aiTarget)
+        self.generateAIFleetOrders()
 
     def issueAIFleetOrders(self):
         "issues AIFleetOrders which can be issued in system and moves to next one if is possible"
@@ -264,25 +353,16 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         for aiFleetOrder2 in self.getAIFleetOrders():
             print "\t\t %s"%aiFleetOrder2
         print "/t/t------"
+        if EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION in self.getAIMissionTypes():
+            self.check_retarget_invasion()
         for aiFleetOrder in self.getAIFleetOrders():
             print "  checking Order: %s"%(aiFleetOrder)
             clearAll=False
-            if aiFleetOrder.getAIFleetOrderType() in [EnumsAI.AIFleetOrderType.ORDER_COLONISE,  EnumsAI.AIFleetOrderType.ORDER_OUTPOST]:#TODO: invasion?
-                universe=fo.getUniverse()
-                planet = universe.getPlanet(aiFleetOrder.getTargetAITarget().target_id)
-                if  not planet:
-                    clearAll =True
-                elif aiFleetOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_COLONISE :
-                    if  ( (planet.currentMeterValue(fo.meterType.population) >0) or  not ( planet.unowned  or planet.ownedBy(fo.empireID()) ) ) :
-                        clearAll =True
-                elif not planet.unowned:
-                    clearAll =True
-                if clearAll:
-                    print "   %s"%(aiFleetOrder)
-                    print "Fleet %d had a target planet that is no longer valid for this mission; aborting."%(self.target_id)
-                    self.clearAIFleetOrders()
-                    self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
-                    FleetUtilsAI.splitFleet(self.target_id)
+            if aiFleetOrder.getAIFleetOrderType() in [
+                                                      EnumsAI.AIFleetOrderType.ORDER_COLONISE,  
+                                                      EnumsAI.AIFleetOrderType.ORDER_OUTPOST,  
+                                                      EnumsAI.AIFleetOrderType.ORDER_INVADE]:#TODO: invasion?
+                if self.check_abort_mission(aiFleetOrder):
                     return
             self.checkMergers(context=str(aiFleetOrder))
             if aiFleetOrder.canIssueOrder(verbose=True):

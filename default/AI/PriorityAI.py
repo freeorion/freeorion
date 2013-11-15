@@ -113,6 +113,7 @@ def calculateResearchPriority():
     gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
     researchQueueList = ResearchAI.getResearchQueueTechs()
     orbGenTech = "PRO_ORBITAL_GEN"
+    got_orb_gen = (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete)
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
@@ -122,19 +123,19 @@ def calculateResearchPriority():
     planets = map(universe.getPlanet,  ownedPlanetIDs)
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
-    styleIndex = empireID%2
+    styleIndex =  (empireID%3)%2
     cutoffSets =  [ [25, 45, 70  ],  [35,  50,  70  ]   ]
     cutoffs = cutoffSets[styleIndex  ]
-    settings = [ [2, .6, .4, .35  ],  [1.4,  .7,  .4, .35   ]   ][styleIndex  ]
+    settings = [ [1.4, .7, .4, .35  ],  [2.0,  1.0,  .6, .35   ]   ][styleIndex  ]
 
     if industrySurge and True:
         researchPriority =  0.2 * industryPriority
     else:
-        if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
+        if  (fo.currentTurn() < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
             researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
-        elif fo.currentTurn() < cutoffs[1]:
+        elif (not got_orb_gen) or (fo.currentTurn() < cutoffs[1]) :
             researchPriority = settings[1] * industryPriority# med-high research
-        elif (fo.currentTurn() < cutoffs[2]) or (empire.getTechStatus("PRO_ORBITAL_GEN") != fo.techStatus.complete):
+        elif (fo.currentTurn() < cutoffs[2]):
             researchPriority = settings[2] * industryPriority # med-high  industry
         else:
             researchQueue = list(empire.researchQueue)
@@ -153,6 +154,7 @@ def calculateResearchPriority():
     if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
             (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
             (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
+        industry_factor = [ [0.2,  0.25],  [0.25,  0.3] ][styleIndex ]
         if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete):
             researchPriority = min(researchPriority,  0.2*industryPriority) # high  industry , very very low research
         else:
