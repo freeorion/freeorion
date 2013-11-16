@@ -106,6 +106,7 @@
     <ClCompile Include="..\..\parse\ConditionParser3.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser4.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser5.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser6.cpp" />
     <ClCompile Include="..\..\parse\Double.cpp" />
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\EffectParser.cpp" />
