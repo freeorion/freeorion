@@ -155,6 +155,9 @@
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser5.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">

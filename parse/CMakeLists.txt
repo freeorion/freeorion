@@ -31,6 +31,7 @@ add_library(freeorionparse
     ConditionParser2.cpp
     ConditionParser3.cpp
     ConditionParser4.cpp
+    ConditionParser5.cpp
     EffectParser.cpp
     EffectParser1.cpp
     EffectParser2.cpp
