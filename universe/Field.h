@@ -77,7 +77,7 @@ public:
 
     /** basic ctor */
     FieldType(const std::string& name, const std::string& description,
-              double stealth, const std::set<std::string>& tags,
+              float stealth, const std::set<std::string>& tags,
               const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
               const std::string& graphic);
     ~FieldType(); ///< dtor
@@ -87,7 +87,7 @@ public:
     const std::string&              Name() const            { return m_name; }          ///< returns the unique name for this type of field
     const std::string&              Description() const     { return m_description; }   ///< returns a text description of this type of building
     std::string                     Dump() const;                                       ///< returns a data file format representation of this object
-    double                          Stealth() const         { return m_stealth; }       ///< returns stealth of field type
+    float                           Stealth() const         { return m_stealth; }       ///< returns stealth of field type
     const std::set<std::string>&    Tags() const            { return m_tags; }
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects of this FieldType
@@ -97,7 +97,7 @@ public:
 private:
     std::string                                                 m_name;
     std::string                                                 m_description;
-    double                                                      m_stealth;
+    float                                                       m_stealth;
     std::set<std::string>                                       m_tags;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;

@@ -28,7 +28,7 @@ namespace {
         PartTypeStringVisitor(std::string& str) :
             m_str(str)
         {}
-        void operator()(const double& d) const
+        void operator()(const float& d) const
         { m_str = "capacity stat"; }
         void operator()(const DirectFireStats& stats) const
         { m_str = "direct-fire weapon stats"; }
@@ -474,21 +474,21 @@ bool PartType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-double PartType::ProductionCost(int empire_id, int location_id) const {
+float PartType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
-        return 1.0;
+        return 1.0f;
     } else {
         if (ValueRef::ConstantExpr(m_production_cost))
-            return m_production_cost->Eval();
+            return static_cast<float>(m_production_cost->Eval());
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
-            return 999999.9;    // arbitrary large number
+            return 999999.9f;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
-        return m_production_cost->Eval(context);
+        return static_cast<float>(m_production_cost->Eval(context));
     }
 }
 
@@ -565,21 +565,21 @@ bool HullType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-double HullType::ProductionCost(int empire_id, int location_id) const {
+float HullType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
-        return 1.0;
+        return 1.0f;
     } else {
         if (ValueRef::ConstantExpr(m_production_cost))
-            return m_production_cost->Eval();
+            return static_cast<float>(m_production_cost->Eval());
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
-            return 999999.9;    // arbitrary large number
+            return 999999.9f;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         ScriptingContext context(source, location);
 
-        return m_production_cost->Eval(context);
+        return static_cast<float>(m_production_cost->Eval(context));
     }
 }
 
@@ -767,21 +767,21 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-double ShipDesign::ProductionCost(int empire_id, int location_id) const {
+float ShipDesign::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION) {
-        return 1.0;
+        return 1.0f;
     } else {
-        double cost_accumulator = 0.0;
+        float cost_accumulator = 0.0f;
         if (const HullType* hull = GetHullType(m_hull))
             cost_accumulator += hull->ProductionCost(empire_id, location_id);
         for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
             if (const PartType* part = GetPartType(*it))
                 cost_accumulator += part->ProductionCost(empire_id, location_id);
-        return std::max(0.0, cost_accumulator);
+        return std::max(0.0f, cost_accumulator);
     }
 }
 
-double ShipDesign::PerTurnCost(int empire_id, int location_id) const
+float ShipDesign::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int ShipDesign::ProductionTime(int empire_id, int location_id) const {
@@ -816,7 +816,7 @@ bool ShipDesign::CanColonize() const {
 //// TEMPORARY
 float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
-    double total_defense = 0.0;
+    float total_defense = 0.0f;
     const PartTypeManager& part_manager = GetPartTypeManager();
     std::vector<std::string> all_parts = Parts();
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {

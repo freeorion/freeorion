@@ -157,7 +157,7 @@ void Field::ClampMeters() {
 // FieldType                                   //
 /////////////////////////////////////////////////
 FieldType::FieldType(const std::string& name, const std::string& description,
-                     double stealth, const std::set<std::string>& tags,
+                     float stealth, const std::set<std::string>& tags,
                      //const Condition::ConditionBase* location,
                      const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                      const std::string& graphic) :
@@ -169,7 +169,7 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     m_effects(effects),
     m_graphic(graphic)
 {
-    if (m_stealth != 0)
+    if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
 }
 

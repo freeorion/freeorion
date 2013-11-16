@@ -46,7 +46,6 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
-            qi::_f_type _f;
             qi::_r1_type _r1;
             using phoenix::new_;
 
@@ -56,13 +55,11 @@ namespace {
                 >   parse::label(Description_token)          >> tok.string [ _b = _1 ]
                 >   parse::label(Stealth_token)              >> parse::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
-                //>   -(
-                //        parse::label(Location_token)         >> parse::detail::condition_parser [ _e = _1 ]
-                //     )
                 >   -(
-                        parse::label(EffectsGroups_token)    >> parse::detail::effects_group_parser() [ _f = _1 ]
+                        parse::label(EffectsGroups_token)    >> parse::detail::effects_group_parser() [ _e = _1 ]
                      )
-                >    parse::label(Graphic_token) >> tok.string [ insert(_r1, new_<FieldType>(_a, _b, _c, _d,/* _e, */_f, _1)) ]
+                >    parse::label(Graphic_token) >> tok.string
+                     [ insert(_r1, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -84,9 +81,8 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                double,
+                float,
                 std::set<std::string>,
-                Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
             >,
             parse::skipper_type

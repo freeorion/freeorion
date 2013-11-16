@@ -33,8 +33,8 @@ namespace Effect {
     struct AccountingInfo : public EffectCause {
         AccountingInfo();           ///< default ctor
         int     source_id;          ///< source object of effect
-        double  meter_change;       ///< net change on meter due to this effect, as best known by client's empire
-        double  running_meter_total;///< meter total as of this effect.
+        float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire
+        float   running_meter_total;///< meter total as of this effect.
     };
 
     /** Effect accounting information for all meters of all objects that are

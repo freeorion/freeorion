@@ -69,7 +69,7 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    double getMainStat(ShipPartClass spclass, PartTypeStats spstats)  {
+    float getMainStat(ShipPartClass spclass, PartTypeStats spstats)  {
         switch (spclass) {
             case PC_SHORT_RANGE:
             case PC_POINT_DEFENSE: {
@@ -99,7 +99,7 @@ namespace {
                 break;
             case PC_GENERAL:
             default:
-                return 0;
+                return 0.9f;
         }
     }
     typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::vector<const PartType* > > partGroupsType;
@@ -344,13 +344,15 @@ partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
     return partGroups;
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id) {
+void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& thisGroup,
+                                        ShipPartClass pclass, int empire_id, int loc_id)
+{
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
     for (std::vector<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
         const PartType* checkPart = *part_it;
         for (std::vector<const PartType* >::iterator check_it = thisGroup.begin(); check_it != thisGroup.end(); ++check_it ) {
             const PartType* refPart = *check_it;
-            if ( (getMainStat(pclass, checkPart->Stats()) < getMainStat(pclass, refPart->Stats()) ) && 
+            if ( (getMainStat(pclass, checkPart->Stats()) < getMainStat(pclass, refPart->Stats()) ) &&
                 ( checkPart->ProductionCost(empire_id, loc_id) >= refPart->ProductionCost(empire_id, loc_id) ) &&
                 ( checkPart->ProductionTime(empire_id, loc_id) >= refPart->ProductionTime(empire_id, loc_id) ) ) {
                 thisGroup.erase(part_it--);
