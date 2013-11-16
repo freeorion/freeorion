@@ -2561,6 +2561,8 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
         return;
     }
     std::string tech_name = m_tech_name->Eval(context);
+    if (tech_name.empty())
+        return;
 
     const Tech* tech = GetTech(tech_name);
     if (!tech) {
