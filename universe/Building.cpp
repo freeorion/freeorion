@@ -227,9 +227,9 @@ namespace {
 bool BuildingType::ProductionCostTimeLocationInvariant() const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION)
         return true;
-    if (m_production_cost && !m_production_cost->LocalCandidateInvariant())
+    if (m_production_cost && !m_production_cost->TargetInvariant())
         return false;
-    if (m_production_time && !m_production_time->LocalCandidateInvariant())
+    if (m_production_time && !m_production_time->TargetInvariant())
         return false;
     return true;
 }
