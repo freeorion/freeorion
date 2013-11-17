@@ -379,6 +379,8 @@
 		82C0747F149DE83000E76876 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C560D117D0CC2F00FE3B35 /* Tokens.cpp */; };
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
+		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
+		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
@@ -1733,6 +1735,8 @@
 		82C560D117D0CC2F00FE3B35 /* Tokens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tokens.cpp; sourceTree = "<group>"; };
 		82C560D217D0CC2F00FE3B35 /* Tokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tokens.h; sourceTree = "<group>"; };
 		82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeModeratorAction.cpp; sourceTree = "<group>"; };
+		82D2D9A11838C8340011C212 /* ConditionParser5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser5.cpp; sourceTree = "<group>"; };
+		82D2D9A21838C8340011C212 /* ConditionParser6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser6.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
@@ -3511,6 +3515,8 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				82D2D9A11838C8340011C212 /* ConditionParser5.cpp */,
+				82D2D9A21838C8340011C212 /* ConditionParser6.cpp */,
 				829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */,
 				82C560D117D0CC2F00FE3B35 /* Tokens.cpp */,
 				82C560D217D0CC2F00FE3B35 /* Tokens.h */,
@@ -4267,6 +4273,8 @@
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
+				82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */,
+				82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
