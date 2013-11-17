@@ -719,7 +719,9 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             try {
                 LoadGame((save_dir / save_filename).string(),   *m_server_save_game_data,
                          m_player_save_game_data,               GetUniverse(),
-                         Empires(),     GetSpeciesManager(),    GetCombatLogManager());
+                         Empires(),     GetSpeciesManager(),    GetCombatLogManager(),
+                         server.m_galaxy_setup_data);
+
             } catch (const std::exception&) {
                 SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return discard_event();
@@ -925,7 +927,8 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             try {
                 LoadGame(m_single_player_setup_data->m_filename,            *m_server_save_game_data,
                          m_player_save_game_data,   GetUniverse(),          Empires(),
-                         GetSpeciesManager(),       GetCombatLogManager());
+                         GetSpeciesManager(),       GetCombatLogManager(),  server.m_galaxy_setup_data);
+
             } catch (const std::exception&) {
                 SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return transit<Idle>();
@@ -1017,7 +1020,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
+        int already_connected_players = m_expected_ai_player_names.size() +
+                                        server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             Logger().errorStream() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
@@ -1048,9 +1052,7 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
         if (m_player_save_game_data.empty())
             server.NewMPGameInit(*m_lobby_data);
         else
-            server.LoadMPGameInit(*m_lobby_data,
-                                  m_player_save_game_data,
-                                  m_server_save_game_data);
+            server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
         return transit<PlayingGame>();
     }
 
@@ -1071,9 +1073,16 @@ PlayingGame::~PlayingGame()
 sc::result PlayingGame::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if (msg.m_message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID || msg.m_message.ReceivingPlayer() == (*it)->PlayerID())
-            (*it)->SendMessage(SingleRecipientChatMessage(msg.m_message.SendingPlayer(), (*it)->PlayerID(), msg.m_message.Text()));
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        if (msg.m_message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID ||
+            msg.m_message.ReceivingPlayer() == (*it)->PlayerID())
+        {
+            (*it)->SendMessage(SingleRecipientChatMessage(msg.m_message.SendingPlayer(),
+                                                          (*it)->PlayerID(),
+                                                          msg.m_message.Text()));
+        }
     }
     return discard_event();
 }
@@ -1109,7 +1118,8 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 
         // update player(s) of changed gamestate as result of action
         server.m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING, player_id));
-        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
+        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id,
+                                                                 server.PlayerEmpireID(player_id),
                                                                  GetUniverse()));
     }
 
@@ -1370,9 +1380,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     m_player_save_game_data.push_back(
         PlayerSaveGameData(player_connection->PlayerName(),
                            server.PlayerEmpireID(message.SendingPlayer()),
-                           order_set,
-                           ui_data,
-                           save_state_string,
+                           order_set,       ui_data,    save_state_string,
                            client_type));
 
 
@@ -1389,7 +1397,8 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         try {
             SaveGame(save_filename,     server_data,    m_player_save_game_data,
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
-                     GetCombatLogManager());
+                     GetCombatLogManager(),             server.m_galaxy_setup_data);
+
         } catch (const std::exception&) {
             Logger().debugStream() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));

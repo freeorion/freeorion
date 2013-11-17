@@ -13,6 +13,7 @@ class Universe;
 class EmpireManager;
 class SpeciesManager;
 class CombatLogManager;
+class GalaxySetupData;
 
 /** Saves the provided data to savefile \a filename. */
 void SaveGame(const std::string& filename,
@@ -21,7 +22,8 @@ void SaveGame(const std::string& filename,
               const Universe& universe,
               const EmpireManager& empire_manager,
               const SpeciesManager& species_manager,
-              const CombatLogManager& combat_log_manager);
+              const CombatLogManager& combat_log_manager,
+              const GalaxySetupData& galaxy_setup_data);
 
 /** Loads the indicated data from savefile \a filename. */
 void LoadGame(const std::string& filename,
@@ -30,7 +32,8 @@ void LoadGame(const std::string& filename,
               Universe& universe,
               EmpireManager& empire_manager,
               SpeciesManager& species_manager,
-              CombatLogManager& combat_log_manager);
+              CombatLogManager& combat_log_manager,
+              GalaxySetupData& galaxy_setup_data);
 
 /** Loads from a savefile \a filename various non-gamestate information that is
   * needed when resuming a saved game.  This includes some player setup

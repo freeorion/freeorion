@@ -7,6 +7,7 @@
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <set>
 #include <vector>
@@ -112,7 +113,7 @@ public:
 
     /** Used post combat, to selectively clear the m_arrival_starlane flag of monsters
      *  so that they can impose blockades */
-    void UpdateMonsterTravelRestrictions();
+    void    UpdateMonsterTravelRestrictions();
 
     /** Determines resource and supply distribution pathes and connections,
       * updates research, production, trade spending,
@@ -241,6 +242,7 @@ private:
     int                     m_current_turn;         ///< current turn number
     std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
     bool                    m_single_player_game;   ///< true when the game being played is single-player
+    GalaxySetupData         m_galaxy_setup_data;    ///< stored setup data for the game currently being played
 
     /** Turn sequence map is used for turn processing. Each empire is added at
       * the start of a game or reload and then the map maintains OrderSets for

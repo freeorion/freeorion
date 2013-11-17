@@ -47,7 +47,8 @@ namespace {
 void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
               const std::vector<PlayerSaveGameData>& player_save_game_data,
               const Universe& universe, const EmpireManager& empire_manager,
-              const SpeciesManager& species_manager, const CombatLogManager& combat_log_manager)
+              const SpeciesManager& species_manager, const CombatLogManager& combat_log_manager,
+              const GalaxySetupData& galaxy_setup_data)
 {
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
@@ -68,6 +69,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         freeorion_oarchive oa(ofs);
+        oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
@@ -84,7 +86,8 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data,
               Universe& universe, EmpireManager& empire_manager,
-              SpeciesManager& species_manager, CombatLogManager& combat_log_manager)
+              SpeciesManager& species_manager, CombatLogManager& combat_log_manager,
+              GalaxySetupData& galaxy_setup_data)
 {
     //boost::this_thread::sleep(boost::posix_time::seconds(5));
 
@@ -113,10 +116,15 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
+
+        Logger().debugStream() << "LoadGame : Reading Galaxy Setup Data";
+        ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+
         Logger().debugStream() << "LoadGame : Reading Server Save Game Data";
         ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
         Logger().debugStream() << "LoadGame : Reading Player Save Game Data";
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+
         Logger().debugStream() << "LoadGame : Reading Empire Save Game Data (Ignored)";
         ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
         Logger().debugStream() << "LoadGame : Reading Empires Data";
@@ -134,8 +142,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     Logger().debugStream() << "LoadGame : Done loading save file";
 }
 
-void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data) {
-    ServerSaveGameData ignored_server_save_game_data;
+void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
 
     try {
 #ifdef FREEORION_WIN32
@@ -151,6 +158,36 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
+
+        ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+        // skipping additional deserialization which is not needed for this function
+    } catch (const std::exception& e) {
+        Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadPlayerSaveGameData exception: " << ": " << e.what();
+        throw e;
+    }
+}
+
+
+void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data) {
+    ServerSaveGameData  ignored_server_save_game_data;
+    GalaxySetupData     ignored_galaxy_setup_data;
+
+    try {
+#ifdef FREEORION_WIN32
+        // convert UTF-8 file name to UTF-16
+        fs::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        fs::path path = fs::path(file_name_native);
+#else
+        fs::path path = fs::path(filename);
+#endif
+        fs::ifstream ifs(path, std::ios_base::binary);
+
+        if (!ifs)
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        freeorion_iarchive ia(ifs);
+
+        ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
         // skipping additional deserialization which is not needed for this function
@@ -163,6 +200,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data) {
     ServerSaveGameData              ignored_server_save_game_data;
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
+    GalaxySetupData                 ignored_galaxy_setup_data;
 
     try {
 #ifdef FREEORION_WIN32
@@ -178,6 +216,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);

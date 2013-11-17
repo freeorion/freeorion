@@ -531,8 +531,11 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     NewGameInit(multiplayer_lobby_data, player_id_setup_data);
 }
 
-void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std::map<int, PlayerSetupData>& player_id_setup_data) {
+void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
+                            const std::map<int, PlayerSetupData>& player_id_setup_data) {
     Logger().debugStream() << "ServerApp::NewGameInit";
+
+    m_galaxy_setup_data = galaxy_setup_data;
 
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {
