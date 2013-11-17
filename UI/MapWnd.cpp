@@ -4780,11 +4780,12 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("MAP_RESEARCH_TEXT"))));
 
-    //Logger().debugStream() << "Research spend: " << empire->GetResearchQueue().TotalRPsSpent() << " output: " << empire->ResourceProduction(RE_RESEARCH);
     double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
-    if (totalWastedRP > 1E-6) {
+    if (totalWastedRP > 1E-4) {
+        Logger().debugStream()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: " 
+                                << totalRPSpent << " and RP Production: " << totalProduction << ", wasting " << totalWastedRP;
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
@@ -4819,11 +4820,12 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("MAP_PRODUCTION_TEXT"))));
 
-    //Logger().debugStream() << "Industry spend: " << empire->GetProductionQueue().TotalPPsSpent() << " output: " << empire->ResourceProduction(RE_INDUSTRY);
     double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
-    if (totalWastedPP > 1E-6) {
+    if (totalWastedPP > 1E-4) {
+        Logger().debugStream()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: " 
+                                << totalPPSpent << " and Industry Production: " << totalProduction << ", wasting " << totalWastedPP;
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
