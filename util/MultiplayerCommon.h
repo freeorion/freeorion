@@ -25,7 +25,7 @@ XMLElement ClrToXML(const GG::Clr& clr);
 FO_COMMON_API GG::Clr XMLToClr(const XMLElement& clr);
 
 /** The data that represent the galaxy setup for a new game. */
-struct GalaxySetupData {
+struct FO_COMMON_API GalaxySetupData {
     /** \name Structors */ //@{
     GalaxySetupData() :
         m_seed(),
