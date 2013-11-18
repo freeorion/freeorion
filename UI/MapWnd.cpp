@@ -2432,7 +2432,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 int system_id = planet->SystemID();
                 resPoolSystems[it->first].insert(system_id);
                 m_resourceCenters.insert(system_id);
-                if (group_pp > allocatedPP[it->first] + 1e-4)
+                if (group_pp > allocatedPP[it->first] + 0.05)
                     underAllocResSys.insert(system_id);
             }
             thisPool += ")";
@@ -4783,7 +4783,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
-    if (totalWastedRP > 1E-4) {
+    if (totalWastedRP > 0.05) {
         Logger().debugStream()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: " 
                                 << totalRPSpent << " and RP Production: " << totalProduction << ", wasting " << totalWastedRP;
         m_research_wasted->Show();
@@ -4823,7 +4823,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
-    if (totalWastedPP > 1E-4) {
+    if (totalWastedPP > 0.05) {
         Logger().debugStream()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: " 
                                 << totalPPSpent << " and Industry Production: " << totalProduction << ", wasting " << totalWastedPP;
         m_industry_wasted->Show();
