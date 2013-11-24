@@ -205,7 +205,7 @@ def generateOrders(): # pylint: disable=invalid-name
     print "***************************************************************************"
     print "***************************************************************************"
     print ("Generating Orders")
-    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID-1) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+_aggressions.get(foAIstate.aggression,  "?") + " Turn: " + str(fo.currentTurn())
+    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+_aggressions.get(foAIstate.aggression,  "?") + " Turn: " + str(fo.currentTurn())
     empireColor = empire.colour
     print "EmpireColors: %d %d %d %d"% (empireColor.r,  empireColor.g,  empireColor.b,  empireColor.a)
     if planet:

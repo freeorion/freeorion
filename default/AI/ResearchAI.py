@@ -55,9 +55,11 @@ def generateResearchOrders():
     #
     if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
         if foAI.foAIstate.aggression <=fo.aggression.typical:
-            newtech = TechsListsAI.primary_meta_techs(index = empireID % 2)
+            research_index = empireID % 2
         else:
-            newtech = TechsListsAI.primary_meta_techs(index = ((empireID % 2) + 1)) 
+            research_index = ((empireID % 2) + 1)
+        newtech = TechsListsAI.primary_meta_techs(index = research_index)
+        print "Empire %s (%d) is selecting research index %d"%(empire.name,  empireID,  research_index)
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)

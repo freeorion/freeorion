@@ -111,9 +111,11 @@ def calculateResearchPriority():
     industryPriority = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
     gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
+    got_quant = empire.getTechStatus("LRN_QUANT_NET") == fo.techStatus.complete
     researchQueueList = ResearchAI.getResearchQueueTechs()
     orbGenTech = "PRO_ORBITAL_GEN"
     got_orb_gen = (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete)
+    got_solar_gen = (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete)
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
@@ -154,15 +156,14 @@ def calculateResearchPriority():
     if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
             (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
             (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
-        industry_factor = [ [0.2,  0.25],  [0.25,  0.3] ][styleIndex ]
-        if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete):
-            researchPriority = min(researchPriority,  0.2*industryPriority) # high  industry , very very low research
-        else:
-            researchPriority = min(researchPriority,  0.25*industryPriority) # high  industry , very low research
-
+        industry_factor = [ [0.25,  0.2],  [0.3,  0.25] ][styleIndex ]
+        researchPriority = min(researchPriority,  industry_factor[got_solar_gen]*industryPriority) 
+    if got_quant:
+        researchPriority = min(researchPriority + 0.1*industryPriority,  researchPriority * 1.3) 
+    researchPriority = int(researchPriority)
     print  ""
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)
-    print  "Priority for Research: " + str(researchPriority)
+    print  "Priority for Research: %d (new target ~ %d RP)"%(researchPriority,  totalPP * industryPriority / researchPriority)
 
     return researchPriority
 
@@ -321,6 +322,11 @@ def calculateMilitaryPriority():
         homeworld = universe.getPlanet(capitalID)
     else:
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
+        
+    have_mod_weaps = ( empire.getTechStatus("SHP_WEAPON_1_4") == fo.techStatus.complete or
+                                   empire.getTechStatus("SHP_WEAPON_2_1") == fo.techStatus.complete or
+                                   empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete )
+        
     allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
     targetPlanetIDs =  [pid for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:allottedColonyTargets]  ] + [pid for pid,  pscore in foAI.foAIstate.colonisableOutpostIDs[:allottedColonyTargets]  ]
 
@@ -357,6 +363,8 @@ def calculateMilitaryPriority():
 
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
     militaryPriority = int( 40 + max(0,  75*shipsNeeded) )
+    if not have_mod_weaps:
+        militaryPriority /= 2
     #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
     print "Calculating Military Priority:  40 + 75 * shipsNeeded \n\t  Priority: %d   \t shipsNeeded %d   \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority, shipsNeeded,   unmetThreat,  curShipRating)
     return max( militaryPriority,  0)
