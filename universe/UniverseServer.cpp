@@ -2166,21 +2166,21 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
-            Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
+            //Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
             system = sys_vec[system_index];
-            Logger().debugStream() << "... system name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
+            //Logger().debugStream() << "... system name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
 
             for (unsigned int j = 0; j < homeworld_planet_ids.size(); ++j) {
                 //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
                 TemporaryPtr<Planet> homeworld = GetPlanet(homeworld_planet_ids[j]);
                 if (!homeworld) {
-                    Logger().errorStream() << "couldn't find homeworld!";
+                    //Logger().errorStream() << "couldn't find homeworld!";
                     continue;
                 }
 
                 TemporaryPtr<System> existing_system = GetSystem(homeworld->SystemID());
                 if (!existing_system) {
-                    Logger().errorStream() << "couldn't find existing system!";
+                    //Logger().errorStream() << "couldn't find existing system!";
                     continue;
                 }
 
