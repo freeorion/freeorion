@@ -21,7 +21,7 @@ namespace {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = new Condition::Source;
+        Condition::Source* activation = 0;
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
