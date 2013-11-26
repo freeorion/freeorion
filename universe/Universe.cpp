@@ -832,13 +832,12 @@ bool Universe::DeleteShipDesign(int design_id) {
 
 void Universe::ApplyAllEffectsAndUpdateMeters() {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
-    std::vector<int> object_ids = m_objects.FindObjectIDs();
 
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes, object_ids);
+    GetEffectsAndTargets(targets_causes);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so that max/target/unpaired meter
@@ -890,13 +889,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 void Universe::ApplyMeterEffectsAndUpdateMeters() {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
 
-    std::vector<int> object_ids = m_objects.FindObjectIDs();
     Effect::TargetsCauses targets_causes;
-    GetEffectsAndTargets(targets_causes, object_ids);
+    GetEffectsAndTargets(targets_causes);
 
-    std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
-
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
         (*it)->ResetTargetMaxUnpairedMeters();
         (*it)->ResetPairedActiveMeters();
     }
@@ -904,7 +900,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
         it->second->ResetMeters();
     ExecuteEffects(targets_causes, true, true, false, true);
 
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
@@ -1042,9 +1038,15 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     if (objects_vec.empty())
         return;
 
-    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
-        int obj_id = *obj_it;
-        TemporaryPtr<UniverseObject> obj = m_objects.Object(obj_id);
+    // get all pointers to objects once, to avoid having to do so repeatedly
+    // when iterating over the list in the following code
+    std::vector<TemporaryPtr<UniverseObject> > object_ptrs = m_objects.FindObjects(objects_vec);
+
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+         obj_it != object_ptrs.end(); ++obj_it)
+    {
+        TemporaryPtr<UniverseObject> obj = *obj_it;
+        int obj_id = obj->ID();
 
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
@@ -1059,7 +1061,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
                 info.running_meter_total = meter->Current();
 
-                if (info.meter_change > 0.0)
+                if (info.meter_change > 0.0f)
                     m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
@@ -1067,10 +1069,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters objects:";
-        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
-                Logger().debugStream() << obj->Dump();
-        }
+        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+             obj_it != object_ptrs.end(); ++obj_it)
+        { Logger().debugStream() << (*obj_it)->Dump(); }
     }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
@@ -1083,19 +1084,20 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects objects:";
-        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
-                Logger().debugStream() << obj->Dump();
-        }
+        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+             obj_it != object_ptrs.end(); ++obj_it)
+        { Logger().debugStream() << (*obj_it)->Dump(); }
     }
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty()) {
-        for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
-            int obj_id = *obj_it;
-            TemporaryPtr<UniverseObject> obj = m_objects.Object(obj_id);
+        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+             obj_it != object_ptrs.end(); ++obj_it)
+        {
+            TemporaryPtr<UniverseObject> obj = *obj_it;
+            int obj_id = obj->ID();
 
             // check if this object has any discrepancies
             Effect::DiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
@@ -1134,19 +1136,20 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     // clamp meters to valid range of max values, and so current is less than max
-    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+    for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+         obj_it != object_ptrs.end(); ++obj_it)
+    {
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
-        m_objects.Object(*obj_it)->ClampMeters();
+        (*obj_it)->ClampMeters();
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
-                Logger().debugStream() << obj->Dump();
-        }
+        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
+             obj_it != object_ptrs.end(); ++obj_it)
+        { Logger().debugStream() << (*obj_it)->Dump(); }
     }
 }
 
@@ -1176,20 +1179,14 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         return;
 
     // transfer target objects from input vector to a set
-    Effect::TargetSet all_potential_targets;
-    all_potential_targets.reserve(target_objects.size());
-    for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
-        all_potential_targets.push_back(m_objects.Object(*it));
+    Effect::TargetSet all_potential_targets = m_objects.FindObjects(target_objects);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "target objects:";
-        for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it) {
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it))
-                Logger().debugStream() << obj->Dump();
-        }
+        for (Effect::TargetSet::const_iterator it = all_potential_targets.begin();
+             it != all_potential_targets.end(); ++it)
+        { Logger().debugStream() << (*it)->Dump(); }
     }
-
-    boost::timer type_timer;
 
 
     // caching space for each source object's results of finding matches for
@@ -1199,6 +1196,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         cached_source_condition_matches;
     std::map<const Condition::ConditionBase*, Effect::TargetSet>& invariant_condition_matches =
         cached_source_condition_matches[INVALID_OBJECT_ID];
+
+
+    boost::timer type_timer;
 
 
     // 1) EffectsGroups from Species
