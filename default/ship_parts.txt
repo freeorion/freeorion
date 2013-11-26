@@ -734,9 +734,12 @@ Part
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy Contains Source
+                InSystem Source.SystemID
             ]
-            activation = Random 0.15
+            activation = And [
+                            Random 0.15
+                            InSystem
+                        ]
             effects = AddSpecial "CLOUD_COVER_MASTER_SPECIAL"
 
         EffectsGroup
@@ -777,9 +780,12 @@ Part
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy Contains Source
+                InSystem Source.SystemID
             ]
-            activation = Random 0.15
+            activation = And [
+                            Random 0.15
+                            InSystem
+                        ]
             effects = AddSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
 
         EffectsGroup
@@ -820,9 +826,12 @@ Part
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy Contains Source
+                InSystem Source.SystemID
             ]
-            activation = Random 0.15
+            activation = And [
+                            Random 0.15
+                            InSystem
+                        ]
             effects = AddSpecial "DIM_RIFT_MASTER_SPECIAL"
 
         EffectsGroup
@@ -863,9 +872,12 @@ Part
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy Contains Source
+                InSystem Source.SystemID
             ]
-            activation = Random 0.15
+            activation = And [
+                            Random 0.15
+                            InSystem
+                        ]
             effects = AddSpecial "VOID_MASTER_SPECIAL"
 
         EffectsGroup
@@ -905,8 +917,8 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = And [
-                ContainedBy Contains Source
                 Planet
+                InSystem Source.SystemID
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -914,7 +926,10 @@ Part
                 VisibleToEmpire Source.Owner
                 HasTag "ORGANIC"
             ]
-            activation = OwnedBy AnyEmpire
+            activation = And [ 
+                            OwnedBy AnyEmpire
+                            InSystem
+                        ]
             effects = [
                 SetPopulation Value - 0.5
                 GenerateSitRepMessage
@@ -927,13 +942,16 @@ Part
 
         EffectsGroup
             scope = And [
-                ContainedBy Contains Source
                 Planet
+                InSystem Source.SystemID
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
                 HasTag "ORGANIC"
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = And [
+                            Not OwnedBy AnyEmpire
+                            InSystem
+                        ]
             effects = [
                 SetPopulation Value - 0.5
                 GenerateSitRepMessage
@@ -957,8 +975,8 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = And [
-                ContainedBy Contains Source
                 Planet
+                InSystem Source.SystemID
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -966,7 +984,10 @@ Part
                 VisibleToEmpire Source.Owner
                 HasTag "ORGANIC"
             ]
-            activation = OwnedBy AnyEmpire
+            activation = And [
+                            OwnedBy AnyEmpire
+                            InSystem
+                        ]
             effects = [
                 SetPopulation Value - 1
                 GenerateSitRepMessage
@@ -979,13 +1000,16 @@ Part
 
         EffectsGroup
             scope = And [
-                ContainedBy Contains Source
                 Planet
+                InSystem Source.SystemID
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
                 HasTag "ORGANIC"
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = And [
+                            Not OwnedBy AnyEmpire
+                            InSystem
+                        ]
             effects = [
                 SetPopulation Value - 1
                 GenerateSitRepMessage
@@ -1009,8 +1033,8 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Contains Source
                 System
+                Contains Source
             ]
             activation = Number 1 And [
                 Building "BLD_NOVA_BOMB_ACTIVATOR"
