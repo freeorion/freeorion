@@ -156,7 +156,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                m_current_turn,          m_empires,              m_universe,
                                GetSpeciesManager(),     GetCombatLogManager(),  m_player_info,
                                m_orders,                loaded_game_data,       ui_data_available,
-                               ui_data,                 state_string_available, save_state_string);
+                               ui_data,                 state_string_available, save_state_string,
+                               m_galaxy_setup_data);
 
             Logger().debugStream() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 

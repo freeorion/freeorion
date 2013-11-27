@@ -530,7 +530,8 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
                        current_turn,        Empires(),                      GetUniverse(),
                        GetSpeciesManager(), GetCombatLogManager(),          Client().Players(),
                        orders,              loaded_game_data,               ui_data_available,
-                       ui_data,             save_state_string_available,    save_state_string);
+                       ui_data,             save_state_string_available,    save_state_string,
+                       Client().GetGalaxySetupData());
 
     Logger().debugStream() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 

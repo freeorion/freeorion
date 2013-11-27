@@ -38,6 +38,15 @@ int ClientApp::CurrentTurn() const
 Universe& ClientApp::GetUniverse()
 { return m_universe; }
 
+const Universe& ClientApp::GetUniverse() const
+{ return m_universe; }
+
+GalaxySetupData& ClientApp::GetGalaxySetupData()
+{ return m_galaxy_setup_data; }
+
+const GalaxySetupData& ClientApp::GetGalaxySetupData() const
+{ return m_galaxy_setup_data; }
+
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 

@@ -282,7 +282,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
                          const CombatLogManager& combat_logs,
-                         const std::map<int, PlayerInfo>& players)
+                         const std::map<int, PlayerInfo>& players,
+                         const GalaxySetupData& galaxy_setup_data)
 {
     std::ostringstream os;
     {
@@ -298,6 +299,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         bool loaded_game_data = false;
         oa << BOOST_SERIALIZATION_NVP(players)
            << BOOST_SERIALIZATION_NVP(loaded_game_data);
+        oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
     }
     return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -307,7 +309,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
-                         const OrderSet& orders, const SaveGameUIData* ui_data)
+                         const OrderSet& orders, const SaveGameUIData* ui_data,
+                         const GalaxySetupData& galaxy_setup_data)
 {
     std::ostringstream os;
     {
@@ -330,6 +333,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
             oa << boost::serialization::make_nvp("ui_data", *ui_data);
         bool save_state_string_available = false;
         oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
+        oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
     }
     return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -339,7 +343,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
-                         const OrderSet& orders, const std::string* save_state_string)
+                         const OrderSet& orders, const std::string* save_state_string,
+                         const GalaxySetupData& galaxy_setup_data)
 {
     std::ostringstream os;
     {
@@ -362,6 +367,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
         if (save_state_string_available)
             oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
+        oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
     }
     return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -676,7 +682,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
                         std::map<int, PlayerInfo>& players, OrderSet& orders,
                         bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
-                        std::string& save_state_string)
+                        std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
 {
     try {
         std::istringstream is(msg.Text());
@@ -712,6 +718,8 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
             ui_data_available = false;
             save_state_string_available = false;
         }
+        ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
                                << "int& current_turn, EmpireManager& empires, Universe& universe, "
