@@ -2731,17 +2731,17 @@ void SidePanel::RefreshImpl() {
     // populate droplist of system names
     {
         ScopedTimer("SidePanel::RefreshImpl droplist population", true);
-        int system_names_in_droplist = 0;
+        std::map< std::string, int > system_map; //alphabetize Systems here
         for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-             sys_it != Objects().const_end<System>(); ++sys_it)
+             sys_it != Objects().const_end<System>(); ++sys_it) 
         {
-            int sys_id = sys_it->ID();
-
-            if (sys_it->Name().empty() && sys_id != s_system_id)
-                continue;   // skip rows for systems that aren't known to this client, except the selected system
+            if (!sys_it->Name().empty() || sys_it->ID()==s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+                system_map.insert(std::make_pair<std::string, int>(sys_it->Name(), sys_it->ID()));
+        }
+        for ( std::map< std::string, int >::iterator sys_it = system_map.begin(); sys_it != system_map.end(); sys_it++) {
+            int sys_id = sys_it->second;
 
             GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));
-            ++system_names_in_droplist;
 
             if (sys_id == s_system_id)
                 m_system_name->Select(latest_it);
@@ -2752,7 +2752,7 @@ void SidePanel::RefreshImpl() {
         const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
         const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
         const int TOTAL_LISTBOX_MARGIN = 4;
-        GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+        GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * int(system_map.size()), MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
     }
 
