@@ -1425,6 +1425,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 }
 
 namespace {
+    Effect::TargetSet EMPTY_TARGET_SET;
+
     Effect::TargetSet& GetConditionMatches(const Condition::ConditionBase* cond,
                                            std::map<const Condition::ConditionBase*, Effect::TargetSet>&
                                                cached_condition_matches,
@@ -1433,8 +1435,11 @@ namespace {
                                            Effect::TargetSet& target_objects)
     {
         if (!cond)
-            return cached_condition_matches[0]; // empty TargetSet
+            return EMPTY_TARGET_SET;
 
+        // have to iterate through cached condition matches, rather than using
+        // find, since there is no operator< for comparing conditions by value
+        // and by pointer is irrelivant.
         for (std::map<const Condition::ConditionBase*, Effect::TargetSet>::iterator
              it = cached_condition_matches.begin(); it != cached_condition_matches.end(); ++it)
         {
