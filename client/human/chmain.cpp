@@ -14,6 +14,7 @@
 #include "../../util/XMLDoc.h"
 #include "../../util/i18n.h"
 #include "../../UI/EntityRenderer.h"
+#include "../../UI/Hotkeys.h"
 
 #include <OgreCamera.h>
 #include <OgreLogManager.h>
@@ -111,6 +112,9 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
         GetOptionsDB().Add<std::string>("version-string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
                                         FreeOrionVersionString(),   Validator<std::string>(),                  true);
+
+        // Add the keyboard shortcuts
+        Hotkey::AddOptions(GetOptionsDB());
 
 
         // read config.xml and set options entries from it, if present

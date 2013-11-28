@@ -25,6 +25,7 @@
 #include "FieldIcon.h"
 #include "TurnProgressWnd.h"
 #include "ShaderProgram.h"
+#include "Hotkeys.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -128,6 +129,33 @@ namespace {
         db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),   3,       RangedValidator<int>(0, 8));
 
         db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),               false,      Validator<bool>());
+
+
+        // We also register shortcut names/default values, for the
+        // context "map".
+        Hotkey::AddHotkey("map.return_to_map", GG::GGK_ESCAPE);
+        Hotkey::AddHotkey("map.open_chat", GG::GGK_RETURN);
+        Hotkey::AddHotkey("map.end_turn", GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.sit_rep", GG::GGK_F2);
+        Hotkey::AddHotkey("map.research", GG::GGK_F3);
+        Hotkey::AddHotkey("map.production", GG::GGK_F4);
+        Hotkey::AddHotkey("map.design", GG::GGK_F5);
+        Hotkey::AddHotkey("map.menu", GG::GGK_F10);
+        Hotkey::AddHotkey("map.zoom_in", GG::GGK_e);
+        Hotkey::AddHotkey("map.zoom_in_alt", GG::GGK_KP_PLUS);
+        Hotkey::AddHotkey("map.zoom_out", GG::GGK_r);
+        Hotkey::AddHotkey("map.zoom_out_alt", GG::GGK_KP_MINUS);
+        Hotkey::AddHotkey("map.zoom_home_system", GG::GGK_d);
+        Hotkey::AddHotkey("map.zoom_prev_system", GG::GGK_x);
+        Hotkey::AddHotkey("map.zoom_next_system", GG::GGK_c);
+        Hotkey::AddHotkey("map.zoom_prev_fleet", GG::GGK_v);
+        Hotkey::AddHotkey("map.zoom_next_fleet", GG::GGK_b);
+        Hotkey::AddHotkey("map.zoom_prev_idle_fleet", GG::GGK_f);
+        Hotkey::AddHotkey("map.zoom_next_idle_fleet", GG::GGK_g);
+        
+        Hotkey::AddHotkey("cut",GG::GGK_x, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("copy",GG::GGK_c, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("paste",GG::GGK_v, GG::MOD_KEY_CTRL);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -516,7 +544,6 @@ MapWnd::MapWnd() :
     m_fleet_buttons(),
     m_fleet_state_change_signals(),
     m_system_fleet_insert_remove_signals(),
-    m_keyboard_accelerator_signals(),
     m_fleet_lines(),
     m_projected_fleet_lines(),
     m_line_between_systems(std::make_pair(INVALID_OBJECT_ID, INVALID_OBJECT_ID)),
@@ -1007,7 +1034,8 @@ MapWnd::MapWnd() :
             &MapWnd::EnableAlphaNumAccels,     this);
 
     DoLayout();
-    SetAccelerators();
+    // Connect keyboard accelerators for once and for all.
+    ConnectKeyboardAcceleratorSignals();
 }
 
 MapWnd::~MapWnd() {
@@ -1891,10 +1919,6 @@ void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
     ScopedTimer init_timer("MapWnd::InitTurn", true);
-
-    // reset hotkey signals
-    DisconnectKeyboardAcceleratorSignals();
-    ConnectKeyboardAcceleratorSignals();
 
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
@@ -4356,10 +4380,6 @@ void MapWnd::Sanitize() {
     }
     m_system_fleet_insert_remove_signals.clear();
 
-    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin(); it != m_keyboard_accelerator_signals.end(); ++it)
-        it->disconnect();
-    m_keyboard_accelerator_signals.clear();
-
     m_fleet_lines.clear();
 
     m_projected_fleet_lines.clear();
@@ -5057,170 +5077,59 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     return false;
 }
 
+
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),
-                    &MapWnd::ReturnToMap, this));
+    HotkeyManager * hkm = HotkeyManager::GetManager();
 
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),
-                    &MapWnd::OpenChatWindow, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER),
-                    &MapWnd::OpenChatWindow, this));
+    hkm->Connect(this, &MapWnd::ReturnToMap, "map.return_to_map");
+    hkm->Connect(this, &MapWnd::OpenChatWindow, "map.open_chat");
+    hkm->Connect(this, &MapWnd::EndTurn, "map.end_turn");
+    hkm->Connect(this, &MapWnd::ToggleSitRep, "map.sit_rep");
+    hkm->Connect(this, &MapWnd::ToggleResearch, "map.research");
+    hkm->Connect(this, &MapWnd::ToggleProduction, "map.production");
+    hkm->Connect(this, &MapWnd::ToggleDesign, "map.design");
+    hkm->Connect(this, &MapWnd::ShowMenu, "map.menu");
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn, "map.zoom_in");
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn, "map.zoom_in_alt");
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut, "map.zoom_out");
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut, "map.zoom_out_alt");
+    hkm->Connect(this, &MapWnd::ZoomToHomeSystem, "map.zoom_home_system");
+    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem, "map.zoom_prev_system");
+    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem, "map.zoom_next_system");
 
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN,   GG::MOD_KEY_CTRL),
-                    &MapWnd::EndTurn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),
-                    &MapWnd::EndTurn, this));
+    // the list of windows for which the fleet shortcuts are blacklisted.
+    std::list<GG::Wnd *> bl;
+    bl.push_back(m_research_wnd);
+    bl.push_back(m_production_wnd);
+    bl.push_back(m_design_wnd);
 
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),
-                    &MapWnd::ToggleSitRep, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3),
-                    &MapWnd::ToggleResearch, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4),
-                    &MapWnd::ToggleProduction, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5),
-                    &MapWnd::ToggleDesign, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),
-                    &MapWnd::ShowMenu, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s),
-                    &MapWnd::CloseSystemView, this));
 
-    // Keys for zooming
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),
-                    &MapWnd::KeyboardZoomIn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),
-                    &MapWnd::KeyboardZoomIn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),
-                    &MapWnd::KeyboardZoomOut, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS),
-                    &MapWnd::KeyboardZoomOut, this));
+    hkm->Connect(this, &MapWnd::ZoomToPrevFleet, "map.zoom_prev_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToNextFleet, "map.zoom_next_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet, "map.zoom_prev_idle_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet, "map.zoom_next_idle_fleet", new InvisibleWindowCondition(bl));
 
-    // Keys for showing systems
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d),
-                    &MapWnd::ZoomToHomeSystem, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x),
-                    &MapWnd::ZoomToPrevOwnedSystem, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c),
-                    &MapWnd::ZoomToNextOwnedSystem, this));
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText, "cut");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText, "copy");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText, "paste");
 
-    // Keys for showing fleets
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),
-                    &MapWnd::ZoomToPrevIdleFleet, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),
-                    &MapWnd::ZoomToNextIdleFleet, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),
-                    &MapWnd::ZoomToPrevFleet, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
-                    &MapWnd::ZoomToNextFleet, this));
-
-    // Keys for cut / copy / paste
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x, GG::MOD_KEY_CTRL),
-                    &GG::GUI::CutFocusWndText, GG::GUI::GetGUI()));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c, GG::MOD_KEY_CTRL),
-                    &GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v, GG::MOD_KEY_CTRL),
-                    &GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()));
+    hkm->RebuildShortcuts();
 }
 
 void MapWnd::DisconnectKeyboardAcceleratorSignals() {
-    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin();
-         it != m_keyboard_accelerator_signals.end(); ++it)
-    { it->disconnect(); }
-    m_keyboard_accelerator_signals.clear();
+    // m_hotkey_manager.DisconnectAll();
 }
 
 void MapWnd::SetAccelerators() {
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE);
-
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
-
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN,   GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
-
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F5);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s);
-
-    // Keys for zooming
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS);
-
-    // Keys for showing systems
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_d);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c);
-
-    // Keys for showing fleets
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
-
-    // Copy / Paste
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x, GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c, GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, GG::MOD_KEY_CTRL);
+    // m_hotkey_manager.SetAccelerators();
 }
 
 void MapWnd::DisableAlphaNumAccels() {
-    for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
-         i != GG::GUI::GetGUI()->accel_end(); ++i)
-    {
-        if (i->second != 0) // we only want to disable mod_keys without modifiers
-            continue;
-
-        GG::Key key = i->first;
-        GG::Flags<GG::ModKey> mod_keys = i->second;
-        if ((key >= GG::GGK_a && key <= GG::GGK_z) ||
-            (key >= GG::GGK_0 && key <= GG::GGK_9))
-        {
-            m_disabled_accels_list.insert(key);
-        }
-        m_disabled_accels_list.insert(GG::GGK_KP_ENTER);
-        m_disabled_accels_list.insert(GG::GGK_RETURN);
-    }
-    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
-         i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->RemoveAccelerator(*i);
-    }
+    HotkeyManager::GetManager()->DisableAlphaNumeric();
 }
 
 void MapWnd::EnableAlphaNumAccels() {
-    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
-         i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->SetAccelerator(*i);
-    }
-    m_disabled_accels_list.clear();
+    HotkeyManager::GetManager()->EnableAlphaNumeric();
 }
 
 void MapWnd::ChatMessageSentSlot()

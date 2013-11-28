@@ -9437,3 +9437,85 @@ AI_CAPITOL_NAMES_MANIACAL
 '''Throne of Heaven,
 Glorious Revolutionary Planning Center, '''
 ### End of Capitol Names Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+OPTIONS_PAGE_HOTKEYS
+Keyboard shortcuts
+
+HOTKEYS_Z_COMBAT
+Combat window
+
+HOTKEYS_MAP
+Map window
+
+HOTKEYS_GENERAL
+General shortcuts
+
+HOTKEY_MAP_OPEN_CHAT
+Open chat window
+
+HOTKEY_MAP_END_TURN
+End turn
+
+HOTKEY_MAP_RESEARCH
+Toggle research panel
+
+HOTKEY_MAP_DESIGN
+Toggle design panel
+
+HOTKEY_MAP_PRODUCTION
+Toggle production panel
+
+HOTKEY_MAP_SIT_REP
+Toggle situation report
+
+HOTKEY_MAP_MENU
+General menu
+
+HOTKEY_MAP_RETURN_TO_MAP
+Return to map window
+
+HOTKEY_MAP_ZOOM_IN
+Zoom in
+
+HOTKEY_MAP_ZOOM_IN_ALT
+Zoom in (other shortcut)
+
+HOTKEY_MAP_ZOOM_OUT
+Zoom out
+
+HOTKEY_MAP_ZOOM_OUT_ALT
+Zoom out (other shortcut)
+
+HOTKEY_MAP_ZOOM_HOME_SYSTEM
+Switch to home system
+
+HOTKEY_MAP_ZOOM_PREV_SYSTEM
+Switch to previous system
+
+HOTKEY_MAP_ZOOM_NEXT_SYSTEM
+Switch to next system
+
+HOTKEY_MAP_ZOOM_PREV_FLEET
+Switch to previous fleet
+
+HOTKEY_MAP_ZOOM_NEXT_FLEET
+Switch to next fleet
+
+HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET
+Switch to previous idle fleet
+
+HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
+Switch to next idle fleet
+
+HOTKEY_CUT
+Cut
+
+HOTKEY_COPY
+Copy
+
+HOTKEY_PASTE
+Paste

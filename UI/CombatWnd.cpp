@@ -8,6 +8,7 @@
 #include "CUIControls.h"
 #include "EntityRenderer.h" // TODO: Remove; for testing only.
 #include "InGameMenu.h"
+#include "Hotkeys.h"
 #include "../combat/CombatFighter.h"
 #include "../combat/CombatShip.h"
 #include "../combat/Missile.h"
@@ -413,6 +414,21 @@ namespace {
         db.Add("combat.enable-skybox",      UserStringNop("OPTIONS_DB_COMBAT_ENABLE_SKYBOX"),      true, Validator<bool>());
         db.Add("combat.enable-lens-flare",  UserStringNop("OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE"),  true, Validator<bool>());
         db.Add("combat.filled-selection",   UserStringNop("OPTIONS_DB_COMBAT_FILLED_SELECTION"),   false, Validator<bool>());
+
+        // We also register shortcut names/default values, for the
+        // context "map".
+        Hotkey::AddHotkey("combat.open_chat", GG::GGK_RETURN);
+        Hotkey::AddHotkey("combat.end_turn", GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.menu", GG::GGK_F10);
+        Hotkey::AddHotkey("combat.zoom_in", GG::GGK_e);
+        Hotkey::AddHotkey("combat.zoom_in_alt", GG::GGK_KP_PLUS);
+        Hotkey::AddHotkey("combat.zoom_out", GG::GGK_r);
+        Hotkey::AddHotkey("combat.zoom_out_alt", GG::GGK_KP_MINUS);
+        Hotkey::AddHotkey("combat.zoom_prev_unit", GG::GGK_v);
+        Hotkey::AddHotkey("combat.zoom_next_unit", GG::GGK_b);
+        Hotkey::AddHotkey("combat.zoom_prev_idle_unit", GG::GGK_f);
+        Hotkey::AddHotkey("combat.zoom_next_idle_unit", GG::GGK_g);
+        
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -2005,117 +2021,43 @@ bool CombatWnd::ZoomToNextUnit() {
 }
 
 void CombatWnd::ConnectKeyboardAcceleratorSignals() {
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),
-                    &CombatWnd::OpenChatWindow, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER),
-                    &CombatWnd::OpenChatWindow, this));
+    HotkeyManager * hkm = HotkeyManager::GetManager();
 
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL),
-                    &CombatWnd::EndTurn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),
-                    &CombatWnd::EndTurn, this));
-
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),
-                    &CombatWnd::ShowMenu, this));
-
-    // Keys for zooming
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),
-                    &CombatWnd::KeyboardZoomIn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),
-                    &CombatWnd::KeyboardZoomIn, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),
-                    &CombatWnd::KeyboardZoomOut, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS),
-                    &CombatWnd::KeyboardZoomOut, this));
-
-    // Keys for showing units
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),
-                    &CombatWnd::ZoomToPrevIdleUnit, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),
-                    &CombatWnd::ZoomToNextIdleUnit, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),
-                    &CombatWnd::ZoomToPrevUnit, this));
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
-                    &CombatWnd::ZoomToNextUnit, this));
+    hkm->Connect(this, &CombatWnd::OpenChatWindow, "combat.open_chat");
+    hkm->Connect(this, &CombatWnd::ShowMenu, "combat.menu");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomIn, "combat.zoom_in");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomIn, "combat.zoom_in_alt");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomOut, "combat.zoom_out");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomOut, "combat.zoom_out_alt");
+    hkm->Connect(this, &CombatWnd::ZoomToPrevUnit, "combat.zoom_prev_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToNextUnit, "combat.zoom_next_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToPrevIdleUnit, "combat.zoom_prev_idle_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToNextIdleUnit, "combat.zoom_next_idle_unit");
+    
+    hkm->RebuildShortcuts();
 }
 
 void CombatWnd::SetAccelerators() {
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
-
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
-
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
-
-    // Keys for zooming
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS);
-
-    // Keys for showing units
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
-
     ConnectKeyboardAcceleratorSignals();
 }
 
 void CombatWnd::RemoveAccelerators() {
+
+    // This is mostly pointless, now, isn't it ?
     GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
     while (i != GG::GUI::GetGUI()->accel_end()) {
         GG::GUI::GetGUI()->RemoveAccelerator(i);
         i = GG::GUI::GetGUI()->accel_begin();
     }
     m_disabled_accels_list.clear();
-
-    for (std::set<boost::signals::connection>::iterator it =
-             m_keyboard_accelerator_signals.begin();
-         it != m_keyboard_accelerator_signals.end();
-         ++it) {
-        it->disconnect();
-    }
-    m_keyboard_accelerator_signals.clear();
 }
 
 void CombatWnd::DisableAlphaNumAccels() {
-    for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
-         i != GG::GUI::GetGUI()->accel_end(); ++i) {
-        if (i->second != 0) // we only want to disable mod_keys without modifiers
-            continue; 
-        GG::Key key = i->first;
-        if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
-            (key >= GG::GGK_0 && key <= GG::GGK_9)) {
-            m_disabled_accels_list.insert(key);
-        }
-    }
-    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
-         i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->RemoveAccelerator(*i);
-    }
+    HotkeyManager::GetManager()->DisableAlphaNumeric();
 }
 
 void CombatWnd::EnableAlphaNumAccels() {
-    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
-         i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->SetAccelerator(*i);
-    }
-    m_disabled_accels_list.clear();
+    HotkeyManager::GetManager()->DisableAlphaNumeric();
 }
 
 void CombatWnd::ChatMessageSentSlot() {

@@ -9,6 +9,7 @@
 #include "CUISpin.h"
 #include "CUISlider.h"
 #include "Sound.h"
+#include "Hotkeys.h"
 
 #include <OgreRoot.h>
 #include <OgreRenderSystem.h>
@@ -31,6 +32,40 @@
 
 
 namespace fs = boost::filesystem;
+
+// Here, we define a small window that will simply get a unique key
+// press.
+class KeyPressCatcher : public GG::Wnd {
+    GG::Key m_key;
+
+    boost::uint32_t m_code_point;
+
+    GG::Flags<GG::ModKey> m_mods;
+
+public:
+    KeyPressCatcher() : Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL)) {};
+    virtual void Render() {};
+
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+        m_key = key;
+        m_code_point = key_code_point;
+        m_mods = mod_keys;
+        // exit modal loop only if not a modifier
+        if(!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
+            m_done = true;
+
+        /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
+        /// the like...
+    };
+
+    static std::pair<GG::Key, GG::Flags<GG::ModKey> > GetKeypress() {
+        KeyPressCatcher ct;
+        ct.Run();
+        return std::make_pair(ct.m_key, ct.m_mods);
+    };
+};
+
 
 namespace {
     const GG::X PAGE_WIDTH(400);
@@ -349,6 +384,35 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(option_name));
     return button;
+}
+
+// A slot to handle the button press of a hotkey option
+static void HandleHotkeyOption(const std::string & hk_name,
+                               CUIButton * button)
+{
+    std::pair<GG::Key, GG::Flags<GG::ModKey> > kp = KeyPressCatcher::GetKeypress();
+    Hotkey::SetHotKey(hk_name, kp.first, kp.second);
+    button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
+    HotkeyManager::GetManager()->RebuildShortcuts();
+}
+
+void OptionsWnd::HotkeyOption(const std::string& hotkey_name) {
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
+    std::string text = UserString(Hotkey::UserStringForHotkey(hotkey_name));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUIButton* button = new CUIButton(GG::X0, GG::Y0, GG::X1, hk.PrettyPrint());
+
+    layout->Add(text_control, 0, 0);
+    layout->Add(button, 0, 1);
+
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+
+    GG::Connect(button->LeftClickedSignal, boost::bind(HandleHotkeyOption, hotkey_name, button));
+
+    m_current_option_list->Insert(row);
 }
 
 CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text) {
@@ -883,6 +947,9 @@ void OptionsWnd::Init() {
     IntOption("autosave.limit",                     UserString("OPTIONS_AUTOSAVE_LIMIT"));
     EndPage();
 
+    // Keyboard shortcuts tab
+    HotkeysPage();
+
     // Directories tab
     BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
@@ -891,6 +958,21 @@ void OptionsWnd::Init() {
 
     // Connect the done and cancel button
     GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
+}
+
+void OptionsWnd::HotkeysPage()
+{
+    BeginPage(UserString("OPTIONS_PAGE_HOTKEYS"));
+    std::map<std::string, std::set<std::string> > hotkeys = Hotkey::ClassifyHotkeys();
+    for(std::map<std::string, std::set<std::string> >::iterator i = hotkeys.begin(); 
+        i != hotkeys.end(); i++) {
+        BeginSection(UserString(i->first));
+        for(std::set<std::string>::iterator j = i->second.begin(); 
+            j != i->second.end(); j++)
+            HotkeyOption(*j);
+        EndSection();
+    }
+    EndPage();
 }
 
 OptionsWnd::~OptionsWnd()

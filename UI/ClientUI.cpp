@@ -9,6 +9,7 @@
 #include "PlayerListWnd.h"
 #include "MultiplayerLobbyWnd.h"
 #include "Sound.h"
+#include "Hotkeys.h"
 
 #undef int64_t
 
@@ -518,12 +519,14 @@ ClientUI::ClientUI() :
     m_multiplayer_lobby_wnd(0)
 {
     s_the_UI = this;
+    Hotkey::ReadFromOptions(GetOptionsDB());
 
     m_message_wnd =             new MessageWnd(GG::X0,                           GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PANEL_WIDTH,             PANEL_HEIGHT);
     m_player_list_wnd =         new PlayerListWnd(m_message_wnd->LowerRight().x, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
+
 
     if (GetOptionsDB().Get<bool>("tech-demo")) {
         if (HumanClientApp* app = HumanClientApp::GetApp()) {

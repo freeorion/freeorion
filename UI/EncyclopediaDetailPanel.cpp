@@ -1510,6 +1510,8 @@ void EncyclopediaDetailPanel::Refresh() {
     } else if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
 
+        bool log_scale = true;
+
         const std::map<std::string, std::map<int, std::map<int, double> > >&
             stat_records = GetUniverse().GetStatRecords();
 
@@ -1534,7 +1536,14 @@ void EncyclopediaDetailPanel::Refresh() {
                 std::vector<std::pair<double, double> > line_data_pts;
                 for (std::map<int, double>::const_iterator line_it = empire_line.begin();
                      line_it != empire_line.end(); ++line_it)
-                { line_data_pts.push_back(std::make_pair<double, double>(line_it->first, line_it->second)); }
+                {
+                    if (!log_scale) {
+                        line_data_pts.push_back(std::make_pair<double, double>(line_it->first, line_it->second));
+                    } else {
+                        double y = std::log10(std::max(line_it->second, 1.0));
+                        line_data_pts.push_back(std::make_pair<double, double>(line_it->first, y));
+                    }
+                }
 
                 m_graph->AddSeries(line_data_pts, empire_clr);
             }

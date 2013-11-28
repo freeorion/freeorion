@@ -378,6 +378,9 @@
     <ClInclude Include="..\..\UI\GraphControl.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\Hotkeys.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">
@@ -557,6 +560,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\GraphControl.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\Hotkeys.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

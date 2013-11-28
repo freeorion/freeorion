@@ -35,9 +35,11 @@ private:
     void                EndPage();
     void                BeginSection(const std::string& name);
     void                EndSection();
+    void                HotkeysPage();
     CUIStateButton*     BoolOption(const std::string& option_name, const std::string& text);
     CUISpin<int>*       IntOption(const std::string& option_name, const std::string& text);
     CUISpin<double>*    DoubleOption(const std::string& option_name, const std::string& text);
+    void                HotkeyOption(const std::string& hotkey_name);
     void                MusicVolumeOption();
     void                VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
                                      VolumeSliderHandler volume_slider_handler, bool toggle_value);

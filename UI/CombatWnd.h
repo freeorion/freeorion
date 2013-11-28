@@ -13,7 +13,6 @@
 
 #include <GG/Wnd.h>
 
-
 namespace Ogre {
     class Camera;
     class MovableObject;
@@ -239,7 +238,6 @@ private:
     CombatSetupWnd*         m_combat_setup_wnd;
 
     bool                    m_menu_showing;
-    std::set<boost::signals::connection>    m_keyboard_accelerator_signals;
     std::set<GG::Key>       m_disabled_accels_list;
 
     CombatOrderSet          m_combat_order_set;

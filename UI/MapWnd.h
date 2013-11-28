@@ -386,8 +386,6 @@ private:
     std::map<int, boost::signals::connection>               m_fleet_state_change_signals;
     std::map<int, std::vector<boost::signals::connection> > m_system_fleet_insert_remove_signals;
 
-    std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
-
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
 
