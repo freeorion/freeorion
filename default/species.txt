@@ -2848,21 +2848,22 @@ EffectsGroup
 
 BASIC_GROUND_TROOPS
 '''EffectsGroup
-            scope = Source
-            activation = And [
+            scope = And [
                 Planet
-                OwnedBy AnyEmpire
-                Not OwnerHasTech "DEF_GARRISON_1"
+                OwnedBy TheEmpire Source.Owner
             ]
+            activation = NOT OwnerHasTech "DEF_GARRISON_1"
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_ROOT_DEFENSE"
             effects = SetMaxTroops Value + 2    
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_GARRISON_1"
                 NOT OwnerHasTech "DEF_GARRISON_2"
             ]
@@ -2871,10 +2872,12 @@ EffectsGroup
             effects = SetMaxTroops Value + 5
             
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_GARRISON_2"
                 NOT OwnerHasTech "DEF_GARRISON_3"
             ]
@@ -2883,10 +2886,12 @@ EffectsGroup
             effects = SetMaxTroops Value + 10
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_GARRISON_3"
                 NOT OwnerHasTech "DEF_GARRISON_4"
             ]
@@ -2895,10 +2900,12 @@ EffectsGroup
             effects = SetMaxTroops Value + 15        
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_GARRISON_4"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
@@ -2906,10 +2913,9 @@ EffectsGroup
             effects = SetMaxTroops Value + 20
              
 EffectsGroup
-            scope = Source
-            activation = And [
+            scope = AND [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy TheEmpire Source.Owner
                 Population high = 0
             ]
             stackinggroup = "OUTPOST_TROOPS_STACK"
@@ -2917,24 +2923,25 @@ EffectsGroup
             effects = SetMaxTroops Value * .5
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                Contains Building name = "BLD_IMPERIAL_PALACE"
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_ROOT_DEFENSE"
-                Contains Building name = "BLD_IMPERIAL_PALACE"
             ]
             stackinggroup = "PALACE_TROOPS_STACK"
             accountinglabel = "BLD_IMPERIAL_PALACE"
             effects = SetMaxTroops Value + 3
 
 EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                OwnedBy AnyEmpire
+            scope = AND [
                 Homeworld
+                OwnedBy TheEmpire Source.Owner
             ]
+            activation = Planet
             stackinggroup = "HOMEWORLD_TROOPS_STACK"
             accountinglabel = "HOMEWORLD_LABEL"
             effects = SetMaxTroops Value + 2
@@ -2953,12 +2960,12 @@ EffectsGroup
 
 PROTECTION_FOCUS_TROOPS
 '''            EffectsGroup
-            scope = Source
-            activation = And [
+            scope = And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_PROTECTION"
             ]
+            activation = Planet
             stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxTroops Value * 2
@@ -2980,10 +2987,12 @@ AVERAGE_PLANETARY_SHIELDS
 
 BASIC_PLANETARY_SHIELDS
 '''EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "LRN_FORCE_FIELD"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_FF"
@@ -2991,10 +3000,12 @@ BASIC_PLANETARY_SHIELDS
             effects = SetMaxShield Value + 10
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_PLAN_BARRIER_SHLD_1"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_1"
@@ -3002,10 +3013,12 @@ EffectsGroup
             SetMaxShield Value + 30
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_PLAN_BARRIER_SHLD_2"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_2"
@@ -3013,10 +3026,12 @@ EffectsGroup
             SetMaxShield Value + 60
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_PLAN_BARRIER_SHLD_3"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_3"
@@ -3024,10 +3039,12 @@ EffectsGroup
             SetMaxShield Value + 90
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_PLAN_BARRIER_SHLD_4"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_4"
@@ -3035,10 +3052,12 @@ EffectsGroup
             SetMaxShield Value + 150
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "DEF_PLAN_BARRIER_SHLD_5"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_5"
@@ -3046,12 +3065,14 @@ EffectsGroup
             SetMaxShield Value + 150
 
 EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                Population low = 0.000001
+            ]
             activation = And [
                 Planet
-                OwnedBy AnyEmpire
                 OwnerHasTech "GRO_ENERGY_META"
-                Population low = 0.000001
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             accountinglabel = "GRO_ENERGY_META"
@@ -3060,12 +3081,12 @@ EffectsGroup
 
 PROTECTION_FOCUS_SHIELDS
 '''            EffectsGroup
-            scope = Source
-            activation = And [
+            scope = And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_PROTECTION"
             ]
+            activation = Planet
             stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxShield Value * 2
