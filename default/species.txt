@@ -2529,10 +2529,13 @@ ADVANCED_FOCUS_EFFECTS
             scope = And [
                 Fleet
                 OwnedBy TheEmpire Source.Owner
-                ContainedBy Contains And [
-                    Planet
-                    OwnedBy TheEmpire Source.Owner
-                    Focus "FOCUS_STARGATE_SEND"
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                        Focus "FOCUS_STARGATE_SEND"
+                    ]
                 ]
             ]
             activation = And [

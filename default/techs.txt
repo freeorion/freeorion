@@ -283,9 +283,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -294,9 +297,9 @@ Tech
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
+                ContainedBy System Contains And [
                     Planet
+                    OwnedBy TheEmpire Source.Owner
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -316,9 +319,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
                 Structure high = 2
@@ -351,9 +357,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -362,9 +371,12 @@ Tech
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -384,9 +396,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
                 Structure high = 6
@@ -419,9 +434,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -429,9 +447,12 @@ Tech
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
@@ -450,9 +471,12 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
                 Structure high = 14
@@ -1213,10 +1237,13 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy TheEmpire Source.Owner
-                ContainedBy Contains And [
-                    Planet type = Asteroids
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        Planet type = Asteroids
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 Focus "FOCUS_INDUSTRY"
             ]

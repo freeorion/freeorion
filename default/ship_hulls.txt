@@ -439,19 +439,26 @@ Hull
     buildCost = 5.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
+        Planet
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
@@ -478,15 +485,21 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
@@ -520,15 +533,21 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
@@ -557,15 +576,21 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 45
 
         [[REGULAR_HULL_DETECTION]]
@@ -592,15 +617,21 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
@@ -645,19 +676,28 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST_REF"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST_REF"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 40
 
         [[REGULAR_HULL_DETECTION]]
@@ -685,19 +725,28 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST_REF"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST_REF"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
@@ -741,19 +790,28 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST_REF"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST_REF"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 40
 
         EffectsGroup
@@ -797,19 +855,28 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
-        ContainedBy Contains And [
-            Building "BLD_SHIPYARD_AST_REF"
-            OwnedBy TheEmpire Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building "BLD_SHIPYARD_AST_REF"
+                OwnedBy TheEmpire Source.Owner
+            ]
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains Planet type = Asteroids
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
             effects = SetStealth Value + 15
 
         [[REGULAR_HULL_DETECTION]]
@@ -1456,8 +1523,11 @@ Hull
 
         EffectsGroup
             scope = And [
-                ContainedBy Contains Source
                 Ship
+                ContainedBy And [
+                    System 
+                    Contains Source
+                ]
                 Or [
                     OwnedBy TheEmpire Source.Owner
                     OwnedBy AllyOf Source.Owner
@@ -1723,11 +1793,17 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
@@ -1736,7 +1812,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
             ]
             activation = Random probability = 0.1
             stackinggroup = "KRILL_1_ACTION_STACK"
@@ -1820,11 +1899,17 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [ 
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [ 
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
@@ -1833,7 +1918,7 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy System Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.12
             stackinggroup = "KRILL_2_ACTION_STACK"
@@ -1917,11 +2002,17 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [ 
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy Contains Source
+                    ContainedBy And [ 
+                        System 
+                        Contains Source
+                    ]
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
@@ -1930,7 +2021,7 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy System Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.08
             stackinggroup = "KRILL_3_ACTION_STACK"
@@ -1989,7 +2080,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
             ]
             activation = Random probability = 0.06
             stackinggroup = "KRILL_4_ACTION_STACK"
@@ -2051,7 +2145,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = GasGiant
+                ContainedBy And [
+                    System 
+                    Contains Planet type = GasGiant
+                ]
             ]
             activation = Random probability = 0.025
             effects = [
@@ -2096,7 +2193,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = GasGiant
+                ContainedBy And [
+                    System 
+                    Contains Planet type = GasGiant
+                ]
             ]
             activation = Random probability = 0.025
             effects = [
@@ -2182,7 +2282,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet size = Small
+                ContainedBy And [
+                    System 
+                    Contains Planet size = Small
+                ]
             ]
             activation = Random probability = 0.03
             effects = [
@@ -2227,7 +2330,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet size = Small
+                ContainedBy And [
+                    System 
+                    Contains Planet size = Small
+                ]
             ]
             activation = Random probability = 0.03
             effects = [
@@ -2312,7 +2418,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
             ]
             activation = Random probability = 0.03
             effects = [
@@ -2357,7 +2466,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet type = Asteroids
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
             ]
             activation = Random probability = 0.02
             effects = [
@@ -2449,8 +2561,11 @@ Hull
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy Contains Source
                 Not Planet type = [Asteroids GasGiant]
+                ContainedBy And [
+                    System 
+                    Contains Source
+                ]
             ]
             effects = [
                 SetSpecies "SP_EXPERIMENTOR"
@@ -2595,8 +2710,11 @@ Hull
 
         EffectsGroup
             scope = NumberOf 1 And [
-                ContainedBy Contains Source
                 Planet
+                ContainedBy And [
+                    System 
+                    Contains Source
+                ]
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
             ]
@@ -2630,8 +2748,11 @@ Hull
         [[MONSTER_MOVE_PRE]]0.05[[MONSTER_MOVE_POST_NOT_OWNED]]
         EffectsGroup
             scope = NumberOf 1 And [
-                ContainedBy Contains Source
                 Ship
+                ContainedBy And [
+                    System 
+                    Contains Source
+                ]
                 OwnedBy AnyEmpire
             ]
             effects = [

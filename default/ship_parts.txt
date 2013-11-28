@@ -1047,14 +1047,20 @@ Part
             ]
 
         EffectsGroup
-            scope = ContainedBy Contains Source
+            scope = ContainedBy And [
+                System 
+                Contains Source
+            ]
             activation = Or [
                 Number 1 And [
                     Building "BLD_NOVA_BOMB_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                     WithinStarlaneJumps 1 Source
                 ]
-                ContainedBy Contains HasSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                ContainedBy And [
+                    System 
+                    Contains HasSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                ]
             ]
             effects = Destroy
     ]

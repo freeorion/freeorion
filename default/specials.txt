@@ -161,7 +161,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+                System 
+                Contains Capital
+            ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -403,7 +406,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -436,14 +442,20 @@ Special
         Planet
         Planet size = tiny
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
-        ContainedBy Contains And [
-            Planet
-            Not Planet size = tiny
+        ContainedBy And [
+            System 
+            Contains And [
+                Planet
+                Not Planet size = tiny
+            ]
         ]
     ]
     effectsgroups = [
@@ -456,7 +468,10 @@ Special
             scope = And [
                 Planet
                 // Focus "FOCUS_RESEARCH" // Does not require focus
-                ContainedBy Contains Source
+                ContainedBy And [
+                    System 
+                    Contains Source
+                ]
             ]
             activation = Not OwnedBy AnyEmpire
             stackinggroup = "PHILOSOPHER_STACK"
@@ -477,7 +492,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy And [
+            System 
+            Contains Homeworld
+        ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -1183,7 +1201,10 @@ Special
     location = And [
         Planet
         Planet type = [Ocean Swamp Toxic]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1224,7 +1245,10 @@ Special
     location = And [
         Planet
         Planet type = [Desert Terran Ocean Swamp]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1264,7 +1288,10 @@ Special
     location = And [
         Planet
         Planet type = [Tundra Desert Terran]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1304,7 +1331,10 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1346,7 +1376,10 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1389,7 +1422,10 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1432,7 +1468,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1474,7 +1513,10 @@ Special
     location = And [
         Planet
         Not Planet type = [GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+            ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1517,7 +1559,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not ContainedBy And [
+            System 
+            Contains Capital
+        ]
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
