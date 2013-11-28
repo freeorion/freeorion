@@ -85,6 +85,7 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_GALAXY_SETUP"),   LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GALAXY_SETUP") + "\n"));
 
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
@@ -600,6 +601,42 @@ namespace {
         default:                return EMPTY_STRING;
         }
     }
+
+    const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso) {
+        switch (gso) {
+        case GALAXY_SETUP_NONE:     return UserString("GSETUP_NONE");
+        case GALAXY_SETUP_LOW:      return UserString("GSETUP_LOW");
+        case GALAXY_SETUP_MEDIUM:   return UserString("GSETUP_MEDIUM");
+        case GALAXY_SETUP_HIGH:     return UserString("GSETUP_HIGH");
+        default:                    return EMPTY_STRING;
+        }
+    }
+
+    const std::string& TextForGalaxyShape(Shape shape) {
+        switch (shape) {
+        case SPIRAL_2:      return UserString("GSETUP_2ARM");
+        case SPIRAL_3:      return UserString("GSETUP_3ARM");
+        case SPIRAL_4:      return UserString("GSETUP_4ARM");
+        case CLUSTER:       return UserString("GSETUP_CLUSTER");
+        case ELLIPTICAL:    return UserString("GSETUP_ELLIPTICAL");
+        case IRREGULAR:     return UserString("GSETUP_IRREGULAR");
+        case RING:          return UserString("GSETUP_RING");
+        case RANDOM:        return UserString("GSETUP_RANDOM");
+        default:            return EMPTY_STRING;
+        }
+    }
+
+    const std::string& TextForAIAggression(Aggression a) {
+        switch (a) {
+        case BEGINNER:      return UserString("GSETUP_BEGINNER");
+        case TURTLE:        return UserString("GSETUP_TURTLE");
+        case CAUTIOUS:      return UserString("GSETUP_DEFENSIVE");
+        case TYPICAL:       return UserString("GSETUP_MODERATE");
+        case AGGRESSIVE:    return UserString("GSETUP_AGGRESSIVE");
+        case MANIACAL:      return UserString("GSETUP_MANIACAL");
+        default:            return EMPTY_STRING;
+        }
+    }
 }
 
 void EncyclopediaDetailPanel::Refresh() {
@@ -643,6 +680,23 @@ void EncyclopediaDetailPanel::Refresh() {
         if (!detailed_description.empty()) {
             // attempt to treat as a directory
             name = UserString(m_items_it->second);
+
+        } else if (m_items_it->second == "ENC_GALAXY_SETUP") {
+            const GalaxySetupData& gsd = ClientApp::GetApp()->GetGalaxySetupData();
+
+            name = UserString("ENC_GALAXY_SETUP");
+
+            detailed_description += str(FlexibleFormat(UserString("ENC_GALAXY_SETUP_SETTINGS"))
+                % gsd.m_seed
+                % boost::lexical_cast<std::string>(gsd.m_size)
+                % TextForGalaxyShape(gsd.m_shape)
+                % TextForGalaxySetupSetting(gsd.m_age)
+                % TextForGalaxySetupSetting(gsd.m_starlane_freq)
+                % TextForGalaxySetupSetting(gsd.m_planet_density)
+                % TextForGalaxySetupSetting(gsd.m_specials_freq)
+                % TextForGalaxySetupSetting(gsd.m_monster_freq)
+                % TextForGalaxySetupSetting(gsd.m_native_freq)
+                % TextForAIAggression(gsd.m_ai_aggr));
 
         } else {
             // couldn't find a directory; look up in custom encyclopedia entries

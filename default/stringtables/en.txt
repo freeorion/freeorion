@@ -2721,6 +2721,22 @@ Test
 ENC_GRAPH
 Graph
 
+ENC_GALAXY_SETUP
+Galaxy Generation Settings
+
+ENC_GALAXY_SETUP_SETTINGS
+'''Seed: %1%
+Number of Systems: %2%
+Shape: %3%
+Age: %4%
+Starlanes: %5%
+Planets: %6%
+Specials: %7%
+Monsters: %8%
+Natives: %9%
+AI Max Aggression: %10%
+'''
+
 ENC_SHIP_PART
 Ship Part
 
