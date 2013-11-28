@@ -11,6 +11,7 @@ class Tech;
 class DiplomaticMessage;
 class Universe;
 struct DiplomaticStatusUpdateInfo;
+struct GalaxySetupData;
 
 /* AI logic modules implement this class, and AIClientApps contain one, and call it to generate orders */
 class AIBase {
@@ -59,6 +60,8 @@ namespace AIInterface {
     const Tech*         GetTech(const std::string& tech_name);  ///< returns Tech with name \a name
 
     int                 CurrentTurn();                  ///< returns the current game turn
+
+    const GalaxySetupData&  GetGalaxySetupData();       ///< returns the setup data used to generate the game universe
     //@}
 
     /** Gamestate Prediction Utilites */ //@{

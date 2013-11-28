@@ -165,7 +165,24 @@ namespace FreeOrionPython {
             .value("typical",       TYPICAL)
             .value("aggressive",    AGGRESSIVE)
             .value("maniacal",      MANIACAL)
-            .value("num_ai_aggression_levels",  NUM_AI_AGGRESSION_LEVELS)
+        ;
+        enum_<GalaxySetupOption>("galaxySetupOption")
+            .value("invalid",       INVALID_GALAXY_SETUP_OPTION)
+            .value("none",          GALAXY_SETUP_NONE)
+            .value("low",           GALAXY_SETUP_LOW)
+            .value("medium",        GALAXY_SETUP_MEDIUM)
+            .value("high",          GALAXY_SETUP_HIGH)
+        ;
+        enum_<Shape>("galaxyShape")
+            .value("invalid",       INVALID_SHAPE)
+            .value("spiral2",       SPIRAL_2)
+            .value("spiral3",       SPIRAL_3)
+            .value("spiral4",       SPIRAL_4)
+            .value("cluster",       CLUSTER)
+            .value("elliptical",    ELLIPTICAL)
+            .value("irregular",     IRREGULAR)
+            .value("ring",          RING)
+            .value("random",        RANDOM)
         ;
     }
 }

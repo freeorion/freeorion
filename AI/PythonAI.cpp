@@ -3,12 +3,13 @@
 #include "../universe/Universe.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
+#include "../util/i18n.h"
+#include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 #include "../python/PythonSetWrapper.h"
 #include "../python/PythonWrappers.h"
-#include "../util/i18n.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -156,6 +157,20 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("doneTurn",                 AIInterface::DoneTurn);
     def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
+
+    class_<GalaxySetupData>("galaxySetupData")
+        .add_property("seed",               &GalaxySetupData::m_seed)
+        .add_property("size",               &GalaxySetupData::m_size)
+        .add_property("shape",              &GalaxySetupData::m_shape)
+        .add_property("age",                &GalaxySetupData::m_age)
+        .add_property("starlaneFrequency",  &GalaxySetupData::m_starlane_freq)
+        .add_property("planetDensity",      &GalaxySetupData::m_planet_density)
+        .add_property("specialsFrequency",  &GalaxySetupData::m_specials_freq)
+        .add_property("monsterFrequency",   &GalaxySetupData::m_monster_freq)
+        .add_property("nativeFrequency",    &GalaxySetupData::m_native_freq)
+        .add_property("maxAIAgression",     &GalaxySetupData::m_ai_aggr)
+    ;
+    def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
 
 
     //////////////////

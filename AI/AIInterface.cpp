@@ -172,6 +172,9 @@ namespace AIInterface {
     int CurrentTurn()
     { return AIClientApp::GetApp()->CurrentTurn(); }
 
+    const GalaxySetupData&  GetGalaxySetupData()
+    { return AIClientApp::GetApp()->GetGalaxySetupData(); }
+
     void InitTurn() {
         boost::timer turn_init_timer;
 
