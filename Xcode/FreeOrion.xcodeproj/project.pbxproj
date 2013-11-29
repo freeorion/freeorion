@@ -295,6 +295,7 @@
 		47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47B615BF0CF099BD00318761 /* libFREEALUT.a */; };
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
+		820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 820BDECB1848A93E009BC457 /* Hotkeys.cpp */; };
 		82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */; };
 		821CB8D115F8BC3C00D48537 /* MacHIDManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C6E15F8ABEE0063179C /* MacHIDManager.cpp */; };
 		821CC1EE15F8C3C600D48537 /* AbortAppender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821CC1BC15F8C3C600D48537 /* AbortAppender.cpp */; };
@@ -1439,6 +1440,8 @@
 		8201E5F215E2C0770037D453 /* EffectParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser1.cpp; sourceTree = "<group>"; };
 		8201E5F315E2C0770037D453 /* EffectParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser2.cpp; sourceTree = "<group>"; };
 		8201E5F415E2C0770037D453 /* EffectParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParserImpl.h; sourceTree = "<group>"; };
+		820BDECB1848A93E009BC457 /* Hotkeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hotkeys.cpp; sourceTree = "<group>"; };
+		820BDECC1848A93E009BC457 /* Hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hotkeys.h; sourceTree = "<group>"; };
 		82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectListWnd.cpp; sourceTree = "<group>"; };
 		82132C2E15DA2BBC00F5B537 /* ObjectListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectListWnd.h; sourceTree = "<group>"; };
 		821CB90915F8C15A00D48537 /* liblog4cpp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblog4cpp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2995,6 +2998,8 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				820BDECB1848A93E009BC457 /* Hotkeys.cpp */,
+				820BDECC1848A93E009BC457 /* Hotkeys.h */,
 				82B9D445180C53FE0032F86D /* GraphControl.cpp */,
 				82B9D446180C53FE0032F86D /* GraphControl.h */,
 				827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */,
@@ -4342,6 +4347,7 @@
 				828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */,
 				827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
+				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
