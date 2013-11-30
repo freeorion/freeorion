@@ -28,7 +28,7 @@ MFocus = AIFocusType.FOCUS_MINING
 GFocus = AIFocusType.FOCUS_GROWTH
 
 useGrowth = True
-limitAssessments = False
+limitAssessments = True
 
 lastFociCheck=[0]
 
@@ -156,7 +156,7 @@ def setPlanetResourceFoci(): #+
     empire = fo.getEmpire()
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
-    freq = min(3,  ( max(5,  currentTurn-120)   )/4.0)**(1.0/3)
+    freq = min(3,  ( max(5,  currentTurn-80)   )/4.0)**(1.0/3)
     if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
         timer = 6*[time()]
     else:
@@ -305,7 +305,7 @@ def setPlanetResourceFoci(): #+
                     #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
                     if (pop < t_pop - 5):
                         continue
-                    if  ( CI > II + 8) or ( ((RR-CR)>=1+2*research_penalty) and ((RR-IR)>=3) and ( (CR-IR) >= 0.7*((II-CI)(1+0.1*research_penalty) ) )):
+                    if  ( CI > II + 8) or (( (RR>II) or ((RR-CR)>=1+2*research_penalty)) and ((RR-IR)>=3) and ( (CR-IR) >= 0.7*((II-CI)(1+0.1*research_penalty) ) )):
                         curTargetPP += CI -1 - research_penalty#
                         curTargetRP +=  CR+1
                         newFoci[pid] = RFocus

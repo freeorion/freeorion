@@ -163,7 +163,7 @@ def calculateResearchPriority():
     researchPriority = int(researchPriority)
     print  ""
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)
-    print  "Priority for Research: %d (new target ~ %d RP)"%(researchPriority,  totalPP * industryPriority / researchPriority)
+    print  "Priority for Research: %d (new target ~ %d RP)"%(researchPriority,  totalPP * researchPriority/industryPriority)
 
     return researchPriority
 
@@ -203,6 +203,9 @@ def calculateColonisationPriority():
     colonyCost=120*(1+ 0.06*len( list(AIstate.popCtrIDs) ))
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     allottedPortion = [0.4,  0.5][ random.choice([0, 1]) ]    #fo.empireID() % 2
+    if ( foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) 
+            > 2 * foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
+        allottedPortion *= 1.5
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
