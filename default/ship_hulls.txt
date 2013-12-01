@@ -1582,6 +1582,7 @@ Hull
                 Star type = [Blue White Yellow Orange Red]
                 Contains Source
                 Not Number low = 2 condition = And [
+                    Ship
                     Monster
                     InSystem Source.SystemID
                 ]
@@ -1780,33 +1781,28 @@ Hull
                 Contains Source 
                 Number low = 2 high = 3 And [
                     Ship
-                    ContainedBy And [
-                        System
-                        Contains Source
-                    ]
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
+            activation = InSystem
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = CreateShip "SM_KRILL_2"
 
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy And [
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy And [
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
+            activation = InSystem
             effects = Destroy
 
         EffectsGroup
@@ -1877,14 +1873,12 @@ Hull
                 Contains Source 
                 Number low = 2 high = 3 And [
                     Ship
-                    ContainedBy And [
-                        System
-                        Contains Source
-                    ]
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
-            stackinggroup = "KRILL_2_ACTION_STACK"
+            activation = InSystem
+           stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_3"
                 /*
@@ -1899,20 +1893,17 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy And [ 
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy And [ 
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
+            activation = InSystem
             effects = Destroy
 
         EffectsGroup
@@ -1980,13 +1971,11 @@ Hull
                 Contains Source 
                 Number low = 2 high = 3 And [
                     Ship
-                    ContainedBy And [
-                        System
-                        Contains Source
-                    ]
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
+            activation = InSystem
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_4"
@@ -2002,20 +1991,17 @@ Hull
         EffectsGroup
             scope = And [
                 Number low = 2 And [
-                    ContainedBy And [ 
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
                 NumberOf 2 And [
-                    ContainedBy And [ 
-                        System 
-                        Contains Source
-                    ]
+                    Ship
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
+            activation = InSystem
             effects = Destroy
 
         EffectsGroup
@@ -2664,8 +2650,8 @@ Hull
 
         EffectsGroup
             scope = NumberOf 4 And [
-                WithinStarlaneJumps 1 Source
                 Ship
+                WithinStarlaneJumps 1 Source
                 HasTag "ORGANIC"
             ]
             activation = Random 0.2
@@ -2673,8 +2659,8 @@ Hull
 
         EffectsGroup
             scope = NumberOf 12 And [
-                WithinStarlaneJumps 1 Source
                 Ship
+                WithinStarlaneJumps 1 Source
                 HasTag "ORGANIC"
                 Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
@@ -2871,6 +2857,7 @@ INFINITE_FUEL
 HUNT_BUILDINGS
 '''EffectsGroup
             scope = And [
+                Fleet
                 Object id = Source.FleetID
                 Number low = 1 And [
                     System
@@ -2898,6 +2885,7 @@ HUNT_BUILDINGS
 HUNT_SHIPS
 '''EffectsGroup
             scope = And [
+                Fleet
                 Object id = Source.FleetID
                 Number low = 1 And [
                     Ship
@@ -2922,6 +2910,7 @@ HUNT_SHIPS
 HUNT_PLANETS
 '''EffectsGroup
             scope = And [
+                Fleet
                 Object id = Source.FleetID
                 Number low = 1 And [
                     Planet

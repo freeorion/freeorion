@@ -87,9 +87,12 @@ Species
                     Turn low = 220 high = 220
                     Turn low = 290 high = 290
                 ]
-                Not WithinStarlaneJumps 1 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
+                Not WithinStarlaneJumps 1 And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy AnyEmpire
+                    ]
                 ]
             ]
             effects = CreateShip "SM_ACIREMA_GUARD"

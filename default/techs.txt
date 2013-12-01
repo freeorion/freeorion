@@ -297,9 +297,12 @@ Tech
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy System Contains And [
-                    Planet
-                    OwnedBy TheEmpire Source.Owner
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                    ]
                 ]
                 OwnedBy EnemyOf Source.Owner
             ]
