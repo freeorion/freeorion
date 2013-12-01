@@ -425,6 +425,7 @@ struct FO_COMMON_API Condition::Target : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -497,6 +498,7 @@ struct FO_COMMON_API Condition::Monster : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -571,6 +573,7 @@ struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -696,6 +699,7 @@ struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
