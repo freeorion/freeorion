@@ -260,11 +260,14 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
 }
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
-    ObjectMap& objects = GetUniverse().Objects();
+    TemporaryPtr<UniverseObject> source = GetUniverseObject(source_id);
+    //ObjectMap& objects = GetUniverse().Objects();
     TargetSet potential_targets;
-    potential_targets.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_targets.push_back(*it);
+    //potential_targets.reserve(objects.NumObjects());
+    //for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
+    //    potential_targets.push_back(*it);
+    m_scope->GetDefaultInitialCandidateObjects(ScriptingContext(source),
+            *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
     GetTargetSet(source_id, targets, potential_targets);
 }
 
@@ -1788,9 +1791,6 @@ AddStarlanes::~AddStarlanes()
 { delete m_other_lane_endpoint_condition; }
 
 void AddStarlanes::Execute(const ScriptingContext& context) const {
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
     // get target system
     if (!context.effect_target) {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
@@ -1803,19 +1803,10 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         return; // nothing to do!
 
     // get other endpoint systems...
-
-    // get all objects in an ObjectSet
-    Condition::ObjectSet potential_endpoint_objects;
-    potential_endpoint_objects.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.push_back(*it);
-
     Condition::ObjectSet endpoint_objects;
-    endpoint_objects.reserve(potential_endpoint_objects.size());
-
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(context, endpoint_objects, potential_endpoint_objects);
+    m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (endpoint_objects.empty())
@@ -1862,9 +1853,6 @@ RemoveStarlanes::~RemoveStarlanes()
 { delete m_other_lane_endpoint_condition; }
 
 void RemoveStarlanes::Execute(const ScriptingContext& context) const {
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
     // get target system
     if (!context.effect_target) {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
@@ -1878,18 +1866,10 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
 
     // get other endpoint systems...
 
-    // get all objects in an ObjectSet
-    Condition::ObjectSet potential_endpoint_objects;
-    potential_endpoint_objects.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.push_back(*it);
-
     Condition::ObjectSet endpoint_objects;
-    endpoint_objects.reserve(potential_endpoint_objects.size());
-
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(context, endpoint_objects, potential_endpoint_objects);
+    m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (endpoint_objects.empty())
@@ -1974,19 +1954,10 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     }
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
-    // get all objects in an ObjectSet
-    Condition::ObjectSet potential_locations;
-    potential_locations.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.push_back(*it);
 
     Condition::ObjectSet valid_locations;
-    valid_locations.reserve(potential_locations.size());
-
     // apply location condition to determine valid location to move target to
-    m_location_condition->Eval(context, valid_locations, potential_locations);
+    m_location_condition->Eval(context, valid_locations);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())
@@ -2415,19 +2386,10 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     }
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
-    // get all objects in an ObjectSet
-    Condition::ObjectSet potential_locations;
-    potential_locations.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.push_back(*it);
 
     Condition::ObjectSet valid_locations;
-    valid_locations.reserve(potential_locations.size());
-
     // apply location condition to determine valid location to move target to
-    m_location_condition->Eval(context, valid_locations, potential_locations);
+    m_location_condition->Eval(context, valid_locations);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())

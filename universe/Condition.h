@@ -150,6 +150,8 @@ struct FO_COMMON_API Condition::ConditionBase {
     /** Tests single candidate object, returning true iff it matches condition
       * with empty ScriptingContext. */
     bool                Eval(TemporaryPtr<const UniverseObject> candidate) const;
+    
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
@@ -301,6 +303,7 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
     const ValueRef::ValueRefBase<double>*   SortKey() const { return m_sort_key; }
     SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
     const ConditionBase*                    GetCondition() const { return m_condition; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     const ValueRef::ValueRefBase<int>*      m_number;
@@ -379,6 +382,7 @@ struct FO_COMMON_API Condition::Source : public Condition::ConditionBase {
     //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -453,6 +457,7 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -473,6 +478,7 @@ struct FO_COMMON_API Condition::Capital : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -535,6 +541,7 @@ struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -805,6 +812,7 @@ struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -835,6 +843,7 @@ struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -865,6 +874,7 @@ struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionB
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1816,6 +1826,7 @@ struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<const ConditionBase*>&
                         Operands() const { return m_operands; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     std::vector<const ConditionBase*> m_operands;

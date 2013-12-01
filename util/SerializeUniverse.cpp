@@ -29,8 +29,9 @@ void ObjectMap::serialize(Archive& ar, const unsigned int version)
     ar & BOOST_SERIALIZATION_NVP(m_objects);
 
     // If loading from the archive, propagate the changes to the specialized maps.
-    if (Archive::is_loading::value)
+    if (Archive::is_loading::value) {
         CopyObjectsToSpecializedMaps();
+    }
 }
 
 template <class Archive>
@@ -95,7 +96,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        Logger().debugStream() << "Universe::serialize : Swapping old/new data";
+        Logger().debugStream() << "Universe::serialize : Swapping old/new data, with Encoding Empire " << EncodingEmpire();
         m_objects.swap(objects);
         m_destroyed_object_ids.swap(destroyed_object_ids);
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
@@ -104,6 +105,13 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
         m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
         m_ship_designs.swap(ship_designs);
+        m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
+        for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin(); 
+                                it != m_empire_latest_known_objects.end(); it++) {
+            std::map< int, std::set< int > >::iterator destroyed_ids_it = m_empire_known_destroyed_object_ids.find(it->first);
+            if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
+                it->second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
+        }
     }
 }
 

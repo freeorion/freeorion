@@ -7,6 +7,7 @@
 #include "Building.h"
 #include "Fleet.h"
 #include "Ship.h"
+#include "ObjectMap.h"
 #include "ShipDesign.h"
 #include "Planet.h"
 #include "System.h"
@@ -24,6 +25,21 @@ using boost::io::str;
 extern int g_indent;
 
 namespace {
+
+    void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
+                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
+                std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+    }
+
+    void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
+                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
+                std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+    }
+
     TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
         TemporaryPtr<const Fleet> retval = universe_object_ptr_cast<const Fleet>(obj);
         if (!retval) {
@@ -187,14 +203,11 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
                                     Condition::ObjectSet& matches) const
 {
     matches.clear();
-    matches.reserve(Objects().NumObjects());
     // evaluate condition on all non-destroyed objects in Universe
-    Condition::ObjectSet condition_non_targets;
-    condition_non_targets.reserve(Objects().NumObjects());
-    for (ObjectMap::const_iterator<> it = Objects().const_begin(); it != Objects().const_end(); ++it)
-        if (GetUniverse().DestroyedObjectIds().find(it->ID()) == GetUniverse().DestroyedObjectIds().end())
-            condition_non_targets.push_back(*it);
-    Eval(parent_context, matches, condition_non_targets);
+    Condition::ObjectSet condition_initial_candidates;
+    GetDefaultInitialCandidateObjects(parent_context, condition_initial_candidates);
+    matches.reserve(condition_initial_candidates.size());
+    Eval(parent_context, matches, condition_initial_candidates);
 }
 
 void Condition::ConditionBase::Eval(Condition::ObjectSet& matches) const
@@ -218,6 +231,13 @@ bool Condition::ConditionBase::Eval(TemporaryPtr<const UniverseObject> candidate
     non_matches.push_back(candidate);
     Eval(ScriptingContext(), matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
+}
+
+void Condition::ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    condition_non_targets.reserve(Objects().NumExistingObjects());
+    std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(), 
+                    std::back_inserter(condition_non_targets), 
+                    boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
 }
 
 std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
@@ -327,21 +347,10 @@ void Condition::Number::Eval(const ScriptingContext& parent_context,
         int low = (m_low ? m_low->Eval(local_context) : 0);
         int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
-        const std::set<int> destroyed_object_ids = GetUniverse().DestroyedObjectIds();
-
         // get set of all UniverseObjects that satisfy m_condition
-        ObjectMap& objects = GetUniverse().Objects();
         ObjectSet condition_matches;
-        condition_matches.reserve(objects.NumObjects());
-        ObjectSet condition_non_matches;
-        condition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> uit = objects.const_begin(); uit != objects.const_end(); ++uit) {
-            if (destroyed_object_ids.find(uit->ID()) != destroyed_object_ids.end())
-                continue;
-            condition_non_matches.push_back(*uit);
-        }
         // can evaluate subcondition once for all objects being tested by this condition
-        m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
+        m_condition->Eval(local_context, condition_matches);
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
         int matched = condition_matches.size();
         bool in_range = (low <= matched && matched <= high);
@@ -382,20 +391,9 @@ bool Condition::Number::Match(const ScriptingContext& local_context) const {
     int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
 
-    const std::set<int> destroyed_object_ids = GetUniverse().DestroyedObjectIds();
-
     // get set of all UniverseObjects that satisfy m_condition
-    ObjectMap& objects = GetUniverse().Objects();
     ObjectSet condition_matches;
-    condition_matches.reserve(objects.NumObjects());
-    ObjectSet condition_non_matches;
-    condition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> uit = objects.const_begin(); uit != objects.const_end(); ++uit) {
-        if (destroyed_object_ids.find(uit->ID()) != destroyed_object_ids.end())
-            continue;
-        condition_non_matches.push_back(*uit);
-    }
-    m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
+    m_condition->Eval(local_context, condition_matches);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_matches.size();
@@ -918,6 +916,15 @@ std::string Condition::SortedNumberOf::Dump() const {
     return retval;
 }
 
+void Condition::SortedNumberOf::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    if ( m_condition ) {
+        m_condition->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+        return;
+    } else {
+        ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+    }
+}
+
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
@@ -1125,6 +1132,12 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const {
     if (!local_context.source)
         return false;
     return local_context.source == local_context.condition_local_candidate;
+}
+
+void Condition::Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    if (parent_context.source)
+        condition_non_targets.push_back(parent_context.source);
+    //Logger().debugStream() << "Condition::ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
 }
 
 ///////////////////////////////////////////////////////////
@@ -1386,6 +1399,9 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
     return false;
 }
 
+void Condition::Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
+    { AddPlanetSet(condition_non_targets); }
+
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
@@ -1417,6 +1433,9 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const {
             return true;
     return false;
 }
+
+void Condition::Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
+    { AddPlanetSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
@@ -1575,6 +1594,7 @@ std::string Condition::Type::Dump() const {
         case OBJ_POP_CENTER:  retval += "PopulationCenter\n"; break;
         case OBJ_PROD_CENTER: retval += "ProductionCenter\n"; break;
         case OBJ_SYSTEM:      retval += "System\n"; break;
+        case OBJ_FIELD:       retval += "Field\n"; break;
         default: retval += "?\n"; break;
         }
     } else {
@@ -1591,6 +1611,76 @@ bool Condition::Type::Match(const ScriptingContext& local_context) const {
     }
 
     return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
+}
+
+void Condition::Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    // Ships, Fleets and default checks for current objects only
+    bool found_type = false;
+    if (m_type) {
+        found_type = true;
+        //std::vector<TemporaryPtr<const T> > this_base;
+        switch (m_type->Eval()) {
+            case OBJ_BUILDING:
+                condition_non_targets.reserve(Objects().NumExistingBuildings());
+                std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_FIELD:
+                condition_non_targets.reserve(Objects().NumExistingFields());
+                std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_FLEET:
+                condition_non_targets.reserve(Objects().NumExistingFleets());
+                std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_PLANET:
+                condition_non_targets.reserve(Objects().NumExistingPlanets());
+                std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_POP_CENTER:
+                condition_non_targets.reserve(Objects().NumExistingPopCenters());
+                std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_PROD_CENTER:
+                condition_non_targets.reserve(Objects().NumExistingResourceCenters());
+                std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_SHIP:
+                condition_non_targets.reserve(Objects().NumExistingShips());
+                std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            case OBJ_SYSTEM:
+                condition_non_targets.reserve(Objects().NumExistingSystems());
+                std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(), 
+                                std::back_inserter(condition_non_targets), 
+                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                break;
+            default: 
+                found_type = false;
+                break;
+        }
+    }
+    if (found_type) {
+        //if (int(condition_non_targets.size()) < Objects().NumObjects()) {
+        //    Logger().debugStream() << "Condition::Type::GetBaseNonMatches will provide " << condition_non_targets.size() 
+        //                            << " objects of type " << GetType()->Eval() << " rather than " << Objects().NumObjects() << " total objects";
+        //}
+    } else {
+        ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -2098,20 +2188,12 @@ void Condition::Contains::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
-
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
 
         EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
     } else {
@@ -2151,17 +2233,9 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
 
     // does candidate object contain any subcondition matches?
     for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it)
@@ -2221,20 +2295,13 @@ void Condition::ContainedBy::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
 
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
+        // get subcondition matches
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
 
         EvalImpl(matches, non_matches, search_domain, ContainedBySimpleMatch(subcondition_matches));
     } else {
@@ -2274,17 +2341,9 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
 
     // is candidate object contained by any subcondition matches?
     for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it)
@@ -2643,6 +2702,11 @@ std::string Condition::PlanetType::Dump() const {
     return retval;
 }
 
+void Condition::PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    AddPlanetSet(condition_non_targets); 
+    AddBuildingSet(condition_non_targets); 
+}
+
 bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -2821,6 +2885,11 @@ std::string Condition::PlanetSize::Dump() const {
     return retval;
 }
 
+void Condition::PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    AddPlanetSet(condition_non_targets); 
+    AddBuildingSet(condition_non_targets); 
+}
+
 bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -2995,6 +3064,11 @@ std::string Condition::PlanetEnvironment::Dump() const {
         retval += "]\n";
     }
     return retval;
+}
+
+void Condition::PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    AddPlanetSet(condition_non_targets); 
+    AddBuildingSet(condition_non_targets); 
 }
 
 bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const {
@@ -5271,20 +5345,13 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context,
                             parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
 
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
+        // get subcondition matches
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
 
         double distance = m_distance->Eval(local_context);
 
@@ -5330,17 +5397,9 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
     if (subcondition_matches.empty())
         return false;
 
@@ -5500,20 +5559,12 @@ void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context
                             parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
-
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
+        // get subcondition matches
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
         int jump_limit = m_jumps->Eval(local_context);
 
         EvalImpl(matches, non_matches, search_domain, WithinStarlaneJumpsSimpleMatch(subcondition_matches, jump_limit));
@@ -5556,17 +5607,9 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
     int jump_limit = m_jumps->Eval(local_context);
 
     return WithinStarlaneJumpsSimpleMatch(subcondition_matches, jump_limit)(candidate);
@@ -5615,20 +5658,12 @@ void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_co
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
-
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
+        // get subcondition matches
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
 
         EvalImpl(matches, non_matches, search_domain, CanAddStarlaneConnectionSimpleMatch(subcondition_matches));
     } else {
@@ -5668,17 +5703,9 @@ bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_co
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
 
     return CanAddStarlaneConnectionSimpleMatch(subcondition_matches)(candidate);
 }
@@ -5999,19 +6026,12 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& pa
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
-
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-        m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_condition->Eval(local_context, subcondition_matches);
 
         int empire_id = m_empire_id->Eval(local_context);
 
@@ -6038,17 +6058,9 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_condition->Eval(local_context, subcondition_matches);
     int empire_id = m_empire_id->Eval(local_context);
 
     return ResourceSupplySimpleMatch(empire_id, subcondition_matches)(candidate);
@@ -6271,20 +6283,12 @@ void Condition::OrderedBombarded::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        ObjectMap& objects = GetUniverse().Objects();
-
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-            subcondition_non_matches.push_back(*it);
+        // get subcondition matches
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(objects.NumObjects());
-
-        m_by_object_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+        m_by_object_condition->Eval(local_context, subcondition_matches);
 
         EvalImpl(matches, non_matches, search_domain, OrderedBombardedSimpleMatch(subcondition_matches));
     } else {
@@ -6323,17 +6327,9 @@ bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) c
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
-
-    // get objects to be considering for matching against subcondition
-    ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.push_back(*it);
+    // get subcondition matches
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(objects.NumObjects());
-
-    m_by_object_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+    m_by_object_condition->Eval(local_context, subcondition_matches);
 
     return OrderedBombardedSimpleMatch(subcondition_matches)(candidate);
 }
@@ -6609,6 +6605,14 @@ std::string Condition::And::Dump() const {
     --g_indent;
     retval += DumpIndent() + "]\n";
     return retval;
+}
+
+void Condition::And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+    if (!Operands().empty()) {
+        Operands()[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); //gets condition_non_targets from first operand condition
+    } else {
+        ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
+    }
 }
 
 ///////////////////////////////////////////////////////////

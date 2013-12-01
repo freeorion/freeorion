@@ -4,6 +4,7 @@
 
 #include <map>
 #include <vector>
+#include <set>
 #include <string>
 
 #include <boost/smart_ptr.hpp>
@@ -54,7 +55,7 @@ public:
         }
 
         iterator operator ++(int) {
-            iterator result = std::map<int, boost::shared_ptr<T> >::iterator::operator++(0);
+            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator++(0), m_owner);
             Refresh();
             return result;
         }
@@ -66,7 +67,7 @@ public:
         }
 
         iterator operator --(int) {
-            iterator result = std::map<int, boost::shared_ptr<T> >::iterator::operator--(0);
+            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator--(0), m_owner);
             Refresh();
             return result;
         }
@@ -222,6 +223,9 @@ public:
     template <class T>
     std::vector<int>        FindObjectIDs() const;
 
+    std::vector<int>        FindExistingObjectIDs() const;
+
+
     /** Returns the IDs of all objects in this ObjectMap */
     std::vector<int>        FindObjectIDs() const;
 
@@ -242,6 +246,71 @@ public:
     const_iterator<T>       const_end() const;
 
     std::string             Dump() const;
+
+    /**  */
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingObjectsBegin() 
+    { return m_existing_objects.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingObjectsEnd() 
+    { return m_existing_objects.end(); }
+    int NumExistingObjects()
+    {return m_existing_objects.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingResourceCentersBegin() 
+    { return m_existing_resource_centers.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingResourceCentersEnd() 
+    { return m_existing_resource_centers.end(); }
+    int NumExistingResourceCenters()
+    {return m_existing_resource_centers.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingPopCentersBegin() 
+    { return m_existing_pop_centers.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingPopCentersEnd() 
+    { return m_existing_pop_centers.end(); }
+    int NumExistingPopCenters()
+    {return m_existing_pop_centers.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingShipsBegin() 
+    { return m_existing_ships.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingShipsEnd() 
+    { return m_existing_ships.end(); }
+    int NumExistingShips()
+    {return m_existing_ships.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingFleetsBegin() 
+    { return m_existing_fleets.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingFleetsEnd() 
+    { return m_existing_fleets.end(); }
+    int NumExistingFleets()
+    {return m_existing_fleets.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingPlanetsBegin() 
+    { return m_existing_planets.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingPlanetsEnd() 
+    { return m_existing_planets.end(); }
+    int NumExistingPlanets()
+    {return m_existing_planets.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingSystemsBegin() 
+    { return m_existing_systems.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingSystemsEnd() 
+    { return m_existing_systems.end(); }
+    int NumExistingSystems()
+    {return m_existing_systems.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingBuildingsBegin() 
+    { return m_existing_buildings.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingBuildingsEnd() 
+    { return m_existing_buildings.end(); }
+    int NumExistingBuildings()
+    {return m_existing_buildings.size(); }
+
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingFieldsBegin() 
+    { return m_existing_fields.begin(); }
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingFieldsEnd() 
+    { return m_existing_fields.end(); }
+    int NumExistingFields()
+    {return m_existing_fields.size(); }
+
     //@}
 
     /** \name Mutators */ //@{
@@ -290,11 +359,11 @@ public:
       * that object will be removed.  A TemporaryPtr to the new object is
       * returned. */
     template <class T>
-    TemporaryPtr<T>     Insert(T* obj);
+    TemporaryPtr<T>     Insert(T* obj, int empire_id = ALL_EMPIRES);
 
     /** Adds object \a obj to the map under its ID, if it is a valid object. */
     template <class T>
-    void                Insert(TemporaryPtr<T> obj);
+    void                Insert(TemporaryPtr<T> obj, int empire_id = ALL_EMPIRES);
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
@@ -309,10 +378,14 @@ public:
 
     /** Swaps the contents of *this with \a rhs. */
     void                swap(ObjectMap& rhs);
+
+
+    /** */
+    void                UpdateCurrentDestroyedObjects(std::set<int> destroyed_object_ids);
     //@}
 
 private:
-    void                Insert(boost::shared_ptr<UniverseObject> item);
+    void                Insert(boost::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
     void                CopyObjectsToSpecializedMaps();
     template <class T>
     const std::map<int, boost::shared_ptr<T> >& Map() const;
@@ -337,6 +410,15 @@ private:
     std::map<int, boost::shared_ptr<System> >                   m_systems;
     std::map<int, boost::shared_ptr<Building> >                 m_buildings;
     std::map<int, boost::shared_ptr<Field> >                    m_fields;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_objects;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_resource_centers;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_pop_centers;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_ships;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_fleets;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_planets;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_systems;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_buildings;
+    std::map<int, TemporaryPtr<UniverseObject> >                m_existing_fields;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -401,21 +483,21 @@ int ObjectMap::NumObjects() const {
 }
 
 template <class T>
-TemporaryPtr<T> ObjectMap::Insert(T* item) {
+TemporaryPtr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return TemporaryPtr<T>();
 
     boost::shared_ptr<T> shared_item(item);
-    Insert(shared_item);
+    Insert(shared_item, empire_id);
     return TemporaryPtr<T>(shared_item);
 }
 
 template <class T>
-void ObjectMap::Insert(TemporaryPtr<T> item) {
+void ObjectMap::Insert(TemporaryPtr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
 
-    Insert(item.m_ptr);
+    Insert(item.m_ptr, empire_id);
 }
 
 // template specializations

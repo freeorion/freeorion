@@ -67,7 +67,7 @@ void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire
     if (TemporaryPtr<UniverseObject> destination = this->Object(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        Insert(source->Clone()); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        Insert(source->Clone(), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }
 }
 
@@ -175,8 +175,43 @@ ObjectMap::const_iterator<> ObjectMap::const_begin() const
 ObjectMap::const_iterator<> ObjectMap::const_end() const
 { return const_end<UniverseObject>(); }
 
-void ObjectMap::Insert(boost::shared_ptr<UniverseObject> item) {
+void ObjectMap::Insert(boost::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
+    if (item && GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) == GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end()) {
+        TemporaryPtr< UniverseObject > this_item = this->Object(item->ID());
+        m_existing_objects[item->ID()] = this_item;
+        switch (item->ObjectType()) {
+            case OBJ_BUILDING:
+                m_existing_buildings[item->ID()] = this_item;
+                break;
+            case OBJ_FIELD:
+                m_existing_fields[item->ID()] = this_item;
+                break;
+            case OBJ_FLEET:
+                m_existing_fleets[item->ID()] = this_item;
+                break;
+            case OBJ_PLANET:
+                m_existing_planets[item->ID()] = this_item;
+                m_existing_pop_centers[item->ID()] = this_item;
+                m_existing_resource_centers[item->ID()] = this_item;
+                break;
+            case OBJ_POP_CENTER:
+                m_existing_pop_centers[item->ID()] = this_item;
+                break;
+            case OBJ_PROD_CENTER:
+                m_existing_resource_centers[item->ID()] = this_item;
+                break;
+            case OBJ_SHIP:
+                m_existing_ships[item->ID()] = this_item;
+                break;
+            case OBJ_SYSTEM:
+                m_existing_systems[item->ID()] = this_item;
+                break;
+            default:
+                break;
+        }
+
+    }
 }
 
 boost::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
@@ -190,7 +225,15 @@ boost::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     // and erase from pointer maps
     m_objects.erase(it);
     FOR_EACH_SPECIALIZED_MAP(EraseFromMap, id);
-
+    m_existing_objects.erase(id);
+    m_existing_buildings.erase(id);
+    m_existing_fields.erase(id);
+    m_existing_fleets.erase(id);
+    m_existing_ships.erase(id);
+    m_existing_planets.erase(id);
+    m_existing_pop_centers.erase(id);
+    m_existing_resource_centers.erase(id);
+    m_existing_systems.erase(id);
     return result;
 }
 
@@ -200,6 +243,63 @@ void ObjectMap::Clear() {
 
 void ObjectMap::swap(ObjectMap& rhs) {
     FOR_EACH_MAP(SwapMap, rhs);
+}
+
+std::vector<int> ObjectMap::FindExistingObjectIDs() const {
+    std::vector<int> result;
+    for (std::map< int, TemporaryPtr< UniverseObject > >::const_iterator it = m_existing_objects.begin(); it != m_existing_objects.end(); ++it)
+        result.push_back(it->first);
+    return result;
+}
+
+void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int> destroyed_object_ids) {
+    m_existing_objects.clear();
+    m_existing_buildings.clear();
+    m_existing_fields.clear();
+    m_existing_fleets.clear();
+    m_existing_ships.clear();
+    m_existing_planets.clear();
+    m_existing_pop_centers.clear();
+    m_existing_resource_centers.clear();
+    m_existing_systems.clear();
+    for ( std::map< int, boost::shared_ptr< UniverseObject > >::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (!it->second)
+            continue;
+        if (destroyed_object_ids.find(it->first) != destroyed_object_ids.end())
+            continue;
+        TemporaryPtr< UniverseObject > this_item = this->Object(it->first);
+        m_existing_objects[it->first] = this_item;
+        switch (it->second->ObjectType()) {
+            case OBJ_BUILDING:
+                m_existing_buildings[it->first] = this_item;
+                break;
+            case OBJ_FIELD:
+                m_existing_fields[it->first] = this_item;
+                break;
+            case OBJ_FLEET:
+                m_existing_fleets[it->first] = this_item;
+                break;
+            case OBJ_PLANET:
+                m_existing_planets[it->first] = this_item;
+                m_existing_pop_centers[it->first] = this_item;
+                m_existing_resource_centers[it->first] = this_item;
+                break;
+            case OBJ_POP_CENTER:
+                m_existing_pop_centers[it->first] = this_item;
+                break;
+            case OBJ_PROD_CENTER:
+                m_existing_resource_centers[it->first] = this_item;
+                break;
+            case OBJ_SHIP:
+                m_existing_ships[it->first] = this_item;
+                break;
+            case OBJ_SYSTEM:
+                m_existing_systems[it->first] = this_item;
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
