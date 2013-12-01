@@ -260,19 +260,23 @@ def generateResearchOrders():
     #
     # check to accelerate distrib thought
     if True: #just to help with cold-folding /  organization
-        if (foAI.foAIstate.aggression > fo.aggression.cautious) and( tRP * empire.population() > 1500):
-            if (empire.getTechStatus("LRN_DISTRIB_THOUGHT") != fo.techStatus.complete):
-                for specName in ColonisationAI.empireSpecies:
-                    thisSpec=fo.getSpecies(specName)
-                    if thisSpec and ("TELEPATHIC" in list(thisSpec.tags)):
-                        insert_idx = num_techs_accelerated
-                        for dt_ech in [ "LRN_DISTRIB_THOUGHT", "LRN_PSIONICS", "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ]:
-                            if   dt_ech not in researchQueueList[:4+num_techs_accelerated]  and  empire.getTechStatus(dt_ech) != fo.techStatus.complete:
-                                res=fo.issueEnqueueTechOrder(dt_ech, insert_idx)
-                                num_techs_accelerated += 1
-                                print "Empire has a telepathic race, so attempted to fast-track %s,  got result %d"%(dt_ech, res)
-                        researchQueueList = getResearchQueueTechs()
-                        break
+        if (empire.getTechStatus("LRN_DISTRIB_THOUGHT") != fo.techStatus.complete):
+            got_telepathy = False
+            for specName in ColonisationAI.empireSpecies:
+                thisSpec=fo.getSpecies(specName)
+                if thisSpec and ("TELEPATHIC" in list(thisSpec.tags)):
+                    got_telepathy = True
+                    break
+            if ((foAI.foAIstate.aggression > fo.aggression.cautious) and (empire.population() > ([300, 100][got_telepathy]))):
+                insert_idx = num_techs_accelerated
+                for dt_ech in [ "LRN_DISTRIB_THOUGHT", "LRN_PSIONICS", "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ]:
+                    if   dt_ech not in researchQueueList[:4+num_techs_accelerated]  and  empire.getTechStatus(dt_ech) != fo.techStatus.complete:
+                        res=fo.issueEnqueueTechOrder(dt_ech, insert_idx)
+                        num_techs_accelerated += 1
+                        fmt_str = "Empire has a telepathic race, so attempted to fast-track %s (got result %d)"
+                        fmt_str += " with current target_RP %.1f and current pop %.1f, on turn %d"
+                        print fmt_str%( dt_ech, res,  tRP,  empire.population,  fo.currentTurn())
+                researchQueueList = getResearchQueueTechs()
     #
     # check to accelerate quant net
     if True: #just to help with cold-folding /  organization
@@ -283,7 +287,7 @@ def generateResearchOrders():
                     if   qnTech not in researchQueueList[:2+num_techs_accelerated]  and  empire.getTechStatus(qnTech) != fo.techStatus.complete:
                         res=fo.issueEnqueueTechOrder(qnTech, insert_idx)
                         num_techs_accelerated += 1
-                        print "Empire many researchers, so attempted to fast-track %s,  got result %d"%(qnTech, res)
+                        print "Empire has many researchers, so attempted to fast-track %s (got result %d) on turn %d"%(qnTech, res,  fo.currentTurn())
                 researchQueueList = getResearchQueueTechs()
 
     #
