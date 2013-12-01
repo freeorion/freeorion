@@ -4829,6 +4829,17 @@ Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
+HEAD_ON_A_SPIKE_SPECIAL
+Head on a spike
+HEAD_ON_A_SPIKE_SPECIAL_DESC
+'''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
+
+Non-empire ships, both enemies and allies, within 100uu will have reduced shields, structure and weapons. 
+'''
+
+HEAD_ON_A_SPIKE_SPECIAL_EFFECT
+Cowering in fear
+
 CONC_CAMP_MASTER_SPECIAL
 Pall of Death
 CONC_CAMP_MASTER_SPECIAL_DESC
@@ -8155,6 +8166,13 @@ Capacity: %1%
 
 PART_DESC_STRENGTH
 Strength: %1%
+
+PART_DESC_SHIELD_STRENGTH
+Shield Strength: %1%
+
+PART_DESC_DETECTION
+'''Detection Strength: %1%'''
+# Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
 '''Attack Damage: %1%'''

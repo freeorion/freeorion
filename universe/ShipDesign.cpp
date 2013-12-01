@@ -90,10 +90,24 @@ namespace {
             m_description(description)
         {}
         void operator()(const float& d) const {
-            const std::string& desc_string =
-                m_class == PC_FUEL || m_class == PC_COLONY
-                    ? UserString("PART_DESC_CAPACITY")
-                    : UserString("PART_DESC_STRENGTH");
+            std::string desc_string;
+
+            switch(m_class){
+            case PC_FUEL: 
+            case PC_TROOPS: 
+            case PC_COLONY: 
+                desc_string += UserString("PART_DESC_CAPACITY");
+                break;
+            case PC_SHIELD: 
+                desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
+                break;
+            case PC_DETECTION: 
+                desc_string = UserString("PART_DESC_DETECTION");
+                break;
+            default:
+                desc_string = UserString("PART_DESC_STRENGTH");
+                break;
+            }
             m_description +=
                 str(FlexibleFormat(desc_string) % d);
         }
