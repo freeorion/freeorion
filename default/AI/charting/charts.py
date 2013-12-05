@@ -109,7 +109,8 @@ for lfile in logfiles:
 
 print
 for plotType in doPlotTypes:
-
+    
+    print "--------------------"
     if plotType=="PP":
         caption="Production"
     elif plotType=="RP":
@@ -153,7 +154,7 @@ for plotType in doPlotTypes:
     ax.set_yscale('log',basey=10)
       
     if playerName not in allData:
-        print "can't find playerData in allData"
+        print "\t\t\tcan't find playerData in allData\n"
     else:
         if playerName in empireColors:
             turnsP = allData[playerName].get("turnsP",  [])
@@ -163,7 +164,9 @@ for plotType in doPlotTypes:
         else:
             print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType,  [])), ' | ', max(allData[playerName].get(plotType,  []))
             plot(turnsP, allData[playerName].get(plotType,  []), 'bx-',  label=playerName,  linewidth=2.0)
+    print "Ranked by ",  plotType
     for rank,name in rankings[::-1]:
+        print name
         if name in empireColors:
             adata = allData[name].get(plotType,  [])
             plot(range(turns[0], turns[0]+len(adata)), adata, color=empireColors[name],  label="%s: %s - %.1f"%(name,  species[name],  sum(adata)),  linewidth=2.0)

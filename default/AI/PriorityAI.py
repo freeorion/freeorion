@@ -14,6 +14,7 @@ import PlanetUtilsAI
 import EnumsAI
 import ProductionAI
 import ResearchAI
+from time import time
 
 
 allottedInvasionTargets=0
@@ -25,23 +26,49 @@ def calculatePriorities():
     "calculates the priorities of the AI player"
     print("checking statuses")
     # Industry, Research, Colony, Invasion, Military
+    times=[]
+    tasks = []
+    times.append( time() )
+    tasks.append("init")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, 50) # let this one stay fixed & just adjust Research
+    times.append( time() )
+    tasks.append( "setting Production Priority" )
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
+    times.append( time() )
+    tasks.append(  "setting Research Priority")
     ColonisationAI.getColonyFleets() # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs  and many other values used by other modules
+    times.append( time() )
+    tasks.append(  "Evaluating Colonization Status")
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
+    times.append( time() )
+    tasks.append(  "Evaluating Invasion Status")
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
+    times.append( time() )
+    tasks.append(  "Evaluating Military Status")
 
     print("calculating priorities")
     calculateIndustryPriority()#purely for reporting purposes
+    times.append( time() )
+    tasks.append(  "reporting Production Priority")
 
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_CONSTRUCTION, 0)
 
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION, calculateExplorationPriority())
+    times.append( time() )
+    tasks.append(  "setting Exploration Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, calculateOutpostPriority())
+    times.append( time() )
+    tasks.append(  "setting Outpost Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, calculateColonisationPriority())
+    times.append( time() )
+    tasks.append(  "setting Colony Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION, calculateInvasionPriority())
+    times.append( time() )
+    tasks.append(  "setting Invasion Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY, calculateMilitaryPriority())
+    times.append( time() )
+    tasks.append(  "setting Military Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS, 25)
 
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESEARCH_LEARNING, calculateLearningPriority())
@@ -51,6 +78,12 @@ def calculatePriorities():
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESEARCH_ECONOMICS, 0)
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESEARCH_SHIPS, calculateShipsPriority())
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESEARCH_DEFENSE, 0)
+    times.append( time() )
+    tasks.append(  "total processing")
+    
+    for t_index in range(1, len(times)-1):
+        print "calculatePriorities(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[t_index]-times[t_index-1])))
+    print "getColonyFleets(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[-1]-times[0])))
 
     # foAI.foAIstate.printPriorities()
 
