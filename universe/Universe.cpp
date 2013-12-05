@@ -859,6 +859,8 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids) {
+    if (object_ids.empty())
+        return;
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -905,6 +907,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
 }
 
 void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
+    if (object_ids.empty())
+        return;
     ScopedTimer timer("Universe::ApplyAppearanceEffects on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
 
     // cache all activation and scoping condition results before applying
@@ -915,8 +919,17 @@ void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
     ExecuteEffects(targets_causes, false, false, true);
 }
 
-void Universe::ApplyAppearanceEffects()
-{ ApplyAppearanceEffects(m_objects.FindObjectIDs()); }
+void Universe::ApplyAppearanceEffects() {
+    ScopedTimer timer("Universe::ApplyAppearanceEffects on all objects");
+
+    // cache all activation and scoping condition results before applying
+    // Effects, since the application of these Effects may affect the
+    // activation and scoping evaluations
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes);
+    ExecuteEffects(targets_causes, false, false, true);
+}
+
 
 void Universe::InitMeterEstimatesAndDiscrepancies() {
     Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
@@ -980,8 +993,11 @@ void Universe::UpdateMeterEstimates()
 
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     if (object_id == INVALID_OBJECT_ID) {
+        std::vector<int> all_objects_vec = m_objects.FindExistingObjectIDs();
+        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); id_it++)
+            m_effect_accounting_map[*id_it].clear();
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
-        UpdateMeterEstimates(m_objects.FindObjectIDs());
+        UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
         return;
     }
 
@@ -1014,7 +1030,8 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     std::vector<int> objects_vec;
     objects_vec.reserve(objects_set.size());
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
-    UpdateMeterEstimatesImpl(objects_vec);
+    if (!objects_vec.empty())
+        UpdateMeterEstimatesImpl(objects_vec);
 }
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
@@ -1030,17 +1047,22 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     }
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
-    UpdateMeterEstimatesImpl(final_objects_vec);
+    if (!final_objects_vec.empty())
+        UpdateMeterEstimatesImpl(final_objects_vec);
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects", true);
-    if (objects_vec.empty())
-        return;
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
     std::vector<TemporaryPtr<UniverseObject> > object_ptrs = m_objects.FindObjects(objects_vec);
+    if (objects_vec.empty()) {
+        object_ptrs.reserve(m_objects.NumExistingObjects());
+        std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(), 
+                        std::back_inserter(object_ptrs), 
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+    }
 
     for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
          obj_it != object_ptrs.end(); ++obj_it)
@@ -1167,16 +1189,13 @@ void Universe::BackPropegateObjectMeters()
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
     targets_causes.clear();
 
-    std::vector<int> all_objects = m_objects.FindObjectIDs();
-    GetEffectsAndTargets(targets_causes, all_objects);
+    GetEffectsAndTargets(targets_causes, std::vector<int>());
 }
 
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                                     const std::vector<int>& target_objects)
 {
     ScopedTimer timer("Universe::GetEffectsAndTargets");
-    if (target_objects.empty())
-        return;
 
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets = m_objects.FindObjects(target_objects);
@@ -1455,6 +1474,11 @@ namespace {
         Effect::TargetSet& target_set = cached_condition_matches[cond];
         Condition::ObjectSet& matched_target_objects =
             *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_set));
+        if (target_objects.empty()) {
+            // move matches from default target candidates into target_set
+            cond->Eval(source_context, matched_target_objects);
+        } else {
+            // move matches from candidates in target_objects into target_set
         Condition::ObjectSet& potential_target_objects =
             *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_objects));
 
@@ -1463,6 +1487,7 @@ namespace {
         // restore target_objects by copying objects back from targets to target_objects
         // this should be cheaper than doing a full copy because target_set is usually small
         target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
+        }
 
         //Logger().debugStream() << "Generated new target set!";
 
