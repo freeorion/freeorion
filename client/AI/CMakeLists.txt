@@ -5,7 +5,7 @@ project(freeorionca)
 
 message("-- Configuring freeorionca")
 
-list(APPEND MINIMUM_BOOST_COMPONENTS iostreams python)
+list(APPEND MINIMUM_BOOST_COMPONENTS python)
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
