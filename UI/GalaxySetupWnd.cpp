@@ -305,14 +305,15 @@ void GalaxySetupPanel::Init() {
     // create and load textures
     m_textures.clear();
     m_textures.resize(GALAXY_SHAPES);
-    m_textures[SPIRAL_2] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
-    m_textures[SPIRAL_3] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
-    m_textures[SPIRAL_4] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
-    m_textures[CLUSTER] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
-    m_textures[ELLIPTICAL] =ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[IRREGULAR] = ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
-    m_textures[RING] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
-    m_textures[RANDOM] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
+    m_textures[SPIRAL_2] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
+    m_textures[SPIRAL_3] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
+    m_textures[SPIRAL_4] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
+    m_textures[CLUSTER] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
+    m_textures[ELLIPTICAL] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
+    m_textures[IRREGULAR] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[RING] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
+    m_textures[PYTHON_TEST] = ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));
@@ -322,6 +323,7 @@ void GalaxySetupPanel::Init() {
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ELLIPTICAL")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RING")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_PYTHON_TEST")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_YOUNG")));

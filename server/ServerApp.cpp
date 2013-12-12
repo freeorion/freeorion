@@ -13,6 +13,7 @@
 #include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../universe/PythonUniverseGenerator.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -607,25 +608,9 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     Logger().debugStream() << "ServerApp::NewGameInit: Creating Universe";
     m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
 
-    int seed = 0;
-    try {
-        seed = boost::lexical_cast<unsigned int>(galaxy_setup_data.m_seed);
-    } catch (...) {
-        try {
-            boost::hash<std::string> string_hash;
-            std::size_t h = string_hash(galaxy_setup_data.m_seed);
-            seed = static_cast<unsigned int>(h);
-        } catch (...) {
-        }
-    }
-
 
     // m_current_turn set above so that every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    m_universe.CreateUniverse(seed,                                 galaxy_setup_data.m_size,
-                              galaxy_setup_data.m_shape,            galaxy_setup_data.m_age,
-                              galaxy_setup_data.m_starlane_freq,    galaxy_setup_data.m_planet_density,
-                              galaxy_setup_data.m_specials_freq,    galaxy_setup_data.m_monster_freq,
-                              galaxy_setup_data.m_native_freq,      active_players_id_setup_data);
+    GenerateUniverse(m_galaxy_setup_data, active_players_id_setup_data);
     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_current_turn = 1;
 

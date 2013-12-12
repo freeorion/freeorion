@@ -278,6 +278,7 @@ enum Shape {
     ELLIPTICAL,     ///< an elliptical galaxy
     IRREGULAR,      ///< an irregular galaxy
     RING,           ///< a ring galaxy
+    PYTHON_TEST,    ///< "test" galaxy shape for use in Python universe generator script
     RANDOM,         ///< a random one of the above
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
 };
@@ -292,6 +293,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(ELLIPTICAL)
     GG_ENUM_MAP_INSERT(IRREGULAR)
     GG_ENUM_MAP_INSERT(RING)
+    GG_ENUM_MAP_INSERT(PYTHON_TEST)
     GG_ENUM_MAP_INSERT(RANDOM)
     GG_ENUM_MAP_END
 }

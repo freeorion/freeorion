@@ -48,6 +48,25 @@ namespace Effect {
     typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
 }
 
+// TEMPORARY HACK!!! We need definition of this class here because the
+// Python universe generation interface is not completed yet, and we
+// have to pass a vector of these to Universe::CreateUniverse
+// Will be moved to the bottom of this header file to the rest of the
+// server-side universe generator stuff once it's no longer required
+// up here.
+struct SystemPosition {
+    double x;
+    double y;
+    
+    SystemPosition(double pos_x, double pos_y) :
+        x(pos_x),
+        y(pos_y)
+    {}
+    
+    bool operator == (const SystemPosition &p)
+    { return ((x == p.x) && (y == p.y)); }
+};
+
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
   * game.  (Other gamestate is contained in the Empire class.)
@@ -233,14 +252,20 @@ public:
       * true on success, or false on failure.
       * \note Universe gains ownership of \a ship_design once inserted. */
     bool            InsertShipDesignID(ShipDesign* ship_design, int id);
+    
+    // Resets the universe object to prepare for generation of a new universe
+    void            ResetUniverse();
 
     /** Generates systems and planets, assigns homeworlds and populates them
       * with people, industry and bases, and places starting fleets.  Uses
-      * predefined galaxy shapes. */
-    void            CreateUniverse(unsigned int seed, int size, Shape shape,
-                                   GalaxySetupOption age, GalaxySetupOption starlane_freq,
-                                   GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
-                                   GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
+      * predefined galaxy shapes.
+      * WILL BE REMOVED!!! Currently kept because the new Python universe
+      * generator interface is not yet able to replace this function completely */
+    void            CreateUniverse(int size,                          Shape shape,
+                                   GalaxySetupOption age,             GalaxySetupOption starlane_freq,
+                                   GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
+                                   GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
+                                   const std::vector<SystemPosition>& positions,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Clears main ObjectMap, empires' latest known objects map, and
@@ -403,6 +428,7 @@ public:
     int&            EncodingEmpire();
 
     double          UniverseWidth() const;
+    void            SetUniverseWidth(double width) { m_universe_width = width; }
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
@@ -695,5 +721,44 @@ protected:
     int                             m_spawn_limit;
     const Condition::ConditionBase* m_location;
 };
+
+// Stuff (classes, functions, etc.) needed for server-side universe generation
+/*
+// Class representing a position on the galaxy map, used
+// to store the positions at which systems shall be created
+// TEMPORARY HACK!!! Currently commented out,  we need to
+// define this class before the Universe class, because
+// we need to pass a vector of these to Universe::CreateUniverse
+// until the new Python universe generator interface is
+// sufficiently complete to replace Universe::CreateUniverse
+// entirely.
+struct SystemPosition {
+    double x;
+    double y;
+
+    SystemPosition(double pos_x, double pos_y) :
+        x(pos_x),
+        y(pos_y)
+    {}
+
+    bool operator == (const SystemPosition &p)
+    { return ((x == p.x) && (y == p.y)); }
+};
+*/
+void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
+                               unsigned int arms, unsigned int stars, double width, double height);
+
+void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
+                                   unsigned int stars, double width, double height);
+
+void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int clusters,
+                                unsigned int stars, double width, double height);
+
+void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int stars,
+                             double width, double height);
+
+void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
+                              double width, double height);
+
 
 #endif // _Universe_h_

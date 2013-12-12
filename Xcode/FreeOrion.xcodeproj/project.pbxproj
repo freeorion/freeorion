@@ -367,11 +367,16 @@
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
 		827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */; };
+		8288432E1850A1770023C4D7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
+		8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
+		828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */; };
+		82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
+		82B743DF184E127A001A5803 /* PythonUniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */; };
 		82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9D445180C53FE0032F86D /* GraphControl.cpp */; };
 		82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BEB657159853B300B024CB /* Diplomacy.cpp */; };
 		82C07470149DE72D00E76876 /* Parse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F1147E3B1B00B840A5 /* Parse.cpp */; };
@@ -1728,6 +1733,8 @@
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
 		829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireStatsParser.cpp; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
+		82B743DD184E127A001A5803 /* PythonUniverseGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonUniverseGenerator.h; sourceTree = "<group>"; };
+		82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseGenerator.cpp; sourceTree = "<group>"; };
 		82B9D445180C53FE0032F86D /* GraphControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphControl.cpp; sourceTree = "<group>"; };
 		82B9D446180C53FE0032F86D /* GraphControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphControl.h; sourceTree = "<group>"; };
 		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
@@ -1783,6 +1790,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8288432E1850A1770023C4D7 /* Python.framework in Frameworks */,
+				8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */,
 				3ABEAB971749C93400E34912 /* libboost_signals.a in Frameworks */,
 				3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */,
 				478417730CF0589200BE4710 /* freeorioncommon.dylib in Frameworks */,
@@ -3107,18 +3116,6 @@
 		471D5CE40A98A3F900DA9C21 /* universe */ = {
 			isa = PBXGroup;
 			children = (
-				8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */,
-				82F06B6417B7C3BD00982965 /* TemporaryPtr.h */,
-				8250FDE315FCEFDD00523C1C /* Field.cpp */,
-				8250FDE415FCEFDE00523C1C /* Field.h */,
-				82B4313314A74E07003EEE42 /* UniverseServer.cpp */,
-				82592EF7147E38ED00B840A5 /* ValueRefFwd.h */,
-				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
-				82592EF4147E387100B840A5 /* ObjectMap.h */,
-				82592EEF147E381B00B840A5 /* EffectAccounting.cpp */,
-				82592EEE147E37FB00B840A5 /* EffectAccounting.h */,
-				34D3CE8A11D7DA03007C1E78 /* Species.cpp */,
-				34D3CE8B11D7DA03007C1E78 /* Species.h */,
 				471D5CE50A98A3F900DA9C21 /* Building.cpp */,
 				471D5CE60A98A3F900DA9C21 /* Building.h */,
 				471D5CE70A98A3F900DA9C21 /* Condition.cpp */,
@@ -3126,19 +3123,28 @@
 				471D5CEC0A98A3F900DA9C21 /* doc */,
 				471D5CEF0A98A3F900DA9C21 /* Effect.cpp */,
 				471D5CF00A98A3F900DA9C21 /* Effect.h */,
+				82592EEF147E381B00B840A5 /* EffectAccounting.cpp */,
+				82592EEE147E37FB00B840A5 /* EffectAccounting.h */,
+				8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */,
 				471D5CF20A98A3F900DA9C21 /* Enums.cpp */,
 				471D5CF30A98A3F900DA9C21 /* Enums.h */,
+				8250FDE315FCEFDD00523C1C /* Field.cpp */,
+				8250FDE415FCEFDE00523C1C /* Field.h */,
 				471D5CF40A98A3F900DA9C21 /* Fleet.cpp */,
-				471D5CF80A98A3F900DA9C21 /* Meter.h */,
 				471D5CF50A98A3F900DA9C21 /* Fleet.h */,
 				471D5CF60A98A3F900DA9C21 /* InhibitableSignal.h */,
 				471D5CF70A98A3F900DA9C21 /* Meter.cpp */,
+				471D5CF80A98A3F900DA9C21 /* Meter.h */,
+				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
+				82592EF4147E387100B840A5 /* ObjectMap.h */,
 				471D5CFC0A98A3F900DA9C21 /* Planet.cpp */,
 				471D5CFD0A98A3F900DA9C21 /* Planet.h */,
 				471D5CFE0A98A3F900DA9C21 /* PopCenter.cpp */,
 				471D5CFF0A98A3F900DA9C21 /* PopCenter.h */,
 				471D5D000A98A3F900DA9C21 /* Predicates.cpp */,
 				471D5D010A98A3F900DA9C21 /* Predicates.h */,
+				82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */,
+				82B743DD184E127A001A5803 /* PythonUniverseGenerator.h */,
 				471D5D020A98A3F900DA9C21 /* ResourceCenter.cpp */,
 				471D5D030A98A3F900DA9C21 /* ResourceCenter.h */,
 				471D5D040A98A3F900DA9C21 /* Ship.cpp */,
@@ -3147,16 +3153,21 @@
 				471D5D070A98A3F900DA9C21 /* ShipDesign.h */,
 				471D5D080A98A3F900DA9C21 /* Special.cpp */,
 				471D5D090A98A3F900DA9C21 /* Special.h */,
+				34D3CE8A11D7DA03007C1E78 /* Species.cpp */,
+				34D3CE8B11D7DA03007C1E78 /* Species.h */,
 				471D5D0A0A98A3F900DA9C21 /* System.cpp */,
 				471D5D0B0A98A3F900DA9C21 /* System.h */,
 				471D5D0C0A98A3F900DA9C21 /* Tech.cpp */,
 				471D5D0D0A98A3F900DA9C21 /* Tech.h */,
+				82F06B6417B7C3BD00982965 /* TemporaryPtr.h */,
 				471D5D0F0A98A3F900DA9C21 /* Universe.cpp */,
 				471D5D100A98A3F900DA9C21 /* Universe.h */,
 				471D5D110A98A3F900DA9C21 /* UniverseObject.cpp */,
 				471D5D120A98A3F900DA9C21 /* UniverseObject.h */,
+				82B4313314A74E07003EEE42 /* UniverseServer.cpp */,
 				471D5D130A98A3F900DA9C21 /* ValueRef.cpp */,
 				471D5D140A98A3F900DA9C21 /* ValueRef.h */,
+				82592EF7147E38ED00B840A5 /* ValueRefFwd.h */,
 			);
 			path = universe;
 			sourceTree = "<group>";
@@ -3172,24 +3183,6 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
-				8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */,
-				8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */,
-				3A5105521748D68B00DC258B /* i18n.cpp */,
-				3A5105531748D68B00DC258B /* i18n.h */,
-				3A5105551748D6A600DC258B /* Logger.cpp */,
-				3A5105561748D6A700DC258B /* Logger.h */,
-				82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */,
-				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
-				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
-				34C44954118271590071E09A /* Math.cpp */,
-				34C44955118271590071E09A /* Math.h */,
-				34C44956118271590071E09A /* Serialize.ipp */,
-				34C44957118271590071E09A /* SerializeEmpire.cpp */,
-				34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */,
-				34C44959118271590071E09A /* SerializeOrderSet.cpp */,
-				34C4495A118271590071E09A /* SerializePathingEngine.cpp */,
-				34C4495B118271590071E09A /* SerializeUniverse.cpp */,
-				34C4495C118271590071E09A /* SerializeUniverseExports.ipp */,
 				471D5D180A98A3F900DA9C21 /* AppInterface.cpp */,
 				471D5D190A98A3F900DA9C21 /* AppInterface.h */,
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
@@ -3202,29 +3195,47 @@
 				471D5D220A98A3F900DA9C21 /* GLStateComparator.h */,
 				471D5D230A98A3F900DA9C21 /* GZStream.cpp */,
 				471D5D240A98A3F900DA9C21 /* GZStream.h */,
+				3A5105521748D68B00DC258B /* i18n.cpp */,
+				3A5105531748D68B00DC258B /* i18n.h */,
+				3A5105551748D6A600DC258B /* Logger.cpp */,
+				3A5105561748D6A700DC258B /* Logger.h */,
+				34C44954118271590071E09A /* Math.cpp */,
+				34C44955118271590071E09A /* Math.h */,
+				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
+				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */,
 				471D5D280A98A3F900DA9C21 /* MultiplayerCommon.h */,
 				471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */,
 				471D5D2A0A98A3F900DA9C21 /* OptionsDB.h */,
+				471D5D2B0A98A3F900DA9C21 /* OptionValidators.h */,
 				471D5D2C0A98A3F900DA9C21 /* Order.cpp */,
 				471D5D2D0A98A3F900DA9C21 /* Order.h */,
 				471D5D2E0A98A3F900DA9C21 /* OrderSet.cpp */,
-				471D5D2B0A98A3F900DA9C21 /* OptionValidators.h */,
 				471D5D2F0A98A3F900DA9C21 /* OrderSet.h */,
 				471D5D300A98A3F900DA9C21 /* Process.cpp */,
 				471D5D310A98A3F900DA9C21 /* Process.h */,
 				471D5D320A98A3F900DA9C21 /* Random.cpp */,
 				471D5D330A98A3F900DA9C21 /* Random.h */,
+				8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */,
+				8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */,
 				471D5D350A98A3F900DA9C21 /* Serialize.h */,
+				34C44956118271590071E09A /* Serialize.ipp */,
+				34C44957118271590071E09A /* SerializeEmpire.cpp */,
+				82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */,
+				34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */,
+				34C44959118271590071E09A /* SerializeOrderSet.cpp */,
+				34C4495A118271590071E09A /* SerializePathingEngine.cpp */,
+				34C4495B118271590071E09A /* SerializeUniverse.cpp */,
+				34C4495C118271590071E09A /* SerializeUniverseExports.ipp */,
 				471D5D360A98A3F900DA9C21 /* SitRepEntry.cpp */,
 				471D5D370A98A3F900DA9C21 /* SitRepEntry.h */,
 				471D5CDC0A98A3F900DA9C21 /* StringTable.cpp */,
 				471D5CDD0A98A3F900DA9C21 /* StringTable.h */,
 				471D5D380A98A3F900DA9C21 /* VarText.cpp */,
 				471D5D390A98A3F900DA9C21 /* VarText.h */,
-				471D5D3B0A98A3F900DA9C21 /* Version.h */,
-				34C4495D118271590071E09A /* Version.cpp.in */,
 				3A1BF3EA1748875200812237 /* Version.cpp */,
+				34C4495D118271590071E09A /* Version.cpp.in */,
+				471D5D3B0A98A3F900DA9C21 /* Version.h */,
 				471D5D3C0A98A3F900DA9C21 /* XMLDoc.cpp */,
 				471D5D3D0A98A3F900DA9C21 /* XMLDoc.h */,
 			);
@@ -4115,6 +4126,9 @@
 				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
 				82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */,
 				82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */,
+				82B743DF184E127A001A5803 /* PythonUniverseGenerator.cpp in Sources */,
+				828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */,
+				82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4556,6 +4570,10 @@
 		471D5D6C0A98A48500DA9C21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
@@ -4716,6 +4734,10 @@
 		8218683014A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
@@ -4891,6 +4913,10 @@
 		8218684014AA28BE009441B8 /* Release_10_5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
@@ -5073,6 +5099,10 @@
 		8219A99F14AAFFC300EEE387 /* Release_LLVM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
@@ -5302,6 +5332,10 @@
 		8221B253160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
@@ -5537,6 +5571,10 @@
 		8263A0EE16DDFC9400A2AACD /* Test_GCC42 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/Frameworks\"",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,

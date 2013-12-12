@@ -621,6 +621,7 @@ namespace {
         case ELLIPTICAL:    return UserString("GSETUP_ELLIPTICAL");
         case IRREGULAR:     return UserString("GSETUP_IRREGULAR");
         case RING:          return UserString("GSETUP_RING");
+        case PYTHON_TEST:   return UserString("GSETUP_PYTHON_TEST");
         case RANDOM:        return UserString("GSETUP_RANDOM");
         default:            return EMPTY_STRING;
         }

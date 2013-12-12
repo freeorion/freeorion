@@ -182,6 +182,7 @@ namespace FreeOrionPython {
             .value("elliptical",    ELLIPTICAL)
             .value("irregular",     IRREGULAR)
             .value("ring",          RING)
+            .value("test",          PYTHON_TEST)
             .value("random",        RANDOM)
         ;
     }

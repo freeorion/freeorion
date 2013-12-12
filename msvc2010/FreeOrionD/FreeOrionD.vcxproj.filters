@@ -45,6 +45,12 @@
     <Filter Include="Source Files\combat">
       <UniqueIdentifier>{6b2d0754-7ac9-4b5b-b390-dcbd62045354}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\python">
+      <UniqueIdentifier>{6d76a9db-88e7-4d35-8172-8665596466db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\python">
+      <UniqueIdentifier>{249f8c81-16de-4b81-90d5-4088dfdb7369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatOrder.h">
@@ -218,6 +224,12 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\python\PythonWrappers.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PythonUniverseGenerator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\ServerNetworking.cpp">
@@ -243,6 +255,15 @@
     </ClCompile>
     <ClCompile Include="..\..\combat\CombatSystem.cpp">
       <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp">
+      <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

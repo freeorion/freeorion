@@ -5,14 +5,38 @@ project(freeoriond)
 
 message("-- Configuring freeoriond")
 
+list(APPEND MINIMUM_BOOST_COMPONENTS python)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
+if (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+else ()
+    message(FATAL_ERROR "Boost libraries not found.")
+endif ()
+
+find_package(PythonLibs 2)
+if (PYTHONLIBS_FOUND)
+    include_directories(${PYTHON_INCLUDE_PATH})
+else ()
+    message(FATAL_ERROR "Python2 library not found.")
+endif ()
+
+
 add_definitions(-DFREEORION_BUILD_SERVER)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 endif ()
 
+set(freeoriond_LINK_LIBS
+    freeorioncommon
+    freeorionparse
+    ${PYTHON_LIBRARIES}
+)
+
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
+else ()
+    list(APPEND freeoriond_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
 add_executable(freeoriond
@@ -23,11 +47,13 @@ add_executable(freeoriond
     ../server/dmain.cpp
     ../universe/UniverseServer.cpp
     ../combat/CombatSystem.cpp
+    ../universe/PythonUniverseGenerator.cpp
+    ../python/PythonEnumWrapper.cpp
+    ../python/PythonLoggingWrapper.cpp
 )
 
 target_link_libraries(freeoriond
-    freeorioncommon
-    freeorionparse
+    ${freeoriond_LINK_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 

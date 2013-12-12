@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT=0x0501;FREEORION_BUILD_SERVER;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;LOG4CPP_STLPORT_AND_BOOST_BUILD</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../../../include/zlib/;../../OpenSteer/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../../../include/Python27/;../../../include/zlib/;../../OpenSteer/include/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -102,6 +102,7 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\network\ServerNetworking.h" />
+    <ClInclude Include="..\..\python\PythonWrappers.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
     <ClInclude Include="..\..\server\ServerFSM.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />
     <ClInclude Include="..\..\universe\Predicates.h" />
+    <ClInclude Include="..\..\universe\PythonUniverseGenerator.h" />
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />
@@ -154,10 +156,13 @@
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
+    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
+    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
+    <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp" />
     <ClCompile Include="..\..\universe\UniverseServer.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
