@@ -12,21 +12,14 @@ set(FreeOrion_VERSION 0.4.3+)
 set(FREEORION_RELEASE false)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
-option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
-option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
-if (BUILD_DEBUG)
-    set(BUILD_RELEASE OFF)
-else ()
-    set(BUILD_RELEASE ON)
-endif ()
+option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
 if (BUILD_TESTS)
     enable_testing()
 endif ()
 
-include(Config)
-include(Util)
+find_package (Threads)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

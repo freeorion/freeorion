@@ -18,7 +18,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 set(MINIMUM_BOOST_VERSION 1.47.0)
 
 option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
-option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
 option(BUILD_PLUGIN_SUPPORT "Enables building of plugin support." OFF)
 option(BUILD_ADAM_SUPPORT "Enables building of Adobe Adam bindings." OFF)
 cmake_dependent_option(BUILD_EXPERIMENTAL_EVE_SUPPORT "Enables building of experimental Adobe Eve bindings." OFF BUILD_ADAM_SUPPORT OFF)
@@ -36,7 +35,6 @@ if (DEFINED BUILD_STATIC OR DEFINED BUILD_SHARED)
     return()
 endif ()
 
-include(Config)
 include(Util)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
