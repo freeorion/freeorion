@@ -402,6 +402,7 @@ Special
                 ]
                 OwnedBy TheEmpire Source.Owner
             ]
+            stackinggroup = "RESONANT_MOON_STACK"
             effects = SetStealth Value + 10
     ]
     graphic = "icons/specials_huge/resonant_moon.png"
@@ -554,7 +555,12 @@ Special
             activation = AND [
                 Planet
                 Not Planet environment = Good
+                Population low = 0.01
                 OwnedBy AnyEmpire
+                Not And [
+				    Species name = "SP_EXOBOT"
+					Planet environment = adequate
+                ]
                 Random probability = 0.5
             ]
             effects = [
