@@ -5,20 +5,13 @@ project(freeorionca)
 
 message("-- Configuring freeorionca")
 
-list(APPEND MINIMUM_BOOST_COMPONENTS python)
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
-if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-else ()
-    message(FATAL_ERROR "Boost libraries not found.")
-endif ()
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS python REQUIRED)
+find_package(PythonLibs 2 REQUIRED)
 
-find_package(PythonLibs 2)
-if (PYTHONLIBS_FOUND)
-    include_directories(${PYTHON_INCLUDE_PATH})
-else ()
-    message(FATAL_ERROR "Python2 library not found.")
-endif ()
+include_directories(
+    ${Boost_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_PATH}
+)
 
 add_definitions(-DFREEORION_BUILD_AI)
 

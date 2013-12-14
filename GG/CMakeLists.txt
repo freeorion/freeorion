@@ -16,7 +16,6 @@ set(GIGI_VERSION 0.8.0)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
-set(MINIMUM_BOOST_COMPONENTS date_time filesystem signals system thread)
 
 option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
@@ -43,9 +42,6 @@ include(Util)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
-    "Specifies alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost).")
 
 option(USE_DEVIL
        "Enables optional use of the DevIL image-loading library.  This should only be enabled if you need to load image files other than PNG, JPEG, and TIFF."
@@ -148,67 +144,53 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/libl
 # Dependencies                         #
 ########################################
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
-if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-else ()
-    message(FATAL_ERROR "Boost libraries not found.")
-endif ()
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem signals system thread REQUIRED)
 
-if (NOT BOOST_SIGNALS_NAMESPACE STREQUAL "signals")
-    add_definitions(
-        -DBOOST_SIGNALS_NAMESPACE=${BOOST_SIGNALS_NAMESPACE}
-        -Dsignals=${BOOST_SIGNALS_NAMESPACE}
-    )
-endif ()
+include_directories(${Boost_INCLUDE_DIRS})
 
 set(int_have_devil 0)
 set(int_have_jpeg 0)
 set(int_have_png 0)
 set(int_have_tiff 0)
 if (USE_DEVIL)
-    find_package(DevIL)
+    find_package(DevIL REQUIRED)
+
     if (IL_FOUND)
-        include_directories(${IL_INCLUDE_DIR})
         set(int_have_devil 1)
-    else ()
-        message(FATAL_ERROR "DevIL libraries not found.")
     endif ()
+
+    include_directories(${IL_INCLUDE_DIR})
 else ()
     find_package(JPEG)
+    find_package(PNG)
+    find_package(TIFF)
+
     if (JPEG_FOUND)
         include_directories(${JPEG_INCLUDE_DIR})
         set(int_have_jpeg 1)
     endif ()
-    find_package(PNG)
     if (PNG_FOUND)
         include_directories(${PNG_INCLUDE_DIR})
         set(int_have_png 1)
     endif ()
-    find_package(TIFF)
     if (TIFF_FOUND)
         include_directories(${TIFF_INCLUDE_DIR})
         set(int_have_tiff 1)
     endif ()
+
 endif ()
 
-find_package(OpenGL)
-if (OPENGL_FOUND)
-    if (NOT OPENGL_GLU_FOUND)
-        message(FATAL_ERROR "OpenGL GLU library not found.")
-    endif ()
-    include_directories(${OPENGL_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "OpenGL library not found.")
+find_package(OpenGL REQUIRED)
+find_package(Freetype REQUIRED)
+
+if (NOT OPENGL_GLU_FOUND)
+    message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
-find_package(Freetype)
-if (FREETYPE_FOUND)
-    include_directories(${FREETYPE_INCLUDE_DIRS})
-else ()
-    message(FATAL_ERROR "Freetype library not found.")
-endif ()
-
+include_directories(
+    ${OPENGL_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
+)
 
 ########################################
 # Header Generation                    #

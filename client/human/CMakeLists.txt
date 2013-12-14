@@ -5,64 +5,33 @@ project(freeorion)
 
 message("-- Configuring freeorion")
 
-if (WIN32)
-   find_package(OpenGL)
-   if (OPENGL_FOUND)
-       if (NOT OPENGL_GLU_FOUND)
-           message(FATAL_ERROR "OpenGL GLU library not found.")
-       endif ()
-       include_directories(${OPENGL_INCLUDE_DIR})
-   else ()
-       message(FATAL_ERROR "OpenGL library not found.")
-   endif ()
+find_package(OpenGL REQUIRED)
+
+if (NOT OPENGL_GLU_FOUND)
+    message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
-find_package(OpenAL)
-if (OPENAL_FOUND)
-    include_directories(${OPENAL_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "OpenAL library not found.")
-endif ()
+find_package(OpenAL REQUIRED)
+find_package(ALUT REQUIRED)
+find_package(OGRE REQUIRED)
+find_package(Ogg REQUIRED)
+find_package(Vorbis REQUIRED)
+find_package(Bullet REQUIRED)
 
-find_package(ALUT)
-if (ALUT_FOUND)
-    include_directories(${ALUT_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "ALUT OpenAL utility library not found.")
-endif ()
-
-find_package(OGRE)
-if (OGRE_FOUND)
-    include_directories(${OGRE_INCLUDE_DIRS})
-else ()
-    message(FATAL_ERROR "Ogre library not found.")
-endif ()
-
-find_package(Ogg)
-if (OGG_FOUND)
-    include_directories(${OGG_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "Ogg library not found.")
-endif ()
-
-find_package(Vorbis)
-if (VORBIS_FOUND)
-    include_directories(${VORBIS_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "Vorbis library not found.")
-endif ()
-
-find_package(Bullet)
-if (BULLET_FOUND)
-    include_directories(${BULLET_INCLUDE_DIR})
-    link_directories(${BULLET_LIB_DIR})
-else ()
-    message(FATAL_ERROR "Bullet library not found.")
-endif ()
-
-include_directories(${CMAKE_SOURCE_DIR}/PagedGeometry/include)
+include_directories(
+    ${OPENGL_INCLUDE_DIR}
+    ${OPENAL_INCLUDE_DIR}
+    ${ALUT_INCLUDE_DIR}
+    ${OGRE_INCLUDE_DIRS}
+    ${OGG_INCLUDE_DIR}
+    ${VORBIS_INCLUDE_DIR}
+    ${BULLET_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/PagedGeometry/include
+)
 
 add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
+
+link_directories(${BULLET_LIB_DIR})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")

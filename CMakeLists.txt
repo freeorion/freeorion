@@ -12,11 +12,6 @@ set(FreeOrion_VERSION 0.4.3+)
 set(FREEORION_RELEASE false)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
-set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
-
-set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
-    "Specifies alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost).")
-
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
@@ -60,39 +55,6 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-########################################
-# Dependencies                         #
-########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
-if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-else ()
-    message(FATAL_ERROR "Boost libraries (>=${MINIMUM_BOOST_VERSION}) not found")
-endif ()
-
-if (NOT BOOST_SIGNALS_NAMESPACE STREQUAL "signals")
-    add_definitions(
-        -DBOOST_SIGNALS_NAMESPACE=${BOOST_SIGNALS_NAMESPACE}
-        -Dsignals=${BOOST_SIGNALS_NAMESPACE}
-    )
-endif ()
-
-find_package(ZLIB)
-if (ZLIB_FOUND)
-    include_directories(${ZLIB_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "ZLib library not found.")
-endif ()
-
-find_package(OpenGL REQUIRED)
-if(OPENGL_FOUND)
-    include_directories(${OPENGL_INCLUDE_DIR})
-else()
-    message(FATAL_ERROR "OpenGL library not found.")
-endif()
-
-find_package(OGRE)
-
 configure_file(
     ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
     ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
@@ -126,7 +88,20 @@ set(BUILD_ADAM_SUPPORT CACHE INTERNAL "Enables building of Adobe Adam bindings."
 set(BUILD_PLUGIN_SUPPORT CACHE INTERNAL "Enables building of plugin support." FORCE)
 add_subdirectory(GG)
 
-include_directories(${CMAKE_SOURCE_DIR} GG log4cpp OpenSteer/include)
+########################################
+# Dependencies                         #
+########################################
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem serialization signals system thread REQUIRED)
+find_package(ZLIB REQUIRED)
+
+include_directories(
+    ${Boost_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIR}i
+    ${CMAKE_SOURCE_DIR}
+    GG
+    log4cpp
+    OpenSteer/include
+)
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
