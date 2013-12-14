@@ -180,7 +180,7 @@ void Hotkey::ReadFromOptions(OptionsDB & db)
             sb->m_key = sc.first;
             sb->m_mod_keys = sc.second;
         }
-        catch(std::exception & e) {
+        catch(...) {
             std::cerr << "Invalid key spec: '" << s << "', ignoring" << std::endl;
         }
     }
