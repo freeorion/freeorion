@@ -598,8 +598,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             psd.m_empire_color = GG::Clr(0, 0, 0, 0);
+            // On OSX the following two lines must not be included.
+            // Clearing empire name and starting species name from
+            // PlayerSetupData causes a weird crash (bus error) deep
+            // in GG code on OSX in the Multiplayer Lobby when selecting
+            // Observer or Moderator as client type.
+#ifndef FREEORION_MACOSX
             psd.m_empire_name.clear();
             psd.m_starting_species_name.clear();
+#endif
             psd.m_save_game_empire_id = ALL_EMPIRES;
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
