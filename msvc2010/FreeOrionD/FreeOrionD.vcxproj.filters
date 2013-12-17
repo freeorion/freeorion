@@ -230,6 +230,9 @@
     <ClInclude Include="..\..\universe\PythonUniverseGenerator.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseGenerator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\ServerNetworking.cpp">
@@ -247,9 +250,6 @@
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\UniverseServer.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\util\Process.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
@@ -264,6 +264,12 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

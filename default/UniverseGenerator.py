@@ -54,9 +54,9 @@ def createUniverse():
     universe.width = width
     print "Set universe width to %f" % width
 
-    # Calling interface helper functions to calculate positions for the
-    # requested galaxy shape and number of systems
-    system_positions = fo.getSystemPositions()
+    # Calling universe generator helper functions to calculate positions
+    # for the requested galaxy shape and number of systems
+    system_positions = fo.SystemPositionVec()
     if gsd.shape == fo.galaxyShape.random:
         gsd.shape = random.choice(galaxy_shapes)
     if gsd.shape == fo.galaxyShape.spiral2:
@@ -87,5 +87,13 @@ def createUniverse():
         fo.irregularGalaxyPositions(system_positions, gsd.size, width, width)
     gsd.size = len(system_positions)
     print gsd.shape, "galaxy created, final number of systems:", gsd.size
+
+    # Let UniverseGenerator::CreateUniverse do the rest that hasn't been implemented
+    # into the Python universe generator yet
+    fo.createUniverse(universe,
+                      gsd.size,              gsd.shape,           gsd.age,
+                      gsd.starlaneFrequency, gsd.planetDensity,   gsd.specialsFrequency,
+                      gsd.monsterFrequency,  gsd.nativeFrequency, system_positions,
+                      psd)
 
     print "Python Universe Generator completed"

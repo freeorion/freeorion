@@ -25,7 +25,6 @@
 #  undef GetObjectA
 #endif
 
-struct PlayerSetupData;
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
@@ -47,25 +46,6 @@ namespace Effect {
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
     typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
 }
-
-// TEMPORARY HACK!!! We need definition of this class here because the
-// Python universe generation interface is not completed yet, and we
-// have to pass a vector of these to Universe::CreateUniverse
-// Will be moved to the bottom of this header file to the rest of the
-// server-side universe generator stuff once it's no longer required
-// up here.
-struct SystemPosition {
-    double x;
-    double y;
-    
-    SystemPosition(double pos_x, double pos_y) :
-        x(pos_x),
-        y(pos_y)
-    {}
-    
-    bool operator == (const SystemPosition &p)
-    { return ((x == p.x) && (y == p.y)); }
-};
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -256,18 +236,6 @@ public:
     // Resets the universe object to prepare for generation of a new universe
     void            ResetUniverse();
 
-    /** Generates systems and planets, assigns homeworlds and populates them
-      * with people, industry and bases, and places starting fleets.  Uses
-      * predefined galaxy shapes.
-      * WILL BE REMOVED!!! Currently kept because the new Python universe
-      * generator interface is not yet able to replace this function completely */
-    void            CreateUniverse(int size,                          Shape shape,
-                                   GalaxySetupOption age,             GalaxySetupOption starlane_freq,
-                                   GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
-                                   GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
-                                   const std::vector<SystemPosition>& positions,
-                                   const std::map<int, PlayerSetupData>& player_setup_data);
-
     /** Clears main ObjectMap, empires' latest known objects map, and
       * ShipDesign map. */
     void            Clear();
@@ -415,8 +383,6 @@ public:
       * server to service new ID requests. */
     int             GenerateDesignID() { return ++m_last_allocated_design_id; } // TODO: See GenerateObjectID()
 
-    typedef std::vector<std::vector<std::set<TemporaryPtr<System> > > > AdjacencyGrid;
-
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool&     UniverseObjectSignalsInhibited();
 
@@ -556,39 +522,6 @@ private:
       * vector is passed, it will instead update all existing objects. */
     void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec);
 
-    /** Generates planets for all systems that have empty object maps (ie those
-      * that aren't homeworld systems).*/
-    void    PopulateSystems(GalaxySetupOption density);
-
-    /** Adds start-of-game specials to objects. */
-    void    AddStartingSpecials(GalaxySetupOption specials_freq);
-
-    /** Adds non-empire-affiliated native populations to planets. */
-    void    GenerateNatives(GalaxySetupOption freq);
-
-    /** Adds space monsters to systems. */
-    void    GenerateSpaceMonsters(GalaxySetupOption freq);
-
-    /** Creates starlanes and adds them systems already generated. */
-    void    GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid);
-
-    /** Picks systems to host homeworlds, generates planets for them, stores
-      * the ID's of the homeworld planets into the homeworld vector. */
-    void    GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids);
-
-    /** Names the planets in each system, based on the system's name. */
-    void    NamePlanets();
-
-    /** Creates some initial fields in universe. */
-    void    GenerateFields(GalaxySetupOption freq);
-
-    /** Creates Empires objects for each entry in \a player_setup_data with
-      * empire id equal to the specified player ids (so that the calling code
-      * can know which empire belongs to which player).  Homeworlds are
-      * associated with the empires, and starting buildings and fleets are
-      * created, and empire starting ship designs are created and added. */
-    void    GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
-
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
@@ -666,99 +599,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
-/** A combination of names of ShipDesign that can be put together to make a
-  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
-  * ShipDesign names refer to designs listed in premade_ship_designs.txt.
-  * Useful for saving or specifying prearranged combinations of prearranged
-  * ShipDesigns to automatically put together, such as during universe creation.*/
-class FleetPlan {
-public:
-    FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-              bool lookup_name_userstring = false) :
-        m_name(fleet_name),
-        m_ship_designs(ship_design_names),
-        m_name_in_stringtable(lookup_name_userstring)
-    {}
-    FleetPlan() :
-        m_name(""),
-        m_ship_designs(),
-        m_name_in_stringtable(false)
-    {}
-    virtual ~FleetPlan() {};
-    const std::string&              Name() const;
-    const std::vector<std::string>& ShipDesigns() const { return m_ship_designs; }
-protected:
-    std::string                     m_name;
-    std::vector<std::string>        m_ship_designs;
-    bool                            m_name_in_stringtable;
-};
-
-/** The combination of a FleetPlan and spawning instructions for start of game
-  * monsters. */
-class FO_COMMON_API MonsterFleetPlan : public FleetPlan {
-public:
-    MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                     double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,
-                     bool lookup_name_userstring = false) :
-        FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
-        m_spawn_rate(spawn_rate),
-        m_spawn_limit(spawn_limit),
-        m_location(location)
-    {}
-    MonsterFleetPlan() :
-        FleetPlan(),
-        m_spawn_rate(1.0),
-        m_spawn_limit(9999),
-        m_location(0)
-    {}
-    virtual ~MonsterFleetPlan();
-    double                          SpawnRate() const   { return m_spawn_rate; }
-    int                             SpawnLimit() const  { return m_spawn_limit; }
-    const Condition::ConditionBase* Location() const    { return m_location; }
-protected:
-    double                          m_spawn_rate;
-    int                             m_spawn_limit;
-    const Condition::ConditionBase* m_location;
-};
-
-// Stuff (classes, functions, etc.) needed for server-side universe generation
-/*
-// Class representing a position on the galaxy map, used
-// to store the positions at which systems shall be created
-// TEMPORARY HACK!!! Currently commented out,  we need to
-// define this class before the Universe class, because
-// we need to pass a vector of these to Universe::CreateUniverse
-// until the new Python universe generator interface is
-// sufficiently complete to replace Universe::CreateUniverse
-// entirely.
-struct SystemPosition {
-    double x;
-    double y;
-
-    SystemPosition(double pos_x, double pos_y) :
-        x(pos_x),
-        y(pos_y)
-    {}
-
-    bool operator == (const SystemPosition &p)
-    { return ((x == p.x) && (y == p.y)); }
-};
-*/
-void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                               unsigned int arms, unsigned int stars, double width, double height);
-
-void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                                   unsigned int stars, double width, double height);
-
-void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int clusters,
-                                unsigned int stars, double width, double height);
-
-void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                             double width, double height);
-
-void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                              double width, double height);
 
 
 #endif // _Universe_h_

@@ -63,22 +63,6 @@ namespace {
     // Returns the global PlayerSetupData map
     std::map<int, PlayerSetupData>& GetPlayerSetupData()
     { return g_player_setup_data; }
-    
-    // TEMPORARY HACK!!! Need to provide a global accessible positions
-    // vector that can be passed to the still required CreateUniverse
-    // function of the Universe class. Will be removed once the Python
-    // interface is so far completed that this isn't necessary anymore
-    std::vector<SystemPosition> g_system_positions;
-    
-    // Returns reference to the global system positions vector
-    std::vector<SystemPosition>& GetSystemPositions()
-    { return g_system_positions; }
-    
-    // Calculates typical universe width based on number of systems
-    // A 150 star universe should be 1000 units across
-    // TODO: Move to GenerateUniverse.h
-    double CalcTypicalUniverseWidth(int size)
-    { return (1000.0 / std::sqrt(150.0)) * std::sqrt(static_cast<double>(size)); }
 }
 
 
@@ -100,18 +84,6 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     class_<std::vector<SystemPosition> >("SystemPositionVec")
         .def(vector_indexing_suite<std::vector<SystemPosition>, true>());
 
-    class_<GalaxySetupData>("galaxySetupData")
-        .def_readonly ("seed",              &GalaxySetupData::m_seed)
-        .def_readwrite("size",              &GalaxySetupData::m_size)
-        .def_readwrite("shape",             &GalaxySetupData::m_shape)
-        .def_readonly ("age",               &GalaxySetupData::m_age)
-        .def_readonly ("starlaneFrequency", &GalaxySetupData::m_starlane_freq)
-        .def_readonly ("planetDensity",     &GalaxySetupData::m_planet_density)
-        .def_readonly ("specialsFrequency", &GalaxySetupData::m_specials_freq)
-        .def_readonly ("monsterFrequency",  &GalaxySetupData::m_monster_freq)
-        .def_readonly ("nativeFrequency",   &GalaxySetupData::m_native_freq)
-        .def_readonly ("maxAIAgression",    &GalaxySetupData::m_ai_aggr);
-
     class_<PlayerSetupData>("playerSetupData")
         .def_readonly("playerName",         &PlayerSetupData::m_player_name)
         .def_readonly("empireName",         &PlayerSetupData::m_empire_name)
@@ -124,7 +96,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("getUniverse",                      GetUniverse,                    return_value_policy<reference_existing_object>());
     def("getGalaxySetupData",               GetGalaxySetupData,             return_value_policy<reference_existing_object>());
     def("getPlayerSetupData",               GetPlayerSetupData,             return_value_policy<reference_existing_object>());
-    def("getSystemPositions",               GetSystemPositions,             return_value_policy<reference_existing_object>());
+
     def("calcTypicalUniverseWidth",         CalcTypicalUniverseWidth);
     def("spiralGalaxyCalcPositions",        SpiralGalaxyCalcPositions);
     def("ellipticalGalaxyCalcPositions",    EllipticalGalaxyCalcPositions);
@@ -132,8 +104,13 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("ringGalaxyCalcPositions",          RingGalaxyCalcPositions);
     def("irregularGalaxyPositions",         IrregularGalaxyPositions);
 
+    def("createUniverse",                   CreateUniverse);
+
     // Enums
     FreeOrionPython::WrapGameStateEnums();
+
+    // GalaxySetupData
+    FreeOrionPython::WrapGalaxySetupData();
 }
 
 
@@ -284,7 +261,7 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     // Get a reference to the universe copy of the server
     Universe& universe = GetUniverse();
 
-    // Setup and run Python
+    // Setup and run Python interpreter
     PythonInit();
     
     // Reset the universe object for a new universe
@@ -296,15 +273,7 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     catch (error_already_set err) {
         PyErr_Print();
     }
-    // TEMPORARY HACK!!! As the Python universe generator interface is not
-    // yet complete, we still have to call Universe::CreateUniverse to do
-    // all the stuff that hasn't been implemented in the generator yet
-    universe.CreateUniverse(g_galaxy_setup_data->m_size,            g_galaxy_setup_data->m_shape,
-                            g_galaxy_setup_data->m_age,             g_galaxy_setup_data->m_starlane_freq,
-                            g_galaxy_setup_data->m_planet_density,  g_galaxy_setup_data->m_specials_freq,
-                            g_galaxy_setup_data->m_monster_freq,    g_galaxy_setup_data->m_native_freq,
-                            g_system_positions,                     player_setup_data);
 
-    // Stop and clean up Python
+    // Stop and clean up Python interpreter
     PythonCleanup();
 }

@@ -6,6 +6,7 @@
 #include "ParseImpl.h"
 
 #include "../universe/Universe.h"
+#include "../universe/UniverseGenerator.h"
 
 #include <boost/spirit/home/phoenix.hpp>
 

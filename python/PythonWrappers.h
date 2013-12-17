@@ -4,6 +4,7 @@
 
 namespace FreeOrionPython {
     void WrapUniverseClasses();
+    void WrapGalaxySetupData();
     void WrapGameStateEnums();
     void WrapEmpire();
 

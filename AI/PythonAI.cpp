@@ -158,18 +158,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("doneTurn",                 AIInterface::DoneTurn);
     def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
 
-    class_<GalaxySetupData>("galaxySetupData")
-        .add_property("seed",               &GalaxySetupData::m_seed)
-        .add_property("size",               &GalaxySetupData::m_size)
-        .add_property("shape",              &GalaxySetupData::m_shape)
-        .add_property("age",                &GalaxySetupData::m_age)
-        .add_property("starlaneFrequency",  &GalaxySetupData::m_starlane_freq)
-        .add_property("planetDensity",      &GalaxySetupData::m_planet_density)
-        .add_property("specialsFrequency",  &GalaxySetupData::m_specials_freq)
-        .add_property("monsterFrequency",   &GalaxySetupData::m_monster_freq)
-        .add_property("nativeFrequency",    &GalaxySetupData::m_native_freq)
-        .add_property("maxAIAgression",     &GalaxySetupData::m_ai_aggr)
-    ;
     def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
 
 
@@ -183,6 +171,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     // UniverseClasses //
     /////////////////////
     FreeOrionPython::WrapUniverseClasses();
+    FreeOrionPython::WrapGalaxySetupData();
 
 
     ///////////////////

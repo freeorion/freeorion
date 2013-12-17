@@ -37,11 +37,12 @@ add_executable(freeoriond
     ../server/ServerApp.cpp
     ../server/ServerFSM.cpp
     ../server/dmain.cpp
-    ../universe/UniverseServer.cpp
+    ../universe/UniverseGenerator.cpp
     ../combat/CombatSystem.cpp
     ../universe/PythonUniverseGenerator.cpp
     ../python/PythonEnumWrapper.cpp
     ../python/PythonLoggingWrapper.cpp
+    ../python/PythonUniverseWrapper.cpp
 )
 
 target_link_libraries(freeoriond

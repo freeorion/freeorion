@@ -12,6 +12,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
@@ -619,5 +620,19 @@ namespace FreeOrionPython {
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
         ;
         def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>());
+    }
+
+    void WrapGalaxySetupData() {
+        class_<GalaxySetupData>("galaxySetupData")
+            .def_readonly ("seed",              &GalaxySetupData::m_seed)
+            .def_readwrite("size",              &GalaxySetupData::m_size)
+            .def_readwrite("shape",             &GalaxySetupData::m_shape)
+            .def_readonly ("age",               &GalaxySetupData::m_age)
+            .def_readonly ("starlaneFrequency", &GalaxySetupData::m_starlane_freq)
+            .def_readonly ("planetDensity",     &GalaxySetupData::m_planet_density)
+            .def_readonly ("specialsFrequency", &GalaxySetupData::m_specials_freq)
+            .def_readonly ("monsterFrequency",  &GalaxySetupData::m_monster_freq)
+            .def_readonly ("nativeFrequency",   &GalaxySetupData::m_native_freq)
+            .def_readonly ("maxAIAgression",    &GalaxySetupData::m_ai_aggr);
     }
 }

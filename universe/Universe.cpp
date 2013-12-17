@@ -327,12 +327,6 @@ extern const int TEMPORARY_OBJECT_ID    = -2; // the ID number assigned to tempo
 // TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
 extern const int MAX_ID                 = 2000000000;
 
-////////////////////////////////////////
-// MonsterFleetPlan                   //
-////////////////////////////////////////
-MonsterFleetPlan::~MonsterFleetPlan()
-{ delete m_location; }
-
 
 /////////////////////////////////////////////
 // struct Universe::GraphImpl
@@ -3154,3 +3148,14 @@ TemporaryPtr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
 
 TemporaryPtr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Field(field_type, x, y, radius), id); }
+
+void Universe::ResetUniverse() {
+    m_objects.Clear();  // wipe out anything present in the object map
+    
+    // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
+    // but the point here is that the latest used ID is incremented before
+    // being assigned, so using -1 here means the first assigned ID will be 0,
+    // which is a valid ID
+    m_last_allocated_object_id = -1;
+    m_last_allocated_design_id = -1;
+}

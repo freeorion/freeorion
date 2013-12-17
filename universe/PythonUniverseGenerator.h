@@ -3,6 +3,7 @@
 #define _PythonUniverseGenerator_h_
 
 #include "Universe.h"
+#include "UniverseGenerator.h"
 #include "../util/MultiplayerCommon.h"
 
 

@@ -128,6 +128,7 @@
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\UniverseGenerator.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
     <ClInclude Include="..\..\universe\ValueRefFwd.h" />
@@ -158,12 +159,13 @@
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
+    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
     <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp" />
-    <ClCompile Include="..\..\universe\UniverseServer.cpp" />
+    <ClCompile Include="..\..\universe\UniverseGenerator.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
