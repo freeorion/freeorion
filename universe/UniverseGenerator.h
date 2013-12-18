@@ -4,7 +4,7 @@
 
 #include "Universe.h"
 #include "../util/MultiplayerCommon.h"
-
+#include "Condition.h"
 
 
 struct PlayerSetupData;
@@ -17,7 +17,7 @@ typedef std::vector<std::vector<std::set<TemporaryPtr<System> > > > AdjacencyGri
 struct SystemPosition {
     double x;
     double y;
-    
+
     SystemPosition(double pos_x, double pos_y) :
         x(pos_x),
         y(pos_y)
@@ -55,7 +55,7 @@ protected:
 };
 
 /** The combination of a FleetPlan and spawning instructions for start of game
- * monsters. */
+  * monsters. */
 class FO_COMMON_API MonsterFleetPlan : public FleetPlan {
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
