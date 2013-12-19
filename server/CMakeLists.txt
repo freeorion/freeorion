@@ -31,18 +31,30 @@ else ()
     list(APPEND freeoriond_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
-add_executable(freeoriond
-    ../network/ServerNetworking.cpp
-    ../server/SaveLoad.cpp
-    ../server/ServerApp.cpp
-    ../server/ServerFSM.cpp
-    ../server/dmain.cpp
-    ../universe/UniverseGenerator.cpp
+set (freeoriond_HEADER
+    ../network/ServerNetworking.h
+    SaveLoad.h
+    ServerApp.h
+    ServerFSM.h
+)
+
+set (freeoriond_SOURCE
+    dmain.cpp
+    SaveLoad.cpp
+    ServerApp.cpp
+    ServerFSM.cpp
     ../combat/CombatSystem.cpp
-    ../universe/PythonUniverseGenerator.cpp
+    ../network/ServerNetworking.cpp
     ../python/PythonEnumWrapper.cpp
     ../python/PythonLoggingWrapper.cpp
     ../python/PythonUniverseWrapper.cpp
+    ../universe/PythonUniverseGenerator.cpp
+    ../universe/UniverseGenerator.cpp
+)
+
+add_executable(freeoriond
+    ${freeoriond_HEADER}
+    ${freeoriond_SOURCE}
 )
 
 target_link_libraries(freeoriond

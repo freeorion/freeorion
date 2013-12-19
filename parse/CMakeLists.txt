@@ -9,54 +9,77 @@ if (NOT BUILD_TESTS)
     endif ()
 endif ()
 
-add_library(freeorionparse
-    Tokens.cpp
-    Lexer.cpp
-    ReportParseError.cpp
-    Int.cpp
-    Double.cpp
-    Label.cpp
-    EnumParser.cpp
-    IntValueRefParser.cpp
-    DoubleValueRefParser.cpp
-    StringValueRefParser.cpp
-    PlanetSizeValueRefParser.cpp
-    PlanetTypeValueRefParser.cpp
-    PlanetEnvironmentValueRefParser.cpp
-    UniverseObjectTypeValueRefParser.cpp
-    StarTypeValueRefParser.cpp
-    ValueRefParserImpl.cpp
-    ConditionParser.cpp
+set (freeorionparse_HEADER
+    ConditionParserImpl.h
+    Double.h
+    EffectParser.h
+    EffectParserImpl.h
+    EnumParser.h
+    Int.h
+    Label.h
+    Lexer.h
+    Parse.h
+    ParseImpl.h
+    ReportParseError.h
+    ShipPartStatsParser.h
+    Tokens.h
+    ValueRefParser.h
+    ValueRefParserImpl.h
+)
+
+set (freeorionparse_SOURCE
+    AlignmentsParser.cpp
+    BuildingsParser.cpp
     ConditionParser1.cpp
     ConditionParser2.cpp
     ConditionParser3.cpp
     ConditionParser4.cpp
     ConditionParser5.cpp
     ConditionParser6.cpp
-    EffectParser.cpp
+    ConditionParser.cpp
+    Double.cpp
+    DoubleValueRefParser.cpp
     EffectParser1.cpp
     EffectParser2.cpp
     EffectParser3.cpp
     EffectParser4.cpp
+    EffectParser.cpp
     EmpireStatsParser.cpp
+    EncyclopediaParser.cpp
+    EnumParser.cpp
     FieldsParser.cpp
-    Parse.cpp
-    BuildingsParser.cpp
-    SpecialsParser.cpp
-    SpeciesParser.cpp
-    TechsParser.cpp
+    FleetPlansParser.cpp
+    Int.cpp
+    IntValueRefParser.cpp
     ItemsParser.cpp
+    KeymapParser.cpp
+    Label.cpp
+    Lexer.cpp
+    MonsterFleetPlansParser.cpp
+    Parse.cpp
+    PlanetEnvironmentValueRefParser.cpp
+    PlanetSizeValueRefParser.cpp
+    PlanetTypeValueRefParser.cpp
+    ReportParseError.cpp
+    ShipDesignsParser.cpp
+    ShipHullsParser.cpp
     ShipPartsParser.cpp
     ShipPartStatsParser.cpp
-    ShipHullsParser.cpp
-    ShipDesignsParser.cpp
-    FleetPlansParser.cpp
-    MonsterFleetPlansParser.cpp
-    AlignmentsParser.cpp
-    EncyclopediaParser.cpp
-    KeymapParser.cpp
+    SpecialsParser.cpp
+    SpeciesParser.cpp
+    StarTypeValueRefParser.cpp
+    StringValueRefParser.cpp
+    TechsParser.cpp
+    Tokens.cpp
+    UniverseObjectTypeValueRefParser.cpp
+    ValueRefParserImpl.cpp
     ../GG/src/adobe/name.cpp
     ../GG/src/adobe/string_pool.cpp
+)
+
+add_library(freeorionparse
+    ${freeorionparse_HEADER}
+    ${freeorionparse_SOURCE}
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

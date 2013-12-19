@@ -31,19 +31,30 @@ else ()
     list(APPEND freeorionca_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
-add_executable(freeorionca
+set (freeorionca_HEADER
+    AIClientApp.h
+    ../ClientApp.h
+    ../ClientFSMEvents.h
+)
+
+set (freeorionca_SOURCE
     ../../AI/AIInterface.cpp
+    AIClientApp.cpp
     ../../AI/PythonAI.cpp
-    ../../client/ClientApp.cpp
-    ../../client/ClientFSMEvents.cpp
-    ../../client/AI/AIClientApp.cpp
-    ../../client/AI/camain.cpp
+    camain.cpp
+    ../ClientApp.cpp
+    ../ClientFSMEvents.cpp
     ../../combat/CombatSystem.cpp
     ../../network/ClientNetworking.cpp
-    ../../python/PythonEnumWrapper.cpp
-    ../../python/PythonUniverseWrapper.cpp
     ../../python/PythonEmpireWrapper.cpp
+    ../../python/PythonEnumWrapper.cpp
     ../../python/PythonLoggingWrapper.cpp
+    ../../python/PythonUniverseWrapper.cpp
+)
+
+add_executable(freeorionca
+    ${freeorionca_HEADER}
+    ${freeorionca_SOURCE}
 )
 
 target_link_libraries(freeorionca

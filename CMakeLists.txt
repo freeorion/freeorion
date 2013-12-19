@@ -102,31 +102,98 @@ if (FREEORION_RELEASE)
     add_definitions(-DFREEORION_RELEASE)
 endif ()
 
-add_library(freeorioncommon
-    combat/CombatOrder.cpp
+set (freeorioncommon_HEADER
+    combat/AsteroidBeltObstacle.h
+    combat/CombatEventListener.h
+    combat/CombatFighter.h
+    combat/CombatLogManager.h
+    combat/CombatObject.h
+    combat/CombatOrder.h
+    combat/CombatShip.h
+    combat/CombatSystem.h
+    combat/Missile.h
+    combat/PathingEngineFwd.h
+    combat/PathingEngine.h
+    Empire/Diplomacy.h
+    Empire/Empire.h
+    Empire/EmpireManager.h
+    Empire/ResourcePool.h
+    network/Message.h
+    python/PythonSetWrapper.h
+    python/PythonWrappers.h
+    universe/Building.h
+    universe/Condition.h
+    universe/EffectAccounting.h
+    universe/Effect.h
+    universe/Enums.h
+    universe/Field.h
+    universe/Fleet.h
+    universe/Meter.h
+    universe/ObjectMap.h
+    universe/Planet.h
+    universe/PopCenter.h
+    universe/Predicates.h
+    universe/PythonUniverseGenerator.h
+    universe/ResourceCenter.h
+    universe/ShipDesign.h
+    universe/Ship.h
+    universe/Special.h
+    universe/Species.h
+    universe/System.h
+    universe/Tech.h
+    universe/Universe.h
+    universe/UniverseObject.h
+    universe/ValueRef.h
+    util/AppInterface.h
+    util/DataTable.h
+    util/Directories.h
+    util/GZStream.h
+    util/i18n.h
+    util/Logger.h
+    util/Math.h
+    util/ModeratorAction.h
+    util/MultiplayerCommon.h
+    util/OptionsDB.h
+    util/OptionValidators.h
+    util/Order.h
+    util/OrderSet.h
+    util/Process.h
+    util/Random.h
+    util/ScopedTimer.h
+    util/Serialize.h
+    util/Serialize.ipp
+    util/SitRepEntry.h
+    util/StringTable.h
+    util/VarText.h
+    util/XMLDoc.h
+)
+
+set (freeorioncommon_SOURCE
     combat/AsteroidBeltObstacle.cpp
     combat/CombatFighter.cpp
-    combat/CombatObject.cpp
-    combat/CombatShip.cpp
     combat/CombatLogManager.cpp
+    combat/CombatObject.cpp
+    combat/CombatOrder.cpp
+    combat/CombatShip.cpp
     combat/Missile.cpp
     combat/PathingEngine.cpp
+    Empire/Diplomacy.cpp
+    Empire/Empire.cpp
+    Empire/EmpireManager.cpp
+    Empire/ResourcePool.cpp
+    network/Message.cpp
+    network/MessageQueue.cpp
+    network/Networking.cpp
     OpenSteer/source/Obstacle.cpp
     OpenSteer/source/SimpleVehicle.cpp
     OpenSteer/source/Vec3.cpp
     OpenSteer/source/Vec3Utilities.cpp
-    Empire/Empire.cpp
-    Empire/EmpireManager.cpp
-    Empire/ResourcePool.cpp
-    Empire/Diplomacy.cpp
-    network/Message.cpp
-    network/MessageQueue.cpp
-    network/Networking.cpp
     universe/Building.cpp
     universe/Condition.cpp
-    universe/Effect.cpp
     universe/EffectAccounting.cpp
+    universe/Effect.cpp
     universe/Enums.cpp
+    universe/Field.cpp
     universe/Fleet.cpp
     universe/Meter.cpp
     universe/ObjectMap.cpp
@@ -139,14 +206,16 @@ add_library(freeorioncommon
     universe/Special.cpp
     universe/Species.cpp
     universe/System.cpp
-    universe/Field.cpp
     universe/Tech.cpp
     universe/Universe.cpp
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp
+    util/binreloc.c
     util/DataTable.cpp
+    util/Directories.cpp
     util/GZStream.cpp
+    util/i18n.cpp
     util/Logger.cpp
     util/Math.cpp
     util/ModeratorAction.cpp
@@ -156,21 +225,23 @@ add_library(freeorioncommon
     util/OrderSet.cpp
     util/Process.cpp
     util/Random.cpp
+    util/ScopedTimer.cpp
     util/SerializeEmpire.cpp
     util/SerializeModeratorAction.cpp
     util/SerializeMultiplayerCommon.cpp
     util/SerializeOrderSet.cpp
     util/SerializePathingEngine.cpp
     util/SerializeUniverse.cpp
-    util/ScopedTimer.cpp
     util/SitRepEntry.cpp
     util/StringTable.cpp
-    util/binreloc.c
-    util/Directories.cpp
-    util/i18n.cpp
     util/VarText.cpp
     util/XMLDoc.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
+)
+
+add_library(freeorioncommon
+    ${freeorioncommon_HEADER}
+    ${freeorioncommon_SOURCE}
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
