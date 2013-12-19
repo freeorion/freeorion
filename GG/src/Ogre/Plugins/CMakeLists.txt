@@ -5,16 +5,11 @@ project(GiGiOgrePlugin_OIS)
 
 if (BUILD_OGRE_OIS_PLUGIN)
     message("-- Configuring Ogre OIS Input Plugin")
-    find_package(OIS)
-    if (OIS_FOUND)
-        include_directories(${OIS_INCLUDE_DIRS})
-    else ()
-        set(BUILD_OGRE_OIS_PLUGIN OFF)
-        message("     Warning: OIS could not be found.  Disabling the OIS build.")
-    endif ()
-endif ()
 
-if (BUILD_OGRE_OIS_PLUGIN)
+    find_package(OIS REQUIRED)
+
+    include_directories(${OIS_INCLUDE_DIRS})
+
     add_library(GiGiOgrePlugin_OIS
         OgreGUIInputPlugin.cpp
         OISInput.cpp
