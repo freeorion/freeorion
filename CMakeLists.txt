@@ -89,7 +89,7 @@ find_package(ZLIB REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
-    ${ZLIB_INCLUDE_DIR}i
+    ${ZLIB_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
     GG
     log4cpp
