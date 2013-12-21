@@ -452,6 +452,7 @@ public:
     virtual void    MouseLeave();
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
     { ForwardEventToParent(); }
+    virtual         ~TechPanel();
     void            Update();
     void            Select(bool select);
     int             FontSize() const;
@@ -498,6 +499,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
     Update();
 }
+
+TechTreeWnd::LayoutPanel::TechPanel::~TechPanel()
+{ delete m_icon; }
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 { return ClientUI::Pts() * 3 / 2; }
