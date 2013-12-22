@@ -183,6 +183,16 @@ def addDesigns(shipType,  newDesigns,  shipProdPriority):
                 print "added  %s Design %s, with result %d"%(shipType,  name,  res)
             except:
                 print "Error: exception triggered and caught adding %s %s:  "%(shipType, name),  traceback.format_exc()
+        # the following loop is added since the above call into C++ code seems to be the garbage collector from
+        # automatically reclaiming these
+        while len(needsAdding) > 0:
+            design_tup = needsAdding.pop()
+            partslist = design_tup[3]
+            while len(partslist) > 0:
+                this_part = partslist.pop()
+                del this_part
+            del design_tup
+            
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( shipProdPriority)
     if bestDesign:
         print "Best %s  buildable is %s"%(shipType,  bestDesign.name(False))

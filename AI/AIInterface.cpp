@@ -818,6 +818,7 @@ namespace AIInterface {
 
         int new_design_id = AIClientApp::GetApp()->GetNewDesignID();
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+        delete design;
 
         return 1;
     }
