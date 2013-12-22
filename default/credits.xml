@@ -52,6 +52,7 @@
       <PERSON name=""                         nick="Vezzra"           task="Programming"/>
       <PERSON name="Landon Manning"           nick="yandonman"        task="Programming"/>
       <PERSON name="Marcel Metz"              nick="adrian_broher"    task="Programming, German Translation"/>
+      <PERSON name="Vincent Fourmond"         nick="yanub"            task="Programming"/>
     </GROUP>
     <GROUP name="GAMEDESIGN and CONTENT">
       <PERSON name="Krum Stanoev"             nick=""                 task="Game Design"/>
@@ -109,6 +110,7 @@
       <PERSON name="Alexandr Kopitkov"        nick="Cjckem"           task="Russian Translation"/>
       <PERSON name=""                         nick="alchemy"          task="French Translation"/>
       <PERSON name=""                         nick="andrewsa"         task="Russian Translation"/>
+      <PERSON name=""                         nick="Nilstilar"        task="French Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>
