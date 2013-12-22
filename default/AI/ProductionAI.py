@@ -1244,9 +1244,9 @@ def generateProductionOrders():
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
         elif foAI.foAIstate.aggression>fo.aggression.typical and canBuildCamp and (tPop >= 36):
             checkedCamp=True
-            if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
-                #continue
-                pass  # now that focus setting takes these into account, probably works ok to have conc camp
+            if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials) or (pid == capitolID):
+                continue
+                #pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             if (cPop <0.95*tPop):#
                 if verboseCamp:
@@ -1271,6 +1271,9 @@ def generateProductionOrders():
                     if res:
                         queuedBldLocs.append(pid)
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                    else:
+                        #TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
+                        print "Error enqueing Conc Camp despite bldType.canBeProduced(empire.empireID,  pid) reporting ",  canBuildCamp
         if verboseCamp:
             print "conc camp status at %s : checkedCamp: %s,  builtCamp: %s"%( planet.name,  canBuildCamp,  builtCamp)
 
