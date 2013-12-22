@@ -1,5 +1,7 @@
 #include "PythonUniverseGenerator.h"
 
+#include "System.h"
+
 #include "../server/ServerApp.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
@@ -63,8 +65,49 @@ namespace {
     // Returns the global PlayerSetupData map
     std::map<int, PlayerSetupData>& GetPlayerSetupData()
     { return g_player_setup_data; }
-}
 
+    // Functions that return various important constants
+    int     InvalidObjectID()
+    { return INVALID_OBJECT_ID; }
+
+    double  MinSystemSeparation()
+    { return MIN_SYSTEM_SEPARATION; }
+
+    double  MinHomeSystemSeparation()
+    { return MIN_HOME_SYSTEM_SEPARATION; }
+
+    int     MaxSystemOrbits()
+    { return MAX_SYSTEM_ORBITS; }
+
+    // Universe tables
+    const std::vector<int>&                 g_base_star_type_dist                   = UniverseDataTables()["BaseStarTypeDist"][0];
+    const std::vector<std::vector<int> >&   g_universe_age_mod_to_star_type_dist    = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
+
+    // Functions exposed to Python to access the universe tables
+    int BaseStarTypeDist(StarType star_type)
+    { return g_base_star_type_dist[star_type]; }
+
+    int UniverseAgeModToStarTypeDist(GalaxySetupOption age, StarType star_type)
+    { return g_universe_age_mod_to_star_type_dist[age][star_type]; }
+
+    // Wrappers for Universe class member functions to provide a more
+    // consistent set of universe generation functions to scripters
+    double  GetUniverseWidth()
+    { return GetUniverse().UniverseWidth(); }
+
+    void    SetUniverseWidth(double width)
+    { GetUniverse().SetUniverseWidth(width); }
+
+    int     CreateSystem(StarType star_type, std::string star_name, double x, double y) {
+        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
+        if (!system) {
+            std::string err_msg = "PythonUniverseGenerator::CreateSystem() : Attempt to insert system into the object map failed.";
+            Logger().debugStream() << err_msg;
+            throw std::runtime_error(err_msg);
+        }
+        return system->SystemID();
+    }
+}
 
 // Python module for logging functions
 BOOST_PYTHON_MODULE(foLogger) {
@@ -73,9 +116,6 @@ BOOST_PYTHON_MODULE(foLogger) {
 
 // Python module providing the universe generator API
 BOOST_PYTHON_MODULE(foUniverseGenerator) {
-
-    class_<Universe, noncopyable>("Universe", no_init)
-        .add_property("width", &Universe::UniverseWidth, &Universe::SetUniverseWidth);
 
     class_<SystemPosition>("SystemPosition", init<double, double>())
         .def_readwrite("x", &SystemPosition::x)
@@ -93,16 +133,27 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     class_<std::map<int, PlayerSetupData>, noncopyable>("playerSetupDataMap", no_init)
         .def(map_indexing_suite<std::map<int, PlayerSetupData>, true>());
 
-    def("getUniverse",                      GetUniverse,                    return_value_policy<reference_existing_object>());
     def("getGalaxySetupData",               GetGalaxySetupData,             return_value_policy<reference_existing_object>());
     def("getPlayerSetupData",               GetPlayerSetupData,             return_value_policy<reference_existing_object>());
 
+    def("invalidObject",                    InvalidObjectID);
+    def("minSystemSeparation",              MinSystemSeparation);
+    def("minHomeSystemSeparation",          MinHomeSystemSeparation);
+    def("maxSystemOrbits",                  MaxSystemOrbits);
+
+    def("baseStarTypeDist",                 BaseStarTypeDist);
+    def("universeAgeModToStarTypeDist",     UniverseAgeModToStarTypeDist);
     def("calcTypicalUniverseWidth",         CalcTypicalUniverseWidth);
+
     def("spiralGalaxyCalcPositions",        SpiralGalaxyCalcPositions);
     def("ellipticalGalaxyCalcPositions",    EllipticalGalaxyCalcPositions);
     def("clusterGalaxyCalcPositions",       ClusterGalaxyCalcPositions);
     def("ringGalaxyCalcPositions",          RingGalaxyCalcPositions);
     def("irregularGalaxyPositions",         IrregularGalaxyPositions);
+
+    def("getUniverseWidth",                 GetUniverseWidth);
+    def("setUniverseWidth",                 SetUniverseWidth);
+    def("createSystem",                     CreateSystem);
 
     def("createUniverse",                   CreateUniverse);
 
@@ -202,6 +253,15 @@ namespace {
             return;
         }
         
+        // set Python current work directory to resource dir
+        script = "import os\n"
+        "os.chdir(r'" + (GetResourceDir()).string() + "')\n"
+        "print 'Python current directory set to', os.getcwd()";
+        if (!PythonExecScript(script)) {
+            Logger().errorStream() << "Unable to set Python current directory";
+            return;
+        }
+        
         // tell Python the path in which to locate universe generator script file
         std::string command = "sys.path.append(r'" + (GetResourceDir()).string() + "')";
         if (!PythonExecScript(command)) {
@@ -258,14 +318,11 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     Seed(seed);
     Logger().debugStream() << "GenerateUniverse with seed: " << seed;
     
-    // Get a reference to the universe copy of the server
-    Universe& universe = GetUniverse();
-
     // Setup and run Python interpreter
     PythonInit();
     
     // Reset the universe object for a new universe
-    universe.ResetUniverse();
+    GetUniverse().ResetUniverse();
     // Call the main Python universe generator script
     try {
         PythonCreateUniverse();

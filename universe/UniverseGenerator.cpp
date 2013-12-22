@@ -1,6 +1,5 @@
 #include "UniverseGenerator.h"
 
-#include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
@@ -29,14 +28,15 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-namespace {
-    DataTableMap& UniverseDataTables() {
-        static DataTableMap map;
-        if (map.empty())
-            LoadDataTables((GetResourceDir() / "universe_tables.txt").string(), map);
-        return map;
-    }
 
+DataTableMap& UniverseDataTables() {
+    static DataTableMap map;
+    if (map.empty())
+        LoadDataTables((GetResourceDir() / "universe_tables.txt").string(), map);
+    return map;
+}
+
+namespace {
     void LoadSystemNames(std::list<std::string>& names) {
         boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
         while (ifs) {
@@ -46,7 +46,7 @@ namespace {
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
         }
     }
-
+    
     void LoadEmpireNames(std::list<std::string>& names) {
         boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
         while (ifs) {
@@ -55,18 +55,14 @@ namespace {
             if (!latest_name.empty())
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
         }
-    }
+    }    
 }
 
 //////////////////////////////////////////
 //  Universe Setup Functions            //
 //////////////////////////////////////////
 namespace {
-    const double        MIN_SYSTEM_SEPARATION       = 35.0;                         // in universe units [0.0, m_universe_width]
-    const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, m_universe_width]
-    const int           ADJACENCY_BOXES             = 25;
     const double        PI                          = 3.141592653589793;
-    const int           MAX_SYSTEM_ORBITS           = 9;                            // maximum slots where planets can be
     SmallIntDistType    g_hundred_dist              = SmallIntDist(1, 100);         // a linear distribution [1, 100] used in most universe generation
     const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
 
@@ -136,61 +132,6 @@ namespace {
         }
         
         return system;
-    }
-
-    void GenerateStarField(Universe &universe, GalaxySetupOption age, const std::vector<SystemPosition>& positions, 
-                           AdjacencyGrid& adjacency_grid, double adjacency_box_size)
-    {
-        Logger().debugStream() << "GenerateStarField with " << positions.size() << " positions";
-        // generate star field
-        for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
-            TemporaryPtr<System> system = GenerateSystem(universe, age, positions[star_cnt].x, positions[star_cnt].y);
-            adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
-                [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
-        }
-    }
-
-    void GetNeighbors(double x, double y, const AdjacencyGrid& adjacency_grid, std::set<TemporaryPtr<System> >& neighbors) {
-        const double ADJACENCY_BOX_SIZE = GetUniverse().UniverseWidth() / ADJACENCY_BOXES;
-        std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
-                                                       static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
-
-        // look in the box into which this system falls, and those boxes immediately around that box
-        neighbors = adjacency_grid[grid_box.first][grid_box.second];
-
-        if (0 < grid_box.first) {
-            if (0 < grid_box.second) {
-                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-        }
-        if (0 < grid_box.second) {
-            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-        }
-        if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-        }
-
-        if (grid_box.first < adjacency_grid.size() - 1) {
-            if (0 < grid_box.second) {
-                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-            const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<TemporaryPtr<System> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-        }
     }
 }
 
@@ -1496,29 +1437,23 @@ namespace {
     }
 }
 
-void CreateUniverse(Universe& universe,
-                    int size,                          Shape shape,
+void CreateUniverse(int size,                          Shape shape,
                     GalaxySetupOption age,             GalaxySetupOption starlane_freq,
                     GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
                     GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
                     const std::vector<SystemPosition>& positions,
                     const std::map<int, PlayerSetupData>& player_setup_data)
 {
+    Universe& universe = GetUniverse();
     int total_players = player_setup_data.size();
     std::vector<int> homeworld_planet_ids;
 
-    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
-    // in order to ensure that they get spaced out properly
-    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<TemporaryPtr<System> > >(ADJACENCY_BOXES));
-
     Logger().debugStream() << "CreateUniverse: universe width: " << universe.UniverseWidth();
-
-    GenerateStarField(universe, age, positions, adjacency_grid, universe.UniverseWidth() / ADJACENCY_BOXES);
 
     Logger().debugStream() << "Populating Systems";
     PopulateSystems(universe, planet_density);
     Logger().debugStream() << "Generating Starlanes";
-    GenerateStarlanes(universe, starlane_freq, adjacency_grid);
+    GenerateStarlanes(universe, starlane_freq);
     Logger().debugStream() << "Initializing System Graph";
     universe.InitializeSystemGraph();
     Logger().debugStream() << "Generating Homeworlds";
@@ -1915,7 +1850,7 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
     }
 }
 
-void GenerateStarlanes(Universe& universe, GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid) {
+void GenerateStarlanes(Universe& universe, GalaxySetupOption freq) {
     if (freq == GALAXY_SETUP_NONE)
         return;
 
@@ -1935,7 +1870,8 @@ void GenerateStarlanes(Universe& universe, GalaxySetupOption freq, const Adjacen
 
     // get systems
     std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
-
+    numSys = sys_vec.size();  // (actually = number of systems + 1)
+    
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
     if (!triList ||triList->empty()) {
@@ -1949,8 +1885,6 @@ void GenerateStarlanes(Universe& universe, GalaxySetupOption freq, const Adjacen
     // "adjacent" in the delauney triangulation.  (separated by a single potential starlane).
     // these numbers can be tweaked
     int maxJumpsBetweenSystems = UniverseDataTables()["MaxJumpsBetweenSystems"][0][freq];
-
-    numSys = sys_vec.size();  // (actually = number of systems + 1)
 
     // initialize arrays...
     potentialLaneSetArray.resize(numSys);

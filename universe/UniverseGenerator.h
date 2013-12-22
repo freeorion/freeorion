@@ -2,15 +2,23 @@
 #ifndef _UniverseGenerator_h_
 #define _UniverseGenerator_h_
 
-#include "Universe.h"
-#include "../util/MultiplayerCommon.h"
 #include "Condition.h"
+#include "Universe.h"
 
+#include "../util/DataTable.h"
+#include "../util/MultiplayerCommon.h"
+
+
+// Minimum distance between systems in universe units [0.0, m_universe_width]
+const double    MIN_SYSTEM_SEPARATION       = 35.0;
+
+// Minimum distance between home systems in universe units [0.0, m_universe_width]
+const double    MIN_HOME_SYSTEM_SEPARATION  = 200.0;
+
+// Maximum slots where planets can be
+const int       MAX_SYSTEM_ORBITS           = 9;
 
 struct PlayerSetupData;
-
-
-typedef std::vector<std::vector<std::set<TemporaryPtr<System> > > > AdjacencyGrid;
 
 // Class representing a position on the galaxy map, used
 // to store the positions at which systems shall be created
@@ -84,6 +92,9 @@ protected:
 };
 
 
+// Returns map of universe tables
+DataTableMap& UniverseDataTables();
+
 // Calculates typical universe width based on number of systems
 // A 150 star universe should be 1000 units across
 double CalcTypicalUniverseWidth(int size);
@@ -119,7 +130,7 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq);
 void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq);
 
 /** Creates starlanes and adds them systems already generated. */
-void GenerateStarlanes(Universe& universe, GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid);
+void GenerateStarlanes(Universe& universe, GalaxySetupOption freq);
 
 /** Picks systems to host homeworlds, generates planets for them, stores
  * the ID's of the homeworld planets into the homeworld vector. */
@@ -144,8 +155,7 @@ void GenerateEmpires(Universe& universe,  std::vector<int>& homeworld_planet_ids
  * predefined galaxy shapes.
  * WILL BE REMOVED!!! Currently kept because the new Python universe
  * generator interface is not yet able to replace this function completely */
-void CreateUniverse(Universe& universe,
-                    int size,                          Shape shape,
+void CreateUniverse(int size,                          Shape shape,
                     GalaxySetupOption age,             GalaxySetupOption starlane_freq,
                     GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
                     GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
