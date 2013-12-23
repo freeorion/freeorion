@@ -130,7 +130,7 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq);
 void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq);
 
 /** Creates starlanes and adds them systems already generated. */
-void GenerateStarlanes(Universe& universe, GalaxySetupOption freq);
+void GenerateStarlanes(GalaxySetupOption freq);
 
 /** Picks systems to host homeworlds, generates planets for them, stores
  * the ID's of the homeworld planets into the homeworld vector. */

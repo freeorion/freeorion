@@ -1450,10 +1450,10 @@ void CreateUniverse(int size,                          Shape shape,
 
     Logger().debugStream() << "CreateUniverse: universe width: " << universe.UniverseWidth();
 
-    Logger().debugStream() << "Populating Systems";
-    PopulateSystems(universe, planet_density);
-    Logger().debugStream() << "Generating Starlanes";
-    GenerateStarlanes(universe, starlane_freq);
+    // Logger().debugStream() << "Populating Systems";
+    // PopulateSystems(universe, planet_density);
+    // Logger().debugStream() << "Generating Starlanes";
+    // GenerateStarlanes(starlane_freq);
     Logger().debugStream() << "Initializing System Graph";
     universe.InitializeSystemGraph();
     Logger().debugStream() << "Generating Homeworlds";
@@ -1465,7 +1465,7 @@ void CreateUniverse(int size,                          Shape shape,
     Logger().debugStream() << "Generating Empires";
     GenerateEmpires(universe, homeworld_planet_ids, player_setup_data);
     Logger().debugStream() << "Naming Planets";
-    NamePlanets(universe);
+    // NamePlanets(universe);
     Logger().debugStream() << "Generating Natives";
     GenerateNatives(universe, native_freq);
     Logger().debugStream() << "Generating Space Monsters";
@@ -1850,7 +1850,7 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
     }
 }
 
-void GenerateStarlanes(Universe& universe, GalaxySetupOption freq) {
+void GenerateStarlanes(GalaxySetupOption freq) {
     if (freq == GALAXY_SETUP_NONE)
         return;
 

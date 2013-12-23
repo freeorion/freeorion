@@ -16,7 +16,7 @@ AverageDensity                  70          0           0       0       -5      
 HighDensity                     50          0           0       0       -5       -10   0               0
 
 <8x8>
-StarColorModToPlanetSizeDist    NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
+StarTypeModToPlanetSizeDist     NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
 Blue                            0           0           0       0       -5      -10     0               0
 White                           0           0           0       0       -5      -10     0               0
 Yellow                          0           0           0       0       -5      -10     0               0
@@ -27,17 +27,17 @@ Blackhole                       30          0           0       -5      -10     
 NoStar                          80          0           0       0       -10     -15     0               10
 
 <10x8>
-SlotModToPlanetSizeDist         NoWorld     Planetoid   Small   Medium  Large   Massive  AsteroidField  GasGiant
-Slot1                           10          0           20      10      0       0        0              -80
-Slot2                           5           0           15      20      5       0        0              -70
-Slot3                           0           0           10      30      10      5        0              -60
-Slot4                           0           0           10      30      10      5        10             -30
-Slot5                           0           0           10      20      15      10       25             0
-Slot6                           0           0           5       5       20      15       10             30
-Slot7                           0           0           5       5       15      10       5              30
-Slot8                           0           0           10      5       10      5        5              30
-Slot9                           5           0           10      5       5       5        5              30
-Slot10                          10          0           10      0       0       0        5              10
+OrbitModToPlanetSizeDist        NoWorld     Planetoid   Small   Medium  Large   Massive  AsteroidField  GasGiant
+Orbit1                          10          0           20      10      0       0        0              -80
+Orbit2                          5           0           15      20      5       0        0              -70
+Orbit3                          0           0           10      30      10      5        0              -60
+Orbit4                          0           0           10      30      10      5        10             -30
+Orbit5                          0           0           10      20      15      10       25             0
+Orbit6                          0           0           5       5       20      15       10             30
+Orbit7                          0           0           5       5       15      10       5              30
+Orbit8                          0           0           10      5       10      5        5              30
+Orbit9                          5           0           10      5       5       5        5              30
+Orbit10                         10          0           10      0       0       0        5              10
 
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
@@ -51,20 +51,20 @@ Asteroid                        0        0      0       0           0       0   
 GasGiant                        0        0      0       0           0       0       0       0       0       0               0
 
 <10x11>
-SlotModToPlanetTypeDist         Swamp   Toxic   Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
-Slot1                           0       0       0       0           0       0       0       0       0         0               0
-Slot2                           0       0       0       0           0       0       0       0       0         0               0
-Slot3                           0       0       0       0           0       0       0       0       0         0               0
-Slot4                           0       0       0       0           0       0       0       0       0         0               0
-Slot5                           0       0       0       0           0       0       0       0       0         0               0
-Slot6                           0       0       0       0           0       0       0       0       0         0               0
-Slot7                           0       0       0       0           0       0       0       0       0         0               0
-Slot8                           0       0       0       0           0       0       0       0       0         0               0
-Slot9                           0       0       0       0           0       0       0       0       0         0               0
-Slot10                          0       0       0       0           0       0       0       0       0         0               0
+OrbitModToPlanetTypeDist        Swamp   Toxic   Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
+Orbit1                          0       0       0       0           0       0       0       0       0         0               0
+Orbit2                          0       0       0       0           0       0       0       0       0         0               0
+Orbit3                          0       0       0       0           0       0       0       0       0         0               0
+Orbit4                          0       0       0       0           0       0       0       0       0         0               0
+Orbit5                          0       0       0       0           0       0       0       0       0         0               0
+Orbit6                          0       0       0       0           0       0       0       0       0         0               0
+Orbit7                          0       0       0       0           0       0       0       0       0         0               0
+Orbit8                          0       0       0       0           0       0       0       0       0         0               0
+Orbit9                          0       0       0       0           0       0       0       0       0         0               0
+Orbit10                         0       0       0       0           0       0       0       0       0         0               0
 
 <8x11>
-StarColorModToPlanetTypeDist    Swamp  Toxic   Inferno Radiated     Barren   Tundra  Desert  Terran  Ocean  AsteroidField   GasGiant
+StarTypeModToPlanetTypeDist     Swamp  Toxic   Inferno Radiated     Barren   Tundra  Desert  Terran  Ocean  AsteroidField   GasGiant
 Blue                            0      5       8       10           8       0       2       0       0       0               0
 White                           2      2       5       2            5       0       8       0       0       0               0
 Yellow                          10     0       0       0            0       2       10      15      12      0               0

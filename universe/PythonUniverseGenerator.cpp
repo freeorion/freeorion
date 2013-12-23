@@ -1,11 +1,13 @@
 #include "PythonUniverseGenerator.h"
 
 #include "System.h"
+#include "Planet.h"
 
 #include "../server/ServerApp.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/Random.h"
+#include "../util/i18n.h"
 #include "../python/PythonSetWrapper.h"
 #include "../python/PythonWrappers.h"
 
@@ -82,7 +84,13 @@ namespace {
     // Universe tables
     const std::vector<int>&                 g_base_star_type_dist                   = UniverseDataTables()["BaseStarTypeDist"][0];
     const std::vector<std::vector<int> >&   g_universe_age_mod_to_star_type_dist    = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
-
+    const std::vector<std::vector<int> >&   g_density_mod_to_planet_size_dist       = UniverseDataTables()["DensityModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_size_dist     = UniverseDataTables()["StarTypeModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_size_dist         = UniverseDataTables()["OrbitModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >&   g_planet_size_mod_to_planet_type_dist   = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_type_dist         = UniverseDataTables()["OrbitModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_type_dist     = UniverseDataTables()["StarTypeModToPlanetTypeDist"];
+    
     // Functions exposed to Python to access the universe tables
     int BaseStarTypeDist(StarType star_type)
     { return g_base_star_type_dist[star_type]; }
@@ -90,23 +98,151 @@ namespace {
     int UniverseAgeModToStarTypeDist(GalaxySetupOption age, StarType star_type)
     { return g_universe_age_mod_to_star_type_dist[age][star_type]; }
 
-    // Wrappers for Universe class member functions to provide a more
-    // consistent set of universe generation functions to scripters
-    double  GetUniverseWidth()
+    int DensityModToPlanetSizeDist(GalaxySetupOption density, PlanetSize size)
+    { return g_density_mod_to_planet_size_dist[density][size]; }
+
+    int StarTypeModToPlanetSizeDist(StarType star_type, PlanetSize size)
+    { return g_star_type_mod_to_planet_size_dist[star_type][size]; }
+
+    int OrbitModToPlanetSizeDist(int orbit, PlanetSize size)
+    { return g_orbit_mod_to_planet_size_dist[orbit][size]; }
+
+    int PlanetSizeModToPlanetTypeDist(PlanetSize size, PlanetType planet_type)
+    { return g_planet_size_mod_to_planet_type_dist[size][planet_type]; }
+
+    int OrbitModToPlanetTypeDist(int orbit, PlanetType planet_type)
+    { return g_orbit_mod_to_planet_type_dist[orbit][planet_type]; }
+
+    int StarTypeModToPlanetTypeDist(StarType star_type, PlanetType planet_type)
+    { return g_star_type_mod_to_planet_type_dist[star_type][planet_type]; }
+
+    // Wrappers for the various universe object classes member funtions
+    // This should provide a more safe and consistent set of universe generation
+    // functions to scripters. All wrapper functions work with object ids, so
+    // handling with object references and passing them between the languages is
+    // avoided
+    //
+    // Wrappers for common UniverseObject class member funtions
+    object GetName(int object_id) {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetName : Couldn't get object with ID " << object_id;
+            return object("");
+        }
+        return object(obj->Name());
+    }    
+    
+    void SetName(int object_id, std::string name) {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::RenameUniverseObject : Couldn't get object with ID " << object_id;
+            return;
+        }
+        obj->Rename(name);
+    }
+
+    // Wrappers for Universe class member functions
+    double GetUniverseWidth()
     { return GetUniverse().UniverseWidth(); }
 
-    void    SetUniverseWidth(double width)
+    void SetUniverseWidth(double width)
     { GetUniverse().SetUniverseWidth(width); }
 
-    int     CreateSystem(StarType star_type, std::string star_name, double x, double y) {
+    int CreateSystem(StarType star_type, std::string star_name, double x, double y) {
+        // Create system and insert it into the object map
         TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
         if (!system) {
-            std::string err_msg = "PythonUniverseGenerator::CreateSystem() : Attempt to insert system into the object map failed.";
+            std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
             Logger().debugStream() << err_msg;
             throw std::runtime_error(err_msg);
         }
         return system->SystemID();
     }
+
+    int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, std::string name) {
+        Universe& universe = GetUniverse();
+        TemporaryPtr<System> system = universe.Objects().Object<System>(system_id);
+
+        // Perform some validity checks
+        // Check if system with id system_id exists
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Couldn't get system with ID " << system_id;
+            return INVALID_OBJECT_ID;
+        }
+
+        // Check if orbit number is within allowed range
+        if ((orbit < 0) || (orbit >= system->Orbits())) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : There is no orbit " << orbit << " in system " << system_id;
+            return INVALID_OBJECT_ID;
+        }
+
+        // Check if desired orbit is still empty
+        if (system->OrbitOccupied(orbit)) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Orbit " << orbit << " of system " << system_id << " already occupied";
+            return INVALID_OBJECT_ID;
+        }
+
+        // Check if planet size is set to valid value
+        if ((size < SZ_TINY) || (size > SZ_GASGIANT)) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Can't create a planet of size " << size;
+            return INVALID_OBJECT_ID;
+        }
+        
+        // Check if planet type is set to valid value
+        if ((planet_type < PT_SWAMP) || (planet_type > PT_GASGIANT)) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Can't create a planet of type " << planet_type;
+            return INVALID_OBJECT_ID;
+        }
+        
+        // Check if planet type and size match
+        // if type is gas giant, size must be too, same goes for asteroids
+        if (((planet_type == PT_GASGIANT) && (size != SZ_GASGIANT)) || ((planet_type == PT_ASTEROIDS) && (size != SZ_ASTEROIDS))) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Planet of type " << planet_type << " can't have size " << size;
+            return INVALID_OBJECT_ID;
+        }
+        
+        // Create planet and insert it into the object map
+        TemporaryPtr<Planet> planet = universe.CreatePlanet(planet_type, size);
+        if (!planet) {
+            std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert planet into the object map failed";
+            Logger().debugStream() << err_msg;
+            throw std::runtime_error(err_msg);
+        }
+
+        // Add planet to system map
+        system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
+
+        // If a name has been specified, set planet name
+        if (!(name.empty()))
+            planet->Rename(name);
+
+        return planet->ID();
+    }
+
+    // Wrappers for System class member functions
+    StarType GetStarType(int system_id) {
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetStarType : Couldn't get system with ID " << system_id;
+            return INVALID_STAR_TYPE;
+        }
+        return system->GetStarType();
+    }
+
+    int GetNumOrbits(int system_id) {
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetNumOrbits : Couldn't get system with ID " << system_id;
+            return 0;
+        }
+        return system->Orbits();
+    }
+
+    // Misc. helper functions/wrappers
+    //
+    // Wrapper function for i18n::RomanNumber
+    object RomanNumberWrapper(unsigned int n)
+    { return object(RomanNumber(n)); }
 }
 
 // Python module for logging functions
@@ -136,6 +272,9 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("getGalaxySetupData",               GetGalaxySetupData,             return_value_policy<reference_existing_object>());
     def("getPlayerSetupData",               GetPlayerSetupData,             return_value_policy<reference_existing_object>());
 
+    def("userString",                       make_function(&UserString,      return_value_policy<copy_const_reference>()));
+    def("romanNumber",                      RomanNumber);
+
     def("invalidObject",                    InvalidObjectID);
     def("minSystemSeparation",              MinSystemSeparation);
     def("minHomeSystemSeparation",          MinHomeSystemSeparation);
@@ -143,6 +282,12 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
 
     def("baseStarTypeDist",                 BaseStarTypeDist);
     def("universeAgeModToStarTypeDist",     UniverseAgeModToStarTypeDist);
+    def("densityModToPlanetSizeDist",       DensityModToPlanetSizeDist);
+    def("starTypeModToPlanetSizeDist",      StarTypeModToPlanetSizeDist);
+    def("orbitModToPlanetSizeDist",         OrbitModToPlanetSizeDist);
+    def("planetSizeModToPlanetTypeDist",    PlanetSizeModToPlanetTypeDist);
+    def("orbitModToPlanetTypeDist",         OrbitModToPlanetTypeDist);
+    def("starTypeModToPlanetTypeDist",      StarTypeModToPlanetTypeDist);
     def("calcTypicalUniverseWidth",         CalcTypicalUniverseWidth);
 
     def("spiralGalaxyCalcPositions",        SpiralGalaxyCalcPositions);
@@ -150,10 +295,18 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("clusterGalaxyCalcPositions",       ClusterGalaxyCalcPositions);
     def("ringGalaxyCalcPositions",          RingGalaxyCalcPositions);
     def("irregularGalaxyPositions",         IrregularGalaxyPositions);
+    def("generateStarlanes",                GenerateStarlanes);
+
+    def("getName",                          GetName);
+    def("setName",                          SetName);
 
     def("getUniverseWidth",                 GetUniverseWidth);
     def("setUniverseWidth",                 SetUniverseWidth);
     def("createSystem",                     CreateSystem);
+    def("createPlanet",                     CreatePlanet);
+
+    def("getStarType",                      GetStarType);
+    def("getNumOrbits",                     GetNumOrbits);
 
     def("createUniverse",                   CreateUniverse);
 

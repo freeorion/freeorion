@@ -15,6 +15,24 @@ galaxy_shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galax
 star_types = (fo.starType.blue, fo.starType.white,   fo.starType.yellow,    fo.starType.orange,
               fo.starType.red,  fo.starType.neutron, fo.starType.blackHole, fo.starType.noStar)
 
+# tuple of all valid planet sizes
+planet_sizes_all = (fo.planetSize.tiny, fo.planetSize.small,     fo.planetSize.medium,   fo.planetSize.large,
+                    fo.planetSize.huge, fo.planetSize.asteroids, fo.planetSize.gasGiant, fo.planetSize.noWorld)
+
+# tuple of planet sizes without "no world"
+planet_sizes = (fo.planetSize.tiny, fo.planetSize.small,     fo.planetSize.medium,   fo.planetSize.large,
+                fo.planetSize.huge, fo.planetSize.asteroids, fo.planetSize.gasGiant)
+
+# tuple of all available planet types (with asteroids and gas giants)
+planet_types_all = (fo.planetType.swamp,  fo.planetType.radiated,  fo.planetType.toxic,  fo.planetType.inferno,
+                    fo.planetType.barren, fo.planetType.tundra,    fo.planetType.desert, fo.planetType.terran,
+                    fo.planetType.ocean,  fo.planetType.asteroids, fo.planetType.gasGiant)
+
+# tuple of available planet types without asteroids and gas giants
+planet_types = (fo.planetType.swamp,  fo.planetType.radiated,  fo.planetType.toxic,  fo.planetType.inferno,
+                fo.planetType.barren, fo.planetType.tundra,    fo.planetType.desert, fo.planetType.terran,
+                fo.planetType.ocean)
+
 # list of star system names
 star_names = []
 
@@ -90,7 +108,7 @@ def generateSystem(position):
     except:
         # in case of an error play save and set star type to invalid
         star_type = fo.starType.unknown
-        print "Python generateSystem(): Pick star type failed"
+        print "Python generateSystem: Pick star type failed"
         print sys.exc_info()[1]
 
     # if we got an invalid star type (for whatever reason),
@@ -102,10 +120,84 @@ def generateSystem(position):
     # and return ID of the newly created system
     return fo.createSystem(star_type, getStarName(), position.x, position.y)
 
+# Calculate planet size for a potential new planet based on
+# planet density setup option, star type and orbit number
+def calcPlanetSize(star_type, orbit):
+
+    # try to pick a planet size by making a series of "rolls" (1-100)
+    # for each planet size, and take the highest modified roll
+    planet_size = fo.planetSize.unknown
+    try:
+        max_roll = 0        
+        for candidate in planet_sizes_all:
+            roll = random.randint(1, 100) \
+                + fo.densityModToPlanetSizeDist(gsd.planetDensity, candidate) \
+                + fo.starTypeModToPlanetSizeDist(star_type, candidate) \
+                + fo.orbitModToPlanetSizeDist(orbit, candidate)
+            if max_roll < roll:
+                max_roll = roll
+                planet_size = candidate
+    except:
+        # in case of an error play save and set planet size to invalid
+        planet_size = fo.planetSize.unknown
+        print "Python calcPlanetSize: Pick planet size failed"
+        print sys.exc_info()[1]
+
+    # if we got an invalid planet size (for whatever reason),
+    # just select one randomly from the global tuple based
+    # only on the planet density setup option
+    if planet_size == fo.planetSize.unknown:
+        if random.randint(1, 10) <= gsd.planetDensity:
+            planet_size = random.choice(planet_sizes)
+        else:
+            planet_size = fo.planetSize.noWorld
+
+    return planet_size
+
+# Calculate planet type for a potential new planet
+# TEMP: For now, pick planet type randomly, unless it is required by size
+# TODO: Consider using the universe tables that modify planet type again,
+#       this has been (temporarily?) disabled in C code. But the respective
+#       tables are there, the Python interface to them is in place, and
+#       this function is already prepared to take all necessary parameters.
+#       So if anyone feels like experimenting, go for it... :)
+def calcPlanetType(star_type, orbit, planet_size):
+
+    planet_type = fo.planetType.unknown
+
+    # check specified planet size to determine if we want a planet at all
+    if  planet_size in planet_sizes:
+        # if yes, determine planet type based on planet size...
+        if planet_size == fo.planetSize.gasGiant:
+            planet_type = fo.planetType.gasGiant
+        elif planet_size == fo.planetSize.asteroids:
+            planet_type = fo.planetType.asteroids
+        else:
+            planet_type = random.choice(planet_types)
+
+    return planet_type
+
+# Generate a new planet in specified system and orbit
+def generatePlanet(planet_size, planet_type, system, orbit, number):
+
+    try:
+        if planet_type == fo.planetType.asteroids:
+            name = fo.userString("PL_ASTEROID_BELT_OF_SYSTEM")
+            name = name.replace("%1%", fo.getName(system))
+        else:
+            name = fo.getName(system) + " " + fo.romanNumber(number)
+        planet = fo.createPlanet(planet_size, planet_type, system, orbit, name)
+
+    except:
+        planet = fo.invalidObject;
+        print "Python generatePlanet: Create planet failed"
+        print sys.exc_info()[1]
+
+    return planet
+
 def createUniverse():
 
     print "Python Universe Generator"
-    print "Current directory:", os.getcwd()
 
     # fetch universe and player setup data
     global gsd, psd
@@ -167,8 +259,31 @@ def createUniverse():
     print gsd.shape, "galaxy created, final number of systems:", gsd.size
 
     # Generate systems at the calculated positions
+    sys_list = []
     for position in system_positions:
-        generateSystem(position)
+        sys_list.append(generateSystem(position))
+    print "Systems generated"
+
+    # Generate Starlanes
+    fo.generateStarlanes(gsd.starlaneFrequency)
+    print "Starlanes generated"
+    
+    # Populate systems
+    for system in sys_list:
+        if system == fo.invalidObject:
+            continue
+        star_type = fo.getStarType(system) # needed to determine planet size (and maybe in future also type?)
+        planet_number = 1 # needed to make up the planet named
+        for orbit in range(0, fo.getNumOrbits(system)):
+            # check for each orbit if a planet shall be created by determining planet size
+            planet_size = calcPlanetSize(star_type, orbit)
+            if planet_size in planet_sizes:
+                # ok, we want a planet, determie planet type and generate the planet
+                planet_type = calcPlanetType(star_type, orbit, planet_size)
+                if generatePlanet(planet_size, planet_type, system, orbit, planet_number) != fo.invalidObject:
+                    # new planet successfully created, increase planet number
+                    planet_number = planet_number + 1
+    print "Systems populated"
 
     # Let UniverseGenerator::CreateUniverse do the rest that hasn't been implemented
     # in the Python universe generator yet

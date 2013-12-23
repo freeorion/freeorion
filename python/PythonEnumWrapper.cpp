@@ -32,6 +32,8 @@ namespace FreeOrionPython {
             .value("huge",      SZ_HUGE)
             .value("asteroids", SZ_ASTEROIDS)
             .value("gasGiant",  SZ_GASGIANT)
+            .value("noWorld",   SZ_NOWORLD)
+            .value("unknown",   INVALID_PLANET_SIZE)
         ;
         enum_<PlanetType>("planetType")
             .value("swamp",     PT_SWAMP)
@@ -45,6 +47,7 @@ namespace FreeOrionPython {
             .value("ocean",     PT_OCEAN)
             .value("asteroids", PT_ASTEROIDS)
             .value("gasGiant",  PT_GASGIANT)
+            .value("unknown",   INVALID_PLANET_TYPE)
         ;
         enum_<PlanetEnvironment>("planetEnvironment")
             .value("uninhabitable", PE_UNINHABITABLE)
