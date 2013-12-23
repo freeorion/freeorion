@@ -1962,11 +1962,11 @@ void GenerateStarlanes(GalaxySetupOption freq) {
         } // end while
     }
 
-     // add the starlane to the stars
+    // add the starlane to the stars
     for (n = 0; n < numSys; ++n) {
         const std::set<int>& lanes = laneSetArray[n];
         for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
-            sys_vec[n]->AddStarlane(*it);
+            sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
     }
 
 
