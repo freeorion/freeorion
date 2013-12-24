@@ -1729,9 +1729,9 @@ namespace {
             // don't allow moving ships / fleets to give detection
             TemporaryPtr<const Fleet> fleet;
             if (obj->ObjectType() == OBJ_FLEET) {
-                fleet = dynamic_ptr_cast<const Fleet>(obj);
+                fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
             } else if (obj->ObjectType() == OBJ_SHIP) {
-                TemporaryPtr<const Ship> ship = dynamic_ptr_cast<const Ship>(obj);
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
                 if (ship)
                     fleet = Objects().Object<Fleet>(ship->FleetID());
             }
@@ -2236,7 +2236,7 @@ namespace {
             TemporaryPtr<const UniverseObject> obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
-            TemporaryPtr<const Fleet> fleet = dynamic_ptr_cast<const Fleet>(obj);
+            TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
             if (!fleet)
                 continue;
 
@@ -2532,7 +2532,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 continue;
             if (obj_it->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY)
                 continue;
-            TemporaryPtr<const Fleet> fleet = dynamic_ptr_cast<const Fleet>(*obj_it);
+            TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(*obj_it);
             if (!fleet)
                 continue;
             int fleet_id = obj_it->ID();
@@ -2658,7 +2658,7 @@ void Universe::RecursiveDestroy(int object_id) {
         return;
     }
 
-    if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(obj)) {
+    if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         Destroy(object_id);
@@ -2666,21 +2666,21 @@ void Universe::RecursiveDestroy(int object_id) {
             Destroy(fleet->ID());
         }
 
-    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(obj)) {
+    } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(obj)) {
         std::set<int> fleet_ships = fleet->ShipIDs();           // copy, so destroying ships can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = fleet_ships.begin();
              it != fleet_ships.end(); ++it)
         { Destroy(*it); }
         Destroy(object_id);
 
-    } else if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(obj)) {
+    } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(obj)) {
         std::set<int> planet_buildings = planet->Buildings();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = planet_buildings.begin();
              it != planet_buildings.end(); ++it)
         { Destroy(*it); }
         Destroy(object_id);
 
-    } else if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(obj)) {
+    } else if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(obj)) {
         std::vector<int> system_objs = system->FindObjectIDs();
         for (std::vector<int>::const_iterator it = system_objs.begin();
              it != system_objs.end(); ++it)

@@ -124,7 +124,7 @@ const std::string& Field::PublicName(int empire_id) const {
 }
 
 TemporaryPtr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Field>(static_ptr_cast<const Field>(TemporaryFromThis()))); }
+{ return visitor.Visit(boost::const_pointer_cast<Field>(boost::static_pointer_cast<const Field>(TemporaryFromThis()))); }
 
 bool Field::InField(TemporaryPtr<const UniverseObject> obj) const
 { return obj && InField(obj->X(), obj->Y()); }

@@ -760,7 +760,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target);
+    TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
         Logger().errorStream() << "SetShipPartMeter::Execute acting on non-ship target:";
         context.effect_target->Dump();
@@ -1021,7 +1021,7 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     if (!empire)
         return;
 
-    TemporaryPtr<const Planet> planet = dynamic_ptr_cast<const Planet>(context.effect_target);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(context.effect_target);
     if (!planet)
         return;
 
@@ -1056,7 +1056,7 @@ SetPlanetType::~SetPlanetType()
 { delete m_type; }
 
 void SetPlanetType::Execute(const ScriptingContext& context) const {
-    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
         PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
         p->SetType(type);
         if (type == PT_ASTEROIDS)
@@ -1092,7 +1092,7 @@ SetPlanetSize::~SetPlanetSize()
 { delete m_size; }
 
 void SetPlanetSize::Execute(const ScriptingContext& context) const {
-    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
         PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
         p->SetSize(size);
         if (size == SZ_ASTEROIDS)
@@ -1126,10 +1126,10 @@ SetSpecies::~SetSpecies()
 { delete m_species_name; }
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
-    if (TemporaryPtr<Planet> p = dynamic_ptr_cast<Planet>(context.effect_target)) {
+    if (TemporaryPtr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, p->SpeciesName()));
         p->SetSpecies(species_name);
-    } else if (TemporaryPtr<Ship> s = dynamic_ptr_cast<Ship>(context.effect_target)) {
+    } else if (TemporaryPtr<Ship> s = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, s->SpeciesName()));
         s->SetSpecies(species_name);
     }
@@ -1166,7 +1166,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
 
     context.effect_target->SetOwner(empire_id);
 
-    if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target)) {
+    if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
         TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
@@ -1241,7 +1241,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
 
     PlanetSize target_size = INVALID_PLANET_SIZE;
     PlanetType target_type = INVALID_PLANET_TYPE;
-    if (TemporaryPtr<const Planet> location_planet = dynamic_ptr_cast<const Planet>(context.effect_target)) {
+    if (TemporaryPtr<const Planet> location_planet = boost::dynamic_pointer_cast<const Planet>(context.effect_target)) {
         target_size = location_planet->Size();
         target_type = location_planet->Type();
     }
@@ -1305,9 +1305,9 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "CreateBuilding::Execute passed no target object";
         return;
     }
-    TemporaryPtr<Planet> location = dynamic_ptr_cast<Planet>(context.effect_target);
+    TemporaryPtr<Planet> location = boost::dynamic_pointer_cast<Planet>(context.effect_target);
     if (!location)
-        if (TemporaryPtr<Building> location_building = dynamic_ptr_cast<Building>(context.effect_target))
+        if (TemporaryPtr<Building> location_building = boost::dynamic_pointer_cast<Building>(context.effect_target))
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
@@ -1443,9 +1443,9 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //// possible future modification: try to put new ship into existing fleet if
     //// ownership with target object's fleet works out (if target is a ship)
     //// attempt to find a
-    //TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target);
+    //TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target);
     //if (!fleet)
-    //    if (TemporaryPtr<const Ship> ship = dynamic_ptr_cast<const Ship>(target))
+    //    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target))
     //        fleet = ship->FleetID();
     //// etc.
 
@@ -1592,7 +1592,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     // if target is a system, and location matches system location, can put
     // field into system
-    TemporaryPtr<System> system = dynamic_ptr_cast<System>(target);
+    TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target);
     if (!system)
         return;
     if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
@@ -1796,7 +1796,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    TemporaryPtr<System> target_system = dynamic_ptr_cast<System>(context.effect_target);
+    TemporaryPtr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1816,12 +1816,12 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     std::set<TemporaryPtr<System> > endpoint_systems;
     for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
         TemporaryPtr<const UniverseObject> endpoint_object = *it;
-        TemporaryPtr<const System> endpoint_system = dynamic_ptr_cast<const System>(endpoint_object);
+        TemporaryPtr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(const_ptr_cast<System>(endpoint_system));
+        endpoint_systems.insert(boost::const_pointer_cast<System>(endpoint_system));
     }
 
     // add starlanes from target to endpoint systems
@@ -1858,7 +1858,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    TemporaryPtr<System> target_system = dynamic_ptr_cast<System>(context.effect_target);
+    TemporaryPtr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1879,12 +1879,12 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     std::set<TemporaryPtr<System> > endpoint_systems;
     for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
         TemporaryPtr<const UniverseObject> endpoint_object = *it;
-        TemporaryPtr<const System> endpoint_system = dynamic_ptr_cast<const System>(endpoint_object);
+        TemporaryPtr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(const_ptr_cast<System>(endpoint_system));
+        endpoint_systems.insert(boost::const_pointer_cast<System>(endpoint_system));
     }
 
     // remove starlanes from target to endpoint systems
@@ -1920,7 +1920,7 @@ void SetStarType::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "SetStarType::Execute given no target object";
         return;
     }
-    if (TemporaryPtr<System> s = dynamic_ptr_cast<System>(context.effect_target))
+    if (TemporaryPtr<System> s = boost::dynamic_pointer_cast<System>(context.effect_target))
         s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
     else
         Logger().errorStream() << "SetStarType::Execute given a non-system target";
@@ -1964,12 +1964,12 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         return;
 
     // "randomly" pick a destination
-    TemporaryPtr<UniverseObject> destination = const_ptr_cast<UniverseObject>(*valid_locations.begin());
+    TemporaryPtr<UniverseObject> destination = boost::const_pointer_cast<UniverseObject>(*valid_locations.begin());
 
 
     // do the moving...
 
-    if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(context.effect_target)) {
+    if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
         if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
@@ -1991,9 +1991,9 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             // valid next and previous systems for the target fleet.
             TemporaryPtr<const Fleet> dest_fleet;
 
-            dest_fleet = dynamic_ptr_cast<const Fleet>(destination);
+            dest_fleet = boost::dynamic_pointer_cast<const Fleet>(destination);
             if (!dest_fleet)
-                if (TemporaryPtr<const Ship> dest_ship = dynamic_ptr_cast<const Ship>(destination))
+                if (TemporaryPtr<const Ship> dest_ship = boost::dynamic_pointer_cast<const Ship>(destination))
                     dest_fleet = GetFleet(dest_ship->FleetID());
 
             if (dest_fleet) {
@@ -2005,11 +2005,11 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             }
         }
 
-    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(context.effect_target)) {
+    } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
         TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
-        TemporaryPtr<Fleet> dest_fleet = dynamic_ptr_cast<Fleet>(destination);  // may be 0 if destination is not a fleet
+        TemporaryPtr<Fleet> dest_fleet = boost::dynamic_pointer_cast<Fleet>(destination);  // may be 0 if destination is not a fleet
         bool same_owners = ship->Owner() == destination->Owner();
         int dest_sys_id = destination->SystemID();
         int ship_sys_id = ship->SystemID();
@@ -2040,7 +2040,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (old_fleet && old_fleet->NumShips() < 1)
             universe.EffectDestroy(old_fleet->ID());
 
-    } else if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(context.effect_target)) {
+    } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
         if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
             // check if planet is already in this system.  if so, don't need to do anything
@@ -2056,16 +2056,16 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         }
         // don't move planets to a location outside a system
 
-    } else if (TemporaryPtr<Building> building = dynamic_ptr_cast<Building>(context.effect_target)) {
+    } else if (TemporaryPtr<Building> building = boost::dynamic_pointer_cast<Building>(context.effect_target)) {
         // buildings need to be located on planets, so if destination is a planet, insert building into it,
         // or attempt to get the planet on which the destination object is located and insert target building into that
-        if (TemporaryPtr<Planet> dest_planet = dynamic_ptr_cast<Planet>(destination)) {
+        if (TemporaryPtr<Planet> dest_planet = boost::dynamic_pointer_cast<Planet>(destination)) {
             dest_planet->AddBuilding(building->ID());
             if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
                 ExploreSystem(dest_system->ID(), building);
 
 
-        } else if (TemporaryPtr<Building> dest_building = dynamic_ptr_cast<Building>(destination)) {
+        } else if (TemporaryPtr<Building> dest_building = boost::dynamic_pointer_cast<Building>(destination)) {
             if (TemporaryPtr<Planet> dest_planet = GetPlanet(dest_building->PlanetID())) {
                 dest_planet->AddBuilding(building->ID());
                 if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
@@ -2074,7 +2074,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         }
         // else if destination is something else that can be on a planet...
 
-    } else if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(context.effect_target)) {
+    } else if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(context.effect_target)) {
         if (destination->SystemID() == INVALID_OBJECT_ID) {
             // can simply move system to new location, and insert destination object into system
             system->UniverseObject::MoveTo(destination);
@@ -2088,7 +2088,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             //TemporaryPtr<System> destination_system = GetSystem(destination->SystemID());
             // TODO: merge systems
         }
-    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(context.effect_target)) {
+    } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(context.effect_target)) {
         field->UniverseObject::MoveTo(destination);
     }
 }
@@ -2172,20 +2172,20 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(target)) {
+    if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
-    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target)) {
+    } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
         fleet->MoveTo(new_x, new_y);
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
         return;
-    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(target)) {
+    } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
         TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->NumShips() < 1)
             GetUniverse().EffectDestroy(old_fleet->ID());
-    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(target)) {
+    } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
@@ -2305,20 +2305,20 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(target)) {
+    if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
-    } else if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(target)) {
+    } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
         fleet->MoveTo(new_x, new_y);
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
         return;
-    } else if (TemporaryPtr<Ship> ship = dynamic_ptr_cast<Ship>(target)) {
+    } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
         TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->NumShips() < 1)
             GetUniverse().EffectDestroy(old_fleet->ID());
-    } else if (TemporaryPtr<Field> field = dynamic_ptr_cast<Field>(target)) {
+    } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
@@ -2378,7 +2378,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    TemporaryPtr<Fleet> target_fleet = dynamic_ptr_cast<Fleet>(context.effect_target);
+    TemporaryPtr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         Logger().errorStream() << "SetDestination::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2399,7 +2399,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
     Condition::ObjectSet::iterator obj_it = valid_locations.begin();
     std::advance(obj_it, destination_idx);
-    TemporaryPtr<UniverseObject> destination = const_ptr_cast<UniverseObject>(*obj_it);
+    TemporaryPtr<UniverseObject> destination = boost::const_pointer_cast<UniverseObject>(*obj_it);
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
@@ -2450,7 +2450,7 @@ void SetAggression::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    TemporaryPtr<Fleet> target_fleet = dynamic_ptr_cast<Fleet>(context.effect_target);
+    TemporaryPtr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         Logger().errorStream() << "SetAggression::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2778,7 +2778,7 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
     if (m_size)
         size = m_size->Eval(context);
 
-    if (TemporaryPtr<System> system = dynamic_ptr_cast<System>(context.effect_target))
+    if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(context.effect_target))
         system->SetOverlayTexture(m_texture, size);
 }
 
@@ -2804,7 +2804,7 @@ SetTexture::SetTexture(const std::string& texture) :
 void SetTexture::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
-    if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(context.effect_target))
+    if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target))
         planet->SetSurfaceTexture(m_texture);
 }
 

@@ -1583,10 +1583,10 @@ namespace {
                 return candidate->ObjectType() == m_type;
                 break;
             case OBJ_POP_CENTER:
-                return (bool)dynamic_ptr_cast<const PopCenter>(candidate);
+                return (bool)boost::dynamic_pointer_cast<const PopCenter>(candidate);
                 break;
             case OBJ_PROD_CENTER:
-                return (bool)dynamic_ptr_cast<const ResourceCenter>(candidate);
+                return (bool)boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
                 break;
             default:
                 break;
@@ -3166,7 +3166,7 @@ namespace {
                 return false;
 
             // is it a population centre?
-            if (TemporaryPtr<const ::PopCenter> pop = dynamic_ptr_cast<const ::PopCenter>(candidate)) {
+            if (TemporaryPtr<const ::PopCenter> pop = boost::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
@@ -3616,11 +3616,11 @@ namespace {
                 return false;
 
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            TemporaryPtr<const ResourceCenter> res_center = dynamic_ptr_cast<const ResourceCenter>(candidate);
+            TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
             TemporaryPtr<const ::Building> building;
             if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
                 if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
-                    res_center = dynamic_ptr_cast<const ResourceCenter>(planet);
+                    res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
                 return !res_center->Focus().empty() && (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
@@ -3738,11 +3738,11 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    TemporaryPtr<const ResourceCenter> res_center = dynamic_ptr_cast<const ResourceCenter>(candidate);
+    TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
     TemporaryPtr<const ::Building> building;
     if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
         if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
-            res_center = dynamic_ptr_cast<const ResourceCenter>(planet);
+            res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {

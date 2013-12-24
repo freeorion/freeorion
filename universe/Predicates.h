@@ -11,6 +11,7 @@ class System;
 class Field;
 
 #include <boost/mpl/assert.hpp>
+#include <boost/pointer_cast.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -114,7 +115,7 @@ TemporaryPtr<T1> universe_object_ptr_cast(TemporaryPtr<T2> ptr)
 
     typedef UniverseObjectSubclassVisitor<T1ConstFreeType> VisitorType;
 
-    return static_ptr_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
+    return boost::static_pointer_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
 }
 
 template <class T>

@@ -2170,7 +2170,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
         return;
     }
-    TemporaryPtr<const ResourceCenter> res = dynamic_ptr_cast<const ResourceCenter>(obj);
+    TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
     Logger().debugStream() << "Got resource center.";
     if (!res) {
         Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";

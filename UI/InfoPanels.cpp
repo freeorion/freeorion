@@ -267,7 +267,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_popcenter_id);
     if (!obj)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an invalid object id");
-    TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(obj);
+    TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj);
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
@@ -459,7 +459,7 @@ TemporaryPtr<const PopCenter> PopulationPanel::GetPopCenter() const {
         Logger().errorStream() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
         return TemporaryPtr<const PopCenter>();
     }
-    TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(obj);
+    TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj);
     if (!pop) {
         Logger().errorStream() << "PopulationPanel failed casting an object pointer to a PopCenter pointer";
         return TemporaryPtr<const PopCenter>();
@@ -479,7 +479,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (!obj)
         return false;
 
-    TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj);
+    TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
     if (!pc)
         return false;
 
@@ -527,7 +527,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an object_id that is not an UniverseObject");
-    TemporaryPtr<const ResourceCenter> res = dynamic_ptr_cast<const ResourceCenter>(obj);
+    TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -614,7 +614,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        TemporaryPtr<const ResourceCenter> res = dynamic_ptr_cast<const ResourceCenter>(obj);
+        TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
 
         if (res) {
             // determine which two resource icons to display while collapsed: the two with the highest production.
@@ -1076,7 +1076,7 @@ void MultiIconValueIndicator::Init() {
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
             if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin()))
-                if (TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj))
+                if (TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj))
                     texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
@@ -1153,7 +1153,7 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     if (!obj)
         return false;
 
-    TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj);
+    TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
     if (!pc)
         return false;
 
@@ -2405,7 +2405,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
-        TemporaryPtr<const ResourceCenter> rc = dynamic_ptr_cast<const ResourceCenter>(obj);
+        TemporaryPtr<const ResourceCenter> rc = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (!rc) continue;
 
         std::string name = obj->Name();
@@ -2756,7 +2756,7 @@ void MeterBrowseWnd::Initialize() {
         std::string summary_title_text;
         if (m_primary_meter_type == METER_POPULATION) {
             std::string human_readable_species_name;
-            if (TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(obj)) {
+            if (TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj)) {
                 const std::string& species_name = pop->SpeciesName();
                 if (!species_name.empty())
                     human_readable_species_name = UserString(species_name);

@@ -328,7 +328,7 @@ const std::string& Ship::PublicName(int empire_id) const {
 }
 
 TemporaryPtr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Ship>(static_ptr_cast<const Ship>(TemporaryFromThis()))); }
+{ return visitor.Visit(boost::const_pointer_cast<Ship>(boost::static_pointer_cast<const Ship>(TemporaryFromThis()))); }
 
 float Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //if (type == METER_FUEL) {

@@ -36,7 +36,7 @@ struct UniverseObjectVisitor;
   * Signal.  This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
-class FO_COMMON_API UniverseObject : public EnableTemporaryFromThis<UniverseObject> {
+class FO_COMMON_API UniverseObject : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>                          StateChangedSignalBaseType;

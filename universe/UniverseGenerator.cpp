@@ -1608,13 +1608,13 @@ void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
 
                         // kludges for planet appearance changes for particular specials
                         if (special_name == "TIDAL_LOCK_SPECIAL") {
-                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
+                            if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*obj_it))
                                 planet->SetRotationalPeriod(Day(planet->OrbitalPeriod()));
                         } else if (special_name == "SLOW_ROTATION_SPECIAL") {
-                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
+                            if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*obj_it))
                                 planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
                         } else if (special_name == "HIGH_AXIAL_TILT_SPECIAL") {
-                            if (TemporaryPtr<Planet> planet = dynamic_ptr_cast<Planet>(*obj_it))
+                            if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*obj_it))
                                 planet->SetHighAxialTilt();
                         }
                     }
@@ -1680,8 +1680,8 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq) {
 
     std::vector<TemporaryPtr<Planet> > native_safe_planets;
     for (Condition::ObjectSet::iterator it = native_safe_planet_set.begin(); it != native_safe_planet_set.end(); ++it)
-        if (TemporaryPtr<const Planet> planet = dynamic_ptr_cast<const Planet>(*it))
-            native_safe_planets.push_back(const_ptr_cast<Planet>(planet));
+        if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(*it))
+            native_safe_planets.push_back(boost::const_pointer_cast<Planet>(planet));
 
     // randomly add species to planets
     for (std::vector<TemporaryPtr<Planet> >::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {

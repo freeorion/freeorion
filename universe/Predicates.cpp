@@ -18,22 +18,22 @@ TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<UniverseO
 { return TemporaryPtr<UniverseObject>(); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Building> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Fleet> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Planet> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Ship> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<System> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Field> obj) const
-{ return Visit(static_ptr_cast<UniverseObject>(obj)); }
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
 
 ////////////////////////////////////////////////
 // StationaryFleetVisitor

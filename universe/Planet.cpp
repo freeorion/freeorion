@@ -437,7 +437,7 @@ std::vector<int> Planet::FindObjectIDs() const {
 }
 
 TemporaryPtr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Planet>(static_ptr_cast<const Planet>(TemporaryFromThis()))); }
+{ return visitor.Visit(boost::const_pointer_cast<Planet>(boost::static_pointer_cast<const Planet>(TemporaryFromThis()))); }
 
 Meter* Planet::GetMeter(MeterType type)
 { return UniverseObject::GetMeter(type); }
@@ -500,7 +500,7 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
 
 std::vector<std::string> Planet::AvailableFoci() const {
     std::vector<std::string> retval;
-    TemporaryPtr<const Planet> this_planet = dynamic_ptr_cast<const Planet>(TemporaryFromThis());
+    TemporaryPtr<const Planet> this_planet = boost::dynamic_pointer_cast<const Planet>(TemporaryFromThis());
     if (!this_planet)
         return retval;
     ScriptingContext context(this_planet);
@@ -645,7 +645,7 @@ void Planet::Conquer(int conquerer) {
         TemporaryPtr<UniverseObject> obj = *it;
 
         // Buildings:
-        if (TemporaryPtr<Building> building = dynamic_ptr_cast<Building>(obj)) {
+        if (TemporaryPtr<Building> building = boost::dynamic_pointer_cast<Building>(obj)) {
             const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
             // determine what to do with building of this type...

@@ -4875,7 +4875,7 @@ void MapWnd::RefreshPopulationIndicator() {
     //tally up all species population counts
     for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
         TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
-        TemporaryPtr<const PopCenter> pc = dynamic_ptr_cast<const PopCenter>(obj);
+        TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
             continue;
 

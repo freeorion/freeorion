@@ -7,9 +7,11 @@
 #include <boost/serialization/nvp.hpp>
 
 #include "../util/Export.h"
+#include "EnableTemporaryFromThis.h"
 #include "TemporaryPtr.h"
 
 class Meter;
+class UniverseObject;
 
 /** The PopCenter class is an abstract base class for anything in the FreeOrion
   * gamestate that has population on or in it.  Most likely, such an object
@@ -17,7 +19,7 @@ class Meter;
   * Planet is the most obvious class to inherit PopCenter, but other classes
   * could be made from it as well (e.g., a ship that is large enough to support
   * population and still travel between systems). */
-class FO_COMMON_API PopCenter {
+class FO_COMMON_API PopCenter : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Structors */ //@{
     PopCenter();                                        ///< default ctor

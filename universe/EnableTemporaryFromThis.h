@@ -2,30 +2,31 @@
 #ifndef _Enable_Temporary_From_This_h_
 #define _Enable_Temporary_From_This_h_
 
-#include "TemporaryPtr.h"
-#include "../util/Logger.h"
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/smart_ptr/weak_ptr.hpp>
+#include <boost/thread/mutex.hpp>
+
+template <class T> class TemporaryPtr;
 
 template <class T>
-class EnableTemporaryFromThis {
+class EnableTemporaryFromThis : public boost::enable_shared_from_this<T> {
 public:
-    TemporaryPtr<T> TemporaryFromThis() {
-        if (!m_ptr)
-            Logger().errorStream() << "TemporaryPtr from this was null!";
-
-        return m_ptr;
-    }
-
-    TemporaryPtr<const T> TemporaryFromThis() const {
-        if (!m_ptr)
-            Logger().errorStream() << "TemporaryPtr from this was null!";
-
-        return m_ptr;
-    }
+    typedef EnableTemporaryFromThis<T> enable_temporary_from_this_type;
+		EnableTemporaryFromThis();
+    TemporaryPtr<T> TemporaryFromThis();
+    TemporaryPtr<const T> TemporaryFromThis() const;
 
 private:
-    template <class Y> friend class TemporaryPtr;
-    mutable TemporaryPtr<T> m_ptr;
+    // this is only necessary when we inherit privately from boost::enable_shared_from_this
+    // currently, it is safe to publicly inherit, so we make MSVC happy and do so.
+    // template <class Y>
+    // friend class boost::shared_ptr; 
+    template <class Y>
+    friend class TemporaryPtr;
+    mutable boost::mutex m_ptr_mutex;
 };
 
+#include "EnableTemporaryFromThis.tcc"
 
 #endif // _Enable_Temporary_From_This_h_

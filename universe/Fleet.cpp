@@ -640,7 +640,7 @@ bool Fleet::UnknownRoute() const {
 }
 
 TemporaryPtr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<Fleet>(static_ptr_cast<const Fleet>(TemporaryFromThis()))); }
+{ return visitor.Visit(boost::const_pointer_cast<Fleet>(boost::static_pointer_cast<const Fleet>(TemporaryFromThis()))); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
     //Logger().debugStream() << "Fleet::SetRoute() ";
@@ -820,7 +820,7 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
 void Fleet::MovementPhase() {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
-    TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(TemporaryFromThis());
+    TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(TemporaryFromThis());
     if (fleet != this) {
         Logger().errorStream() << "Fleet::MovementPhase was passed a TemporaryPtr different from itself.";
         return;

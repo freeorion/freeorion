@@ -2770,7 +2770,7 @@ void Empire::CheckProductionProgress() {
                 // is a valid capital, or otherwise ???
                 // TODO: Add more fallbacks if necessary
                 std::string species_name;
-                if (TemporaryPtr<const PopCenter> location_pop_center = dynamic_ptr_cast<const PopCenter>(build_location))
+                if (TemporaryPtr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
                     species_name = location_pop_center->SpeciesName();
                 else if (TemporaryPtr<const Ship> location_ship = universe_object_ptr_cast<const Ship>(build_location))
                     species_name = location_ship->SpeciesName();
@@ -2906,7 +2906,7 @@ void Empire::InitResourcePools() {
          it != object_vec.end(); ++it)
     {
         object_ids_vec.push_back((*it)->ID());
-        if (dynamic_ptr_cast<const PopCenter>(*it))
+        if (boost::dynamic_pointer_cast<const PopCenter>(*it))
             popcenter_ids_vec.push_back((*it)->ID());
     }
     m_population_pool.SetPopCenters(popcenter_ids_vec);

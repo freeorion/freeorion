@@ -409,9 +409,9 @@ namespace ValueRef {
             ObjectTypeVisitor v;
             if (object->Accept(v))
                 return v.m_type;
-            else if (dynamic_ptr_cast<const PopCenter>(object))
+            else if (boost::dynamic_pointer_cast<const PopCenter>(object))
                 return OBJ_POP_CENTER;
-            else if (dynamic_ptr_cast<const ResourceCenter>(object))
+            else if (boost::dynamic_pointer_cast<const ResourceCenter>(object))
                 return OBJ_PROD_CENTER;
         }
 
@@ -507,7 +507,7 @@ namespace ValueRef {
                 return planet->DistanceFromOriginalType();
 
         } else if (property_name == "NextTurnPopGrowth") {
-            if (TemporaryPtr<const PopCenter> pop = dynamic_ptr_cast<const PopCenter>(object))
+            if (TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(object))
                 return pop->NextTurnPopGrowth();
 
         } else if (property_name == "CurrentTurn") {

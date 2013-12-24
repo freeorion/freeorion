@@ -338,7 +338,7 @@ System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
 TemporaryPtr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_ptr_cast<System>(static_ptr_cast<const System>(TemporaryFromThis()))); }
+{ return visitor.Visit(boost::const_pointer_cast<System>(boost::static_pointer_cast<const System>(TemporaryFromThis()))); }
 
 int System::Insert(TemporaryPtr<UniverseObject> obj)
 { return Insert(obj, -1); }
@@ -402,7 +402,7 @@ int System::Insert(TemporaryPtr<UniverseObject> obj, int orbit) {
 
 
     // special case for if object is a fleet
-    if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(obj))
+    if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(obj))
         FleetInsertedSignal(fleet);
 
     StateChangedSignal();
@@ -461,7 +461,7 @@ void System::Remove(TemporaryPtr<UniverseObject> obj) {
 
                 if (cur_obj->ObjectType() == OBJ_PLANET)
                     removed_planet = true;
-                if (TemporaryPtr<Fleet> fleet = dynamic_ptr_cast<Fleet>(cur_obj))
+                if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(cur_obj))
                     removed_fleets.push_back(fleet);
 
                 break;                  // assuming no duplicate entries
