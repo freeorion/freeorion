@@ -4554,6 +4554,20 @@
 		47103BE40CF04DC700A7DF2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",
@@ -4718,6 +4732,20 @@
 		8218682E14A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",
@@ -4897,6 +4925,20 @@
 		8218683E14AA28BE009441B8 /* Release_10_5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",
@@ -5083,6 +5125,20 @@
 		8219A99D14AAFFC300EEE387 /* Release_LLVM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",
@@ -5316,6 +5372,20 @@
 		8221B251160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",
@@ -5555,6 +5625,20 @@
 		8263A0EC16DDFC9400A2AACD /* Test_GCC42 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/..\"",
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"-fvisibility=hidden",

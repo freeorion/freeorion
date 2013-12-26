@@ -1,4 +1,4 @@
-#include "Version.h"
+#include "util/Version.h"
 
 namespace {
     static const std::string retval = "v${FreeOrion_VERSION} [SVN ${FreeOrion_WC_REVISION}] ${FreeOrion_BUILDSYS}";

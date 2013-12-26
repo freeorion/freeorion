@@ -253,6 +253,7 @@ set (freeorioncommon_SOURCE
     util/StringTable.cpp
     util/VarText.cpp
     util/XMLDoc.cpp
+    util/Version.cpp.in
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
@@ -273,13 +274,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         util/SerializePathingEngine.cpp
         PROPERTY
         COMPILE_FLAGS -ftemplate-depth=512
-    )
-endif ()
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set_source_files_properties(
-        ${CMAKE_BINARY_DIR}/util/Version.cpp
-        COMPILE_FLAGS -I${CMAKE_SOURCE_DIR}/util/
     )
 endif ()
 
