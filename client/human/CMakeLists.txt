@@ -17,6 +17,10 @@ find_package(OGRE REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Bullet REQUIRED)
+find_package(OIS REQUIRED)
+if(WIN32)
+    find_package(GLEW REQUIRED)
+endif()
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
@@ -25,9 +29,14 @@ include_directories(
     ${OGRE_INCLUDE_DIRS}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
-    ${BULLET_INCLUDE_DIR}
+    ${BULLET_INCLUDE_DIRS}
+    ${OIS_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/PagedGeometry/include
 )
+
+if(WIN32)
+    include_directories(${GLEW_INCLUDE_DIRS})
+endif()
 
 add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
 
@@ -155,8 +164,11 @@ set(freeorion_LINK_LIBS
     GiGi
     GiGiOgre
     GiGiOgrePlugin_OIS
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
     ${OPENAL_LIBRARY}
     ${ALUT_LIBRARY}
+    ${Boost_LIBRARIES}
     ${OGRE_LIBRARIES}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
@@ -169,13 +181,9 @@ if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
     list(APPEND
         freeorion_LINK_LIBS
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
-        jpeg.lib libpng.lib glew32.lib
+        ${GLEW_LIBRARIES}
     )
     list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
-else ()
-    list(APPEND freeorion_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
 add_executable(freeorion

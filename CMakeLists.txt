@@ -30,12 +30,21 @@ if (WIN32)
     add_definitions(
         -D_CRT_SECURE_NO_DEPRECATE
         -D_SCL_SECURE_NO_DEPRECATE
+        -D_CRT_NONSTDC_NO_DEPRECATE
         -DBOOST_ALL_DYN_LINK
+        -DLOG4CPP_STLPORT_AND_BOOST_BUILD
         -DFREEORION_WIN32
+        -D_WIN32_WINNT=0x0501
     )
     if (MSVC)
+        set (CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/../")
+        set (BOOST_ROOT "${CMAKE_SOURCE_DIR}/../Boost/")
+        set (BOOST_INCLUDEDIR "${CMAKE_SOURCE_DIR}/../Boost/include/boost_1_51/")
+        set (OIS_INC_SEARCH_PATH "${CMAKE_SOURCE_DIR}/OIS/")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+        set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
@@ -85,7 +94,7 @@ add_subdirectory(GG)
 ########################################
 # Dependencies                         #
 ########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem serialization signals system thread REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex serialization signals system thread REQUIRED)
 find_package(ZLIB REQUIRED)
 
 include_directories(
@@ -115,11 +124,14 @@ set (freeorioncommon_HEADER
     combat/Missile.h
     combat/PathingEngineFwd.h
     combat/PathingEngine.h
+    combat/ProximityDatabase.h
     Empire/Diplomacy.h
     Empire/Empire.h
     Empire/EmpireManager.h
     Empire/ResourcePool.h
     network/Message.h
+    network/MessageQueue.h
+    network/Networking.h
     python/PythonSetWrapper.h
     python/PythonWrappers.h
     universe/Building.h
@@ -129,6 +141,7 @@ set (freeorioncommon_HEADER
     universe/Enums.h
     universe/Field.h
     universe/Fleet.h
+    universe/InhibitableSignal.h
     universe/Meter.h
     universe/ObjectMap.h
     universe/Planet.h
@@ -144,10 +157,13 @@ set (freeorioncommon_HEADER
     universe/Tech.h
     universe/Universe.h
     universe/UniverseObject.h
+    universe/TemporaryPtr.h
     universe/ValueRef.h
+    universe/ValueRefFwd.h
     util/AppInterface.h
     util/DataTable.h
     util/Directories.h
+    util/GLStateComparator.h
     util/GZStream.h
     util/i18n.h
     util/Logger.h
@@ -166,6 +182,7 @@ set (freeorioncommon_HEADER
     util/SitRepEntry.h
     util/StringTable.h
     util/VarText.h
+    util/Version.h
     util/XMLDoc.h
 )
 
@@ -212,7 +229,6 @@ set (freeorioncommon_SOURCE
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp
-    util/binreloc.c
     util/DataTable.cpp
     util/Directories.cpp
     util/GZStream.cpp
@@ -239,6 +255,12 @@ set (freeorioncommon_SOURCE
     util/XMLDoc.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
+
+if (NOT WIN32)
+    list(APPEND freeorioncommon_SOURCE
+        util/binreloc.c
+    )
+endif ()
 
 add_library(freeorioncommon
     ${freeorioncommon_HEADER}
@@ -271,8 +293,14 @@ target_link_libraries(freeorioncommon
 set_target_properties(freeorioncommon
     PROPERTIES
     DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
-    COMPILE_FLAGS "-fvisibility=hidden"
 )
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set_target_properties(freeorioncommon
+        PROPERTIES
+        COMPILE_FLAGS "-fvisibility=hidden"
+)
+endif ()
 
 ########################################
 # Recurse Into Sources                 #
@@ -290,7 +318,7 @@ add_subdirectory(client/human)
 if (WIN32)
     # Add icon resource file to freeorion.exe
     if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
-        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/client/human/HumanClient.ico\"")
+        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/FreeOrion.ico\"")
     endif ()
 
     get_target_property(freeorion_loc freeorion LOCATION)

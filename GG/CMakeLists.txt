@@ -142,7 +142,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/libl
 # Dependencies                         #
 ########################################
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS date_time filesystem signals system thread REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem signals system thread REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 

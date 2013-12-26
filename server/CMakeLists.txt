@@ -23,12 +23,11 @@ set(freeoriond_LINK_LIBS
     freeorioncommon
     freeorionparse
     ${PYTHON_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
-else ()
-    list(APPEND freeoriond_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
 set (freeoriond_HEADER
