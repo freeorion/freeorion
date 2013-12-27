@@ -15,6 +15,7 @@ import EnumsAI
 import MilitaryAI
 
 bestMilRatingsHistory={}
+design_cost_cache = { 0: { (-1, -1):0 } } #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   EnumsAI.AIShipDesignTypes.explorationShip,
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostShip,
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostBase,
@@ -34,6 +35,20 @@ doDoubleShields=False
 
 def dictFromMap(this_map):
     return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
+    
+def get_design_cost(cur_turn,  design,  pid):
+    if cur_turn in design_cost_cache:
+        cost_cache = design_cost_cache[cur_turn]
+    else:
+        design_cost_cache.clear()
+        cost_cache = {}
+        design_cost_cache[cur_turn] = cost_cache
+    loc_invariant = True #TODO: check actual loc invariance of design cost
+    if loc_invariant:
+        loc = -1
+    else:
+        loc = pid
+    return float( cost_cache.setdefault( (design.id, loc),  design.productionCost(fo.empireID(), pid) ) )# float() so as to not return actual reference
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
 def curBestMilShipRating():
@@ -98,6 +113,7 @@ def getBestShipRatings(loc=None):
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitolID = PlanetUtilsAI.getCapital()
+    cur_turn = fo.currentTurn()
     if loc is None:
         planetIDs = ColonisationAI.empireShipyards
     elif isinstance(loc,  list):
@@ -132,7 +148,7 @@ def getBestShipRatings(loc=None):
             shipDesign = fo.getShipDesign(shipDesignID)
             if not shipDesign.productionLocationForEmpire(empireID, pid):
                 continue
-            cost = shipDesign.productionCost(empireID, pid)
+            cost = get_design_cost(cur_turn,  shipDesign,  pid)
             nattacks = sum( designStats.get('attacks', {1:1}).keys() )
             costRating = (designStats['attack'] * (designStats['structure'] + nattacks*designStats['shields']))/(max( 0.1,  cost))  # TODO: improve shield treatment here
             if costRating < 0.1* bestCostRating:
