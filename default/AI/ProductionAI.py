@@ -1003,7 +1003,7 @@ def generateProductionOrders():
                         if sysID == -1:
                             continue
                         try:
-                            distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
+                            distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID)
                         except:
                             pass
                     useSys = ([(-1, -1)] + sorted(  [ (dist,  sysID) for sysID,  dist in distanceMap.items() ] ))[:2][-1][-1]  # kinda messy, but ensures a value
@@ -1040,7 +1040,7 @@ def generateProductionOrders():
                     if sysID == -1:
                         continue
                     try:
-                        distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
+                        distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID)
                     except:
                         pass
                 redSysList = sorted(  [ (dist,  sysID) for sysID,  dist in distanceMap.items() ] )
@@ -1085,7 +1085,7 @@ def generateProductionOrders():
                     if sysID == -1:
                         continue
                     try:
-                        distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
+                        distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID)
                     except:
                         pass
                 useSys = ([(-1, -1)] + sorted(  [ (dist,  sysID) for sysID,  dist in distanceMap.items() ] ))[:2][-1][-1]  # kinda messy, but ensures a value
@@ -1159,7 +1159,7 @@ def generateProductionOrders():
                     if sysID == -1:
                         continue
                     try:
-                        distanceMap[sysID] = len(universe.leastJumpsPath(homeworld.systemID, sysID, empire.empireID))
+                        distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID, empire.empireID)
                     except:
                         pass
                 print ([-1] + sorted(  [ (dist,  sysID) for sysID,  dist in distanceMap.items() ] ))

@@ -1089,9 +1089,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             homeSystemID = homeworld.systemID
             evalSystemID = planet.systemID
             if (homeSystemID != -1) and (evalSystemID != -1):
-                leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-                #leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-                distanceFactor = 1.001 / (leastJumpsPath + 1)
+                leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
+                distanceFactor = 1.001 / (leastJumps + 1)
 
         for special in [ spec for spec in  planetSpecials if spec in AIDependencies.metabolimBoosts]:
             gbonus =  discountMultiplier  * basePopInd  * indMult * empireMetabolisms.get( AIDependencies.metabolimBoosts[special] , 0)#  due to growth applicability to other planets

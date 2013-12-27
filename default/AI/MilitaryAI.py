@@ -612,8 +612,8 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
         homeSystemID = homeworld.systemID
         evalSystemID = system.systemID
         if (homeSystemID != -1) and (evalSystemID != -1):
-            leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-            distanceFactor = 1.001/(leastJumpsPath + 1)
+            leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
+            distanceFactor = 1.001/(leastJumps + 1)
     else:
         homeSystemID=-1
 
