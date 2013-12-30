@@ -208,33 +208,33 @@ endif ()
 
 target_link_libraries(GiGi ${GiGi_LINK_LIBS})
 
-# Installation of this library variant
-if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
-    (BUILD_SHARED_LIBS AND NOT DEVEL_ONLY_PACKAGE)) AND (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGi OR ${PACKAGE_TYPE} STREQUAL GiGiDevel))
+install(
+    TARGETS GiGi
+    LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGI
+)
+
+if (BUILD_DEVEL_PACKAGE)
     install(
         TARGETS GiGi
-        LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGI
         ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGI_DEVEL
     )
 endif ()
 
-if (UNIX)
+if (UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/GiGi.pc.in
         ${CMAKE_BINARY_DIR}/GiGi.pc
         @ONLY
     )
-    if (NOT RUNTIME_ONLY_PACKAGE)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} STREQUAL GiGi OR ${PACKAGE_TYPE} STREQUAL GiGiDevel)
-            install(
-            FILES ${CMAKE_BINARY_DIR}/GiGi.pc
-            DESTINATION lib${LIB_SUFFIX}/pkgconfig
-            COMPONENT COMPONENT_GIGI_DEVEL
-            OPTIONAL
-        )
-        endif ()
-    endif ()
+
+    install(
+        FILES ${CMAKE_BINARY_DIR}/GiGi.pc
+        DESTINATION lib${LIB_SUFFIX}/pkgconfig
+        COMPONENT COMPONENT_GIGI_DEVEL
+        OPTIONAL
+    )
 endif ()
 
 if (BUILD_SDL_DRIVER)

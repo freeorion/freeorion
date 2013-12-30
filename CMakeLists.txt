@@ -86,9 +86,10 @@ endif ()
 ########################################
 # Build common code library            #
 ########################################
-set(BUILD_SDL_DRIVER CACHE INTERNAL "Disable building of SDL driver." FORCE)
-set(BUILD_ADAM_SUPPORT CACHE INTERNAL "Enables building of Adobe Adam bindings." FORCE)
-set(BUILD_PLUGIN_SUPPORT CACHE INTERNAL "Enables building of plugin support." FORCE)
+set(BUILD_SDL_DRIVER OFF CACHE INTERNAL "Disable building of SDL driver." FORCE)
+set(BUILD_ADAM_SUPPORT OFF CACHE INTERNAL "Disables building of Adobe Adam bindings." FORCE)
+set(BUILD_PLUGIN_SUPPORT OFF CACHE INTERNAL "Disables building of plugin support." FORCE)
+set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 add_subdirectory(GG)
 
 ########################################

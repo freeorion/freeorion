@@ -26,33 +26,35 @@ endif ()
 
 target_link_libraries(GiGiOgre ${GiGiOgre_LINK_LIBS})
 
-# Installation of this library variant
-if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
-    (BUILD_SHARED_LIBS AND NOT DEVEL_ONLY_PACKAGE)) AND (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiOgre OR ${PACKAGE_TYPE} STREQUAL GiGiOgreDevel))
+install(
+    TARGETS GiGiOgre
+    LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGIOGRE
+)
+
+if (BUILD_DEVEL_PACKAGE)
     install(
         TARGETS GiGiOgre
-        LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGIOGRE
         ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGIOGRE_DEVEL
     )
 endif ()
 
-if (UNIX)
+if (UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGiOgre_LINK_LIBS})
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/GiGiOgre.pc.in
         ${CMAKE_BINARY_DIR}/GiGiOgre.pc
         @ONLY
     )
-    if (NOT RUNTIME_ONLY_PACKAGE)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiOgre)
-            install(
-            FILES ${CMAKE_BINARY_DIR}/GiGiOgre.pc
-            DESTINATION lib${LIB_SUFFIX}/pkgconfig
-            COMPONENT COMPONENT_GIGI_DEVEL
-            OPTIONAL
-        )
-        endif ()
-    endif ()
+
+    install(
+        FILES ${CMAKE_BINARY_DIR}/GiGiOgre.pc
+        DESTINATION lib${LIB_SUFFIX}/pkgconfig
+        COMPONENT COMPONENT_GIGI_DEVEL
+        OPTIONAL
+    )
 endif ()
 
-add_subdirectory(Plugins)
+if (BUILD_OGRE_OIS_PLUGIN)
+    add_subdirectory(Plugins)
+endif ()

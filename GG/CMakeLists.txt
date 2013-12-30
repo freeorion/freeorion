@@ -57,6 +57,9 @@ option(BUILD_OGRE_OIS_PLUGIN
 option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
        OFF)
+option(BUILD_DEVEL_PACKAGE
+       "Install development files."
+       ON)
 
 cmake_dependent_option(BUILD_TUTORIALS "Build tutorial applications." OFF BUILD_SDL_DRIVER OFF)
 cmake_dependent_option(BUILD_TESTS "Build tests applications." OFF BUILD_SDL_DRIVER OFF)
@@ -70,68 +73,6 @@ if (MSVC)
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 endif ()
-
-set(RUNTIME_ONLY_PACKAGE false)
-set(DEVEL_ONLY_PACKAGE false)
-set(NO_DOCS_PACKAGE false)
-set(NO_HEADERS_PACKAGE false)
-set(GG_PACKAGE_DEPENDENCY false)
-set(GG_DEVEL_PACKAGE_DEPENDENCY false)
-set(SDL_PACKAGE_DEPENDENCY false)
-set(SDL_DEVEL_PACKAGE_DEPENDENCY false)
-set(OGRE_OIS_PACKAGE_DEPENDENCY false)
-set(OGRE_OIS_DEVEL_PACKAGE_DEPENDENCY false)
-if (UNIX)
-    set(PACKAGE_CONFIGURATIONS
-        NoPackage GiGi GiGiSDL GiGiOgre Full GiGiDevel GiGiSDLDevel GiGiOgreDevel FullDevel
-        CACHE INTERNAL
-        "The types of packages available for build.  NoPackage means leave everything in.  They follow the pattern {GiGi|GiGiSDL|GiGiOgre|Full}[Devel]."
-    )
-    set(PACKAGE_TYPE
-        NoPackage
-        CACHE STRING
-        "The type of package chosen for this build.  These allow you to build Debs and RPMs that contain the sublibraries within GG, or all of GG, binary-only or \"-devel\".  NoPackage means leave everything in.  They follow the pattern {GiGi|GiGiSDL|GiGiOgre|Full}[Devel]."
-    )
-    list_contains(package_type_valid ${PACKAGE_TYPE} ${PACKAGE_CONFIGURATIONS})
-    if (NOT package_type_valid)
-        message(FATAL_ERROR "Your choice for PACKAGE_TYPE \"${PACKAGE_TYPE}\" is not a valid string.  Choose one of [${PACKAGE_CONFIGURATIONS}].")
-    endif ()
-    if (NOT ${PACKAGE_TYPE} STREQUAL NoPackage)
-        if (${PACKAGE_TYPE} MATCHES Devel)
-            set(RUNTIME_ONLY_PACKAGE false)
-            set(DEVEL_ONLY_PACKAGE true)
-        else ()
-            set(RUNTIME_ONLY_PACKAGE true)
-            set(DEVEL_ONLY_PACKAGE false)
-        endif ()
-        if (NOT ${PACKAGE_TYPE} STREQUAL FullDevel AND NOT ${PACKAGE_TYPE} STREQUAL GiGiDevel)
-            set(NO_DOCS_PACKAGE true)
-            set(NO_HEADERS_PACKAGE true)
-            if (DEVEL_ONLY_PACKAGE)
-                set(GG_DEVEL_PACKAGE_DEPENDENCY true)
-            endif ()
-        endif ()
-        if (RUNTIME_ONLY_PACKAGE AND NOT ${PACKAGE_TYPE} STREQUAL Full AND NOT ${PACKAGE_TYPE} STREQUAL GiGi)
-            set(GG_PACKAGE_DEPENDENCY true)
-        endif ()
-        if (${PACKAGE_TYPE} STREQUAL Full OR ${PACKAGE_TYPE} STREQUAL GiGiSDL)
-            set(SDL_PACKAGE_DEPENDENCY true)
-        endif ()
-        if (${PACKAGE_TYPE} STREQUAL FullDevel OR ${PACKAGE_TYPE} STREQUAL GiGiSDLDevel)
-            set(SDL_DEVEL_PACKAGE_DEPENDENCY true)
-        endif ()
-        if (${PACKAGE_TYPE} STREQUAL Full OR ${PACKAGE_TYPE} STREQUAL GiGiOgre)
-            set(OGRE_OIS_PACKAGE_DEPENDENCY true)
-        endif ()
-        if (${PACKAGE_TYPE} STREQUAL FullDevel OR ${PACKAGE_TYPE} STREQUAL GiGiOgreDevel)
-            set(OGRE_OIS_DEVEL_PACKAGE_DEPENDENCY true)
-        endif ()
-    endif ()
-else ()
-    set(PACKAGE_CONFIGURATIONS NoPackage)
-    set(PACKAGE_TYPE NoPackage)
-endif ()
-
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
@@ -235,7 +176,7 @@ configure_file(
 ########################################
 # Installed Files                      #
 ########################################
-if (NOT NO_HEADERS_PACKAGE)
+if (BUILD_DEVEL_PACKAGE)
     install(
         DIRECTORY GG
         DESTINATION include
@@ -305,7 +246,7 @@ if (DOXYGEN_FOUND)
         COMMENT "Generating documentation with Doxygen" VERBATIM
     )
     add_custom_target (doc ALL DEPENDS ${GG_DOC_STAMP_DIR}/index.html)
-    if (NOT NO_DOCS_PACKAGE)
+    if (BUILD_DEVEL_PACKAGE)
         install(
             DIRECTORY ${GG_DOC_STAMP_DIR}
             DESTINATION doc
@@ -317,94 +258,68 @@ endif ()
 ########################################
 # Packaging                            #
 ########################################
-if (RUNTIME_ONLY_PACKAGE AND DEVEL_ONLY_PACKAGE)
-    message(FATAL_ERROR "Both RUNTIME_ONLY_PACKAGE and DEVEL_ONLY_PACKAGE are turned on.  This means that nothing will be installed and generated packages will be empty!")
-endif ()
-
 set(CPACK_PACKAGE_VERSION ${GIGI_VERSION})
 set(CPACK_PACKAGE_VENDOR "T. Zachary Laine")
 set(CPACK_PACKAGE_CONTACT ${CPACK_PACKAGE_VENDOR})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A C++ OpenGL GUI library.")
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/COPYING)
-if (NOT ${PACKAGE_TYPE} STREQUAL NoPackage)
-    set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
-    if (${PACKAGE_TYPE} STREQUAL Full)
-        set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
-        set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
-        string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
-    else ()
-        if (NOT ${PACKAGE_TYPE} STREQUAL FullDevel)
-            set(CPACK_PACKAGE_NAME ${PACKAGE_TYPE})
-            string(REPLACE Devel "" CPACK_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
-            if (${PACKAGE_TYPE} MATCHES Ogre OR ${PACKAGE_TYPE} MATCHES SDL)
-                string(REPLACE GiGi GiGi- CPACK_PACKAGE_NAME ${CPACK_PACKAGE_NAME})
-            endif ()
-        else ()
-            set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
-        endif ()
-        set(version_devel_substring ${CPACK_PACKAGE_VERSION})
-        if (DEVEL_ONLY_PACKAGE)
-            set(version_devel_substring devel-${version_devel_substring})
-        endif ()
-        set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${version_devel_substring}-${CPACK_SYSTEM_NAME}")
-        string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
-    endif ()
-endif ()
+set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-src)
 
 # RPM-specific settings
 set(CPACK_RPM_PACKAGE_LICENSE LGPL)
 set(CPACK_RPM_PACKAGE_REQUIRES)
-if (NOT RUNTIME_ONLY_PACKAGE)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
-    if (GG_DEVEL_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
-    endif ()
-    if (SDL_DEVEL_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
-    endif ()
-    if (OGRE_OIS_DEVEL_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre-devel>=1.6 libois-devel>=1.2)
-    endif ()
+
+list(APPEND CPACK_RPM_PACKAGE_REQUIRES Mesa freetype2)
+list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi=${GIGI_VERSION})
+
+if (BUILD_SDL_DRIVER)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
 endif ()
-if (NOT DEVEL_ONLY_PACKAGE)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES Mesa freetype2)
-    if (GG_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi=${GIGI_VERSION})
-    endif ()
-    if (SDL_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
-    endif ()
-    if (OGRE_OIS_PACKAGE_DEPENDENCY)
-        list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre>=1.6 libois1>=1.2)
-    endif ()
+
+if (BUILD_OGRE_OIS_PLUGIN)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre>=1.6 libois1>=1.2)
+endif ()
+
+if (BUILD_DEVEL_PACKAGE)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
+endif ()
+
+if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
+endif ()
+
+if (BUILD_DEVEL_PACKAGE AND BUILD_OGRE_OIS_PLUGIN)
+    list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre-devel>=1.6 libois-devel>=1.2)
 endif ()
 
 # Deb-specific settings
 set(CPACK_DEBIAN_PACKAGE_SECTION libs)
-if (NOT RUNTIME_ONLY_PACKAGE)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libglu1-mesa-dev | libglu-dev, libfreetype6-dev")
-    if (GG_DEVEL_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
-    endif ()
-    if (SDL_DEVEL_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
-    endif ()
-    if (OGRE_OIS_DEVEL_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogre-dev (>= 1.4.9), libois-dev")
-    endif ()
+
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libglu1-mesa | libglu, libfreetype6")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi (= ${GIGI_VERSION})")
+
+if (BUILD_SDL_DRIVER)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
 endif ()
-if (NOT DEVEL_ONLY_PACKAGE)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libglu1-mesa | libglu, libfreetype6")
-    if (GG_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi (= ${GIGI_VERSION})")
-    endif ()
-    if (SDL_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
-    endif ()
-    if (OGRE_OIS_PACKAGE_DEPENDENCY)
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogremain-1.4.9 (>= 1.4.9), libois1")
-    endif ()
+
+if (BUILD_OGRE_OIS_PLUGIN)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogremain-1.4.9 (>= 1.4.9), libois1")
+endif ()
+
+if (BUILD_DEVEL_PACKAGE)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libglu1-mesa-dev | libglu-dev, libfreetype6-dev")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
+endif ()
+
+if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
+endif ()
+if (BUILD_DEVEL_PACKAGE AND BUILD_OGRE_OIS_PLUGIN)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogre-dev (>= 1.4.9), libois-dev")
 endif ()
 
 if (UNIX)

@@ -22,31 +22,31 @@ endif ()
 
 target_link_libraries(GiGiSDL ${GiGiSDL_LINK_LIBS})
 
-# Installation of this library variant
-if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
-   (BUILD_SHARED_LIBS AND NOT DEVEL_ONLY_PACKAGE)) AND (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiSDL OR ${PACKAGE_TYPE} STREQUAL GiGiSDLDevel))
+install(
+    TARGETS GiGiSDL
+    LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGISDL
+)
+
+if (BUILD_DEVEL_PACKAGE)
     install(
         TARGETS GiGiSDL
-        LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGISDL
         ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGISDL_DEVEL
     )
 endif ()
 
-if (UNIX)
+if (UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
+
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/GiGiSDL.pc.in
         ${CMAKE_BINARY_DIR}/GiGiSDL.pc
         @ONLY
     )
-    if (NOT RUNTIME_ONLY_PACKAGE)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiSDL)
-            install(
-                FILES ${CMAKE_BINARY_DIR}/GiGiSDL.pc
-                DESTINATION lib${LIB_SUFFIX}/pkgconfig
-                COMPONENT COMPONENT_GIGI_DEVEL
-                OPTIONAL
-            )
-        endif ()
-    endif ()
+
+    install(
+        FILES ${CMAKE_BINARY_DIR}/GiGiSDL.pc
+        DESTINATION lib${LIB_SUFFIX}/pkgconfig
+        COMPONENT COMPONENT_GIGI_DEVEL
+        OPTIONAL
+    )
 endif ()
