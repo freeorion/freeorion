@@ -30,6 +30,7 @@
 
 #include "../util/OptionsDB.h"
 #include "../util/i18n.h"
+#include "../util/Logger.h"
 
 #include <sstream>
 
@@ -48,15 +49,18 @@ void Hotkey::AddHotkey(const std::string & name,
 std::string Hotkey::HotkeyToString(GG::Key key,
                                    GG::Flags<GG::ModKey> mod)
 {
-    std::string ms;
     std::ostringstream s;
-    if(mod != GG::MOD_KEY_NONE) {
+
+    if (mod != GG::MOD_KEY_NONE) {
         s << mod;
         s << "+";
     }
-    s << key;
-    ms = s.str();
-    return ms;
+
+    if (key != GG::GGK_UNKNOWN) {
+        s << key;
+    }
+
+    return s.str();
 }
 
 std::set<std::string> Hotkey::DefinedHotkeys() {
@@ -73,6 +77,9 @@ std::string Hotkey::ToString() const
 { return HotkeyToString(m_key, m_mod_keys); }
 
 std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string & str) {
+    if (str.empty())
+        return std::make_pair(GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>());
+
     size_t plus = str.find_first_of("+");
     std::string v = str;
     GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE;
@@ -144,12 +151,14 @@ std::string Hotkey::PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod) {
 
     std::string ks = HotkeyToString(key, GG::MOD_KEY_NONE);
     ReplaceInString(ks, "GGK_", "");
+
     if (mod == GG::MOD_KEY_CTRL)
         return "CTRL+" + ks;
     if (mod == GG::MOD_KEY_SHIFT)
         return "SHIFT+" + ks;
     if (mod == GG::MOD_KEY_ALT)
         return "ALT+" + ks;
+
     ReplaceInString(ret, "MOD_KEY_", "");
 
     return ret;
@@ -162,27 +171,31 @@ void Hotkey::ReadFromOptions(OptionsDB & db) {
     for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
          i != s_hotkeys->end(); i++)
     {
-        Hotkey * sb = &(i->second);
-        std::string n = "UI.hotkeys.";
-        n += sb->m_name;
+        Hotkey& sb = i->second;
+
+        std::string n = "UI.hotkeys." + sb.m_name;
         std::string s = db.Get<std::string>(n);
-        try {
-            std::pair<GG::Key, GG::Flags<GG::ModKey> > sc = HotkeyFromString(s);
-            if (sc.first == GG::EnumMap<GG::Key>::BAD_VALUE)
-                throw std::exception();
-            sb->m_key = sc.first;
-            sb->m_mod_keys = sc.second;
+
+        std::pair<GG::Key, GG::Flags<GG::ModKey> > sc = HotkeyFromString(s);
+
+        if (sc.first == GG::EnumMap<GG::Key>::BAD_VALUE) {
+            Logger().errorStream() << "Hotkey::ReadFromOptions : Invalid key spec: '"
+                                   << s << "', ignoring";
+            continue;
         }
-        catch(...) {
-            std::cerr << "Invalid key spec: '" << s << "', ignoring" << std::endl;
-        }
+
+        sb.m_key = sc.first;
+        sb.m_mod_keys = sc.second;
     }
 }
 
-Hotkey::Hotkey(const std::string & name,
-               GG::Key key,
+Hotkey::Hotkey(const std::string & name, GG::Key key,
                GG::Flags<GG::ModKey> mod) :
-    m_name(name), m_key(key), m_mod_keys(mod)
+    m_name(name),
+    m_key(key),
+    m_key_default(key),
+    m_mod_keys(mod),
+    m_mod_keys_default(mod)
 {}
 
 const Hotkey & Hotkey::NamedHotkey(const std::string & name)
@@ -207,7 +220,6 @@ Hotkey & Hotkey::PrivateNamedHotkey(const std::string & name) {
     return i->second;
 }
 
-
 std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     std::map<std::string, std::set<std::string> > ret;
     if (s_hotkeys) {
@@ -231,7 +243,6 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     return ret;
 }
 
-
 bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod) {
     // If something else than shift is pressed, it is not alphanumeric
     if (!(mod == 0 || mod == GG::MOD_KEY_LSHIFT || mod == GG::MOD_KEY_RSHIFT))
@@ -244,7 +255,10 @@ bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod) {
 bool Hotkey::IsAlnum() const
 { return IsAlnum(m_key, m_mod_keys); }
 
-void Hotkey::SetHotKey(const std::string & name, GG::Key key,
+bool Hotkey::IsDefault() const
+{ return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
+
+void Hotkey::SetHotkey(const std::string & name, GG::Key key,
                        GG::Flags<GG::ModKey> mod)
 {
     Hotkey & hk = PrivateNamedHotkey(name);
@@ -254,6 +268,18 @@ void Hotkey::SetHotKey(const std::string & name, GG::Key key,
     hk.m_mod_keys = mod;
     GetOptionsDB().Set<std::string>(n, hk.ToString());
 }
+
+void Hotkey::ResetHotkey(const std::string & name) {
+    Hotkey & hk = PrivateNamedHotkey(name);
+    std::string n = "UI.hotkeys.";
+    n += hk.m_name;
+    hk.m_key = hk.m_key_default;
+    hk.m_mod_keys = hk.m_mod_keys_default;
+    GetOptionsDB().Set<std::string>(n, hk.ToString());
+}
+
+void Hotkey::ClearHotkey(const std::string & name)
+{ Hotkey::SetHotkey(name, GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>()); }
 
 //////////////////////////////////////////////////////////////////////
 

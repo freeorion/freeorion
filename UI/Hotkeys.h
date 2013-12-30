@@ -31,12 +31,10 @@ class OptionsDB;
 /// A single hotkey, ie just a combination key+modifier that has been
 /// given a certain name.
 class Hotkey {
-
     /// The global hotkey storage
     static std::map<std::string, Hotkey> * s_hotkeys;
 
-    Hotkey(const std::string & name,
-           GG::Key key,
+    Hotkey(const std::string & name, GG::Key key,
            GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Returns a modifiable version of the hotkey. 
@@ -58,14 +56,16 @@ public:
     ///
     /// GG::GGK_RETURN set both return and keypad return
     GG::Key m_key;
+    GG::Key m_key_default;
 
     /// Modifier for the key.
     GG::Flags<GG::ModKey> m_mod_keys;
+    GG::Flags<GG::ModKey> m_mod_keys_default;
+
 
     /// Registers a hotkey name (ie the one used for storing in the
     /// database) along with a description and a default value.
-    static void AddHotkey(const std::string & name, 
-                          GG::Key key,
+    static void AddHotkey(const std::string & name, GG::Key key,
                           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
 
@@ -83,9 +83,16 @@ public:
 
     /// Sets the value of the given named hotkey, and updates the
     /// corresponding option.
-    static void SetHotKey(const std::string & name, GG::Key key,
+    static void SetHotkey(const std::string & name, GG::Key key,
                           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
-  
+
+    /// Sets the value of the given named hotkey to its default,
+    /// and updates the corresponding option.
+    static void ResetHotkey(const std::string & name);
+
+    /// Sets the value of the given named hotkey to no key
+    static void ClearHotkey(const std::string & name);
+
     /// Returns a string that can later be parsed again with
     /// HotkeyFromString()
     static std::string HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod);
@@ -119,6 +126,9 @@ public:
 
     /// Is the hotkey alphanumeric ?
     bool IsAlnum() const;
+
+    /// Is the hotkey set to its default value ?
+    bool IsDefault() const;
 };
 
 /// A simple functor returning a boolean value. The children will be
@@ -216,8 +226,6 @@ public:
 /// hotkeys. You must connect each hotkey you use to a given signal
 /// manually, using the one of the Connect functions.
 class HotkeyManager {
-
-
     /// A helper class that stores both a connection and the
     /// conditions in which it should be on.
     struct ConditionalConnection {
@@ -263,7 +271,7 @@ class HotkeyManager {
 
     /// Whether or not alnum shortcut are currently disabled
     bool m_disabled_alnum;
-    
+
     /// Signals for each shortut name, created on demand.
     std::map<std::string, GG::GUI::AcceleratorSignalType * > m_signals;
 
@@ -276,8 +284,7 @@ class HotkeyManager {
     /// Returns the signal for the given named accelerator, creating
     /// it if necessary.
     GG::GUI::AcceleratorSignalType & NamedSignal(const std::string & name);
-    
-    
+
 public:
 
     /// Rebuilds all shortcuts/connections. Should be called again at
