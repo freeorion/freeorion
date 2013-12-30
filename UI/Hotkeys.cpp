@@ -36,16 +36,16 @@
 
 std::map<std::string, Hotkey> * Hotkey::s_hotkeys = NULL;
 
-void Hotkey::AddHotkey(const std::string & name, 
+void Hotkey::AddHotkey(const std::string & name,
                        GG::Key key,
                        GG::Flags<GG::ModKey> mod)
 {
-    if(! s_hotkeys)
+    if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
     s_hotkeys->insert(std::make_pair(name, Hotkey(name, key, mod)));
 }
 
-std::string Hotkey::HotkeyToString(GG::Key key, 
+std::string Hotkey::HotkeyToString(GG::Key key,
                                    GG::Flags<GG::ModKey> mod)
 {
     std::string ms;
@@ -59,41 +59,37 @@ std::string Hotkey::HotkeyToString(GG::Key key,
     return ms;
 }
 
-std::set<std::string> Hotkey::DefinedHotkeys()
-{
+std::set<std::string> Hotkey::DefinedHotkeys() {
     std::set<std::string> retval;
-    if(s_hotkeys) {
-        for(std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-            i != s_hotkeys->end(); i++)
-            retval.insert(i->first);
+    if (s_hotkeys) {
+        for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
+             i != s_hotkeys->end(); i++)
+        { retval.insert(i->first); }
     }
     return retval;
 }
 
 std::string Hotkey::ToString() const
-{
-    return HotkeyToString(m_key, m_mod_keys);
-}
+{ return HotkeyToString(m_key, m_mod_keys); }
 
-std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string & str)
-{
+std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string & str) {
     size_t plus = str.find_first_of("+");
     std::string v = str;
     GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE;
-    if(plus != std::string::npos) {
+    if (plus != std::string::npos) {
         // We have a modifier. Things get a little complex, since we need
         // to handle the |-separated flags:
         std::string m = str.substr(0, plus);
         v = str.substr(plus);
-    
+
         size_t found = 0;
         size_t prev = 0;
-        while(true) {
+        while (true) {
             found = m.find(" | ", prev);
             std::string sub = m.substr(prev, found);
             GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
             mod |= cm;
-            if(found == std::string::npos)
+            if (found == std::string::npos)
                 break;
             prev = found + 3;
         }
@@ -105,23 +101,23 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
     return std::pair<GG::Key, GG::Flags<GG::ModKey> >(key, mod);
 }
 
-void Hotkey::FromString(const std::string & str)
-{
+void Hotkey::FromString(const std::string & str) {
     std::pair<GG::Key, GG::Flags<GG::ModKey> > km = HotkeyFromString(str);
     m_key = km.first;
     m_mod_keys = km.second;
 }
 
-void Hotkey::AddOptions(OptionsDB & db)
-{
-    if(! s_hotkeys)
+void Hotkey::AddOptions(OptionsDB & db) {
+    if (!s_hotkeys)
         return;
-    for(std::map<std::string, Hotkey>::const_iterator i = s_hotkeys->begin();
-        i != s_hotkeys->end(); i++) {
+    for (std::map<std::string, Hotkey>::const_iterator i = s_hotkeys->begin();
+         i != s_hotkeys->end(); i++)
+    {
         const Hotkey & sb = i->second;
         std::string n = "UI.hotkeys.";
         n += sb.m_name;
-        db.Add(n, UserString(UserStringForHotkey(sb.m_name)), sb.ToString(),Validator<std::string>());
+        db.Add(n, UserString(UserStringForHotkey(sb.m_name)),
+               sb.ToString(), Validator<std::string>());
     }
 }
 
@@ -142,40 +138,37 @@ static void ReplaceInString(std::string & str, const std::string & what,
     } while(true);
 }
 
-
-std::string Hotkey::PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod)
-{
+std::string Hotkey::PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod) {
     std::string ret = HotkeyToString(key, mod);
     ReplaceInString(ret, "GGK_", "");
 
     std::string ks = HotkeyToString(key, GG::MOD_KEY_NONE);
     ReplaceInString(ks, "GGK_", "");
-    if(mod == GG::MOD_KEY_CTRL)
+    if (mod == GG::MOD_KEY_CTRL)
         return "CTRL+" + ks;
-    if(mod == GG::MOD_KEY_SHIFT)
+    if (mod == GG::MOD_KEY_SHIFT)
         return "SHIFT+" + ks;
-    if(mod == GG::MOD_KEY_ALT)
+    if (mod == GG::MOD_KEY_ALT)
         return "ALT+" + ks;
     ReplaceInString(ret, "MOD_KEY_", "");
+
     return ret;
 }
 
 std::string Hotkey::PrettyPrint() const
-{
-    return PrettyPrint(m_key, m_mod_keys);
-}
+{ return PrettyPrint(m_key, m_mod_keys); }
 
-void Hotkey::ReadFromOptions(OptionsDB & db) 
-{
-    for(std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-        i != s_hotkeys->end(); i++) {
+void Hotkey::ReadFromOptions(OptionsDB & db) {
+    for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
+         i != s_hotkeys->end(); i++)
+    {
         Hotkey * sb = &(i->second);
         std::string n = "UI.hotkeys.";
         n += sb->m_name;
         std::string s = db.Get<std::string>(n);
         try {
             std::pair<GG::Key, GG::Flags<GG::ModKey> > sc = HotkeyFromString(s);
-            if(sc.first == GG::EnumMap<GG::Key>::BAD_VALUE)
+            if (sc.first == GG::EnumMap<GG::Key>::BAD_VALUE)
                 throw std::exception();
             sb->m_key = sc.first;
             sb->m_mod_keys = sc.second;
@@ -190,55 +183,47 @@ Hotkey::Hotkey(const std::string & name,
                GG::Key key,
                GG::Flags<GG::ModKey> mod) :
     m_name(name), m_key(key), m_mod_keys(mod)
-{
-}
+{}
 
 const Hotkey & Hotkey::NamedHotkey(const std::string & name)
-{
-    return PrivateNamedHotkey(name);
-}
+{ return PrivateNamedHotkey(name); }
 
-std::string Hotkey::UserStringForHotkey(const std::string & name)
-{
+std::string Hotkey::UserStringForHotkey(const std::string & name) {
     std::string ret = "HOTKEY_" + name;
     std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
     ReplaceInString(ret, ".", "_");
     return ret;
 }
 
-Hotkey & Hotkey::PrivateNamedHotkey(const std::string & name)
-{
-    // Hmmm error string built even if doesn't fail. Shouldn't be much
-    // of a performance hit anyway ;-)...
-    std::string error_msg = "Error: no hotkey named: ";
-    error_msg += name;
-    if(! s_hotkeys)
+Hotkey & Hotkey::PrivateNamedHotkey(const std::string & name) {
+    std::string error_msg = "Error: no hotkey named: " + name;
+
+    if (!s_hotkeys)
         throw std::invalid_argument(error_msg.c_str());
     std::map<std::string, Hotkey>::iterator i = s_hotkeys->find(name);
-    if(i == s_hotkeys->end())
+    if (i == s_hotkeys->end())
         throw std::invalid_argument(error_msg.c_str());
 
     return i->second;
 }
 
 
-std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys()
-{
+std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     std::map<std::string, std::set<std::string> > ret;
-    if(s_hotkeys) {
-        for(std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-            i != s_hotkeys->end(); i++) {
+    if (s_hotkeys) {
+        for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
+             i != s_hotkeys->end(); i++)
+        {
             const std::string & hk_name = i->first;
             std::string section = "HOTKEYS_GENERAL";
             size_t j = hk_name.find('.');
-            if(j != std::string::npos) {
+            if (j != std::string::npos) {
                 section = "HOTKEYS_" + hk_name.substr(0, j);
                 std::transform(section.begin(), section.end(), 
                                section.begin(), ::toupper);
-                if(section == "HOTKEYS_COMBAT")
+                if (section == "HOTKEYS_COMBAT")
                     section = "HOTKEYS_Z_COMBAT"; // make combat the
                                                   // last category
-                
             }
             ret[section].insert(hk_name);
         }
@@ -247,10 +232,9 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys()
 }
 
 
-bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod)
-{
+bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod) {
     // If something else than shift is pressed, it is not alphanumeric
-    if(! (mod == 0 || mod == GG::MOD_KEY_LSHIFT || mod == GG::MOD_KEY_RSHIFT))
+    if (!(mod == 0 || mod == GG::MOD_KEY_LSHIFT || mod == GG::MOD_KEY_RSHIFT))
         return false;
 
     return ((key >= GG::GGK_a && key <= GG::GGK_z) ||
@@ -258,9 +242,7 @@ bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod)
 }
 
 bool Hotkey::IsAlnum() const
-{
-    return IsAlnum(m_key, m_mod_keys);
-}
+{ return IsAlnum(m_key, m_mod_keys); }
 
 void Hotkey::SetHotKey(const std::string & name, GG::Key key,
                        GG::Flags<GG::ModKey> mod)
@@ -275,35 +257,31 @@ void Hotkey::SetHotKey(const std::string & name, GG::Key key,
 
 //////////////////////////////////////////////////////////////////////
 
-InvisibleWindowCondition::InvisibleWindowCondition(GG::Wnd * w1, GG::Wnd * w2, 
-                                                   GG::Wnd * w3,
-                                                   GG::Wnd * w4)
+InvisibleWindowCondition::InvisibleWindowCondition(GG::Wnd * w1, GG::Wnd * w2,
+                                                   GG::Wnd * w3, GG::Wnd * w4)
 {
     m_blacklist.push_back(w1);
-    if(w2)
+    if (w2)
         m_blacklist.push_back(w2);
-    if(w3)
+    if (w3)
         m_blacklist.push_back(w3);
-    if(w4)
+    if (w4)
         m_blacklist.push_back(w4);
 }
 
-InvisibleWindowCondition::InvisibleWindowCondition(const std::list<GG::Wnd*> & bl) : 
+InvisibleWindowCondition::InvisibleWindowCondition(const std::list<GG::Wnd*> & bl) :
     m_blacklist(bl)
-{
-}
+{}
 
 bool InvisibleWindowCondition::IsActive() const {
-    for(std::list<GG::Wnd*>::const_iterator i = m_blacklist.begin(); 
-        i != m_blacklist.end(); i++) {
-        if((*i)->Visible())
+    for (std::list<GG::Wnd*>::const_iterator i = m_blacklist.begin();
+        i != m_blacklist.end(); i++)
+    {
+        if ((*i)->Visible())
             return false;
     }
     return true;
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////
 
@@ -314,46 +292,42 @@ OrCondition::OrCondition(HotkeyCondition * c1, HotkeyCondition * c2,
 {
     m_conditions.push_back(c1);
     m_conditions.push_back(c2);
-    if(c3)
+    if (c3)
         m_conditions.push_back(c3);
-    if(c4)
+    if (c4)
         m_conditions.push_back(c4);
-    if(c5)
+    if (c5)
         m_conditions.push_back(c5);
-    if(c6)
+    if (c6)
         m_conditions.push_back(c6);
-    if(c7)
+    if (c7)
         m_conditions.push_back(c7);
-    if(c8)
+    if (c8)
         m_conditions.push_back(c8);
 }
 
-bool OrCondition::IsActive() const
-{
-    for(std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
-        i != m_conditions.end(); i++) {
-        if((*i)->IsActive())
+bool OrCondition::IsActive() const {
+    for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
+         i != m_conditions.end(); i++)
+    {
+        if ((*i)->IsActive())
             return true;
     }
     return false;
 }
 
-OrCondition::~OrCondition()
-{
-    for(std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
-        i != m_conditions.end(); i++)
-        delete *i;
+OrCondition::~OrCondition() {
+    for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
+         i != m_conditions.end(); i++)
+    { delete *i; }
 }
-
 
 //////////////////////////////////////////////////////////////////////
 
-
-void HotkeyManager::RebuildShortcuts()
-{
-    for(std::set<boost::signals::connection>::iterator i = m_internal_connections.begin();
-        i != m_internal_connections.end(); i++)
-        i->disconnect();
+void HotkeyManager::RebuildShortcuts() {
+    for (std::set<boost::signals::connection>::iterator i = m_internal_connections.begin();
+         i != m_internal_connections.end(); i++)
+    { i->disconnect(); }
     m_internal_connections.clear();
 
     /// @todo Disable the shortcuts that we've enabled so far ? Is it
@@ -362,23 +336,24 @@ void HotkeyManager::RebuildShortcuts()
 
     // Now, build up again all the shortcuts
     GG::GUI * gui = GG::GUI::GetGUI();
-    for(Connections::iterator i = m_connections.begin(); i != m_connections.end(); i++) {
+    for (Connections::iterator i = m_connections.begin(); i != m_connections.end(); i++) {
         const Hotkey & hk = Hotkey::NamedHotkey(i->first);
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
-        m_internal_connections.insert(GG::Connect(gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys), boost::bind(&HotkeyManager::ProcessNamedShortcut, this, hk.m_name)));
+        m_internal_connections.insert(GG::Connect(gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys),
+                                                  boost::bind(&HotkeyManager::ProcessNamedShortcut,
+                                                              this, hk.m_name)));
     }
 }
 
-HotkeyManager * HotkeyManager::s_singleton = NULL;
+HotkeyManager * HotkeyManager::s_singleton = 0;
 
-HotkeyManager * HotkeyManager::GetManager()
-{
-    if(! s_singleton)
+HotkeyManager * HotkeyManager::GetManager() {
+    if (!s_singleton)
         s_singleton = new HotkeyManager;
     return s_singleton;
 }
 
-void HotkeyManager::AddConditionalConnection(const std::string & name, 
+void HotkeyManager::AddConditionalConnection(const std::string & name,
                                              const boost::signals::connection & conn,
                                              HotkeyCondition * cond)
 {
@@ -386,33 +361,29 @@ void HotkeyManager::AddConditionalConnection(const std::string & name,
     list.push_back(ConditionalConnection(conn, cond));
 }
 
-GG::GUI::AcceleratorSignalType & HotkeyManager::NamedSignal(const std::string & name)
-{
+GG::GUI::AcceleratorSignalType & HotkeyManager::NamedSignal(const std::string & name) {
     /// Unsure why GG::AcceleratorSignal implementation uses shared
     /// pointers. Maybe I should, too ?
     GG::GUI::AcceleratorSignalType * & sig = m_signals[name];
-    if(! sig)
+    if (!sig)
         sig = new GG::GUI::AcceleratorSignalType;
     return *sig;
 }
 
 
-bool HotkeyManager::ProcessNamedShortcut(const std::string & name)
-{
-
-    if(m_disabled_alnum  && Hotkey::NamedHotkey(name).IsAlnum())
+bool HotkeyManager::ProcessNamedShortcut(const std::string & name) {
+    if (m_disabled_alnum  && Hotkey::NamedHotkey(name).IsAlnum())
         return false;           // ignored
-
 
     // First update the connection state according to the current
     // status.
     ConditionalConnectionList & conds = m_connections[name];
-    for(ConditionalConnectionList::iterator i = conds.begin();
-        i != conds.end(); i++) {
+    for (ConditionalConnectionList::iterator i = conds.begin();
+         i != conds.end(); i++)
+    {
         i->UpdateConnection();
-        if(! i->connection.connected()) {
+        if (!i->connection.connected())
             i = conds.erase(i);
-        }
     }
 
     // Then, return the value of the signal !
@@ -421,20 +392,13 @@ bool HotkeyManager::ProcessNamedShortcut(const std::string & name)
 }
 
 HotkeyManager::~HotkeyManager()
-{
-}
+{}
 
 HotkeyManager::HotkeyManager() : m_disabled_alnum(false)
-{
-    
-}
+{}
 
 void HotkeyManager::DisableAlphaNumeric()
-{
-    m_disabled_alnum = true;
-}
+{ m_disabled_alnum = true; }
 
 void HotkeyManager::EnableAlphaNumeric()
-{
-    m_disabled_alnum = false;
-}
+{ m_disabled_alnum = false; }
