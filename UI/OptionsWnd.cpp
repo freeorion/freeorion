@@ -33,8 +33,7 @@
 
 namespace fs = boost::filesystem;
 
-// Here, we define a small window that will simply get a unique key
-// press.
+// Here, we define a small window that will simply get a unique key press.
 class KeyPressCatcher : public GG::Wnd {
     GG::Key m_key;
 
@@ -46,13 +45,12 @@ public:
     KeyPressCatcher() : Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL)) {};
     virtual void Render() {};
 
-
     void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
         m_key = key;
         m_code_point = key_code_point;
         m_mods = mod_keys;
         // exit modal loop only if not a modifier
-        if(!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
+        if (!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
             m_done = true;
 
         /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
@@ -391,8 +389,24 @@ static void HandleHotkeyOption(const std::string & hk_name,
                                CUIButton * button)
 {
     std::pair<GG::Key, GG::Flags<GG::ModKey> > kp = KeyPressCatcher::GetKeypress();
+
+    // abort of escape was pressed...
+    if (kp.first == GG::GGK_ESCAPE)
+        return;
+
+    // check if pressed key is different from existing setting...
+    const Hotkey& hotkey = Hotkey::NamedHotkey(hk_name);
+    if (hotkey.m_key == kp.first && hotkey.m_mod_keys == kp.second)
+        return; // nothing to change
+
+
+    // set hotkey to new pressed key / modkey combination
     Hotkey::SetHotKey(hk_name, kp.first, kp.second);
+
+    // indicate new hotkey on button
     button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
+
+    // update shortcuts for new hotkey
     HotkeyManager::GetManager()->RebuildShortcuts();
 }
 
