@@ -131,31 +131,30 @@ namespace {
         db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),               false,      Validator<bool>());
 
 
-        // We also register shortcut names/default values, for the
-        // context "map".
-        Hotkey::AddHotkey("map.return_to_map", GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("map.open_chat", GG::GGK_RETURN);
-        Hotkey::AddHotkey("map.end_turn", GG::GGK_RETURN, GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.sit_rep", GG::GGK_F2);
-        Hotkey::AddHotkey("map.research", GG::GGK_F3);
-        Hotkey::AddHotkey("map.production", GG::GGK_F4);
-        Hotkey::AddHotkey("map.design", GG::GGK_F5);
-        Hotkey::AddHotkey("map.menu", GG::GGK_F10);
-        Hotkey::AddHotkey("map.zoom_in", GG::GGK_e);
-        Hotkey::AddHotkey("map.zoom_in_alt", GG::GGK_KP_PLUS);
-        Hotkey::AddHotkey("map.zoom_out", GG::GGK_r);
-        Hotkey::AddHotkey("map.zoom_out_alt", GG::GGK_KP_MINUS);
-        Hotkey::AddHotkey("map.zoom_home_system", GG::GGK_d);
-        Hotkey::AddHotkey("map.zoom_prev_system", GG::GGK_x);
-        Hotkey::AddHotkey("map.zoom_next_system", GG::GGK_c);
-        Hotkey::AddHotkey("map.zoom_prev_fleet", GG::GGK_v);
-        Hotkey::AddHotkey("map.zoom_next_fleet", GG::GGK_b);
-        Hotkey::AddHotkey("map.zoom_prev_idle_fleet", GG::GGK_f);
-        Hotkey::AddHotkey("map.zoom_next_idle_fleet", GG::GGK_g);
-        
-        Hotkey::AddHotkey("cut",GG::GGK_x, GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("copy",GG::GGK_c, GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("paste",GG::GGK_v, GG::MOD_KEY_CTRL);
+        // Register hotkey names/default values for the context "map".
+        Hotkey::AddHotkey("map.return_to_map",          GG::GGK_ESCAPE);
+        Hotkey::AddHotkey("map.open_chat",              GG::GGK_RETURN);
+        Hotkey::AddHotkey("map.end_turn",               GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.sit_rep",                GG::GGK_n);
+        Hotkey::AddHotkey("map.research",               GG::GGK_r);
+        Hotkey::AddHotkey("map.production",             GG::GGK_p);
+        Hotkey::AddHotkey("map.design",                 GG::GGK_d);
+        Hotkey::AddHotkey("map.menu",                   GG::GGK_F10);
+        Hotkey::AddHotkey("map.zoom_in",                GG::GGK_z);
+        Hotkey::AddHotkey("map.zoom_in_alt",            GG::GGK_KP_PLUS);
+        Hotkey::AddHotkey("map.zoom_out",               GG::GGK_x);
+        Hotkey::AddHotkey("map.zoom_out_alt",           GG::GGK_KP_MINUS);
+        Hotkey::AddHotkey("map.zoom_home_system",       GG::GGK_h);
+        Hotkey::AddHotkey("map.zoom_prev_system",       GG::GGK_LESS);
+        Hotkey::AddHotkey("map.zoom_next_system",       GG::GGK_GREATER);
+        Hotkey::AddHotkey("map.zoom_prev_fleet",        GG::GGK_f);
+        Hotkey::AddHotkey("map.zoom_next_fleet",        GG::GGK_g);
+        Hotkey::AddHotkey("map.zoom_prev_idle_fleet",   GG::GGK_UNKNOWN);
+        Hotkey::AddHotkey("map.zoom_next_idle_fleet",   GG::GGK_UNKNOWN);
+
+        Hotkey::AddHotkey("cut",                        GG::GGK_x,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("copy",                       GG::GGK_c,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("paste",                      GG::GGK_v,  GG::MOD_KEY_CTRL);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
