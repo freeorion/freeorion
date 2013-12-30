@@ -22,8 +22,12 @@ Hull
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/xentronium_hull_small.png"
     graphic = "hulls_design/xentronium_hull.png"
 
@@ -61,7 +65,12 @@ Hull
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups = [[REGULAR_HULL_DETECTION]]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/basic-small-hull_small.png"
     graphic = "hulls_design/basic-small-hull.png"
     
@@ -84,8 +93,12 @@ Hull
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/basic-medium-hull_small.png"
     graphic = "hulls_design/basic-medium-hull.png"
 
@@ -109,8 +122,12 @@ Hull
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/generic_hull.png"
     graphic = "hulls_design/generic_hull.png"
 
@@ -149,6 +166,9 @@ Hull
             effects = SetStructure Value + 2
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/robotic_hull_small.png"
     graphic = "hulls_design/robotic_hull.png"
@@ -185,6 +205,9 @@ Hull
             effects = SetStealth Value - 30
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/spatial_flux_hull_small.png"
     graphic = "hulls_design/spatial_flux_hull.png"
@@ -225,8 +248,12 @@ Hull
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/self_gravitating_hull_small.png"
     graphic = "hulls_design/self_gravitating_hull.png"
 
@@ -271,6 +298,9 @@ Hull
             effects = SetStructure Target.MaxStructure
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/nano_robotic_hull_small.png"
     graphic = "hulls_design/nano_robotic_hull.png"
@@ -321,8 +351,12 @@ Hull
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/titanic_hull_small.png"
     graphic = "hulls_design/titanic_hull.png"
 
@@ -352,8 +386,12 @@ Hull
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/trans_spatial_hull_small.png"
     graphic = "hulls_design/trans_spatial_hull.png"
 
@@ -416,6 +454,9 @@ Hull
             effects = SetStructure Target.MaxStructure
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/logistics_facilitator_hull_small.png"
     graphic = "hulls_design/logistics_facilitator_hull.png"
@@ -462,6 +503,9 @@ Hull
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/asteroid_hull_small.png"
     graphic = "hulls_design/asteroid_hull.png"
@@ -503,6 +547,9 @@ Hull
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/small_asteroid_hull_small.png"
     graphic = "hulls_design/small_asteroid_hull.png"
@@ -551,6 +598,9 @@ Hull
             effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/heavy_asteroid_hull_small.png"
     graphic = "hulls_design/heavy_asteroid_hull.png"
@@ -594,6 +644,9 @@ Hull
             effects = SetStealth Value + 45
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/camouflage_asteroid_hull_small.png"
     graphic = "hulls_design/camouflage_asteroid_hull.png"
@@ -635,6 +688,9 @@ Hull
             effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/small_camouflage_asteroid_hull_small.png"
     graphic = "hulls_design/small_camouflage_asteroid_hull.png"
@@ -701,6 +757,9 @@ Hull
             effects = SetStealth Value + 40
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/agregate_asteroid_hull_small.png"
     graphic = "hulls_design/agregate_asteroid_hull.png"
@@ -750,6 +809,9 @@ Hull
             effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/mini_asteroid_swarm_small.png"
     graphic = "hulls_design/mini_asteroid_swarm.png"
@@ -828,6 +890,9 @@ Hull
             effects = SetMaxShield Value + 5
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/scattered_asteroid_hull_small.png"
     graphic = "hulls_design/scattered_asteroid_hull.png"
@@ -880,6 +945,9 @@ Hull
             effects = SetStealth Value + 15
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/crystalized_asteroid_hull_small.png"
     graphic = "hulls_design/crystalized_asteroid_hull.png"
@@ -926,6 +994,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 5)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/organic_hull_small.png"
     graphic = "hulls_design/organic_hull.png"
@@ -962,8 +1034,12 @@ Hull
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/static_multicellular_small.png"
     graphic = "hulls_design/static_multicellular.png"
 
@@ -1011,6 +1087,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/endomorphic_hull_small.png"
     graphic = "hulls_design/endomorphic_hull.png"
@@ -1061,6 +1141,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 10)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/symbiotic_hull_small.png"
     graphic = "hulls_design/symbiotic_hull.png"
@@ -1112,6 +1196,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/protoplasmic_hull_small.png"
     graphic = "hulls_design/protoplasmic_hull.png"
@@ -1169,6 +1257,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
+            
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/endosymbiotic_hull.png"
@@ -1218,6 +1310,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 20)
+            
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/ravenous_hull_small.png"
     graphic = "hulls_design/ravenous_hull.png"
@@ -1270,6 +1366,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
+            
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/bio_adaptive_hull_small.png"
     graphic = "hulls_design/bio_adaptive_hull.png"
@@ -1345,6 +1445,10 @@ Hull
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure Value + min(Source.Age*0.2, 45)
+            
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/sentient_hull_small.png"
     graphic = "hulls_design/sentient_hull.png"
@@ -1372,8 +1476,12 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Star type = [White Blue BlackHole]
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/compressed_energy_hull_small.png"
     graphic = "hulls_design/compressed_energy_hull.png"
 
@@ -1415,8 +1523,12 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Star type = [Blue BlackHole]
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/fractal_energy_hull_small.png"
     graphic = "hulls_design/fractal_energy_hull.png"
 
@@ -1454,8 +1566,12 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Star type = [Blue BlackHole]
     ]
-    effectsgroups =
+    effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
     icon = "icons/ship_hulls/quantum_energy_hull_small.png"
     graphic = "hulls_design/quantum_energy_hull.png"
 
@@ -1524,16 +1640,16 @@ Hull
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System 
-                    Contains Source
-                ]
+                InSystem Source.SystemID
                 Or [
                     OwnedBy TheEmpire Source.Owner
                     OwnedBy AllyOf Source.Owner
                 ]
             ]
-            activation = Source
+            activation = And [
+                Source
+                InSystem
+            ]
             effects = SetFuel Target.MaxFuel
 
         EffectsGroup
@@ -1550,6 +1666,9 @@ Hull
             effects = SetStealth Value - 100
 
         [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
     ]
     icon = "icons/ship_hulls/solar_hull_small.png"
     graphic = "hulls_design/solar_hull.png"
@@ -1580,7 +1699,7 @@ Hull
             scope = And [
                 System
                 Star type = [Blue White Yellow Orange Red]
-                Contains Source
+                InSystem Source.SystemID
                 Not Number low = 2 condition = And [
                     Ship
                     Monster
@@ -1744,7 +1863,7 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                Contains Source 
+                InSystem Source.SystemID
                 Number high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
                     Ship
                     InSystem Source.SystemID
@@ -1778,7 +1897,7 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                Contains Source 
+                InSystem Source.SystemID 
                 Number low = 2 high = 3 And [
                     Ship
                     InSystem Source.SystemID
@@ -1836,14 +1955,14 @@ Hull
             scope = And [
                 Fleet
                 Stationary
-                Contains Source
+                Object id = Source.FleetID
             ]
             activation = Random probability = 0.80
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
                 WithinStarlaneJumps 1 Source
-                Not Contains Source
+                Not InSystem Source.SystemID
             ]
     ]
     icon = ""
@@ -1870,7 +1989,7 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                Contains Source 
+                InSystem Source.SystemID
                 Number low = 2 high = 3 And [
                     Ship
                     InSystem Source.SystemID
@@ -1933,14 +2052,14 @@ Hull
             scope = And [
                 Fleet
                 Stationary
-                Contains Source
+                Object id = Source.FleetID
             ]
             activation = Random probability = 0.70
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
                 WithinStarlaneJumps 1 Source
-                Not Contains Source
+                Not InSystem Source.SystemID
             ]
     ]
     icon = ""
@@ -1968,7 +2087,7 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                Contains Source 
+                InSystem Source.SystemID
                 Number low = 2 high = 3 And [
                     Ship
                     InSystem Source.SystemID
@@ -2031,14 +2150,14 @@ Hull
             scope = And [
                 Fleet
                 Stationary
-                Contains Source
+                Object id = Source.FleetID
             ]
             activation = Random probability = 0.60
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
                 WithinStarlaneJumps 1 Source
-                Not Contains Source
+                Not InSystem Source.SystemID
             ]
     ]
     icon = ""
@@ -2117,9 +2236,12 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = GasGiant
-                Not WithinStarlaneJumps 2 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
+                Not WithinStarlaneJumps 2 And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy AnyEmpire
+                    ]
                 ]
             ]
             activation = Turn high = 2
@@ -2254,9 +2376,12 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet size = Small
-                Not WithinStarlaneJumps 2 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
+                Not WithinStarlaneJumps 2 And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy AnyEmpire
+                    ]
                 ]
             ]
             activation = Not Turn low = 1
@@ -2390,9 +2515,12 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = Asteroids
-                Not WithinStarlaneJumps 2 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
+                Not WithinStarlaneJumps 2 And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy AnyEmpire
+                    ]
                 ]
             ]
             activation = Not Turn low = 1
@@ -2548,10 +2676,7 @@ Hull
             scope = NumberOf 1 And [
                 Planet
                 Not Planet type = [Asteroids GasGiant]
-                ContainedBy And [
-                    System 
-                    Contains Source
-                ]
+                InSystem Source.SystemID
             ]
             effects = [
                 SetSpecies "SP_EXPERIMENTOR"
@@ -2697,10 +2822,7 @@ Hull
         EffectsGroup
             scope = NumberOf 1 And [
                 Planet
-                ContainedBy And [
-                    System 
-                    Contains Source
-                ]
+                InSystem Source.SystemID
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
             ]
@@ -2735,10 +2857,7 @@ Hull
         EffectsGroup
             scope = NumberOf 1 And [
                 Ship
-                ContainedBy And [
-                    System 
-                    Contains Source
-                ]
+                InSystem Source.SystemID
                 OwnedBy AnyEmpire
             ]
             effects = [
@@ -2787,14 +2906,45 @@ EXCELLENT_VISION
         effects = SetDetection Value + 150
 '''
 
+UNOWNED_GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Source
+            Not OwnedBy AnyEmpire
+        ]
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection Value + 100
+'''
 
+
+UNOWNED_MOVE
+'''EffectsGroup
+            scope = And [
+                Fleet
+                Object id = Source.FleetID
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Not OwnedBy AnyEmpire
+                Random probability = 0.9
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not InSystem Source.SystemID
+                WithinStarlaneJumps 1 Source
+                Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
+            ]
+'''
 
 
 MONSTER_MOVE_ALWAYS
 '''EffectsGroup
             scope = And [
-                Contains Source
                 Fleet
+                Object id = Source.FleetID
             ]
             activation = And [
                 Turn low = 10
@@ -2804,7 +2954,7 @@ MONSTER_MOVE_ALWAYS
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not Contains Source
+                Not InSystem Source.SystemID
                 WithinStarlaneJumps 1 Source
                 Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
             ]
@@ -2813,8 +2963,8 @@ MONSTER_MOVE_ALWAYS
 MONSTER_MOVE_PRE
 '''EffectsGroup
             scope = And [
-                Contains Source
                 Fleet
+                Object id = Source.FleetID
             ]
             activation = And [
                 Stationary
@@ -2828,7 +2978,7 @@ MONSTER_MOVE_POST_NOT_OWNED
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not Contains Source
+                Not InSystem Source.SystemID
                 WithinStarlaneJumps 1 Source
                 Not Contains And [
                     Planet
@@ -2843,7 +2993,7 @@ MONSTER_MOVE_POST
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not Contains Source
+                Not InSystem Source.SystemID
                 WithinStarlaneJumps 1 Source
             ]
 '''
@@ -2851,6 +3001,17 @@ MONSTER_MOVE_POST
 INFINITE_FUEL
 '''EffectsGroup
             scope = Source
+            effects = SetFuel Value + 1
+'''
+
+SCAVANGE_FUEL_UNOWNED
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Stationary
+                Not OwnedBy AnyEmpire
+                Random probability = 0.6
+            ]
             effects = SetFuel Value + 1
 '''
 
