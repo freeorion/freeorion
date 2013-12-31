@@ -81,7 +81,6 @@
       <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../include/zlib/;../../../Boost/include/boost_1_51/;../../GG/;../../OpenSteer/include/;../../</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

@@ -69,7 +69,6 @@
       <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../../OpenSteer/include/</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
