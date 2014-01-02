@@ -946,8 +946,16 @@ void GUI::RegisterDragDropWnd(Wnd* wnd, const Pt& offset, Wnd* originating_wnd)
 {
     assert(wnd);
     if (!s_impl->m_drag_drop_wnds.empty() && originating_wnd != s_impl->m_drag_drop_originating_wnd) {
-        throw std::runtime_error("GUI::RegisterDragDropWnd() : Attempted to register a drag drop item dragged from "
-                                 "one window, when another window already has items being dragged from it.");
+        std::string s_impl_orig_wnd_name("NULL");
+        std::string orig_wnd_name("NULL");
+        if (s_impl->m_drag_drop_originating_wnd)
+            s_impl_orig_wnd_name = s_impl->m_drag_drop_originating_wnd->Name();
+        if (originating_wnd)
+            orig_wnd_name = originating_wnd->Name();
+        throw std::runtime_error("GUI::RegisterDragDropWnd() : Attempted to register a drag drop item"
+                                "dragged from  one window(" + orig_wnd_name + 
+                                "), when another window (" + s_impl_orig_wnd_name +
+                                ") already has items being dragged from it.");
     }
     s_impl->m_drag_drop_wnds[wnd] = offset;
     s_impl->m_drag_drop_wnds_acceptable[wnd] = false;
