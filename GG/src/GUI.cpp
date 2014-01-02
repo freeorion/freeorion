@@ -326,10 +326,12 @@ void GUIImpl::HandleDrag(unsigned int mouse_button, const Pt& pos, int curr_tick
         // ensure that the minimum drag requirements are met
         if (m_min_drag_time < (curr_ticks - m_prev_button_press_time) &&
             (m_min_drag_distance * m_min_drag_distance < drag_distance) &&
-            m_drag_drop_wnds.find(m_drag_wnds[mouse_button]) == m_drag_drop_wnds.end()) {
+            m_drag_drop_wnds.find(m_drag_wnds[mouse_button]) == m_drag_drop_wnds.end())
+        {
             if (!m_drag_wnds[mouse_button]->Dragable() &&
                 m_drag_wnds[mouse_button]->DragDropDataType() != "" &&
-                mouse_button == 0) {
+                mouse_button == 0)
+            {
                 Wnd* parent = m_drag_wnds[mouse_button]->Parent();
                 Pt offset = m_prev_button_press_pos - m_drag_wnds[mouse_button]->UpperLeft();
                 GUI::s_gui->RegisterDragDropWnd(m_drag_wnds[mouse_button], offset, parent);
