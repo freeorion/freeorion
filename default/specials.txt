@@ -1,6 +1,42 @@
 include "shared_macros.txt"
 
 Special
+    name = "MODERATE_TECH_NATIVES_SPECIAL"
+    description = "MODERATE_TECH_NATIVES_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not OwnedBy AnyEmpire
+            effects = [
+                SetMaxDefense Value + 10
+                SetMaxShield Value + 10
+                SetMaxTroops Value + 10
+            ]
+    ]
+    graphic = ""
+
+Special
+    name = "HIGH_TECH_NATIVES_SPECIAL"
+    description = "HIGH_TECH_NATIVES_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not OwnedBy AnyEmpire
+            effects = [
+                SetMaxDefense Value + 30
+                SetMaxShield Value + 30
+                SetMaxTroops Value + 30
+            ]
+    ]
+    graphic = ""
+
+Special
     name = "STARSPAWN_NEBULA_SPECIAL"
     description = "STARSPAWN_NEBULA_SPECIAL_DESC"
     stealth = 0
@@ -324,6 +360,7 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
+            activation = OwnedBy AnyEmpire
             effects = [
                 SetDetection Value + 75
                 SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
