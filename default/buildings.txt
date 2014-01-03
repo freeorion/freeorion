@@ -20,6 +20,24 @@ BuildingType
             ]
             
         EffectsGroup
+            scope = And [
+                Planet
+                Object Source.PlanetID
+                OwnedBy TheEmpire Source.Owner
+                Not HasSpecial "HEAD_ON_A_SPIKE_SPECIAL"
+            ]
+            activation = Not ProducedByEmpire Source.Owner                
+            effects = [
+                AddSpecial "HEAD_ON_A_SPIKE_SPECIAL"
+                GenerateSitRepMessage
+                    message = "HEAD_ON_A_SPIKE_MESSAGE"
+                    icon = "icons/sitrep/empire_eliminated.png"
+                    parameters = [
+                        tag = "empire" data = Source.ProducedByEmpireID                        
+                    ]
+            ]
+            
+        EffectsGroup
             scope = Source
             activation = Random probability = 0.02
             effects = CreateField type = "FLD_ION_STORM"

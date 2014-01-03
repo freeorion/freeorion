@@ -4836,11 +4836,17 @@ Head on a spike
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
-Non-empire ships, both enemies and allies, within 100uu will have reduced shields, structure and weapons. 
+Non-empire ships, both enemies and allies, within 100uu will have slightly reduced shields, structure and weapons. 
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
 Cowering in fear
+
+HEAD_ON_A_SPIKE_MESSAGE
+The capitol of the %empire% empire has fallen. 
+
+HEAD_ON_A_SPIKE_MESSAGE_LABEL
+Empire Capitol Captured
 
 CONC_CAMP_MASTER_SPECIAL
 Pall of Death

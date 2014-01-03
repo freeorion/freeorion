@@ -758,6 +758,50 @@ Special
     graphic = "icons/specials_huge/juggernaut-nest.png"
 
 Special
+    name = "HEAD_ON_A_SPIKE_SPECIAL"
+    description = "HEAD_ON_A_SPIKE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxDefense Value + 1
+                SetMaxShield Value + 1
+            ]
+
+        EffectsGroup
+            scope = And [
+                Ship
+                NOT OwnedBy TheEmpire Source.Owner
+                OwnedBy AnyEmpire
+                WithinDistance 100 Source
+            ]
+        stackinggroup = "HEAD_ON_A_SPIKE_SPECIAL_EFFECT"
+        effects = [
+            SetMaxShield Value - 1
+            SetMaxStructure Value -1 
+            SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
+            SetDamage partname = "SR_WEAPON_1_2" value = Value - 1
+            SetDamage partname = "SR_WEAPON_1_3" value = Value - 1
+            SetDamage partname = "SR_WEAPON_1_4" value = Value - 1
+            SetDamage partname = "SR_WEAPON_2_1" value = Value - 1
+            SetDamage partname = "SR_WEAPON_2_2" value = Value - 1
+            SetDamage partname = "SR_WEAPON_2_3" value = Value - 1
+            SetDamage partname = "SR_WEAPON_2_4" value = Value - 1
+            SetDamage partname = "SR_WEAPON_3_1" value = Value - 1
+            SetDamage partname = "SR_WEAPON_3_2" value = Value - 1
+            SetDamage partname = "SR_WEAPON_3_3" value = Value - 1
+            SetDamage partname = "SR_WEAPON_3_4" value = Value - 1
+            SetDamage partname = "SR_WEAPON_4_1" value = Value - 1
+            SetDamage partname = "SR_WEAPON_4_2" value = Value - 1
+            SetDamage partname = "SR_WEAPON_4_3" value = Value - 1
+            SetDamage partname = "SR_WEAPON_4_4" value = Value - 1
+        ]
+    ]
+    graphic = "icons/sitrep/empire_eliminated.png"
+
+Special
     name = "CONC_CAMP_MASTER_SPECIAL"
     description = "CONC_CAMP_MASTER_SPECIAL_DESC"
     spawnrate = 0.0
