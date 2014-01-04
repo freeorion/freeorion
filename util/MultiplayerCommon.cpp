@@ -1,7 +1,6 @@
 #include "MultiplayerCommon.h"
 
 #include "OptionsDB.h"
-#include "Obstacle.h"
 #include "../combat/AsteroidBeltObstacle.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -16,11 +15,12 @@
 #undef int64_t
 #endif
 
-#include <GG/utf8/checked.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
+#include <OpenSteer/Obstacle.h>
+#include <GG/utf8/checked.h>
 
 
 const std::string MP_SAVE_FILE_EXTENSION = ".mps";

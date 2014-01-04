@@ -38,13 +38,13 @@
 
 
 // Include OpenSteer::Vec3
-#include "Vec3.h"
+#include "OpenSteer/Vec3.h"
 
 // Include OpenSteer::size_t
-#include "StandardTypes.h"
+#include "OpenSteer/StandardTypes.h"
 
 // Include OpenSteer::equalsRelative
-#include "Utilities.h"
+#include "OpenSteer/Utilities.h"
 
 
 

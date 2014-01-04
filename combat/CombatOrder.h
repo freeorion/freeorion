@@ -3,13 +3,12 @@
 #define _CombatOrder_h_
 
 #include "PathingEngineFwd.h"
-#include "Vec3.h"
 
 #include "../util/Export.h"
 
-#include <boost/serialization/access.hpp>
-
 #include <vector>
+#include <boost/serialization/access.hpp>
+#include <OpenSteer/Vec3.h>
 
 
 struct FO_COMMON_API ShipMission

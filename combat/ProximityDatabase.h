@@ -2,7 +2,7 @@
 #ifndef PROXIMITY_DATABASE_H
 #define PROXIMITY_DATABASE_H
 
-#include "Vec3.h"
+#include <OpenSteer/Vec3.h>
 
 #include <map>
 #include <vector>

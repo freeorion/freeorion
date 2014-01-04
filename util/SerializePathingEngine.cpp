@@ -5,10 +5,10 @@
 #include "../combat/CombatFighter.h"
 #include "../combat/Missile.h"
 #include "../combat/PathingEngine.h"
-#include "Obstacle.h"
 
 #include "Serialize.ipp"
 
+#include <OpenSteer/Obstacle.h>
 
 // exports for boost serialization of PathingEngine-related classes
 BOOST_CLASS_EXPORT(CombatShip)

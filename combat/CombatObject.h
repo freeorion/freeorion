@@ -3,11 +3,11 @@
 #define _CombatObject_h_
 
 #include "PathingEngineFwd.h"
-#include "SimpleVehicle.h"
 #include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <OpenSteer/SimpleVehicle.h>
 
 
 class CombatEventListener;

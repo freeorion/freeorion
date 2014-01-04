@@ -1925,7 +1925,7 @@
 			isa = PBXGroup;
 			children = (
 				3A8889581710CFED0063EC8C /* include */,
-				3A8889571710CF210063EC8C /* source */,
+				3A8889571710CF210063EC8C /* src */,
 				34972B590F49CB100015C864 /* COPYING.OPENSTEER */,
 				34972B5A0F49CB100015C864 /* doc */,
 			);
@@ -2558,7 +2558,7 @@
 			path = source;
 			sourceTree = "<group>";
 		};
-		3A8889571710CF210063EC8C /* source */ = {
+		3A8889571710CF210063EC8C /* src */ = {
 			isa = PBXGroup;
 			children = (
 				34B9EBC90F5E1EEB005BF6A4 /* Obstacle.cpp */,
@@ -2566,7 +2566,7 @@
 				34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */,
 				34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */,
 			);
-			path = source;
+			path = src;
 			sourceTree = "<group>";
 		};
 		3A8889581710CFED0063EC8C /* include */ = {

@@ -414,10 +414,10 @@
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\source\SimpleVehicle.cpp">
+    <ClCompile Include="..\..\OpenSteer\src\SimpleVehicle.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\source\Vec3.cpp">
+    <ClCompile Include="..\..\OpenSteer\src\Vec3.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\combat\AsteroidBeltObstacle.cpp">
@@ -444,10 +444,10 @@
     <ClCompile Include="..\..\combat\PathingEngine.cpp">
       <Filter>Source Files\combat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp">
+    <ClCompile Include="..\..\OpenSteer\src\Obstacle.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp">
+    <ClCompile Include="..\..\OpenSteer\src\Vec3Utilities.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Version.cpp">

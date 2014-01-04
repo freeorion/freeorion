@@ -51,7 +51,7 @@
 #define OPENSTEER_VEC3_H
 
 
-#include "Utilities.h"  // for interpolate, etc.
+#include "OpenSteer/Utilities.h"  // for interpolate, etc.
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>

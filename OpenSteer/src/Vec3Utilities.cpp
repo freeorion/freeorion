@@ -26,7 +26,7 @@
  * @author Bjoern Knafla <bknafla@uni-kassel.de>
  */
 
-#include "Vec3Utilities.h"
+#include "OpenSteer/Vec3Utilities.h"
 
 // Include assert
 #include <cassert>
@@ -34,7 +34,7 @@
 
 
 // Include OpenSteer::clamp
-#include "Utilities.h"
+#include "OpenSteer/Utilities.h"
 
 /**
  * @todo Is this useful?

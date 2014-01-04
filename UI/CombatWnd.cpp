@@ -28,8 +28,8 @@
 
 // TODO: Remove these once the obstacle test code is removed.
 #include "../combat/AsteroidBeltObstacle.h"
-#include "Obstacle.h"
-#include "SimpleVehicle.h"
+#include <OpenSteer/Obstacle.h>
+#include <OpenSteer/SimpleVehicle.h>
 
 // TODO: Remove this.  It is only here for prototyping.
 #include "../universe/Fleet.h"

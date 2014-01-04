@@ -64,8 +64,8 @@
 #define OPENSTEER_SIMPLEVEHICLE_H
 
 
-#include "AbstractVehicle.h"
-#include "SteerLibrary.h"
+#include "OpenSteer/AbstractVehicle.h"
+#include "OpenSteer/SteerLibrary.h"
 
 #include "../../util/Export.h"
 

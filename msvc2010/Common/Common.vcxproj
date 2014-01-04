@@ -216,10 +216,10 @@
     <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
-    <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp" />
-    <ClCompile Include="..\..\OpenSteer\source\SimpleVehicle.cpp" />
-    <ClCompile Include="..\..\OpenSteer\source\Vec3.cpp" />
-    <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp" />
+    <ClCompile Include="..\..\OpenSteer\src\Obstacle.cpp" />
+    <ClCompile Include="..\..\OpenSteer\src\SimpleVehicle.cpp" />
+    <ClCompile Include="..\..\OpenSteer\src\Vec3.cpp" />
+    <ClCompile Include="..\..\OpenSteer\src\Vec3Utilities.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />
     <ClCompile Include="..\..\util\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />

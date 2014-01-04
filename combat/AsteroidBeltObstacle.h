@@ -2,7 +2,7 @@
 #ifndef _AsteroidBeltObstacle_h_
 #define _AsteroidBeltObstacle_h_
 
-#include "Obstacle.h"
+#include <OpenSteer/Obstacle.h>
 
 #include <set>
 

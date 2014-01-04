@@ -203,10 +203,10 @@ set (freeorioncommon_SOURCE
     network/Message.cpp
     network/MessageQueue.cpp
     network/Networking.cpp
-    OpenSteer/source/Obstacle.cpp
-    OpenSteer/source/SimpleVehicle.cpp
-    OpenSteer/source/Vec3.cpp
-    OpenSteer/source/Vec3Utilities.cpp
+    OpenSteer/src/Obstacle.cpp
+    OpenSteer/src/SimpleVehicle.cpp
+    OpenSteer/src/Vec3.cpp
+    OpenSteer/src/Vec3Utilities.cpp
     universe/Building.cpp
     universe/Condition.cpp
     universe/EffectAccounting.cpp
