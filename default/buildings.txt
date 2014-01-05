@@ -8,6 +8,17 @@ BuildingType
     tags = "ANTIQUATED"
     location = Not All
     effectsgroups = [
+/*
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                Contains Source
+            ]
+            effects = SetEmpireTechProgress
+                name = Source.OwnerTopPriorityEnqueuedTech
+                progress = Value + 10
+*/
         EffectsGroup          // These bonuses given to anyone
             scope = And [
                 Planet
@@ -1387,17 +1398,32 @@ BuildingType
             ]
             effects = SetStealth Value + 40
 
-        EffectsGroup
+/*        EffectsGroup
             scope = And [
                 System
                 Contains Source
             ]
             effects = AddSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
+*/
 
         EffectsGroup
             scope = Source
-            activation = Not ContainedBy Contains Monster
+            activation = Or [
+                Not ContainedBy Contains Monster
+                Turn high = 200     // always remove lanes before turn 200
+            ]
             effects = RemoveStarlanes WithinStarlaneJumps 1 Source
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                ContainedBy Contains Monster
+                Turn low = 200      // don't create lanes before turn 200
+            ]
+            effects = AddStarlanes NumberOf 1 And [
+                WithinDistance 100 Source
+                System
+            ]
 
         EffectsGroup
             scope = Source
@@ -1484,14 +1510,6 @@ BuildingType
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy Contains Monster
-            effects = AddStarlanes NumberOf 1 And [
-                WithinDistance 100 Source
-                System
             ]
     ]
     icon = ""
