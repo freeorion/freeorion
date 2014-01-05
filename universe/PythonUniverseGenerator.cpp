@@ -150,7 +150,7 @@ namespace {
 
     int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
         // Create system and insert it into the object map
-        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
+        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
         if (!system) {
             std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
             Logger().debugStream() << err_msg;
