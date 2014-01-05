@@ -144,6 +144,50 @@ PlayerConnection::NewConnection(boost::asio::io_service& io_service,
                              disconnected_callback));
 }
 
+namespace {
+    std::string MessageTypeName(Message::MessageType type) {
+        switch(type) {
+        case Message::UNDEFINED:            return "Undefined";
+        case Message::DEBUG:                return "Debug";
+        case Message::ERROR_MSG:            return "Error";
+        case Message::HOST_SP_GAME:         return "Host SP Game";
+        case Message::HOST_MP_GAME:         return "Host MP Game";
+        case Message::JOIN_GAME:            return "Join Game";
+        case Message::HOST_ID:              return "Host ID";
+        case Message::LOBBY_UPDATE:         return "Lobby Update";
+        case Message::LOBBY_CHAT:           return "Lobby Chat";
+        case Message::LOBBY_EXIT:           return "Lobby Exit";
+        case Message::START_MP_GAME:        return "Start MP Game";
+        case Message::SAVE_GAME:            return "Save Game";
+        case Message::LOAD_GAME:            return "Load Game";
+        case Message::GAME_START:           return "Game Start";
+        case Message::TURN_UPDATE:          return "Turn Update";
+        case Message::TURN_PARTIAL_UPDATE:  return "Turn Partial Update";
+        case Message::TURN_ORDERS:          return "Turn Orders";
+        case Message::TURN_PROGRESS:        return "Turn Progress";
+        case Message::PLAYER_STATUS:        return "Player Status";
+        case Message::CLIENT_SAVE_DATA:     return "Client Save Data";
+        case Message::COMBAT_START:         return "Combat Start";
+        case Message::COMBAT_TURN_UPDATE:   return "Combat Turn Update";
+        case Message::COMBAT_TURN_ORDERS:   return "Combat Turn Orders";
+        case Message::COMBAT_END:           return "Combat End";
+        case Message::PLAYER_CHAT:          return "Player Chat";
+        case Message::DIPLOMACY:            return "Diplomacy";
+        case Message::DIPLOMATIC_STATUS:    return "Diplomatic Status";
+        case Message::REQUEST_NEW_OBJECT_ID:    return "Request New Object ID";
+        case Message::DISPATCH_NEW_OBJECT_ID:   return "Dispatch New Object ID";
+        case Message::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
+        case Message::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
+        case Message::VICTORY_DEFEAT:       return "Victory/Defeat";
+        case Message::PLAYER_ELIMINATED:    return "Player Elimination";
+        case Message::END_GAME:             return "End Game";
+        case Message::MODERATOR_ACTION:     return "Moderator Action";
+        case Message::SHUT_DOWN_SERVER:     return "Shut Down Server";
+        default:                            return "Unknown Type";
+        };
+    }
+}
+
 void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
                                              std::size_t bytes_transferred)
 {
@@ -158,10 +202,12 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
-            if (TRACE_EXECUTION) {
-                Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
-                                       << "received message of type " << m_incoming_message.Type()
-                                       << "; and size "<< m_incoming_message.Size();
+            if (TRACE_EXECUTION && m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
+                Logger().debugStream() << "Server received message from player id: "
+                                       << m_incoming_message.SendingPlayer()
+                                       << " of type "
+                                       << MessageTypeName(m_incoming_message.Type())
+                                       << " and size "<< m_incoming_message.Size();
                 //Logger().debugStream() << "     Full message: " << m_incoming_message;
             }
             if (EstablishedPlayer()) {
