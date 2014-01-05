@@ -591,12 +591,13 @@ Special
             scope = Source
             activation = AND [
                 Planet
+                Species
                 Not Planet environment = Good
                 Population low = 0.01
                 OwnedBy AnyEmpire
                 Not And [
-				    Species name = "SP_EXOBOT"
-					Planet environment = adequate
+                    Species name = "SP_EXOBOT"
+                    Planet environment = adequate
                 ]
                 Random probability = 0.5
             ]
@@ -613,13 +614,13 @@ Special
 
         // population effects in species.txt
 
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = Turn high = 0
             stackinggroup = "GAIAN_STACK"
             effects = CreateShip "SM_GUARD_2"
 
-        EffectsGroup     
+        EffectsGroup
             scope = Source
             activation = Turn high = 0
             stackinggroup = "GAIAN_STACK"
