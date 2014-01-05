@@ -90,7 +90,7 @@ namespace {
     const std::vector<std::vector<int> >&   g_planet_size_mod_to_planet_type_dist   = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
     const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_type_dist         = UniverseDataTables()["OrbitModToPlanetTypeDist"];
     const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_type_dist     = UniverseDataTables()["StarTypeModToPlanetTypeDist"];
-    
+
     // Functions exposed to Python to access the universe tables
     int BaseStarTypeDist(StarType star_type)
     { return g_base_star_type_dist[star_type]; }
@@ -130,8 +130,8 @@ namespace {
             return object("");
         }
         return object(obj->Name());
-    }    
-    
+    }
+
     void SetName(int object_id, std::string name) {
         TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
@@ -148,9 +148,9 @@ namespace {
     void SetUniverseWidth(double width)
     { GetUniverse().SetUniverseWidth(width); }
 
-    int CreateSystem(StarType star_type, std::string star_name, double x, double y) {
+    int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
         // Create system and insert it into the object map
-        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
+        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
         if (!system) {
             std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
             Logger().debugStream() << err_msg;
@@ -159,7 +159,7 @@ namespace {
         return system->SystemID();
     }
 
-    int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, std::string name) {
+    int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) {
         Universe& universe = GetUniverse();
         TemporaryPtr<System> system = universe.Objects().Object<System>(system_id);
 
@@ -187,20 +187,20 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Can't create a planet of size " << size;
             return INVALID_OBJECT_ID;
         }
-        
+
         // Check if planet type is set to valid value
         if ((planet_type < PT_SWAMP) || (planet_type > PT_GASGIANT)) {
             Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Can't create a planet of type " << planet_type;
             return INVALID_OBJECT_ID;
         }
-        
+
         // Check if planet type and size match
         // if type is gas giant, size must be too, same goes for asteroids
         if (((planet_type == PT_GASGIANT) && (size != SZ_GASGIANT)) || ((planet_type == PT_ASTEROIDS) && (size != SZ_ASTEROIDS))) {
             Logger().errorStream() << "PythonUniverseGenerator::CreatePlanet : Planet of type " << planet_type << " can't have size " << size;
             return INVALID_OBJECT_ID;
         }
-        
+
         // Create planet and insert it into the object map
         TemporaryPtr<Planet> planet = universe.CreatePlanet(planet_type, size);
         if (!planet) {
@@ -333,7 +333,7 @@ namespace {
 
     // Object storing the main Python createUniverse function callable
     static object   PythonCreateUniverse = object();
-    
+
     // Helper function for executing a Python script
     bool PythonExecScript(const std::string script) {
         try { object ignored = exec(script.c_str(), s_python_namespace, s_python_namespace); }
@@ -348,7 +348,7 @@ namespace {
     // Prepares the Python environment
     void PythonInit() {
         Logger().debugStream() << "Initializing universe generator Python interface";
-        
+
         try {
 #ifdef FREEORION_MACOSX
             // There have been recurring issues on OSX to get FO to use the
@@ -377,7 +377,7 @@ namespace {
             Logger().errorStream() << "Unable to initialize Python interpreter";
             return;
         }
-        
+
         try {
             // get main namespace, needed to run other interpreted code
             object py_main = import("__main__");
@@ -388,7 +388,7 @@ namespace {
             PyErr_Print();
             return;
         }
-        
+
         // set up logging by redirecting stdout and stderr to exposed logging functions
         std::string script = "import sys\n"
         "import foLogger\n"
@@ -405,7 +405,7 @@ namespace {
             Logger().errorStream() << "Unable to redirect Python stdout and stderr";
             return;
         }
-        
+
         // set Python current work directory to resource dir
         script = "import os\n"
         "os.chdir(r'" + (GetResourceDir()).string() + "')\n"
@@ -414,14 +414,14 @@ namespace {
             Logger().errorStream() << "Unable to set Python current directory";
             return;
         }
-        
+
         // tell Python the path in which to locate universe generator script file
         std::string command = "sys.path.append(r'" + (GetResourceDir()).string() + "')";
         if (!PythonExecScript(command)) {
             Logger().errorStream() << "Unable to set universe generator script dir";
             return;
         }
-            
+
         try {
             // import universe generator script file
             s_python_module = import("UniverseGenerator");
@@ -444,7 +444,6 @@ namespace {
         PythonCreateUniverse = object();
         Logger().debugStream() << "Cleaned up universe generator Python interface";
     }
-
 }
 
 
@@ -455,7 +454,7 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     // to the instances we received
     g_galaxy_setup_data = &galaxy_setup_data;
     g_player_setup_data = player_setup_data;
-    
+
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
     try {
@@ -470,10 +469,10 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     }
     Seed(seed);
     Logger().debugStream() << "GenerateUniverse with seed: " << seed;
-    
+
     // Setup and run Python interpreter
     PythonInit();
-    
+
     // Reset the universe object for a new universe
     GetUniverse().ResetUniverse();
     // Call the main Python universe generator script
