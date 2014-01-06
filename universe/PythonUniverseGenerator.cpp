@@ -257,7 +257,7 @@ namespace {
         }
         
         // Create the design and add it to the universe
-        ShipDesign* design = new ShipDesign(name, description, BEFORE_FIRST_TURN, hull, parts, icon, model, false, monster);
+        ShipDesign* design = new ShipDesign(name, description, BEFORE_FIRST_TURN, hull, parts, icon, model, true, monster);
         if (!design) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateShipDesign: couldn't create ship design";
             return false;
