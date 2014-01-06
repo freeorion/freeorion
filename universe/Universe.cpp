@@ -789,6 +789,7 @@ int Universe::InsertShipDesign(ShipDesign* ship_design) {
     if (ship_design) {
         if (m_last_allocated_design_id + 1 < MAX_ID) {
             m_ship_designs[++m_last_allocated_design_id] = ship_design;
+            ship_design->SetID(m_last_allocated_design_id);
             retval = m_last_allocated_design_id;
         } else { // we'll probably never execute this branch, considering how many IDs are available
             // find a hole in the assigned IDs in which to place the object
@@ -796,6 +797,7 @@ int Universe::InsertShipDesign(ShipDesign* ship_design) {
             for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
                 if (1 < it->first - last_id_seen) {
                     m_ship_designs[last_id_seen + 1] = ship_design;
+                    ship_design->SetID(last_id_seen + 1);
                     retval = last_id_seen + 1;
                     break;
                 }
