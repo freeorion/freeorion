@@ -116,10 +116,6 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
 void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
                               double width, double height);
 
-/** Generates planets for all systems that have empty object maps (ie those
- * that aren't homeworld systems).*/
-void PopulateSystems(Universe& universe, GalaxySetupOption density);
-
 /** Adds start-of-game specials to objects. */
 void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq);
 
@@ -142,13 +138,15 @@ void NamePlanets(Universe& universe);
 /** Creates some initial fields in universe. */
 void GenerateFields(Universe& universe, GalaxySetupOption freq);
 
+/** Sets empire homeworld
+ * This includes setting ownership, capital, species,
+ * preferred environment (planet type) for the species */
+bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name);
+
 /** Creates Empires objects for each entry in \a player_setup_data with
  * empire id equal to the specified player ids (so that the calling code
- * can know which empire belongs to which player).  Homeworlds are
- * associated with the empires, and starting buildings and fleets are
- * created, and empire starting ship designs are created and added. */
-void GenerateEmpires(Universe& universe,  std::vector<int>& homeworld_planet_ids,
-                     const std::map<int, PlayerSetupData>& player_setup_data);
+ * can know which empire belongs to which player). */
+void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data);
 
 /** Generates systems and planets, assigns homeworlds and populates them
  * with people, industry and bases, and places starting fleets.  Uses

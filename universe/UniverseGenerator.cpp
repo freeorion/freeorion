@@ -61,6 +61,7 @@ namespace {
 //////////////////////////////////////////
 //  Universe Setup Functions            //
 //////////////////////////////////////////
+
 namespace {
     const double        PI                          = 3.141592653589793;
     SmallIntDistType    g_hundred_dist              = SmallIntDist(1, 100);         // a linear distribution [1, 100] used in most universe generation
@@ -82,56 +83,6 @@ namespace {
                 lowest_dist = distance;
         }
         return lowest_dist;
-    }
-
-    TemporaryPtr<System> GenerateSystem(Universe &universe, GalaxySetupOption age, double x, double y) {
-        //Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
-        if (age <= GALAXY_SETUP_NONE || age > GALAXY_SETUP_HIGH)
-            age = GALAXY_SETUP_MEDIUM;
-
-        const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
-        const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
-
-        // generate new star
-
-        // pick a star type
-        StarType star_type = STAR_NONE;
-        // make a series of "rolls" (1-100) for each star type, and take the highest modified roll
-        int idx = 0;
-        int max_roll = 0;
-        for (unsigned int i = 0; i < NUM_STAR_TYPES; ++i) {
-            int roll = g_hundred_dist() + universe_age_mod_to_star_type_dist[age][i] + base_star_type_dist[i];
-            if (max_roll < roll) {
-                max_roll = roll;
-                idx = i;
-            }
-        }
-        star_type = StarType(idx);
-
-        // pick a name for the system
-        static std::list<std::string> star_names;
-        if (star_names.empty())
-            LoadSystemNames(star_names);
-
-        std::string star_name;
-        if (!star_names.empty()) {
-            int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-            std::list<std::string>::iterator it = star_names.begin();
-            std::advance(it, star_name_idx);
-            star_name = *it;
-            // erase chosen name from list, to avoid duplicates
-            star_names.erase(it);
-        }
-
-        // create new system
-        TemporaryPtr<System> system = universe.CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
-
-        if (!system) {
-            Logger().debugStream() << "...NOT!";
-            throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system into the object map failed.");
-        }
-        
-        return system;
     }
 }
 
@@ -1450,22 +1401,8 @@ void CreateUniverse(int size,                          Shape shape,
 
     Logger().debugStream() << "CreateUniverse: universe width: " << universe.UniverseWidth();
 
-    // Logger().debugStream() << "Populating Systems";
-    // PopulateSystems(universe, planet_density);
-    // Logger().debugStream() << "Generating Starlanes";
-    // GenerateStarlanes(starlane_freq);
-    Logger().debugStream() << "Initializing System Graph";
-    universe.InitializeSystemGraph();
-    Logger().debugStream() << "Generating Homeworlds";
-    GenerateHomeworlds(universe, total_players, homeworld_planet_ids);
     Logger().debugStream() << "Generating Fields";
     GenerateFields(universe, GALAXY_SETUP_MEDIUM);
-    Logger().debugStream() << "Getting Predefined Ship Design Manager";
-    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
-    Logger().debugStream() << "Generating Empires";
-    GenerateEmpires(universe, homeworld_planet_ids, player_setup_data);
-    Logger().debugStream() << "Naming Planets";
-    // NamePlanets(universe);
     Logger().debugStream() << "Generating Natives";
     GenerateNatives(universe, native_freq);
     Logger().debugStream() << "Generating Space Monsters";
@@ -1503,58 +1440,6 @@ void CreateUniverse(int size,                          Shape shape,
     }
 
     universe.UpdateEmpireObjectVisibilities();
-}
-
-void PopulateSystems(Universe& universe, GalaxySetupOption density) {
-    Logger().debugStream() << "PopulateSystems";
-
-    std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
-
-    if (sys_vec.empty())
-        throw std::runtime_error("Attempted to populate an empty galaxy.");
-
-    const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
-    //const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
-    //const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
-    //const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
-
-    for (std::vector<TemporaryPtr<System> >::iterator sys_it = sys_vec.begin(); sys_it != sys_vec.end(); ++sys_it) {
-        TemporaryPtr<System> system = *sys_it;
-        for (int orbit = 0; orbit < system->Orbits(); orbit++) {
-            // randomly generate size and type
-            // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
-            int idx = 0;
-            int max_roll = 0;
-            for (unsigned int i = 0; i < NUM_PLANET_SIZES; ++i) {
-                int roll = g_hundred_dist()
-                    + star_color_mod_to_planet_size_dist[system->GetStarType()][i]
-                    + slot_mod_to_planet_size_dist[orbit][i]
-                    + density_mod_to_planet_size_dist[density][i];
-                if (max_roll < roll) {
-                    max_roll = roll;
-                    idx = i;
-                }
-            }
-            PlanetSize planet_size = PlanetSize(idx);
-            // TEMP: pick planet type randomly, unless it is required by size
-            if (planet_size == SZ_NOWORLD)
-                continue;
-            PlanetType planet_type = INVALID_PLANET_TYPE;
-            if (planet_size == SZ_GASGIANT)
-                planet_type = PT_GASGIANT;
-            else if (planet_size == SZ_ASTEROIDS)
-                planet_type = PT_ASTEROIDS;
-            else {
-                int type_idx = RandInt(0, NUM_PLANET_TYPES - 3);    // last two are asteroids and gas giant
-                planet_type = PlanetType(type_idx);
-            }
-
-            TemporaryPtr<Planet> planet = universe.CreatePlanet(planet_type, planet_size);
-            system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);  // add planet to system map
-        }
-    }
 }
 
 void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
@@ -1969,6 +1854,9 @@ void GenerateStarlanes(GalaxySetupOption freq) {
             sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
     }
 
+    Logger().debugStream() << "Initializing System Graph";
+    GetUniverse().InitializeSystemGraph();
+
 
     //for (n = 0; n < numSys; n++)
     //    laneSetArray[n].clear();
@@ -2155,59 +2043,79 @@ namespace {
     }
 };
 
-void GenerateEmpires(Universe& universe, std::vector<int>& homeworld_planet_ids,
-                    const std::map<int,  PlayerSetupData>& player_setup_data)
+bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
+
+    // set ownership of home planet
+    TemporaryPtr<Planet> home_planet = GetPlanet(planet_id);
+    TemporaryPtr<System> home_system = (home_planet ? GetSystem(home_planet->SystemID()) : TemporaryPtr<System>());
+    if (!home_planet || !home_system) {
+        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
+        return false;
+    }
+    
+    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->Name() << " (planet " <<  home_planet->ID()
+                           << ") to be home system for empire " << empire->EmpireID();
+    
+    home_planet->SetOwner(empire->EmpireID());
+    empire->SetCapitalID(home_planet->ID());
+    empire->AddExploredSystem(home_planet->SystemID());
+    
+    home_planet->SetSpecies(species_name);
+    if (Species* species = GetSpeciesManager().GetSpecies(species_name)) {
+        species->AddHomeworld(home_planet->ID());
+        
+        // set homeword's planet type to the preferred type for this species
+        const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
+        if (!spte.empty()) {
+            // invert map from planet type to environments to map from
+            // environments to type, sorted by environment
+            std::map<PlanetEnvironment, PlanetType> sept;
+            for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
+                sept[it->second] = it->first;
+            // assuming enum values are ordered in increasing goodness...
+            PlanetType preferred_planet_type = sept.rbegin()->second;
+            
+            home_planet->SetType(preferred_planet_type);
+            if (preferred_planet_type == PT_ASTEROIDS)
+                home_planet->SetSize(SZ_ASTEROIDS);
+            else if (preferred_planet_type == PT_GASGIANT)
+                home_planet->SetSize(SZ_GASGIANT);
+        }
+        
+    } else {
+        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \"" << species_name << "\" to set with homeworld id " << home_planet->ID();
+        return false;
+    }
+    
+    return true;
+}
+
+void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
 {
-    Logger().debugStream() << "Generating " << player_setup_data.size() << " empires";
-    // create empires and assign homeworlds, names, colors, and fleet ranges to each one
+    Logger().debugStream() << "Initializing " << player_setup_data.size() << " empires";
 
-    // load default empire names
-    static std::list<std::string> empire_names;
-    if (empire_names.empty())
-        LoadEmpireNames(empire_names);
+    // copy empire colour table, so that individual colours can be removed after they're used
+    std::vector<GG::Clr> colors = EmpireColors();
 
-    std::vector<GG::Clr> colors = EmpireColors();   // copy, not reference, so that individual colours can be removed after they're used
-
-    SpeciesManager&                     species_manager =           GetSpeciesManager();
-    species_manager.ClearSpeciesHomeworlds();
-
-    const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
-    const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
-    const ItemSpecManager&              starting_unlocked_items =   GetItemSpecManager();
-
-    static std::vector<std::string> starting_building_names;
-    if (starting_building_names.empty())
-        LoadNames(starting_building_names, "starting_buildings.txt");
-    static std::vector<std::string> starting_ship_design_names;
-    if (starting_ship_design_names.empty())
-        LoadNames(starting_ship_design_names, "starting_ship_designs.txt");
-
-    // create empire and starting conditions for each player
+    // create empire objects and do some basic initilization for each player
     int player_i = 0;
     for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
          setup_data_it != player_setup_data.end(); ++setup_data_it, ++player_i)
     {
         int         player_id =                 setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
-            Logger().errorStream() << "Universe::GenerateEmpires player id (" << player_id << ") is invalid";
+            Logger().errorStream() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
         int         empire_id =                 player_id;
-
         std::string player_name =               setup_data_it->second.m_player_name;
-        std::string empire_name =               setup_data_it->second.m_empire_name;
         GG::Clr     empire_colour =             setup_data_it->second.m_empire_color;
-        std::string empire_starting_species =   setup_data_it->second.m_starting_species_name;
 
-        int         homeworld_id =              homeworld_planet_ids[player_i];
-
-        // validate or generate name/colour/species
-
+        // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
         std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), empire_colour);
         if (color_it != colors.end())
             colors.erase(color_it);
-
 
         // if no colour already set, do so automatically
         if (empire_colour == GG::Clr(0, 0, 0, 0)) {
@@ -2222,154 +2130,14 @@ void GenerateEmpires(Universe& universe, std::vector<int>& homeworld_planet_ids,
             }
         }
 
-        // if no empire name already set, do so automatically
-        if (empire_name.empty()) {
-            // automatically pick a name
-            if (!empire_names.empty()) {
-                // pick a name from the list of empire names
-                int empire_name_idx = RandSmallInt(0, static_cast<int>(empire_names.size()) - 1);
-                std::list<std::string>::iterator it = empire_names.begin();
-                std::advance(it, empire_name_idx);
-                empire_name = *it;
-                empire_names.erase(it);
-            } else {
-                // use a generic name
-                empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(player_i);
-            }
-        }
+        // set generic default empire name
+        std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(empire_id);
 
-        // if no empire starting species already set, do so automatically
-        if (empire_starting_species.empty()) {
-            // automatically pick a species
-            if (species_manager.NumPlayableSpecies() < 1) {
-                Logger().errorStream() << "Universe::GenerateEmpires found no playable species!  Can't assign species to empires.";
-            } else {
-                int species_name_idx = RandSmallInt(0, species_manager.NumPlayableSpecies() - 1);
-                SpeciesManager::playable_iterator it = species_manager.playable_begin();
-                std::advance(it, species_name_idx);
-                empire_starting_species = it->first;
-                Logger().debugStream() << "Universe::GenerateEmpires randomly assigning species " << empire_starting_species << " to an empire";
-            }
-        }
-
-        Logger().debugStream() << "Universe::GenerateEmpires creating empire named: " << empire_name
-                               << " with empire id: " << empire_id << " for player: " << player_name << " (with player id: " << player_id << ")"
-                               << " starting with species: " << empire_starting_species
-                               << " at homeworld id: " << homeworld_id;
+        Logger().debugStream() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
+                               << " for player: " << player_name << " (with player id: " << player_id << ")";
 
         // create new Empire object through empire manager
-        Empire* empire = Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);
-
-
-        // set ownership of home planet
-        TemporaryPtr<Planet> home_planet = GetPlanet(homeworld_id);
-        TemporaryPtr<System> home_system = (home_planet ? GetSystem(home_planet->SystemID()) : TemporaryPtr<System>());
-        if (!home_planet || !home_system) {
-            Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
-            continue;
-        }
-
-        Logger().debugStream() << "Universe::GenerateEmpires Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
-                               << ") to be home system for Empire " << empire_id;
-
-        home_planet->SetOwner(empire_id);
-        empire->SetCapitalID(home_planet->ID());
-        empire->AddExploredSystem(home_planet->SystemID());
-
-        home_planet->SetSpecies(empire_starting_species);
-        if (Species* species = species_manager.GetSpecies(empire_starting_species)) {
-            species->AddHomeworld(homeworld_id);
-
-            // set homeword's planet type to the preferred type for this species
-            const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
-            if (!spte.empty()) {
-                // invert map from planet type to environments to map from
-                // environments to type, sorted by environment
-                std::map<PlanetEnvironment, PlanetType> sept;
-                for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
-                    sept[it->second] = it->first;
-                // assuming enum values are ordered in increasing goodness...
-                PlanetType preferred_planet_type = sept.rbegin()->second;
-
-                home_planet->SetType(preferred_planet_type);
-                if (preferred_planet_type == PT_ASTEROIDS)
-                    home_planet->SetSize(SZ_ASTEROIDS);
-                else if (preferred_planet_type == PT_GASGIANT)
-                    home_planet->SetSize(SZ_GASGIANT);
-            }
-
-        } else {
-            Logger().errorStream() << "Universe::GenerateEmpires Couldn't get species \"" << empire_starting_species << "\" to set with homeworld id " << homeworld_id;
-        }
-
-        // find a focus to give planets by default.  use first defined available focus.
-        // the planet's AvailableFoci function should return a vector of all names of
-        // available foci, although this might be buggy since the universe isn't fully
-        // created yet at this point in unverse generation.
-        std::vector<std::string> available_foci = home_planet->AvailableFoci();
-        if (!available_foci.empty())
-            home_planet->SetFocus(*available_foci.begin());
-
-
-        // give homeworlds starting buildings
-        for (std::vector<std::string>::const_iterator building_it = starting_building_names.begin();
-             building_it != starting_building_names.end(); ++building_it)
-        {
-            TemporaryPtr<Building> building = universe.CreateBuilding(empire_id, *building_it, empire_id);
-            home_planet->AddBuilding(building->ID());
-        }
-
-
-        // give new empire items and ship designs it should start with
-        starting_unlocked_items.AddItemsToEmpire(empire);
-        predefined_ship_designs.AddShipDesignsToEmpire(empire, starting_ship_design_names);
-
-
-        // create new empire's starting fleets
-        for (FleetPlanManager::iterator it = starting_fleet_plans.begin();
-             it != starting_fleet_plans.end(); ++it)
-        {
-            // create fleet
-            const std::string& fleet_name = (*it)->Name();
-            TemporaryPtr<Fleet> fleet = universe.CreateFleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
-            if (!fleet) {
-                Logger().errorStream() << "unable to create new fleet!";
-                break;
-            }
-            home_system->Insert(fleet);
-
-            // create ships and add to fleet
-            const std::vector<std::string>& ship_design_names = (*it)->ShipDesigns();
-            for (std::vector<std::string>::const_iterator ship_it = ship_design_names.begin();
-                 ship_it != ship_design_names.end(); ++ship_it)
-            {
-                // get universe id of design by looking up name in this empire's map from name to design id
-                const std::string& design_name = *ship_it;
-                int design_id = predefined_ship_designs.GetDesignID(design_name);
-                if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-                    Logger().errorStream() << "couldn't find design name " << design_name << " in map from design names to ids of designs added to empire";
-                    continue;
-                }
-
-                const ShipDesign* design = GetShipDesign(design_id);
-                if (!design) {
-                    Logger().errorStream() << "unable to get ShipDesign with id " << design_id << " and name " << design_name;
-                    continue;
-                }
-
-                // create new ship
-                TemporaryPtr<Ship> ship = universe.CreateShip(empire_id, design_id, empire_starting_species, empire_id);
-                if (!ship) {
-                    Logger().errorStream() << "unable to create new ship!";
-                    break;
-                }
-
-                ship->Rename(empire->NewShipName());
-
-                // add ship to fleet
-                fleet->AddShip(ship->ID());    // also moves ship to fleet's location and inserts into system
-            }
-        }
+        Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);
     }
 
     Empires().ResetDiplomacy();

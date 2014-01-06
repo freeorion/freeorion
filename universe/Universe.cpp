@@ -3158,4 +3158,6 @@ void Universe::ResetUniverse() {
     // which is a valid ID
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
+
+    GetSpeciesManager().ClearSpeciesHomeworlds();
 }

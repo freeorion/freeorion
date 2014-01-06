@@ -154,6 +154,7 @@ namespace FreeOrionPython {
             .value("general",       PC_GENERAL)
         ;
         enum_<UnlockableItemType>("unlockableItemType")
+            .value("invalid",       INVALID_UNLOCKABLE_ITEM_TYPE)
             .value("building",      UIT_BUILDING)
             .value("shipPart",      UIT_SHIP_PART)
             .value("shipHull",      UIT_SHIP_HULL)
