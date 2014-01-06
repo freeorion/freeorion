@@ -1695,7 +1695,7 @@ Hull
         [[INFINITE_FUEL]]
         [[MODERATE_VISION]]
 
-        EffectsGroup
+        EffectsGroup    // in systems with no other monsters, spawn trees
             scope = And [
                 System
                 Star type = [Blue White Yellow Orange Red]
@@ -1728,24 +1728,28 @@ Hull
     location = All
     effectsgroups = [
         [[EXCELLENT_VISION]]
-        EffectsGroup
+
+        EffectsGroup    // remove self and recreate on first turn, so that trees start with age 0, and thus low initial health, instead of having thousands of structure at start of game
             scope = Source
             activation = Turn high = 2
             effects = [
                 CreateShip "SM_TREE"
                 Destroy
             ]
-        EffectsGroup
+
+        EffectsGroup    // grow larger / stronger with age
             scope = Source
             effects = [
                 SetMaxStructure Value + Source.Age*3
                 SetStructure Value + 7
             ]
-        EffectsGroup
+
+        EffectsGroup    // spawn floaters to reproduce
             scope = Source
             activation = Random probability = 0.03
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
+
         EffectsGroup
             scope = And [ Fleet Contains Source ]
             effects = SetAggressive
@@ -1852,9 +1856,9 @@ Hull
     location = All
     effectsgroups = [
         [[EXCELLENT_VISION]]
-        EffectsGroup     
-            scope = Source     
-            activation = Not Turn low = 1  
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1
             effects = [   
                 CreateShip "SM_DRONE"
                 CreateShip "SM_DRONE"
@@ -1894,7 +1898,8 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        EffectsGroup
+
+        EffectsGroup    // merge small krills to create a medium krill
             scope = And [
                 System
                 InSystem Source.SystemID 
@@ -1908,7 +1913,7 @@ Hull
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = CreateShip "SM_KRILL_2"
 
-        EffectsGroup
+        EffectsGroup    // remove merged krills
             scope = And [
                 Number low = 2 And [
                     Ship
@@ -1924,7 +1929,7 @@ Hull
             activation = InSystem
             effects = Destroy
 
-        EffectsGroup
+        EffectsGroup    // mature into medium krill
             scope = And [
                 Source
                 ContainedBy And [
@@ -2007,7 +2012,7 @@ Hull
                         tag = "predefinedshipdesign" data = "SM_KRILL_3"
                         tag = "system" data = Source.SystemID
                     ]
-                    */
+                */
             ]
         EffectsGroup
             scope = And [
@@ -2028,9 +2033,12 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy System Contains Planet type = Asteroids
+                ContainedBy And [
+                    System
+                    Contains Planet type = Asteroids
+                ]
             ]
-            activation = Random probability = 0.12
+            activation = Random probability = 0.15
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_1"
@@ -2064,7 +2072,7 @@ Hull
     ]
     icon = ""
     graphic = "icons/monsters/krill-2.png"
-    
+
 Hull
     name = "SH_KRILL_3_BODY"
     description = "SH_KRILL_3_BODY_DESC"
@@ -2105,7 +2113,7 @@ Hull
                         tag = "predefinedshipdesign" data = "SM_KRILL_4"
                         tag = "system" data = Source.SystemID
                     ]
-                    */
+                */
             ]
         EffectsGroup
             scope = And [
@@ -2126,7 +2134,10 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy System Contains Planet type = Asteroids
+                ContainedBy And [
+                    System
+                    Contains Planet type = Asteroids
+                ]
             ]
             activation = Random probability = 0.08
             stackinggroup = "KRILL_3_ACTION_STACK"
@@ -2145,7 +2156,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[GOOD_VISION]]
-            
+
         EffectsGroup
             scope = And [
                 Fleet
@@ -2201,7 +2212,7 @@ Hull
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
-                    */
+                */
             ]
 
         [[MONSTER_MOVE_ALWAYS]]
