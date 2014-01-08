@@ -24,17 +24,7 @@ struct UniverseObjectVisitor;
    (together), all system objects, all free system objects (those not in an
    orbit), and all objects in a paricular orbit.*/
 class FO_COMMON_API System : public UniverseObject {
-private:
-    typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
-
 public:
-    typedef std::map<int, bool>                 StarlaneMap;            ///< the return type of VisibleStarlanesWormholes()
-
-    typedef ObjectMultimap::iterator            orbit_iterator;         ///< iterator for system objects
-    typedef ObjectMultimap::const_iterator      const_orbit_iterator;   ///< const_iterator for system objects
-    typedef StarlaneMap::iterator               lane_iterator;          ///< iterator for starlanes and wormholes
-    typedef StarlaneMap::const_iterator         const_lane_iterator;    ///< const_iterator for starlanes and wormholes
-
     /** \name Accessors */ //@{
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType  ObjectType() const;
@@ -52,51 +42,39 @@ public:
     StarType                NextOlderStarType() const;
     StarType                NextYoungerStarType() const;
 
-    int                     Orbits() const                  { return m_orbits; }///< returns the number of orbits in this system
+    int                     Orbits() const                  { return m_orbits.size(); } ///< returns the number of orbits in this system
 
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
     bool                    HasStarlaneTo(int id) const;                ///< returns true if there is a starlane from this system to the system with ID number \a id
     bool                    HasWormholeTo(int id) const;                ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
-    virtual int             SystemID() const;                           ///< returns this->ID()
+    virtual int             SystemID() const                { return this->ID(); }
 
-    virtual std::vector<int>FindObjectIDs() const;                      ///< returns ids of objects contained within this system
+    virtual const std::set<int>&    ContainedObjectIDs() const;                     ///< returns ids of objects in this system
 
-    std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;  ///< returns the IDs of all the objects that match \a visitor
+    const std::set<int>&    ObjectIDs() const               { return m_objects; }
+    const std::set<int>&    PlanetIDs() const               { return m_planets; }
+    const std::set<int>&    BuildingIDs() const             { return m_buildings; }
+    const std::set<int>&    FleetIDs() const                { return m_fleets; }
+    const std::set<int>&    ShipIDs() const                 { return m_ships; }
+    const std::set<int>&    FieldIDs() const                { return m_fields; }
 
-    template <class T>
-    std::vector<int>        FindObjectIDs() const;                                      ///< returns the IDs of all the objects of type T
+    virtual bool            Contains(int object_id) const;                                  ///< returns true if object with id \a object_id is in this System
+    virtual bool            ContainedBy(int object_id) const{ return false; }               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
-    std::vector<int>        FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;    ///< returns the IDs of all the objects that match \a visitor
-
-    template <class T>
-    std::vector<int>        FindObjectIDsInOrbit(int orbit) const;                      ///< returns the IDs of all the objects of type T in orbit \a orbit
-
-    virtual bool            Contains(int object_id) const;              ///< returns true if object with id \a object_id is in this system
-
-    const_orbit_iterator    begin() const               { return m_objects.begin(); }   ///< begin iterator for all system objects
-    const_orbit_iterator    end() const                 { return m_objects.end(); }     ///< end iterator for all system objects
-
-    std::pair<const_orbit_iterator, const_orbit_iterator>
-                            orbit_range(int o) const;                   ///< returns begin and end iterators for all system objects in orbit
-    std::pair<const_orbit_iterator, const_orbit_iterator>
-                            non_orbit_range() const;                    ///< returns begin and end iterators for all system objects not in an orbit
-
-    int                     OrbitOfObjectID(int object_id) const;       ///< returns the orbit ID in which the object with \a object_id is located, or -1 if in no orbit or not an object present in an orbit
+    int                     PlanetInOrbit(int orbit) const;             ///< returns the ID of the planet in the specified \a orbit, or INVALID_OBJECT_ID if there is no planet in that orbit or it is an invalid orbit
+    int                     OrbitOfPlanet(int object_id) const;         ///< returns the orbit ID in which the planet with \a object_id is located, or -1 the specified ID is not a planet in an orbit of this system
     bool                    OrbitOccupied(int orbit) const;             ///< returns true if there is an object in \a orbit
     std::set<int>           FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
 
-    const_lane_iterator     begin_lanes() const;                        ///< begin iterator for all starlanes and wormholes terminating in this system
-    const_lane_iterator     end_lanes() const;                          ///< end iterator for all starlanes and wormholes terminating in this system
-
-    StarlaneMap             StarlanesWormholes() const;                 ///< returns map of all starlanes and wormholes; map contains keys that are IDs of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)
+    const std::map<int, bool>&  StarlanesWormholes() const;             ///< returns map of all starlanes and wormholes; map contains keys that are IDs of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)
 
     /** returns a map of the starlanes and wormholes visible to empire
       * \a empire_id; the map contains keys that are IDs of connected systems,
       * and bool values indicating whether each is a starlane (false) or a
       * wormhole (true)*/
-    StarlaneMap             VisibleStarlanesWormholes(int empire_id) const;
+    std::map<int, bool>     VisibleStarlanesWormholes(int empire_id) const;
 
     int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 
@@ -104,38 +82,20 @@ public:
                             Accept(const UniverseObjectVisitor& visitor) const;
 
     const std::string&      OverlayTexture() const      { return m_overlay_texture; }
-    double                  OverlaySize() const         { return m_overlay_size; }      ///< size in universe
+    double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units
 
-    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
-    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetRemovedSignal;      ///< fleet is removed from system
+    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetInsertedSignal;    ///< fleet is inserted into system
+    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetRemovedSignal;     ///< fleet is removed from system
     //@}
 
     /** \name Mutators */ //@{
     virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
-    /** inserts a UniversObject into the system, though not in any particular
-      * orbit.  Only objects free of any particular orbit, such as ships,
-      * should be inserted using this function.  This function calls
-      * obj->SetSystem(this), and obj->MoveTo( this system's position )*/
-    int                     Insert(TemporaryPtr<UniverseObject> obj);
-
-    /** inserts an object into a specific orbit position.  Only orbit-bound
-      * objects, such as Planets, and planet-bound objects should be inserted
-      * with this function.  This function calls obj->SetSystem(this) and
-      * obj->MoveTo( here )
-      * \throw std::invalid_arugment May throw std::invalid_arugment if
-      * \a orbit is out of the range [0, Orbits()].*/
-    int                     Insert(TemporaryPtr<UniverseObject> obj, int orbit);
-
-    /** inserts an object into a specific orbit position.  Only orbit-bound
-      * objects, such as Planets, and planet-bound objects should be inserted
-      * with this function. */
-    int                     Insert(int obj_id, int orbit);
+    /** adds an object to this system. */
+    void                    Insert(TemporaryPtr<UniverseObject> obj, int orbit = -1);
 
     /** removes the object with ID number \a id from this system. */
     void                    Remove(int id);
-
-    virtual void            MoveTo(double x, double y);
 
     void                    SetStarType(StarType type);     ///< sets the type of the star in this Systems to \a StarType
     void                    AddStarlane(int id);            ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
@@ -146,18 +106,6 @@ public:
     virtual void            SetOwner(int id) {};            ///< adding owner to system objects is a no-op
     void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this system
 
-    orbit_iterator          begin()                     { return m_objects.begin(); }   ///< begin iterator for all system objects
-    orbit_iterator          end()                       { return m_objects.end(); }     ///< end iterator for all system objects
-
-    std::pair<orbit_iterator, orbit_iterator>
-                            orbit_range(int o);             ///< returns begin and end iterators for all system objects in orbit \a o
-
-    std::pair<orbit_iterator, orbit_iterator>
-                            non_orbit_range();              ///< returns begin and end iterators for all system objects not in an orbit
-
-    lane_iterator           begin_lanes();                  ///< begin iterator for all starlanes and wormholes terminating in this system
-    lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
-
     void                    SetOverlayTexture(const std::string& texture, double size);
 
     virtual void            ResetTargetMaxUnpairedMeters();
@@ -166,19 +114,19 @@ public:
 protected:
     friend class Universe;
     /** \name Structors */ //@{
-    System();                                                           ///< default ctor
+    System();   ///< default ctor
 
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
       * area.*/
-    System(StarType star, int orbits, const std::string& name, double x, double y);
+    System(StarType star, const std::string& name, double x, double y);
 
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
       * area.*/
-    System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
+    System(StarType star, const std::map<int, bool>& lanes_and_holes,
            const std::string& name, double x, double y);
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
@@ -189,21 +137,19 @@ protected:
     //@}
 
 private:
-    /** returns the subset of m_objects that is visible to empire with id
-      * \a empire_id */
-    ObjectMultimap          VisibleContainedObjects(int empire_id) const;
+    StarType            m_star;
+    std::vector<int>    m_orbits;                   ///< indexed by orbit number, indicates the id of the planet in that orbit
+    std::set<int>       m_objects;
+    std::set<int>       m_planets;
+    std::set<int>       m_buildings;
+    std::set<int>       m_fleets;
+    std::set<int>       m_ships;
+    std::set<int>       m_fields;
+    std::map<int, bool> m_starlanes_wormholes;      ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    int                 m_last_turn_battle_here;    ///< the turn on which there was last a battle in this system
 
-    /** removes object \a obj from this system. */
-    void                    Remove(TemporaryPtr<UniverseObject> obj);
-
-    StarType        m_star;
-    int             m_orbits;
-    ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
-    StarlaneMap     m_starlanes_wormholes;          ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
-    int             m_last_turn_battle_here;        ///< the turn on which there was last a battle in this system
-
-    std::string     m_overlay_texture;              // intentionally not serialized; set by local effects
-    double          m_overlay_size;
+    std::string         m_overlay_texture;          // intentionally not serialized; set by local effects
+    double              m_overlay_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -244,30 +190,5 @@ double StarlaneEntranceTangentAxis();
 /** Returns true iff tactical combat point <i>(x, y)</i> falls inside the
     indicated starlane ellipse. */
 bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system);
-
-
-// template implementations
-template <class T>
-std::vector<int> System::FindObjectIDs() const {
-    std::vector<int> retval;
-    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
-            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
-                retval.push_back(it->second);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<int> System::FindObjectIDsInOrbit(int orbit) const {
-    std::vector<int> retval;
-    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
-    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(it->second))
-            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
-                retval.push_back(it->second);
-    }
-    return retval;
-}
 
 #endif // _System_h_

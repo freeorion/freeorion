@@ -126,6 +126,14 @@ const std::string& Field::PublicName(int empire_id) const {
 TemporaryPtr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(boost::const_pointer_cast<Field>(boost::static_pointer_cast<const Field>(TemporaryFromThis()))); }
 
+int Field::ContainerObjectID() const
+{ return this->SystemID(); }
+
+bool Field::ContainedBy(int object_id) const {
+    return object_id != INVALID_OBJECT_ID
+        && object_id == this->SystemID();
+}
+
 bool Field::InField(TemporaryPtr<const UniverseObject> obj) const
 { return obj && InField(obj->X(), obj->Y()); }
 

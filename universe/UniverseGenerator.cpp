@@ -330,23 +330,23 @@ void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned i
                               double width, double height)
 {
     Logger().debugStream() << "IrregularGalaxyPositions";
-    
+
     unsigned int positions_placed = 0;
     for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
-        
+
         double x = width * RandZeroToOne();
         double y = height * RandZeroToOne();
-        
+
         Logger().debugStream() << "... potential position: (" << x << ", " << y << ")";
-        
+
         // reject positions outside of galaxy: minimum 0, maximum height or width.  shouldn't be a problem,
         // but I'm copying this from one of the other generation functions and figure it might as well remain
         if (x < 0 || width <= x || y < 0 || height <= y)
             continue;
-        
+
         // See if new star is too close to any existing star.
         double lowest_dist = CalcNewPosNearestNeighbour(x, y, positions);
-        
+
         // If so, we try again or give up.
         if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
             if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -357,14 +357,14 @@ void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned i
             }
             continue;
         }
-        
+
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
-        
+
         Logger().debugStream() << "... added system at (" << x << ", " << y << ") after " << attempts << " attempts";
-        
+
         positions_placed++;
-        
+
         // Note that attempts is reset for every star.
         attempts = 0;
     }
@@ -1596,7 +1596,8 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
 
     // get overall universe chance for monster generation in a system
     int inverse_monster_chance = UniverseDataTables()["MonsterFrequency"][0][freq];
-    Logger().debugStream() << "Universe::GenerateSpaceMonsters(" << boost::lexical_cast<std::string>(freq) << ") inverse monster chance: " << inverse_monster_chance;
+    Logger().debugStream() << "Universe::GenerateSpaceMonsters(" << boost::lexical_cast<std::string>(freq)
+                           << ") inverse monster chance: " << inverse_monster_chance;
     double monster_chance(0.0);
     if (inverse_monster_chance > 0)
         monster_chance = 1.0 / static_cast<double>(inverse_monster_chance);
@@ -1627,8 +1628,12 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
     // system, which hasn't already been added too many times, and then attempt
     // to add that monster by testing the spawn rate chance
     MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
-    for (std::vector<TemporaryPtr<System> >::iterator sys_it = system_vec.begin(); sys_it != system_vec.end(); ++sys_it) {
+    for (std::vector<TemporaryPtr<System> >::iterator sys_it = system_vec.begin();
+         sys_it != system_vec.end(); ++sys_it)
+    {
         //Logger().debugStream() << "Attempting to add monster at system " << system->Name();
+        TemporaryPtr<System> system = *sys_it;
+
         // for this system, find a suitable monster fleet plan
         const MonsterFleetPlanManager::iterator initial_monster_plan_it = monster_plan_it;
         while (true) {
@@ -1643,7 +1648,7 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
                 // location.  if there is no location condition, assume there
                 // is no restriction on this monster's spawn location.
                 const Condition::ConditionBase* location_test = plan->Location();
-                if (!location_test || location_test->Eval(*sys_it)) {
+                if (!location_test || location_test->Eval(system)) {
                     //Logger().debugStream() << "... ... can be placed here";
                     // monster can be placed here.
 
@@ -1662,12 +1667,12 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
 
                         // create fleet for monsters
                         const std::string& fleet_name = UserString("MONSTERS");
-                        TemporaryPtr<Fleet> fleet = universe.CreateFleet(fleet_name, (*sys_it)->X(), (*sys_it)->Y(), ALL_EMPIRES);
+                        TemporaryPtr<Fleet> fleet = universe.CreateFleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
                         if (!fleet) {
                             Logger().errorStream() << "unable to create new fleet for monsters!";
                             return;
                         }
-                        (*sys_it)->Insert(fleet);
+                        system->Insert(fleet);
 
                         // create ships and add to fleet
                         for (std::vector<std::string>::const_iterator monster_it = monsters.begin();
@@ -1681,12 +1686,12 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
 
                             // create new monster ship
                             TemporaryPtr<Ship> ship = universe.CreateShip(ALL_EMPIRES, design_id, "", ALL_EMPIRES);
-                            if (!ship)
-                                continue;
+                            system->Insert(ship);
 
                             ship->Rename(UserString(*monster_it));
 
-                            fleet->AddShip(ship->ID());    // also moves ship to fleet's location and inserts into system
+                            fleet->AddShip(ship->ID());
+                            ship->SetFleetID(fleet->ID());
                         }
                     } else {
                         //Logger().debugStream() << "... ... failed random chance test. skipping system.";
@@ -1825,7 +1830,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
         } // end while
     }
 
-    // add the starlane to the stars
+     // add the starlane to the stars
     for (n = 0; n < numSys; ++n) {
         const std::set<int>& lanes = laneSetArray[n];
         for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
@@ -1932,30 +1937,34 @@ void GenerateHomeworlds(Universe& universe, int players, std::vector<int>& homew
                     break;
                 }
             }
-        } while ((!system->Orbits() || system->FindObjectIDs<Planet>().empty() || too_close) && ++attempts < 50);
+        } while ((!system->Orbits() || system->PlanetIDs().empty() || too_close) && ++attempts < 50);
 
         sys_vec.erase(sys_vec.begin() + system_index);
 
         // find a place to put the homeworld, and replace whatever planet is there already
-        int home_orbit; std::string planet_name;
+        int home_orbit = -1;
 
-        // we can only select a planet if there are planets in this system.
-        if (system->Orbits() >0 && !system->FindObjectIDs<Planet>().empty()) {
-            std::vector<int> vec_orbits;
-            for (int i = 0; i < system->Orbits(); i++)
-                if (system->FindObjectIDsInOrbit<Planet>(i).size() > 0)
-                    vec_orbits.push_back(i);
-
-            int planet_index = vec_orbits.size() > 1   ?   RandSmallInt(0, vec_orbits.size() - 1)   :   0;
-            planet_name = system->Name() + " " + RomanNumber(planet_index + 1);
-            home_orbit = vec_orbits[planet_index];
-            universe.Delete(system->FindObjectIDsInOrbit<Planet>(home_orbit).back());
-        } else {
+        if (system->PlanetIDs().empty()) {
             home_orbit = 0;
-            planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
+        } else {
+            // find empty orbit?
+            for (int o = 0; o < system->Orbits(); ++o) {
+                if (system->PlanetInOrbit(o) == INVALID_OBJECT_ID) {
+                    home_orbit = o;
+                    break;
+                }
+            }
+            if (home_orbit == -1) {
+                // no free orbit, so need to clear one.
+                int sacrificial_planet = system->PlanetInOrbit(0);
+                system->Remove(sacrificial_planet);
+                universe.Delete(sacrificial_planet);
+                home_orbit = 0;
+            }
         }
 
-        TemporaryPtr<Planet> planet = universe.CreatePlanet(PT_TERRAN, SZ_MEDIUM); // TODO: Is setting homeworlds' EPs hacked into the scripts somewhere?  We can probably do it here, if only we had the species...
+        TemporaryPtr<Planet> planet = universe.CreatePlanet(PT_TERRAN, SZ_MEDIUM);
+        std::string planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         planet->Rename(planet_name);
         system->Insert(TemporaryPtr<UniverseObject>(planet), home_orbit);
 
@@ -1965,24 +1974,24 @@ void GenerateHomeworlds(Universe& universe, int players, std::vector<int>& homew
 
 void NamePlanets(Universe& universe) {
     std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
-    for (ObjectMap::iterator<System> sys_it = Objects().begin<System>(); sys_it != Objects().end<System>(); ++sys_it) {
-        int num_planets_in_system = 0;
-        for (int i = 0; i < sys_it->Orbits(); i++) {
-            std::vector<int> planet_ids = sys_it->FindObjectIDsInOrbit<Planet>(i);
-            if (!planet_ids.empty()) {
-                assert(planet_ids.size() == 1);
-                TemporaryPtr<Planet> planet = GetPlanet(*planet_ids.begin());
-                if (!planet) {
-                    Logger().errorStream() << "Universe::NamePlanet couldn't get planet with id " << *planet_ids.begin();
-                    continue;
-                }
-                if (planet->Type() == PT_ASTEROIDS) {
-                    std::string name = boost::io::str(FlexibleFormat(UserString("PL_ASTEROID_BELT_OF_SYSTEM")) %
-                                                      sys_it->Name());
-                    planet->Rename(name);
-                } else {
-                    planet->Rename(sys_it->Name() + " " + RomanNumber(++num_planets_in_system));
-                }
+    for (ObjectMap::iterator<System> sys_it = Objects().begin<System>();
+         sys_it != Objects().end<System>(); ++sys_it)
+    {
+        TemporaryPtr<System> system = *sys_it;
+        std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>(system->PlanetIDs());
+
+        for (std::vector<TemporaryPtr<Planet> >::iterator planet_it = planets.begin();
+             planet_it != planets.end(); ++planet_it)
+        {
+            TemporaryPtr<Planet> planet = *planet_it;
+
+            if (planet->Type() == PT_ASTEROIDS) {
+                std::string name = boost::io::str(FlexibleFormat(UserString("PL_ASTEROID_BELT_OF_SYSTEM")) %
+                                                  system->Name());
+                planet->Rename(name);
+            } else {
+                int orbit = system->OrbitOfPlanet(planet->ID());
+                planet->Rename(system->Name() + " " + RomanNumber(orbit+1));
             }
         }
     }
@@ -2022,49 +2031,52 @@ namespace {
 };
 
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
-
     // set ownership of home planet
     TemporaryPtr<Planet> home_planet = GetPlanet(planet_id);
-    TemporaryPtr<System> home_system = (home_planet ? GetSystem(home_planet->SystemID()) : TemporaryPtr<System>());
+    TemporaryPtr<System> home_system;
+    if (home_planet)
+        home_system = GetSystem(home_planet->SystemID());
     if (!home_planet || !home_system) {
         Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
         return false;
     }
-    
-    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->Name() << " (planet " <<  home_planet->ID()
+
+    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->Name()
+                           << " (planet " <<  home_planet->ID()
                            << ") to be home system for empire " << empire->EmpireID();
-    
+
     home_planet->SetOwner(empire->EmpireID());
     empire->SetCapitalID(home_planet->ID());
     empire->AddExploredSystem(home_planet->SystemID());
-    
+
     home_planet->SetSpecies(species_name);
     if (Species* species = GetSpeciesManager().GetSpecies(species_name)) {
         species->AddHomeworld(home_planet->ID());
-        
-        // set homeword's planet type to the preferred type for this species
-        const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
-        if (!spte.empty()) {
-            // invert map from planet type to environments to map from
-            // environments to type, sorted by environment
-            std::map<PlanetEnvironment, PlanetType> sept;
-            for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
-                sept[it->second] = it->first;
-            // assuming enum values are ordered in increasing goodness...
-            PlanetType preferred_planet_type = sept.rbegin()->second;
-            
-            home_planet->SetType(preferred_planet_type);
-            if (preferred_planet_type == PT_ASTEROIDS)
-                home_planet->SetSize(SZ_ASTEROIDS);
-            else if (preferred_planet_type == PT_GASGIANT)
-                home_planet->SetSize(SZ_GASGIANT);
-        }
-        
+
+            // set homeword's planet type to the preferred type for this species
+            const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
+            if (!spte.empty()) {
+                // invert map from planet type to environments to map from
+                // environments to type, sorted by environment
+                std::map<PlanetEnvironment, PlanetType> sept;
+                for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
+                    sept[it->second] = it->first;
+                // assuming enum values are ordered in increasing goodness...
+                PlanetType preferred_planet_type = sept.rbegin()->second;
+
+                home_planet->SetType(preferred_planet_type);
+                if (preferred_planet_type == PT_ASTEROIDS)
+                    home_planet->SetSize(SZ_ASTEROIDS);
+                else if (preferred_planet_type == PT_GASGIANT)
+                    home_planet->SetSize(SZ_GASGIANT);
+            }
+
     } else {
-        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \"" << species_name << "\" to set with homeworld id " << home_planet->ID();
+        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
+                               << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
-    
+
     return true;
 }
 

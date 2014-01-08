@@ -28,7 +28,11 @@ public:
     virtual std::string         Dump() const;
 
     const std::string&      BuildingTypeName() const    { return m_building_type; };        ///< returns the name of the BuildingType object for this building
+
+    virtual int             ContainerObjectID() const   { return m_planet_id; }             ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
+    virtual bool            ContainedBy(int object_id) const;                               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
     int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
+
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
 
     virtual TemporaryPtr<UniverseObject>
@@ -41,7 +45,6 @@ public:
     virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
-    virtual void    MoveTo(double x, double y);
 
     void            Reset();                            ///< resets any building state, and removes owners
     void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping

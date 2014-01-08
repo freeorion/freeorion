@@ -70,20 +70,15 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
-    if (vis == VIS_BASIC_VISIBILITY) {
-        ShipIDSet vis_ship_ids = copied_fleet->VisibleContainedObjects(empire_id);
-        // removal from old fleet and setting of ship's m_fleet_id is handled by the ship, as is setting of the ships fleetID
-        this->m_ships.insert(vis_ship_ids.begin(), vis_ship_ids.end());
-        Logger().debugStream() << "Fleet::Copy for fleet " << this->Name() << " ID(" << this->ID() << ") BASIC_VISIBILITY -- updating infor for "<<vis_ship_ids.size()<<" ships";
-    }
     if (vis >= VIS_BASIC_VISIBILITY) {
+        this->m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
+
         this->m_next_system =                   copied_fleet->m_next_system;
         this->m_prev_system =                   copied_fleet->m_prev_system;
         this->m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         this->m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-            this->m_ships =                     copied_fleet->VisibleContainedObjects(empire_id);
             this->m_aggressive =                copied_fleet->m_aggressive;
             if (this->Unowned())
                 this->m_name =                  copied_fleet->m_name;
@@ -138,13 +133,25 @@ std::string Fleet::Dump() const {
        << " next system: " << m_next_system
        << " arrival lane: " << m_arrival_starlane
        << " ships: ";
-    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end();) {
+    for (std::set<int>::const_iterator it = m_ships.begin(); it != m_ships.end();) {
         int ship_id = *it;
         ++it;
         os << ship_id << (it == m_ships.end() ? "" : ", ");
     }
     return os.str();
 }
+
+int Fleet::ContainerObjectID() const
+{ return this->SystemID(); }
+
+const std::set<int>& Fleet::ContainedObjectIDs() const
+{ return m_ships; }
+
+bool Fleet::Contains(int object_id) const
+{ return object_id != INVALID_OBJECT_ID && m_ships.find(object_id) != m_ships.end(); }
+
+bool Fleet::ContainedBy(int object_id) const
+{ return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
 const std::string& Fleet::PublicName(int empire_id) const {
     // Disclose real fleet name only to fleet owners.
@@ -502,12 +509,11 @@ float Fleet::Fuel() const {
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
-    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        TemporaryPtr<const Ship> ship = GetShip(*ship_it);
-        if (!ship) {
-            Logger().errorStream() << "Fleet::Fuel couldn't get ship with id " << *ship_it;
-            continue;
-        }
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             Logger().errorStream() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -532,12 +538,11 @@ float Fleet::MaxFuel() const {
     // can store the least amount of fuel
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
-    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        TemporaryPtr<const Ship> ship = GetShip(*ship_it);
-        if (!ship) {
-            Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
-            continue;
-        }
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
             Logger().errorStream() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -555,84 +560,91 @@ float Fleet::MaxFuel() const {
 }
 
 bool Fleet::HasMonsters() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->IsMonster())
-                return true;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        if (ship->IsMonster())
+            return true;
     }
     return false;
 }
 
 bool Fleet::HasArmedShips() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->IsArmed())
-                return true;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        if (ship->IsArmed())
+            return true;
     }
     return false;
 }
 
 bool Fleet::HasColonyShips() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++)
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->CanColonize())
-                if (const ShipDesign* design = ship->Design())
-                    if (design->ColonyCapacity() > 0.0)
-                        return true;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        if (ship->CanColonize())
+            if (const ShipDesign* design = ship->Design())
+                if (design->ColonyCapacity() > 0.0)
+                    return true;
+    }
     return false;
 }
 
 bool Fleet::HasOutpostShips() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++)
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->CanColonize())
-                if (const ShipDesign* design = ship->Design())
-                    if (design->ColonyCapacity() == 0.0)
-                        return true;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        if (ship->CanColonize())
+            if (const ShipDesign* design = ship->Design())
+                if (design->ColonyCapacity() == 0.0)
+                    return true;
+    }
     return false;
 }
 
 bool Fleet::HasTroopShips() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++)
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->HasTroops())
-                return true;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        if (ship->HasTroops())
+            return true;
+    }
     return false;
 }
 
 bool Fleet::HasShipsOrderedScrapped() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++)
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (ship->OrderedScrapped())
-                return true;
+    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
+    for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<Ship> ship = *it;
+        if (ship->OrderedScrapped())
+            return true;
+    }
     return false;
 }
 
 bool Fleet::HasShipsWithoutScrapOrders() const {
-    for (Fleet::const_iterator it = begin(); it != end(); it++)
-        if (TemporaryPtr<const Ship> ship = GetShip(*it))
-            if (!ship->OrderedScrapped())
-                return true;
+    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
+    for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<Ship> ship = *it;
+        if (!ship->OrderedScrapped())
+            return true;
+    }
     return false;
-}
-
-bool Fleet::Contains(int object_id) const
-{ return m_ships.find(object_id) != m_ships.end(); }
-
-std::vector<TemporaryPtr<UniverseObject> > Fleet::FindObjects() const {
-    std::vector<TemporaryPtr<UniverseObject> > retval;
-    // add ships in this fleet
-    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it)
-        if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(*it))
-            retval.push_back(obj);
-    return retval;
-}
-
-std::vector<int> Fleet::FindObjectIDs() const {
-    std::vector<int> retval;
-    // add ships in this fleet
-    std::copy(m_ships.begin(), m_ships.end(), std::back_inserter(retval));
-    return retval;
 }
 
 bool Fleet::UnknownRoute() const {
@@ -730,51 +742,9 @@ void Fleet::AddShip(int ship_id) {
 }
 
 void Fleet::AddShips(const std::vector<int>& ship_ids) {
-    ScopedTimer timer("Fleet::AddShips for " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
-    // sort ships to be added by old fleet
-    std::map<int, std::pair<std::vector<int>, std::vector<TemporaryPtr<Ship> > > > old_fleets_ships;
-    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-        TemporaryPtr<Ship> ship = GetShip(*it);
-        if (!ship) {
-            Logger().errorStream() << "Fleet::AddShips couldn't find ship with id  " << *it;
-            continue;
-        }
-        if (this->Contains(*it))
-            continue;
-        old_fleets_ships[ship->FleetID()].first.push_back(*it);
-        old_fleets_ships[ship->FleetID()].second.push_back(ship);
-    }
-
-    bool changed = false;
-
-    // move all the ships from each source fleet together
-    for (std::map<int, std::pair<std::vector<int>, std::vector<TemporaryPtr<Ship> > > >::const_iterator
-         old_fleet_it = old_fleets_ships.begin();
-         old_fleet_it != old_fleets_ships.end(); ++old_fleet_it)
-    {
-        const std::vector<int>& ships_to_move_ids = old_fleet_it->second.first;
-        const std::vector<TemporaryPtr<Ship> >& ships_to_move = old_fleet_it->second.second;
-        int old_fleet_id = old_fleet_it->first;
-
-        if (TemporaryPtr<Fleet> old_fleet = GetFleet(old_fleet_id))
-            old_fleet->RemoveShips(ships_to_move_ids);
-
-        // ensure ships are in same system as this fleet and set their fleet IDs
-        int fleet_system_id = this->SystemID();
-        for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships_to_move.begin();
-             ship_it != ships_to_move.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
-            if (fleet_system_id != ship->SystemID())
-                if (TemporaryPtr<System> system = GetSystem(fleet_system_id))
-                    system->Insert(ship);
-            ship->SetFleetID(this->ID());
-        }
-        // record this fleet's ships
-        std::copy(ships_to_move_ids.begin(), ships_to_move_ids.end(), std::inserter(m_ships, m_ships.end()));
-        changed = true;
-    }
-    if (changed)
+    int old_ships_size = m_ships.size();
+    std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end()));
+    if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }
 
@@ -785,30 +755,11 @@ void Fleet::RemoveShip(int ship_id) {
 }
 
 void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
-    ScopedTimer timer("Fleet::RemoveShips for " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
-    std::set<int> initial_m_ships = m_ships;
+    int old_ships_size = m_ships.size();
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
         m_ships.erase(*it);
-    if (m_ships != initial_m_ships)
+    if (old_ships_size != m_ships.size())
         StateChangedSignal();
-}
-
-void Fleet::SetSystem(int sys) {
-    //Logger().debugStream() << "Fleet::SetSystem(int sys)";
-    UniverseObject::SetSystem(sys);
-    for (iterator it = begin(); it != end(); ++it)
-        if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(*it))
-            obj->SetSystem(sys);
-}
-
-void Fleet::MoveTo(double x, double y) {
-    //Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
-    // move fleet itself
-    UniverseObject::MoveTo(x, y);
-    // move ships in fleet
-    for (iterator it = begin(); it != end(); ++it)
-        if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(*it))
-            obj->UniverseObject::MoveTo(x, y);
 }
 
 void Fleet::SetNextAndPreviousSystems(int next, int prev) {
@@ -829,17 +780,21 @@ void Fleet::MovementPhase() {
     Empire* empire = Empires().Lookup(fleet->Owner());
     std::set<int> supply_unobstructed_systems;
     if (empire)
-        supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(), empire->SupplyUnobstructedSystems().end());
+        supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
+                                           empire->SupplyUnobstructedSystems().end());
+
+    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
     if (empire && empire->SystemHasFleetSupply(fleet->SystemID())) {
-        for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
-            if (TemporaryPtr<Ship> ship = GetShip(*ship_it)) {
-                ship->Resupply();
-                if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
-                    fuel_meter->BackPropegate();
-            }
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            ship->Resupply();
+            if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                fuel_meter->BackPropegate();
         }
     }
 
@@ -851,26 +806,25 @@ void Fleet::MovementPhase() {
     if (next_it != move_path.end())
         ++next_it;
 
-    //Logger().debugStream() << "Fleet::MovementPhase for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at system ("<<SystemID()<<")";
 
-    // is the ship stuck in a system for a whole turn?
+    // is the fleet stuck in a system for a whole turn?
     if (current_system) {
         ///update m_arrival_starlane if no blockade, if needed
-        // blockade debug logging
-        //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at current_system " << current_system->Name() << "("<<SystemID()<<")";
         if (supply_unobstructed_systems.find(fleet->SystemID()) != supply_unobstructed_systems.end()) {
-                //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at current_system " << current_system->Name() << "("<<SystemID()<<")";
-                fleet->m_arrival_starlane = fleet->SystemID();//allows departure via any starlane
+            fleet->m_arrival_starlane = fleet->SystemID();//allows departure via any starlane
         }
+
         // in a system.  if there is no system after the current one in the
         // path, or the current and next nodes have the same system id, that
-        // is an actual system,  or if blockaded from intended path, then won't be moving this turn.
+        // is an actual system, or if blockaded from intended path, then won't
+        // be moving this turn.
         bool stopped = false;
         if (next_it == move_path.end()) {
             stopped = true;
+
         } else if (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) {
             stopped = true;
-            //Logger().debugStream() << "Fleet::MovementPhase stopping due to doubled system at start of path";
+
         } else if (fleet->m_arrival_starlane != fleet->SystemID()) {
             int next_sys_id;
             if (next_it->object_id != INVALID_OBJECT_ID) {
@@ -886,31 +840,42 @@ void Fleet::MovementPhase() {
             if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
                 fleet->FinalDestinationID() == fleet->SystemID())
             {
-                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
-                    if (TemporaryPtr<Ship> ship = GetShip(*ship_it))
-                        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
-                            fuel_meter->AddToCurrent(0.1001f);
-                            fuel_meter->BackPropegate();
-                        }
+                for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
+                     ship_it != ships.end(); ++ship_it)
+                {
+                    TemporaryPtr<Ship> ship = *ship_it;
+                    if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
+                        fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
+                        fuel_meter->BackPropegate();
+                    }
                 }
             }
             return;
+
         } else {
+            // record previous system on fleet's path, and the starlane along
+            // which it will arrive at the next system (for blockading purposes)
             fleet->m_arrival_starlane = fleet->SystemID();
             fleet->m_prev_system = fleet->SystemID();
+
+            // remove fleet and ships from system they are departing
+            current_system->Remove(fleet->ID());
+            fleet->SetSystem(INVALID_OBJECT_ID);
+            for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                 ship_it != ships.end(); ++ship_it)
+            {
+                TemporaryPtr<Ship> ship = *ship_it;
+                current_system->Remove(ship->ID());
+                ship->SetSystem(INVALID_OBJECT_ID);
+            }
         }
     }
 
 
     // if fleet not moving, nothing more to do.
     if (move_path.empty() || move_path.size() == 1) {
-        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path is empty or has only one entry.  doing nothing";
         return;
     }
-
-    //Logger().debugStream() << "Fleet::MovementPhase move path:";
-    //for (std::list<MovePathNode>::const_iterator it = move_path.begin(); it != move_path.end(); ++it)
-    //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
 
 
     // move fleet in sequence to MovePathNodes it can reach this turn
@@ -919,8 +884,6 @@ void Fleet::MovementPhase() {
         next_it = it;   ++next_it;
 
         TemporaryPtr<System> system = GetSystem(it->object_id);
-
-        //Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
@@ -942,54 +905,57 @@ void Fleet::MovementPhase() {
             if (resupply_here) {
                 //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
-                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
-                    TemporaryPtr<Ship> ship = GetShip(*ship_it);
-                    assert(ship);
+                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                     ship_it != ships.end(); ++ship_it)
+                {
+                    TemporaryPtr<Ship> ship = *ship_it;
                     ship->Resupply();
                 }
             }
 
 
-            if (node_is_next_stop) {                    // is system the last node reached this turn?
-                system->Insert(fleet);                       // fleet ends turn at this node.  insert fleet into system
+            // is system the last node reached this turn?
+            if (node_is_next_stop) {
+                // fleet ends turn at this node.  insert fleet and ships into system
+                system->Insert(fleet);
+                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                     ship_it != ships.end(); ++ship_it)
+                {
+                    TemporaryPtr<Ship> ship = *ship_it;
+                    system->Insert(ship);
+                }
+
                 current_system = system;
-                // blockade debug logging
-                //Logger().debugStream() << "Fleet::MovementPhase checking blockade for Fleet "<< ID() << " with m_arrival_lane "<<m_arrival_starlane<< " at next stop node system " << current_system->Name() << "("<<SystemID()<<")";
+
                 if (supply_unobstructed_systems.find(fleet->SystemID()) != supply_unobstructed_systems.end()) {
                     fleet->m_arrival_starlane = fleet->SystemID();//allows departure via any starlane
-                    //Logger().debugStream() << "Fleet::MovementPhase clearing m_arrival_starlane for Fleet "<< ID() << " at (next stop node) system " << system->Name() << "("<<system->ID()<<")";
                 }
-                //Logger().debugStream() << "... ... inserted fleet into system";
                 break;
+
             } else {
                 // fleet will continue past this system this turn.
-                //Logger().debugStream() << "... ... moved fleet to system (not inserted)";
                 fleet->m_arrival_starlane = fleet->m_prev_system;
-                //Logger().debugStream() << "Fleet::MovementPhase setting m_arrival_starlane for Fleet "<< ID() << " to system just passed: " << system->Name() << "("<<system->ID()<<")";
                 if (!resupply_here) {
                     fuel_consumed += 1.0;
-                    //Logger().debugStream() << "... ... consuming 1 unit of fuel to continue moving.  total fuel consumed now: " << fuel_consumed;
-                } else {
-                    //Logger().debugStream() << "... ... not consuming fuel to depart resupply system";
                 }
             }
 
         } else {
             // node is not a system.
             fleet->m_arrival_starlane = fleet->m_prev_system;
-            //Logger().debugStream() << "Fleet::MovementPhase setting m_arrival_starlane for Fleet "<< ID() << " mid starlane from system ID " << m_prev_system;
-            if (node_is_next_stop) {                    // node is not a system, but is it the last node reached this turn?
-                fleet->MoveTo(it->x, it->y);                       // fleet ends turn at this node.  move fleet here
-                //Logger().debugStream() << "... ... moved fleet to position";
+            if (node_is_next_stop) {            // node is not a system, but is it the last node reached this turn?
+                fleet->MoveTo(it->x, it->y);    // fleet ends turn at this node.  move fleet and ships here
+                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                     ship_it != ships.end(); ++ship_it)
+                {
+                    TemporaryPtr<Ship> ship = *ship_it;
+                    ship->MoveTo(it->x, it->y);
+                }
                 break;
             }
         }
     }
 
-
-    //Logger().debugStream() << "Fleet::MovementPhase rest of move path:";
-    //for (std::list<MovePathNode>::const_iterator it2 = it; it2 != move_path.end(); ++it2)
-    //    Logger().debugStream() << "... (" << it2->x << ", " << it2->y << ") at object id: " << it2->object_id << " eta: " << it2->eta << (it2->turn_end ? " (end of turn)" : " (during turn)");
 
     // update next system
     if (fleet->m_moving_to != fleet->SystemID() && next_it != move_path.end() && it != move_path.end()) {
@@ -1011,12 +977,15 @@ void Fleet::MovementPhase() {
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0) {
-        for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it)
-            if (TemporaryPtr<Ship> ship = GetShip(*ship_it))
-                if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
-                    meter->AddToCurrent(-fuel_consumed);
-                    meter->BackPropegate();
-                }
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
+                meter->AddToCurrent(-fuel_consumed);
+                meter->BackPropegate();
+            }
+        }
     }
 }
 
@@ -1205,32 +1174,42 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float lowestShipStealth = 99999.9f;
-    for (std::set<int>::const_iterator ship_it = this->ShipIDs().begin(); ship_it != this->ShipIDs().end(); ++ship_it) {
-        TemporaryPtr<const Ship> ship = GetShip(*ship_it);
-        if ((ship) && lowestShipStealth > ship->CurrentMeterValue(METER_STEALTH))
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(this->ShipIDs());
+    for (std::vector<TemporaryPtr<const Ship> >::iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<const Ship> ship = *it;
+        if (lowestShipStealth > ship->CurrentMeterValue(METER_STEALTH))
             lowestShipStealth = ship->CurrentMeterValue(METER_STEALTH);
     }
 
-    std::vector<int> system_fleet_ids = current_system->FindObjectIDs<Fleet>();
-
     float monsterDetection = 0.0f;
-    for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
+    std::vector<TemporaryPtr<const Fleet> > fleets =
+        Objects().FindObjects<const Fleet>(current_system->FleetIDs());
+    for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
+         fleet_it != fleets.end(); ++fleet_it)
+    {
+        TemporaryPtr<const Fleet> fleet = *fleet_it;
         if (!fleet->Unowned())
             continue;
-        for (std::set<int>::const_iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ++ship_it) {
-            if (TemporaryPtr<const Ship> ship = GetShip(*ship_it)){
-                float curDetect = ship->CurrentMeterValue(METER_DETECTION);
-                if (curDetect >= monsterDetection)
-                    monsterDetection = curDetect;
-            }
+
+        ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<const Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<const Ship> ship = *ship_it;
+            float curDetect = ship->CurrentMeterValue(METER_DETECTION);
+            if (curDetect >= monsterDetection)
+                monsterDetection = curDetect;
         }
     }
 
     bool canBeBlockaded = false;
-    for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_it);
-        if (!fleet || (fleet->NextSystemID() != INVALID_OBJECT_ID)) //fleets trying to leave this turn can't blockade pre-combat.
+    for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
+         fleet_it != fleets.end(); ++fleet_it)
+    {
+        TemporaryPtr<const Fleet> fleet = *fleet_it;
+        if (fleet->NextSystemID() != INVALID_OBJECT_ID) //fleets trying to leave this turn can't blockade pre-combat.
             continue;
         bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
         if  (fleet->Owner() == this->Owner()) {
@@ -1244,8 +1223,9 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         } else {
             can_see = (monsterDetection >= lowestShipStealth);
         }
-        bool at_war = Unowned() || fleet->Unowned() || Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR ;
-        bool aggressive = (fleet->Aggressive() || fleet->Unowned() );
+        bool at_war = Unowned() || fleet->Unowned() ||
+                      Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR;
+        bool aggressive = (fleet->Aggressive() || fleet->Unowned());
 
         if (aggressive && fleet->HasArmedShips() && at_war && can_see && (unrestricted || not_yet_in_system))
             canBeBlockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
@@ -1254,8 +1234,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         return true;
     }
     return false;
-
-} 
+}
 
 float Fleet::Speed() const {
     if (m_ships.empty())
@@ -1263,7 +1242,7 @@ float Fleet::Speed() const {
 
     bool isFleetScrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
-    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
                 if (ship->Speed() < retval)
@@ -1285,7 +1264,7 @@ float Fleet::Damage() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
                 if (const ShipDesign* design = ship->Design()){
@@ -1308,7 +1287,7 @@ float Fleet::Structure() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_STRUCTURE);
@@ -1329,7 +1308,7 @@ float Fleet::Shields() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_SHIELD);
@@ -1376,15 +1355,4 @@ std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_f
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
     return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(new_fleet_id));
-}
-
-Fleet::ShipIDSet Fleet::VisibleContainedObjects(int empire_id) const {
-    ShipIDSet retval;
-    const Universe& universe = GetUniverse();
-    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        int object_id = *it;
-        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
-            retval.insert(object_id);
-    }
-    return retval;
 }

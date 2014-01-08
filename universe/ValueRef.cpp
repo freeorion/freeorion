@@ -617,7 +617,7 @@ namespace ValueRef {
                 return INVALID_GAME_TURN;
         } else if (property_name == "Orbit") {
             if (TemporaryPtr<const System> system = GetSystem(object->SystemID()))
-                return system->OrbitOfObjectID(object->ID());
+                return system->OrbitOfPlanet(object->ID());
             return -1;
         }
 

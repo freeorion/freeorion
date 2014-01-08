@@ -343,8 +343,8 @@ public:
     /** Destroys object with ID \a object_id, and destroys any associted
       * objects, such as contained buildings of planets, contained anything of
       * systems, or fleets if their last ship has id \a object_id and the fleet
-      * is thus empty. */
-    void            RecursiveDestroy(int object_id);
+      * is thus empty. Returns the ids of all destroyed objects. */
+    std::set<int>   RecursiveDestroy(int object_id);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
@@ -409,8 +409,8 @@ public:
     TemporaryPtr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
 
     TemporaryPtr<System> CreateSystem(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<System> CreateSystem(StarType star, int orbits, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
-    TemporaryPtr<System> CreateSystem(StarType star, int orbits, const std::map<int, bool>& lanes_and_holes, // TODO: std::map<int, bool> is typedef'd in System.h.  Figure out how to make this less awkward...
+    TemporaryPtr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    TemporaryPtr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
                                       const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
 
     TemporaryPtr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);

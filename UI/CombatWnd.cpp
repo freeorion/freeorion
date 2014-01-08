@@ -833,25 +833,16 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
         // a sample system
         std::vector<TemporaryPtr<Planet> > planets;
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[0], planet_sizes[0]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[1], planet_sizes[1]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[2], planet_sizes[2]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[3], planet_sizes[3]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[4], planet_sizes[4]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[5], planet_sizes[5]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[6], planet_sizes[6]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[7], planet_sizes[7]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[8], planet_sizes[8]));
-        planets.push_back(GetUniverse().CreatePlanet(planet_types[9], planet_sizes[9]));
+        for (unsigned int i = 0; i <= 9; ++i)
+            planets.push_back(GetUniverse().CreatePlanet(planet_types[0], planet_sizes[0]));
 
         CombatData* combat_data = new CombatData;
-        combat_data->m_system = GetUniverse().CreateSystem(star_type, planets.size(), "Sample", 0.0, 0.0);
+        combat_data->m_system = GetUniverse().CreateSystem(star_type, "Sample", 0.0, 0.0);
         std::map<int, TemporaryPtr<UniverseObject> >& combat_universe = combat_data->m_combat_universe;
         for (std::size_t i = 0; i < planets.size(); ++i) {
-            TemporaryPtr<Planet> planet = planets[i];
-            //GetUniverse().InsertID(planet, planet_ids[i]);
+            TemporaryPtr<Planet> planet = planets[i];;
             combat_universe[planet_ids[i]] = planet;
-            combat_data->m_system->Insert(planet_ids[i], i);
+            combat_data->m_system->Insert(planet, i);   // just created planets above, and know they have no buildings to insert
             assert(combat_data->m_system->Contains(i));
         }
 
@@ -940,17 +931,26 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
     CreateAsteroidEntities(asteroid_entities, m_scene_manager);
 
     // create planets
-    for (System::const_orbit_iterator it = m_combat_data->m_system->begin();
-         it != m_combat_data->m_system->end(); ++it)
+    std::set<int> planet_ids = m_combat_data->m_system->PlanetIDs();
+
+    for (std::set<int>::const_iterator it = planet_ids.begin();
+         it != planet_ids.end(); ++it)
     {
-        TemporaryPtr<const Planet> planet;
-        planet = universe_object_ptr_cast<Planet>(m_combat_data->m_combat_universe[it->second]);
-        if (!planet) continue;
+        int planet_id = *it;
+
+        TemporaryPtr<const UniverseObject> obj = m_combat_data->m_combat_universe[planet_id];
+        if (!obj)
+            continue;
+        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<Planet>(obj);
+        if (!planet)
+            continue;
+
+        int orbit = m_combat_data->m_system->OrbitOfPlanet(planet_id);
 
         std::string material_name = PlanetNodeMaterial(planet->Type());
         if (material_name != "asteroid") {
             std::string planet_name =
-                "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+                "orbit " + boost::lexical_cast<std::string>(orbit) + " planet";
 
             Ogre::SceneNode* node =
                 m_scene_manager->getRootSceneNode()->createChildSceneNode(
@@ -958,7 +958,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
             Ogre::Real planet_radius = PlanetRadius(planet->Size());
             node->setScale(planet_radius, planet_radius, planet_radius);
             node->yaw(Ogre::Degree(planet->AxialTilt()));
-            double orbit_radius = OrbitalRadius(it->first);
+            double orbit_radius = OrbitalRadius(orbit);
             double rads =
                 planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
             Ogre::Vector3 position(orbit_radius * std::cos(rads),
@@ -1003,11 +1003,11 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
                 std::string new_material_name =
-                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
+                    material_name + "_" + boost::lexical_cast<std::string>(orbit);
                 Ogre::MaterialPtr material =
                     Ogre::MaterialManager::getSingleton().getByName(material_name);
                 material = material->clone(new_material_name);
-                m_planet_assets[it->first].second.push_back(material);
+                m_planet_assets[orbit].second.push_back(material);
                 material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
                     setTextureName(base_name + ".png");
                 entity->setMaterialName(new_material_name);
@@ -1017,14 +1017,14 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                     m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 std::string new_material_name =
-                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
+                    material_name + "_" + boost::lexical_cast<std::string>(orbit);
                 Ogre::MaterialPtr material =
                     Ogre::MaterialManager::getSingleton().getByName(
                         material_name == "planet" ?
                         PlanetMaterialName(base_name) :
                         material_name);
                 material = material->clone(new_material_name);
-                m_planet_assets[it->first].second.push_back(material);
+                m_planet_assets[orbit].second.push_back(material);
                 assert(entity->getNumSubEntities() == 1u);
                 material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
                     setTextureName(base_name + "Day.png");
@@ -1049,7 +1049,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                         Ogre::MaterialManager::getSingleton().getByName(
                             AtmosphereMaterialName(base_name));
                     entity->setMaterialName(material->getName());
-                    m_planet_assets[it->first].second.push_back(material);
+                    m_planet_assets[orbit].second.push_back(material);
                     node->attachObject(entity);
                 } else {
                     assert(material_name == "atmosphereless_planet");
@@ -1063,17 +1063,17 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                 }
             }
 
-            m_planet_assets[it->first].first = node;
+            m_planet_assets[orbit].first = node;
         } else {
             SetupPagedGeometry(m_paged_geometry, m_paged_geometry_loader, m_ogre_camera);
 
             const int ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT = 1000;
-            const int ORBITAL_RADIUS = OrbitalRadius(it->first);
+            const int ORBITAL_RADIUS = OrbitalRadius(orbit);
             const int ASTEROIDS =
                 ORBITAL_RADIUS / OrbitalRadius(3) * ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT;
 
             std::string planet_name =
-                "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+                "orbit " + boost::lexical_cast<std::string>(orbit) + " planet";
 
             const Ogre::Real DELTA_THETA = Ogre::Math::TWO_PI / ASTEROIDS;
             Ogre::Real theta = 0.0;
@@ -1096,8 +1096,8 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
     }
 
     // create starlane entrance points
-    for (System::const_lane_iterator it = m_combat_data->m_system->begin_lanes();
-         it != m_combat_data->m_system->end_lanes(); ++it)
+    for (std::map<int, bool>::const_iterator it = m_combat_data->m_system->StarlanesWormholes().begin();
+         it != m_combat_data->m_system->StarlanesWormholes().end(); ++it)
     {
         // this will break if/when we add support for wormholes, so we'll know to fix this code
         assert(!it->second);

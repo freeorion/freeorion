@@ -149,10 +149,11 @@ void NewFleetOrder::ExecuteImpl() const {
     }
 
     // verify ship validity
-    std::vector<int> validated_ships;
+    std::vector<TemporaryPtr<Ship> >    validated_ships;
+    std::vector<int>                    validated_ships_ids;
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        TemporaryPtr<const Ship> ship = GetShip(m_ship_ids[i]);
+        TemporaryPtr<Ship> ship = GetShip(m_ship_ids[i]);
         if (!ship) {
             Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
             continue;
@@ -165,7 +166,8 @@ void NewFleetOrder::ExecuteImpl() const {
             Logger().errorStream() << "Empire attempted to make a new fleet from ship in the wrong system";
             continue;
         }
-        validated_ships.push_back(m_ship_ids[i]);
+        validated_ships.push_back(ship);
+        validated_ships_ids.push_back(ship->ID());
     }
     if (validated_ships.empty())
         return;
@@ -174,16 +176,28 @@ void NewFleetOrder::ExecuteImpl() const {
     // create fleet
     TemporaryPtr<Fleet> fleet = universe.CreateFleet(m_fleet_name, system->X(), system->Y(), EmpireID(), m_fleet_id);
     fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+    fleet->SetAggressive(false);
+
     // an ID is provided to ensure consistancy between server and client universes
     universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
     system->Insert(fleet);
+
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
-    TemporaryPtr<Ship> firstShip = GetShip(validated_ships[0]);
+    TemporaryPtr<Ship> firstShip = validated_ships[0];
     TemporaryPtr<Fleet> firstFleet = GetFleet(firstShip->FleetID());
     if (firstFleet)
         fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
-    fleet->SetAggressive(false);
-    fleet->AddShips(validated_ships);
+
+    // remove ships from old fleet(s) and add to new
+    for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = validated_ships.begin();
+         ship_it != validated_ships.end(); ++ship_it)
+    {
+        TemporaryPtr<Ship> ship = *ship_it;
+        if (TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID()))
+            old_fleet->RemoveShip(ship->ID());
+        ship->SetFleetID(fleet->ID());
+    }
+    fleet->AddShips(validated_ships_ids);
 }
 
 
@@ -367,23 +381,31 @@ void FleetTransferOrder::ExecuteImpl() const {
     std::vector<int>::const_iterator itr = m_add_ships.begin();
     while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
-        int curr = (*itr);
-        TemporaryPtr<Ship> a_ship = GetShip(curr);
-        if (!a_ship) {
+        int ship_id = (*itr);
+        TemporaryPtr<Ship> ship = GetShip(ship_id);
+        if (!ship) {
             Logger().errorStream() << "Illegal ship id specified in fleet merge order.";
-            return;
+            itr++;
+            continue;
         }
 
-        // figure out what fleet this ship is coming from -- verify its the one we
-        // said it comes from
-        if (a_ship->FleetID() != SourceFleet()) {
+        // figure out what fleet this ship is coming from
+        // ... verify it is the one we it is supposed to be coming from
+        if (ship->FleetID() != SourceFleet()) {
             Logger().errorStream() << "Ship in merge order is not in specified source fleet.";
-            return;
+            itr++;
+            continue;
         }
 
-        validated_ship_ids.push_back(curr);
+        validated_ship_ids.push_back(ship_id);
         itr++;
+
+        // set ships' fleet to new fleet
+        ship->SetFleetID(target_fleet->ID());
     }
+
+    // set fleet records
+    source_fleet->RemoveShips(validated_ship_ids);
     target_fleet->AddShips(validated_ship_ids);
 }
 
@@ -723,7 +745,11 @@ void DeleteFleetOrder::ExecuteImpl() const {
     }
 
     if (!fleet->Empty())
-        return;
+        return; // should be no ships to process during this deletion
+
+    TemporaryPtr<System> system = GetSystem(fleet->SystemID());
+    if (system)
+        system->Remove(fleet->ID());
 
     GetUniverse().Destroy(FleetID());
 }

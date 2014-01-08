@@ -102,6 +102,12 @@ const std::string& Building::TypeName() const
 UniverseObjectType Building::ObjectType() const
 { return OBJ_BUILDING; }
 
+bool Building::ContainedBy(int object_id) const {
+    return object_id != INVALID_OBJECT_ID
+        && (    object_id == m_planet_id
+            ||  object_id == this->SystemID());
+}
+
 std::string Building::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
@@ -114,18 +120,10 @@ TemporaryPtr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visit
 { return visitor.Visit(boost::const_pointer_cast<Building>(boost::static_pointer_cast<const Building>(TemporaryFromThis()))); }
 
 void Building::SetPlanetID(int planet_id) {
-    if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))
-        planet->RemoveBuilding(this->ID());
-    m_planet_id = planet_id;
-}
-
-void Building::MoveTo(double x, double y) {
-    //Logger().debugStream() << "Building::MoveTo(" << x << ", " << y << ")";
-    UniverseObject::MoveTo(x, y);
-
-    // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
-    if (TemporaryPtr<Planet> planet = GetPlanet(m_planet_id))
-        planet->RemoveBuilding(this->ID());
+    if (planet_id != m_planet_id) {
+        m_planet_id = planet_id;
+        StateChangedSignal();
+    }
 }
 
 void Building::ResetTargetMaxUnpairedMeters() {

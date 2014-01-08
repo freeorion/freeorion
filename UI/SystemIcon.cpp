@@ -112,7 +112,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            const std::set<int>& buildings = planet->Buildings();
+            const std::set<int>& buildings = planet->BuildingIDs();
             for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
                 if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
                     continue;

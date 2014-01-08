@@ -30,19 +30,17 @@ struct MovePathNode {
   * ships that travel together. */
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
-    typedef std::set<int>               ShipIDSet;
-    typedef ShipIDSet::iterator         iterator;                       ///< an iterator to the ships in the fleet
-    typedef ShipIDSet::const_iterator   const_iterator;                 ///< a const iterator to the ships in the fleet
-
     /** \name Accessors */ //@{
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType          ObjectType() const;
     virtual std::string                 Dump() const;
 
-    const_iterator                      begin() const       { return m_ships.begin(); } ///< returns the begin const_iterator for the ships in the fleet
-    const_iterator                      end() const         { return m_ships.end(); }   ///< returns the end const_iterator for the ships in the fleet
-
     const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
+
+    virtual int                         ContainerObjectID() const;          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
+    virtual const std::set<int>&        ContainedObjectIDs() const;         ///< returns ids of objects directly contained within this object
+    virtual bool                        Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
+    virtual bool                        ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     virtual const std::string&          PublicName(int empire_id) const;
 
@@ -80,10 +78,6 @@ public:
     bool                                HasShipsWithoutScrapOrders() const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
     int                                 NumShips() const                    { return m_ships.size(); }  ///< Returns number of ships in fleet.
     bool                                Empty() const                       { return m_ships.empty(); } ///< Returns true if fleet contains no ships, false otherwise.
-    virtual bool                        Contains(int object_id) const;      ///< Returns true iff this Fleet contains a ship with ID \a id.
-    virtual std::vector<TemporaryPtr<UniverseObject> >
-                                        FindObjects() const;                ///< returns objects contained within this fleet
-    virtual std::vector<int>            FindObjectIDs() const;              ///< returns ids of objects contained within this fleet
 
     /** Returns true iff this fleet is moving, but the route is unknown.  This
       * is usually the case when a foreign player A's fleet is represented on
@@ -110,7 +104,7 @@ public:
     void                    CalculateRoute() const;                         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to its current destination system
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
-    
+
     virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
@@ -118,11 +112,6 @@ public:
     void                    RemoveShip(int ship_id);                        ///< removes the ship from the fleet.
     void                    RemoveShips(const std::vector<int>& ship_ids);  ///< removes the ships from the fleet.
 
-    iterator                begin() { return m_ships.begin(); }             ///< returns the begin iterator for the ships in the fleet
-    iterator                end()   { return m_ships.end(); }               ///< returns the end iterator for the ships in the fleet
-
-    virtual void            SetSystem(int sys);
-    virtual void            MoveTo(double x, double y);
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
     void                    SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
     void                    ClearArrivalFlag() { m_arrived_this_turn = false; } ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
@@ -163,10 +152,7 @@ private:
     ///< removes any systems on the route after the specified system
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);
 
-    ///< returns the subset of m_ships that is visible to empire with id \a empire_id
-    ShipIDSet               VisibleContainedObjects(int empire_id) const;
-
-    ShipIDSet                   m_ships;
+    std::set<int>               m_ships;
     int                         m_moving_to;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one

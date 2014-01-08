@@ -224,6 +224,12 @@ const std::string& Ship::TypeName() const
 UniverseObjectType Ship::ObjectType() const
 { return OBJ_SHIP; }
 
+bool Ship::ContainedBy(int object_id) const {
+    return object_id != INVALID_OBJECT_ID
+        && (    object_id == m_fleet_id
+            ||  object_id == this->SystemID());
+}
+
 std::string Ship::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
@@ -414,8 +420,10 @@ std::vector<float> Ship::AllWeaponsDamage() const {
 }
 
 void Ship::SetFleetID(int fleet_id) {
-    m_fleet_id = fleet_id;
-    StateChangedSignal();
+    if (m_fleet_id != fleet_id) {
+        m_fleet_id = fleet_id;
+        StateChangedSignal();
+    }
 }
 
 void Ship::Resupply() {
@@ -470,16 +478,6 @@ void Ship::SetSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
         Logger().errorStream() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = species_name;
-}
-
-void Ship::MoveTo(double x, double y) {
-    UniverseObject::MoveTo(x, y);
-
-    // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
-    if (TemporaryPtr<Fleet> fleet = GetFleet(this->FleetID())) {
-        //Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
-        fleet->RemoveShip(this->ID());
-    }
 }
 
 void Ship::SetOrderedScrapped(bool b) {

@@ -490,7 +490,7 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
-    const ValueRef::ValueRefBase< ::StarType>*   m_type;
+    const ValueRef::ValueRefBase< ::StarType>*  m_type;
     const ValueRef::ValueRefBase<double>*       m_x;
     const ValueRef::ValueRefBase<double>*       m_y;
 

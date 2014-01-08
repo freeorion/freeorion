@@ -64,7 +64,6 @@ using boost::python::len;
 // Helper stuff (classes, functions etc.) exposed to the
 // universe generator Python scripts
 namespace {
-
     // Global pointer to the GalaxySetupData
     // instance that has been passed in
     GalaxySetupData* g_galaxy_setup_data = 0;
@@ -145,7 +144,7 @@ namespace {
         }
         return species_list;
     }
-    
+
     list GetPlayableSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
@@ -154,7 +153,7 @@ namespace {
         }
         return species_list;
     }
-    
+
     list GetNativeSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
@@ -270,7 +269,7 @@ namespace {
         
         return true;
     }
-    
+
     list ShipDesignGetPremadeList() {
         list py_ship_designs;
         const PredefinedShipDesignManager& manager = GetPredefinedShipDesignManager();
@@ -279,7 +278,7 @@ namespace {
         }
         return list(py_ship_designs);
     }
-    
+
     list ShipDesignGetMonsterList() {
         list py_monster_designs;
         const PredefinedShipDesignManager& manager = GetPredefinedShipDesignManager();
@@ -288,7 +287,7 @@ namespace {
         }
         return list(py_monster_designs);
     }
-    
+
     // Wrappers for starting fleet and monster fleet plans
     class FleetPlanWrapper {
     public:
@@ -325,7 +324,7 @@ namespace {
     private:
         FleetPlan m_fleet_plan;
     };
-    
+
     list LoadFleetPlanList(const std::string& file_name) {
         list py_fleet_plans;
         std::vector<FleetPlan*> fleet_plans;
@@ -336,7 +335,7 @@ namespace {
         }
         return list(py_fleet_plans);
     }
-    
+
     // Wrappers for the various universe object classes member funtions
     // This should provide a more safe and consistent set of universe generation
     // functions to scripters. All wrapper functions work with object ids, so
@@ -370,7 +369,7 @@ namespace {
         }
         return obj->Owner();
     }
-    
+
     // Wrappers for Universe class
     double GetUniverseWidth()
     { return GetUniverse().UniverseWidth(); }
@@ -383,9 +382,8 @@ namespace {
 
     int JumpDistance(int system1_id, int system2_id)
     { return GetUniverse().JumpDistance(system1_id, system2_id); }
-    
-    int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
 
+    int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
         // Check if star type is set to valid value
         if ((star_type == INVALID_STAR_TYPE) || (star_type == NUM_STAR_TYPES)) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateSystem : Can't create a system with a star of type " << star_type;
@@ -393,7 +391,7 @@ namespace {
         }
 
         // Create system and insert it into the object map
-        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
+        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
         if (!system) {
             std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
             Logger().debugStream() << err_msg;
@@ -463,10 +461,15 @@ namespace {
     }
 
     int CreateBuilding(const std::string& building_type, int planet_id, int empire_id) {
-
         TemporaryPtr<Planet> planet = Objects().Object<Planet>(planet_id);
         if (!planet) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't get planet with ID " << planet_id;
+            return INVALID_OBJECT_ID;
+        }
+
+        TemporaryPtr<System> system = GetSystem(planet->SystemID());
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
         }
 
@@ -481,12 +484,14 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
         }
+
+        system->Insert(building);
         planet->AddBuilding(building->ID());
+        building->SetPlanetID(planet_id);
         return building->ID();
     }
 
     int CreateFleet(const std::string& name, int system_id, int empire_id) {
-
         // Get system and check if it exists
         TemporaryPtr<System> system = Objects().Object<System>(system_id);
         if (!system) {
@@ -507,9 +512,8 @@ namespace {
     }
 
     int CreateShip(const std::string& name, const std::string& design_name, const std::string& species, int fleet_id) {
-
         Universe& universe = GetUniverse();
-    
+
         // check if we got a species name
         if (species.empty()) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateShip: no species specified";
@@ -527,6 +531,12 @@ namespace {
         TemporaryPtr<Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateShip: couldn't get fleet with ID " << fleet_id;
+            return INVALID_OBJECT_ID;
+        }
+
+        TemporaryPtr<System> system = GetSystem(fleet->SystemID());
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't get system for fleet";
             return INVALID_OBJECT_ID;
         }
 
@@ -548,6 +558,7 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
         }
+        system->Insert(ship);
 
         // set ship name
         // check if we got a ship name...
@@ -569,6 +580,7 @@ namespace {
         // add ship to fleet, this also moves the ship to the
         // fleets location and inserts it into the system
         fleet->AddShip(ship->ID());
+        ship->SetFleetID(fleet->ID());
 
         //return the new ships id
         return ship->ID();
@@ -617,10 +629,10 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
         }
-        std::vector<int> planets = system->FindObjectIDs<Planet>();
-        for (int i = 0; i < planets.size(); i++) {
-            py_planets.append(planets[i]);
-        }
+        const std::set<int>& planets = system->PlanetIDs();
+        for (std::set<int>::const_iterator it = planets.begin();
+             it != planets.end(); ++it)
+        { py_planets.append(*it); }
         return py_planets;
     }
 
@@ -632,8 +644,8 @@ namespace {
             return INVALID_PLANET_TYPE;
         }
         return planet->Type();
-    }    
-    
+    }
+
     void PlanetSetType(int planet_id, PlanetType planet_type) {
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
@@ -650,8 +662,8 @@ namespace {
             return INVALID_PLANET_SIZE;
         }
         return planet->Size();
-    }    
-    
+    }
+
     void PlanetSetSize(int planet_id, PlanetSize planet_size) {
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
@@ -668,8 +680,8 @@ namespace {
             return object("");
         }
         return object(planet->SpeciesName());
-    }    
-    
+    }
+
     void PlanetSetSpecies(int planet_id, const std::string& species_name) {
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
@@ -678,7 +690,7 @@ namespace {
         }
         planet->SetSpecies(species_name);
     }
-    
+
     object PlanetGetFocus(int planet_id) {
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
@@ -686,8 +698,8 @@ namespace {
             return object("");
         }
         return object(planet->Focus());
-    }    
-    
+    }
+
     void PlanetSetFocus(int planet_id, const std::string& focus) {
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
@@ -749,7 +761,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
         .def("name",        &FleetPlanWrapper::Name)
         .def("shipDesigns", &FleetPlanWrapper::ShipDesigns);
-    
+
     def("getGalaxySetupData",               GetGalaxySetupData,             return_value_policy<reference_existing_object>());
     def("getPlayerSetupData",               GetPlayerSetupData,             return_value_policy<reference_existing_object>());
 
@@ -834,7 +846,6 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
 
 
 namespace {
-
     // Some helper objects needed to initialize and run the
     // Python interface. Don't know if or why they have to
     // be exactly this way, more or less copied them over

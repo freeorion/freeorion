@@ -1648,17 +1648,26 @@ void Empire::UpdateSystemSupplyRanges() {
 }
 
 void Empire::UpdateUnobstructedFleets() {
-    const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (std::set<int>::const_iterator sys_it = m_supply_unobstructed_systems.begin(); sys_it != m_supply_unobstructed_systems.end(); ++sys_it) {
+    const std::set<int>& known_destroyed_objects =
+        GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
+
+    for (std::set<int>::const_iterator sys_it = m_supply_unobstructed_systems.begin();
+         sys_it != m_supply_unobstructed_systems.end(); ++sys_it)
+    {
         TemporaryPtr<const System> system = GetSystem(*sys_it);
-        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-        for (std::vector<int>::iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); fleet_it++) {
-            if (known_destroyed_objects.find(*fleet_it) == known_destroyed_objects.end()) {
-                if (TemporaryPtr<Fleet> fleet = GetFleet(*fleet_it) ) {
-                    if (fleet->OwnedBy(m_id))
-                        fleet->SetArrivalStarlane(*sys_it);
-                }
-            }
+        if (!system)
+            continue;
+
+        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(system->FleetIDs());
+
+        for (std::vector<TemporaryPtr<Fleet> >::iterator fleet_it = fleets.begin();
+             fleet_it != fleets.end(); ++fleet_it)
+        {
+            TemporaryPtr<Fleet> fleet = *fleet_it;
+            if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end())
+                continue;
+            if (fleet->OwnedBy(m_id))
+                fleet->SetArrivalStarlane(*sys_it);
         }
     }
 }
@@ -1778,14 +1787,13 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     if (m_supply_unobstructed_systems.find(start_system_id) == m_supply_unobstructed_systems.end()) {
-        //Logger().debugStream() << "Empire::UpdateAvailableLane for system ("<< start_system_id <<") adding lane to ("<<dest_system_id <<")";
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
+
     } else { // if the system is unobstructed, mark all its lanes as avilable
-        //Logger().debugStream() << "Empire::UpdateAvailableLane for system ("<< start_system_id <<") adding all lanes";
         TemporaryPtr<const System> system = GetSystem(start_system_id);
-        for (System::const_lane_iterator lane_it = system->begin_lanes(); lane_it != system->end_lanes(); lane_it++) {
-            m_pending_system_exit_lanes[start_system_id].insert(lane_it->first); // will add both starlanes and wormholes
-            //Logger().debugStream() << "..... lane "<< lane_it->first;
+        const std::map<int, bool>& lanes = system->StarlanesWormholes();
+        for (std::map<int, bool>::const_iterator it = lanes.begin(); it != lanes.end(); ++it) {
+            m_pending_system_exit_lanes[start_system_id].insert(it->first); // will add both starlanes and wormholes
         }
     }
 }
@@ -2069,8 +2077,10 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
         if (known_destroyed_objects.find(start_id) != known_destroyed_objects.end())
             continue;
 
-        System::StarlaneMap lanes = sys_it->StarlanesWormholes();
-        for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
+        const std::map<int, bool>& lanes = sys_it->StarlanesWormholes();
+        for (std::map<int, bool>::const_iterator lane_it = lanes.begin();
+             lane_it != lanes.end(); ++lane_it)
+        {
             if (lane_it->second || known_destroyed_objects.find(lane_it->second) != known_destroyed_objects.end())
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             int end_id = lane_it->first;
@@ -2098,10 +2108,12 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
             continue;
 
         // get system's visible lanes for this empire
-        System::StarlaneMap lanes = sys_it->VisibleStarlanesWormholes(m_id);
+        std::map<int, bool> lanes = sys_it->VisibleStarlanesWormholes(m_id);
 
         // copy to retval
-        for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
+        for (std::map<int, bool>::const_iterator lane_it = lanes.begin();
+             lane_it != lanes.end(); ++lane_it)
+        {
             if (lane_it->second)
                 continue;   // is a wormhole, not a starlane
             int end_id = lane_it->first;
@@ -2718,11 +2730,15 @@ void Empire::CheckProductionProgress() {
 
             switch (elem.item.build_type) {
             case BT_BUILDING: {
-                Logger().debugStream() << "It's a building";
-                int planet_id = elem.location;
-                TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+                TemporaryPtr<Planet> planet = GetPlanet(elem.location);
                 if (!planet) {
-                    Logger().errorStream() << "Couldn't get planet with id  " << planet_id << " on which to create building";
+                    Logger().errorStream() << "Couldn't get planet with id  " << elem.location << " on which to create building";
+                    break;
+                }
+
+                TemporaryPtr<System> system = GetSystem(planet->SystemID());
+                if (!system) {
+                    Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for producing new building";
                     break;
                 }
 
@@ -2737,6 +2753,8 @@ void Empire::CheckProductionProgress() {
                 // create new building
                 TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
                 planet->AddBuilding(building->ID());
+                building->SetPlanetID(planet->ID());
+                system->Insert(building);
 
                 AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
                 Logger().debugStream() << "New Building created on turn: " << CurrentTurn();
@@ -2754,7 +2772,7 @@ void Empire::CheckProductionProgress() {
                 // TODO: account for shipyards and/or other ship production
                 // sites that are in interstellar space, if needed
                 if (!system) {
-                    Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for building new ship";
+                    Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for producing new ship";
                     break;
                 }
 
@@ -2795,6 +2813,8 @@ void Empire::CheckProductionProgress() {
                 for (int count = 0; count < elem.blocksize; count++) {
                     // create ship
                     ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
+                    system->Insert(ship);
+
                     // set active meters that have associated max meters to an
                     // initial very large value, so that when the active meters are
                     // later clamped, they will equal the max meter after effects
@@ -2845,12 +2865,13 @@ void Empire::CheckProductionProgress() {
         if (allShips.empty())
             continue;
 
-        //group ships into fleets, by design
+        // group ships into fleets, by design
         std::map<int,std::vector<TemporaryPtr<Ship> > > shipsByDesign;
         for (std::vector<TemporaryPtr<Ship> >::iterator it = allShips.begin(); it != allShips.end(); ++it) {
             TemporaryPtr<Ship> ship = *it;
             shipsByDesign[ship->DesignID()].push_back(ship);
         }
+
         for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = shipsByDesign.begin();
              design_it != shipsByDesign.end(); ++design_it)
         {
@@ -2869,6 +2890,7 @@ void Empire::CheckProductionProgress() {
                 TemporaryPtr<Ship> ship = *it;
                 ship_ids.push_back(ship->ID());
                 fleet->AddShip(ship->ID());
+                ship->SetFleetID(fleet->ID());
             }
 
             // rename fleet, given its id and the ship that is in it

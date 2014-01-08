@@ -75,13 +75,7 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_id =                    copied_object->m_id;
-        if (this->m_system_id != copied_object->m_system_id) {
-            // as with other containers, removal from the old container (System) is triggered by the contained Object
-            TemporaryPtr<System> oldSys = GetSystem(this->m_system_id);
-            if (this->ContainedBy(this->m_system_id) && (oldSys))
-                oldSys->Remove(this->m_id);
-            this->m_system_id =         copied_object->m_system_id;// actual Insertion into the new System is handled by the System::Copy process for the new System
-        }
+        this->m_system_id =             copied_object->m_system_id;
         this->m_x =                     copied_object->m_x;
         this->m_y =                     copied_object->m_y;
 
@@ -89,16 +83,12 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
         for (std::map<std::string, int>::const_iterator copied_special_it = copied_object->m_specials.begin();
              copied_special_it != copied_object->m_specials.end(); ++copied_special_it)
         {
-            //Logger().debugStream() << "UniverseObject::Copy " << copied_object->Name() << " has special " << copied_special_it->first;
             if (visible_specials.find(copied_special_it->first) != visible_specials.end()) {
                 this->m_specials[copied_special_it->first] = copied_special_it->second;
-                //Logger().debugStream() << " ... which is copied.";
             }
         }
 
-
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-
             this->m_owner_empire_id =   copied_object->m_owner_empire_id;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
@@ -187,19 +177,33 @@ std::string UniverseObject::Dump() const {
     return os.str();
 }
 
-std::vector<int> UniverseObject::FindObjectIDs() const
-{ return std::vector<int>(); }
+namespace {
+    std::set<int> EMPTY_SET;
+}
+
+const std::set<int>& UniverseObject::ContainedObjectIDs() const
+{ return EMPTY_SET; }
+
+std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
+    std::set<int> retval;
+    const Universe& universe = GetUniverse();
+    const std::set<int>& contained_obj_ids = ContainedObjectIDs();
+    for (std::set<int>::const_iterator it = contained_obj_ids.begin(); it != contained_obj_ids.end(); ++it) {
+        int object_id = *it;
+        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
+            retval.insert(object_id);
+    }
+    return retval;
+}
+
+int UniverseObject::ContainerObjectID() const
+{ return INVALID_OBJECT_ID; }
 
 bool UniverseObject::Contains(int object_id) const
 { return false; }
 
-bool UniverseObject::ContainedBy(int object_id) const {
-    TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
-    if (object)
-        return object->Contains(m_id);
-    else
-        return false;
-}
+bool UniverseObject::ContainedBy(int object_id) const
+{ return false; }
 
 const Meter* UniverseObject::GetMeter(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
@@ -266,35 +270,22 @@ void UniverseObject::MoveTo(int object_id)
 { MoveTo(GetUniverseObject(object_id)); }
 
 void UniverseObject::MoveTo(TemporaryPtr<UniverseObject> object) {
-    if (!object)
-        throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
-
-    if (object->SystemID() == this->SystemID()) {
-        // don't call MoveTo(double, double) as that would remove from old (current system)
-        m_x = object->X();
-        m_y = object->Y();
-        StateChangedSignal();
-    } else {
-        // move to location in space, removing from old system
-        MoveTo(object->X(), object->Y());
+    if (!object) {
+        Logger().errorStream() << "UniverseObject::MoveTo : attempted to move to a null object.";
+        return;
     }
+    MoveTo(object->X(), object->Y());
 }
 
 void UniverseObject::MoveTo(double x, double y) {
-    //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || GetUniverse().UniverseWidth() < x || y < 0.0 || GetUniverse().UniverseWidth() < y)
         Logger().debugStream() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
 
+    if (m_x == x && m_y == y)
+        return;
+
     m_x = x;
     m_y = y;
-    
-    // remove object from its old system (unless object is a system, as that would attempt to remove it from itself)
-    if (this->ID() != this->SystemID()) {
-        if (TemporaryPtr<System> system = GetSystem(this->SystemID())) {
-
-            system->Remove(this->ID());
-        }
-    }
 
     StateChangedSignal();
 }

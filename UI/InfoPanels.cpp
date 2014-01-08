@@ -1500,7 +1500,7 @@ void BuildingsPanel::Update() {
         Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    const std::set<int>& buildings = planet->Buildings();
+    const std::set<int>& buildings = planet->BuildingIDs();
     int system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
@@ -2397,9 +2397,13 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
     // add label-value pair for each resource-producing object in system to indicate amount of resource produced
-    std::vector<int> obj_vec = system->FindObjectIDs();
-    for (std::vector<int>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
+    std::vector<TemporaryPtr<const UniverseObject> > objects =
+        Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
+
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
+         it != objects.end(); ++it)
+    {
+        TemporaryPtr<const UniverseObject> obj = *it;
 
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
@@ -2490,16 +2494,13 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
-    std::vector<int> obj_vec = system->FindObjectIDs();
-    //// DEBUG
-    //Logger().debugStream() << "System::FindObjects for system " << m_system->Name();
-    //for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it)
-    //    Logger().debugStream() << ".... " << (*it)->Name();
-    //// END DEBUG
+    std::vector<TemporaryPtr<const UniverseObject> > objects =
+        Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
 
-
-    for (std::vector<int>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
+         it != objects.end(); ++it)
+    {
+        TemporaryPtr<const UniverseObject> obj = *it;
 
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))

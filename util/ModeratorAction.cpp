@@ -181,9 +181,7 @@ namespace {
 }
 
 void Moderator::CreateSystem::Execute() const {
-    const int MAX_SYSTEM_ORBITS = 9;    // hard coded value in UniverseServer.cpp
-
-    TemporaryPtr<System> system = GetUniverse().CreateSystem(m_star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), m_x, m_y);
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(m_star_type, GenerateSystemName(), m_x, m_y);
     if (!system) {
         Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
         return;

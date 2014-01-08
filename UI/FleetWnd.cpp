@@ -1291,22 +1291,25 @@ void FleetDataPanel::SetStatIconValues() {
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
-    for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
-        int ship_id = *it;
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<const Ship> ship = *it;
+        int ship_id = ship->ID();
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
             continue;
         if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
             continue;
-        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
-            if (ship->Design()) {
-                ship_count++;
-                damage_tally += ship->TotalWeaponsDamage();
-                structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
-                shield_tally += ship->CurrentMeterValue(METER_SHIELD);
-                fuels.push_back(ship->CurrentMeterValue(METER_FUEL));
-                speeds.push_back(ship->CurrentMeterValue(METER_STARLANE_SPEED));
-            }
+
+        if (ship->Design()) {
+            ship_count++;
+            damage_tally += ship->TotalWeaponsDamage();
+            structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
+            shield_tally += ship->CurrentMeterValue(METER_SHIELD);
+            fuels.push_back(ship->CurrentMeterValue(METER_FUEL));
+            speeds.push_back(ship->CurrentMeterValue(METER_STARLANE_SPEED));
         }
     }
     if (!fuels.empty())
@@ -1829,10 +1832,13 @@ public:
         LockColWidths();
 
         int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-        const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+        const std::set<int>& this_client_known_destroyed_objects =
+            GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+        const std::set<int>& this_client_stale_object_info =
+            GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-        for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
+        const std::set<int> ship_ids = fleet->ShipIDs();
+        for (std::set<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
             int ship_id = *it;
 
             // skip known destroyed and stale info objects
@@ -2420,25 +2426,34 @@ void FleetWnd::SetStatIconValues() {
     float damage_tally =    0.0;
     float structure_tally = 0.0;
     float shield_tally =    0.0;
-    
-    for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
-        if ( (!fleet) || (!(m_empire_id==ALL_EMPIRES || fleet->OwnedBy(m_empire_id))) )
+
+    std::vector<TemporaryPtr<const Fleet> > fleets = Objects().FindObjects<const Fleet>(m_fleet_ids);
+    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin();
+         fleet_it != fleets.end(); ++fleet_it)
+    {
+        TemporaryPtr<const Fleet> fleet = *fleet_it;
+
+        if ( !(m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) )
             continue;
-        for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
-            int ship_id = *it;
+
+        std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<const Ship> ship = *ship_it;
+            int ship_id = ship->ID();
+
             // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
                 continue;
             if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
-            if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
-                if (ship->Design()) {
-                    ship_count++;
-                    damage_tally += ship->TotalWeaponsDamage();
-                    structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
-                    shield_tally += ship->CurrentMeterValue(METER_SHIELD);
-                }
+
+            if (ship->Design()) {
+                ship_count++;
+                damage_tally += ship->TotalWeaponsDamage();
+                structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
+                shield_tally += ship->CurrentMeterValue(METER_SHIELD);
             }
         }
     }

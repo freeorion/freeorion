@@ -41,37 +41,31 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 
 
     // find ships and their owners in system
-    std::vector<int> ship_ids = system->FindObjectIDs<Ship>();
-    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-        int ship_id = *it;
-        TemporaryPtr<Ship> ship = GetShip(ship_id);
-        if (!ship) {
-            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
-            continue;
-        }
+    std::vector<TemporaryPtr<Ship> > ships =
+        Objects().FindObjects<Ship>(system->ShipIDs());
 
+    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<Ship> ship = *ship_it;
         // add owner to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
 
-        // add ship to full / complete copy of objects in system - NOTE: changed from copy of ship
         objects.Insert(ship);
     }
 
     // find planets and their owners in system
-    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        int planet_id = *it;
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
-        if (!planet) {
-            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
-            continue;
-        }
+    std::vector<TemporaryPtr<Planet> > planets =
+        Objects().FindObjects<Planet>(system->PlanetIDs());
 
+    for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
+         planet_it != planets.end(); ++planet_it)
+    {
+        TemporaryPtr<Planet> planet = *planet_it;
         // if planet is populated, add owner to empires that have assets in this battle
         if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
             empire_ids.insert(planet->Owner());
 
-        // add ship to full / complete copy of objects in system - NOTE: changed from copy of ship
         objects.Insert(planet);
     }
 
@@ -82,27 +76,31 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // known information about all objects in this battle
 
     // system
-    for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+    for (std::set<int>::const_iterator empire_it = empire_ids.begin();
+         empire_it != empire_ids.end(); ++empire_it)
+    {
         int empire_id = *empire_it;
         if (empire_id == ALL_EMPIRES)
             continue;
         empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
     }
+
     // ships
-    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-        int ship_id = *it;
-        TemporaryPtr<const Ship> ship = GetShip(ship_id);
-        if (!ship) {
-            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
-            continue;
-        }
+    for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<Ship> ship = *it;
+        int ship_id = ship->ID();
         TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
-            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get fleet with id " << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get fleet with id "
+                                   << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
             continue;
         }
 
-        for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+        for (std::set<int>::const_iterator empire_it = empire_ids.begin();
+             empire_it != empire_ids.end(); ++empire_it)
+        {
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
@@ -114,14 +112,13 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             { empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
         }
     }
+
     // planets
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        int planet_id = *it;
-        TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
-        if (!planet) {
-            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
-            continue;
-        }
+    for (std::vector<TemporaryPtr<Planet> >::const_iterator it = planets.begin();
+         it != planets.end(); ++it)
+    {
+        TemporaryPtr<Planet> planet = *it;
+        int planet_id = planet->ID();
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
@@ -137,17 +134,6 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // will be copied back to the main Universe's ObjectMap and the Universe's
     // empire latest known objects ObjectMap - NOTE: Using the real thing now
 }
-
-//void CombatInfo::Clear() {
-//    system_id = INVALID_OBJECT_ID;
-//    empire_ids.clear();
-//    objects.Clear();
-//    for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
-//        it->second.Clear();
-//    damaged_object_ids.clear();
-//    destroyed_object_ids.clear();
-//    destroyed_object_knowers.clear();
-//}
 
 TemporaryPtr<const System> CombatInfo::GetSystem() const
 { return this->objects.Object<System>(this->system_id); }
@@ -653,8 +639,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                  part_it != weapons.end(); ++part_it)
             {
                 if (GetOptionsDB().Get<bool>("verbose-logging")) {
-                    Logger().debugStream() << "weapon: " << part_it->part_type_name <<
-                                          " attack: " << part_it->part_attack;
+                    Logger().debugStream() << "weapon: " << part_it->part_type_name
+                                           << " attack: " << part_it->part_attack;
                 }
             }
         } else if (attack_planet) { // treat planet defenses as short range
@@ -831,7 +817,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // TODO: assemble list of objects to copy for each empire.  this should
     //       include objects the empire already knows about with standard
     //       visibility system, and also any objects the empire knows are
-    //       destroyed or
+    //       destroyed during this combat...
     for (std::map<int, ObjectMap>::iterator it = combat_info.empire_known_objects.begin();
          it != combat_info.empire_known_objects.end(); ++it)
     { it->second.Copy(combat_info.objects); }

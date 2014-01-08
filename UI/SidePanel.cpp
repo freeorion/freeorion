@@ -865,7 +865,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     }
 
     // check for shipyard
-    const std::set<int>& buildings = planet->Buildings();
+    const std::set<int>& buildings = planet->BuildingIDs();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         TemporaryPtr<const Building> building = GetBuilding(*building_it);
         if (!building)
@@ -1238,15 +1238,17 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     PlanetType target_planet_type = target_planet->Type();
 
-    //const ObjectMap& objects = Objects();
-    std::vector<int> ships = system->FindObjectIDs<Ship>();
+    // todo: return vector of ships from system ids using new Objects().FindObjects<Ship>(system->FindObjectIDs())
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(system->ShipIDs());
     std::vector<TemporaryPtr<const Ship> > capable_and_available_colony_ships;
     capable_and_available_colony_ships.reserve(ships.size());
 
     // get all ships that can colonize and that are free to do so in the
     // specified planet'ssystem and that can colonize the requested planet
-    for (std::vector<int>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        TemporaryPtr<const Ship> ship = GetShip(*it);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<const Ship> ship = *it;
         if (!AvailableToColonize(ship, system_id, empire_id))
             continue;
         if (!CanColonizePlanetType(ship, target_planet_type))
@@ -1270,26 +1272,27 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     bool changed_planet = false;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = capable_and_available_colony_ships.begin();
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator
+         ship_it = capable_and_available_colony_ships.begin();
          ship_it != capable_and_available_colony_ships.end(); ship_it++)
     {
         TemporaryPtr<const Ship> ship = *ship_it;
         if (!ship)
             continue;
         int ship_id = ship->ID();
-        double planet_capacity = -999;
+        float planet_capacity = -999.9f;
         std::pair<int,int> this_pair = std::make_pair<int,int>(ship_id, target_planet_id);
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
         } else {
-            double colony_ship_capacity = 0.0;
+            float colony_ship_capacity = 0.0f;
             std::string ship_species_name;
             const ShipDesign* design = ship->Design();
             if (!design)
                 continue;
             colony_ship_capacity = design->ColonyCapacity();
-            if (colony_ship_capacity > 0.0 ) {
+            if (colony_ship_capacity > 0.0f ) {
                 ship_species_name = ship->SpeciesName();
                 std::pair<std::string,int> spec_pair = std::make_pair<std::string,int>(ship_species_name, target_planet_id);
                 std::map<std::pair<std::string,int>,float>::iterator spec_pair_it = species_colony_projections.find(spec_pair);
@@ -1304,14 +1307,14 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                         changed_planet = true;
                         target_planet->SetOwner(empire_id);
                         target_planet->SetSpecies(ship_species_name);
-                        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
+                        target_planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0f, 0.0f);
                         GetUniverse().UpdateMeterEstimates(target_planet_id);
                         planet_capacity = target_planet->CurrentMeterValue(METER_TARGET_POPULATION);
                     }
                     species_colony_projections[spec_pair] = planet_capacity;
                 }
             } else {
-                planet_capacity = 0;
+                planet_capacity = 0.0f;
             }
             colony_projections[this_pair] = planet_capacity;
         }
@@ -2316,7 +2319,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
             Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
         }
-        orbits_planets.insert(std::make_pair(system->OrbitOfObjectID(planet_id), planet_id));
+        orbits_planets.insert(std::make_pair(system->OrbitOfPlanet(planet_id), planet_id));
     }
 
     // create new panels and connect their signals
@@ -2687,15 +2690,19 @@ void SidePanel::Refresh() {
         return;
     }
 
-    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it)
-        if (TemporaryPtr<Planet> planet = GetPlanet(*it))
-            s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
+    std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>(system->PlanetIDs());
+    for (std::vector<TemporaryPtr<Planet> >::iterator it = planets.begin(); it != planets.end(); ++it) {
+        TemporaryPtr<Planet> planet = *it;
+        s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal,
+                                                SidePanel::ResourceCenterChangedSignal));
+    }
 
-    std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-    for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
-        if (TemporaryPtr<Fleet> fleet = GetFleet(*it))
-            s_fleet_state_change_signals[*it] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
+    std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(system->FleetIDs());
+    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal,
+                                                                &SidePanel::FleetStateChanged);
+    }
 
     //s_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Update));
     s_system_connections.insert(GG::Connect(system->FleetInsertedSignal,    &SidePanel::FleetInserted));

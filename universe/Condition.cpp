@@ -2310,8 +2310,10 @@ namespace {
                 return false;
 
             bool match = false;
-            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
-                if ((*it)->Contains(candidate->ID())) {
+            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin();
+                 it != m_subcondition_matches.end(); ++it)
+            {
+                if (candidate->ContainedBy((*it)->ID())) {
                     match = true;
                     break;
                 }
@@ -2376,16 +2378,20 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
         return false;
     }
 
-    // get subcondition matches
-    ObjectSet subcondition_matches;
-    m_condition->Eval(local_context, subcondition_matches);
+    // get containing objects
+    std::set<int> containers;
+    if (candidate->SystemID() != INVALID_OBJECT_ID)
+        containers.insert(candidate->SystemID());
+    if (candidate->ContainerObjectID() != INVALID_OBJECT_ID && candidate->ContainerObjectID() != candidate->SystemID())
+        containers.insert(candidate->ContainerObjectID());
 
-    // is candidate object contained by any subcondition matches?
-    for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it)
-        if ((*subcon_it)->Contains(candidate->ID()))
-            return true;
+    ObjectSet container_objects = Objects().FindObjects<const UniverseObject>(containers);
+    if (container_objects.empty())
+        return false;
 
-    return false;
+    m_condition->Eval(local_context, container_objects);
+
+    return container_objects.empty();
 }
 
 ///////////////////////////////////////////////////////////
@@ -5484,6 +5490,8 @@ namespace {
             }
             if (jumps != -1)    // if jumps is -1, no path exists between the systems
                 return static_cast<int>(jumps);
+            else
+                return MANY_JUMPS;
 
         } else if (system_one) {
             // just object one is / in a system.
@@ -5503,9 +5511,9 @@ namespace {
                 if (jumps != -1) {
                     return jumps - 1;
                 } else {
-                    Logger().errorStream() << "JumpsBetweenObjects called with only obj 1 insytem but object 2 fleet having invalid prev_system and next_system";
+                    // no path
+                    return MANY_JUMPS;
                 }
-
             }
 
         } else if (system_two) {
@@ -5526,7 +5534,8 @@ namespace {
                 if (jumps != -1) {
                     return jumps - 1;
                 } else {
-                    Logger().errorStream() << "JumpsBetweenObjects called with only obj 2 insystem but  object 1 fleet having invalid prev_system and next_system";
+                    // no path
+                    return MANY_JUMPS;
                 }
             }
         } else {
@@ -5560,11 +5569,8 @@ namespace {
                 if (jumps != -1) {
                     return jumps - 1;
                 } else {
-                    Logger().errorStream() << "JumpsBetweenObjects called with neither obj1 nor obj2 insystem"
-                                            << "; fleet 1 prev_system " << fleet_one_prev_system_id 
-                                            << " and next_system " << fleet_one_next_system_id
-                                            << "; fleet 2 prev_system " << fleet_two_prev_system_id 
-                                            << " and next_system " << fleet_two_next_system_id;
+                    // no path
+                    return MANY_JUMPS;
                 }
             }
         }
@@ -5595,7 +5601,7 @@ namespace {
                         return true;
                 } else {
                     int jumps = JumpsBetweenObjects(*it, candidate);
-                    if (jumps <= m_jump_limit)
+                    if (jumps != -1 && jumps <= m_jump_limit)
                         return true;
                 }
             }

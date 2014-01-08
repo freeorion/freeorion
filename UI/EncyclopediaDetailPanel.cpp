@@ -1189,7 +1189,8 @@ void EncyclopediaDetailPanel::Refresh() {
             }
         }
 
-        TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "", client_empire_id, TEMPORARY_OBJECT_ID);
+        TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "",
+                                                           client_empire_id, TEMPORARY_OBJECT_ID);
         GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
@@ -1277,7 +1278,8 @@ void EncyclopediaDetailPanel::Refresh() {
 
             GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
 
-            TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id, TEMPORARY_OBJECT_ID);
+            TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
+                                                               client_empire_id, TEMPORARY_OBJECT_ID);
             GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
             detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))

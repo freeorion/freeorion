@@ -644,9 +644,8 @@ void CombatShip::UpdateMissionQueue()
     case ShipMission::ENTER_STARLANE: {
         TemporaryPtr<System> system = GetSystem(GetShip()->SystemID());
         assert(system);
-        for (System::const_lane_iterator it = system->begin_lanes();
-             it != system->end_lanes();
-             ++it) {
+        const std::map<int, bool>& lanes = system->StarlanesWormholes();
+        for (std::map<int, bool>::const_iterator it = lanes.begin(); it != lanes.end(); ++it) {
             if (PointInStarlaneEllipse(position().x, position().y, system->ID(), it->first)) {
                 m_enter_starlane_start_turn = m_turn;
                 break;

@@ -926,7 +926,6 @@ void Universe::ApplyAppearanceEffects() {
     ExecuteEffects(targets_causes, false, false, true);
 }
 
-
 void Universe::InitMeterEstimatesAndDiscrepancies() {
     Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
@@ -1017,9 +1016,10 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
         objects_set.insert(cur_object_id);
         m_effect_accounting_map[cur_object_id].clear();
 
-        // add contained objects to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
+        // add contained objects to list of objects to process, if requested.
+        // assumes no objects contain themselves (which could cause infinite loops)
         if (update_contained_objects) {
-            std::vector<int> contained_objects = cur_object->FindObjectIDs(); // get all contained objects
+            const std::set<int>& contained_objects = cur_object->ContainedObjectIDs();
             std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
         }
     }
@@ -1475,14 +1475,14 @@ namespace {
             cond->Eval(source_context, matched_target_objects);
         } else {
             // move matches from candidates in target_objects into target_set
-        Condition::ObjectSet& potential_target_objects =
-            *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_objects));
+            Condition::ObjectSet& potential_target_objects =
+                *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_objects));
 
-        // move matches from candidates in target_objects into target_set
-        cond->Eval(source_context, matched_target_objects, potential_target_objects);
-        // restore target_objects by copying objects back from targets to target_objects
-        // this should be cheaper than doing a full copy because target_set is usually small
-        target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
+            // move matches from candidates in target_objects into target_set
+            cond->Eval(source_context, matched_target_objects, potential_target_objects);
+            // restore target_objects by copying objects back from targets to target_objects
+            // this should be cheaper than doing a full copy because target_set is usually small
+            target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
         }
 
         //Logger().debugStream() << "Generated new target set!";
@@ -2090,7 +2090,7 @@ namespace {
                 continue;   // shouldn't be necessary, but I like to be safe...
 
             // does object actually contain any other objects?
-            std::vector<int> contained_objects = container_obj->FindObjectIDs();
+            const std::set<int>& contained_objects = container_obj->ContainedObjectIDs();
             if (contained_objects.empty())
                 continue;   // nothing to propegate if no objects contained
 
@@ -2101,7 +2101,7 @@ namespace {
             //Logger().debugStream() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
 
             // for each contained object within container
-            for (std::vector<int>::iterator contained_obj_it = contained_objects.begin();
+            for (std::set<int>::const_iterator contained_obj_it = contained_objects.begin();
                  contained_obj_it != contained_objects.end(); ++contained_obj_it)
             {
                 int contained_obj_id = *contained_obj_it;
@@ -2200,8 +2200,8 @@ namespace {
                     continue;
 
                 // get all starlanes emanating from this system, and loop through them
-                System::StarlaneMap starlane_map = system->StarlanesWormholes();
-                for (System::StarlaneMap::const_iterator lane_it = starlane_map.begin();
+                const std::map<int, bool>& starlane_map = system->StarlanesWormholes();
+                for (std::map<int, bool>::const_iterator lane_it = starlane_map.begin();
                      lane_it != starlane_map.end(); ++lane_it)
                 {
                     bool is_wormhole = lane_it->second;
@@ -2325,8 +2325,6 @@ namespace {
 }
 
 void Universe::UpdateEmpireObjectVisibilities() {
-    //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
-
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
     for (EmpireManager::iterator empire_it = Empires().begin();
          empire_it != Empires().end(); ++empire_it)
@@ -2600,10 +2598,9 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
         Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
         return;
     }
-
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
+    if (!Empires().Lookup(empire_id)) {
         Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called for invalid empire id: " << empire_id;
+        return;
     }
     m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 }
@@ -2630,7 +2627,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     }
 
     m_destroyed_object_ids.insert(object_id);
-    
+
     if (update_destroyed_object_knowers) {
         // record empires that know this object has been destroyed
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
@@ -2642,60 +2639,108 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
         }
     }
 
-
-    // move object to its own position, thereby removing it from anything
-    // that contained it and propegating associated signals
-    obj->MoveTo(obj->X(), obj->Y());
-
+    //// remove object from its system, if any. should be redundant with
+    //// calling code doing similar action.
+    //if (obj->SystemID() != INVALID_OBJECT_ID && obj->SystemID() != obj->SystemID()) {
+    //    TemporaryPtr<System> system = GetSystem(obj->SystemID());
+    //    if (system)
+    //        system->Remove(obj->ID());
+    //    obj->SetSystem(INVALID_OBJECT_ID);
+    //}
 
     // signal that an object has been deleted
     UniverseObjectDeleteSignal(obj);
     m_objects.Remove(object_id);
 }
 
-void Universe::RecursiveDestroy(int object_id) {
+std::set<int> Universe::RecursiveDestroy(int object_id) {
+    std::set<int> retval;
+
     TemporaryPtr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
-        return;
+        return retval;
     }
+
+    TemporaryPtr<System> system = GetSystem(obj->SystemID());
 
     if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
-        Destroy(object_id);
-        if (fleet && fleet->Empty()) {
-            Destroy(fleet->ID());
+        if (fleet) {
+            fleet->RemoveShip(ship->ID());
+            if (fleet->Empty()) {
+                if (system)
+                    system->Remove(fleet->ID());
+                Destroy(fleet->ID());
+                retval.insert(fleet->ID());
+            }
         }
+        if (system)
+            system->Remove(object_id);
+        Destroy(object_id);
+        retval.insert(object_id);
 
     } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(obj)) {
         std::set<int> fleet_ships = fleet->ShipIDs();           // copy, so destroying ships can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = fleet_ships.begin();
              it != fleet_ships.end(); ++it)
-        { Destroy(*it); }
+        {
+            if (system)
+                system->Remove(*it);
+            Destroy(*it);
+            retval.insert(*it);
+        }
+        if (system)
+            system->Remove(object_id);
         Destroy(object_id);
+        retval.insert(object_id);
 
     } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(obj)) {
-        std::set<int> planet_buildings = planet->Buildings();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
+        std::set<int> planet_buildings = planet->BuildingIDs();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
         for (std::set<int>::const_iterator it = planet_buildings.begin();
              it != planet_buildings.end(); ++it)
-        { Destroy(*it); }
+        {
+            if (system)
+                system->Remove(*it);
+            Destroy(*it);
+            retval.insert(*it);
+        }
+        if (system)
+            system->Remove(object_id);
         Destroy(object_id);
+        retval.insert(object_id);
 
-    } else if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(obj)) {
-        std::vector<int> system_objs = system->FindObjectIDs();
-        for (std::vector<int>::const_iterator it = system_objs.begin();
-             it != system_objs.end(); ++it)
-        { Destroy(*it); }
+    } else if (TemporaryPtr<System> obj_system = boost::dynamic_pointer_cast<System>(obj)) {
+        // destroy all objects in system
+        std::set<int> objects = obj_system->ObjectIDs();
+        for (std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+            Destroy(*it);
+            retval.insert(*it);
+        }
+        // then system itself
         Destroy(object_id);
+        retval.insert(object_id);
+        // don't need to bother with removing things from system, fleets, or
+        // ships, since everything in system is being destroyed
 
-    } else if (obj->ObjectType() == OBJ_BUILDING) {
+    } else if (TemporaryPtr<Building> building = boost::dynamic_pointer_cast<Building>(obj)) {
+        TemporaryPtr<Planet> planet = GetPlanet(building->PlanetID());
+        if (planet)
+            planet->RemoveBuilding(object_id);
+        if (system)
+            system->Remove(object_id);
         Destroy(object_id);
+        retval.insert(object_id);
 
     } else if (obj->ObjectType() == OBJ_FIELD) {
+        if (system)
+            system->Remove(object_id);
         Destroy(object_id);
+        retval.insert(object_id);
     }
     // else ??? object is of some type unknown as of this writing.
+    return retval;
 }
 
 bool Universe::Delete(int object_id) {
@@ -2778,7 +2823,9 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         m_system_id_to_graph_index[system1_id] = i;
 
         // add edges and edge weights
-        for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
+        for (std::map<int, bool>::const_iterator it = system1->StarlanesWormholes().begin();
+             it != system1->StarlanesWormholes().end(); ++it)
+        {
             // get id in universe of system at other end of lane
             const int lane_dest_id = it->first;
             // skip null lanes and only add edges in one direction, to avoid
@@ -3131,12 +3178,12 @@ TemporaryPtr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, in
 TemporaryPtr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new System(), id); }
 
-TemporaryPtr<System> Universe::CreateSystem(StarType star, int orbits, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, orbits, name, x, y), id); }
+TemporaryPtr<System> Universe::CreateSystem(StarType star, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new System(star, name, x, y), id); }
 
-TemporaryPtr<System> Universe::CreateSystem(StarType star, int orbits, const std::map<int, bool>& lanes_and_holes,
-                                    const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
-{ return InsertID(new System(star, orbits, lanes_and_holes, name, x, y), id); }
+TemporaryPtr<System> Universe::CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
+                                            const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+{ return InsertID(new System(star, lanes_and_holes, name, x, y), id); }
 
 TemporaryPtr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Building(), id); }

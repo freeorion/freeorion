@@ -83,6 +83,7 @@ namespace {
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         fleet->AddShip(ship->ID());
+        ship->SetFleetID(fleet->ID());
 
         return fleet;
     }
@@ -95,8 +96,25 @@ namespace {
         if (!system || !ship)
             return TemporaryPtr<Fleet>();
 
+        // remove ship from old fleet / system, put into new system if necessary
+        if (ship->SystemID() != system->ID()) {
+            if (TemporaryPtr<System> old_system = GetSystem(ship->SystemID())) {
+                old_system->Remove(ship->ID());
+                ship->SetSystem(INVALID_OBJECT_ID);
+            }
+            system->Insert(ship);
+        }
+
+        if (ship->FleetID() != INVALID_OBJECT_ID) {
+            if (TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID())) {
+                old_fleet->RemoveShip(ship->ID());
+            }
+        }
+
+        // create new fleet for ship, and put it in new system
         TemporaryPtr<Fleet> fleet = CreateNewFleet(system->X(), system->Y(), ship);
         system->Insert(fleet);
+
         return fleet;
     }
 
@@ -1172,8 +1190,9 @@ void SetOwner::Execute(const ScriptingContext& context) const {
             new_fleet = CreateNewFleet(system, ship);
         else
             new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
-        if (new_fleet)
+        if (new_fleet) {
             new_fleet->SetNextAndPreviousSystems(fleet->NextSystemID(), fleet->PreviousSystemID());
+        }
 
         // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
         // in case that would reval something to the recipient that shouldn't be...
@@ -1244,7 +1263,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    //  determine if and which orbits are available
+    // determine if and which orbits are available
     std::set<int> free_orbits = location->FreeOrbits();
     if (free_orbits.empty()) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
@@ -1257,8 +1276,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    int orbit = *(free_orbits.begin());
-    location->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
+    location->Insert(planet);   // let system chose an orbit for planet
 }
 
 std::string CreatePlanet::Description() const {
@@ -1319,8 +1337,13 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     }
 
     location->AddBuilding(building->ID());
+    building->SetPlanetID(location->ID());
 
     building->SetOwner(location->Owner());
+
+    TemporaryPtr<System> system = GetSystem(location->SystemID());
+    if (system)
+        system->Insert(building);
 }
 
 std::string CreateBuilding::Description() const {
@@ -1441,6 +1464,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //// etc.
 
     TemporaryPtr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
+    system->Insert(ship);
 
     ship->Rename(empire ? empire->NewShipName() : ship->Design()->Name());
 
@@ -1669,9 +1693,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (m_y)
         y = m_y->Eval(context);
 
-    const int MAX_SYSTEM_ORBITS = 9;    // hard coded value in UniverseServer.cpp
-
-    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), x, y);
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, GenerateSystemName(), x, y);
     if (!system) {
         Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -1957,41 +1979,81 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     // "randomly" pick a destination
     TemporaryPtr<UniverseObject> destination = boost::const_pointer_cast<UniverseObject>(*valid_locations.begin());
 
+    // get previous system from which to remove object if necessary
+    TemporaryPtr<System> old_sys = GetSystem(context.effect_target->SystemID());
 
     // do the moving...
-
     if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target)) {
-        // fleets can be inserted into the system that contains the destination object (or the 
-        // destination object istelf if it is a system
+        // fleets can be inserted into the system that contains the destination
+        // object (or the destination object itself if it is a system)
         if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
+                // remove fleet from old system, put into new system
+                if (old_sys)
+                    old_sys->Remove(fleet->ID());
                 dest_system->Insert(fleet);
+
+                // also move ships of fleet
+                std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                     ship_it != ships.end(); ++ship_it)
+                {
+                    TemporaryPtr<Ship> ship = *ship_it;
+                    if (old_sys)
+                        old_sys->Remove(ship->ID());
+                    dest_system->Insert(*ship_it);
+                }
+
                 ExploreSystem(dest_system->ID(), fleet);
                 UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
             }
+
+            // if old and new systems are the same, and destination is that
+            // system, don't need to do anything
+
         } else {
-            fleet->UniverseObject::MoveTo(destination); // UniverseObject:: scope specification seemingly needed due to mixture of overridded and non-virtual base class MoveTo functions
+            // move fleet to new location
+            if (old_sys)
+                old_sys->Remove(fleet->ID());
+            fleet->SetSystem(INVALID_OBJECT_ID);
+            fleet->MoveTo(destination);
 
-            // fleet has been moved to a location that is not a system.  Presumably this will be located on a starlane between two
-            // other systems, which may or may not have been explored.  Regardless, the fleet needs to be given a new next and
-            // previous system so it can move into a system, or can be ordered to a new location, and so that it won't try to move
-            // off of starlanes towards some other system from its current location (if it was heading to another system) and so it
-            // won't be stuck in the middle of a starlane, unable to move (if it wasn't previously moving)
+            // also move ships of fleet
+            std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+            for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+                    ship_it != ships.end(); ++ship_it)
+            {
+                TemporaryPtr<Ship> ship = *ship_it;
+                if (old_sys)
+                    old_sys->Remove(ship->ID());
+                ship->SetSystem(INVALID_OBJECT_ID);
+                ship->MoveTo(destination);
+            }
 
-            // if destination object is a fleet or is part of a fleet, can use that fleet's previous and next systems to get
-            // valid next and previous systems for the target fleet.
-            TemporaryPtr<const Fleet> dest_fleet;
 
-            dest_fleet = boost::dynamic_pointer_cast<const Fleet>(destination);
+            // fleet has been moved to a location that is not a system.
+            // Presumably this will be located on a starlane between two other
+            // systems, which may or may not have been explored.  Regardless,
+            // the fleet needs to be given a new next and previous system so it
+            // can move into a system, or can be ordered to a new location, and
+            // so that it won't try to move off of starlanes towards some other
+            // system from its current location (if it was heading to another
+            // system) and so it won't be stuck in the middle of a starlane,
+            // unable to move (if it wasn't previously moving)
+
+            // if destination object is a fleet or is part of a fleet, can use
+            // that fleet's previous and next systems to get valid next and
+            // previous systems for the target fleet.
+            TemporaryPtr<const Fleet> dest_fleet = boost::dynamic_pointer_cast<const Fleet>(destination);
             if (!dest_fleet)
                 if (TemporaryPtr<const Ship> dest_ship = boost::dynamic_pointer_cast<const Ship>(destination))
                     dest_fleet = GetFleet(dest_ship->FleetID());
-
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
+
             } else {
-                // need to do something more fancy, although as of this writing, there are no other types of UniverseObject subclass
-                // that can be located between systems other than fleets and ships, so this shouldn't matter for now...
+                // TODO: need to do something else to get updated previous/next
+                // systems if the destination is a field.
                 Logger().errorStream() << "Effect::MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
             }
         }
@@ -1999,27 +2061,63 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
-        TemporaryPtr<Fleet> dest_fleet = boost::dynamic_pointer_cast<Fleet>(destination);  // may be 0 if destination is not a fleet
+        // is destination a ship/fleet ?
+        TemporaryPtr<Fleet> dest_fleet = boost::dynamic_pointer_cast<Fleet>(destination);   // may be 0 if destination is not a fleet
+        if (!dest_fleet) {
+            TemporaryPtr<Ship> dest_ship = boost::dynamic_pointer_cast<Ship>(destination);  // may still be 0
+            if (dest_ship)
+                dest_fleet = GetFleet(dest_ship->FleetID());
+        }
+        if (dest_fleet && dest_fleet->ID() == ship->FleetID())
+            return; // already in destination fleet. nothing to do.
+
         bool same_owners = ship->Owner() == destination->Owner();
         int dest_sys_id = destination->SystemID();
         int ship_sys_id = ship->SystemID();
 
+
+        if (ship_sys_id != dest_sys_id) {
+            // ship is moving to a different system.
+
+            // remove ship from old system
+            if (old_sys) {
+                old_sys->Remove(ship->ID());
+                ship->SetSystem(INVALID_OBJECT_ID);
+            }
+
+            if (TemporaryPtr<System> new_sys = GetSystem(dest_sys_id)) {
+                // ship is moving to a new system. insert it.
+                new_sys->Insert(ship);
+            } else {
+                // ship is moving to a non-system location. move it there.
+                ship->MoveTo(boost::dynamic_pointer_cast<UniverseObject>(dest_fleet));
+            }
+
+            // may create a fleet for ship below...
+        }
+
+        TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
+
         if (dest_fleet && same_owners) {
-            // ship is moving to a different fleet owned by the same empire, so can be inserted into it
-            dest_fleet->AddShip(ship->ID());    // does nothing if fleet already contains the ship
+            // ship is moving to a different fleet owned by the same empire, so
+            // can be inserted into it.
+            old_fleet->RemoveShip(ship->ID());
+            dest_fleet->AddShip(ship->ID());
+            ship->SetFleetID(dest_fleet->ID());
 
         } else if (dest_sys_id == ship_sys_id && dest_sys_id != INVALID_OBJECT_ID) {
-            // ship is moving to the system it is already in, but isn't being or can't be moved into a specific fleet, so the ship
-            // can be left in its current fleet and at its current location
+            // ship is moving to the system it is already in, but isn't being or
+            // can't be moved into a specific fleet, so the ship can be left in
+            // its current fleet and at its current location
 
         } else if (destination->X() == ship->X() && destination->Y() == ship->Y()) {
-            // ship is moving to the same location it's already at, but isn't being or can't be moved to a specific fleet, so the ship
-            // can be left in its current fleet and at its current location
+            // ship is moving to the same location it's already at, but isn't
+            // being or can't be moved to a specific fleet, so the ship can be
+            // left in its current fleet and at its current location
 
         } else {
             // need to create a new fleet for ship
-            if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
+            if (TemporaryPtr<System> dest_system = GetSystem(dest_sys_id)) {
                 CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
@@ -2028,59 +2126,116 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             }
         }
 
-        if (old_fleet && old_fleet->NumShips() < 1)
+        if (old_fleet && old_fleet->Empty()) {
+            old_sys->Remove(old_fleet->ID());
             universe.EffectDestroy(old_fleet->ID());
+        }
 
     } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
-        if (TemporaryPtr<System> dest_system = GetSystem(destination->SystemID())) {
-            // check if planet is already in this system.  if so, don't need to do anything
-            if (planet->SystemID() == INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
-                //  determine if and which orbits are available
-                std::set<int> free_orbits = dest_system->FreeOrbits();
-                if (!free_orbits.empty()) {
-                    int orbit = *(free_orbits.begin());
-                    dest_system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
-                    ExploreSystem(dest_system->ID(), planet);
-                }
-            }
+
+        TemporaryPtr<System> dest_system = GetSystem(destination->SystemID());
+        if (!dest_system)
+            return; // can't move a planet to a non-system
+
+        if (planet->SystemID() == dest_system->ID())
+            return; // planet already at destination
+
+        if (dest_system->FreeOrbits().empty())
+            return; // no room for planet at destination
+
+        if (old_sys)
+            old_sys->Remove(planet->ID());
+        dest_system->Insert(planet);  // let system pick an orbit
+
+        // also insert buildings of planet into system.
+        std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(planet->BuildingIDs());
+        for (std::vector<TemporaryPtr<Building> >::iterator building_it = buildings.begin();
+             building_it != buildings.end(); ++building_it)
+        {
+            TemporaryPtr<Building> building = *building_it;
+            if (old_sys)
+                old_sys->Remove(building->ID());
+            dest_system->Insert(building);
         }
-        // don't move planets to a location outside a system
+
+        // buildings planet should be unchanged by move, as should planet's
+        // records of its buildings
+
+        ExploreSystem(dest_system->ID(), planet);
+
 
     } else if (TemporaryPtr<Building> building = boost::dynamic_pointer_cast<Building>(context.effect_target)) {
-        // buildings need to be located on planets, so if destination is a planet, insert building into it,
-        // or attempt to get the planet on which the destination object is located and insert target building into that
-        if (TemporaryPtr<Planet> dest_planet = boost::dynamic_pointer_cast<Planet>(destination)) {
-            dest_planet->AddBuilding(building->ID());
-            if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
-                ExploreSystem(dest_system->ID(), building);
-
-
-        } else if (TemporaryPtr<Building> dest_building = boost::dynamic_pointer_cast<Building>(destination)) {
-            if (TemporaryPtr<Planet> dest_planet = GetPlanet(dest_building->PlanetID())) {
-                dest_planet->AddBuilding(building->ID());
-                if (TemporaryPtr<const System> dest_system = GetSystem(dest_planet->SystemID()))
-                    ExploreSystem(dest_system->ID(), building);
+        // buildings need to be located on planets, so if destination is a
+        // planet, insert building into it, or attempt to get the planet on
+        // which the destination object is located and insert target building
+        // into that
+        TemporaryPtr<Planet> dest_planet = boost::dynamic_pointer_cast<Planet>(destination);
+        if (!dest_planet) {
+            TemporaryPtr<Building> dest_building = boost::dynamic_pointer_cast<Building>(destination);
+            if (dest_building) {
+                dest_planet = GetPlanet(dest_building->PlanetID());
             }
         }
-        // else if destination is something else that can be on a planet...
+        if (!dest_planet)
+            return;
+
+        if (dest_planet->ID() == building->PlanetID())
+            return; // nothing to do
+
+        TemporaryPtr<System> dest_system = GetSystem(destination->SystemID());
+        if (!dest_system)
+            return;
+
+        // remove building from old planet / system, add to new planet / system
+        if (old_sys)
+            old_sys->Remove(building->ID());
+        building->SetSystem(INVALID_OBJECT_ID);
+
+        if (TemporaryPtr<Planet> old_planet = GetPlanet(building->PlanetID()))
+            old_planet->RemoveBuilding(building->ID());
+
+        dest_planet->AddBuilding(building->ID());
+        building->SetPlanetID(dest_planet->ID());
+
+        dest_system->Insert(building);
+        ExploreSystem(dest_system->ID(), building);
+
 
     } else if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(context.effect_target)) {
-        if (destination->SystemID() == INVALID_OBJECT_ID) {
-            // can simply move system to new location, and insert destination object into system
-            system->UniverseObject::MoveTo(destination);
-            // find fleets at this location and insert into system
-            std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
-            for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it)
-                if (TemporaryPtr<Fleet> fleet = *it)
-                    if (fleet->X() == system->X() && fleet->Y() == system->Y())
-                        system->Insert(fleet);
-        } else {
-            //TemporaryPtr<System> destination_system = GetSystem(destination->SystemID());
+        if (destination->SystemID() != INVALID_OBJECT_ID) {
             // TODO: merge systems
+            return;
         }
+
+        // move target system to new destination, and insert destination object
+        // and related objects into system
+        system->MoveTo(destination);
+
+        if (destination->ObjectType() == OBJ_FIELD)
+            system->Insert(destination);
+
+        // find fleets / ships at destination location and insert into system
+        for (ObjectMap::iterator<Fleet> it = Objects().begin<Fleet>(); it != Objects().end<Fleet>(); ++it) {
+            TemporaryPtr<Fleet> obj = *it;
+            if (obj->X() == system->X() && obj->Y() == system->Y())
+                system->Insert(obj);
+        }
+
+        for (ObjectMap::iterator<Ship> it = Objects().begin<Ship>(); it != Objects().end<Ship>(); ++it) {
+            TemporaryPtr<Ship> obj = *it;
+            if (obj->X() == system->X() && obj->Y() == system->Y())
+                system->Insert(obj);
+        }
+
+
     } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(context.effect_target)) {
-        field->UniverseObject::MoveTo(destination);
+        if (old_sys)
+            old_sys->Remove(field->ID());
+        field->SetSystem(INVALID_OBJECT_ID);
+        field->MoveTo(destination);
+        if (TemporaryPtr<System> dest_system = boost::dynamic_pointer_cast<System>(destination))
+            dest_system->Insert(field);
     }
 }
 
@@ -2163,20 +2318,55 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
+    TemporaryPtr<System> old_sys = GetSystem(target->SystemID());
+
     if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
+
     } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
+        if (old_sys)
+            old_sys->Remove(fleet);
+        fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            if (old_sys)
+                old_sys->Remove(ship->ID());
+            ship->SetSystem(INVALID_OBJECT_ID);
+            ship->MoveTo(new_x, new_y);
+        }
         return;
+
     } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
+        if (old_sys)
+            old_sys->Remove(ship->ID());
+        ship->SetSystem(INVALID_OBJECT_ID);
+
         TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        if (old_fleet) {
+            old_fleet->RemoveShip(ship->ID());
+            if (old_fleet->Empty()) {
+                old_sys->Remove(old_fleet->ID());
+                GetUniverse().EffectDestroy(old_fleet->ID());
+            }
+        }
+
+        ship->SetFleetID(INVALID_OBJECT_ID);
+        ship->MoveTo(new_x, new_y);
+
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
-        if (old_fleet && old_fleet->NumShips() < 1)
-            GetUniverse().EffectDestroy(old_fleet->ID());
+        return;
+
     } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
+        if (old_sys)
+            old_sys->Remove(field->ID());
+        field->SetSystem(INVALID_OBJECT_ID);
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
@@ -2294,23 +2484,67 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         new_y = target->Y() + dest_to_target_y / dest_to_target_dist * speed;
     }
     if (target->X() == new_x && target->Y() == new_y)
-        return;
+        return; // nothing to do
 
     if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
-        return;
+        std::vector<TemporaryPtr<UniverseObject> > contained_objects =
+            Objects().FindObjects<UniverseObject>(system->ObjectIDs());
+        for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = contained_objects.begin();
+             it != contained_objects.end(); ++it)
+        {
+            TemporaryPtr<UniverseObject> obj = *it;
+            obj->MoveTo(new_x, new_y);
+        }
+        // don't need to remove objects from system or insert into it, as all
+        // contained objects in system are moved with it, maintaining their
+        // containment situation
+
     } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
+        TemporaryPtr<System> old_sys = GetSystem(fleet->SystemID());
+        if (old_sys)
+            old_sys->Remove(fleet->ID());
+        fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
+             it != ships.end(); ++it)
+        {
+            TemporaryPtr<Ship> ship = *it;
+            if (old_sys)
+                old_sys->Remove(ship->ID());
+            ship->SetSystem(INVALID_OBJECT_ID);
+            ship->MoveTo(new_x, new_y);
+        }
+
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
-        return;
+
     } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
+        TemporaryPtr<System> old_sys = GetSystem(ship->SystemID());
+        if (old_sys)
+            old_sys->Remove(ship->ID());
+        ship->SetSystem(INVALID_OBJECT_ID);
+
         TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        if (old_fleet)
+            old_fleet->RemoveShip(ship->ID());
+        ship->SetFleetID(INVALID_OBJECT_ID);
+
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
-        if (old_fleet && old_fleet->NumShips() < 1)
+        if (old_fleet && old_fleet->Empty()) {
+            if (old_sys)
+                old_sys->Remove(old_fleet->ID());
             GetUniverse().EffectDestroy(old_fleet->ID());
+        }
+
     } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
+        TemporaryPtr<System> old_sys = GetSystem(field->SystemID());
+        if (old_sys)
+            old_sys->Remove(field->ID());
+        field->SetSystem(INVALID_OBJECT_ID);
         field->MoveTo(new_x, new_y);
+
     }
     // don't move planets or buildings, as these can't exist outside of systems
 }

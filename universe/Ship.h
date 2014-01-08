@@ -31,7 +31,11 @@ public:
 
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
+
+    virtual int                 ContainerObjectID() const   { return m_fleet_id; }             ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
+    virtual bool                ContainedBy(int object_id) const;                               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
     int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
+
     int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
 
     virtual const std::string&  PublicName(int empire_id) const;
@@ -79,8 +83,6 @@ public:
     void            RemoveMissiles(const std::string& part_name, std::size_t n);
 
     void            SetSpecies(const std::string& species_name);
-
-    virtual void    MoveTo(double x, double y);
 
     void            SetOrderedScrapped(bool b = true);                          ///< flags ship for scrapping
     void            SetColonizePlanet(int planet_id);                           ///< marks ship to colonize the indicated planet

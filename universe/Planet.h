@@ -111,11 +111,12 @@ public:
     Day                         RotationalPeriod() const;
     Degree                      AxialTilt() const;
 
-    const std::set<int>&        Buildings() const {return m_buildings;}
+    const std::set<int>&        BuildingIDs() const {return m_buildings;}
 
-    virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
-    virtual std::vector<TemporaryPtr<UniverseObject> >FindObjects() const;            ///< returns objects contained within this object
-    virtual std::vector<int>            FindObjectIDs() const;          ///< returns ids of objects contained within this object
+    virtual int                 ContainerObjectID() const;          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
+    virtual const std::set<int>&ContainedObjectIDs() const;         ///< returns ids of objects contained within this object
+    virtual bool                Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
+    virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     virtual std::vector<std::string>    AvailableFoci() const;
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
@@ -139,9 +140,6 @@ public:
     virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     virtual Meter*  GetMeter(MeterType type);
-
-    virtual void    SetSystem(int sys);
-    virtual void    MoveTo(double x, double y);
 
     void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
     void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
@@ -199,8 +197,6 @@ private:
 
     virtual Visibility      GetVisibility(int empire_id) const  { return UniverseObject::GetVisibility(empire_id); }
     virtual void            AddMeter(MeterType meter_type)      { UniverseObject::AddMeter(meter_type); }
-
-    std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 
     PlanetType      m_type;
     PlanetType      m_original_type;

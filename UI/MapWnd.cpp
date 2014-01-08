@@ -2372,11 +2372,16 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
         ancestor[*sysIt] = -1;
     ancestor[startSys] = startSys;
     tryNext.push_back(startSys);
+
     while (!tryNext.empty() ) {
         int sysID = tryNext.front();
-        //Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers  ==> GetLeastJumps, checking system "<< sysID;
-        for (System::const_lane_iterator laneIt= universe_object_ptr_cast<System>(objMap.Object(sysID))->begin_lanes(); 
-             laneIt!= universe_object_ptr_cast<System>(objMap.Object(sysID))->end_lanes(); laneIt++)
+
+        TemporaryPtr<const System> system = objMap.Object<const System>(sysID);
+        if (!system)
+            continue;
+        const std::map<int, bool>& lanes = system->StarlanesWormholes();
+        for (std::map<int, bool>::const_iterator laneIt = lanes.begin();
+             laneIt != lanes.end(); ++laneIt)
         {
             int newSys = laneIt->first;
             std::pair<int, int> lane_forward = std::make_pair(sysID, newSys);
@@ -2530,7 +2535,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
 
         // add system's starlanes
-        for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
+        const std::map<int, bool>& lanes = start_system->StarlanesWormholes();
+        for (std::map<int, bool>::const_iterator lane_it = lanes.begin();
+             lane_it != lanes.end(); ++lane_it)
+        {
             bool lane_is_wormhole = lane_it->second;
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
@@ -3876,14 +3884,15 @@ void MapWnd::SystemRightClicked(int system_id) {
             TemporaryPtr<const System> system = GetSystem(system_id);
             if (!system)
                 return;
-            std::vector<int> object_ids = system->FindObjectIDs();
 
-            for (std::vector<int>::const_iterator it = object_ids.begin();
-                 it != object_ids.end(); ++it)
+            std::vector<TemporaryPtr<const UniverseObject> > objects =
+                Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
+
+            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
+                 it != objects.end(); ++it)
             {
-                TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
-                if (!obj)
-                    continue;
+                TemporaryPtr<const UniverseObject> obj = *it;
+
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(player_id,
@@ -4411,7 +4420,7 @@ bool MapWnd::ReturnToMap() {
 }
 
 bool MapWnd::OpenChatWindow() {
-    std::cout << "open chat window" << std::endl;
+    Logger().debugStream() << "MapWnd::OpenChatWindow";
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return false;

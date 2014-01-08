@@ -22,7 +22,8 @@ namespace {
     void                    DumpObjects(const Universe& universe)
     { Logger().debugStream() << universe.Objects().Dump(); }
 
-    // We're returning the result of operator-> here so that python doesn't need to deal with our TemporaryPtr class.
+    // We're returning the result of operator-> here so that python doesn't
+    // need to deal with our TemporaryPtr class.
     // Please don't use this trick elsewhere to grab a raw UniverseObject*!
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
     { return ::GetUniverseObject(id).operator->(); }
@@ -38,7 +39,7 @@ namespace {
     { return ::GetField(id).operator->();  }
     const Building*         GetBuildingP(const Universe& universe, int id)
     { return ::GetBuilding(id).operator->(); }
-    
+
     std::vector<int>        ObjectIDs(const Universe& universe)
     { return Objects().FindObjectIDs(); }
     std::vector<int>        FleetIDs(const Universe& universe)
@@ -54,7 +55,7 @@ namespace {
     std::vector<int>        BuildingIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Building>(); }
 
-    std::vector<std::string>    SpeciesFoci(const Species& species) {
+    std::vector<std::string>SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
         const std::vector<FocusType>& foci = species.Foci();
         for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); f_it++ )
@@ -388,6 +389,8 @@ namespace FreeOrionPython {
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
             .def("contains",                    &UniverseObject::Contains)
             .def("containedBy",                 &UniverseObject::ContainedBy)
+            .add_property("containedObjects",   make_function(&UniverseObject::ContainedObjectIDs,  return_value_policy<return_by_value>()))
+            .add_property("containerObject",    &UniverseObject::ContainerObjectID)
             .def("currentMeterValue",           &UniverseObject::CurrentMeterValue)
             .def("initialMeterValue",           &UniverseObject::InitialMeterValue)
             .def("nextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
@@ -556,7 +559,7 @@ namespace FreeOrionPython {
             .def("OrbitalPositionOnTurn",                   &Planet::OrbitalPositionOnTurn)
             .add_property("RotationalPeriod",               &Planet::RotationalPeriod)
             .add_property("AxialTilt",                      &Planet::AxialTilt)
-            .add_property("buildingIDs",                    make_function(&Planet::Buildings,           return_internal_reference<>()))
+            .add_property("buildingIDs",                    make_function(&Planet::BuildingIDs,     return_internal_reference<>()))
         ;
 
         //////////////////
@@ -564,15 +567,16 @@ namespace FreeOrionPython {
         //////////////////
         class_<System, bases<UniverseObject>, noncopyable>("system", no_init)
             .add_property("starType",           &System::GetStarType)
-            .add_property("numOrbits",          &System::Orbits)
             .add_property("numStarlanes",       &System::NumStarlanes)
             .add_property("numWormholes",       &System::NumWormholes)
             .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
             .def("HasWormholeToSystemID",       &System::HasWormholeTo)
-            .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,              return_value_policy<return_by_value>()))
-            .add_property("allObjectIDs",       make_function(&System::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>()))
-            .add_property("planetIDs",          make_function(&System::FindObjectIDs<Planet>,           return_value_policy<return_by_value>()))
-            .add_property("fleetIDs",           make_function(&System::FindObjectIDs<Fleet>,            return_value_policy<return_by_value>()))
+            .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,  return_value_policy<return_by_value>()))
+            .add_property("planetIDs",          make_function(&System::PlanetIDs,           return_value_policy<return_by_value>()))
+            .add_property("buildingIDs",        make_function(&System::BuildingIDs,         return_value_policy<return_by_value>()))
+            .add_property("fleetIDs",           make_function(&System::FleetIDs,            return_value_policy<return_by_value>()))
+            .add_property("shipIDs",            make_function(&System::ShipIDs,             return_value_policy<return_by_value>()))
+            .add_property("fieldIDs",           make_function(&System::FieldIDs,            return_value_policy<return_by_value>()))
             .add_property("lastTurnBattleHere", &System::LastTurnBattleHere)
         ;
 

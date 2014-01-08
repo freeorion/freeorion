@@ -64,14 +64,18 @@ namespace {
         assert(!arriving_fleets_by_starlane.begin()->second.back()->Unowned());
         int owner = arriving_fleets_by_starlane.begin()->second.back()->Owner();
         for (std::map<int, std::vector<TemporaryPtr<Fleet> > >::const_iterator it = arriving_fleets_by_starlane.begin();
-             it != arriving_fleets_by_starlane.end();
-             ++it)
+             it != arriving_fleets_by_starlane.end(); ++it)
         {
             setup_groups.push_back(CombatSetupGroup());
             CombatSetupGroup& setup_group = setup_groups.back();
 
-            for (std::size_t i = 0; i < it->second.size(); ++i) {
-                setup_group.m_ships.insert(it->second[i]->begin(), it->second[i]->end());
+            std::vector<TemporaryPtr<Fleet> > fleets = it->second;
+            for (std::vector<TemporaryPtr<Fleet> >::const_iterator fleet_it = fleets.begin();
+                 fleet_it != fleets.end(); ++fleet_it)
+            {
+                TemporaryPtr<Fleet> fleet = *fleet_it;
+                const std::set<int> ship_ids = fleet->ShipIDs();
+                setup_group.m_ships.insert(ship_ids.begin(), ship_ids.end());
             }
 
             double rads = StarlaneEntranceOrbitalPosition(it->first, system->ID());
@@ -104,21 +108,31 @@ namespace {
                             const std::vector<TemporaryPtr<Fleet> >& fleets,
                             CombatSetupGroup& setup_group)
     {
-        for (std::size_t i = 0; i < fleets.size(); ++i) {
-            setup_group.m_ships.insert(fleets[i]->begin(), fleets[i]->end());
+        for (std::vector<TemporaryPtr<Fleet> >::const_iterator fleet_it = fleets.begin();
+                fleet_it != fleets.end(); ++fleet_it)
+        {
+            TemporaryPtr<Fleet> fleet = *fleet_it;
+            const std::set<int> ship_ids = fleet->ShipIDs();
+            setup_group.m_ships.insert(ship_ids.begin(), ship_ids.end());
         }
 
-        for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-            if (TemporaryPtr<const Planet> planet = GetPlanet(it->second)) {
-                double orbit_r = OrbitalRadius(it->first);
-                double rads = planet->OrbitalPositionOnTurn(CurrentTurn());
-                float planet_r = PlanetRadius(planet->Size());
-                setup_group.m_regions.push_back(
-                    CombatSetupRegion(orbit_r * std::cos(rads), orbit_r * std::sin(rads), planet_r * 1.5));
-            }
+        std::vector<TemporaryPtr<const Planet> > planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
+        for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets.begin();
+             it != planets.end(); ++it)
+        {
+            TemporaryPtr<const Planet> planet = *it;
+            int object_id = planet->ID();
+
+            int orbit = system->OrbitOfPlanet(planet->ID());
+            double orbit_r = OrbitalRadius(orbit);
+
+            float rads = planet->OrbitalPositionOnTurn(CurrentTurn());
+            float planet_r = PlanetRadius(planet->Size());
+            setup_group.m_regions.push_back(
+                CombatSetupRegion(orbit_r * std::cos(rads), orbit_r * std::sin(rads), planet_r * 1.5));
         }
 
-        setup_group.m_regions.push_back(CombatSetupRegion(0.0, 0.0, StarRadius() / 2.0));
+        setup_group.m_regions.push_back(CombatSetupRegion(0.0f, 0.0f, StarRadius() / 2.0f));
 
         // provide a gap between the nearest point on the ellipse and the
         // allowed placement area.
@@ -379,11 +393,22 @@ CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<Co
     std::map<int, std::map<int, std::vector<TemporaryPtr<Fleet> > > > arriving_fleets_by_starlane_by_empire;
     std::map<int, std::set<int> > empires_by_starlane;
 
-    for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-        m_combat_universe[it->second] = GetUniverseObject(it->second);
+    std::vector<TemporaryPtr<UniverseObject> > objects =
+        Objects().FindObjects<UniverseObject>(system->ContainedObjectIDs());
+
+    for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = objects.begin();
+         it != objects.end(); ++it)
+    {
+        TemporaryPtr<UniverseObject> object = *it;
+        int object_id = object->ID();
+
+        m_combat_universe[object_id] = object;
+
         if (TemporaryPtr<const Planet> planet =
-                universe_object_ptr_cast<const Planet>(m_combat_universe[it->second])) {
-            double orbit_radius = OrbitalRadius(it->first);
+                universe_object_ptr_cast<const Planet>(object))
+        {
+            int orbit = system->OrbitOfPlanet(object_id);
+            double orbit_radius = OrbitalRadius(orbit);
             if (planet->Type() == PT_ASTEROIDS) {
                 m_pathing_engine.AddObstacle(
                     new AsteroidBeltObstacle(orbit_radius, AsteroidBeltRadius()));
@@ -397,7 +422,8 @@ CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<Co
                     new SphereObstacle(PlanetRadius(planet->Size()), position));
             }
         } else if (TemporaryPtr<Fleet> fleet =
-                   universe_object_ptr_cast<Fleet>(m_combat_universe[it->second])) {
+                   universe_object_ptr_cast<Fleet>(object))
+        {
             assert(!fleet->Unowned());
             int owner = fleet->Owner();
             if (fleet->ArrivedThisTurn()) {
@@ -410,9 +436,8 @@ CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<Co
         }
     }
 
-    for (std::map<int, std::vector<TemporaryPtr<Fleet> > >::iterator it = present_fleets_by_empire.begin();
-         it != present_fleets_by_empire.end();
-         ++it)
+    for (std::map<int, std::vector<TemporaryPtr<Fleet> > >::iterator
+         it = present_fleets_by_empire.begin(); it != present_fleets_by_empire.end(); ++it)
     {
         std::vector<CombatSetupGroup>& empire_setup_groups = setup_groups[it->first];
         empire_setup_groups.push_back(CombatSetupGroup());
