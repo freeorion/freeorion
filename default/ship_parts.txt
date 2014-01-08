@@ -735,6 +735,7 @@ Part
             scope = NumberOf 1 And [
                 Planet
                 InSystem Source.SystemID
+                Not Planet type = [Asteroids GasGiant Barren Desert]
             ]
             activation = And [
                             Random 0.15
