@@ -38,6 +38,13 @@ const std::string& UserString(const std::string& str) {
         return GetDefaultStringTable().String(str);
 }
 
+void UserStringList(const std::string& str_list, std::list<std::string>& strings) {
+    std::istringstream template_stream(UserString(str_list));
+    std::copy(std::istream_iterator<std::string>(template_stream),
+              std::istream_iterator<std::string>(),
+              std::back_inserter<std::list<std::string> >(strings));
+}
+
 boost::format FlexibleFormat(const std::string &string_to_format) {
     try {
         boost::format retval(string_to_format);

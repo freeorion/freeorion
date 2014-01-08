@@ -118,21 +118,11 @@ namespace {
         }
     }
 
-    void LoadEmpireNames(std::list<std::string>& names) {
-        boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
-        while (ifs) {
-            std::string latest_name;
-            std::getline(ifs, latest_name);
-            if (!latest_name.empty())
-                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-        }
-    }
-
     std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> >& players) {
         // load default empire names
         static std::list<std::string> empire_names;
         if (empire_names.empty())
-            LoadEmpireNames(empire_names);
+            UserStringList("EMPIRE_NAMES", empire_names);
         std::set<std::string> validNames(empire_names.begin(), empire_names.end());
         for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
             std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);

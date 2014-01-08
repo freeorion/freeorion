@@ -3,6 +3,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "ValueRef.h"
@@ -175,20 +176,10 @@ namespace {
         return false;
     }
 
-    void LoadSystemNames(std::list<std::string>& names) {
-        boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
-        while (ifs) {
-            std::string latest_name;
-            std::getline(ifs, latest_name);
-            if (!latest_name.empty())
-                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-        }
-    }
-
     std::string GenerateSystemName() {
         static std::list<std::string> star_names;
         if (star_names.empty())
-            LoadSystemNames(star_names);
+            UserStringList("STAR_NAMES", star_names);
 
         const ObjectMap& objects = Objects();
         std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();

@@ -420,7 +420,7 @@ def createUniverse():
 
     # store list of possible star system names in global container
     global star_names
-    star_names = loadStringList("starnames.txt")
+    star_names = getNameList("STAR_NAMES")
     # randomly shuffle the list so we don't get the names always
     # in the same order when we pop names from the list later
     random.shuffle(star_names)
@@ -436,7 +436,7 @@ def createUniverse():
     # get typical width for universe based on number of systems
     width = fo.calcTypicalUniverseWidth(gsd.size)
     fo.setUniverseWidth(width)
-    print "Set universe width to %f" % width
+    print "Set universe width to", width
 
     # Calling universe generator helper functions to calculate positions
     # for the requested galaxy shape and number of systems
@@ -501,7 +501,7 @@ def createUniverse():
     # store list of possible empire names in global container
     global empire_names
     print "Load list of empire names..."
-    empire_names = loadStringList("empire_names.txt")
+    empire_names = getNameList("EMPIRE_NAMES")
     print "...", len(empire_names), "names loaded"
     # randomly shuffle the list so we don't get the names always
     # in the same order when we pop names from the list later

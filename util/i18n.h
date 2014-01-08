@@ -3,6 +3,7 @@
 #define _I18N_h_
 
 #include <string>
+#include <list>
 
 #include <boost/format.hpp>
 
@@ -10,6 +11,9 @@
 
 /** Returns a language-specific string for the key-string \a str */
 FO_COMMON_API const std::string& UserString(const std::string& str);
+
+/** Returns a language-specific list of strings for the key-string \a str_list */
+FO_COMMON_API void UserStringList(const std::string& str_list, std::list<std::string>& strings);
 
 /** Placeholder for non local translations, evaluates to a non operation */
 #define UserStringNop(key) key
