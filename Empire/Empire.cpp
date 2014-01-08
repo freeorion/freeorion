@@ -197,9 +197,14 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group
-            float allocation = std::max(std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), group_pp_available), 0.0f);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+            float allocation = std::max(std::min(std::min(additional_pp_to_complete_element,
+                                                          element_per_turn_limit),
+                                                 group_pp_available),
+                                        0.0f);       // max(..., 0.0) prevents negative-allocations
 
-            //Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
+            //Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost "
+            //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
+            //                       << " more to be completed";
             //Logger().debugStream() << "... allocating " << allocation;
 
             // allocate pp
@@ -213,19 +218,6 @@ namespace {
 
             if (allocation > 0.0)
                 ++projects_in_progress;
-        }
-    }
-
-    void LoadShipNames(std::vector<std::string>& names) {
-        std::string file_name = "shipnames.txt";
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        while (ifs) {
-            std::string latest_name;
-            std::getline(ifs, latest_name);
-            if (latest_name != "") {
-                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-            }
         }
     }
 }
@@ -2483,12 +2475,20 @@ void Empire::AddExploredSystem(int ID) {
 }
 
 std::string Empire::NewShipName() {
-    std::string retval;
     static std::vector<std::string> ship_names;
-    if (ship_names.empty())
-        LoadShipNames(ship_names);
+    if (ship_names.empty()) {
+        // load potential names from stringtable
+        std::list<std::string> ship_names_list;
+        UserStringList("SHIP_NAMES", ship_names_list);
+        ship_names.reserve(ship_names_list.size());
+        std::copy(ship_names_list.begin(), ship_names_list.end(), std::back_inserter(ship_names));
+        if (ship_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
+            ship_names.push_back(UserString("SHIP"));
+    }
+
+    // select name randomly from list
     int star_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);
-    retval = ship_names[star_name_idx];
+    std::string retval = ship_names[star_name_idx];
     int times_name_used = ++m_ship_names_used[retval];
     if (1 < times_name_used)
         retval += " " + RomanNumber(times_name_used);
