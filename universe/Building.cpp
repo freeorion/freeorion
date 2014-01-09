@@ -31,7 +31,7 @@ Building::Building(int empire_id, const std::string& building_type,
     m_ordered_scrapped(false),
     m_produced_by_empire_id(produced_by_empire_id)
 {
-    SetOwner(empire_id);
+    UniverseObject::SetOwner(empire_id);
     const BuildingType* type = GetBuildingType(m_building_type);
     if (type)
         Rename(UserString(type->Name()));
@@ -135,7 +135,7 @@ void Building::ResetTargetMaxUnpairedMeters() {
 }
 
 void Building::Reset() {
-    SetOwner(ALL_EMPIRES);
+    UniverseObject::SetOwner(ALL_EMPIRES);
     m_ordered_scrapped = false;
 }
 

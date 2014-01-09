@@ -2710,7 +2710,7 @@ void SidePanel::Refresh() {
 }
 
 void SidePanel::RefreshImpl() {
-    ScopedTimer("SidePanel::RefreshImpl", true);
+    ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
 
     // save initial scroll position so it can be restored after repopulating the planet panel container
@@ -2737,7 +2737,7 @@ void SidePanel::RefreshImpl() {
 
     // populate droplist of system names
     {
-        ScopedTimer("SidePanel::RefreshImpl droplist population", true);
+        ScopedTimer droplist_population_timer("SidePanel::RefreshImpl droplist population", true);
         std::map< std::string, int > system_map; //alphabetize Systems here
         for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
              sys_it != Objects().const_end<System>(); ++sys_it) 
