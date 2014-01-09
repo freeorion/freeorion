@@ -203,8 +203,18 @@ class AIShipDesignTypes(object):
     troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C",  "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
     #  [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')), 
     #   (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
-    attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G",  "Obliterator":"H",
-                                    "Atlas":"EA",  "Pele":"EB",  "Xena":"EC",
+    attackShip= {"SD_MARK":"A", 
+                        "Lynx":"B",
+                        "Griffon":"C",  
+                        "Comet":"CA", 
+                        "Wyvern":"D", 
+                        "Manticore":"E",  
+                        "Atlas":"EA",  
+                        "Pele":"EB",  
+                        "Xena":"EC", 
+                        "Devil":"F",  
+                        "Reaver":"G",  
+                        "Obliterator":"H",
                                     }
 
     colonyBase={"SD_COLONY_BASE":"A",  "NestBase":"B"}

@@ -6758,6 +6758,12 @@ Asteroid Hulls
 SHP_ASTEROID_HULLS_DESC
 Rather than constructing a hull from scratch, it is far easier to take a pre-existing space-borne object and adapt it to fill the role of a ship's hull. Not only would such ships be very inexpensive to produce, but they would also be able to avoid detection by enemy ships by hiding amongst other asteroids.
 
+SHP_HEAVY_AST_HULL
+Heavy Asteroid Hulls
+
+SHP_HEAVY_AST_HULL_DESC
+Allows construction of larger asteroid hulls
+
 SHP_ASTEROID_REFORM
 Asteroid Reformation
 

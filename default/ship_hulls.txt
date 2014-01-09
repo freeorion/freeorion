@@ -573,7 +573,7 @@ Hull
         Slot type = Internal position = (0.24, 0.75)
         Slot type = Internal position = (0.36, 0.75)
     ]
-    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 12.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -966,7 +966,7 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
-    buildCost = 7 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [

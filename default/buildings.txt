@@ -315,8 +315,8 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
     description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
-    buildcost = 30
-    buildtime = 10
+    buildcost = 40
+    buildtime = 8
     tags = "ORBITAL"
     location = And [
         Planet

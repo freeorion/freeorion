@@ -1871,8 +1871,8 @@ Tech
     short_description = "TAME_MONSTER_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 6 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 2
+    researchcost = 9 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
     prerequisites = "GRO_PLANET_ECOL"
 
 Tech
@@ -2001,8 +2001,20 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_SMALL_ASTEROID"
         Item type = ShipHull name = "SH_ASTEROID"
-        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
+    ]
+
+Tech
+    name = "SHP_HEAVY_AST_HULL"
+    description = "SHP_HEAVY_AST_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = "SHP_ASTEROID_HULLS"
+    unlock = [
+        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
     ]
 
 Tech
@@ -2046,8 +2058,8 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 4 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 2
+    researchcost = 8 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
     prerequisites = "SHP_DOMESTIC_MONSTER"
     unlock = [
         Item type = ShipHull name = "SH_ORGANIC"
