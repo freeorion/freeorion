@@ -27,7 +27,7 @@ namespace {
     struct condition_parser_rules_6 {
         condition_parser_rules_6() {
             const parse::lexer& tok = parse::lexer::instance();
-            
+
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
                 parse::value_ref_parser<std::string>();
 

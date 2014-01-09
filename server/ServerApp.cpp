@@ -2072,17 +2072,17 @@ namespace {
                 if (planet->OwnedBy(empire_with_troops_id)) {
                     continue;   // if troops all belong to planet owner, not a combat.
                 } else {
-                    Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
+                    //Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
                     if (planet_initial_owner_id != ALL_EMPIRES)
                         all_involved_empires.insert(planet_initial_owner_id);
                     if (empire_with_troops_id != ALL_EMPIRES)
                         all_involved_empires.insert(empire_with_troops_id);
                 }
             } else {
-                Logger().debugStream() << "Ground combat on " << planet->Name();
+                Logger().debugStream() << "Ground combat troops on " << planet->Name() << " :";
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                      empire_it != empires_troops.end(); ++empire_it)
-                { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+                { Logger().debugStream() << " ... empire: " << empire_it->first << " : " << empire_it->second; }
 
                 // create sitreps for all empires involved in battle
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
