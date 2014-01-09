@@ -207,31 +207,25 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     int m_found_buffer = 1;
     int m_found_source = 0;
 
-    if (alcGetCurrentContext() != 0)
-    {
+    if (alcGetCurrentContext() != 0) {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
         if (it != m_buffers.end())
             m_current_buffer = it->second;
-        else
-        {
+        else {
             /* We buffer the file if it wasn't previously */
             if ((m_current_buffer = alutCreateBufferFromFile(filename.c_str())) != AL_NONE)
                 m_buffers[filename] = m_current_buffer;
-            else
-            {
+            else {
                 Logger().errorStream() << "PlaySound: Cannot create buffer for: " << filename.c_str() << " Reason:" << alutGetErrorString(alutGetError());
                 m_found_buffer = 0;
             }
         }
-        if (m_found_buffer)
-        {
+        if (m_found_buffer) {
             /* Now that we have the buffer, we need to find a source to send it to */
-            for (m_i = 1; m_i < NUM_SOURCES; ++m_i) // as we're playing sounds we start at 1. 0 is reserved for music
-            {
+            for (m_i = 1; m_i < NUM_SOURCES; ++m_i) {   // as we're playing sounds we start at 1. 0 is reserved for music
                 alGetSourcei(m_sources[m_i],AL_SOURCE_STATE,&m_source_state);
-                if ((m_source_state != AL_PLAYING) && (m_source_state != AL_PAUSED))
-                {
+                if ((m_source_state != AL_PLAYING) && (m_source_state != AL_PAUSED)) {
                     m_found_source = 1;
                     alSourcei(m_sources[m_i], AL_BUFFER, m_current_buffer);
                     alSourcePlay(m_sources[m_i]);
@@ -249,12 +243,11 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     }
 }
 
-void Sound::FreeSound(const boost::filesystem::path& path)
-{
+void Sound::FreeSound(const boost::filesystem::path& path) {
     ALenum m_openal_error;
     std::string filename = path.string();
     std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
-   
+
     if (it != m_buffers.end()) {
         alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
@@ -266,12 +259,12 @@ void Sound::FreeSound(const boost::filesystem::path& path)
     }
 }
 
-void Sound::FreeAllSounds()
-{
+void Sound::FreeAllSounds() {
     ALenum m_openal_error;
-   
+
     for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
-         it != m_buffers.end(); ++it) {
+         it != m_buffers.end(); ++it)
+    {
         alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
@@ -281,10 +274,9 @@ void Sound::FreeAllSounds()
     }
 }
 
-void Sound::SetMusicVolume(int vol)
-{
+void Sound::SetMusicVolume(int vol) {
     ALenum m_openal_error;
-   
+
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("UI.sound.music-volume", vol);
@@ -298,15 +290,13 @@ void Sound::SetMusicVolume(int vol)
     }
 }
 
-void Sound::SetUISoundsVolume(int vol)
-{
+void Sound::SetUISoundsVolume(int vol) {
     ALenum m_openal_error;
-   
+
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
-    if (alcGetCurrentContext() != 0)
-    {
+    if (alcGetCurrentContext() != 0) {
         for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it],AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
@@ -316,16 +306,13 @@ void Sound::SetUISoundsVolume(int vol)
     }
 }
 
-void Sound::DoFrame()
-{
+void Sound::DoFrame() {
     ALint    state;
     int      num_buffers_processed;
-   
-    if ((alcGetCurrentContext() != 0) && (m_music_name.size() > 0))
-    {
+
+    if ((alcGetCurrentContext() != 0) && (m_music_name.size() > 0)) {
         alGetSourcei(m_sources[0],AL_BUFFERS_PROCESSED,&num_buffers_processed);
-        while (num_buffers_processed > 0)
-        {
+        while (num_buffers_processed > 0) {
             ALuint buffer_name_yay;
             alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
             if (RefillBuffer(&buffer_name_yay))
@@ -342,25 +329,20 @@ void Sound::DoFrame()
 bool Sound::UISoundsTemporarilyDisabled() const
 { return !m_UI_sounds_temporarily_disabled.empty(); }
 
-int Sound::RefillBuffer(ALuint *bufferName)
-{
+int Sound::RefillBuffer(ALuint *bufferName) {
     ALenum m_openal_error;
     int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
     int bitStream,bytes,bytes_new;
     char array[BUFFER_SIZE];
     bytes = 0;
-   
-    if (alcGetCurrentContext() != 0)
-    {
+
+    if (alcGetCurrentContext() != 0) {
         /* First, let's fill up the buffer. We need the loop, as ov_read treats (BUFFER_SIZE - bytes) to read as a suggestion only */
-        do
-        {
+        do {
             bytes_new = ov_read(&m_ogg_file, &array[bytes],(BUFFER_SIZE - bytes), endian, 2, 1, &bitStream);
             bytes += bytes_new;
-            if (bytes_new == 0)
-            {
-                if (m_music_loops != 0) // enter here if we need to play the same file again
-                {
+            if (bytes_new == 0) {
+                if (m_music_loops != 0) {   // enter here if we need to play the same file again
                     if (m_music_loops > 0)
                         m_music_loops--;
                     ov_time_seek(&m_ogg_file,0.0); // rewind to beginning
@@ -369,15 +351,12 @@ int Sound::RefillBuffer(ALuint *bufferName)
                     break;
             }
         } while ((BUFFER_SIZE - bytes) > 4096);
-        if (bytes > 0)
-        {
+        if (bytes > 0) {
             alBufferData(bufferName[0], m_ogg_format, array, static_cast < ALsizei > (bytes),m_ogg_freq);
             m_openal_error = alGetError();
             if (m_openal_error != AL_NONE)
                 Logger().errorStream() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
-        }
-        else
-        {
+        } else {
             m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
             ov_clear(&m_ogg_file); // the app might think we still have something to play.
             return 1;

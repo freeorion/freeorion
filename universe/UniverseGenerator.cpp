@@ -1389,7 +1389,7 @@ void CreateUniverse(int size,                          Shape shape,
     AddStartingSpecials(universe, specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
-    
+
     // Apply effects for 1st turn.
     universe.ApplyAllEffectsAndUpdateMeters();
     Logger().debugStream() << "Finished applying all effects and updating meters.";
