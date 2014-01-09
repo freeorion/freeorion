@@ -6706,7 +6706,7 @@ SHP_INTSTEL_LOG
 Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
-'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
+'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by 4.
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 

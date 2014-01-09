@@ -2612,7 +2612,7 @@ ADVANCED_FOCUS_EFFECTS
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
-            effects = SetSupply Value + Target.Population * 0.5
+            effects = SetSupply Value + 4
 '''
 
 //#####      I N D U S T R Y    #####//
