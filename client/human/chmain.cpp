@@ -145,8 +145,32 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // gracefully by resetting it to the standard path into the
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
-        if (!boost::filesystem::exists(GetResourceDir()))
+        if (!boost::filesystem::exists(GetResourceDir()) ||
+            !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
+            !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+        {
+            Logger().debugStream() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
+
             GetOptionsDB().Set<std::string>("resource-dir", "");
+
+            // double-check that resetting actually fixed things...
+            if (!boost::filesystem::exists(GetResourceDir()) ||
+                !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
+                !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+            {
+                Logger().debugStream() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
+
+                std::string path_string;
+#if defined(FREEORION_WIN32)
+                boost::filesystem::path::string_type path_string_native = GetResourceDir().native();
+                utf8::utf16to8(path_string_native.begin(), path_string_native.end(), std::back_inserter(path_string));
+#else
+                path_string = GetResourceDir().string();
+#endif
+                throw std::runtime_error("Unable to load game resources at default location: " +
+                                         path_string + " : Install may be broken.");
+            }
+        }
 
 
         // did the player request generation of config.xml, saving the default (or current) options to disk?
