@@ -1484,7 +1484,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    prerequisites = "CON_METRO_INFRA"
+    prerequisites = "CON_ASYMP_MATS"
     graphic = "icons/tech/architecture_psychology.png"
 
 Tech
@@ -1495,7 +1495,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-    prerequisites = "CON_METRO_INFRA"
+    prerequisites = "CON_ASYMP_MATS"
     unlock = Item type = Building name = "BLD_SPACE_ELEVATOR"
     graphic = "icons/tech/architectural_monofilaments.png"
 
@@ -1507,7 +1507,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
-    prerequisites = "CON_INFRA_ECOL"
+    prerequisites = "SHP_INTSTEL_LOG"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1672,28 +1672,6 @@ Tech
     graphic = "icons/tech/transcendent_architecture.png"
 
 Tech
-    name = "CON_INFRA_ECOL"
-    description = "CON_INFRA_ECOL_DESC"
-    short_description = "STARLANE_SPEED_SHORT_DESC"
-    techtype = Theory
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 6
-    prerequisites = "SHP_INTSTEL_LOG"
-    effectsgroups = EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy TheEmpire Source.Owner
-                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
-                WithinDistance 50 And [
-                    Planet
-                    OwnedBy TheEmpire Source.Owner
-                ]
-            ]
-        effects = SetStarlaneSpeed Value + 20
-    graphic = "icons/tech/infrastructure_ecology.png"
-
-Tech
     name = "CON_ORGANIC_STRC"
     description = "CON_ORGANIC_STRC_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -1757,29 +1735,6 @@ Tech
     graphic = "icons/tech/orbital_construction.png"
 
 Tech
-    name = "CON_METRO_INFRA"
-    description = "CON_METRO_INFRA_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 1
-    prerequisites = "CON_ASYMP_MATS"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Not Or [
-                    HasSpecial "TUNNELS_SPECIAL"
-                    HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
-                ]
-            ]
-            accountinglabel = "TUNNELS_LABEL"
-            effects = SetTargetConstruction Value + 10
-    graphic = "icons/tech/metroplex_infrastructure.png"
-
-Tech
     name = "CON_CONC_CAMP"
     description = "CON_CONC_CAMP_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -1789,7 +1744,6 @@ Tech
     researchturns = 4
     prerequisites = "CON_ARCH_PSYCH"
     unlock = Item type = Building name = "BLD_CONC_CAMP"
-
 
 Tech
     name = "CON_FRC_ENRG_CAMO"
@@ -1884,6 +1838,17 @@ Tech
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "CON_ORBITAL_CON"
+    effectsgroups = EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
+                WithinDistance 50 And [
+                    Planet
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+        effects = SetStarlaneSpeed Value + 20
     graphic = "icons/tech/stellar_navigation.png"
 
 Tech
