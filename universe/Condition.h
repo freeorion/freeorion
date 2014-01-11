@@ -150,8 +150,9 @@ struct FO_COMMON_API Condition::ConditionBase {
     /** Tests single candidate object, returning true iff it matches condition
       * with empty ScriptingContext. */
     bool                Eval(TemporaryPtr<const UniverseObject> candidate) const;
-    
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
 
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
@@ -786,6 +787,7 @@ struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;

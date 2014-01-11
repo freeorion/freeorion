@@ -25,61 +25,67 @@ using boost::io::str;
 extern int g_indent;
 
 namespace {
+    void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingObjects());
+        std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+    }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
-                std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
+        std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFields());
-                std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFields());
+        std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFleets());
-                std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFleets());
+        std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
-                std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
+        std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPopCenters());
-                std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPopCenters());
+        std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingResourceCenters());
-                std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingResourceCenters());
+        std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     void AddShipSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingShips());
-                std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingShips());
+        std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
-    
+
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
-                condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingSystems());
-                std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(), 
-                                std::back_inserter(condition_non_targets), 
-                                boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingSystems());
+        std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(),
+                        std::back_inserter(condition_non_targets),
+                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
     TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
@@ -275,11 +281,10 @@ bool Condition::ConditionBase::Eval(TemporaryPtr<const UniverseObject> candidate
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
-void Condition::ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
-    condition_non_targets.reserve(Objects().NumExistingObjects());
-    std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(), 
-                    std::back_inserter(condition_non_targets), 
-                    boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+void Condition::ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                                 Condition::ObjectSet& condition_non_targets) const
+{
+    AddAllObjectsSet(condition_non_targets);
 }
 
 std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
@@ -958,8 +963,10 @@ std::string Condition::SortedNumberOf::Dump() const {
     return retval;
 }
 
-void Condition::SortedNumberOf::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
-    if ( m_condition ) {
+void Condition::SortedNumberOf::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                                  Condition::ObjectSet& condition_non_targets) const
+{
+    if (m_condition) {
         m_condition->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
         return;
     } else {
@@ -1176,7 +1183,9 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const {
     return local_context.source == local_context.condition_local_candidate;
 }
 
-void Condition::Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+void Condition::Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const
+{
     if (parent_context.source)
         condition_non_targets.push_back(parent_context.source);
     //Logger().debugStream() << "Condition::ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
@@ -1224,7 +1233,9 @@ bool Condition::Target::Match(const ScriptingContext& local_context) const {
     return local_context.effect_target == local_context.condition_local_candidate;
 }
 
-void Condition::Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+void Condition::Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const
+{
     if (parent_context.effect_target)
         condition_non_targets.push_back(parent_context.effect_target);
 }
@@ -1446,8 +1457,9 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
     return false;
 }
 
-void Condition::Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
-    { AddPlanetSet(condition_non_targets); }
+void Condition::Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                             Condition::ObjectSet& condition_non_targets) const
+{ AddPlanetSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
 // Capital                                               //
@@ -1481,8 +1493,9 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const {
     return false;
 }
 
-void Condition::Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
-    { AddPlanetSet(condition_non_targets); }
+void Condition::Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                           Condition::ObjectSet& condition_non_targets) const
+{ AddPlanetSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
@@ -1513,8 +1526,9 @@ bool Condition::Monster::Match(const ScriptingContext& local_context) const {
     return false;
 }
 
-void Condition::Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
-    { AddShipSet(condition_non_targets); }
+void Condition::Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                           Condition::ObjectSet& condition_non_targets) const
+{ AddShipSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
@@ -1663,7 +1677,9 @@ bool Condition::Type::Match(const ScriptingContext& local_context) const {
     return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
 }
 
-void Condition::Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+void Condition::Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                        Condition::ObjectSet& condition_non_targets) const
+{
     // Ships, Fleets and default checks for current objects only
     bool found_type = false;
     if (m_type) {
@@ -1858,8 +1874,9 @@ std::string Condition::Building::Dump() const {
     return retval;
 }
 
-void Condition::Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const
-    { AddBuildingSet(condition_non_targets); }
+void Condition::Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                            Condition::ObjectSet& condition_non_targets) const
+{ AddBuildingSet(condition_non_targets); }
 
 bool Condition::Building::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -2255,7 +2272,10 @@ std::string Condition::Contains::Dump() const {
     return retval;
 }
 
-void Condition::Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
+void Condition::Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                            Condition::ObjectSet& condition_non_targets) const
+{
+    // objects that can contain other objects: fleets, planets, and systems
     AddFleetSet(condition_non_targets);
     AddPlanetSet(condition_non_targets);
     AddSystemSet(condition_non_targets);
@@ -2583,6 +2603,27 @@ std::string Condition::ObjectID::Description(bool negated/* = false*/) const {
 std::string Condition::ObjectID::Dump() const
 { return DumpIndent() + "Object id = " + m_object_id->Dump(); }
 
+void Condition::ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                            Condition::ObjectSet& condition_non_targets) const
+{
+    if (!m_object_id)
+        return;
+
+    if (!ValueRef::ConstantExpr(m_object_id)) {
+        AddAllObjectsSet(condition_non_targets);
+        return;
+    }
+
+    // simple case of a single specified id; can add just that object
+    int obj_id = m_object_id->Eval();
+    if (obj_id == INVALID_OBJECT_ID)
+        return;
+
+    TemporaryPtr<UniverseObject> obj = Objects().ExistingObject(obj_id);
+    if (obj)
+        condition_non_targets.push_back(obj);
+}
+
 bool Condition::ObjectID::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -2743,9 +2784,11 @@ std::string Condition::PlanetType::Dump() const {
     return retval;
 }
 
-void Condition::PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
-    AddPlanetSet(condition_non_targets); 
-    AddBuildingSet(condition_non_targets); 
+void Condition::PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                              Condition::ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
 }
 
 bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
@@ -2926,9 +2969,11 @@ std::string Condition::PlanetSize::Dump() const {
     return retval;
 }
 
-void Condition::PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
-    AddPlanetSet(condition_non_targets); 
-    AddBuildingSet(condition_non_targets); 
+void Condition::PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                              Condition::ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
 }
 
 bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
@@ -3107,9 +3152,11 @@ std::string Condition::PlanetEnvironment::Dump() const {
     return retval;
 }
 
-void Condition::PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const {
-    AddPlanetSet(condition_non_targets); 
-    AddBuildingSet(condition_non_targets); 
+void Condition::PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                                     Condition::ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
 }
 
 bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const {
@@ -4823,7 +4870,6 @@ bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context)
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     return ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high)(candidate);
 }
-
 
 ///////////////////////////////////////////////////////////
 // EmpireMeterValue                                      //
