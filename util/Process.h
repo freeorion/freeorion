@@ -9,17 +9,7 @@
 
 #include "Export.h"
 
-// assume Linux environment by default
-#if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX) && !defined(FREEORION_MACOSX))
-#define FREEORION_LINUX
-#endif
-
-#ifdef FREEORION_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
-/** encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the 
+/** Encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as 
    a shared_ptr.  In addition, the created process is automatically killed when its owning Process object is 
    destroyed, unless it is explicitly Free()d.  Note that whether or not the process is explicitly Free()d, it may be 
@@ -66,28 +56,11 @@ public:
     //@}
 
 private:
-    class ProcessImpl {
-    public:
-        ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv);
-        ~ProcessImpl();
+    class Impl;
 
-        bool SetLowPriority(bool low); 
-        void Kill();
-        void Free();
-
-    private:
-        bool                m_free;
-    #if defined(FREEORION_WIN32)
-        STARTUPINFO          m_startup_info;
-        PROCESS_INFORMATION  m_process_info;
-    #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
-        pid_t                m_process_id;
-    #endif
-    };
-
-    boost::shared_ptr<ProcessImpl>   m_impl;
-    bool                             m_empty;           ///< true iff this is a default-constructed Process (no associated process exists)
-    bool                             m_low_priority;    ///< true if this process is set to low priority
+    boost::shared_ptr<Impl> m_impl;
+    bool                    m_empty;           ///< true iff this is a default-constructed Process (no associated process exists)
+    bool                    m_low_priority;    ///< true if this process is set to low priority
 };
 
 #endif // _Process_h_

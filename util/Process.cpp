@@ -6,13 +6,42 @@
 
 #include <stdexcept>
 
+// assume Linux environment by default
+#if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX) && !defined(FREEORION_MACOSX))
+#define FREEORION_LINUX
+#endif
+
+#ifdef FREEORION_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
+class Process::Impl {
+public:
+    Impl(const std::string& cmd, const std::vector<std::string>& argv);
+    ~Impl();
+
+    bool SetLowPriority(bool low);
+    void Kill();
+    void Free();
+
+private:
+    bool                m_free;
+#if defined(FREEORION_WIN32)
+    STARTUPINFO          m_startup_info;
+    PROCESS_INFORMATION  m_process_info;
+#elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+    pid_t                m_process_id;
+#endif
+};
+
 Process::Process() :
     m_empty(true),
     m_low_priority(false)
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
-    m_impl(new ProcessImpl(cmd, argv)),
+    m_impl(new Impl(cmd, argv)),
     m_empty(false),
     m_low_priority(false)
 {}
@@ -52,7 +81,7 @@ void Process::Free() {
 
 #if defined(FREEORION_WIN32)
 
-Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv) :
+Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) :
     m_free(false)
 {
     std::string args;
@@ -81,17 +110,17 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
         WaitForInputIdle(m_process_info.hProcess, 1000); // wait for process to finish setting up, or for 1 sec, which ever comes first
 }
 
-Process::ProcessImpl::~ProcessImpl()
+Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
-bool Process::ProcessImpl::SetLowPriority(bool low) {
+bool Process::Impl::SetLowPriority(bool low) {
     if (low)
         return (SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS) != 0);
     else
         return (SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS) != 0);
 }
 
-void Process::ProcessImpl::Kill() {
+void Process::Impl::Kill() {
     if (m_process_info.hProcess && !TerminateProcess(m_process_info.hProcess, 0)) {
         std::string err_str;
         DWORD err = GetLastError();
@@ -102,7 +131,7 @@ void Process::ProcessImpl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::ProcessImpl::Kill : Error terminating process: " << err_str;
+        Logger().errorStream() << "Process::Impl::Kill : Error terminating process: " << err_str;
     }
 
     if (m_process_info.hProcess && !CloseHandle(m_process_info.hProcess)) {
@@ -115,7 +144,7 @@ void Process::ProcessImpl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing process handle: " << err_str;
+        Logger().errorStream() << "Process::Impl::Kill : Error closing process handle: " << err_str;
     }
 
     if (m_process_info.hThread && !CloseHandle(m_process_info.hThread)) {
@@ -128,7 +157,7 @@ void Process::ProcessImpl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing thread handle: " << err_str;
+        Logger().errorStream() << "Process::Impl::Kill : Error closing thread handle: " << err_str;
     }
 
     m_process_info.hProcess = 0;
@@ -146,7 +175,7 @@ void Process::ProcessImpl::Kill() {
 #include <sys/wait.h>
 
 
-Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv) :
+Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) :
     m_free(false)
 {
     std::vector<char*> args;
@@ -173,17 +202,17 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
     }
 }
 
-Process::ProcessImpl::~ProcessImpl()
+Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
-bool Process::ProcessImpl::SetLowPriority(bool low) {
+bool Process::Impl::SetLowPriority(bool low) {
     if (low)
         return (setpriority(PRIO_PROCESS, m_process_id, 10) == 0);
     else
         return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
 }
 
-void Process::ProcessImpl::Kill() {
+void Process::Impl::Kill() {
     int status;
     kill(m_process_id, SIGHUP); 
     waitpid(m_process_id, &status, 0);
@@ -191,5 +220,5 @@ void Process::ProcessImpl::Kill() {
 
 #endif
 
-void Process::ProcessImpl::Free()
+void Process::Impl::Free()
 { m_free = true; }
