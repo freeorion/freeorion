@@ -1970,19 +1970,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_HEAVY_AST_HULL"
-    description = "SHP_HEAVY_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 8
-    prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = [
-        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
-    ]
-
-Tech
     name = "SHP_ASTEROID_REFORM"
     description = "SHP_ASTEROID_REFORM_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -2224,8 +2211,8 @@ Tech
     ]
 
 Tech
-    name = "SHP_CAMO_AST_HULL"
-    description = "SHP_CAMO_AST_HULL_DESC"
+    name = "SHP_ADV_AST_HULL"
+    description = "SHP_ADV_AST_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
@@ -2235,6 +2222,7 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
         Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
+        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
 
@@ -2265,8 +2253,6 @@ Tech
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-
-
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -2326,7 +2312,7 @@ Tech
     researchturns = 10
     prerequisites = [
         "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
-        "PRO_NDIM_ASSMB"
+        "PRO_SINGULAR_GEN"
     ]
     unlock = Item type = ShipPart name = "FU_SINGULARITY_ENGINE_CORE"
     graphic = "icons/tech/zero_point_energy.png"
@@ -2339,7 +2325,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = "SHP_GAL_EXPLO"
+    prerequisites = [
+        "SHP_GAL_EXPLO"
+        "PRO_FUSION_GEN"
+    ]
     unlock = Item type = ShipPart name = "FU_DEUTERIUM_TANK"
 
 Tech
@@ -2367,7 +2356,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    prerequisites = "SHP_MIL_ROBO_CONT"
+    prerequisites = [
+        "SHP_MIL_ROBO_CONT"
+        "SHP_FLEET_REPAIR"
+    ]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2402,7 +2394,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = "SHP_DEUTERIUM_TANK"
+    prerequisites = [
+        "SHP_DEUTERIUM_TANK"
+        "LRN_FORCE_FIELD"
+    ]
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
 
 Tech

@@ -6744,12 +6744,6 @@ Asteroid Hulls
 SHP_ASTEROID_HULLS_DESC
 Rather than constructing a hull from scratch, it is far easier to take a pre-existing space-borne object and adapt it to fill the role of a ship's hull. Not only would such ships be very inexpensive to produce, but they would also be able to avoid detection by enemy ships by hiding amongst other asteroids.
 
-SHP_HEAVY_AST_HULL
-Heavy Asteroid Hulls
-
-SHP_HEAVY_AST_HULL_DESC
-Allows construction of larger asteroid hulls
-
 SHP_ASTEROID_REFORM
 Asteroid Reformation
 
@@ -7615,11 +7609,11 @@ Plasma Torpedo
 SHP_PLASMA_TORP_DESC
 A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead.
 
-SHP_CAMO_AST_HULL
-Camouflage Asteroid Hull
+SHP_ADV_AST_HULL
+Advanced Asteroid Hulls
 
-SHP_CAMO_AST_HULL_DESC
-This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+SHP_ADV_AST_HULL_DESC
+These hulls are modified versions of the basic asteroid hull, with more specialized uses.
 
 SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
