@@ -219,9 +219,6 @@
     <ClInclude Include="..\..\UI\TechTreeWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\GLStateComparator.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\Math.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

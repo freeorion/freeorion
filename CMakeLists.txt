@@ -164,7 +164,6 @@ set (freeorioncommon_HEADER
     util/AppInterface.h
     util/DataTable.h
     util/Directories.h
-    util/GLStateComparator.h
     util/i18n.h
     util/Logger.h
     util/Math.h

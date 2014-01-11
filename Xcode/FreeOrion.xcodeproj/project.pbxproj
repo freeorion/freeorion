@@ -1396,7 +1396,6 @@
 		471D5D1E0A98A3F900DA9C21 /* Directories.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Directories.cpp; sourceTree = "<group>"; };
 		471D5D1F0A98A3F900DA9C21 /* Directories.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Directories.h; sourceTree = "<group>"; };
 		471D5D210A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
-		471D5D220A98A3F900DA9C21 /* GLStateComparator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GLStateComparator.h; sourceTree = "<group>"; };
 		471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MultiplayerCommon.cpp; sourceTree = "<group>"; };
 		471D5D280A98A3F900DA9C21 /* MultiplayerCommon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MultiplayerCommon.h; sourceTree = "<group>"; };
 		471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsDB.cpp; sourceTree = "<group>"; };
@@ -3194,7 +3193,6 @@
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
 				471D5D200A98A3F900DA9C21 /* doc */,
 				827AF39F185B2FB9001CD79C /* Export.h */,
-				471D5D220A98A3F900DA9C21 /* GLStateComparator.h */,
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
