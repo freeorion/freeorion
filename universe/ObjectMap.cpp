@@ -104,13 +104,11 @@ int ObjectMap::NumObjects() const
 bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
-TemporaryPtr<const UniverseObject> ObjectMap::Object(int id) const {
-    return Object<UniverseObject>(id);
-}
+TemporaryPtr<const UniverseObject> ObjectMap::Object(int id) const
+{ return Object<UniverseObject>(id); }
 
-TemporaryPtr<UniverseObject> ObjectMap::Object(int id) {
-    return Object<UniverseObject>(id);
-}
+TemporaryPtr<UniverseObject> ObjectMap::Object(int id)
+{ return Object<UniverseObject>(id); }
 
 std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
     std::vector<TemporaryPtr<const UniverseObject> > result;
@@ -177,8 +175,11 @@ ObjectMap::const_iterator<> ObjectMap::const_end() const
 
 void ObjectMap::Insert(boost::shared_ptr<UniverseObject> item, int empire_id/* = ALL_EMPIRES*/) {
     FOR_EACH_MAP(TryInsertIntoMap, item);
-    if (item && GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) == GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end()) {
-        TemporaryPtr< UniverseObject > this_item = this->Object(item->ID());
+    if (item &&
+        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) ==
+            GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end())
+    {
+        TemporaryPtr<UniverseObject> this_item = this->Object(item->ID());
         m_existing_objects[item->ID()] = this_item;
         switch (item->ObjectType()) {
             case OBJ_BUILDING:
@@ -210,7 +211,6 @@ void ObjectMap::Insert(boost::shared_ptr<UniverseObject> item, int empire_id/* =
             default:
                 break;
         }
-
     }
 }
 
@@ -247,8 +247,9 @@ void ObjectMap::swap(ObjectMap& rhs) {
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
-    for (std::map< int, TemporaryPtr< UniverseObject > >::const_iterator it = m_existing_objects.begin(); it != m_existing_objects.end(); ++it)
-        result.push_back(it->first);
+    for (std::map< int, TemporaryPtr< UniverseObject > >::const_iterator it = m_existing_objects.begin();
+         it != m_existing_objects.end(); ++it)
+    { result.push_back(it->first); }
     return result;
 }
 
@@ -316,6 +317,13 @@ std::string ObjectMap::Dump() const {
         dump_stream << it->Dump() << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();
+}
+
+TemporaryPtr<UniverseObject> ObjectMap::ExistingObject(int id) {
+    std::map<int, TemporaryPtr<UniverseObject> >::iterator it = m_existing_objects.find(id);
+    if (it != m_existing_objects.end())
+        return it->second;
+    return TemporaryPtr<UniverseObject>();
 }
 
 // Static helpers

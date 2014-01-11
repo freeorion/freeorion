@@ -268,6 +268,7 @@ public:
     std::string             Dump() const;
 
     /**  */
+    TemporaryPtr<UniverseObject> ExistingObject(int id);
     std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingObjectsBegin()
     { return m_existing_objects.begin(); }
     std::map<int, TemporaryPtr<UniverseObject> >::iterator ExistingObjectsEnd()
@@ -398,7 +399,6 @@ public:
 
     /** Swaps the contents of *this with \a rhs. */
     void                swap(ObjectMap& rhs);
-
 
     /** */
     void                UpdateCurrentDestroyedObjects(std::set<int> destroyed_object_ids);
