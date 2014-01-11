@@ -66,6 +66,7 @@ namespace log4cpp {
             delete [] buffer;
             buffer = new char[size];
         }
+        delete [] buffer;
     }
 
     std::string StringUtil::trim(const std::string& s) {
