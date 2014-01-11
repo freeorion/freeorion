@@ -122,9 +122,6 @@
     <ClInclude Include="..\..\util\GLStateComparator.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\GZStream.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\Math.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>

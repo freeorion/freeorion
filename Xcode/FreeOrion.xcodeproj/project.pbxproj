@@ -209,7 +209,6 @@
 		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
 		47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */; };
-		47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D230A98A3F900DA9C21 /* GZStream.cpp */; };
 		47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */; };
 		47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */; };
 		47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D2C0A98A3F900DA9C21 /* Order.cpp */; };
@@ -1398,8 +1397,6 @@
 		471D5D1F0A98A3F900DA9C21 /* Directories.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Directories.h; sourceTree = "<group>"; };
 		471D5D210A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		471D5D220A98A3F900DA9C21 /* GLStateComparator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GLStateComparator.h; sourceTree = "<group>"; };
-		471D5D230A98A3F900DA9C21 /* GZStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GZStream.cpp; sourceTree = "<group>"; };
-		471D5D240A98A3F900DA9C21 /* GZStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GZStream.h; sourceTree = "<group>"; };
 		471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MultiplayerCommon.cpp; sourceTree = "<group>"; };
 		471D5D280A98A3F900DA9C21 /* MultiplayerCommon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MultiplayerCommon.h; sourceTree = "<group>"; };
 		471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsDB.cpp; sourceTree = "<group>"; };
@@ -3198,8 +3195,6 @@
 				471D5D200A98A3F900DA9C21 /* doc */,
 				827AF39F185B2FB9001CD79C /* Export.h */,
 				471D5D220A98A3F900DA9C21 /* GLStateComparator.h */,
-				471D5D230A98A3F900DA9C21 /* GZStream.cpp */,
-				471D5D240A98A3F900DA9C21 /* GZStream.h */,
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
@@ -4014,7 +4009,6 @@
 				34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */,
 				34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */,
 				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
-				47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */,
 				47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */,
 				47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */,
 				47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */,

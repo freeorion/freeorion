@@ -138,7 +138,6 @@
     <ClInclude Include="..\..\util\DataTable.h" />
     <ClInclude Include="..\..\util\Directories.h" />
     <ClInclude Include="..\..\util\GLStateComparator.h" />
-    <ClInclude Include="..\..\util\GZStream.h" />
     <ClInclude Include="..\..\util\Math.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\i18n.h" />

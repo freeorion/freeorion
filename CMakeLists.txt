@@ -165,7 +165,6 @@ set (freeorioncommon_HEADER
     util/DataTable.h
     util/Directories.h
     util/GLStateComparator.h
-    util/GZStream.h
     util/i18n.h
     util/Logger.h
     util/Math.h
@@ -232,7 +231,6 @@ set (freeorioncommon_SOURCE
     util/AppInterface.cpp
     util/DataTable.cpp
     util/Directories.cpp
-    util/GZStream.cpp
     util/i18n.cpp
     util/Logger.cpp
     util/Math.cpp
