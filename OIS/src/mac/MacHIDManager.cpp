@@ -183,7 +183,7 @@ void MacHIDManager::iterateAndOpenDevices(io_iterator_t iterator)
 				SInt32 score = 0;
 				if (IOCreatePlugInInterfaceForService(hidDevice, kIOHIDDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &pluginInterface, &score) == kIOReturnSuccess)
 				{
-					IOHIDDeviceInterface **interface;
+					IOHIDDeviceInterface **interface = NULL;
 					
 					HRESULT pluginResult = (*pluginInterface)->QueryInterface(pluginInterface, CFUUIDGetUUIDBytes(kIOHIDDeviceInterfaceID), (void **)&(interface));
 					
