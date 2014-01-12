@@ -1970,6 +1970,19 @@ Tech
     ]
 
 Tech
+    name = "SHP_HEAVY_AST_HULL"
+    description = "SHP_HEAVY_AST_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = "SHP_ASTEROID_HULLS"
+    unlock = [
+        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
+    ]
+
+Tech
     name = "SHP_ASTEROID_REFORM"
     description = "SHP_ASTEROID_REFORM_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -2211,8 +2224,8 @@ Tech
     ]
 
 Tech
-    name = "SHP_ADV_AST_HULL"
-    description = "SHP_ADV_AST_HULL_DESC"
+    name = "SHP_CAMO_AST_HULL"
+    description = "SHP_CAMO_AST_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
@@ -2222,7 +2235,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
         Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
-        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
 
@@ -2356,10 +2368,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    prerequisites = [
-        "SHP_MIL_ROBO_CONT"
-        "SHP_FLEET_REPAIR"
-    ]
+    prerequisites = "SHP_MIL_ROBO_CONT"
     effectsgroups =
         EffectsGroup
             scope = And [
