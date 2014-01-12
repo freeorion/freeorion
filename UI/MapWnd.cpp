@@ -2145,7 +2145,9 @@ void MapWnd::InitTurnRendering() {
 
     // create system icons
     std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
-    for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+    for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
+         sys_it != systems.end(); ++sys_it)
+    {
         TemporaryPtr<const System> sys = *sys_it;
         int sys_id = sys->ID();
 
