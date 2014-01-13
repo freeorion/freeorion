@@ -19,9 +19,6 @@ namespace {
 
     std::map<std::string, const StringTable_*> stringtables;
 
-    void FlushLoadedStringTables()
-    { stringtables.clear(); }
-
     const StringTable_& GetStringTable(std::string stringtable_filename = "") {
         // get option-configured stringtable if no filename specified
         if (stringtable_filename.empty())
@@ -43,6 +40,9 @@ namespace {
     const StringTable_& GetDefaultStringTable()
     { return GetStringTable(GetDefaultStringTableFileName()); }
 }
+
+void FlushLoadedStringTables()
+{ stringtables.clear(); }
 
 const std::string& UserString(const std::string& str) {
     const StringTable_& string_table = GetStringTable();

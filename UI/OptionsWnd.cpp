@@ -780,8 +780,6 @@ void OptionsWnd::ResolutionOption() {
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));
     m_current_option_list->Insert(row);
-
-
     GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
@@ -857,7 +855,24 @@ void OptionsWnd::Init() {
     BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption("UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
-    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),     GetRootDataDir() / "default" / "stringtables", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
+    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
+               GetRootDataDir() / "default" / "stringtables",
+               std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
+               "*" + STRINGTABLE_FILE_SUFFIX),
+               &ValidStringtableFile);
+
+    // flush stringtable button
+    std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
+    GG::X button_width = ClientUI::GetFont()->TextExtent(flush_button_text).x + GG::X(LAYOUT_MARGIN);
+    GG::Button* flush_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
+                                             flush_button_text, ClientUI::GetFont());
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, m_indentation_level));
+    m_current_option_list->Insert(row);
+    GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
+
+
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));
