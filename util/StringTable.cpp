@@ -28,6 +28,9 @@ StringTable_::~StringTable_()
 bool StringTable_::StringExists(const std::string& index) const
 { return m_strings.find(index) != m_strings.end(); }
 
+bool StringTable_::Empty() const
+{ return m_strings.empty(); }
+
 const std::string& StringTable_::operator[] (const std::string& index) const {
     static std::string error_retval;
     std::map<std::string, std::string>::const_iterator it = m_strings.find(index);

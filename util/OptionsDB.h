@@ -168,7 +168,8 @@ public:
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, default_value, default_value, description, validator.Clone(), storable, false);
+        m_options[name] = Option(static_cast<char>(0), name, default_value, default_value,
+                                 description, validator.Clone(), storable, false);
         OptionAddedSignal(name);
     }
 

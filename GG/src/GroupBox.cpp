@@ -65,7 +65,8 @@ Pt GroupBox::ClientUpperLeft() const
 {
     Pt retval = UpperLeft();
     if (!m_set_client_corners_equal_to_box_corners)
-        retval += Pt(X(FRAME_THICK + PIXEL_MARGIN), Y(FRAME_THICK + PIXEL_MARGIN) + TopOfFrame(m_label, m_font));
+        retval += Pt(X(FRAME_THICK + PIXEL_MARGIN),
+                     Y(FRAME_THICK + PIXEL_MARGIN) + TopOfFrame(m_label != 0, m_font));
     return retval;
 }
 
@@ -80,7 +81,7 @@ Pt GroupBox::ClientLowerRight() const
 void GroupBox::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight() - Pt(X1, Y1);
-    ul.y += TopOfFrame(m_label, m_font);
+    ul.y += TopOfFrame(m_label != 0, m_font);
     Clr light = LightColor(m_color);
     Clr dark = DarkColor(m_color);
     const int GAP_FROM_TEXT = 2;

@@ -50,7 +50,7 @@ public:
     //! \names Structors
     //!@{
     StringTable_();  //!< default construction, uses S_DEFAULT_FILENAME
-    
+
     //! @param filename A file containing the data for this StringTable_
     StringTable_(const std::string& filename);   //!< construct a StringTable_ from the given filename
     ~StringTable_();                             //!< default destructor
@@ -65,6 +65,9 @@ public:
     //! @param index The index of the string to check for
     //! @return true iff a string exists with that index, false otherwise
     bool StringExists(const std::string& index) const;              //!< Looks up a string at index and returns if the string is present.
+
+    //! @return true iff this stringtable contain no entries
+    bool Empty() const;                                             //!< Checks if this stringtable contains any entries
 
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
