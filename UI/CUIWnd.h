@@ -139,6 +139,7 @@ protected:
     static const GG::Y      BORDER_BOTTOM;
     static const int        OUTER_EDGE_ANGLE_OFFSET;
     static const int        INNER_BORDER_ANGLE_OFFSET;
+    static const int        TITLE_OFFSET;
     static const int        RESIZE_HASHMARK1_OFFSET;
     static const int        RESIZE_HASHMARK2_OFFSET;
 };

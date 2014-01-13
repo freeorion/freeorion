@@ -97,11 +97,12 @@ const GG::Y CUIWnd::BUTTON_TOP_OFFSET(3);
 const GG::X CUIWnd::BUTTON_RIGHT_OFFSET(15);
 const GG::X CUIWnd::MINIMIZED_WND_WIDTH(150);
 const GG::X CUIWnd::BORDER_LEFT(5);
-const GG::Y CUIWnd::BORDER_TOP(18);
+const GG::Y CUIWnd::BORDER_TOP(21);
 const GG::X CUIWnd::BORDER_RIGHT(5);
 const GG::Y CUIWnd::BORDER_BOTTOM(5);
 const int CUIWnd::OUTER_EDGE_ANGLE_OFFSET = 8;
 const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 11;
+const int CUIWnd::TITLE_OFFSET = 3;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
@@ -181,7 +182,7 @@ void CUIWnd::Render() {
     GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
-    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y), Name());
+    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y + TITLE_OFFSET), Name());
     GG::EndScissorClipping();
 }
 
