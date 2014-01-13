@@ -2682,6 +2682,18 @@ Clear Parts
 DESIGN_DELETE
 Delete Design
 
+DESIGN_INVALID
+Invalid Design
+
+DESIGN_INV_MODERATOR
+Moderators and observers cannot create new ship designs.
+
+DESIGN_INV_NO_HULL
+Begin a ship design by selecting its hull.
+
+DESIGN_INV_NO_NAME
+Each ship design must have a unique name.
+
 
 ################
 ## Statistics ##

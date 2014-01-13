@@ -34,6 +34,21 @@ using namespace GG;
 
 namespace {
     const Pt INVALID_USABLE_SIZE(-X1, -Y1);
+
+    struct TextSignalEcho
+    {
+        TextSignalEcho(const TextControl& text_control, const std::string& name) :
+            m_text_control(text_control),
+            m_name(name)
+            {}
+        void operator()()
+            { std::cerr << "GG_SIGNAL : " << m_name << " ()\n"; }
+        void operator()(const std::string& new_text)
+            { std::cerr << "GG SIGNAL : " << m_name << "() : new_text : " << new_text << "\n"; }
+
+        const TextControl& m_text_control;
+        std::string m_name;
+    };
 }
 
 ////////////////////////////////////////////////
@@ -61,6 +76,9 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 {
     ValidateFormat();
     SetText(str);
+    if (INSTRUMENT_ALL_SIGNALS) {
+        InstrumentSignals();
+    }
 }
 
 TextControl::TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
@@ -76,6 +94,13 @@ TextControl::TextControl(X x, Y y, const std::string& str, const boost::shared_p
 {
     ValidateFormat();
     SetText(str);
+    if (INSTRUMENT_ALL_SIGNALS) {
+        InstrumentSignals();
+    }
+}
+
+void TextControl::InstrumentSignals() {
+    Connect(AfterTextChangedSignal, TextSignalEcho(*this, "TextBox::AfterTextChangedSignal"));
 }
 
 Pt TextControl::MinUsableSize() const
@@ -153,6 +178,7 @@ void TextControl::SetText(const std::string& str)
             RecomputeTextBounds();
         }
     }
+    AfterTextChangedSignal(m_text);
 }
 
 void TextControl::SizeMove(const Pt& ul, const Pt& lr)

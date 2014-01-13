@@ -1783,6 +1783,8 @@ private:
     bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
     int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
+    
+    void            AfterNameChangedSignal(const std::string& new_name);                                ///< Triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
 
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
@@ -1831,6 +1833,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
                                 ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name);
+    GG::Connect(m_design_name->AfterTextChangedSignal, &DesignWnd::MainPanel::AfterNameChangedSignal, this);
 
     m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font,
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
@@ -1845,7 +1848,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
-    m_confirm_button->Disable(true);
+    m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::CtrlColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
@@ -1854,6 +1857,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 
 
     GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
+    DesignChanged(); // Initialize components that rely on the current state of the design.
 }
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
@@ -1978,6 +1982,10 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
         }
     }
     return result;
+}
+
+void DesignWnd::MainPanel::AfterNameChangedSignal(const std::string& new_name) {
+    DesignChangedSignal();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
@@ -2177,9 +2185,39 @@ void DesignWnd::MainPanel::DoLayout() {
 }
 
 void DesignWnd::MainPanel::DesignChanged() {
+    m_confirm_button->ClearBrowseInfoWnd();
+
     m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (client_empire_id != ALL_EMPIRES && m_hull && !(m_hull->Name()).empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
+
+    if (!m_hull) {
+        m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL"))));
+
+        m_confirm_button->Disable(false);
+    }
+    else if (client_empire_id == ALL_EMPIRES) {
+        m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
+
+        m_confirm_button->Disable(false);
+    }
+    else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
+        m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
+
+        m_confirm_button->Disable(false);
+    }
+    else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
+        // I have no idea how this would happen, so I'm not going to display a tooltip for it.
+        m_confirm_button->Disable(false);
+    }
+    else {
+        m_confirm_button->Disable(true);
+    }
+
+
+    if (client_empire_id != ALL_EMPIRES && m_hull && !m_design_name->Text().empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
         m_confirm_button->Disable(false);
     else
         m_confirm_button->Disable(true);

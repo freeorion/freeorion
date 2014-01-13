@@ -948,7 +948,7 @@ void ShipDesign::SetID(int id)
 { m_id = id; }
 
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
-    // ensure hull type exists and has exactly enough slots for passed parts
+    // ensure hull type exists and has at least enough slots for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
     if (!hull_type) {
         Logger().debugStream() << "ShipDesign::ValidDesign: hull not found: " << hull;
