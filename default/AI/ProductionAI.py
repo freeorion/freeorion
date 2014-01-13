@@ -396,7 +396,7 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is5,  if1],  "",  model)    for iw in [2, 3, 4] ]
     else:
         nb_idx=5
-        nb,  hull =  designNameBases[nb_idx]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
+        #nb,  hull =  designNameBases[nb_idx]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
         #newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  15) ]
         #newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  15) ]
 
@@ -405,6 +405,14 @@ def addMarkDesigns():
         #newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
         #newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  14) ]
 
+        nb,  hull =  designNameBases[nb_idx]+"-%1x-%1x",   "SH_RAVENOUS"
+        for ia in [1, 2, 3]:
+            newMarkDesigns += [ (nb%(1, ia),  desc,  hull,  2*[arList[ia]] +2*[if1] + 3*[srb2%iw],  "",  model)    for iw in range(4, 5) ]
+        for ia in [1, 2, 3]:
+            newMarkDesigns += [ (nb%(ia+1, iw),  desc,  hull,  2*[arList[ia]] +2*[if1] + 3*[srb3%iw],  "",  model)    for iw in range(2, 5) ]
+        for ia in [1, 2, 3]:
+            newMarkDesigns += [ (nb%(ia+4, iw),  desc,  hull,  2*[arList[ia]] +2*[if1] + 3*[srb4%iw],  "",  model)    for iw in range(1, 5) ]
+        
         nb,  hull =  designNameBases[nb_idx]+"-%1xb-%1x",   "SH_BIOADAPTIVE"
         newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar4] + [ is3,  if1, if1],  "",  model)    for iw in [4] ]
         newMarkDesigns += [ (nb%(1, iw+4),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
@@ -474,7 +482,11 @@ def addMarkDesigns():
         if foAI.foAIstate.aggression >fo.aggression.typical:
             nb_idx=10
             nb,  hull =  designNameBases[nb_idx]+"-%1x-%02x",   "SH_FRACTAL_ENERGY"
-            #newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
+            for ia in [3, 4, 5]:
+                newMarkDesigns += [ (nb%(ia-2, iw),  desc,  hull,  10*[srb3%iw] + 4*[arList[ia]] ,  "",  model)    for iw in range(2, 5) ]
+            for ia in [3, 4, 5]:
+                newMarkDesigns += [ (nb%(ia+1, iw),  desc,  hull,  10*[srb4%iw] + 4*[arList[ia]] ,  "",  model)    for iw in range(1, 5) ]
+            
 
     addDesigns(shipType,   newMarkDesigns,  shipProdPriority)
     #TODO: add more advanced designs
