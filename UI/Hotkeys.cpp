@@ -123,7 +123,7 @@ void Hotkey::AddOptions(OptionsDB & db) {
         const Hotkey & sb = i->second;
         std::string n = "UI.hotkeys.";
         n += sb.m_name;
-        db.Add(n, UserString(UserStringForHotkey(sb.m_name)),
+        db.Add(n, UserStringForHotkey(sb.m_name),
                sb.ToString(), Validator<std::string>());
     }
 }
