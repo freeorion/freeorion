@@ -17,17 +17,31 @@ namespace {
             return option_filename;
     }
 
-    const StringTable_& GetStringTable() {
-        static std::auto_ptr<StringTable_> string_table(
-            new StringTable_(GetStringTableFileName()));
-        return *string_table;
+    std::map<std::string, const StringTable_*> stringtables;
+
+    void FlushLoadedStringTables()
+    { stringtables.clear(); }
+
+    const StringTable_& GetStringTable(std::string stringtable_filename = "") {
+        // get option-configured stringtable if no filename specified
+        if (stringtable_filename.empty())
+            stringtable_filename = GetStringTableFileName();
+
+        // attempt to find requested stringtable...
+        std::map<std::string, const StringTable_*>::const_iterator it =
+            stringtables.find(stringtable_filename);
+        if (it != stringtables.end())
+            return *(it->second);
+
+        // if already loaded, load, store, and return
+        const StringTable_* table = new StringTable_(stringtable_filename);
+        stringtables[stringtable_filename] = table;
+
+        return *table;
     }
 
-    const StringTable_& GetDefaultStringTable() {
-        static std::auto_ptr<StringTable_> default_string_table(
-            new StringTable_(GetDefaultStringTableFileName()));
-        return *default_string_table;
-    }
+    const StringTable_& GetDefaultStringTable()
+    { return GetStringTable(GetDefaultStringTableFileName()); }
 }
 
 const std::string& UserString(const std::string& str) {

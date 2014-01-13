@@ -15,6 +15,10 @@ FO_COMMON_API const std::string& UserString(const std::string& str);
 /** Returns a language-specific list of strings for the key-string \a str_list */
 FO_COMMON_API void UserStringList(const std::string& str_list, std::list<std::string>& strings);
 
+/** Clears all loaded strings, so that subsequent UserString lookups will cause
+  * the stringtable(s) to be reloaded. */
+FO_COMMON_API void FlushLoadedStringTables();
+
 /** Placeholder for non local translations, evaluates to a non operation */
 #define UserStringNop(key) key
 
