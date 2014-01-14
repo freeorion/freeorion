@@ -1794,6 +1794,7 @@ namespace {
 
         TemporaryPtr<System> system = GetSystem(ship->SystemID());
 
+        // destroy colonizing ship, and its fleet if now empty
         TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (fleet) {
             fleet->RemoveShip(ship->ID());
@@ -2017,25 +2018,25 @@ namespace {
 
             TemporaryPtr<System> system = GetSystem(ship->SystemID());
 
-            // destroy invading ships
+            // destroy invading ships and their fleets if now empty
             TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
-            if (fleet)
+            if (fleet) {
                 fleet->RemoveShip(ship->ID());
-            if (fleet->Empty()) {
-                if (system)
-                    system->Remove(fleet->ID());
-                GetUniverse().Destroy(fleet->ID());
+                if (fleet->Empty()) {
+                    if (system)
+                        system->Remove(fleet->ID());
+                    GetUniverse().Destroy(fleet->ID());
+                }
             }
             if (system)
                 system->Remove(ship->ID());
-
 
             Logger().debugStream() << "HandleInvasion has accounted for "<< design->TroopCapacity()
                                    << " troops to invade " << planet->Name()
                                    << " and is destroying ship " << ship->ID()
                                    << " named " << ship->Name();
 
-            GetUniverse().Destroy(ship->ID());
+            GetUniverse().RecursiveDestroy(ship->ID());
         }
 
         // check each planet for other troops, such as due to empire troops, native troops, or rebel troops
@@ -2182,6 +2183,24 @@ namespace {
             }
         }
     }
+
+    /** Deletes empty fleets. */
+    void CleanEmptyFleets() {
+        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
+             it != fleets.end(); ++it)
+        {
+            TemporaryPtr<Fleet> fleet = *it;
+            if (!fleet->Empty())
+                continue;
+
+            TemporaryPtr<System> sys = GetSystem(fleet->SystemID());
+            if (sys)
+                sys->Remove(fleet->ID());
+
+            GetUniverse().RecursiveDestroy(fleet->ID());
+        }
+    }
 }
 
 void ServerApp::PreCombatProcessTurns() {
@@ -2213,6 +2232,9 @@ void ServerApp::PreCombatProcessTurns() {
 
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
+
+    // clean up empty fleets that empires didn't order deleted
+    CleanEmptyFleets();
 
     // update production queues after order execution
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
