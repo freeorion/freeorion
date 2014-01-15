@@ -216,7 +216,7 @@ void BufferToHeader(const int* header_buf, Message& message) {
     message.m_type = static_cast<Message::MessageType>(header_buf[0]);
     message.m_sending_player = header_buf[1];
     message.m_receiving_player = header_buf[2];
-    message.m_synchronous_response = header_buf[3];
+    message.m_synchronous_response = (header_buf[3] != 0);
     message.m_message_size = header_buf[4];
 }
 
@@ -327,7 +327,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(players)
            << BOOST_SERIALIZATION_NVP(loaded_game_data);
         Serialize(oa, orders);
-        bool ui_data_available = ui_data;
+        bool ui_data_available = (ui_data != 0);
         oa << BOOST_SERIALIZATION_NVP(ui_data_available);
         if (ui_data_available)
             oa << boost::serialization::make_nvp("ui_data", *ui_data);
@@ -363,7 +363,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         Serialize(oa, orders);
         bool ui_data_available = false;
         oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-        bool save_state_string_available = save_state_string;   // save_state_string pointer may be 0
+        bool save_state_string_available = (save_state_string != 0);
         oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
         if (save_state_string_available)
             oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
