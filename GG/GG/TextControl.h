@@ -66,10 +66,6 @@ class GG_API TextControl : public Control
 {
 public:
     using Wnd::SetMinSize;
-    
-    /** \name Signal Types */ ///@{
-    typedef boost::signal<void (const std::string&)> AfterTextChangedSignalType;  ///< Emitted after the text has been changed.
-    //@}
 
     /** \name Structors */ ///@{
     /** Ctor. */
@@ -160,8 +156,6 @@ public:
     /** Returns the lower-right corner of the text as it is would be rendered
         if it were not bound to the dimensions of this control. */
     Pt TextLowerRight() const;
-
-    AfterTextChangedSignalType AfterTextChangedSignal; // The after text changed signal for this text control.
     //@}
 
     /** \name Mutators */ ///@{
@@ -249,7 +243,6 @@ protected:
     //@}
 
 private:
-    void InstrumentSignals();
     void ValidateFormat();      ///< ensures that the format flags are consistent
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr

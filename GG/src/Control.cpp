@@ -25,7 +25,7 @@
 #include <GG/Control.h>
 
 #include <GG/WndEvent.h>
-
+#include <iostream>
 
 using namespace GG;
 
@@ -72,7 +72,7 @@ void Control::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void Control::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
-{ ForwardEventToParent(); }
+{ std::cout << "Key Pressed!"; ForwardEventToParent(); }
 
 void Control::KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
