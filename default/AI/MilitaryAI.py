@@ -31,6 +31,32 @@ def ratingNeeded(target,  current=0):
         return 0
     else:
         return target + current - (4*target*current)**0.5
+        
+def avail_mil_needing_repair(milFleetIDs,  split_ships=False,  on_mission=False):
+    "returns tuple of lists-- ( ids_needing_repair,  ids_not )"
+    fleet_buckets = [[],  []]
+    universe = fo.getUniverse()
+    cutoff = [0.70,  0.25][ on_mission ]
+    for fleet_id in milFleetIDs:
+        fleet = universe.getFleet(fleet_id)
+        ship_buckets = [ [],  [] ]
+        ships_cur_health = [ 0,  0 ]
+        ships_max_health = [ 0,  0 ]
+        for ship_id in fleet.shipIDs:
+            this_ship = universe.getShip(ship_id)
+            cur_struc = this_ship.currentMeterValue(fo.meterType.structure)
+            max_struc = this_ship.currentMeterValue(fo.meterType.maxStructure)
+            ship_ok = cur_struc >= cutoff * max_struc
+            ship_buckets[ship_ok].append( ship_id )
+            ships_cur_health[ship_ok] += cur_struc
+            ships_max_health[ship_ok] += max_struc
+        #TODO: the following is a temp all-or-nothing test
+        fleet_ok = ( sum(ships_cur_health) >= cutoff * sum(ships_max_health) )
+        if not fleet_ok:
+            pass
+            print "Selecting fleet %d at %s for repair"%(fleet_id,  PlanetUtilsAI.sysNameIDs( [fleet.systemID] ))
+        fleet_buckets[fleet_ok].append(fleet_id)
+    return fleet_buckets
 
 def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     "get armed military fleets"
@@ -53,7 +79,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         allMilitaryFleetIDs = milFleetIDs
     else:
         allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
-    if tryReset and ((fo.currentTurn()+empireID) % 10 ==0) and thisround=="Main":
+    if tryReset and ((fo.currentTurn()+empireID) % 10 ==0) and thisround=="Main": 
         tryAgain(allMilitaryFleetIDs,  tryReset=False,  thisround = thisround+" Reset")
 
     num_milships = 0
@@ -69,6 +95,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         foAI.foAIstate.militaryRating=totMilRating
 
     milFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs))
+    mil_needing_repair_ids,  milFleetIDs = avail_mil_needing_repair(milFleetIDs,  split_ships=True)
     availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  milFleetIDs   )  )
     if "Main" in thisround:
         print "=================================================="
@@ -650,23 +677,27 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
             aiFleetMission.addAITarget( missionType , aiTarget)
 
         allMilitaryFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
+        AIstate.militaryFleetIDs = allMilitaryFleetIDs
         if allMilitaryFleetIDs == []:
             MilitaryAllocations = []
             return
-        #TODO: keep some continuity of missions
-        AIstate.militaryFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs)
-        availMilFleetIDs = list( AIstate.militaryFleetIDs )
+        availMilFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs) )
+        mil_needing_repair_ids,  availMilFleetIDs = avail_mil_needing_repair(availMilFleetIDs)
         availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  availMilFleetIDs   )  )
+        under_repair_mil_rating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  mil_needing_repair_ids   )  )
         theseAllocations = MilitaryAllocations
         print "=================================================="
         print "assigning military fleets"
         print "---------------------------------"
     else:
         availMilFleetIDs = list( useFleetIDList )
+        mil_needing_repair_ids,  availMilFleetIDs = avail_mil_needing_repair(availMilFleetIDs)
         availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  availMilFleetIDs   )  )
         theseAllocations = allocations
     remainingMilRating = availMilRating
 
+    #send_for_repair(mil_needing_repair_ids) #currently, let get taken care of by AIFleetMission.generateAIFleetOrders()
+    
     # get systems to defend
 
     availMilFleetIDs = set(availMilFleetIDs)
@@ -717,3 +748,4 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
 
     if doingMain:
         print "---------------------------------"
+

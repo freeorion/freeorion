@@ -119,9 +119,10 @@ class AIFleetMissionType(object):
     FLEET_MISSION_ORBITAL_INVASION = 13
     FLEET_MISSION_ORBITAL_OUTPOST = 14
     FLEET_MISSION_ORBITAL_COLONISATION = 15
+    FLEET_MISSION_REPAIR = 16  #though currently, repair will be handled w/o mission, like resupply
 
     MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
-                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'invalid']
+                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation',  'repair', 'invalid']
 
     def name(self, mtype):
         try:
@@ -132,7 +133,7 @@ class AIFleetMissionType(object):
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIFleetMissionTypes():
-    return __getInterval(0, 15)
+    return __getInterval(0, 16)
 
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
@@ -147,8 +148,10 @@ class AIFleetOrderType(object):
     ORDER_DEFEND = 8
     ORDER_INVADE = 9
     ORDER_MILITARY = 10
-    ORDRER_STAGING = 11
-    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "splitFleet",  "mergeFleet",  "outpost",  "colonize",  "attack",  "defend",  "invade",  "military",  "staging", "invalid"]
+    ORDER_STAGING = 11
+    ORDER_REPAIR = 12
+    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "splitFleet",  "mergeFleet",  "outpost",  "colonize",  "attack",  
+                                          "defend",  "invade",  "military",  "staging", "repair", "invalid"]
     def name(self, otype):
         try:
             name=self.FleetOrderTypeNames[otype]
@@ -158,7 +161,7 @@ class AIFleetOrderType(object):
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 10)
+    return __getInterval(0, 12)
 
 def getFleetOrderTypeForMission(aiFleetMissionType,  option=None):
     if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
@@ -193,6 +196,8 @@ def getFleetOrderTypeForMission(aiFleetMissionType,  option=None):
         return AIFleetOrderType.ORDER_OUTPOST
     elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION:
         return AIFleetOrderType.ORDER_COLONISE
+    elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_REPAIR:
+        return AIFleetOrderType.ORDER_REPAIR
     else:
         return AIFleetOrderType.ORDER_INVALID
 

@@ -83,7 +83,7 @@ def calculatePriorities():
     
     for t_index in range(1, len(times)-1):
         print "calculatePriorities(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[t_index]-times[t_index-1])))
-    print "getColonyFleets(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[-1]-times[0])))
+    print "calculatePriorities(): %40s took %d msec"%(tasks[-1],  int(1000*(times[-1]-times[0])))
 
     # foAI.foAIstate.printPriorities()
 

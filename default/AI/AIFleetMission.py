@@ -509,10 +509,24 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
 
         # TODO: priority
         self.clearAIFleetOrders()
+        systemID = fleet.systemID
+        start_sys_id = [ fleet.nextSystemID,  systemID ][ systemID >= 0 ]
+        # if fleet doesn't have any mission, then repair if needed or resupply if is current location not in supplyable system
+        empire = fo.getEmpire()
+        fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+        #if (not self.hasAnyAIMissionTypes()):
         ntargets=0
         for aiFleetMissionType in self.getAIMissionTypes():
             ntargets += len( self.getAITargets(aiFleetMissionType) )
         if ntargets ==0:
+            if self.need_repair():
+                repairAIFleetOrder = MoveUtilsAI.getRepairAIFleetOrder(self.getAITarget(), start_sys_id)
+                if repairAIFleetOrder.isValid():
+                    self.appendAIFleetOrder(repairAIFleetOrder)
+            if not(self.getLocationAITarget().target_id in fleetSupplyableSystemIDs):
+                resupplyAIFleetOrder = MoveUtilsAI.getResupplyAIFleetOrder(self.getAITarget(), self.getLocationAITarget())
+                if resupplyAIFleetOrder.isValid():
+                    self.appendAIFleetOrder(resupplyAIFleetOrder)
             return #no targets
 
         # for some targets fleet has to visit systems and therefore fleet visit them
@@ -528,7 +542,6 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             self.appendAIFleetOrder(aiFleetOrder)
 
         # if fleet is in some system = fleet.systemID >=0, then also generate system AIFleetOrders
-        systemID = fleet.systemID
         if systemID >= 0:
             # system in where fleet is
             systemAITarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_SYSTEM, systemID)
@@ -543,14 +556,26 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         aiFleetOrder = self.__getAIFleetOrderFromAITarget(aiFleetMissionType, aiTarget)
                         self.appendAIFleetOrder(aiFleetOrder)
 
-
-        # if fleet doesn't have any mission, then resupply if is current location not in supplyable system
-        empire = fo.getEmpire()
-        fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-        if (not self.hasAnyAIMissionTypes()) and not(self.getLocationAITarget().target_id in fleetSupplyableSystemIDs):
-            resupplyAIFleetOrder = MoveUtilsAI.getResupplyAIFleetOrder(self.getAITarget(), self.getLocationAITarget())
-            if resupplyAIFleetOrder.isValid():
-                self.appendAIFleetOrder(resupplyAIFleetOrder)
+    def need_repair(self,  on_mission=False):
+        universe = fo.getUniverse()
+        fleet_id = self.target_id
+        fleet = universe.getFleet(fleet_id)
+        cutoff = [0.70,  0.25][ on_mission ]
+        ship_buckets = [ [],  [] ]
+        ships_cur_health = [ 0,  0 ]
+        ships_max_health = [ 0,  0 ]
+        for ship_id in fleet.shipIDs:
+            this_ship = universe.getShip(ship_id)
+            cur_struc = this_ship.currentMeterValue(fo.meterType.structure)
+            max_struc = this_ship.currentMeterValue(fo.meterType.maxStructure)
+            ship_ok = cur_struc >= cutoff * max_struc
+            ship_buckets[ship_ok].append( ship_id )
+            ships_cur_health[ship_ok] += cur_struc
+            ships_max_health[ship_ok] += max_struc
+        #TODO: the following is a temp all-or-nothing test
+        fleet_ok = ( sum(ships_cur_health) >= cutoff * sum(ships_max_health) )
+        #print "AIFleetMission checked fleet %d at %s for repair needs (%s)"%(fleet_id,  PlanetUtilsAI.sysNameIDs( [fleet.systemID] ),  not fleet_ok)
+        return not fleet_ok
 
     def getLocationAITarget(self):
         "system AITarget where fleet is or will be"
@@ -560,8 +585,8 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         systemID = fleet.systemID
         if systemID >= 0:
             return AITarget.AITarget(EnumsAI.AITargetType.TARGET_SYSTEM, systemID)
-        else:
-            return AITarget.AITarget(EnumsAI.AITargetType.TARGET_SYSTEM, fleet.nextSystemID)#TODO: huh?
+        else: # in starlane, so return next system
+            return AITarget.AITarget(EnumsAI.AITargetType.TARGET_SYSTEM, fleet.nextSystemID)
 
 def getFleetIDsFromAIFleetMissions(aiFleetMissions):
     result = []

@@ -1346,7 +1346,7 @@ def generateProductionOrders():
             if sysID in scannerLocs:
                 continue
             needScanner=False
-            for nSys in AIstate.dictFromMap( universe.getSystemNeighborsMap(sysID,  empire.empireID) ):
+            for nSys in dictFromMap( universe.getSystemNeighborsMap(sysID,  empire.empireID) ):
                 if (universe.getVisibility(nSys,  empire.empireID) < fo.visibility.partial):
                     needScanner=True
                     break
@@ -1372,30 +1372,50 @@ def generateProductionOrders():
     if empire.buildingTypeAvailable(bldName):
         bldType = fo.getBuildingType(bldName)
         queued_locs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-        queued_sys = []
+        queued_sys = set()
         for pid in queued_locs:
             dd_planet = universe.getPlanet(pid)
             if dd_planet:
-                queued_sys.append(dd_planet.systemID)
-        drydock_locs={}
-        drydock_locs.update([(sys_id,  True) for sys_id in queued_sys + list(ColonisationAI.empire_dry_docks)])
-        max_dock_builds = int(0.5 + empire.productionPoints/80.0)
-        for sys_id,  pids in ColonisationAI.empireSpeciesSystems.items(): #TODO: sort/prioritize in some fashion
+                queued_sys.add(dd_planet.systemID)
+        cur_drydoc_sys = set(ColonisationAI.empire_dry_docks.keys())
+        covered_drydoc_locs = set()
+        for start_set, dest_set in [ (cur_drydoc_sys.union(queued_sys),  covered_drydoc_locs), 
+                                               (covered_drydoc_locs,  covered_drydoc_locs) ]:  #coverage of neighbors up to 2 jumps away from a drydock
+            for dd_sys_id in start_set.copy():
+                dest_set.add(dd_sys_id)
+                dd_neighbors = dictFromMap( universe.getSystemNeighborsMap(dd_sys_id,  empire.empireID) )
+                dest_set.update( dd_neighbors.keys() )
+            
+        max_dock_builds = int(0.8 + empire.productionPoints/120.0)
+        print "Considering building %s,  found current and queued systems %s"%(bldName,  PlanetUtilsAI.sysNameIDs(cur_drydoc_sys.union(queued_sys)))
+        #print "Empire shipyards found at %s"%(PlanetUtilsAI.planetNameIDs(ColonisationAI.empireShipyards))
+        for sys_id,  pids_dict in ColonisationAI.empireSpeciesSystems.items(): #TODO: sort/prioritize in some fashion
+            pids = pids_dict.get('pids', [])
             if len(queued_locs)>= max_dock_builds:
                 print "Drydock enqueing halted with %d of max %d"%(  len(queued_locs) ,  max_dock_builds  )
                 break
-            if sys_id in drydock_locs:
+            if sys_id in covered_drydoc_locs:
+                #print "Considering %s at %s,  is already w/in coverage area"%(bldName,  PlanetUtilsAI.sysNameIDs([sys_id]))
                 continue
+            else:
+                #print "Considering %s at %s, with planet choices %s"%(bldName,  PlanetUtilsAI.sysNameIDs([sys_id]),  pids)
+                pass
             for pid in pids:
+                #print "checking planet '%s'"%pid
                 if pid not in ColonisationAI.empireShipyards:
+                    #print "Planet %s not in empireShipyards"%(PlanetUtilsAI.planetNameIDs([pid]) )
                     continue
                 planet = universe.getPlanet(pid)
                 res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
                 print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, planet.name,  res)
                 if res:
-                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                    print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     queued_locs.append( planet.systemID )
+                    covered_drydoc_locs.add( planet.systemID )
+                    dd_neighbors = dictFromMap( universe.getSystemNeighborsMap(planet.systemID,  empire.empireID) )
+                    covered_drydoc_locs.update( dd_neighbors.keys() )
+                    if max_dock_builds >= 2:
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     break
                 else:
                     print "Error failed enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, planet.name,  res)

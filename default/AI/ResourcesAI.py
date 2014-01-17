@@ -206,7 +206,7 @@ def setPlanetResourceFoci(): #+
                         if cur_focus != GFocus:
                             result = fo.issueChangeFocusOrder(spPID, GFocus)
                         if result == 1:
-                            newFoci[pid] = GFocus
+                            newFoci[spPID] = GFocus
                             if spPID in empirePlanetIDs:
                                 del empirePlanetIDs[   empirePlanetIDs.index( spPID ) ]
                             print "%s focus of planet %s (%d) at Growth Focus"%( ["set",  "left" ][  cur_focus == GFocus ] ,  planetMap[spPID].name,  spPID)

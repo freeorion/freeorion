@@ -2,6 +2,8 @@ from EnumsAI import AIFleetOrderType, AITargetType, AIShipRoleType,  AIFleetMiss
 import FleetUtilsAI
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
+import MoveUtilsAI
+import PlanetUtilsAI
 
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()
@@ -166,6 +168,17 @@ class AIFleetOrder(object):
                     empire = fo.getEmpire()
                     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
                     if (self.getTargetAITarget().target_id in fleetSupplyableSystemIDs):
+                        targetAITargetTypeValid = True
+            # repair
+            elif AIFleetOrderType.ORDER_REPAIR == self.getAIFleetOrderType():
+                # with fleet
+                if AITargetType.TARGET_FLEET == self.getSourceAITarget().target_type:
+                    sourceAITargetTypeValid = True
+                # move to system
+                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().target_type:
+                    empire = fo.getEmpire()
+                    fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+                    if (self.getTargetAITarget().target_id in fleetSupplyableSystemIDs): #TODO: check for drydock still there/owned
                         targetAITargetTypeValid = True
             # split fleet
             elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
@@ -432,18 +445,26 @@ class AIFleetOrder(object):
                     self.__setExecutionCompleted()
 
             # move or resupply
-            elif (AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType()) or (AIFleetOrderType.ORDER_RESUPPLY == self.getAIFleetOrderType()):
+            elif self.getAIFleetOrderType() in [ AIFleetOrderType.ORDER_MOVE,  AIFleetOrderType.ORDER_REPAIR, AIFleetOrderType.ORDER_RESUPPLY]:
                 fleetID = self.getSourceAITarget().target_id
-                systemID = self.getTargetAITarget().target_id
+                system_id = self.getTargetAITarget().target_id
                 fleet = fo.getUniverse().getFleet(fleetID)
-                if  systemID not in [fleet.systemID,  fleet.nextSystemID] :
-                    fo.issueFleetMoveOrder(fleetID, systemID)
-                if systemID == fleet.systemID:
+                if  system_id not in [fleet.systemID,  fleet.nextSystemID] :
+                    if self.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE:
+                        dest_id = system_id
+                    else:
+                        if self.getAIFleetOrderType() == AIFleetOrderType.ORDER_REPAIR:
+                            fo.issueAggressionOrder(fleetID,  False)
+                        start_id = [fleet.systemID,  fleet.nextSystemID][ fleet.systemID == -1 ]
+                        dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleetID,  start_id,  system_id)
+                        print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s"%(fleetID, AIFleetOrderTypeNames.name(self.getAIFleetOrderType()), 
+                                                                                                            PlanetUtilsAI.sysNameIDs([dest_id]), 
+                                                                                                            PlanetUtilsAI.sysNameIDs([system_id]))
+                    fo.issueFleetMoveOrder(fleetID, dest_id)
+                if system_id == fleet.systemID:
                     if    foAI.foAIstate.getFleetRole(fleetID) == AIFleetMissionType.FLEET_MISSION_EXPLORATION :
-                        if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
-                            foAI.foAIstate.needsEmergencyExploration=[]
-                        if systemID in foAI.foAIstate.needsEmergencyExploration:
-                            del foAI.foAIstate.needsEmergencyExploration[ foAI.foAIstate.needsEmergencyExploration.index(systemID) ]
+                        if system_id in foAI.foAIstate.needsEmergencyExploration:
+                            del foAI.foAIstate.needsEmergencyExploration[ foAI.foAIstate.needsEmergencyExploration.index(system_id) ]
                     self.__setExecutionCompleted()
 
             # split fleet

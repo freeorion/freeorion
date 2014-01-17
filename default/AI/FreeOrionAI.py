@@ -10,6 +10,7 @@ import traceback
 from time import time
 import random
 
+
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
 
 #pylint: disable=relative-import
@@ -24,6 +25,14 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
+
+using_statprof = False
+try:
+    import statprof
+    statprof.start()
+    using_statprof = True
+except:
+    pass
 
 def UserString(label,  default=None): #this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
     """ a translation assistance tool is intended to search for this method to identify translatable strings"""
@@ -307,6 +316,13 @@ def generateOrders(): # pylint: disable=invalid-name
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
+    if using_statprof:
+        try:
+            statprof.stop()
+            statprof.display()
+            statprof.start()
+        except:
+            pass
 #
 #The following methods should probably be moved to the AIstate module, to keep this module more focused on implementing required interface
 
