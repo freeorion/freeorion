@@ -2957,7 +2957,7 @@ EffectsGroup
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
-            effects = SetMaxTroops Value + 8 
+            effects = SetMaxTroops Value + 12
 
 '''
 
