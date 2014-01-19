@@ -11,6 +11,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/ShipDesign.h"
 
+#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
 

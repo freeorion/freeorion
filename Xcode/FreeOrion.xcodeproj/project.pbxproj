@@ -1360,7 +1360,7 @@
 		471D5CF30A98A3F900DA9C21 /* Enums.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Enums.h; sourceTree = "<group>"; };
 		471D5CF40A98A3F900DA9C21 /* Fleet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Fleet.cpp; sourceTree = "<group>"; };
 		471D5CF50A98A3F900DA9C21 /* Fleet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Fleet.h; sourceTree = "<group>"; };
-		471D5CF60A98A3F900DA9C21 /* InhibitableSignal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InhibitableSignal.h; sourceTree = "<group>"; };
+		471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = blocking_combiner.h; sourceTree = "<group>"; };
 		471D5CF70A98A3F900DA9C21 /* Meter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Meter.cpp; sourceTree = "<group>"; };
 		471D5CF80A98A3F900DA9C21 /* Meter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Meter.h; sourceTree = "<group>"; };
 		471D5CFC0A98A3F900DA9C21 /* Planet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Planet.cpp; sourceTree = "<group>"; };
@@ -3131,7 +3131,6 @@
 				8250FDE415FCEFDE00523C1C /* Field.h */,
 				471D5CF40A98A3F900DA9C21 /* Fleet.cpp */,
 				471D5CF50A98A3F900DA9C21 /* Fleet.h */,
-				471D5CF60A98A3F900DA9C21 /* InhibitableSignal.h */,
 				471D5CF70A98A3F900DA9C21 /* Meter.cpp */,
 				471D5CF80A98A3F900DA9C21 /* Meter.h */,
 				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
@@ -3187,6 +3186,7 @@
 				471D5D190A98A3F900DA9C21 /* AppInterface.h */,
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
+				471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */,
 				471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */,
 				471D5D1D0A98A3F900DA9C21 /* DataTable.h */,
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,

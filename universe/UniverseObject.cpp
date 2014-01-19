@@ -17,7 +17,7 @@ const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using b
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() :
-    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
+    StateChangedSignal(blocking_combiner<boost::last_value<void> >(GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(""),
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
@@ -32,7 +32,7 @@ UniverseObject::UniverseObject() :
 }
 
 UniverseObject::UniverseObject(const std::string name, double x, double y) :
-    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
+    StateChangedSignal(blocking_combiner<boost::last_value<void> >(GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(name),
     m_id(INVALID_OBJECT_ID),
     m_x(x),

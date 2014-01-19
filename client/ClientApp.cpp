@@ -11,6 +11,7 @@
 #include "../network/Networking.h"
 
 #include <stdexcept>
+#include <boost/bind.hpp>
 
 ClientApp::ClientApp() :
     IApp(),

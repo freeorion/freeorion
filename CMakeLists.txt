@@ -142,7 +142,6 @@ set (freeorioncommon_HEADER
     universe/Enums.h
     universe/Field.h
     universe/Fleet.h
-    universe/InhibitableSignal.h
     universe/Meter.h
     universe/ObjectMap.h
     universe/Planet.h
@@ -162,6 +161,7 @@ set (freeorioncommon_HEADER
     universe/ValueRef.h
     universe/ValueRefFwd.h
     util/AppInterface.h
+    util/blocking_combiner.h
     util/DataTable.h
     util/Directories.h
     util/i18n.h

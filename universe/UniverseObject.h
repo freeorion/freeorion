@@ -2,15 +2,16 @@
 #ifndef _UniverseObject_h_
 #define _UniverseObject_h_
 
-#include "InhibitableSignal.h"
 
 #include "Enums.h"
 #include "TemporaryPtr.h"
 #include "EnableTemporaryFromThis.h"
 #include "../util/Export.h"
+#include "../util/blocking_combiner.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/python/detail/destroy.hpp>
+#include <boost/signal.hpp>
 
 #include <set>
 #include <string>
@@ -39,8 +40,7 @@ struct UniverseObjectVisitor;
 class FO_COMMON_API UniverseObject : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>                          StateChangedSignalBaseType;
-    typedef InhibitableSignal<StateChangedSignalBaseType>   StateChangedSignalType;
+    typedef boost::signal<void (), blocking_combiner<boost::last_value<void> > > StateChangedSignalType;
     //@}
 
     /** \name Slot Types */ //@{

@@ -97,8 +97,8 @@
     <ClInclude Include="..\..\universe\Fleet.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\InhibitableSignal.h">
-      <Filter>Header Files\universe</Filter>
+    <ClInclude Include="..\..\util\blocking_combiner.h">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Meter.h">
       <Filter>Header Files\universe</Filter>

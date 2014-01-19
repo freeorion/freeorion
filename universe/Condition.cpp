@@ -17,6 +17,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include <boost/bind.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
 

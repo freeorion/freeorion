@@ -115,7 +115,7 @@
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
-    <ClInclude Include="..\..\universe\InhibitableSignal.h" />
+    <ClInclude Include="..\..\util\blocking_combiner.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
     <ClInclude Include="..\..\universe\Names.h" />
     <ClInclude Include="..\..\universe\ObjectMap.h" />
