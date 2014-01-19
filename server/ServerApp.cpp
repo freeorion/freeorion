@@ -2252,6 +2252,7 @@ void ServerApp::PreCombatProcessTurns() {
     HandleInvasion();
 
     // scrap orders
+    //std::vector<int> scrapped_object_ids;
     for (ObjectMap::iterator<Ship> it = objects.begin<Ship>(); it != objects.end<Ship>(); ++it) {
         TemporaryPtr<Ship> ship = *it;
         if (!ship->OrderedScrapped())
@@ -2264,11 +2265,13 @@ void ServerApp::PreCombatProcessTurns() {
         if (fleet) {
             fleet->RemoveShip(ship->ID());
             if (fleet->Empty()) {
+                //scrapped_object_ids.push_back(fleet->ID());
                 system->Remove(fleet->ID());
                 m_universe.Destroy(fleet->ID());
             }
         }
 
+        //scrapped_object_ids.push_back(ship->ID());
         m_universe.Destroy(ship->ID());
     }
     for (ObjectMap::iterator<Building> it = objects.begin<Building>(); it != objects.end<Building>(); ++it) {
@@ -2279,7 +2282,9 @@ void ServerApp::PreCombatProcessTurns() {
             planet->RemoveBuilding(building->ID());
         if (TemporaryPtr<System> system = GetSystem(building->SystemID()))
             system->Remove(building->ID());
-        m_universe.Destroy(building);
+
+        //scrapped_object_ids.push_back(building->ID());
+        m_universe.Destroy(building->ID());
     }
 
 
@@ -2452,7 +2457,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
                 if (unrestricted)
                     unrestricted_monsters_present = true;
                 else
-                    restricted_monsters.push_back(*fleet_it);
+                    restricted_monsters.push_back(fleet->ID());
             } else if (unrestricted) {
                 unrestricted_empires_present = true;
             }

@@ -2326,7 +2326,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
 
     } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
         if (old_sys)
-            old_sys->Remove(fleet);
+            old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);

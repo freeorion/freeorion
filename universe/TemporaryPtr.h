@@ -61,6 +61,8 @@ public:
     //@}
 
 private:
+    operator int() const;   // disabled. Call ->ID() to get object's ID
+
     template <class Y>
     friend class TemporaryPtr;
     template <class Y>
@@ -116,6 +118,10 @@ private:
     void serialize(Archive& ar, const unsigned int version)
     { ar & BOOST_SERIALIZATION_NVP(m_ptr); }
 };
+
+template <class Y>
+std::ostream& operator<<(std::ostream& o, const TemporaryPtr<Y>& p)
+{ return (o << ""); }
 
 #include "TemporaryPtr.tcc"
 
