@@ -3898,7 +3898,7 @@ void MapWnd::SystemRightClicked(int system_id) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(player_id,
-                    Moderator::SetOwner(*it, empire_id)));
+                    Moderator::SetOwner(obj->ID(), empire_id)));
                 }
             }
         }
