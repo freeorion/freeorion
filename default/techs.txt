@@ -593,7 +593,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    graphic = "icons/tech/force-field_harmonics.png"
+    graphic = "icons/ship_parts/defense_grid.png"
 
 Tech
     name = "LRN_EVERYTHING"
@@ -1889,6 +1889,7 @@ Tech
         Item type = ShipHull name = "SH_SELF_GRAVITATING"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
+    graphic = "icons/ship_hulls/self_gravitating_hull_small.png"
 
 Tech
     name = "SHP_NANOROBO_MAINT"
@@ -1906,6 +1907,7 @@ Tech
         Item type = ShipHull name = "SH_NANOROBOTIC"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
+    graphic = "icons/ship_hulls/nano_robotic_hull_small.png"
 
 Tech
     name = "SHP_MASSPROP_SPEC"
@@ -1920,6 +1922,7 @@ Tech
         Item type = ShipHull name = "SH_TITANIC"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
+    graphic = "icons/ship_hulls/titanic_hull_small.png"
 
 Tech
     name = "SHP_TRANSSPACE_DRIVE"
@@ -1968,6 +1971,7 @@ Tech
         Item type = ShipHull name = "SH_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
+    graphic = "icons/ship_hulls/asteroid_hull_small.png"
 
 Tech
     name = "SHP_HEAVY_AST_HULL"
@@ -1981,6 +1985,7 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_HEAVY_ASTEROID"
     ]
+    graphic = "icons/ship_hulls/asteroid_hull_small.png"
 
 Tech
     name = "SHP_ASTEROID_REFORM"
@@ -2030,6 +2035,7 @@ Tech
         Item type = ShipHull name = "SH_ORGANIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
     ]
+    graphic = "hulls_design/organic_hull.png"
         
 Tech
     name = "SHP_MULTICELL_CAST"
@@ -2047,6 +2053,7 @@ Tech
         Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
+    graphic = "icons/ship_hulls/static_multicellular_small.png"
         
 Tech
     name = "SHP_ENDOCRINE_SYSTEMS"
@@ -2061,7 +2068,7 @@ Tech
         Item type = ShipHull name = "SH_ENDOMORPHIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
-    graphic = "hulls_design/endomorphic_hull.png"
+    graphic = "icons/ship_hulls/endomorphic_hull_small.png"
     
 Tech
     name = "SHP_ENDOSYMB_HULL"
@@ -2080,7 +2087,7 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
-
+    graphic = "icons/ship_hulls/endosymbiotic_hull_small.png"
     
     
 Tech
@@ -2131,6 +2138,7 @@ Tech
         Item type = ShipHull name = "SH_BIOADAPTIVE"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
+    
 
 Tech
     name = "SHP_CONT_BIOADAPT"
@@ -2148,6 +2156,8 @@ Tech
         Item type = ShipHull name = "SH_RAVENOUS"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
+    graphic = "icons/ship_hulls/ravenous_hull_small.png"
+    
         
 Tech    name = "SHP_SENT_HULL"
     description = "SHP_SENT_HULL_DESC"
@@ -2193,6 +2203,7 @@ Tech
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
     unlock = Item type = ShipHull name = "SH_QUANTUM_ENERGY"
+    graphic = "icons/ship_hulls/quantum_energy_hull_small.png"
 
 Tech
     name = "SHP_ENRG_BOUND_MAN"
@@ -2204,6 +2215,7 @@ Tech
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
     unlock = Item type = ShipHull name = "SH_FRACTAL_ENERGY"
+    graphic = "icons/ship_hulls/fractal_energy_hull_small.png"
 
 Tech
     name = "SHP_SOLAR_CONT"
@@ -2222,6 +2234,7 @@ Tech
         Item type = ShipHull name = "SH_SOLAR"
         Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
     ]
+    graphic = "icons/ship_hulls/solar_hull_small.png"
 
 Tech
     name = "SHP_CAMO_AST_HULL"
@@ -2298,6 +2311,7 @@ Tech
     researchturns = 3
     prerequisites = "SHP_GAL_EXPLO"
     unlock = Item type = ShipPart name = "FU_IMPROVED_ENGINE_COUPLINGS"
+    graphic = "icons/ship_parts/engine-1.png"
     
 Tech
     name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
@@ -2312,7 +2326,7 @@ Tech
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = ShipPart name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
-    graphic = "icons/tech/n-dimensional_subspace.png"
+    graphic = "icons/ship_parts/engine-2.png"
     
 Tech
     name = "SHP_SINGULARITY_ENGINE_CORE"
@@ -2327,7 +2341,7 @@ Tech
         "PRO_SINGULAR_GEN"
     ]
     unlock = Item type = ShipPart name = "FU_SINGULARITY_ENGINE_CORE"
-    graphic = "icons/tech/zero_point_energy.png"
+    graphic = "icons/ship_parts/engine-3.png"
     
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -2342,6 +2356,7 @@ Tech
         "PRO_FUSION_GEN"
     ]
     unlock = Item type = ShipPart name = "FU_DEUTERIUM_TANK"
+    graphic = "icons/ship_parts/deuterium_tank.png"
 
 Tech
     name = "SHP_REINFORCED_HULL"
@@ -2408,6 +2423,7 @@ Tech
         "LRN_FORCE_FIELD"
     ]
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
+    graphic = "icons/ship_parts/antimatter_tank.png"
 
 Tech
     name = "SHP_NOVA_BOMB"
@@ -2466,6 +2482,7 @@ Tech
     researchturns = 10
     prerequisites = "LRN_FORCE_FIELD"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
+    graphic = "icons/ship_parts/deflector_shield.png"
 
 Tech
     name = "SHP_PLASMA_SHIELD"
@@ -2477,6 +2494,7 @@ Tech
     researchturns = 10
     prerequisites = "SHP_DEFLECTOR_SHIELD"
     unlock = Item type = ShipPart name = "SH_PLASMA"
+    graphic = "icons/ship_parts/plasma_shield.png"
 
 Tech
     name = "SHP_BLACKSHIELD"
@@ -2488,6 +2506,7 @@ Tech
     researchturns = 10
     prerequisites = "SHP_PLASMA_SHIELD"
     unlock = Item type = ShipPart name = "SH_BLACK"
+    graphic = "icons/ship_parts/blackshield.png"
 
 Tech
     name = "SHP_MULTISPEC_SHIELD"
