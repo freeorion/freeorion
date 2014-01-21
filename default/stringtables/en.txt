@@ -9345,6 +9345,12 @@ INDEPENDENT_TROOP_LABEL
 OUTPOST_TROOP_LABEL
 '''Outpost'''
 
+NATIVE_PLANETARY_DEFENSE_LABEL
+'''%2% Planetary Defense'''
+
+NATIVE_PLANETARY_SHIELDS_LABEL
+'''%2% Planetary Shields'''
+
 VERY_BRIGHT_STAR
 '''Very bright star'''
 

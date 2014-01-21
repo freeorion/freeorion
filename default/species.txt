@@ -804,8 +804,8 @@ Species
         [[BAD_GROUND_TROOPS]]
 
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NATIVE_PLANETARY_DEFENSE]]
+        [[NATIVE_PLANETARY_SHIELDS]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -881,9 +881,10 @@ Species
 
         [[GREAT_WEAPONS]]
         
-        // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NATIVE_PLANETARY_DEFENSE]]
+        [[NATIVE_PLANETARY_SHIELDS]]
+
+        
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -1044,7 +1045,7 @@ Species
     CanColonize
 
     tags = [ "ORGANIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" ]
-    
+
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1052,6 +1053,8 @@ Species
         [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
+    
+    preferredfocus = "FOCUS_RESEARCH"
     
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
@@ -2976,6 +2979,23 @@ PROTECTION_FOCUS_TROOPS
 
 //#####      P L A N E T A R Y   S H I E L D S     #####//
 
+
+NATIVE_PLANETARY_SHIELDS
+'''[[BASIC_PLANETARY_SHIELDS]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not OwnedBy AnyEmpire
+            ]
+            accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
+            effects = SetMaxShield Value + 10
+            
+    [[PROTECTION_FOCUS_SHIELDS]]
+'''
+
+
 AVERAGE_PLANETARY_SHIELDS
 '''[[BASIC_PLANETARY_SHIELDS]]
 
@@ -3096,6 +3116,21 @@ PROTECTION_FOCUS_SHIELDS
 '''
 
 //#####      P L A N E T A R Y   D E F E N S E     #####//
+
+NATIVE_PLANETARY_DEFENSE
+'''[[BASIC_PLANETARY_DEFENSE]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not OwnedBy AnyEmpire
+            ]
+            accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
+            effects = SetMaxDefense Value + 10
+            
+    [[PROTECTION_FOCUS_DEFENSE]]
+'''
 
 AVERAGE_PLANETARY_DEFENSE
 '''[[BASIC_PLANETARY_DEFENSE]]
