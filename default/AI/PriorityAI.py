@@ -194,7 +194,7 @@ def calculateResearchPriority():
     if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
             (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
             (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
-        industry_factor = [ [0.25,  0.2],  [0.3,  0.25] ][styleIndex ]
+        industry_factor = [ [0.25,  0.2],  [0.3,  0.25],  [0.3,  0.25] ][styleIndex ]
         researchPriority = min(researchPriority,  industry_factor[got_solar_gen]*industryPriority) 
     if got_quant:
         researchPriority = min(researchPriority + 0.1*industryPriority,  researchPriority * 1.3) 
