@@ -240,7 +240,6 @@
 		47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C790A98A3F900DA9C21 /* ResourcePool.cpp */; };
 		47103C190CF04E5900A7DF2B /* StringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CDC0A98A3F900DA9C21 /* StringTable.cpp */; };
 		47103C1B0CF04E5900A7DF2B /* Networking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA60CEF565700A7DF2B /* Networking.cpp */; };
-		47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1E0A98A3F900DA9C21 /* Directories.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA50A98A3F900DA9C21 /* About.cpp */; };
@@ -388,6 +387,7 @@
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
+		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
@@ -4039,7 +4039,6 @@
 				47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */,
 				47103C190CF04E5900A7DF2B /* StringTable.cpp in Sources */,
 				47103C1B0CF04E5900A7DF2B /* Networking.cpp in Sources */,
-				47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */,
 				47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */,
 				478417760CF058B100BE4710 /* Process.cpp in Sources */,
 				34B9F92C0F634A03005BF6A4 /* CombatFighter.cpp in Sources */,
@@ -4127,6 +4126,7 @@
 				828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */,
 				82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */,
 				82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */,
+				82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
