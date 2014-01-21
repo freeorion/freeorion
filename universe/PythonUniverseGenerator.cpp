@@ -218,7 +218,7 @@ namespace {
         list py_items;
         std::vector<ItemSpec> items;
         parse::items(GetResourceDir() / file_name, items);
-        for (int i = 0; i < items.size(); i++) {
+        for (unsigned int i = 0; i < items.size(); i++) {
             py_items.append(object(items[i]));
         }
         return py_items;
@@ -304,15 +304,15 @@ namespace {
             }
             m_fleet_plan = FleetPlan(fleet_name, designs, false);
         }
-        
+
         // name accessors
         object Name()
         { return object(m_fleet_plan.Name()); }
-        
+
         list ShipDesigns() {
             list py_designs;
             const std::vector<std::string>& designs = m_fleet_plan.ShipDesigns();
-            for (int i = 0; i < designs.size(); i++) {
+            for (unsigned int i = 0; i < designs.size(); i++) {
                 py_designs.append(object(designs[i]));
             }
             return list(py_designs);
@@ -329,7 +329,7 @@ namespace {
         list py_fleet_plans;
         std::vector<FleetPlan*> fleet_plans;
         parse::fleet_plans(GetResourceDir() / file_name, fleet_plans);
-        for (int i = 0; i < fleet_plans.size(); i++) {
+        for (unsigned int i = 0; i < fleet_plans.size(); i++) {
             py_fleet_plans.append(FleetPlanWrapper(*(fleet_plans[i])));
             delete fleet_plans[i];
         }
@@ -717,7 +717,7 @@ namespace {
             return py_foci;
         }
         std::vector<std::string> foci = planet->AvailableFoci();
-        for (int i = 0; i < foci.size(); i++) {
+        for (unsigned int i = 0; i < foci.size(); i++) {
             py_foci.append(object(foci[i]));
         }
         return py_foci;
