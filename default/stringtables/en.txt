@@ -2697,6 +2697,11 @@ Begin a ship design by selecting its hull.
 DESIGN_INV_NO_NAME
 Each ship design must have a unique name.
 
+DESIGN_KNOWN
+Duplicates Existing Design
+
+DESIGN_KNOWN_DETAIL
+This design (name, hull, parts) duplicates a design already known to this empire.
 
 ################
 ## Statistics ##

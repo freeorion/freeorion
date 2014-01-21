@@ -1735,6 +1735,7 @@ public:
 
     boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
     int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
+    bool                                CurrentDesignIsRegistered(); //!< returns true iff current design dump text is registered as a completed design for the client
     //@}
 
     /** \name Mutators */ //@{
@@ -1763,6 +1764,9 @@ public:
     void            SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts);//!< sets design hull and parts to those specified
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
+    void            RegisterCompletedDesignDump(std::string design_dump);       
+    void            ReregisterDesigns();                                        //!< resets m_completed_designs and reregisters all current empire designs.
+                                                                                //!< Is used w/r/t m_confirm_button status
     //@}
 
     mutable boost::signal<void ()>                  DesignChangedSignal;        //!< emitted when the design is changed (by adding or removing parts, not name or description changes)
@@ -1779,6 +1783,7 @@ private:
     void            DoLayout();                         //!< positions buttons, text entry boxes and SlotControls
     void            DesignChanged();                    //!< responds to the design being changed
     void            RefreshIncompleteDesign() const;
+    std::string     GetCleanDesignDump(const ShipDesign* ship_design); //!< similar to ship design dump but without 'lookup_strings', icon and model entries
 
     bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
@@ -1794,6 +1799,7 @@ private:
     std::vector<SlotControl*>               m_slots;
     int                                     m_complete_design_id;
     mutable boost::shared_ptr<ShipDesign>   m_incomplete_design;
+    std::set<std::string>                   m_completed_design_dump_strings;
 
     GG::StaticGraphic*  m_background_image;
     GG::TextControl*    m_design_name_label;
@@ -1802,6 +1808,7 @@ private:
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
+    boost::signals::connection      m_empire_designs_changed_signal;
 };
 
 // static
@@ -1813,6 +1820,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     m_slots(),
     m_complete_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_incomplete_design(),
+    m_completed_design_dump_strings(),
     m_background_image(0),
     m_design_name_label(0),
     m_design_name(0),
@@ -1901,6 +1909,15 @@ boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() 
 int DesignWnd::MainPanel::GetCompleteDesignID() const
 { return m_complete_design_id; }
 
+bool DesignWnd::MainPanel::CurrentDesignIsRegistered() {
+    bool is_reg = (GetCompleteDesignID() != ShipDesign::INVALID_DESIGN_ID); // though it appears this always fails
+    if (boost::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
+        std::string dump_str = GetCleanDesignDump(cur_design.get());
+        is_reg = is_reg || (m_completed_design_dump_strings.find(dump_str) != m_completed_design_dump_strings.end());
+    }
+    return (is_reg);
+}
+
 void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_incomplete_design.get())
         DesignChangedSignal();
@@ -1914,10 +1931,32 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     DoLayout();
 }
 
+void DesignWnd::MainPanel::ReregisterDesigns() {
+    Logger().debugStream() << "DesignWnd::MainPanel::ReregisterDesigns";
+    m_completed_design_dump_strings.clear();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id); // may return 0
+    if (empire) {
+        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
+            if (const ShipDesign* design = GetShipDesign(*it)) {
+                std::string dump_str = GetCleanDesignDump(design);
+                m_completed_design_dump_strings.insert(dump_str); //no need to validate
+            }
+        }
+    }
+}
+
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(0);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
     m_design_description->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    // disconnect old empire design signal
+    m_empire_designs_changed_signal.disconnect();
+    // connect signal to update this list if the empire's designs change
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &MainPanel::ReregisterDesigns,    this); // not apparent if this is working, but in typical use is unnecessary
+    ReregisterDesigns();
 }
 
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
@@ -2217,11 +2256,29 @@ void DesignWnd::MainPanel::DesignChanged() {
     }
 
 
-    if (client_empire_id != ALL_EMPIRES && m_hull && !m_design_name->Text().empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
-        m_confirm_button->Disable(false);
-    else
-        m_confirm_button->Disable(true);
     RefreshIncompleteDesign();
+    if (CurrentDesignIsRegistered()) {
+        Logger().debugStream() << "DesignWnd::MainPanel::DesignChanged found design to be already registered";
+        m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_KNOWN"), UserString("DESIGN_KNOWN_DETAIL"))));
+        m_confirm_button->Disable(true);
+    } else if (client_empire_id != ALL_EMPIRES && m_hull && !m_design_name->Text().empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
+        m_confirm_button->Disable(false);
+    else {
+        Logger().debugStream() << "DesignWnd::MainPanel::DesignChanged found design to be NOT already registered";
+        m_confirm_button->Disable(true);
+    }
+}
+
+std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_design) {
+    std::string retval = "ShipDesign\n";
+    retval += ship_design->Name() + "\"\n";
+    retval += ship_design->Hull() + "\"\n";
+    const std::vector<std::string> part_list = ship_design->Parts();
+    for (std::vector<std::string>::const_iterator it = part_list.begin(); it != part_list.end(); ++it) {
+        retval += "\"" + *it + "\"\n";
+    }
+    return retval; 
 }
 
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
@@ -2305,6 +2362,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
                                                                                         m_main_panel)));
     GG::Connect(m_main_panel->CompleteDesignClickedSignal,      &EncyclopediaDetailPanel::SetDesign,m_detail_panel);
     m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
+    m_main_panel->Sanitize();
 
     m_part_palette = new PartPalette(most_panels_width, part_palette_height);
     AttachChild(m_part_palette);
@@ -2325,6 +2383,7 @@ void DesignWnd::Reset() {
     m_part_palette->Reset();
     m_base_selector->Reset();
     m_detail_panel->Refresh();
+    m_main_panel->Sanitize();
 }
 
 void DesignWnd::Sanitize()
@@ -2390,6 +2449,8 @@ void DesignWnd::AddDesign() {
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ShipDesignOrder(empire_id, new_design_id, design)));
+    m_main_panel->ReregisterDesigns();
+    m_main_panel->DesignChangedSignal();
 
     Logger().debugStream() << "Added new design: " << design.Name();
 }
