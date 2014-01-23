@@ -54,7 +54,6 @@ bool Order::Executed() const
 bool Order::UndoImpl() const
 { return false; }
 
-
 ////////////////////////////////////////////////
 // RenameOrder
 ////////////////////////////////////////////////
@@ -106,7 +105,6 @@ void RenameOrder::ExecuteImpl() const {
 
     obj->Rename(m_name);
 }
-
 
 ////////////////////////////////////////////////
 // CreateFleetOrder
@@ -207,7 +205,6 @@ void NewFleetOrder::ExecuteImpl() const {
     fleet->StateChangedSignal();
     system->StateChangedSignal();
 }
-
 
 ////////////////////////////////////////////////
 // FleetMoveOrder
@@ -328,7 +325,6 @@ void FleetMoveOrder::ExecuteImpl() const {
     fleet->SetRoute(route_list);
 }
 
-
 ////////////////////////////////////////////////
 // FleetTransferOrder
 ////////////////////////////////////////////////
@@ -416,7 +412,6 @@ void FleetTransferOrder::ExecuteImpl() const {
     source_fleet->RemoveShips(validated_ship_ids);
     target_fleet->AddShips(validated_ship_ids);
 }
-
 
 ////////////////////////////////////////////////
 // ColonizeOrder
@@ -529,7 +524,6 @@ bool ColonizeOrder::UndoImpl() const {
     return true;
 }
 
-
 ////////////////////////////////////////////////
 // InvadeOrder
 ////////////////////////////////////////////////
@@ -630,7 +624,6 @@ bool InvadeOrder::UndoImpl() const {
     return true;
 }
 
-
 ////////////////////////////////////////////////
 // BombardOrder
 ////////////////////////////////////////////////
@@ -723,7 +716,6 @@ bool BombardOrder::UndoImpl() const {
     return true;
 }
 
-
 ////////////////////////////////////////////////
 // DeleteFleetOrder
 ////////////////////////////////////////////////
@@ -761,7 +753,6 @@ void DeleteFleetOrder::ExecuteImpl() const {
 
     GetUniverse().Destroy(FleetID());
 }
-
 
 ////////////////////////////////////////////////
 // ChangeFocusOrder
@@ -1141,3 +1132,50 @@ void AggressiveOrder::ExecuteImpl() const {
             fleet->SetAggressive(m_aggression);
     }
 }
+
+/////////////////////////////////////////////////////
+// GiveObjectToEmpireOrder
+/////////////////////////////////////////////////////
+GiveObjectToEmpireOrder::GiveObjectToEmpireOrder() :
+    Order(),
+    m_object_id(INVALID_OBJECT_ID),
+    m_recipient_empire_id(ALL_EMPIRES)
+{}
+
+GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int recipient) :
+    Order(),
+    m_object_id(INVALID_OBJECT_ID),
+    m_recipient_empire_id(ALL_EMPIRES)
+{}
+
+void GiveObjectToEmpireOrder::ExecuteImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+
+    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
+        if (ship->OwnedBy(empire_id))
+            ship->SetGiveToEmpire(m_recipient_empire_id);
+    } else if (TemporaryPtr<Planet> planet = GetPlanet(m_object_id)) {
+        if (planet->OwnedBy(empire_id))
+            planet->SetGiveToEmpire(m_recipient_empire_id);
+    }
+}
+
+bool GiveObjectToEmpireOrder::UndoImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+
+    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
+        if (ship->OwnedBy(empire_id)) {
+            ship->ClearGiveToEmpire();
+            return true;
+        }
+    } else if (TemporaryPtr<Planet> planet = GetPlanet(m_object_id)) {
+        if (planet->OwnedBy(empire_id)) {
+            planet->ClearGiveToEmpire();
+            return true;
+        }
+    }
+    return false;
+}
+

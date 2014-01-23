@@ -169,6 +169,14 @@ void AggressiveOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_aggression);
 }
 
+template <class Archive>
+void GiveObjectToEmpireOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_object_id)
+        & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
+}
+
 void Serialize(freeorion_oarchive& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
 

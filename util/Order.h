@@ -628,6 +628,44 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
+/////////////////////////////////////////////////////
+// GiveObjectToEmpireOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents giving control of a ship to
+  * another empire */
+class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
+public:
+    /** \name Structors */ //@{
+    GiveObjectToEmpireOrder();
+    GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
+    //@}
+
+    /** \name Accessors */ //@{
+    int             ObjectID() const    { return m_object_id; }             ///< returns ID of object selected in this order
+    int             RecipientEmpireID() { return m_recipient_empire_id; }   ///< returns ID of empire to which object is given
+    //@}
+
+private:
+    /**
+     *  Preconditions:
+     *     - m_object_id must be the ID of an object owned by issuing empire
+     *     - m_recipient_empire_id must be the ID of another empire
+     *
+     *  Postconditions:
+     *     - the object's ownership is set to the other empire
+     */
+    virtual void    ExecuteImpl() const;
+    virtual bool    UndoImpl() const;
+
+    int     m_object_id;
+    int     m_recipient_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 // Note: *::serialize() implemented in SerializeOrderSet.cpp.
 
 #endif // _Order_h_
