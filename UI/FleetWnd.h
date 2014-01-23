@@ -213,6 +213,7 @@ private:
     GG::StaticGraphic*          m_colonize_indicator;
     GG::StaticGraphic*          m_invade_indicator;
     GG::StaticGraphic*          m_bombard_indicator;
+    GG::StaticGraphic*          m_gift_indicator;
     ScanlineControl*            m_scanline_control;
     GG::TextControl*            m_ship_name_text;
     GG::TextControl*            m_design_name_text;
