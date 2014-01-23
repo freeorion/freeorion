@@ -156,11 +156,13 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
+        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size() << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
         if (ship_ids.empty())
             return;
 
-        ScopedTimer timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
+        ScopedTimer new_fleet_creation_timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
         Sound::TempUISoundDisabler sound_disabler;
+
 
         // get system where new fleet is to be created.
         int first_ship_id = ship_ids.front();
@@ -224,7 +226,7 @@ namespace {
         if (!ClientPlayerIsModerator()) {
             if (empire_id == ALL_EMPIRES)
                 return;
-            
+
             // create new fleet with ships
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
@@ -1156,11 +1158,20 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 }
 
 void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    Logger().debugStream() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
         if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(*it))
             ship_ids.push_back(ship_row->ShipID());
+    std::string id_list;
+    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
+        id_list += boost::lexical_cast<std::string>(*it) + " ";
+    Logger().debugStream() << "FleetWnd::AcceptDrops found " << ship_ids.size() << " ship ids: " << id_list;
+
+    if (ship_ids.empty())
+        return;
+
     NewFleetFromShipsSignal(ship_ids);
 }
 
@@ -2097,10 +2108,10 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     const GG::ListBox::SelectionSet& selections = m_ships_lb->Selections();
     //std::cout << " selections size: " << selections.size() << std::endl;
     for (GG::ListBox::SelectionSet::const_iterator sel_it = selections.begin();
-            sel_it != selections.end(); ++sel_it)
+         sel_it != selections.end(); ++sel_it)
     {
         std::list<GG::ListBox::Row*>::iterator starRow_it = *sel_it;
-        bool hasRow=false;
+        bool hasRow = false;
         for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); lb_it++) {
             if (lb_it == starRow_it) {
                 hasRow=true;
@@ -2108,7 +2119,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
             }
         }
         if (!hasRow) {
-            Logger().errorStream() << "FleetDetailPanel::SelectedShipIDs tried to set invalid ship row selection;";
+            Logger().errorStream() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
             continue;
         }
         GG::ListBox::Row* row = **sel_it;
@@ -3107,9 +3118,19 @@ std::string FleetWnd::TitleText() const {
 }
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
+    Logger().debugStream() << "FleetWnd::CreateNewFleetFromDrops with " << ship_ids.size() << " ship ids";
+
+    if (ship_ids.empty())
+        return;
+
     bool aggressive = false;
     if (m_new_fleet_drop_target)
         aggressive = m_new_fleet_drop_target->NewFleetAggression();
+
+    // deselect all ships so that response to fleet rearrangement doesn't attempt
+    // to get the selected ships that are no longer in their old fleet.
+    m_fleet_detail_panel->SetSelectedShips(std::set<int>());
+
     CreateNewFleetFromShips(ship_ids, aggressive);
 }
 
@@ -3117,6 +3138,9 @@ void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 { SelectedShipsChangedSignal(); }
 
 void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
+    Logger().debugStream() << "FleetWnd::UniverseObjectDeleted";
+    Logger().debugStream().flush();
+
     // check if deleted object was a fleet.  if not, abort.
     TemporaryPtr<const Fleet> deleted_fleet = universe_object_ptr_cast<const Fleet>(obj);
     if (!deleted_fleet)
@@ -3136,6 +3160,8 @@ void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
             break;
         }
     }
+    Logger().debugStream() << "FleetWnd::UniverseObjectDeleted done";
+    Logger().debugStream().flush();
 }
 
 void FleetWnd::SystemChangedSlot() {
