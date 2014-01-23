@@ -2360,6 +2360,9 @@ Fleet Damage - Equal to the total damage of ships in the fleet.
 FW_FLEET_COUNT_SUMMARY
 Fleet Count - Equal to the total number of ships in the fleet.
 
+FW_MERGE_SYSTEM_FLEETS
+Merge System Ships Into Fleet
+
 FW_SPLIT_DAMAGED_FLEET
 Split Damaged Ships From Fleet
 

@@ -452,6 +452,59 @@ namespace {
         }
     }
 
+    void MergeFleetsIntoFleet(int fleet_id) {
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            return;
+
+        TemporaryPtr<Fleet> target_fleet = GetFleet(fleet_id);
+        if (!target_fleet) {
+            Logger().errorStream() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
+            return;
+        }
+
+        TemporaryPtr<const System> system = GetSystem(target_fleet->SystemID());
+        if (!system) {
+            Logger().errorStream() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
+            return;
+        }
+
+        // filter fleets in system to select just those owned by this client's
+        // empire, and then order their ships transferred into target fleet
+        std::vector<TemporaryPtr<Fleet> > all_system_fleets = Objects().FindObjects<Fleet>(system->FleetIDs());
+        std::vector<int> empire_system_fleet_ids;
+        empire_system_fleet_ids.reserve(all_system_fleets.size());
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = all_system_fleets.begin();
+             it != all_system_fleets.end(); ++it)
+        {
+            TemporaryPtr<Fleet> fleet = *it;
+            if (!fleet->OwnedBy(empire_id))
+                continue;
+            if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
+                continue;   // no need to do things to target fleet's contents
+
+            empire_system_fleet_ids.push_back(fleet->ID());
+
+            // order ships moved into target fleet
+            std::vector<int> ship_ids(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new FleetTransferOrder(empire_id, fleet->ID(), target_fleet->ID(), ship_ids)));
+        }
+
+        // delete empty fleets from which ships may have been taken
+        std::vector<TemporaryPtr<Fleet> > potentially_empty_fleets =
+            Objects().FindObjects<Fleet>(empire_system_fleet_ids);
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = potentially_empty_fleets.begin();
+                it != potentially_empty_fleets.end(); ++it)
+        {
+            TemporaryPtr<const Fleet> fleet = *it;
+            if (fleet && fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, fleet->ID())));
+        }
+    }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
@@ -3159,6 +3212,15 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
     }
 
+    // Merge fleets
+    if (system
+        && fleet->OwnedBy(empire_id)
+        && !ClientPlayerIsModerator()
+       )
+    {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   10, false, false));
+    }
+
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
     if (system
         && ship_ids_set.size() > 1
@@ -3238,7 +3300,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 2: {   // split damaged
+        case 10:{ // merge fleets
+            MergeFleetsIntoFleet(fleet->ID());
+            break;
+        }
+
+        case 2: { // split damaged
             bool aggressive = false;    // damaged ships want to avoid fighting more
             CreateNewFleetFromShips(damaged_ship_ids, aggressive);
             break;
