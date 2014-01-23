@@ -180,6 +180,9 @@ void NewFleetOrder::ExecuteImpl() const {
 
     // an ID is provided to ensure consistancy between server and client universes
     universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
+
+    GetUniverse().InhibitUniverseObjectSignals(true);
+
     system->Insert(fleet);
 
     // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
@@ -198,6 +201,11 @@ void NewFleetOrder::ExecuteImpl() const {
         ship->SetFleetID(fleet->ID());
     }
     fleet->AddShips(validated_ships_ids);
+
+    GetUniverse().InhibitUniverseObjectSignals(false);
+    system->FleetInsertedSignal(fleet);
+    fleet->StateChangedSignal();
+    system->StateChangedSignal();
 }
 
 
