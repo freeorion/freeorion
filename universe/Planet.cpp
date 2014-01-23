@@ -65,6 +65,7 @@ Planet::Planet() :
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
     m_is_about_to_be_bombarded(false),
+    m_ordered_given_to_empire_id(ALL_EMPIRES),
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
@@ -88,6 +89,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
     m_is_about_to_be_bombarded(false),
+    m_ordered_given_to_empire_id(ALL_EMPIRES),
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
@@ -150,6 +152,7 @@ void Planet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
                 this->m_is_about_to_be_bombarded =  copied_planet->m_is_about_to_be_bombarded;
+                this->m_ordered_given_to_empire_id =copied_planet->m_ordered_given_to_empire_id;
                 this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
@@ -206,6 +209,8 @@ std::string Planet::Dump() const {
         os << " (Just Conquered)";
     if (m_is_about_to_be_bombarded)
         os << " (About to be Bombarded)";
+    if (m_ordered_given_to_empire_id != ALL_EMPIRES)
+        os << " (Ordered to be given to empire with id: " << m_ordered_given_to_empire_id << ")";
     os << " last attacked on turn: " << m_last_turn_attacked_by_ship;
 
     return os.str();
@@ -678,6 +683,15 @@ void Planet::SetIsAboutToBeBombarded(bool b) {
 
 void Planet::ResetIsAboutToBeBombarded()
 { SetIsAboutToBeBombarded(false); }
+
+void Planet::SetGiveToEmpire(int empire_id) {
+    if (empire_id == m_ordered_given_to_empire_id) return;
+    m_ordered_given_to_empire_id = empire_id;
+    StateChangedSignal();
+}
+
+void Planet::ClearGiveToEmpire()
+{ SetGiveToEmpire(ALL_EMPIRES); }
 
 void Planet::SetLastTurnAttackedByShip(int turn)
 { m_last_turn_attacked_by_ship = turn; }

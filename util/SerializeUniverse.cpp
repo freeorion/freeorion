@@ -170,6 +170,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_invaded)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_bombarded)
+        & BOOST_SERIALIZATION_NVP(m_ordered_given_to_empire_id)
         & BOOST_SERIALIZATION_NVP(m_last_turn_attacked_by_ship);
 }
 

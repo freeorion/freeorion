@@ -124,6 +124,7 @@ public:
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
     bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
     bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
+    int                         OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
     virtual TemporaryPtr<UniverseObject>
@@ -164,6 +165,8 @@ public:
     void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
     void            SetIsAboutToBeBombarded(bool b);    ///< Marks planet as being bombarded or not, depending on whether \a b is true or false
     void            ResetIsAboutToBeBombarded();        ///< Marks planet as not being bombarded
+    void            SetGiveToEmpire(int empire_id);     ///< Marks planet to be given to empire
+    void            ClearGiveToEmpire();                ///< Marks planet not to be given to any empire
 
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
 
@@ -212,6 +215,7 @@ private:
     bool            m_is_about_to_be_colonized;
     bool            m_is_about_to_be_invaded;
     bool            m_is_about_to_be_bombarded;
+    int             m_ordered_given_to_empire_id;
     int             m_last_turn_attacked_by_ship;
 
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects
@@ -234,5 +238,4 @@ FO_COMMON_API float PlanetRadius(PlanetSize size);
 FO_COMMON_API float AsteroidBeltRadius();
 
 #endif // _Planet_h_
-
 
