@@ -2369,6 +2369,12 @@ Split Unfueled Ships From Fleet
 FW_SPLIT_FLEET
 Split Fleet
 
+FW_SPLIT_SHIPS_THIS_DESIGN
+Split This Design Ships From Fleet
+
+FW_SPLIT_SHIPS_ALL_DESIGNS
+Split Ships Into Fleets For Each Design
+
 ORDER_SHIP_SCRAP
 Scrap Ship
 

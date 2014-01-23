@@ -89,6 +89,7 @@ public:
     const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
+    bool                    NewFleetAggression() const;         ///< returns true if this FleetWnd's new fleet drop panel is set to aggressive
     //@}
 
     //! \name Mutators //@{

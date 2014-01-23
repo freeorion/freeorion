@@ -156,16 +156,23 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
-        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size() << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
+        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size()
+                               << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
         if (ship_ids.empty())
             return;
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            return;
+
 
         ScopedTimer new_fleet_creation_timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
         Sound::TempUISoundDisabler sound_disabler;
 
 
         // get system where new fleet is to be created.
-        int first_ship_id = ship_ids.front();
+        int first_ship_id = *ship_ids.begin();
         TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
         if (!first_ship) {
             Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
@@ -181,19 +188,16 @@ namespace {
         double X = first_ship->X(), Y = first_ship->Y();
 
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const ObjectMap& objects = GetUniverse().Objects();
-
         // verify that all fleets are at the same system and position and owned
         // by the same empire.  also collect all fleet ids from which ships are
         // being taken
-        std::set<int> original_fleet_ids;
-        for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            TemporaryPtr<const Ship> ship = objects.Object<Ship>(*it);
-            if (!ship) {
-                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
-                return;
-            }
+        std::vector<int> original_fleet_ids;
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
+        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
+            it != ships.end(); ++it)
+        {
+            TemporaryPtr<const Ship> ship = *it;
+
             if (ship->SystemID() != system_id) {
                 Logger().errorStream() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
                 return;
@@ -208,7 +212,7 @@ namespace {
             }
             int fleet_id = ship->FleetID();
             if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.insert(fleet_id);
+                original_fleet_ids.push_back(fleet_id);
         }
 
 
@@ -223,9 +227,207 @@ namespace {
         // generate new fleet name
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
-        if (!ClientPlayerIsModerator()) {
-            if (empire_id == ALL_EMPIRES)
+        // create new fleet with ships
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+
+        // set aggression of new fleet, if not already what was requested
+        if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
+            if (new_fleet->Aggressive() != aggressive)
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
+
+        // delete empty fleets from which ships may have been taken
+        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
+                it != fleets.end(); ++it)
+        {
+            TemporaryPtr<const Fleet> fleet = *it;
+            if (fleet && fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, fleet->ID())));
+        }
+    }
+
+    void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
+                                           int design_id, bool aggressive = false)
+    {
+        Logger().debugStream() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
+                               << " ship ids and design id: " << design_id;
+        if (ship_ids.empty() || design_id == ShipDesign::INVALID_DESIGN_ID)
+            return;
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            return;
+
+
+        Sound::TempUISoundDisabler sound_disabler;
+
+
+        // get system where new fleet is to be created.
+        int first_ship_id = *ship_ids.begin();
+        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
+        if (!first_ship) {
+            Logger().errorStream() << "CreateNewFleetFromShipsWithDesign couldn't get ship with id " << first_ship_id;
+            return;
+        }
+        int system_id = first_ship->SystemID();
+        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
+        if (!system) {
+            Logger().errorStream() << "CreateNewFleetFromShipsWithDesign couldn't get a valid system with system id " << system_id;
+            return;
+        }
+
+        double X = first_ship->X(), Y = first_ship->Y();
+
+        // select ships with the requested design id
+        // also verify that all fleets are at the same system and position and owned by the same empire.
+        // also collect all fleet ids from which ships are being taken
+        std::vector<int> original_fleet_ids;
+        std::vector<int> ships_of_design_ids;
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
+        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
+            it != ships.end(); ++it)
+        {
+            TemporaryPtr<const Ship> ship = *it;
+
+            if (ship->DesignID() != design_id)
+                continue;
+
+            if (ship->SystemID() != system_id) {
+                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ships with inconsistent system ids";
                 return;
+            }
+            if (ship->X() != X || ship->Y() != Y) {
+                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ship and system with inconsistent locations";
+                return;
+            }
+            if (!ship->OwnedBy(empire_id)) {
+                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ships not owned by this client's empire";
+                return;
+            }
+            int fleet_id = ship->FleetID();
+            if (fleet_id != INVALID_OBJECT_ID)
+                original_fleet_ids.push_back(fleet_id);
+            ships_of_design_ids.push_back(ship->ID());
+        }
+
+        if (ships_of_design_ids.empty())
+            return;
+
+        // get new fleet id
+        int new_fleet_id = GetNewObjectID();
+        if (new_fleet_id == INVALID_OBJECT_ID) {
+            ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+            return;
+        }
+
+
+        // generate new fleet name
+        std::string fleet_name = Fleet::GenerateFleetName(ships_of_design_ids, new_fleet_id);
+
+        // create new fleet with ships
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ships_of_design_ids)));
+
+        // set aggression of new fleet, if not already what was requested
+        if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
+            if (new_fleet->Aggressive() != aggressive)
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
+
+        // delete empty fleets from which ships may have been taken
+        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
+                it != fleets.end(); ++it)
+        {
+            TemporaryPtr<const Fleet> fleet = *it;
+            if (fleet && fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, fleet->ID())));
+        }
+    }
+
+    void CreateNewFleetsFromShipsForEachDesign(const std::set<int>& ship_ids,
+                                               bool aggressive = false)
+    {
+        Logger().debugStream() << "CreateNewFleetsFromShipsForEachDesign with "
+                               << ship_ids.size() << " ship ids";
+        if (ship_ids.empty())
+            return;
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            return;
+
+
+        Sound::TempUISoundDisabler sound_disabler;
+
+        // get system where new fleet is to be created.
+        int first_ship_id = *ship_ids.begin();
+        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
+        if (!first_ship) {
+            Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign couldn't get ship with id " << first_ship_id;
+            return;
+        }
+        int system_id = first_ship->SystemID();
+        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
+        if (!system) {
+            Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign couldn't get a valid system with system id " << system_id;
+            return;
+        }
+
+        double X = first_ship->X(), Y = first_ship->Y();
+
+        // sort ships by ID into container, indexed by design id
+        // also collect all fleet ids from which ships are being taken
+        std::map<int, std::vector<int> > designs_ship_ids;
+        std::vector<int> original_fleet_ids;
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
+        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
+            it != ships.end(); ++it)
+        {
+            TemporaryPtr<const Ship> ship = *it;
+
+            if (ship->SystemID() != system_id) {
+                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ships with inconsistent system ids";
+                return;
+            }
+            if (ship->X() != X || ship->Y() != Y) {
+                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ship and system with inconsistent locations";
+                return;
+            }
+            if (!ship->OwnedBy(empire_id)) {
+                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ships not owned by this client's empire";
+                return;
+            }
+            int fleet_id = ship->FleetID();
+            if (fleet_id != INVALID_OBJECT_ID)
+                original_fleet_ids.push_back(fleet_id);
+
+            designs_ship_ids[ship->DesignID()].push_back(ship->ID());
+        }
+
+        // make new fleets for each group of ships, by design id
+        for (std::map<int, std::vector<int> >::const_iterator it = designs_ship_ids.begin();
+             it != designs_ship_ids.end(); ++it)
+        {
+            int design_id = it->first;
+            const std::vector<int>& ship_ids = it->second;
+            if (ship_ids.empty())
+                continue;
+
+            int new_fleet_id = GetNewObjectID();
+            if (new_fleet_id == INVALID_OBJECT_ID) {
+                ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+                return;
+            }
+
+            // generate new fleet name
+            std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
             // create new fleet with ships
             HumanClientApp::GetApp()->Orders().IssueOrder(
@@ -236,18 +438,20 @@ namespace {
                 if (new_fleet->Aggressive() != aggressive)
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
+        }
 
-            // delete empty fleets from which ships may have been taken
-            for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
-                TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(*it);
-                if (fleet && fleet->Empty())
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new DeleteFleetOrder(empire_id, fleet->ID())));
-            }
-        } else {
-            // TODO: moderator version of fleet manipulations
+        // delete empty fleets from which ships may have been taken
+        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
+                it != fleets.end(); ++it)
+        {
+            TemporaryPtr<const Fleet> fleet = *it;
+            if (fleet && fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, fleet->ID())));
         }
     }
+
 
    /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
@@ -2196,6 +2400,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     TemporaryPtr<Ship> ship = GetShip(ship_row->ShipID());
     if (!ship)
         return;
+    TemporaryPtr<Fleet> fleet = GetFleet(m_fleet_id);
 
     const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
@@ -2221,13 +2426,28 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
     }
 
-    if (!ClientPlayerIsModerator() && !ship->OrderedScrapped() && ship->OwnedBy(client_empire_id)) {
+    if (!ClientPlayerIsModerator()
+        && !ship->OrderedScrapped()
+        && ship->OwnedBy(client_empire_id))
+    {
         // create popup menu with "Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), 3, false, false));
-    } else if (!ClientPlayerIsModerator() && ship->OwnedBy(client_empire_id)) {
+    } else if (!ClientPlayerIsModerator()
+               && ship->OwnedBy(client_empire_id))
+    {
         // create popup menu with "Cancel Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), 4, false, false));
     }
+
+    if (ship->OwnedBy(client_empire_id)
+        && !ClientPlayerIsModerator()
+        && fleet)
+    {
+        if (design)
+            menu_contents.next_level.push_back( GG::MenuItem(UserString("FW_SPLIT_SHIPS_THIS_DESIGN"), 7, false, false));
+        menu_contents.next_level.push_back(     GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), 8, false, false));
+    }
+
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
@@ -2252,27 +2472,49 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         }
 
         case 3: { // scrap ship
-            if (!ClientPlayerIsModerator()) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
-            }
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
             break;
         }
 
         case 4: { // un-scrap ship
-            if (!ClientPlayerIsModerator()) {
-                // find order to scrap this ship, and recind it
-                std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-                std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
-                if (it != pending_scrap_orders.end())
-                    HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
-            }
+            // find order to scrap this ship, and recind it
+            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+            std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
+            if (it != pending_scrap_orders.end())
+                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
             break;
         }
 
         case 5: { // pedia lookup ship design
             if (design)
                 ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
+            break;
+        }
+
+        case 7: { // split ships with same design as clicked ship into separate fleet
+            bool aggressive = false;
+            const GG::Wnd* parent = this->Parent();
+            if (!parent)
+                return;
+            const FleetWnd* parent_fleet_wnd = boost::dynamic_pointer_cast<const FleetWnd>(parent);
+            if (!parent_fleet_wnd)
+                return;
+            CreateNewFleetFromShipsWithDesign(fleet->ShipIDs(), design->ID(),
+                                              parent_fleet_wnd->NewFleetAggression());
+            break;
+        }
+
+        case 8: { // split all ships into new fleets by ship design
+            bool aggressive = false;
+            const GG::Wnd* parent = this->Parent();
+            if (!parent)
+                return;
+            const FleetWnd* parent_fleet_wnd = boost::dynamic_pointer_cast<const FleetWnd>(parent);
+            if (!parent_fleet_wnd)
+                return;
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(),
+                                                  parent_fleet_wnd->NewFleetAggression());
             break;
         }
 
@@ -2815,6 +3057,12 @@ std::set<int> FleetWnd::SelectedFleetIDs() const {
 std::set<int> FleetWnd::SelectedShipIDs() const
 { return m_fleet_detail_panel->SelectedShipIDs(); }
 
+bool FleetWnd::NewFleetAggression() const {
+    if (m_new_fleet_drop_target)
+        return m_new_fleet_drop_target->NewFleetAggression();
+    return false;
+}
+
 void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // show appropriate fleet in detail panel.  if one fleet is selected, show
     // its ships.  if more than one fleet is selected or no fleets are selected
@@ -2916,8 +3164,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && ship_ids_set.size() > 1
         && !damaged_ship_ids.empty()
         && damaged_ship_ids.size() != ship_ids_set.size()
-        && (fleet->OwnedBy(empire_id)
-            || ClientPlayerIsModerator())
+        && fleet->OwnedBy(empire_id)
+        && !ClientPlayerIsModerator()
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     2, false, false));
@@ -2928,8 +3176,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && ship_ids_set.size() > 1
         && unfueled_ship_ids.size() > 0
         && unfueled_ship_ids.size() < ship_ids_set.size()
-        && (fleet->OwnedBy(empire_id)
-            || ClientPlayerIsModerator())
+        && fleet->OwnedBy(empire_id)
+        && !ClientPlayerIsModerator()
+
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    3, false, false));
@@ -2938,11 +3187,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
     if (system
         && ship_ids_set.size() > 1
-        && (fleet->OwnedBy(empire_id)
-            || ClientPlayerIsModerator())
+        && (fleet->OwnedBy(empire_id))
+        && !ClientPlayerIsModerator()
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             4, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), 9, false, false));
     }
 
     // Rename fleet
@@ -3016,35 +3266,39 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
+        case 9: { // split fleet into separate fleets for each design
+            bool aggressive = false;
+            if (m_new_fleet_drop_target)
+                aggressive = m_new_fleet_drop_target->NewFleetAggression();
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), aggressive);
+        }
+
         case 5: { // issue scrap orders to all ships in this fleet
-            if (!ClientPlayerIsModerator()) {
-                std::set<int> ship_ids_set = fleet->ShipIDs();
-                for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+            std::set<int> ship_ids_set = fleet->ShipIDs();
+            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                     int ship_id = *it;
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new ScrapOrder(empire_id, ship_id))
                     );
                 }
-            }
             break;
         }
 
         case 6: { // cancel scrap orders for all ships in this fleet
-            if (!ClientPlayerIsModerator()) {
-                const OrderSet orders = HumanClientApp::GetApp()->Orders();
-                std::set<int> ship_ids_set = fleet->ShipIDs();
-                for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                    int ship_id = *it;
-                    for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-                        if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
-                            if (order->ObjectID() == ship_id) {
-                                HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
-                                // could break here, but won't to ensure there are no problems with doubled orders
-                            }
+            const OrderSet orders = HumanClientApp::GetApp()->Orders();
+            std::set<int> ship_ids_set = fleet->ShipIDs();
+            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                int ship_id = *it;
+                for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                    if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                        if (order->ObjectID() == ship_id) {
+                            HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                            // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
                 }
             }
+
             break;
         }
 
