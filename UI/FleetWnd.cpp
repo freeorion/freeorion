@@ -191,7 +191,7 @@ namespace {
         // verify that all fleets are at the same system and position and owned
         // by the same empire.  also collect all fleet ids from which ships are
         // being taken
-        std::vector<int> original_fleet_ids;
+        std::set<int> original_fleet_ids;
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
         for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
             it != ships.end(); ++it)
@@ -212,7 +212,7 @@ namespace {
             }
             int fleet_id = ship->FleetID();
             if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.push_back(fleet_id);
+                original_fleet_ids.insert(fleet_id);
         }
 
 
@@ -285,7 +285,7 @@ namespace {
         // select ships with the requested design id
         // also verify that all fleets are at the same system and position and owned by the same empire.
         // also collect all fleet ids from which ships are being taken
-        std::vector<int> original_fleet_ids;
+        std::set<int> original_fleet_ids;
         std::vector<int> ships_of_design_ids;
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
         for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
@@ -310,7 +310,7 @@ namespace {
             }
             int fleet_id = ship->FleetID();
             if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.push_back(fleet_id);
+                original_fleet_ids.insert(fleet_id);
             ships_of_design_ids.push_back(ship->ID());
         }
 
@@ -385,7 +385,7 @@ namespace {
         // sort ships by ID into container, indexed by design id
         // also collect all fleet ids from which ships are being taken
         std::map<int, std::vector<int> > designs_ship_ids;
-        std::vector<int> original_fleet_ids;
+        std::set<int> original_fleet_ids;
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
         for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
             it != ships.end(); ++it)
@@ -406,7 +406,7 @@ namespace {
             }
             int fleet_id = ship->FleetID();
             if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.push_back(fleet_id);
+                original_fleet_ids.insert(fleet_id);
 
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
         }
