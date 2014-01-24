@@ -2639,15 +2639,6 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
         }
     }
 
-    //// remove object from its system, if any. should be redundant with
-    //// calling code doing similar action.
-    //if (obj->SystemID() != INVALID_OBJECT_ID && obj->SystemID() != obj->SystemID()) {
-    //    TemporaryPtr<System> system = GetSystem(obj->SystemID());
-    //    if (system)
-    //        system->Remove(obj->ID());
-    //    obj->SetSystem(INVALID_OBJECT_ID);
-    //}
-
     // signal that an object has been deleted
     UniverseObjectDeleteSignal(obj);
     m_objects.Remove(object_id);

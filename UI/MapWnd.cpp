@@ -4217,7 +4217,6 @@ void MapWnd::SelectedFleetsChanged() {
 }
 
 void MapWnd::SelectedShipsChanged() {
-    Logger().debugStream() << "SelectedShipsChanged starting...";
     ScopedTimer timer("MapWnd::SelectedShipsChanged", true);
 
     // get selected ships
