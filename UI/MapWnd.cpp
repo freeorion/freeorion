@@ -4272,7 +4272,10 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 {}
 
 void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
-    Logger().debugStream() << "MapWnd::UniverseObjectDeleted";
+    if (obj)
+        Logger().debugStream() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
+    else
+        Logger().debugStream() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
     if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
         if (it1 != m_fleet_lines.end())

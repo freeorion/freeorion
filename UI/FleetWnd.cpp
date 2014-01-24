@@ -166,11 +166,8 @@ namespace {
         if (empire_id == ALL_EMPIRES)
             return;
 
-
-        ScopedTimer new_fleet_creation_timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
         // TODO: We should probably have the sound effect occur exactly once instead of not at all.
         Sound::TempUISoundDisabler sound_disabler;
-
 
         // get system where new fleet is to be created.
         int first_ship_id = *ship_ids.begin();
