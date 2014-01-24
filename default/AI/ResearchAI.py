@@ -54,10 +54,11 @@ def generateResearchOrders():
     # set starting techs, or after turn 100 add any additional default techs
     #
     if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
-        if foAI.foAIstate.aggression <=fo.aggression.typical:
-            research_index = empireID % 2
-        else:
-            research_index = ((empireID % 2) + 1)
+        research_index = empireID % 2
+        if foAI.foAIstate.aggression >=fo.aggression.maniacal:
+            research_index = 2 - ((empireID % 3)%2) #so 1/3 get index 1, 2/3 get index 2
+        elif foAI.foAIstate.aggression >=fo.aggression.typical:
+            research_index += 1
         newtech = TechsListsAI.primary_meta_techs(index = research_index)
         print "Empire %s (%d) is selecting research index %d"%(empire.name,  empireID,  research_index)
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
