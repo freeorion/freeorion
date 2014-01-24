@@ -743,7 +743,7 @@ void Fleet::AddShip(int ship_id) {
 }
 
 void Fleet::AddShips(const std::vector<int>& ship_ids) {
-    int old_ships_size = m_ships.size();
+    size_t old_ships_size = m_ships.size();
     std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end()));
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
@@ -756,7 +756,7 @@ void Fleet::RemoveShip(int ship_id) {
 }
 
 void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
-    int old_ships_size = m_ships.size();
+    size_t old_ships_size = m_ships.size();
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
         m_ships.erase(*it);
     if (old_ships_size != m_ships.size())

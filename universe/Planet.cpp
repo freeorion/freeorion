@@ -568,7 +568,7 @@ void Planet::SetHighAxialTilt() {
 }
 
 void Planet::AddBuilding(int building_id) {
-    int buildings_size = m_buildings.size();
+    size_t buildings_size = m_buildings.size();
     m_buildings.insert(building_id);
     if (buildings_size != m_buildings.size())
         StateChangedSignal();

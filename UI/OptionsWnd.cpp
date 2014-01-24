@@ -773,7 +773,6 @@ void OptionsWnd::ResolutionOption() {
 
     // apply button, sized to fit text
     std::string apply_button_text = UserString("OPTIONS_APPLY");
-    //GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
     GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
                                              apply_button_text, ClientUI::GetFont());
     row = new GG::ListBox::Row();
@@ -863,7 +862,6 @@ void OptionsWnd::Init() {
 
     // flush stringtable button
     std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
-    GG::X button_width = ClientUI::GetFont()->TextExtent(flush_button_text).x + GG::X(LAYOUT_MARGIN);
     GG::Button* flush_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
                                              flush_button_text, ClientUI::GetFont());
     GG::ListBox::Row* row = new GG::ListBox::Row();

@@ -2409,7 +2409,6 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         }
 
         case 7: { // split ships with same design as clicked ship into separate fleet
-            bool aggressive = false;
             const GG::Wnd* parent = this->Parent();
             if (!parent)
                 return;
@@ -2422,7 +2421,6 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         }
 
         case 8: { // split all ships into new fleets by ship design
-            bool aggressive = false;
             const GG::Wnd* parent = this->Parent();
             if (!parent)
                 return;

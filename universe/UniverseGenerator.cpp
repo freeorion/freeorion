@@ -1374,7 +1374,6 @@ void CreateUniverse(int size,                          Shape shape,
                     const std::map<int, PlayerSetupData>& player_setup_data)
 {
     Universe& universe = GetUniverse();
-    int total_players = player_setup_data.size();
     std::vector<int> homeworld_planet_ids;
 
     Logger().debugStream() << "CreateUniverse: universe width: " << universe.UniverseWidth();

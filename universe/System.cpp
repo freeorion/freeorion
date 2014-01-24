@@ -406,7 +406,6 @@ void System::Remove(int id) {
         return;
 
     bool removed_fleet = false;
-    bool removed_planet = false;
 
     std::set<int>::iterator it = m_fleets.find(id);
     if (it != m_fleets.end()) {
@@ -420,7 +419,6 @@ void System::Remove(int id) {
         for (int i = 0; i < static_cast<int>(m_orbits.size()); ++i)
             if (m_orbits[i] == id)
                 m_orbits[i] = INVALID_OBJECT_ID;
-        removed_planet = true;
     }
 
     m_ships.erase(id);

@@ -79,19 +79,15 @@ void GraphControl::SetYMax(double y_max) {
 }
 
 void GraphControl::SetRange(double x1, double x2, double y1, double y2) {
-    double old_x_min = x1;
-    m_x_min = x1;
+    if(m_x_min != x1 || m_y_min != y1 || m_x_max != x2 || m_y_max != y2)
+    {
+        m_x_min = x1;
+        m_y_min = y1;
+        m_x_max = x2;
+        m_y_max = y2;
 
-    double old_y_min = y1;
-    m_y_min = y1;
-
-    double old_x_max = x2;
-    m_x_max = x2;
-
-    double old_y_max = y2;
-    m_y_max = y2;
-
-    DoLayout();
+        DoLayout();
+    }
 }
 
 void GraphControl::AutoSetRange() {

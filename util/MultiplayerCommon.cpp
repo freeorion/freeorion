@@ -121,7 +121,6 @@ namespace {
              it != planets.end(); ++it)
         {
             TemporaryPtr<const Planet> planet = *it;
-            int object_id = planet->ID();
 
             int orbit = system->OrbitOfPlanet(planet->ID());
             double orbit_r = OrbitalRadius(orbit);

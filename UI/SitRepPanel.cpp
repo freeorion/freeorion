@@ -357,7 +357,7 @@ void SitRepPanel::GetTurnSitrepsFromEmpire(std::list<SitRepEntry>& append_list, 
     // get id(s) of empires to get sitreps for
     std::vector<int> empire_ids;
     if (empire_id != ALL_EMPIRES) {
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (Empires().Lookup(empire_id))
             empire_ids.push_back(empire_id);
     } else {
         for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
@@ -467,7 +467,7 @@ int SitRepPanel::NumVisibleSitrepsThisTurn() const {
 
     // which empires to count sitreps for?
     std::vector<int> empire_ids;
-    if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(client_empire_id)) {
+    if (HumanClientApp::GetApp()->Empires().Lookup(client_empire_id)) {
         empire_ids.push_back(client_empire_id);
     } else {
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
