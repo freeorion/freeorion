@@ -168,6 +168,7 @@ namespace {
 
 
         ScopedTimer new_fleet_creation_timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
+        // TODO: We should probably have the sound effect occur exactly once instead of not at all.
         Sound::TempUISoundDisabler sound_disabler;
 
 
@@ -256,98 +257,23 @@ namespace {
                                << " ship ids and design id: " << design_id;
         if (ship_ids.empty() || design_id == ShipDesign::INVALID_DESIGN_ID)
             return;
-        if (ClientPlayerIsModerator())
-            return; // todo: handle moderator actions for this...
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES)
+        if (empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
             return;
-
-
-        Sound::TempUISoundDisabler sound_disabler;
-
-
-        // get system where new fleet is to be created.
-        int first_ship_id = *ship_ids.begin();
-        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
-        if (!first_ship) {
-            Logger().errorStream() << "CreateNewFleetFromShipsWithDesign couldn't get ship with id " << first_ship_id;
-            return;
-        }
-        int system_id = first_ship->SystemID();
-        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
-        if (!system) {
-            Logger().errorStream() << "CreateNewFleetFromShipsWithDesign couldn't get a valid system with system id " << system_id;
-            return;
-        }
-
-        double X = first_ship->X(), Y = first_ship->Y();
 
         // select ships with the requested design id
-        // also verify that all fleets are at the same system and position and owned by the same empire.
-        // also collect all fleet ids from which ships are being taken
-        std::set<int> original_fleet_ids;
         std::vector<int> ships_of_design_ids;
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
         for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
-            it != ships.end(); ++it)
+             it != ships.end(); ++it)
         {
             TemporaryPtr<const Ship> ship = *it;
 
-            if (ship->DesignID() != design_id)
-                continue;
-
-            if (ship->SystemID() != system_id) {
-                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ships with inconsistent system ids";
-                return;
-            }
-            if (ship->X() != X || ship->Y() != Y) {
-                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ship and system with inconsistent locations";
-                return;
-            }
-            if (!ship->OwnedBy(empire_id)) {
-                Logger().errorStream() << "CreateNewFleetFromShipsWithDesign passed ships not owned by this client's empire";
-                return;
-            }
-            int fleet_id = ship->FleetID();
-            if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.insert(fleet_id);
-            ships_of_design_ids.push_back(ship->ID());
+            if (ship->DesignID() == design_id)
+                ships_of_design_ids.push_back(ship->ID());
         }
 
-        if (ships_of_design_ids.empty())
-            return;
-
-        // get new fleet id
-        int new_fleet_id = GetNewObjectID();
-        if (new_fleet_id == INVALID_OBJECT_ID) {
-            ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
-            return;
-        }
-
-
-        // generate new fleet name
-        std::string fleet_name = Fleet::GenerateFleetName(ships_of_design_ids, new_fleet_id);
-
-        // create new fleet with ships
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ships_of_design_ids)));
-
-        // set aggression of new fleet, if not already what was requested
-        if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
-            if (new_fleet->Aggressive() != aggressive)
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
-
-        // delete empty fleets from which ships may have been taken
-        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
-        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
-                it != fleets.end(); ++it)
-        {
-            TemporaryPtr<const Fleet> fleet = *it;
-            if (fleet && fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet->ID())));
-        }
+        CreateNewFleetFromShips(ships_of_design_ids, aggressive);
     }
 
     void CreateNewFleetsFromShipsForEachDesign(const std::set<int>& ship_ids,
@@ -357,99 +283,26 @@ namespace {
                                << ship_ids.size() << " ship ids";
         if (ship_ids.empty())
             return;
-        if (ClientPlayerIsModerator())
-            return; // todo: handle moderator actions for this...
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES)
+        if (empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
             return;
-
-
-        Sound::TempUISoundDisabler sound_disabler;
-
-        // get system where new fleet is to be created.
-        int first_ship_id = *ship_ids.begin();
-        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
-        if (!first_ship) {
-            Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign couldn't get ship with id " << first_ship_id;
-            return;
-        }
-        int system_id = first_ship->SystemID();
-        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
-        if (!system) {
-            Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign couldn't get a valid system with system id " << system_id;
-            return;
-        }
-
-        double X = first_ship->X(), Y = first_ship->Y();
 
         // sort ships by ID into container, indexed by design id
-        // also collect all fleet ids from which ships are being taken
         std::map<int, std::vector<int> > designs_ship_ids;
-        std::set<int> original_fleet_ids;
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
         for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
             it != ships.end(); ++it)
         {
             TemporaryPtr<const Ship> ship = *it;
 
-            if (ship->SystemID() != system_id) {
-                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ships with inconsistent system ids";
-                return;
-            }
-            if (ship->X() != X || ship->Y() != Y) {
-                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ship and system with inconsistent locations";
-                return;
-            }
-            if (!ship->OwnedBy(empire_id)) {
-                Logger().errorStream() << "CreateNewFleetsFromShipsForEachDesign passed ships not owned by this client's empire";
-                return;
-            }
-            int fleet_id = ship->FleetID();
-            if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.insert(fleet_id);
-
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
         }
 
-        // make new fleets for each group of ships, by design id
+        // note that this will cause a UI update for each call to CreateNewFleetFromShips
+        // we can re-evaluate this code if it presents a noticable performance problem
         for (std::map<int, std::vector<int> >::const_iterator it = designs_ship_ids.begin();
              it != designs_ship_ids.end(); ++it)
-        {
-            int design_id = it->first;
-            const std::vector<int>& ship_ids = it->second;
-            if (ship_ids.empty())
-                continue;
-
-            int new_fleet_id = GetNewObjectID();
-            if (new_fleet_id == INVALID_OBJECT_ID) {
-                ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
-                return;
-            }
-
-            // generate new fleet name
-            std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
-
-            // create new fleet with ships
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
-
-            // set aggression of new fleet, if not already what was requested
-            if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
-                if (new_fleet->Aggressive() != aggressive)
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
-        }
-
-        // delete empty fleets from which ships may have been taken
-        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
-        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
-                it != fleets.end(); ++it)
-        {
-            TemporaryPtr<const Fleet> fleet = *it;
-            if (fleet && fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet->ID())));
-        }
+        { CreateNewFleetFromShips(it->second, aggressive); }
     }
 
     void MergeFleetsIntoFleet(int fleet_id) {
@@ -470,6 +323,8 @@ namespace {
             Logger().errorStream() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
         }
+
+        Sound::TempUISoundDisabler sound_disabler;
 
         // filter fleets in system to select just those owned by this client's
         // empire, and then order their ships transferred into target fleet
