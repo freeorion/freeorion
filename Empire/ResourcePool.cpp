@@ -147,15 +147,12 @@ void ResourcePool::Update() {
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (std::vector<int>::const_iterator obj_it = m_object_ids.begin();
-         obj_it != m_object_ids.end(); ++obj_it)
+    std::vector<TemporaryPtr<const UniverseObject> > objects = Objects().FindObjects<const UniverseObject>(m_object_ids);
+    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
+         it != objects.end(); ++it)
     {
-        int object_id = *obj_it;
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
-        if (!obj) {
-            Logger().errorStream() << "ResourcePool::Update couldn't find object with id " << object_id;
-            continue;
-        }
+        TemporaryPtr<const UniverseObject> obj = *it;
+        int object_id = obj->ID();
         int object_system_id = obj->SystemID();
 
         // is object's system in a system group?
@@ -190,7 +187,8 @@ void ResourcePool::Update() {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > >::const_iterator object_group_it = system_groups_to_object_groups.begin();
+    for (std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > >::const_iterator
+             object_group_it = system_groups_to_object_groups.begin();
          object_group_it != system_groups_to_object_groups.end(); ++object_group_it)
     {
         const std::set<TemporaryPtr<const UniverseObject> >& object_group = object_group_it->second;

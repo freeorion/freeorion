@@ -2918,23 +2918,32 @@ void Empire::SetPlayerName(const std::string& player_name)
 { m_player_name = player_name; }
 
 void Empire::InitResourcePools() {
-    const ObjectMap& objects = GetUniverse().Objects();
-    std::vector<TemporaryPtr<const UniverseObject> > object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
-    std::vector<int> object_ids_vec, popcenter_ids_vec;
-
-    // determine if each object owned by this empire is a PopCenter, and store
-    // ids of PopCenters and objects in appropriate vectors
-    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = object_vec.begin();
-         it != object_vec.end(); ++it)
+    // get this empire's owned resource and population centres
+    std::vector<int> res_centers;
+    res_centers.reserve(Objects().NumExistingResourceCenters());
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingResourceCentersBegin();
+         it != Objects().ExistingResourceCentersEnd(); ++it)
     {
-        object_ids_vec.push_back((*it)->ID());
-        if (boost::dynamic_pointer_cast<const PopCenter>(*it))
-            popcenter_ids_vec.push_back((*it)->ID());
+        if (it->second->OwnedBy(m_id))
+            res_centers.push_back(it->first);
     }
-    m_population_pool.SetPopCenters(popcenter_ids_vec);
-    m_resource_pools[RE_RESEARCH]->SetObjects(object_ids_vec);
-    m_resource_pools[RE_INDUSTRY]->SetObjects(object_ids_vec);
-    m_resource_pools[RE_TRADE]->SetObjects(object_ids_vec);
+
+    std::vector<int> pop_centers;
+    pop_centers.reserve(Objects().NumExistingPopCenters());
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingPopCentersBegin();
+         it != Objects().ExistingPopCentersEnd(); ++it)
+    {
+        if (it->second->OwnedBy(m_id))
+            pop_centers.push_back(it->first);
+    }
+
+    m_population_pool.SetPopCenters(pop_centers);
+
+    // determine if each object owned by this empire is a ResourceCenter, and
+    // store ids of ResourceCenters and objects in appropriate vectors
+    m_resource_pools[RE_RESEARCH]->SetObjects(res_centers);
+    m_resource_pools[RE_INDUSTRY]->SetObjects(res_centers);
+    m_resource_pools[RE_TRADE]->SetObjects(res_centers);
 
 
     // inform the blockadeable resource pools about systems that can share
@@ -2944,10 +2953,10 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingSystemsBegin();
+         it != Objects().ExistingSystemsEnd(); ++it)
     {
-        all_systems_set.insert(sys_it->ID());
+        all_systems_set.insert(it->first);
     }
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
@@ -2960,7 +2969,9 @@ void Empire::InitResourcePools() {
     res_type_vec.push_back(RE_TRADE);
     res_type_vec.push_back(RE_RESEARCH);
 
-    for (std::vector<ResourceType>::const_iterator res_it = res_type_vec.begin(); res_it != res_type_vec.end(); ++res_it) {
+    for (std::vector<ResourceType>::const_iterator res_it = res_type_vec.begin();
+         res_it != res_type_vec.end(); ++res_it)
+    {
         ResourceType res_type = *res_it;
         int stockpile_object_id = INVALID_OBJECT_ID;
         if (TemporaryPtr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
