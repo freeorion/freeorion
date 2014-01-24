@@ -63,7 +63,6 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     if (known_destroyed_object_ids.find(system_id) != known_destroyed_object_ids.end())
         return;
 
-    const ObjectMap& objects = Objects();
     const SpeciesManager& species_manager = GetSpeciesManager();
     const EmpireManager& empire_manager = Empires();
 
@@ -74,37 +73,39 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // or have a shipyard, or have neutral population
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
-    std::vector<TemporaryPtr<const Planet> > system_planets;
-    std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        TemporaryPtr<const Planet> planet = *it;
-        if (planet->SystemID() != system_id)
-            continue;
-        if (known_destroyed_object_ids.find(planet->ID()) != known_destroyed_object_ids.end())
-            continue;
-        system_planets.push_back(*it);
-    }
-
     std::set<int> owner_empire_ids;
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
-        TemporaryPtr<const Planet> planet = *it;
+    std::vector<TemporaryPtr<const Planet> > system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
+    for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = system_planets.begin();
+         planet_it != system_planets.end(); ++planet_it)
+    {
+        TemporaryPtr<const Planet> planet = *planet_it;
         int planet_id = planet->ID();
+
+        if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
+            continue;
 
         // is planet a capital?
         if (!capital) {
-            for (EmpireManager::const_iterator empire_it = empire_manager.begin(); empire_it != empire_manager.end(); ++empire_it) {
-                if (empire_it->second->CapitalID() == planet_id)
+            for (EmpireManager::const_iterator empire_it = empire_manager.begin();
+                 empire_it != empire_manager.end(); ++empire_it)
+            {
+                if (empire_it->second->CapitalID() == planet_id) {
                     capital = true;
+                    break;
+                }
             }
         }
 
         // is planet a homeworld? (for any species)
         if (!homeworld) {
-            for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it) {
+            for (SpeciesManager::iterator species_it = species_manager.begin();
+                 species_it != species_manager.end(); ++species_it)
+            {
                 if (const Species* species = species_it->second) {
                     const std::set<int>& homeworld_ids = species->Homeworlds();
                     if (homeworld_ids.find(planet_id) != homeworld_ids.end()) {
                         homeworld = true;
+                        break;
                     }
                 }
             }
@@ -112,25 +113,31 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            const std::set<int>& buildings = planet->BuildingIDs();
-            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
+            std::vector<TemporaryPtr<const Building> > buildings = Objects().FindObjects<const Building>(planet->BuildingIDs());
+            for (std::vector<TemporaryPtr<const Building> >::const_iterator building_it = buildings.begin();
+                 building_it != buildings.end(); ++building_it)
+            {
+                TemporaryPtr<const Building> building = *building_it;
+                int building_id = building->ID();
+
+                if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
                     continue;
-                TemporaryPtr<const Building> building = objects.Object<Building>(*building_it);
-                if (!building)
-                    continue;
+
                 // annoying hard-coded building name here... not sure how better to deal with it
                 if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
                     has_shipyard = true;
+                    break;
                 }
             }
         }
 
+        // is planet populated by neutral species
         if (!has_neutrals) {
             if (planet->Unowned() && !planet->SpeciesName().empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
                 has_neutrals = true;
         }
 
+        // remember if this system has a player-owned planet
         if (!has_player_planet) {
             if (!planet->Unowned()) {
                 has_player_planet = true;
@@ -163,7 +170,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         if (owner_empire_ids.size() == 1)
             text_color = Empires().Lookup(*owner_empire_ids.begin())->Color();
     } else if (has_neutrals) {
-            text_color = ClientUI::TextColor();
+        text_color = ClientUI::TextColor();
     }
 
     GG::TextControl* text = new ShadowedTextControl(GG::X0, GG::Y0, wrapped_system_name, font, text_color);
