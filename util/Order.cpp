@@ -378,6 +378,7 @@ void FleetTransferOrder::ExecuteImpl() const {
         return;
     }
 
+    GetUniverse().InhibitUniverseObjectSignals(true);
 
     // iterate down the ship vector check validity of each
     std::vector<int> validated_ship_ids;
@@ -411,6 +412,10 @@ void FleetTransferOrder::ExecuteImpl() const {
     // set fleet records
     source_fleet->RemoveShips(validated_ship_ids);
     target_fleet->AddShips(validated_ship_ids);
+
+    GetUniverse().InhibitUniverseObjectSignals(false);
+    source_fleet->StateChangedSignal();
+    target_fleet->StateChangedSignal();
 }
 
 ////////////////////////////////////////////////

@@ -115,7 +115,7 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
-    explicit NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids);
+    NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids);
     //@}
 
     /** \name Accessors */ //@{
@@ -131,7 +131,7 @@ private:
      *    None.
      *
      *  Postconditions:
-     *    - a new fleet will exist either in system m_system_id,
+     *    - a new fleet will exist in system with id m_system_id,
      *      and will belong to the creating empire.
      */
     virtual void ExecuteImpl() const;
@@ -206,7 +206,7 @@ public:
 
     /** \name Accessors */ //@{
     int                     SourceFleet() const      {return m_fleet_from;}  ///< returns ID of the fleet the ships will come from
-    int                     DestinationFleet() const {return m_fleet_to;}    ///< returns ID of the fleet that the ships will go into             
+    int                     DestinationFleet() const {return m_fleet_to;}    ///< returns ID of the fleet that the ships will go into
     const std::vector<int>& Ships() const            {return m_add_ships;}   ///< returns IDs of the ships selected for addition to the fleet
     //@}
 
