@@ -377,10 +377,13 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
     case OBJ_SHIP:
         m_ships.insert(obj->ID());
         break;
-    case OBJ_FLEET:
+    case OBJ_FLEET: {
         m_fleets.insert(obj->ID());
-        FleetInsertedSignal(boost::dynamic_pointer_cast<Fleet>(obj));
+        std::vector<TemporaryPtr<Fleet> > fleets;
+        fleets.push_back(boost::dynamic_pointer_cast<Fleet>(obj));
+        FleetsInsertedSignal(fleets);
         break;
+    }
     case OBJ_PLANET:
         m_planets.insert(obj->ID());
         break;
@@ -426,9 +429,13 @@ void System::Remove(int id) {
     m_buildings.erase(id);
     m_objects.erase(id);
 
-    if (removed_fleet)
-        if (TemporaryPtr<Fleet> fleet = GetFleet(id))
-            FleetRemovedSignal(fleet);
+    if (removed_fleet) {
+        if (TemporaryPtr<Fleet> fleet = GetFleet(id)) {
+            std::vector<TemporaryPtr<Fleet> > fleets;
+            fleets.push_back(fleet);
+            FleetsRemovedSignal(fleets);
+        }
+    }
     StateChangedSignal();
 }
 

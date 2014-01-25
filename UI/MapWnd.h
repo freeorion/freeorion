@@ -205,7 +205,7 @@ private:
 
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
-    void            FleetAddedOrRemoved(TemporaryPtr<Fleet> fleet);
+    void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
 
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
     std::pair<double, double>   MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane

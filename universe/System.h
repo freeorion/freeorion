@@ -84,8 +84,8 @@ public:
     const std::string&      OverlayTexture() const      { return m_overlay_texture; }
     double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units
 
-    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetInsertedSignal;    ///< fleet is inserted into system
-    mutable boost::signal<void (TemporaryPtr<Fleet> fleet)> FleetRemovedSignal;     ///< fleet is removed from system
+    mutable boost::signal<void (const std::vector<TemporaryPtr<Fleet> >& fleets)>   FleetsInsertedSignal;   ///< fleets are inserted into system
+    mutable boost::signal<void (const std::vector<TemporaryPtr<Fleet> >& fleets)>   FleetsRemovedSignal;    ///< fleets are removed from system
     //@}
 
     /** \name Mutators */ //@{

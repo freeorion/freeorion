@@ -155,10 +155,8 @@ namespace {
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
-    void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
-        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size()
-                               << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
-        if (ship_ids.empty())
+    void CreateNewFleetsForShips(const std::vector<std::vector<int> >& ship_id_groups, bool aggressive = false) {
+        if (ship_id_groups.empty())
             return;
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
@@ -169,71 +167,85 @@ namespace {
         // TODO: We should probably have the sound effect occur exactly once instead of not at all.
         Sound::TempUISoundDisabler sound_disabler;
 
-        // get system where new fleet is to be created.
-        int first_ship_id = *ship_ids.begin();
-        TemporaryPtr<const Ship> first_ship = GetShip(first_ship_id);
-        if (!first_ship) {
-            Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
-            return;
-        }
-        int system_id = first_ship->SystemID();
-        TemporaryPtr<const System> system = GetSystem(system_id); // may be null
-        if (!system) {
-            Logger().errorStream() << "CreateNewFleetFromShips couldn't get a valid system with system id " << system_id;
-            return;
-        }
+        std::set<int> original_fleet_ids;           // ids of fleets from which ships were taken
+        std::set<int> systems_containing_new_fleets;// systems where new fleets are created. should be only one entry.
 
-        double X = first_ship->X(), Y = first_ship->Y();
+        // compile data about new fleets to pass to order
+        std::vector<std::string>        order_fleet_names;
+        std::vector<int>                order_fleet_ids;
+        std::vector<std::vector<int> >  order_ship_id_groups;
+        std::vector<bool>               order_ship_aggressives(ship_id_groups.size(), aggressive);  // all get the same aggressiveness
 
-
-        // verify that all fleets are at the same system and position and owned
-        // by the same empire.  also collect all fleet ids from which ships are
-        // being taken
-        std::set<int> original_fleet_ids;
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
-        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
-            it != ships.end(); ++it)
+        for (std::vector<std::vector<int> >::const_iterator group_it = ship_id_groups.begin();
+             group_it != ship_id_groups.end(); ++group_it)
         {
-            TemporaryPtr<const Ship> ship = *it;
+            const std::vector<int>& ship_ids = *group_it;
+            std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(ship_ids);
+            if (ships.empty())
+                continue;
 
-            if (ship->SystemID() != system_id) {
-                Logger().errorStream() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
-                return;
+            TemporaryPtr<const Ship> first_ship = *ships.begin();
+            TemporaryPtr<const System> system = GetSystem(first_ship->SystemID());
+            if (!system)
+                continue;
+
+            systems_containing_new_fleets.insert(system->ID());
+
+            // validate that ships are in the same system and all owned by this
+            // client's empire.
+            // also record the fleets from which ships are taken
+            for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+                 ship_it != ships.end(); ++ship_it)
+            {
+                TemporaryPtr<const Ship> ship = *ship_it;
+
+                if (ship->SystemID() != system->ID()) {
+                    Logger().errorStream() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
+                    continue;
+                }
+                if (!ship->OwnedBy(empire_id)) {
+                    Logger().errorStream() << "CreateNewFleetsForShips passed ships not owned by this client's empire";
+                    return;
+                }
+
+                original_fleet_ids.insert(ship->FleetID());
             }
-            if (ship->X() != X || ship->Y() != Y) {
-                Logger().errorStream() << "CreateNewFleetFromShips passed ship and system with inconsistent locations";
-                return;
+
+
+            // get new fleet id
+            int new_fleet_id = INVALID_OBJECT_ID;
+            {
+                ScopedTimer get_id_timer("GetNewObjectID");
+                new_fleet_id = GetNewObjectID();
+                if (new_fleet_id == INVALID_OBJECT_ID) {
+                    ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+                    return;
+                }
             }
-            if (!ship->OwnedBy(empire_id)) {
-                Logger().errorStream() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
-                return;
-            }
-            int fleet_id = ship->FleetID();
-            if (fleet_id != INVALID_OBJECT_ID)
-                original_fleet_ids.insert(fleet_id);
+
+            // generate new fleet name
+            std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+
+            // add entry to order data
+            order_fleet_names.push_back(fleet_name);
+            order_fleet_ids.push_back(new_fleet_id);
+            order_ship_id_groups.push_back(ship_ids);
         }
 
-
-        // get new fleet id
-        int new_fleet_id = GetNewObjectID();
-        if (new_fleet_id == INVALID_OBJECT_ID) {
-            ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+        if (   systems_containing_new_fleets.size() != 1
+            || *systems_containing_new_fleets.begin() == INVALID_OBJECT_ID)
+        {
+            Logger().errorStream() << "CreateNewFleetsForShips got ships in invalid or inconsistent system(s)";
             return;
         }
 
-
-        // generate new fleet name
-        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+            OrderPtr(new NewFleetOrder(empire_id, order_fleet_names, order_fleet_ids,
+                                       *systems_containing_new_fleets.begin(),
+                                       order_ship_id_groups, order_ship_aggressives)));
 
-        // set aggression of new fleet, if not already what was requested
-        if (TemporaryPtr<const Fleet> new_fleet = GetFleet(new_fleet_id))
-            if (new_fleet->Aggressive() != aggressive)
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
 
         // delete empty fleets from which ships may have been taken
         std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
@@ -245,6 +257,15 @@ namespace {
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                     new DeleteFleetOrder(empire_id, fleet->ID())));
         }
+    }
+
+    void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
+        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size()
+                               << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
+        std::vector<std::vector<int> > ship_id_groups;
+        ship_id_groups.push_back(ship_ids);
+
+        CreateNewFleetsForShips(ship_id_groups);
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
@@ -265,7 +286,6 @@ namespace {
              it != ships.end(); ++it)
         {
             TemporaryPtr<const Ship> ship = *it;
-
             if (ship->DesignID() == design_id)
                 ships_of_design_ids.push_back(ship->ID());
         }
@@ -547,10 +567,7 @@ void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
 }
 
 namespace {
-    ////////////////////////////////////////////////
-    // Free Functions
-    ////////////////////////////////////////////////
-    bool    ValidShipTransfer(TemporaryPtr<const Ship> ship, TemporaryPtr<const Fleet> new_fleet) {
+    bool ValidShipTransfer(TemporaryPtr<const Ship> ship, TemporaryPtr<const Fleet> new_fleet) {
         if (!ship || !new_fleet)
             return false;   // can't transfer no ship or to no fleet
 
@@ -577,7 +594,7 @@ namespace {
         return true;
     }
 
-    bool    ValidFleetMerge(TemporaryPtr<const Fleet> fleet, TemporaryPtr<const Fleet> target_fleet) {
+    bool ValidFleetMerge(TemporaryPtr<const Fleet> fleet, TemporaryPtr<const Fleet> target_fleet) {
         if (!fleet || !target_fleet)
             return false;   // missing objects
 
@@ -3178,19 +3195,23 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 4: {   // split
-            // remove first ship from set
+            // remove first ship from set, so it stays in its existing fleet
             std::set<int>::iterator it = ship_ids_set.begin();
             ship_ids_set.erase(it);
 
-            // put remaining ships into their own fleets
+            // assemble container of containers of ids of fleets to create.
+            // one ship id per vector
+            std::vector<std::vector<int> > ship_id_groups;
             for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                std::vector<int> ship_ids_vec;
-                ship_ids_vec.push_back(*it);
-                bool aggressive = false;
-                if (m_new_fleet_drop_target)
-                    aggressive = m_new_fleet_drop_target->NewFleetAggression();
-                CreateNewFleetFromShips(ship_ids_vec, aggressive);
+                std::vector<int> single_id(1, *it);
+                ship_id_groups.push_back(single_id);
             }
+
+            bool aggressive = false;
+            if (m_new_fleet_drop_target)
+                aggressive = m_new_fleet_drop_target->NewFleetAggression();
+
+            CreateNewFleetsForShips(ship_id_groups, aggressive);
             break;
         }
 

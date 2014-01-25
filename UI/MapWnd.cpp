@@ -1968,10 +1968,10 @@ void MapWnd::InitTurn() {
     std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
     for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         TemporaryPtr<const System> system = *it;
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal,
-                                                                     &MapWnd::FleetAddedOrRemoved,   this));
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal,
-                                                                     &MapWnd::FleetAddedOrRemoved,   this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
+                                                                     &MapWnd::FleetsAddedOrRemoved, this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
+                                                                     &MapWnd::FleetsAddedOrRemoved, this));
     }
 
     RefreshFleetSignals();
@@ -3627,26 +3627,26 @@ void MapWnd::RefreshFleetButtons() {
         SetFleetMovementLine(it->second);
 }
 
-void MapWnd::FleetAddedOrRemoved(TemporaryPtr<Fleet> fleet) {
+void MapWnd::FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
     RefreshFleetButtons();
     RefreshFleetSignals();
 }
 
 void MapWnd::RefreshFleetSignals() {
-    const ObjectMap& objects = GetUniverse().Objects();
-
     // disconnect old fleet statechangedsignal connections
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
-        it->second.disconnect();
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin();
+         it != m_fleet_state_change_signals.end(); ++it)
+    { it->second.disconnect(); }
     m_fleet_state_change_signals.clear();
 
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    std::vector<TemporaryPtr<const Fleet> > fleets = objects.FindObjects<Fleet>();
-    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<const Fleet> fleet = *it;
-        m_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
+    std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        m_fleet_state_change_signals[fleet->ID()] =
+            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
     }
 }
 

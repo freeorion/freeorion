@@ -107,8 +107,8 @@ private:
     void                NextButtonClicked();            ///< responts to user clicking previous system button
     void                PlanetSelected(int planet_id);  ///< responds to user selection of a planet by emitting PlanetSelectedSignal
 
-    static void         FleetInserted(TemporaryPtr<Fleet> fleet);    ///< responds to insertion of a fleet into system during a turn.  may update colonize buttons
-    static void         FleetRemoved(TemporaryPtr<Fleet> fleet);     ///< responds to removal of fleet from system during a turn.  may update colonize buttons
+    static void         FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets);    ///< responds to insertion fleets into system during a turn.  may update colonize buttons
+    static void         FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);     ///< responds to removal fleets from system during a turn.  may update colonize buttons
     static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
 
     CUIDropDownList*            m_system_name;

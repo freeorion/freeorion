@@ -115,14 +115,20 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
-    NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids);
+    NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+                  int system_id, const std::vector<int>& ship_ids,
+                  bool aggressive = false);
+    NewFleetOrder(int empire, const std::vector<std::string>& fleet_names, const std::vector<int>& fleet_ids,
+                  int system_id, const std::vector<std::vector<int> >& ship_id_groups,
+                  const std::vector<bool>& aggressives);
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&        FleetName() const    {return m_fleet_name;} ///< returns the name of the new fleet
-    int                       SystemID() const     {return m_system_id;}  ///< returns the system the new fleet will be placed into (may be INVALID_OBJECT_ID if a position is specified)
-    int                       FleetID() const      {return m_fleet_id;}   ///< returns the id of the new fleet
-    const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDs for the ships used to start this fleet
+    int                                     SystemID() const    { return m_system_id; }
+    const std::vector<std::string>&         FleetNames() const  { return m_fleet_names; }
+    const std::vector<int>&                 FleetIDs() const    { return m_fleet_ids; }
+    const std::vector<std::vector<int> >&   ShipIDGroups() const{ return m_ship_id_groups; }
+    const std::vector<bool>&                Aggressive() const  { return m_aggressives; }
     //@}
 
 private:
@@ -131,15 +137,16 @@ private:
      *    None.
      *
      *  Postconditions:
-     *    - a new fleet will exist in system with id m_system_id,
+     *    - new fleets will exist in system with id m_system_id,
      *      and will belong to the creating empire.
      */
     virtual void ExecuteImpl() const;
 
-    std::string               m_fleet_name;
-    int                       m_system_id;
-    int                       m_fleet_id;
-    std::vector<int>          m_ship_ids;
+    std::vector<std::string>        m_fleet_names;
+    int                             m_system_id;
+    std::vector<int>                m_fleet_ids;
+    std::vector<std::vector<int> >  m_ship_id_groups;
+    std::vector<bool>               m_aggressives;
 
     friend class boost::serialization::access;
     template <class Archive>

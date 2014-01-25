@@ -20,12 +20,6 @@
 #include <fstream>
 #include <vector>
 
-#define DEBUG_CREATE_FLEET_ORDER 0
-#define DEBUG_FLEET_MOVE_ORDER   0
-#if DEBUG_CREATE_FLEET_ORDER || DEBUG_FLEET_MOVE_ORDER
-#  include <iostream>
-#endif
-
 
 /////////////////////////////////////////////////////
 // Order
@@ -114,28 +108,36 @@ NewFleetOrder::NewFleetOrder() :
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
-                             int system_id, const std::vector<int>& ship_ids) :
+                             int system_id, const std::vector<int>& ship_ids,
+                             bool aggressive) :
     Order(empire),
-    m_fleet_name(fleet_name),
+    m_fleet_names(),
     m_system_id(system_id),
-    m_fleet_id(fleet_id),
-    m_ship_ids(ship_ids)
+    m_fleet_ids(),
+    m_ship_id_groups(),
+    m_aggressives()
 {
-#if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n" << std::endl 
-              << "    m_empire=" << EmpireID() << std::endl
-              << "    m_fleet_name=" << m_fleet_name << std::endl
-              << "    m_system_id=" << m_system_id << std::endl
-              << "    m_fleet_id=" << m_fleet_id << std::endl
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
-              << std::endl;
-#endif
+    m_fleet_names.push_back(fleet_name);
+    m_fleet_ids.push_back(fleet_id);
+    m_ship_id_groups.push_back(ship_ids);
+    m_aggressives.push_back(aggressive);
 }
+
+
+NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
+                             const std::vector<int>& fleet_ids, int system_id,
+                             const std::vector<std::vector<int> >& ship_id_groups,
+                             const std::vector<bool>& aggressives) :
+    Order(empire),
+    m_fleet_names(fleet_names),
+    m_system_id(system_id),
+    m_fleet_ids(fleet_ids),
+    m_ship_id_groups(ship_id_groups),
+    m_aggressives(aggressives)
+{}
 
 void NewFleetOrder::ExecuteImpl() const {
     ValidateEmpireID();
-
-    Universe& universe = GetUniverse();
 
     if (m_system_id == INVALID_OBJECT_ID) {
         Logger().errorStream() << "Empire attempted to create a new fleet outside a system";
@@ -147,63 +149,89 @@ void NewFleetOrder::ExecuteImpl() const {
         return;
     }
 
-    // verify ship validity
-    std::vector<TemporaryPtr<Ship> >    validated_ships;
-    std::vector<int>                    validated_ships_ids;
-    for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
-        // verify that empire is not trying to take ships from somebody else's fleet
-        TemporaryPtr<Ship> ship = GetShip(m_ship_ids[i]);
-        if (!ship) {
-            Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
-            continue;
-        }
-        if (!ship->OwnedBy(EmpireID())) {
-            Logger().errorStream() << "Empire attempted to create a new fleet with ships from another's fleet.";
-            continue;
-        }
-        if (ship->SystemID() != m_system_id) {
-            Logger().errorStream() << "Empire attempted to make a new fleet from ship in the wrong system";
-            continue;
-        }
-        validated_ships.push_back(ship);
-        validated_ships_ids.push_back(ship->ID());
-    }
-    if (validated_ships.empty())
+    if (m_fleet_names.empty())
         return;
-
-
-    // create fleet
-    TemporaryPtr<Fleet> fleet = universe.CreateFleet(m_fleet_name, system->X(), system->Y(), EmpireID(), m_fleet_id);
-    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-    fleet->SetAggressive(false);
-
-    // an ID is provided to ensure consistancy between server and client universes
-    universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
+    if (m_fleet_names.size() != m_fleet_ids.size()
+        || m_fleet_names.size() != m_ship_id_groups.size()
+        || m_fleet_names.size() != m_aggressives.size())
+    {
+        Logger().errorStream() << "NewFleetOrder has inconsistent data container sizes...";
+        return;
+    }
 
     GetUniverse().InhibitUniverseObjectSignals(true);
+    std::vector<TemporaryPtr<Fleet> > created_fleets;
+    created_fleets.reserve(m_fleet_names.size());
 
-    system->Insert(fleet);
 
-    // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
-    TemporaryPtr<Ship> firstShip = validated_ships[0];
-    TemporaryPtr<Fleet> firstFleet = GetFleet(firstShip->FleetID());
-    if (firstFleet)
-        fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
+    // create fleet for each group of ships
+    for (int i = 0; i < static_cast<int>(m_fleet_names.size()); ++i) {
+        const std::string&      fleet_name =    m_fleet_names[i];
+        int                     fleet_id =      m_fleet_ids[i];
+        const std::vector<int>& ship_ids =      m_ship_id_groups[i];
+        bool                    aggressive =    m_aggressives[i];
 
-    // remove ships from old fleet(s) and add to new
-    for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = validated_ships.begin();
-         ship_it != validated_ships.end(); ++ship_it)
-    {
-        TemporaryPtr<Ship> ship = *ship_it;
-        if (TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID()))
-            old_fleet->RemoveShip(ship->ID());
-        ship->SetFleetID(fleet->ID());
+        if (ship_ids.empty())
+            continue;   // nothing to do...
+
+        // validate specified ships
+        std::vector<TemporaryPtr<Ship> >    validated_ships;
+        std::vector<int>                    validated_ships_ids;
+        for (unsigned int i = 0; i < ship_ids.size(); ++i) {
+            // verify that empire is not trying to take ships from somebody else's fleet
+            TemporaryPtr<Ship> ship = GetShip(ship_ids[i]);
+            if (!ship) {
+                Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
+                continue;
+            }
+            if (!ship->OwnedBy(EmpireID())) {
+                Logger().errorStream() << "Empire attempted to create a new fleet with ships from another's fleet.";
+                continue;
+            }
+            if (ship->SystemID() != m_system_id) {
+                Logger().errorStream() << "Empire attempted to make a new fleet from ship in the wrong system";
+                continue;
+            }
+            validated_ships.push_back(ship);
+            validated_ships_ids.push_back(ship->ID());
+        }
+        if (validated_ships.empty())
+            continue;
+
+        // create fleet
+        TemporaryPtr<Fleet> fleet = GetUniverse().CreateFleet(fleet_name, system->X(), system->Y(),
+                                                              EmpireID(), fleet_id);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+        fleet->SetAggressive(aggressive);
+
+        // an ID is provided to ensure consistancy between server and client universes
+        GetUniverse().SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
+
+        system->Insert(fleet);
+
+        // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
+        TemporaryPtr<Ship> firstShip = validated_ships[0];
+        TemporaryPtr<Fleet> firstFleet = GetFleet(firstShip->FleetID());
+        if (firstFleet)
+            fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
+
+        // remove ships from old fleet(s) and add to new
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = validated_ships.begin();
+             ship_it != validated_ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            if (TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID()))
+                old_fleet->RemoveShip(ship->ID());
+            ship->SetFleetID(fleet->ID());
+        }
+        fleet->AddShips(validated_ships_ids);
+
+        created_fleets.push_back(fleet);
     }
-    fleet->AddShips(validated_ships_ids);
 
     GetUniverse().InhibitUniverseObjectSignals(false);
-    system->FleetInsertedSignal(fleet);
-    fleet->StateChangedSignal();
+
+    system->FleetsInsertedSignal(created_fleets);
     system->StateChangedSignal();
 }
 
@@ -250,15 +278,6 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
         m_route.push_back(m_start_system);
-
-#if DEBUG_FLEET_MOVE_ORDER
-    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_syste, int dest_system) : " << std::endl
-              << "    m_empire=" << EmpireID() << std::endl
-              << "    m_fleet=" << m_fleet << std::endl
-              << "    m_start_system=" << m_start_system << std::endl
-              << "    m_dest_system=" << m_dest_system << std::endl
-              << std::endl;
-#endif
 }
 
 void FleetMoveOrder::ExecuteImpl() const {
@@ -1014,7 +1033,6 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
     m_3D_model(ship_design.Model()),
     m_name_desc_in_stringtable(ship_design.LookupInStringtable())
 {}
-
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
     Order(empire),

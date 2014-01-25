@@ -2705,8 +2705,8 @@ void SidePanel::Refresh() {
     }
 
     //s_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Update));
-    s_system_connections.insert(GG::Connect(system->FleetInsertedSignal,    &SidePanel::FleetInserted));
-    s_system_connections.insert(GG::Connect(system->FleetRemovedSignal,     &SidePanel::FleetRemoved));
+    s_system_connections.insert(GG::Connect(system->FleetsInsertedSignal,   &SidePanel::FleetsInserted));
+    s_system_connections.insert(GG::Connect(system->FleetsRemovedSignal,    &SidePanel::FleetsRemoved));
 }
 
 void SidePanel::RefreshImpl() {
@@ -2951,19 +2951,27 @@ void SidePanel::PlanetSelected(int planet_id) {
         PlanetSelectedSignal(planet_id);
 }
 
-void SidePanel::FleetInserted(TemporaryPtr<Fleet> fleet) {
-    //std::cout << "SidePanel::FleetInserted" << std::endl;
-    s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
-    s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
+void SidePanel::FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin();
+         it != fleets.end(); ++it)
+    {
+        TemporaryPtr<Fleet> fleet = *it;
+        s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
+        s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
+    }
     SidePanel::Update();
 }
 
-void SidePanel::FleetRemoved(TemporaryPtr<Fleet> fleet) {
-    //std::cout << "SidePanel::FleetRemoved" << std::endl;
-    std::map<int, boost::signals::connection>::iterator it = s_fleet_state_change_signals.find(fleet->ID());
-    if (it != s_fleet_state_change_signals.end()) {
-        it->second.disconnect();
-        s_fleet_state_change_signals.erase(it);
+void SidePanel::FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin();
+         it != fleets.end(); ++it)
+    {
+        TemporaryPtr<Fleet> fleet = *it;
+        std::map<int, boost::signals::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
+        if (signal_it != s_fleet_state_change_signals.end()) {
+            signal_it->second.disconnect();
+            s_fleet_state_change_signals.erase(signal_it);
+        }
     }
     SidePanel::Update();
 }
