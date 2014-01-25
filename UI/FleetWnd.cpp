@@ -3148,7 +3148,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     }
 
     // Rename fleet
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                         1, false, false));
+    if (fleet->OwnedBy(empire_id)
+        || ClientPlayerIsModerator())
+    {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+    }
 
     // add a fleet popup command to order all ships in the fleet scrapped
     if (system
