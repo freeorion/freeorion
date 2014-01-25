@@ -980,6 +980,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember)
     m_design_id(existing_design_id_to_remember),
     m_delete_design_from_empire(false),
     m_create_new_design(false),
+    m_update_name_or_description(false),
     m_designed_on_turn(0),
     m_is_monster(false),
     m_name_desc_in_stringtable(false)
@@ -990,6 +991,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
     m_design_id(design_id_to_erase),
     m_delete_design_from_empire(true),
     m_create_new_design(false),
+    m_update_name_or_description(false),
     m_designed_on_turn(0),
     m_is_monster(false),
     m_name_desc_in_stringtable(false)
@@ -1000,6 +1002,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
     m_design_id(new_design_id),
     m_delete_design_from_empire(false),
     m_create_new_design(true),
+    m_update_name_or_description(false),
     m_name(ship_design.Name()),
     m_description(ship_design.Description()),
     m_designed_on_turn(ship_design.DesignedOnTurn()),
@@ -1009,6 +1012,20 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
     m_icon(ship_design.Icon()),
     m_3D_model(ship_design.Model()),
     m_name_desc_in_stringtable(ship_design.LookupInStringtable())
+{}
+
+
+ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
+    Order(empire),
+    m_design_id(existing_design_id),
+    m_delete_design_from_empire(false),
+    m_create_new_design(false),
+    m_update_name_or_description(true),
+    m_name(new_name),
+    m_description(new_description),
+    m_designed_on_turn(0),
+    m_is_monster(false),
+    m_name_desc_in_stringtable(false)
 {}
 
 void ShipDesignOrder::ExecuteImpl() const {
@@ -1032,7 +1049,7 @@ void ShipDesignOrder::ExecuteImpl() const {
             return;
         }
         ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
-                                                     m_designed_on_turn, m_hull, m_parts,
+                                                     m_designed_on_turn, EmpireID(), m_hull, m_parts,
                                                      m_icon, m_3D_model, m_name_desc_in_stringtable,
                                                      m_is_monster);
 
@@ -1040,8 +1057,27 @@ void ShipDesignOrder::ExecuteImpl() const {
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
         empire->AddShipDesign(m_design_id);
 
-    } else if (!m_create_new_design && !m_delete_design_from_empire) {
-        // player is order empire to retain a particular design, so that is can
+    } else if (m_update_name_or_description) {
+        // player is ordering empire to rename a design
+        const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
+        std::set<int>::iterator design_it = empire_known_design_ids.find(m_design_id);
+        if (design_it == empire_known_design_ids.end()) {
+            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that this empire hasn't seen";
+            return;
+        }
+        const ShipDesign* design = GetShipDesign(*design_it);
+        if (!design) {
+            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that doesn't exist (but this empire has seen it)!";
+            return;
+        }
+        if (design->DesignedByEmpire() != EmpireID()) {
+            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that isn't owned by this empire!";
+            return;
+        }
+        GetUniverse().RenameShipDesign(m_design_id, m_name, m_description);
+
+    } else {
+        // player is ordering empire to retain a particular design, so that is can
         // be used to construct ships by that empire.
 
         // TODO: consider removing this order, so that an empire needs to use
@@ -1063,9 +1099,6 @@ void ShipDesignOrder::ExecuteImpl() const {
             return;
         }
 
-    } else {
-        Logger().errorStream() << "Malformed ShipDesignOrder.";
-        return;
     }
 }
 

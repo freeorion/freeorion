@@ -119,6 +119,7 @@ public:
     const std::set<int>&    EmpireStaleKnowledgeObjectIDs(int empire_id) const;
 
     const ShipDesign*       GetShipDesign(int ship_design_id) const;                    ///< returns the ship design with id \a ship_design id, or 0 if non exists
+    void                    RenameShipDesign(int design_id, const std::string& name = "", const std::string& description = "");
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();} ///< returns the begin iterator for ship designs
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}   ///< returns the end iterator for ship designs
 

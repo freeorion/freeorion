@@ -701,13 +701,15 @@ ShipDesign::ShipDesign() :
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
-                       int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
+                       int designed_on_turn, int designed_by_empire, const std::string& hull,
+                       const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster) :
     m_id(INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
     m_designed_on_turn(designed_on_turn),
+    m_designed_by_empire(designed_by_empire),
     m_hull(hull),
     m_parts(parts),
     m_is_monster(monster),
@@ -755,11 +757,23 @@ const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const 
         return m_name;
 }
 
+void ShipDesign::SetName(const std::string& name) {
+    if (m_name != "") {
+        m_name = name;
+    }
+}
+
 const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_description);
     else
         return m_description;
+}
+
+void ShipDesign::SetDescription(const std::string& description) {
+    if (m_description != "") {
+        m_description = description;
+    }
 }
 
 bool ShipDesign::ProductionCostTimeLocationInvariant() const {
@@ -1238,7 +1252,7 @@ namespace {
 
         // duplicate design to add to Universe
         ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false),
-                                          design->DesignedOnTurn(), design->Hull(), design->Parts(),
+                                          design->DesignedOnTurn(), design->DesignedByEmpire(), design->Hull(), design->Parts(),
                                           design->Icon(), design->Model(), true, monster);
         if (!copy) {
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();

@@ -2694,6 +2694,12 @@ Clear Parts
 DESIGN_DELETE
 Delete Design
 
+DESIGN_RENAME
+Rename Design
+
+DESIGN_ENTER_NEW_DESIGN_NAME
+Enter a new design name:
+
 DESIGN_INVALID
 Invalid Design
 

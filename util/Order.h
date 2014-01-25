@@ -511,6 +511,7 @@ public:
     ShipDesignOrder(int empire, int existing_design_id_to_remember);
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
+    ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name = "", const std::string& new_description = "");
     //@}
 
 private:
@@ -535,6 +536,7 @@ private:
     virtual void ExecuteImpl() const;
 
     int                         m_design_id;
+    bool                        m_update_name_or_description;
     bool                        m_delete_design_from_empire;
     bool                        m_create_new_design;
 

@@ -542,6 +542,22 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     return (it != m_ship_designs.end() ? it->second : 0);
 }
 
+void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/, const std::string& description/* = ""*/) {
+    ShipDesignMap::iterator design_it = m_ship_designs.find(design_id);
+    if (design_it == m_ship_designs.end()) {
+        Logger().debugStream() << "Universe::RenameShipDesign tried to rename a ship design that doesn't exist!";
+        return;
+    }
+    ShipDesign* design = design_it->second;
+
+    if (name != "") {
+        design->SetName(name);
+    }
+    if (description != "") {
+        design->SetDescription(description);
+    }
+}
+
 const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
     if (name.empty())
         return 0;

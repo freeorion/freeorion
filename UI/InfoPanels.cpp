@@ -2026,8 +2026,12 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void ShipDesignPanel::Render()
 {}
 
-void ShipDesignPanel::Update()
-{}
+void ShipDesignPanel::Update() {
+    if (const ShipDesign* design = GetShipDesign(m_design_id)) {
+        m_name->SetText(design->Name());
+        m_name->Resize(GG::Pt(Width(), m_name->Height()));
+    }
+}
 
 
 /////////////////////////////////////

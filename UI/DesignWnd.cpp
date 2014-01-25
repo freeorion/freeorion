@@ -938,6 +938,9 @@ private:
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id);
         int                             DesignID() const { return m_design_id; }
+//        void                            Update() {
+//            ShipDesignPanel* panel = dynamic_cast<ShipDesignPanel*>(this->operator[](0));
+//        }
     private:
         int                             m_design_id;
     };
@@ -1214,6 +1217,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
         const ShipDesign* design = GetShipDesign(design_id);
         if (design)
             DesignRightClickedSignal(design);
+        // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
@@ -1222,6 +1226,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
         // create popup menu with a commands in it
         GG::MenuItem menu_contents;
         menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+        if (design->DesignedByEmpire() == empire_id) {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
+        }
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
         if (popup.Run()) {
@@ -1230,6 +1237,19 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             case 1: { // delete design
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new ShipDesignOrder(empire_id, design_id, true)));
+                break;
+            }
+            case 2: { // rename design
+                CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+                edit_wnd.Run();
+                const std::string& result = edit_wnd.Result();
+                if (result != "" && result != design->Name()) {
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new ShipDesignOrder(empire_id, design_id, result)));
+                    GetUniverse().RenameShipDesign(design_id, result);
+                    ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
+                    design_panel->Update();
+                }
                 break;
             }
 
@@ -2314,7 +2334,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     // update stored design
     try {
-        m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(),
+        m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                                                  hull, parts, icon, ""));
     } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
@@ -2443,7 +2463,7 @@ void DesignWnd::AddDesign() {
         icon = hull->Icon();
 
     // create design from stuff chosen in UI
-    ShipDesign design(name, description, CurrentTurn(),
+    ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
                       hull_name, parts, icon, "some model");
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();

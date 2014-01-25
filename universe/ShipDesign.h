@@ -503,7 +503,8 @@ public:
     /** \name Structors */ //@{
     ShipDesign();
     ShipDesign(const std::string& name, const std::string& description,
-               int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
+               int designed_on_turn, int designed_by_empire, const std::string& hull,
+               const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false);
     //@}
@@ -515,14 +516,17 @@ public:
       * the name string is looked up in the stringtable before being returned.
       * otherwise, the raw name string is returned. */
     const std::string&              Name(bool stringtable_lookup = true) const;
+    void                            SetName(const std::string& name);
 
     /** returns description of design.  if \a stringtable_lookup is true and
       * the design was constructed specifying name_desc_in_stringtable true,
       * the description string is looked up in the stringtable before being
       * returned.  otherwise, the raw name string is returned. */
     const std::string&              Description(bool stringtable_lookup = true) const;
+    void                            SetDescription(const std::string& description);
 
     int                             DesignedOnTurn() const  { return m_designed_on_turn; };     ///< returns turn on which design was created
+    int                             DesignedByEmpire() const { return m_designed_by_empire; };  ///< returns id of empire that created this design
 
     bool                            ProductionCostTimeLocationInvariant() const;                ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                           ProductionCost(int empire_id, int location_id) const;       ///< returns the total cost to build a ship of this design
@@ -613,6 +617,7 @@ private:
     std::string                 m_description;
 
     int                         m_designed_on_turn;
+    int                         m_designed_by_empire;
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
