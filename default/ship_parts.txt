@@ -1034,8 +1034,8 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.SystemID
                 System
-                Contains Source
             ]
             activation = Number 1 And [
                 Building "BLD_NOVA_BOMB_ACTIVATOR"
@@ -1049,8 +1049,8 @@ Part
 
         EffectsGroup
             scope = ContainedBy And [
-                System 
-                Contains Source
+                Object Source.SystemID
+                System
             ]
             activation = Or [
                 Number 1 And [

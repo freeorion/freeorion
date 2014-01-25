@@ -1751,7 +1751,10 @@ Hull
             effects = CreateShip "SM_FLOATER"
 
         EffectsGroup
-            scope = And [ Fleet Contains Source ]
+            scope = And [
+                Object Source.FleetID
+                Fleet
+            ]
             effects = SetAggressive
     ]
     icon = ""

@@ -8,22 +8,37 @@ BuildingType
     tags = "ANTIQUATED"
     location = Not All
     effectsgroups = [
-/*
+/*  // testing effects
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                Contains Source
             ]
             effects = SetEmpireTechProgress
                 name = Source.OwnerTopPriorityEnqueuedTech
                 progress = Value + 10
-*/
-        EffectsGroup          // These bonuses given to anyone
+
+        EffectsGroup
             scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                Contains Source
+                ValueTest
+                    high = 5
+                    value = LocalCandidate.Population
+            ]
+            effects = SetTargetPopulation Value + 100
+
+        EffectsGroup
+            scope = Object Source.PlanetID
+            effects = SetTargetConstruction 99
+*/
+
+        EffectsGroup          // These bonuses given to anyone
+            scope = And [
+                Object Source.PlanetID
+                Planet
+                OwnedBy TheEmpire Source.Owner
             ]
             effects = [
                 SetTargetResearch Value + 5
@@ -32,8 +47,8 @@ BuildingType
             
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
                 OwnedBy TheEmpire Source.Owner
                 Not HasSpecial "HEAD_ON_A_SPIKE_SPECIAL"
             ]
@@ -74,7 +89,6 @@ BuildingType
     captureresult = destroy
     location = And [
         Planet
-        Planet
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_IMPERIAL_PALACE"
         TargetPopulation low = 1
@@ -87,16 +101,16 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
                 OwnedBy TheEmpire Source.ProducedByEmpireID
             ]
             effects = SetEmpireCapital
 
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
                 OwnedBy TheEmpire Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
@@ -104,8 +118,8 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
                 OwnedBy TheEmpire Source.ProducedByEmpireID
             ]
             activation = Not Number low = 1 And [
@@ -159,8 +173,8 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = And [ 
-                Planet
                 Object Source.PlanetID
+                Planet
             ]
             effects = SetTargetConstruction Value - 10
     icon = "icons/building/shipyard.png"
@@ -204,8 +218,8 @@ BuildingType
             
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
             ]
             effects = SetTargetConstruction Value - 15
         ]
@@ -467,8 +481,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet
                 Object Source.PlanetID
+                Planet
             ]
             SetDetection Value + 75
     ]
@@ -553,8 +567,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             effects = [
                 CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
@@ -585,8 +599,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet 
-                Contains Source
+                Object Source.PlanetID
+                Planet
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
@@ -677,8 +691,8 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             activation = Source
             effects = SetSupply Value * 2
@@ -700,8 +714,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             activation = Source
             effects = AddSpecial "GAIA_SPECIAL"
@@ -727,8 +741,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.SystemID
                 System
-                Contains Source
             ]
             activation = Star type = Red
             effects = SetStarType BlackHole
@@ -870,8 +884,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             effects = [
                 SetPlanetType Target.NextBetterPlanetType
@@ -904,8 +918,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             effects = [
                 SetPlanetType Target.NextCloserToOriginalPlanetType
@@ -938,8 +952,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             effects = SetPlanetType Target.NextBetterPlanetType
 
@@ -1001,8 +1015,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                PopulationCenter
-                Contains Source
+                Object Source.PlanetID
+                Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -1011,8 +1025,8 @@ BuildingType
             effects = SetTargetIndustry Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
         EffectsGroup
             scope = And [
-                PopulationCenter
-                Contains Source
+                Object Source.PlanetID
+                Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -1037,8 +1051,8 @@ BuildingType
                 ]
         EffectsGroup
             scope = And [
-                PopulationCenter
-                Contains Source
+                Object Source.PlanetID
+                Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -1065,8 +1079,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                PopulationCenter
-                Contains Source
+                Object Source.PlanetID
+                Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -1164,8 +1178,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             activation = Source
             effects = SetPlanetType Barren
@@ -1191,8 +1205,8 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = And [
+                Object Source.PlanetID
                 Planet
-                Contains Source
             ]
             activation = Source
             effects = AddSpecial "RESONANT_MOON_SPECIAL"
@@ -1378,7 +1392,7 @@ BuildingType
             scope = Or [
                 Source
                 And [
-                    Contains Source
+                    Object Source.PlanetID
                     Planet
                 ]
             ]
@@ -1387,8 +1401,8 @@ BuildingType
         EffectsGroup
             scope = Or [
                 And [
+                    Object Source.SystemID
                     System
-                    Contains Source
                 ]
                 And [
                     Planet
@@ -1400,8 +1414,8 @@ BuildingType
 
 /*        EffectsGroup
             scope = And [
+                Object Source.SystemID
                 System
-                Contains Source
             ]
             effects = AddSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
 */
@@ -1569,8 +1583,8 @@ BuildingType
     
         EffectsGroup            // remove population from location
             scope = And [
-                Planet
-                Object Source.PlanetID            
+                Object Source.PlanetID
+                Planet            
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -1613,8 +1627,8 @@ BuildingType
     effectsgroups = [
         Effectsgroup
         scope = And [
+            Object Source.PlanetID
             Planet
-            Contains Source
         ]
         effects = SetSpecies name = "SP_SUPER_TEST"
         

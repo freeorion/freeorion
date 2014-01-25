@@ -424,8 +424,8 @@ Special
             scope = And [
                 Building
                 ContainedBy And [
+                    Object Source.PlanetID
                     Planet
-                    Contains Source
                 ]
             ]
             effects = SetStealth Value + 10
@@ -434,8 +434,8 @@ Special
             scope = And [
                 Ship
                 ContainedBy And [
+                    Object Source.SystemID
                     System
-                    Contains Source
                 ]
                 OwnedBy TheEmpire Source.Owner
             ]
