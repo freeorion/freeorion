@@ -2207,24 +2207,62 @@ bool Condition::Contains::operator==(const Condition::ConditionBase& rhs) const 
 namespace {
     struct ContainsSimpleMatch {
         ContainsSimpleMatch(const Condition::ObjectSet& subcondition_matches) :
-            m_subcondition_matches(subcondition_matches)
-        {}
+            m_subcondition_matches_ids()
+        {
+            // We need a sorted container for efficiently intersecting 
+            // subcondition_matches with the set of objects contained in some
+            // candidate object.
+            // We only need ids, not objects, so we can do that conversion
+            // here as well, simplifying later code.
+            // Note that this constructor is called only once per 
+            // Contains::Eval(), its work cannot help performance when executed 
+            // for each candidate.
+            m_subcondition_matches_ids.reserve(subcondition_matches.size());
+            // gather the ids
+            for (Condition::ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it) {
+                TemporaryPtr<const UniverseObject> obj = *it;
+                if (obj)
+                { m_subcondition_matches_ids.push_back(obj->ID()); }
+            }
+            // sort them
+            std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
+        }
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             bool match = false;
-            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
-                if (candidate->Contains((*it)->ID())) {
-                    match = true;
-                    break;
+            const std::set<int>& candidate_elements = candidate->ContainedObjectIDs(); // guaranteed O(1)
+
+            // We need to test whether candidate_elements and m_subcondition_matches_ids have a common element.
+            // We choose the strategy that is more efficient by comparing the sizes of both sets.
+            if (candidate_elements.size() < m_subcondition_matches_ids.size()) {
+                // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
+                for (std::set<int>::const_iterator it = candidate_elements.begin(), end_it = candidate_elements.end(); it != end_it; ++it) {
+                    // std::lower_bound requires m_subcondition_matches_ids to be sorted
+                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), *it);
+                    
+                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == *it) {
+                        match = true;
+                        break;
+                    }
+                }
+            } else {
+                // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's elements
+                for (std::vector<int>::const_iterator it = m_subcondition_matches_ids.begin(); it != m_subcondition_matches_ids.end(); ++it) {
+                    // candidate->Contains() may have a faster implementation than candidate_elements->find()
+                    if (candidate->Contains(*it)) {
+                        match = true;
+                        break;
+                    }
                 }
             }
+
             return match;
         }
 
-        const Condition::ObjectSet& m_subcondition_matches;
+        std::vector<int> m_subcondition_matches_ids;
     };
 }
 
@@ -2323,26 +2361,69 @@ bool Condition::ContainedBy::operator==(const Condition::ConditionBase& rhs) con
 namespace {
     struct ContainedBySimpleMatch {
         ContainedBySimpleMatch(const Condition::ObjectSet& subcondition_matches) :
-            m_subcondition_matches(subcondition_matches)
-    {}
+            m_subcondition_matches_ids()
+        {
+            // We need a sorted container for efficiently intersecting 
+            // subcondition_matches with the set of objects containing some
+            // candidate object.
+            // We only need ids, not objects, so we can do that conversion
+            // here as well, simplifying later code.
+            // Note that this constructor is called only once per 
+            // ContainedBy::Eval(), its work cannot help performance when
+            // executed for each candidate.
+            m_subcondition_matches_ids.reserve(subcondition_matches.size());
+            // gather the ids
+            for (Condition::ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it) {
+                TemporaryPtr<const UniverseObject> obj = *it;
+                if (obj)
+                { m_subcondition_matches_ids.push_back(obj->ID()); }
+            }
+            // sort them
+            std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
+        }
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             bool match = false;
-            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin();
-                 it != m_subcondition_matches.end(); ++it)
-            {
-                if (candidate->ContainedBy((*it)->ID())) {
-                    match = true;
-                    break;
+            // gather the objects containing candidate
+            std::vector<int> candidate_containers;
+            const int candidate_id = candidate->ID();
+            const int    system_id = candidate->SystemID();
+            const int container_id = candidate->ContainerObjectID();
+            if (   system_id != INVALID_OBJECT_ID &&    system_id != candidate_id) candidate_containers.push_back(   system_id);
+            if (container_id != INVALID_OBJECT_ID && container_id !=    system_id) candidate_containers.push_back(container_id);
+            // FIXME: currently, direct container and system will do. In the future, we might need a way to retrieve containers of containers
+
+            // We need to test whether candidate_containers and m_subcondition_matches_ids have a common element.
+            // We choose the strategy that is more efficient by comparing the sizes of both sets.
+            if (candidate_containers.size() < m_subcondition_matches_ids.size()) {
+                // candidate_containers is smaller, so we iterate it and look up each candidate container in m_subcondition_matches_ids
+                for (std::vector<int>::const_iterator it = candidate_containers.begin(), end_it = candidate_containers.end(); it != end_it; ++it) {
+                    // std::lower_bound requires m_subcondition_matches_ids to be sorted
+                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), *it);
+                    
+                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == *it) {
+                        match = true;
+                        break;
+                    }
+                }
+            } else {
+                // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's containers
+                for (std::vector<int>::const_iterator it = m_subcondition_matches_ids.begin(); it != m_subcondition_matches_ids.end(); ++it) {
+                    // candidate->ContainedBy() may have a faster implementation than candidate_containers->find()
+                    if (candidate->ContainedBy(*it)) {
+                        match = true;
+                        break;
+                    }
                 }
             }
+
             return match;
         }
 
-        const Condition::ObjectSet& m_subcondition_matches;
+        std::vector<int> m_subcondition_matches_ids;
     };
 }
 
