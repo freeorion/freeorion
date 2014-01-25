@@ -28,6 +28,8 @@ BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
 BOOST_CLASS_EXPORT(ScrapOrder)
 BOOST_CLASS_EXPORT(AggressiveOrder)
+BOOST_CLASS_EXPORT(GiveObjectToEmpireOrder)
+
 
 template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
