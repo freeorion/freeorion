@@ -208,30 +208,26 @@ class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetTransferOrder();
-    FleetTransferOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships);
+    FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
     //@}
 
     /** \name Accessors */ //@{
-    int                     SourceFleet() const      {return m_fleet_from;}  ///< returns ID of the fleet the ships will come from
-    int                     DestinationFleet() const {return m_fleet_to;}    ///< returns ID of the fleet that the ships will go into
-    const std::vector<int>& Ships() const            {return m_add_ships;}   ///< returns IDs of the ships selected for addition to the fleet
+    int                     DestinationFleet() const {return m_dest_fleet;} ///< returns ID of the fleet that the ships will go into
+    const std::vector<int>& Ships() const            {return m_add_ships;}  ///< returns IDs of the ships selected for addition to the fleet
     //@}
 
 private:
     /**
      *  FleetTransferOrder's preconditions are:
-     *    - m_fleet_from must be the ID of a fleet owned by the issuing empire
-     *    - m_fleet_to must be the ID of a fleet owned by the issuing empire
-     *    - each element of m_add_ships must be the ID of a ship whose
-     *         fleet ID equals m_fleet_from
+     *    - m_into_fleet must be the ID of a fleet owned by the issuing empire
+     *    - each element of m_add_ships must be the ID of a ship owned by the issuing empire
      *
      *  Postconditions:
-     *     - all ships in m_add_ships will be moved from the Source fleet to the destination fleet
+     *     - all ships in m_add_ships will be moved from their initial fleet to the destination fleet
      */
     virtual void ExecuteImpl() const;
 
-    int               m_fleet_from;
-    int               m_fleet_to;
+    int               m_dest_fleet;
     std::vector<int>  m_add_ships;
 
     friend class boost::serialization::access;

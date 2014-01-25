@@ -425,15 +425,9 @@ namespace AIInterface {
             return 0;
         }
 
-        int old_fleet_id = ship->FleetID();
-        if (new_fleet_id == old_fleet_id) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is already in new fleet id" << new_fleet_id;
-            return 0;
-        }
-
         std::vector<int> ship_ids;
         ship_ids.push_back(ship_id);
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetTransferOrder(empire_id, old_fleet_id, new_fleet_id, ship_ids)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetTransferOrder(empire_id, new_fleet_id, ship_ids)));
 
         return 1;
     }

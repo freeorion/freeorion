@@ -71,8 +71,7 @@ template <class Archive>
 void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
-        & BOOST_SERIALIZATION_NVP(m_fleet_from)
-        & BOOST_SERIALIZATION_NVP(m_fleet_to)
+        & BOOST_SERIALIZATION_NVP(m_dest_fleet)
         & BOOST_SERIALIZATION_NVP(m_add_ships);
 }
 

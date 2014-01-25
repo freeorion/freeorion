@@ -350,92 +350,90 @@ void FleetMoveOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 FleetTransferOrder::FleetTransferOrder() :
     Order(),
-    m_fleet_from(INVALID_OBJECT_ID),
-    m_fleet_to(INVALID_OBJECT_ID)
+    m_dest_fleet(INVALID_OBJECT_ID)
 {}
 
-FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships) : 
+FleetTransferOrder::FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships) :
     Order(empire),
-    m_fleet_from(fleet_from),
-    m_fleet_to(fleet_to),
+    m_dest_fleet(dest_fleet),
     m_add_ships(ships)
 {}
 
 void FleetTransferOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    // look up the source fleet and destination fleet
-    TemporaryPtr<Fleet> source_fleet = GetFleet(SourceFleet());
+    // look up the destination fleet
     TemporaryPtr<Fleet> target_fleet = GetFleet(DestinationFleet());
-
-    if (!source_fleet || !target_fleet) {
-        Logger().errorStream() << "Empire attempted to move ships to or from a nonexistant fleet";
+    if (!target_fleet) {
+        Logger().errorStream() << "Empire attempted to move ships to a nonexistant fleet";
         return;
     }
-
-    // verify that both fleets are in the same system
-    if (source_fleet->SystemID() == INVALID_OBJECT_ID) {
+    // check that destination fleet is owned by empire
+    if (!target_fleet->OwnedBy(EmpireID())) {
+        Logger().errorStream() << "Empire attempted to move ships to a fleet it does not own";
+        return;
+    }
+    // verify that fleet is in a system
+    if (target_fleet->SystemID() == INVALID_OBJECT_ID) {
         Logger().errorStream() << "Empire attempted to transfer ships to/from fleet(s) not in a system";
         return;
     }
-    if (source_fleet->SystemID() != target_fleet->SystemID()) {
-        Logger().errorStream() << "Empire attempted to transfer ships to/from fleets in different systems";
-        return;
-    }
 
-    // verify that empire is not trying to take ships from somebody else's fleet
-    if (!source_fleet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to merge ships from another's fleet.";
-        return;
-    }
+    // check that all ships are in the same system
+    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_add_ships);
 
-    // verify that empire cannot merge ships into somebody else's fleet.
-    // this is just an additional security measure.  IT could be removed to
-    // allow 'donations' of ships to other players, provided the server
-    // verifies IDs of the Empires issuing the orders.
-    if (!target_fleet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to merge ships into another's fleet.";
-        return;
+    std::vector<TemporaryPtr<Ship> > validated_ships;
+    validated_ships.reserve(m_add_ships.size());
+    std::vector<int>                 validated_ship_ids;
+    validated_ship_ids.reserve(m_add_ships.size());
+
+    for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
+         it != ships.end(); ++it)
+    {
+        TemporaryPtr<Ship> ship = *it;
+        if (!ship->OwnedBy(EmpireID()))
+            continue;
+        if (ship->SystemID() != target_fleet->SystemID())
+            continue;
+        if (ship->FleetID() == target_fleet->ID())
+            continue;
+        validated_ships.push_back(ship);
+        validated_ship_ids.push_back(ship->ID());
     }
+    if (validated_ships.empty())
+        return;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
 
-    // iterate down the ship vector check validity of each
-    std::vector<int> validated_ship_ids;
-    validated_ship_ids.reserve(m_add_ships.size());
-    std::vector<int>::const_iterator itr = m_add_ships.begin();
-    while (itr != m_add_ships.end()) {
-        // find the ship, verify that ID is valid
-        int ship_id = (*itr);
-        TemporaryPtr<Ship> ship = GetShip(ship_id);
-        if (!ship) {
-            Logger().errorStream() << "Illegal ship id specified in fleet merge order.";
-            itr++;
-            continue;
+    // remove from old fleet(s)
+    std::set<TemporaryPtr<Fleet> > modified_fleets;
+    for (std::vector<TemporaryPtr<Ship> >::iterator it = validated_ships.begin();
+         it != validated_ships.end(); ++it)
+    {
+        TemporaryPtr<Ship> ship = *it;
+        if (TemporaryPtr<Fleet> source_fleet = GetFleet(ship->FleetID())) {
+            source_fleet->RemoveShip(ship->ID());
+            modified_fleets.insert(source_fleet);
         }
-
-        // figure out what fleet this ship is coming from
-        // ... verify it is the one we it is supposed to be coming from
-        if (ship->FleetID() != SourceFleet()) {
-            Logger().errorStream() << "Ship in merge order is not in specified source fleet.";
-            itr++;
-            continue;
-        }
-
-        validated_ship_ids.push_back(ship_id);
-        itr++;
-
-        // set ships' fleet to new fleet
         ship->SetFleetID(target_fleet->ID());
     }
 
-    // set fleet records
-    source_fleet->RemoveShips(validated_ship_ids);
+    // add to new fleet
     target_fleet->AddShips(validated_ship_ids);
 
     GetUniverse().InhibitUniverseObjectSignals(false);
-    source_fleet->StateChangedSignal();
-    target_fleet->StateChangedSignal();
+
+    // signal change to fleet states
+    modified_fleets.insert(target_fleet);
+
+    for (std::set<TemporaryPtr<Fleet> >::iterator it = modified_fleets.begin();
+         it != modified_fleets.end(); ++it)
+    {
+        TemporaryPtr<Fleet> modified_fleet = *it;
+        if (!modified_fleet->Empty())
+            modified_fleet->StateChangedSignal();
+        // if modified fleet is empty, it should be immently destroyed, so that updating it now is redundant
+    }
 }
 
 ////////////////////////////////////////////////
@@ -770,7 +768,7 @@ void DeleteFleetOrder::ExecuteImpl() const {
     }
 
     if (!fleet->Empty())
-        return; // should be no ships to process during this deletion
+        return; // should be no ships to delete
 
     TemporaryPtr<System> system = GetSystem(fleet->SystemID());
     if (system)

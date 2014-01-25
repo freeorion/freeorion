@@ -344,10 +344,14 @@ namespace {
         Sound::TempUISoundDisabler sound_disabler;
 
         // filter fleets in system to select just those owned by this client's
-        // empire, and then order their ships transferred into target fleet
+        // empire, and collect their ship ids
         std::vector<TemporaryPtr<Fleet> > all_system_fleets = Objects().FindObjects<Fleet>(system->FleetIDs());
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
+        std::vector<TemporaryPtr<Fleet> > empire_system_fleets;
+        empire_system_fleets.reserve(all_system_fleets.size());
+        std::vector<int> empire_system_ship_ids;
+
         for (std::vector<TemporaryPtr<Fleet> >::iterator it = all_system_fleets.begin();
              it != all_system_fleets.end(); ++it)
         {
@@ -358,24 +362,32 @@ namespace {
                 continue;   // no need to do things to target fleet's contents
 
             empire_system_fleet_ids.push_back(fleet->ID());
+            empire_system_fleets.push_back(fleet);
 
-            // order ships moved into target fleet
-            std::vector<int> ship_ids(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new FleetTransferOrder(empire_id, fleet->ID(), target_fleet->ID(), ship_ids)));
+            const std::set<int>& fleet_ships = fleet->ShipIDs();
+            std::copy(fleet_ships.begin(), fleet_ships.end(), std::back_inserter(empire_system_ship_ids));
         }
 
-        // delete empty fleets from which ships may have been taken
-        std::vector<TemporaryPtr<Fleet> > potentially_empty_fleets =
-            Objects().FindObjects<Fleet>(empire_system_fleet_ids);
-        for (std::vector<TemporaryPtr<Fleet> >::iterator it = potentially_empty_fleets.begin();
-                it != potentially_empty_fleets.end(); ++it)
+
+        // order ships moved into target fleet
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new FleetTransferOrder(empire_id, target_fleet->ID(), empire_system_ship_ids)));
+
+
+        // delete empty fleets from which ships have been taken
+        GetUniverse().InhibitUniverseObjectSignals(true);
+        for (std::vector<int>::const_iterator it = empire_system_fleet_ids.begin();
+             it != empire_system_fleet_ids.end(); ++it)
         {
-            TemporaryPtr<const Fleet> fleet = *it;
-            if (fleet && fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet->ID())));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+               new DeleteFleetOrder(empire_id, *it)));
         }
+        GetUniverse().InhibitUniverseObjectSignals(false);
+
+        // signal to update UI
+        system->FleetsRemovedSignal(empire_system_fleets);
+        system->StateChangedSignal();
+        target_fleet->StateChangedSignal();
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
@@ -1728,7 +1740,7 @@ public:
                 if (!ClientPlayerIsModerator()) {
                     // order the transfer
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new FleetTransferOrder(empire_id, dropped_fleet_id, target_fleet_id, ship_ids_vec)));
+                        new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
 
                     // delete empty fleets
                     if (dropped_fleet->Empty())
@@ -1761,7 +1773,7 @@ public:
             if (!ClientPlayerIsModerator()) {
                 // order the transfer
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new FleetTransferOrder(empire_id, fleet_id, target_fleet_id, ship_ids_vec)));
+                    new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
 
                 // delete empty fleets
                 for (std::set<int>::const_iterator it = dropped_ships_fleets.begin(); it != dropped_ships_fleets.end(); ++it) {
@@ -2070,7 +2082,7 @@ public:
 
         if (!ClientPlayerIsModerator()) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new FleetTransferOrder(empire_id, dropped_ship_fleet_id, m_fleet_id, ship_ids)));
+                OrderPtr(new FleetTransferOrder(empire_id, m_fleet_id, ship_ids)));
 
             // delete old fleet if now empty
             const ObjectMap& objects = GetUniverse().Objects();
