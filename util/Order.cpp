@@ -113,7 +113,8 @@ NewFleetOrder::NewFleetOrder() :
     Order()
 {}
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id, int system_id, const std::vector<int>& ship_ids) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
+                             int system_id, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(system_id),
@@ -740,7 +741,7 @@ void DeleteFleetOrder::ExecuteImpl() const {
     TemporaryPtr<Fleet> fleet = GetFleet(FleetID());
 
     if (!fleet) {
-        Logger().errorStream() << "Illegal fleet id specified in fleet delete order.";
+        Logger().errorStream() << "Illegal fleet id specified in fleet delete order: " << FleetID();
         return;
     }
 
