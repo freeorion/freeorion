@@ -2691,17 +2691,22 @@ void Condition::ObjectID::GetDefaultInitialCandidateObjects(const ScriptingConte
     if (!m_object_id)
         return;
 
-    if (!ValueRef::ConstantExpr(m_object_id)) {
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_object_id) ||
+                            (m_object_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (!simple_eval_safe) {
         AddAllObjectsSet(condition_non_targets);
         return;
     }
 
     // simple case of a single specified id; can add just that object
-    int obj_id = m_object_id->Eval();
-    if (obj_id == INVALID_OBJECT_ID)
+    TemporaryPtr<const UniverseObject> no_object;
+    int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
+    if (object_id == INVALID_OBJECT_ID)
         return;
 
-    TemporaryPtr<UniverseObject> obj = Objects().ExistingObject(obj_id);
+    TemporaryPtr<UniverseObject> obj = Objects().ExistingObject(object_id);
     if (obj)
         condition_non_targets.push_back(obj);
 }
