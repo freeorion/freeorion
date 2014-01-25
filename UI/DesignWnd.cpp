@@ -1246,7 +1246,6 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
                 if (result != "" && result != design->Name()) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new ShipDesignOrder(empire_id, design_id, result)));
-                    GetUniverse().RenameShipDesign(design_id, result);
                     ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
                     design_panel->Update();
                 }
