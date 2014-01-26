@@ -175,15 +175,11 @@ float Tech::ResearchCost(int empire_id) const {
             return m_research_cost->Eval();
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
-
-        if (source || m_research_cost->SourceInvariant()) {
-            ScriptingContext context(source);
-            return m_research_cost->Eval(context);
-
-        } else {
-            // if cost depends on a source object, but no such object is present, default to arbitrary large value
+        if (!source && !m_research_cost->SourceInvariant())
             return 999999.9f;
-        }
+
+        ScriptingContext context(source);
+        return m_research_cost->Eval(context);
     }
 }
 
@@ -198,6 +194,9 @@ int Tech::ResearchTime(int empire_id) const {
             return m_research_turns->Eval();
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        if (!source && !m_research_turns->SourceInvariant())
+            return 9999;
+
         ScriptingContext context(source);
 
         return m_research_turns->Eval(context);

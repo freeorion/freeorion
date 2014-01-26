@@ -500,6 +500,9 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
             return 999999.9f;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        if (!source && !m_production_cost->SourceInvariant())
+            return 999999.9f;
+
         ScriptingContext context(source, location);
 
         return static_cast<float>(m_production_cost->Eval(context));
@@ -518,6 +521,9 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
             return 9999;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        if (!source && !m_production_time->SourceInvariant())
+            return 9999;
+
         ScriptingContext context(source, location);
 
         return m_production_time->Eval(context);
@@ -591,6 +597,9 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
             return 999999.9f;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        if (!source && !m_production_cost->SourceInvariant())
+            return 999999.9f;
+
         ScriptingContext context(source, location);
 
         return static_cast<float>(m_production_cost->Eval(context));
@@ -609,6 +618,9 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
             return 9999;    // arbitrary large number
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        if (!source && !m_production_time->SourceInvariant())
+            return 999999.9f;
+
         ScriptingContext context(source, location);
 
         return m_production_time->Eval(context);
