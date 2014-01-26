@@ -1924,29 +1924,6 @@ void MapWnd::InitTurn() {
 
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
-    //// DEBUG
-    //Logger().debugStream() << Empires().Dump();
-    //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;
-    //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
-    //    TemporaryPtr<const UniverseObject> obj = const_universe.Object(*it);
-    //    if (obj)
-    //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
-    //    else
-    //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
-    //}
-    // DEBUG
-
-    //Logger().debugStream() << "Visible UniverseObjects: ";
-    //objects.Dump();
-
-    //// DEBUG
-    //for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-    //    Logger().debugStream() << "MapWnd::InitTurn: empire id: " << empire_it->first << " named: " << empire_it->second->Name();
-    //// END DEBUG
-
-    Empire* this_client_empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
-
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
@@ -2004,8 +1981,10 @@ void MapWnd::InitTurn() {
         ShowSystemNames();
 
 
-    // empire is recreated each turn based on turn update from server, so connections of signals emitted from
-    // the empire must be remade each turn (unlike connections to signals from the sidepanel)
+    // empire is recreated each turn based on turn update from server, so
+    // connections of signals emitted from the empire must be remade each turn
+    // (unlike connections to signals from the sidepanel)
+    Empire* this_client_empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this);
         GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this);
@@ -2034,7 +2013,7 @@ void MapWnd::InitTurn() {
 
 
     timer.restart();
-    SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
+    //SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
     Logger().debugStream() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
 
 

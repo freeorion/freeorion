@@ -777,7 +777,7 @@ TemporaryPtr<T> Universe::Insert(T* obj) {
         obj->SetID(id);
         return m_objects.Insert(obj);
     }
-    
+
     // Avoid leaking memory if there are more than 2^31 objects in the Universe.
     // Realistically, we should probably do something a little more drastic in this case,
     // like terminate the program and call 911 or something.
@@ -2969,7 +2969,7 @@ void Universe::UpdateStatRecords() {
     std::map<int, TemporaryPtr<const UniverseObject> > empire_sources;
     for (EmpireManager::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
     { empire_sources[empire_it->first] = SourceForEmpire(empire_it->first); }
-    
+
 
     // process each stat
     for (std::map<std::string, const ValueRef::ValueRefBase<double>*>::const_iterator
@@ -2991,10 +2991,9 @@ void Universe::UpdateStatRecords() {
 
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
-                continue;
+            } else if (empire_it->second) {
+                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_it->second));
             }
-
-            stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_it->second));
         }
     }
 }
