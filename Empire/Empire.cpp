@@ -2663,7 +2663,8 @@ void Empire::CheckResearchProgress() {
 
 void Empire::CheckProductionProgress() {
     Logger().debugStream() << "========Empire::CheckProductionProgress=======";
-    // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
+    // following commented line should be redundant, as previous call to
+    // UpdateResourcePools should have generated necessary info
     // m_production_queue.Update();
 
     Universe& universe = GetUniverse();
@@ -2680,7 +2681,9 @@ void Empire::CheckProductionProgress() {
     // cost and result in it not being finished that turn.
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
              std::pair<float, int> >                           queue_item_costs_and_times;
-    for (ProductionQueue::iterator it = m_production_queue.begin(); it != m_production_queue.end(); ++it) {
+    for (ProductionQueue::iterator it = m_production_queue.begin();
+         it != m_production_queue.end(); ++it)
+    {
         ProductionQueue::Element& elem = *it;
 
         // for items that don't depend on location, only store cost/time once
@@ -2766,9 +2769,11 @@ void Empire::CheckProductionProgress() {
                     break;   // nothing to do!
 
                 TemporaryPtr<UniverseObject> build_location = GetUniverseObject(elem.location);
-                TemporaryPtr<System> system = universe_object_ptr_cast<System>(build_location);
-                if (!system && build_location)
-                    system = GetSystem(build_location->SystemID());
+                if (!build_location) {
+                    Logger().errorStream() << "Couldn't get build location for completed ship";
+                    break;
+                }
+                TemporaryPtr<System> system = GetSystem(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production
                 // sites that are in interstellar space, if needed
                 if (!system) {
@@ -2846,8 +2851,10 @@ void Empire::CheckProductionProgress() {
                 break;
             }
 
-            if (!--m_production_queue[i].remaining)     // decrement number of remaining items to be produced in current queue element
+            if (!--m_production_queue[i].remaining) {   // decrement number of remaining items to be produced in current queue element
                 to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
+                Logger().debugStream() << "Marking completed production queue item to be removed form queue";
+            }
         }
     }
 
