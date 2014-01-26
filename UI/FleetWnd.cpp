@@ -3203,7 +3203,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         post_scrap_bar = true;
     }
 
-    if (fleet->OwnedBy(client_empire_id) && !peaceful_empires_in_system.empty()) {
+    if (fleet->OwnedBy(client_empire_id)
+        && !peaceful_empires_in_system.empty()
+        && !ClientPlayerIsModerator())
+    {
         if (post_scrap_bar)
             menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
 
@@ -3217,6 +3220,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             give_away_menu.next_level.push_back(GG::MenuItem(it->second->Name(), 100 + other_empire_id, false, false));
         }
         menu_contents.next_level.push_back(give_away_menu);
+
+        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
+            GG::MenuItem cancel_give_away_menu(UserString("ORCER_CANCEL_GIVE_FLEET"), 12, false, false);
+            menu_contents.next_level.push_back(cancel_give_away_menu);
+        }
     }
 
 
@@ -3317,18 +3325,30 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 7: { // send order to explore to the fleet
-            if (!ClientPlayerIsModerator())
-                ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
+            ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
             break;
         }
 
         case 8: { // send order to stop exploring to the fleet
-            if (!ClientPlayerIsModerator())
-                ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
+            ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
             break;
         }
 
-        default: {
+        case 12: { // can give order for this fleet
+            const OrderSet orders = HumanClientApp::GetApp()->Orders();
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                if (boost::shared_ptr<GiveObjectToEmpireOrder> order =
+                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
+                {
+                    if (order->ObjectID() == fleet->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
+
+        default: { // check for menu item indicating give to other empire order
             if (popup.MenuID() > 100) {
                 int recipient_empire_id = popup.MenuID() - 100;
                 HumanClientApp::GetApp()->Orders().IssueOrder(
