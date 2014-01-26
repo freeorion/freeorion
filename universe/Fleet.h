@@ -49,6 +49,8 @@ public:
       * system, that system will be the first one in the list. */
     const std::list<int>&               TravelRoute() const;
 
+    int                                 OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }///< returns the ID of the empire this fleet has been ordered given to, or ALL_EMPIRES if this fleet hasn't been ordered given to an empire
+
     bool                                Aggressive() const  { return m_aggressive; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
@@ -116,6 +118,9 @@ public:
     void                    SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
     void                    ClearArrivalFlag() { m_arrived_this_turn = false; } ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
 
+    void                    SetGiveToEmpire(int empire_id);                 ///< marks fleet to be given to empire
+    void                    ClearGiveToEmpire();                            ///< marks fleet not to be given to any empire
+
     virtual void            ResetTargetMaxUnpairedMeters();
     //@}
 
@@ -135,6 +140,7 @@ protected:
         m_prev_system(INVALID_OBJECT_ID),
         m_next_system(INVALID_OBJECT_ID),
         m_aggressive(true),
+        m_ordered_given_to_empire_id(ALL_EMPIRES),
         m_travel_distance(0.0),
         m_arrived_this_turn(false),
         m_arrival_starlane(INVALID_OBJECT_ID)
@@ -160,6 +166,8 @@ private:
     int                         m_next_system;  ///< the next system in the route, if any
 
     bool                        m_aggressive;    ///< should this fleet attack enemies in the same system?
+
+    int                         m_ordered_given_to_empire_id;
 
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the

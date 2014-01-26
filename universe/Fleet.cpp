@@ -37,6 +37,7 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_aggressive(true),
+    m_ordered_given_to_empire_id(ALL_EMPIRES),
     m_travel_distance(0.0),
     m_arrived_this_turn(false),
     m_arrival_starlane(INVALID_OBJECT_ID)
@@ -85,9 +86,10 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
                 this->m_name =                  copied_fleet->m_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_moving_to =             copied_fleet->m_moving_to;
-                this->m_travel_route =          copied_fleet->m_travel_route;
-                this->m_travel_distance =       copied_fleet->m_travel_distance;
+                this->m_moving_to =                 copied_fleet->m_moving_to;
+                this->m_travel_route =              copied_fleet->m_travel_route;
+                this->m_travel_distance =           copied_fleet->m_travel_distance;
+                this->m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
 
             } else {
                 int             moving_to =         copied_fleet->m_next_system;
@@ -1357,3 +1359,12 @@ std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_f
 
     return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(new_fleet_id));
 }
+
+void Fleet::SetGiveToEmpire(int empire_id) {
+    if (empire_id == m_ordered_given_to_empire_id) return;
+    m_ordered_given_to_empire_id = empire_id;
+    StateChangedSignal();
+}
+
+void Fleet::ClearGiveToEmpire()
+{ SetGiveToEmpire(ALL_EMPIRES); }

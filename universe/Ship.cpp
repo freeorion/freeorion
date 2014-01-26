@@ -20,7 +20,6 @@ Ship::Ship() :
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
     m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
-    m_ordered_given_to_empire_id(ALL_EMPIRES),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_produced_by_empire_id(ALL_EMPIRES)
 {}
@@ -33,7 +32,6 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
     m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
-    m_ordered_given_to_empire_id(ALL_EMPIRES),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id)
@@ -163,7 +161,6 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
                 this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
                 this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
-                this->m_ordered_given_to_empire_id =copied_ship->m_ordered_given_to_empire_id;
                 this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
                 this->m_part_meters =               copied_ship->m_part_meters;
                 this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
@@ -515,15 +512,6 @@ void Ship::SetBombardPlanet(int planet_id) {
 
 void Ship::ClearBombardPlanet()
 { SetBombardPlanet(INVALID_OBJECT_ID); }
-
-void Ship::SetGiveToEmpire(int empire_id) {
-    if (empire_id == m_ordered_given_to_empire_id) return;
-    m_ordered_given_to_empire_id = empire_id;
-    StateChangedSignal();
-}
-
-void Ship::ClearGiveToEmpire()
-{ SetGiveToEmpire(ALL_EMPIRES); }
 
 void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();

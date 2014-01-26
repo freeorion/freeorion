@@ -713,7 +713,6 @@ ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     m_colonize_indicator(0),
     m_invade_indicator(0),
     m_bombard_indicator(0),
-    m_gift_indicator(0),
     m_scanline_control(0),
     m_ship_name_text(0),
     m_design_name_text(0),
@@ -799,9 +798,6 @@ void ShipDataPanel::SetShipIcon() {
     delete m_bombard_indicator;
     m_bombard_indicator = 0;
 
-    delete m_gift_indicator;
-    m_gift_indicator = 0;
-
     delete m_scanline_control;
     m_scanline_control = 0;
 
@@ -839,11 +835,6 @@ void ShipDataPanel::SetShipIcon() {
         boost::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
         m_bombard_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), bombard_texture, DataPanelIconStyle());
         AttachChild(m_bombard_indicator);
-    }
-    if (ship->OrderedGivenToEmpire() != ALL_EMPIRES) {
-        boost::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
-        m_gift_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), bombard_texture, DataPanelIconStyle());
-        AttachChild(m_gift_indicator);
     }
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     if (ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
@@ -946,8 +937,6 @@ void ShipDataPanel::DoLayout() {
         m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     if (m_bombard_indicator)
         m_bombard_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
-    if (m_gift_indicator)
-        m_gift_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
@@ -1076,6 +1065,7 @@ private:
     GG::TextControl*    m_fleet_name_text;
     GG::TextControl*    m_fleet_destination_text;
     GG::Button*         m_aggression_toggle;
+    GG::StaticGraphic*  m_gift_indicator;
     ScanlineControl*    m_scanline_control;
 
     std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
@@ -1093,6 +1083,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
     m_aggression_toggle(0),
+    m_gift_indicator(0),
     m_scanline_control(0),
     m_stat_icons(),
     m_selected(false)
@@ -1181,6 +1172,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
     m_aggression_toggle(0),
+    m_gift_indicator(0),
     m_scanline_control(0),
     m_stat_icons(),
     m_selected(false)
@@ -1391,6 +1383,8 @@ void FleetDataPanel::Refresh() {
     m_fleet_icon = 0;
     delete m_scanline_control;
     m_scanline_control = 0;
+    delete m_gift_indicator;
+    m_gift_indicator = 0;
 
     if (m_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1421,6 +1415,12 @@ void FleetDataPanel::Refresh() {
             m_fleet_icon->SetColor(empire->Color());
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
+
+        if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
+            boost::shared_ptr<GG::Texture> gift_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "gifting.png", true);
+            m_gift_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), gift_texture, DataPanelIconStyle());
+            AttachChild(m_gift_indicator);
+        }
 
         if (fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
             m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), true);
@@ -1553,6 +1553,8 @@ void FleetDataPanel::DoLayout() {
     }
     if (m_scanline_control)
         m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_gift_indicator)
+        m_gift_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);

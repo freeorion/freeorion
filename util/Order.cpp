@@ -1207,9 +1207,10 @@ void GiveObjectToEmpireOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
-        if (ship->OwnedBy(empire_id))
-            ship->SetGiveToEmpire(m_recipient_empire_id);
+    if (TemporaryPtr<Fleet> fleet = GetFleet(m_object_id)) {
+        if (fleet->OwnedBy(empire_id))
+            fleet->SetGiveToEmpire(m_recipient_empire_id);
+
     } else if (TemporaryPtr<Planet> planet = GetPlanet(m_object_id)) {
         if (planet->OwnedBy(empire_id))
             planet->SetGiveToEmpire(m_recipient_empire_id);
@@ -1220,9 +1221,9 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
 
-    if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
-        if (ship->OwnedBy(empire_id)) {
-            ship->ClearGiveToEmpire();
+    if (TemporaryPtr<Fleet> fleet = GetFleet(m_object_id)) {
+        if (fleet->OwnedBy(empire_id)) {
+            fleet->ClearGiveToEmpire();
             return true;
         }
     } else if (TemporaryPtr<Planet> planet = GetPlanet(m_object_id)) {

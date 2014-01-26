@@ -1738,9 +1738,7 @@ namespace {
             }
         }
     }
-}
 
-namespace {
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
         TemporaryPtr<Ship> ship = GetShip(ship_id);
@@ -2167,6 +2165,116 @@ namespace {
         }
     }
 
+    /** Determines which fleets or planets ordered given to other empires,
+      * and sets their new ownership */
+    void HandleGifting() {
+        std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
+        std::vector<TemporaryPtr<Planet> > planets = GetUniverse().Objects().FindObjects<Planet>();
+
+        std::map<int, std::vector<TemporaryPtr<UniverseObject> > > empire_gifted_objects;
+
+        // collect fleets ordered to be given
+        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
+             it != fleets.end(); ++it)
+        {
+            TemporaryPtr<Fleet> fleet = *it;
+            int ordered_given_to_empire_id = fleet->OrderedGivenToEmpire();
+            if (ordered_given_to_empire_id == ALL_EMPIRES)
+                continue;
+            fleet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
+
+            if (   fleet->Unowned()
+                || fleet->OwnedBy(ordered_given_to_empire_id))
+            { continue; }
+
+            empire_gifted_objects[ordered_given_to_empire_id].push_back(fleet);
+        }
+
+        // collect planets ordered to be given
+        for (std::vector<TemporaryPtr<Planet> >::iterator it = planets.begin();
+             it != planets.end(); ++it)
+        {
+            TemporaryPtr<Planet> planet = *it;
+            int ordered_given_to_empire_id = planet->OrderedGivenToEmpire();
+            if (ordered_given_to_empire_id == ALL_EMPIRES)
+                continue;
+            planet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
+
+            if (   planet->Unowned()
+                || planet->OwnedBy(ordered_given_to_empire_id))
+            { continue; }
+
+            empire_gifted_objects[ordered_given_to_empire_id].push_back(planet);
+        }
+
+        // further filter ordered given objects and do giving if appropriate
+        for (std::map<int, std::vector<TemporaryPtr<UniverseObject> > >::iterator empire_it = empire_gifted_objects.begin();
+             empire_it != empire_gifted_objects.end(); ++empire_it)
+        {
+            int recipient_empire_id = empire_it->first;
+            std::vector<TemporaryPtr<UniverseObject> >& objects = empire_it->second;
+            std::map<int, bool> systems_contain_recipient_empire_owned_objects;
+
+            // for each recipient empire, process objects it is being gifted
+            for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin();
+                 it != objects.end(); ++it)
+            {
+                TemporaryPtr<UniverseObject> obj = *it;
+                int initial_owner_empire_id = obj->Owner();
+
+
+                // gifted object must be in a system
+                if (obj->SystemID() == INVALID_OBJECT_ID)
+                    continue;
+                TemporaryPtr<System> system = GetSystem(obj->SystemID());
+                if (!system)
+                    continue;
+
+                // the recipient must have an owned object in the same system
+                bool can_receive_here = false;
+
+                // is reception ability for this location cached?
+                std::map<int, bool>::iterator sys_it = systems_contain_recipient_empire_owned_objects.find(system->ID());
+                if (sys_it != systems_contain_recipient_empire_owned_objects.end()) {
+                    can_receive_here = sys_it->second;
+
+                } else {
+                    // not cached, so scan for objects
+                    std::vector<TemporaryPtr<const UniverseObject> > system_objects =
+                        Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+
+                    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = system_objects.begin();
+                         it != system_objects.end(); ++it)
+                    {
+                        TemporaryPtr<const UniverseObject> obj = *it;
+                        if (obj->OwnedBy(recipient_empire_id)) {
+                            can_receive_here = true;
+                            systems_contain_recipient_empire_owned_objects[system->ID()] = true;
+                            break;
+                        }
+                    }
+                    if (!can_receive_here)
+                        systems_contain_recipient_empire_owned_objects[system->ID()] = false;
+                }
+                if (!can_receive_here)
+                    continue;
+
+                // recipient empire can receive objects at this system, so do transfer
+                std::vector<TemporaryPtr<UniverseObject> > contained_objects =
+                    Objects().FindObjects<UniverseObject>(obj->ContainedObjectIDs());
+
+                for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = contained_objects.begin();
+                     it != contained_objects.end(); ++it)
+                {
+                    TemporaryPtr<UniverseObject> obj = *it;
+                    if (obj->OwnedBy(initial_owner_empire_id))
+                        obj->SetOwner(recipient_empire_id);
+                }
+                obj->SetOwner(recipient_empire_id);
+            }
+        }
+    }
+
     /** Removes bombardment state info from objects. Actual effects of
       * bombardment are handled during */
     void CleanUpBombardmentStateInfo() {
@@ -2249,6 +2357,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     HandleColonization();
     HandleInvasion();
+    HandleGifting();
 
     // scrap orders
     //std::vector<int> scrapped_object_ids;
