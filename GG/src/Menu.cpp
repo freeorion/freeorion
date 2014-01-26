@@ -527,8 +527,11 @@ void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t i = 0; i < m_caret.size(); ++i)
-            menu_ptr = &menu_ptr->next_level[m_caret[i]];
+        for (std::size_t i = 0; i < m_caret.size(); ++i) {
+            if (m_caret[i] != INVALID_CARET) {
+                menu_ptr = &menu_ptr->next_level[m_caret[i]];
+            }
+        }
         if (!menu_ptr->disabled) {
             m_item_selected = menu_ptr;
         }
