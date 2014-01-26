@@ -99,7 +99,7 @@ namespace {
         if (!fleet)
             return retval;
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         TemporaryPtr<const System> dest = GetSystem(fleet->FinalDestinationID());
         TemporaryPtr<const System> cur_sys = GetSystem(fleet->SystemID());
@@ -107,7 +107,7 @@ namespace {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
-            const std::string& dest_name = dest->ApparentName(empire_id);
+            const std::string& dest_name = dest->ApparentName(client_empire_id);
 
             // next system on path
             std::string next_eta_text;
@@ -139,7 +139,7 @@ namespace {
                                                 dest_name % final_eta_text % next_eta_text);
 
         } else if (cur_sys) {
-            const std::string& cur_system_name = cur_sys->ApparentName(empire_id);
+            const std::string& cur_system_name = cur_sys->ApparentName(client_empire_id);
             if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())){ 
                 if(fleet->Fuel() == fleet->MaxFuel())
                     retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_WAITING")));
@@ -160,8 +160,8 @@ namespace {
             return;
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES)
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES)
             return;
 
         // TODO: We should probably have the sound effect occur exactly once instead of not at all.
@@ -203,7 +203,7 @@ namespace {
                     Logger().errorStream() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
                     continue;
                 }
-                if (!ship->OwnedBy(empire_id)) {
+                if (!ship->OwnedBy(client_empire_id)) {
                     Logger().errorStream() << "CreateNewFleetsForShips passed ships not owned by this client's empire";
                     return;
                 }
@@ -242,7 +242,7 @@ namespace {
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, order_fleet_names, order_fleet_ids,
+            OrderPtr(new NewFleetOrder(client_empire_id, order_fleet_names, order_fleet_ids,
                                        *systems_containing_new_fleets.begin(),
                                        order_ship_id_groups, order_ship_aggressives)));
 
@@ -255,7 +255,7 @@ namespace {
             TemporaryPtr<const Fleet> fleet = *it;
             if (fleet && fleet->Empty())
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet->ID())));
+                    new DeleteFleetOrder(client_empire_id, fleet->ID())));
         }
     }
 
@@ -275,8 +275,8 @@ namespace {
                                << " ship ids and design id: " << design_id;
         if (ship_ids.empty() || design_id == ShipDesign::INVALID_DESIGN_ID)
             return;
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
             return;
 
         // select ships with the requested design id
@@ -300,8 +300,8 @@ namespace {
                                << ship_ids.size() << " ship ids";
         if (ship_ids.empty())
             return;
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())
             return;
 
         // sort ships by ID into container, indexed by design id
@@ -325,8 +325,8 @@ namespace {
     void MergeFleetsIntoFleet(int fleet_id) {
         if (ClientPlayerIsModerator())
             return; // todo: handle moderator actions for this...
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (empire_id == ALL_EMPIRES)
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES)
             return;
 
         TemporaryPtr<Fleet> target_fleet = GetFleet(fleet_id);
@@ -356,7 +356,7 @@ namespace {
              it != all_system_fleets.end(); ++it)
         {
             TemporaryPtr<Fleet> fleet = *it;
-            if (!fleet->OwnedBy(empire_id))
+            if (!fleet->OwnedBy(client_empire_id))
                 continue;
             if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
                 continue;   // no need to do things to target fleet's contents
@@ -371,7 +371,7 @@ namespace {
 
         // order ships moved into target fleet
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new FleetTransferOrder(empire_id, target_fleet->ID(), empire_system_ship_ids)));
+            OrderPtr(new FleetTransferOrder(client_empire_id, target_fleet->ID(), empire_system_ship_ids)));
 
 
         // delete empty fleets from which ships have been taken
@@ -380,7 +380,7 @@ namespace {
              it != empire_system_fleet_ids.end(); ++it)
         {
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-               new DeleteFleetOrder(empire_id, *it)));
+               new DeleteFleetOrder(client_empire_id, *it)));
         }
         GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -2397,7 +2397,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
@@ -3058,7 +3058,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 }
 
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     TemporaryPtr<Fleet> fleet = GetFleet(FleetInRow(it));
     if (!fleet)
@@ -3087,30 +3087,54 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             unfueled_ship_ids.push_back(*it);
     }
 
+    // determine which other empires are at peace with client empire and have
+    // an owned object in this fleet's system
+    std::set<int> peaceful_empires_in_system;
+    if (system) {
+        std::vector<TemporaryPtr<const UniverseObject> > system_objects =
+            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
+             it != system_objects.end(); ++it)
+        {
+            TemporaryPtr<const UniverseObject> obj = *it;
+            if (obj->Owner() == client_empire_id || obj->Unowned())
+                continue;
+            if (peaceful_empires_in_system.find(obj->Owner()) != peaceful_empires_in_system.end())
+                continue;
+            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE)
+                continue;
+            peaceful_empires_in_system.insert(obj->Owner());
+        }
+    }
+
+
     GG::MenuItem menu_contents;
 
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system
         && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())
         && !ClientPlayerIsModerator()
-        && fleet->OwnedBy(empire_id))
+        && fleet->OwnedBy(client_empire_id))
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),        7, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
     }
     else if (system
              && !ClientPlayerIsModerator()
-             && fleet->OwnedBy(empire_id))
+             && fleet->OwnedBy(client_empire_id))
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
     }
 
     // Merge fleets
     if (system
-        && fleet->OwnedBy(empire_id)
+        && fleet->OwnedBy(client_empire_id)
         && !ClientPlayerIsModerator()
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   10, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
     }
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
@@ -3118,7 +3142,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && ship_ids_set.size() > 1
         && !damaged_ship_ids.empty()
         && damaged_ship_ids.size() != ship_ids_set.size()
-        && fleet->OwnedBy(empire_id)
+        && fleet->OwnedBy(client_empire_id)
         && !ClientPlayerIsModerator()
        )
     {
@@ -3130,7 +3154,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && ship_ids_set.size() > 1
         && unfueled_ship_ids.size() > 0
         && unfueled_ship_ids.size() < ship_ids_set.size()
-        && fleet->OwnedBy(empire_id)
+        && fleet->OwnedBy(client_empire_id)
         && !ClientPlayerIsModerator()
 
        )
@@ -3141,28 +3165,33 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
     if (system
         && ship_ids_set.size() > 1
-        && (fleet->OwnedBy(empire_id))
+        && (fleet->OwnedBy(client_empire_id))
         && !ClientPlayerIsModerator()
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             4, false, false));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), 9, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
     }
 
     // Rename fleet
-    if (fleet->OwnedBy(empire_id)
+    if (fleet->OwnedBy(client_empire_id)
         || ClientPlayerIsModerator())
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem("-", -3, true, false));
     }
+
+    bool post_scrap_bar = false;
 
     // add a fleet popup command to order all ships in the fleet scrapped
     if (system
         && fleet->HasShipsWithoutScrapOrders()
         && !ClientPlayerIsModerator()
-        && fleet->OwnedBy(empire_id))
+        && fleet->OwnedBy(client_empire_id))
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          5, false, false));
+        post_scrap_bar = true;
     }
 
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
@@ -3171,10 +3200,28 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && !ClientPlayerIsModerator())
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   6, false, false));
+        post_scrap_bar = true;
     }
 
+    if (fleet->OwnedBy(client_empire_id) && !peaceful_empires_in_system.empty()) {
+        if (post_scrap_bar)
+            menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+
+        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), -1, false, false);
+        for (EmpireManager::const_iterator it = Empires().begin();
+             it != Empires().end(); ++it)
+        {
+            int other_empire_id = it->first;
+            if (peaceful_empires_in_system.find(other_empire_id) == peaceful_empires_in_system.end())
+                continue;
+            give_away_menu.next_level.push_back(GG::MenuItem(it->second->Name(), 100 + other_empire_id, false, false));
+        }
+        menu_contents.next_level.push_back(give_away_menu);
+    }
+
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
@@ -3188,7 +3235,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             if (!ClientPlayerIsModerator()) {
                 if (!new_name.empty() && new_name != fleet_name) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new RenameOrder(empire_id, fleet->ID(), new_name)));
+                        OrderPtr(new RenameOrder(client_empire_id, fleet->ID(), new_name)));
                 }
             } else {
                 // TODO: Moderator action for renaming fleet
@@ -3245,7 +3292,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                     int ship_id = *it;
                     HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new ScrapOrder(empire_id, ship_id))
+                        OrderPtr(new ScrapOrder(client_empire_id, ship_id))
                     );
                 }
             break;
@@ -3281,8 +3328,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        default:
+        default: {
+            if (popup.MenuID() > 100) {
+                int recipient_empire_id = popup.MenuID() - 100;
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new GiveObjectToEmpireOrder(client_empire_id, fleet->ID(), recipient_empire_id)));
+            }
             break;
+        }
         }
     }
 }

@@ -1198,9 +1198,9 @@ GiveObjectToEmpireOrder::GiveObjectToEmpireOrder() :
 {}
 
 GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int recipient) :
-    Order(),
-    m_object_id(INVALID_OBJECT_ID),
-    m_recipient_empire_id(ALL_EMPIRES)
+    Order(empire),
+    m_object_id(object_id),
+    m_recipient_empire_id(recipient)
 {}
 
 void GiveObjectToEmpireOrder::ExecuteImpl() const {

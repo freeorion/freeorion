@@ -336,7 +336,7 @@ void SitRepPanel::FilterClicked() {
 
     GG::PopupMenu popup(m_filter_button->UpperLeft().x, m_filter_button->LowerRight().y,
                         ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();

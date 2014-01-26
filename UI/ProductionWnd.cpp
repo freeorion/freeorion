@@ -496,7 +496,7 @@ void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"), 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, GG::CLR_RED,
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // delete item

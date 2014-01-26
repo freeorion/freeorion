@@ -385,12 +385,13 @@ namespace {
 const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
 PopupMenu::PopupMenu(X x, Y y, const boost::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
-                     Clr color/* = CLR_BLACK*/, Clr interior/* = CLR_SHADOW*/) :
+                     Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(font),
-    m_border_color(color),
-    m_int_color(interior),
+    m_border_color(border_color),
+    m_int_color(interior_color),
     m_text_color(text_color),
+    m_hilite_color(hilite_color),
     m_sel_text_color(text_color),
     m_menu_data(m),
     m_open_levels(),
@@ -398,9 +399,6 @@ PopupMenu::PopupMenu(X x, Y y, const boost::shared_ptr<Font>& font, const MenuIt
     m_origin(x, y),
     m_item_selected(0)
 {
-    // use opaque interior color as hilite color
-    interior.a = 255;
-    m_hilite_color = interior;
     m_open_levels.resize(1);
 
     if (INSTRUMENT_ALL_SIGNALS)
@@ -553,7 +551,8 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
         MenuItem& menu = *menu_ptr;
 
         if (pt.x >= m_open_levels[i].ul.x && pt.x <= m_open_levels[i].lr.x &&
-                pt.y >= m_open_levels[i].ul.y && pt.y <= m_open_levels[i].lr.y) {
+            pt.y >= m_open_levels[i].ul.y && pt.y <= m_open_levels[i].lr.y)
+        {
             std::size_t row_selected = Value((pt.y - m_open_levels[i].ul.y) / m_font->Lineskip());
             if (row_selected == m_caret[i]) {
                 cursor_is_in_menu = true;
@@ -562,7 +561,7 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
                 m_open_levels.resize(i + 1);
                 m_caret.resize(i + 1);
                 if (!menu.next_level[row_selected].disabled && menu.next_level[row_selected].next_level.size()) {
-                    m_caret.push_back(0);
+                    m_caret.push_back(INVALID_CARET);
                     m_open_levels.push_back(Rect());
                 }
                 cursor_is_in_menu = true;

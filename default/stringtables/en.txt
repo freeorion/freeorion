@@ -2396,6 +2396,12 @@ Explore
 ORDER_CANCEL_FLEET_EXPLORE
 Stop Exploring
 
+ORDER_GIVE_FLEET_TO_EMPIRE
+Give Fleet To...
+
+ORCER_CANCEL_GIVE_FLEET
+Cancel Giving Fleet
+
 
 ###############
 #  Moderator  #
