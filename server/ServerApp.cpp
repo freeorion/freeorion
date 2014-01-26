@@ -1852,11 +1852,7 @@ namespace {
         std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
 
         for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
-            TemporaryPtr<const Ship> ship = *it;
-            if (!ship) {
-                Logger().errorStream() << "HandleColonization couldn't get ship";
-                continue;
-            }
+            TemporaryPtr<Ship> ship = *it;
             if (ship->Unowned())
                 continue;
             int owner_empire_id = ship->Owner();
@@ -1867,6 +1863,9 @@ namespace {
             int colonize_planet_id = ship->OrderedColonizePlanet();
             if (colonize_planet_id == INVALID_OBJECT_ID)
                 continue;
+
+            ship->SetColonizePlanet(INVALID_OBJECT_ID); // reset so failed colonization doesn't leave ship with hanging colonization order set
+
             TemporaryPtr<Planet> planet = GetPlanet(colonize_planet_id);
             if (!planet)
                 continue;
