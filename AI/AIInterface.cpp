@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/System.h"
 #include "../universe/Tech.h"
 #include "../Empire/Empire.h"
 
@@ -630,6 +631,65 @@ namespace AIInterface {
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
             new AggressiveOrder(empire_id, object_id, aggressive)));
+
+        return 1;
+    }
+
+    int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        if (Empires().Lookup(recipient_id) == 0) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
+            return 0;
+        }
+
+        if (Empires().GetDiplomaticStatus(empire_id, recipient_id) != DIPLO_PEACE) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
+            return 0;
+        }
+
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : passed invalid object id";
+            return 0;
+        }
+
+        if (!obj->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : passed object not owned by player";
+            return 0;
+        }
+
+        if (obj->ObjectType() != OBJ_FLEET && obj->ObjectType() != OBJ_PLANET) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
+            return 0;
+        }
+
+        TemporaryPtr<System> system = GetSystem(obj->SystemID());
+        if (!system) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : couldn't get system of object";
+            return 0;
+        }
+
+        // can only give to empires with something present to receive the gift
+        bool recipient_has_something_here = false;
+        std::vector<TemporaryPtr<const UniverseObject> > system_objects =
+            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
+                it != system_objects.end(); ++it)
+        {
+            TemporaryPtr<const UniverseObject> obj = *it;
+            if (obj->Owner() == recipient_id) {
+                recipient_has_something_here = true;
+                break;
+            }
+        }
+        if (!recipient_has_something_here) {
+            Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new GiveObjectToEmpireOrder(empire_id, object_id, recipient_id)));
 
         return 1;
     }

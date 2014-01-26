@@ -85,6 +85,7 @@ namespace AIInterface {
     int                 IssueBombardOrder(int ship_id, int planet_id);
     int                 IssueDeleteFleetOrder();
     int                 IssueAggressionOrder(int object_id, bool aggressive);
+    int                 IssueGiveObjectToEmpireOrder(int object_id, int recipient_id);
 
     int                 IssueChangeFocusOrder(int planet_id, const std::string& focus);
 
