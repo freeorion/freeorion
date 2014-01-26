@@ -159,6 +159,7 @@ public:
     virtual void    Depopulate();
 
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
+    bool            Colonize(int empire_id, const std::string& species_name, double population); ///< Called during colonization handling to do the actual colonizing
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false

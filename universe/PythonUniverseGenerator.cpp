@@ -14,6 +14,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
+#include "../util/OptionsDB.h"
 #include "../python/PythonSetWrapper.h"
 #include "../python/PythonWrappers.h"
 #include "../parse/Parse.h"
@@ -89,6 +90,9 @@ namespace {
 
     double  MinSystemSeparation()
     { return MIN_SYSTEM_SEPARATION; }
+
+    float   LargeMeterValue()
+    { return Meter::LARGE_VALUE; }
 
     // Universe tables
     const std::vector<int>&                 g_base_star_type_dist                   = UniverseDataTables()["BaseStarTypeDist"][0];
@@ -652,7 +656,16 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
         }
+
         planet->SetType(planet_type);
+        if (planet_type == PT_ASTEROIDS)
+            planet->SetSize(SZ_ASTEROIDS);
+        else if (planet_type == PT_GASGIANT)
+            planet->SetSize(SZ_GASGIANT);
+        else if (planet->Size() == SZ_ASTEROIDS)
+            planet->SetSize(SZ_TINY);
+        else if (planet->Size() == SZ_GASGIANT)
+            planet->SetSize(SZ_HUGE);
     }
 
     PlanetSize PlanetGetSize(int planet_id) {
@@ -670,7 +683,14 @@ namespace {
             Logger().errorStream() << "PythonUniverseGenerator::PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
         }
+
         planet->SetSize(planet_size);
+        if (planet_size == SZ_ASTEROIDS)
+            planet->SetType(PT_ASTEROIDS);
+        else if (planet_size == SZ_GASGIANT)
+            planet->SetType(PT_GASGIANT);
+        else if ((planet->Type() == PT_ASTEROIDS) || (planet->Type() == PT_GASGIANT))
+            planet->SetType(PT_BARREN);
     }
 
     object PlanetGetSpecies(int planet_id) {
@@ -723,6 +743,44 @@ namespace {
         return py_foci;
     }
 
+    bool PlanetMakeOutpost(int planet_id, int empire_id) {
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
+            return false;
+        }
+
+        if (!Empires().Lookup(empire_id)) {
+            Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeOutpost: couldn't get empire with ID " << empire_id;
+            return false;
+        }
+
+        return planet->Colonize(empire_id, "", 0.0);
+    }
+    
+    bool PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) {
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get planet with ID:" << planet_id;
+            return false;
+        }
+
+        if (!Empires().Lookup(empire_id)) {
+            Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get empire with ID " << empire_id;
+            return false;
+        }
+        
+        if (!GetSpecies(species)) {
+            Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get species with name: " << species;
+            return false;
+        }
+
+        if (population < 0.0)
+            population = 0.0;
+
+        return planet->Colonize(empire_id, species, population);
+    }
+    
     // Misc. helper functions/wrappers
     //
     // Wrapper function for i18n::RomanNumber
@@ -771,6 +829,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("allEmpires",                       AllEmpires);
     def("invalidObject",                    InvalidObjectID);
     def("minSystemSeparation",              MinSystemSeparation);
+    def("largeMeterValue",                  LargeMeterValue);
 
     def("baseStarTypeDist",                 BaseStarTypeDist);
     def("universeAgeModToStarTypeDist",     UniverseAgeModToStarTypeDist);
@@ -834,8 +893,8 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("planetGetFocus",                   PlanetGetFocus);
     def("planetSetFocus",                   PlanetSetFocus);
     def("planetAvailableFoci",              PlanetAvailableFoci);
-
-    def("createUniverse",                   CreateUniverse);
+    def("planetMakeOutpost",                PlanetMakeOutpost);
+    def("planetMakeColony",                 PlanetMakeColony);
 
     // Enums
     FreeOrionPython::WrapGameStateEnums();
@@ -856,9 +915,6 @@ namespace {
 #endif
     static dict     s_python_namespace = dict();
     static object   s_python_module = object();
-
-    // Object storing the main Python createUniverse function callable
-    static object   PythonCreateUniverse = object();
 
     // Helper function for executing a Python script
     bool PythonExecScript(const std::string script) {
@@ -951,7 +1007,6 @@ namespace {
         try {
             // import universe generator script file
             s_python_module = import("UniverseGenerator");
-            PythonCreateUniverse = s_python_module.attr("createUniverse");
         }
         catch (error_already_set err) {
             Logger().errorStream() << "Unable to import universe generator script";
@@ -967,8 +1022,20 @@ namespace {
         Py_Finalize();
         s_python_namespace = dict();
         s_python_module = object();
-        PythonCreateUniverse = object();
         Logger().debugStream() << "Cleaned up universe generator Python interface";
+    }
+
+    // Wraps call to the main Python universe generator function
+    void PythonCreateUniverse() {
+        object f = s_python_module.attr("createUniverse");
+        if (!f) {
+            Logger().errorStream() << "Unable to call Python function createUniverse ";
+            return;
+        }
+        try { f(); }
+        catch (error_already_set err) {
+            PyErr_Print();
+        }
     }
 }
 
@@ -976,6 +1043,8 @@ namespace {
 void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
                       const std::map<int, PlayerSetupData>& player_setup_data)
 {
+    Universe& universe = GetUniverse();
+
     // Set the global GalaxySetupData reference and PlayerSetupData map
     // to the instances we received
     g_galaxy_setup_data = &galaxy_setup_data;
@@ -990,8 +1059,7 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
             boost::hash<std::string> string_hash;
             std::size_t h = string_hash(g_galaxy_setup_data->m_seed);
             seed = static_cast<unsigned int>(h);
-        } catch (...) {
-        }
+        } catch (...) {}
     }
     Seed(seed);
     Logger().debugStream() << "GenerateUniverse with seed: " << seed;
@@ -1000,18 +1068,51 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     PythonInit();
 
     // Reset the universe object for a new universe
-    GetUniverse().ResetUniverse();
+    universe.ResetUniverse();
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
-    // Call the main Python universe generator script
-    try {
-        PythonCreateUniverse();
+    // Call the main Python universe generator function
+    PythonCreateUniverse();
+
+    // TEMPORARY: Use legacy universe generation funtions for
+    // all the stuff that hasn't been ported to Python yet
+    Logger().debugStream() << "Generating Natives";
+    GenerateNatives(universe, galaxy_setup_data.m_native_freq);
+    Logger().debugStream() << "Generating Space Monsters";
+    GenerateSpaceMonsters(universe, galaxy_setup_data.m_monster_freq);
+    Logger().debugStream() << "Adding Starting Specials";
+    AddStartingSpecials(universe, galaxy_setup_data.m_specials_freq);
+
+    Logger().debugStream() << "Applying first turn effects and updating meters";
+
+    // Apply effects for 1st turn.
+    universe.ApplyAllEffectsAndUpdateMeters();
+    // Set active meters to targets or maxes after first meter effects application
+    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    universe.BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
+
+    Logger().debugStream() << "Re-applying first turn meter effects and updating meters";
+
+    // Re-apply meter effects, so that results depending on meter values can be
+    // re-checked after initial setting of those meter values
+    universe.ApplyMeterEffectsAndUpdateMeters();
+    // Re-set active meters to targets after re-application of effects
+    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    // Set the population of unowned planets to a random fraction of their target values.
+    SetNativePopulationValues(universe.Objects());
+
+    universe.BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
+
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+        Logger().debugStream() << universe.Objects().Dump();
     }
-    catch (error_already_set err) {
-        PyErr_Print();
-    }
+
+    universe.UpdateEmpireObjectVisibilities();
 
     // Stop and clean up Python interpreter
     PythonCleanup();

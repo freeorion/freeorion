@@ -116,6 +116,14 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
 void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
                               double width, double height);
 
+/** Set active meter current values equal to target/max meter current
+ * values.  Useful when creating new object after applying effects. */
+void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
+
+/** Set the population of unowned planets to a random fraction of 
+ * their target values. */
+void SetNativePopulationValues(ObjectMap& object_map);
+    
 /** Adds start-of-game specials to objects. */
 void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq);
 
@@ -147,18 +155,5 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
  * empire id equal to the specified player ids (so that the calling code
  * can know which empire belongs to which player). */
 void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data);
-
-/** Generates systems and planets, assigns homeworlds and populates them
- * with people, industry and bases, and places starting fleets.  Uses
- * predefined galaxy shapes.
- * WILL BE REMOVED!!! Currently kept because the new Python universe
- * generator interface is not yet able to replace this function completely */
-void CreateUniverse(int size,                          Shape shape,
-                    GalaxySetupOption age,             GalaxySetupOption starlane_freq,
-                    GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
-                    GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
-                    const std::vector<SystemPosition>& positions,
-                    const std::map<int, PlayerSetupData>& player_setup_data);
-
 
 #endif // _UniverseGenerator_h_

@@ -8,6 +8,7 @@ from pprint import pprint
 import foUniverseGenerator as fo
 
 
+
 #tuples of consonants and vowels for random name generation
 consonants = ("b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z")
 vowels = ("a", "e", "i", "o", "u")
@@ -220,22 +221,36 @@ def calcPlanetType(star_type, orbit, planet_size):
     return planet_type
 
 # Generate a new planet in specified system and orbit
-def generatePlanet(planet_size, planet_type, system, orbit, number):
-
+def generatePlanet(planet_size, planet_type, system, orbit):
     try:
-        if planet_type == fo.planetType.asteroids:
-            name = fo.userString("PL_ASTEROID_BELT_OF_SYSTEM")
-            name = name.replace("%1%", fo.getName(system))
-        else:
-            name = fo.getName(system) + " " + fo.romanNumber(number)
-        planet = fo.createPlanet(planet_size, planet_type, system, orbit, name)
-
+        planet = fo.createPlanet(planet_size, planet_type, system, orbit, "")
     except:
         planet = fo.invalidObject();
         print "Python generatePlanet: Create planet failed"
         print sys.exc_info()[1]
-
     return planet
+
+# Sets the names of the planets of the specified system
+# planet name is system name + planet number (as roman number)
+# unless it's an asteroid belt, in that case name is system
+# name + "asteroid belt" (localized)
+def namePlanets(system):
+    planet_number = 1
+    # iterate over all planets in the system
+    for planet in fo.sysGetPlanets(system):
+        # use different naming methods for "normal" planets and asteroid belts
+        if fo.planetGetType(planet) == fo.planetType.asteroids:
+            # get localized text from stringtable
+            name = fo.userString("PL_ASTEROID_BELT_OF_SYSTEM")
+            # %1% parameter in the localized string is the system name
+            name = name.replace("%1%", fo.getName(system))
+        else:
+            # set name to system name + planet number as roman number...
+            name = fo.getName(system) + " " + fo.romanNumber(planet_number)
+            # ...and increase planet number
+            planet_number = planet_number + 1
+        # do the actual renaming
+        fo.setName(planet, name)
 
 # Checks if a system is too close to the other home systems
 # Home systems should be at least 200 units (linear distance)
@@ -318,7 +333,7 @@ def generateHomeSystemList(num_home_systems, systems):
         # set to suitable values later
         if len(fo.sysGetPlanets(candidate)) == 0:
             print "Home system #", len(home_systems), "has no planets, adding one"
-            if generatePlanet(random.choice(real_planet_sizes), random.choice(planet_types), candidate, random.randint(0, fo.sysGetNumOrbits(candidate) - 1), 1) == fo.invalidObject():
+            if generatePlanet(random.choice(real_planet_sizes), random.choice(planet_types), candidate, random.randint(0, fo.sysGetNumOrbits(candidate) - 1)) == fo.invalidObject():
                 # generate planet failed, throw an exception
                 raise Exception("Python generateHomeSystemList: couldn't create planet in home system")
 
@@ -478,16 +493,13 @@ def createUniverse():
         system = generateSystem(position)
         systems.append(system)
         star_type = fo.sysGetStarType(system) # needed to determine planet size (and maybe in future also type?)
-        planet_number = 1 # needed to make up the planet named
         for orbit in range(0, fo.sysGetNumOrbits(system)):
             # check for each orbit if a planet shall be created by determining planet size
             planet_size = calcPlanetSize(star_type, orbit)
             if planet_size in planet_sizes:
                 # ok, we want a planet, determine planet type and generate the planet
                 planet_type = calcPlanetType(star_type, orbit, planet_size)
-                if generatePlanet(planet_size, planet_type, system, orbit, planet_number) != fo.invalidObject():
-                    # new planet successfully created, increase planet number
-                    planet_number = planet_number + 1
+                generatePlanet(planet_size, planet_type, system, orbit)
     print len(systems), "systems generated and populated"
 
     # generate Starlanes
@@ -497,7 +509,7 @@ def createUniverse():
     print "Generate list of home systems..."
     home_systems = generateHomeSystemList(total_players, systems)
     print "...systems choosen:", home_systems
-
+    
     # store list of possible empire names in global container
     global empire_names
     print "Load list of empire names..."
@@ -514,11 +526,12 @@ def createUniverse():
         home_system = home_systems.pop()
         setupEmpire(empire, psd.empireName, home_system, psd.startingSpecies, psd.playerName)
 
-    # Let UniverseGenerator::CreateUniverse do the rest that can't been implemented
-    # with Python scripts yet
-    fo.createUniverse(gsd.size,              gsd.shape,           gsd.age,
-                      gsd.starlaneFrequency, gsd.planetDensity,   gsd.specialsFrequency,
-                      gsd.monsterFrequency,  gsd.nativeFrequency, system_positions,
-                      psd_list)
+    # iterate over all systems and name their planets
+    # this needs to be done after empire home systems have been set, as
+    # during that process asteroid belts might be changed into planets,
+    # and we need to know the final type of a planet to name it
+    print "Set planet names"
+    for system in systems:
+        namePlanets(system)
 
     print "Python Universe Generator completed"

@@ -1758,11 +1758,6 @@ namespace {
             Logger().errorStream() << "ColonizePlanet ship has no species";
             return false;
         }
-        const Species* species = GetSpecies(species_name);
-        if (!species) {
-            Logger().errorStream() << "ColonizePlanet couldn't get species with name: " << species_name;
-            return false;
-        }
 
         const ShipDesign* design = ship->Design();
         if (!design) {
@@ -1785,10 +1780,12 @@ namespace {
 
         // all checks passed.  proceed with colonization.
 
-
-        planet->Reset();
-        if (colonist_capacity > 0.0)
-            planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
+        // colonize planet by calling Planet class Colonize member function
+        // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
+        if (!planet->Colonize(empire_id, species_name, colonist_capacity)) {
+            Logger().errorStream() << "ColonizePlanet: couldn't colonize planet";
+            return false;
+        }
 
         TemporaryPtr<System> system = GetSystem(ship->SystemID());
 
@@ -1806,38 +1803,6 @@ namespace {
         if (system)
             system->Remove(ship->ID());
         GetUniverse().RecursiveDestroy(ship->ID());
-
-
-        // find a focus to give planets by default.  use first defined available focus.
-        // the planet's AvailableFoci function should return a vector of all names of
-        // available foci.
-        std::vector<std::string> available_foci = planet->AvailableFoci();
-        if (!available_foci.empty()) {
-            bool found_preference = false;
-            for (std::vector<std::string>::const_iterator it = available_foci.begin();
-                 it != available_foci.end(); ++it)
-            {
-                if (!it->empty() && *it == species->PreferredFocus()) {
-                    planet->SetFocus(*it);
-                    found_preference = true;
-                    break;
-                }
-            }
-
-            if (!found_preference)
-                planet->SetFocus(*available_foci.begin());
-        }
-
-        planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
-        planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);
-        planet->BackPropegateMeters();
-
-        planet->SetOwner(empire_id);
-
-        std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(planet->BuildingIDs());
-        for (std::vector<TemporaryPtr<Building> >::iterator building_it = buildings.begin();
-             building_it != buildings.end(); ++building_it)
-        { (*building_it)->SetOwner(empire_id); }
 
         return true;
     }

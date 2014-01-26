@@ -654,6 +654,68 @@ void Planet::Conquer(int conquerer) {
     SetOwner(conquerer);
 }
 
+bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
+    const Species* species = 0;
+    
+    // if desired pop > 0, we want a colony, not an outpost, so we need to do some checks
+    if (population > 0.0) {
+        // check if specified species exists and get reference
+        species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "Planet::Colonize couldn't get species with name: " << species_name;
+            return false;
+        }
+        // check if specified species can colonize this planet
+        if (population > 0.0 && EnvironmentForSpecies(species_name) < PE_HOSTILE) {
+            Logger().errorStream() << "Planet::Colonize: can't colonize planet with species " << species_name;
+            return false;
+        }
+    }
+    
+    // reset the planet to unowned/unpopulated
+    Reset();
+
+    // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
+    if (population > 0.0)
+        SetSpecies(species_name);
+
+    // find a default focus. use first defined available focus.
+    // AvailableFoci function should return a vector of all names of
+    // available foci.
+    std::vector<std::string> available_foci = AvailableFoci();
+    if (species && !available_foci.empty()) {
+        bool found_preference = false;
+        for (std::vector<std::string>::const_iterator it = available_foci.begin();
+             it != available_foci.end(); ++it)
+        {
+            if (!it->empty() && *it == species->PreferredFocus()) {
+                SetFocus(*it);
+                found_preference = true;
+                break;
+            }
+        }
+        
+        if (!found_preference)
+            SetFocus(*available_foci.begin());
+    }
+
+    // set colony population
+    GetMeter(METER_POPULATION)->SetCurrent(population);
+    GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
+    BackPropegateMeters();
+
+    // set specified empire as owner
+    SetOwner(empire_id);
+
+    // if there are buildings on the planet, set the specified empire as their owner too
+    std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(BuildingIDs());
+    for (std::vector<TemporaryPtr<Building> >::iterator building_it = buildings.begin();
+         building_it != buildings.end(); ++building_it)
+    { (*building_it)->SetOwner(empire_id); }
+
+    return true;
+}
+
 void Planet::SetIsAboutToBeColonized(bool b) {
     bool initial_status = m_is_about_to_be_colonized;
     if (b == initial_status) return;

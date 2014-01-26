@@ -1323,100 +1323,42 @@ namespace {
                 treeSysListsMapIter = treeSysListsMap.begin();
         }
     }
+}
 
-    /** Set active meter current values equal to target/max meter current
-      * values.  Useful when creating new object after applying effects. */
-    void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
-        std::map<MeterType, MeterType> meters;
-        meters[METER_POPULATION] =   METER_TARGET_POPULATION;
-        meters[METER_INDUSTRY] =     METER_TARGET_INDUSTRY;
-        meters[METER_RESEARCH] =     METER_TARGET_RESEARCH;
-        meters[METER_TRADE] =        METER_TARGET_TRADE;
-        meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
-        meters[METER_FUEL] =         METER_MAX_FUEL;
-        meters[METER_SHIELD] =       METER_MAX_SHIELD;
-        meters[METER_STRUCTURE] =    METER_MAX_STRUCTURE;
-        meters[METER_DEFENSE] =      METER_MAX_DEFENSE;
-        meters[METER_TROOPS] =       METER_MAX_TROOPS;
+void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
+    std::map<MeterType, MeterType> meters;
+    meters[METER_POPULATION] =   METER_TARGET_POPULATION;
+    meters[METER_INDUSTRY] =     METER_TARGET_INDUSTRY;
+    meters[METER_RESEARCH] =     METER_TARGET_RESEARCH;
+    meters[METER_TRADE] =        METER_TARGET_TRADE;
+    meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
+    meters[METER_FUEL] =         METER_MAX_FUEL;
+    meters[METER_SHIELD] =       METER_MAX_SHIELD;
+    meters[METER_STRUCTURE] =    METER_MAX_STRUCTURE;
+    meters[METER_DEFENSE] =      METER_MAX_DEFENSE;
+    meters[METER_TROOPS] =       METER_MAX_TROOPS;
 
-        // check for each pair of meter types.  if both exist, set active
-        // meter current value equal to target meter current value.
-        for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
-                if (Meter* meter = it->GetMeter(meter_it->first))
-                    if (Meter* targetmax_meter = it->GetMeter(meter_it->second))
-                        meter->SetCurrent(targetmax_meter->Current());
-        }
-    }
-
-    /** Set the population of unowned planets to a random fraction of 
-     * their target values. */
-    void SetNativePopulationValues(ObjectMap& object_map) {
-
-        for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            Meter* meter = it->GetMeter(METER_POPULATION);
-            Meter* targetmax_meter = it->GetMeter(METER_TARGET_POPULATION);
-            // only applies to unowned planets
-            if (meter && targetmax_meter && it->Unowned()) {
-                double r = RandZeroToOne();
-                double factor = (0.1<r)?r:0.1;
-                meter->SetCurrent(targetmax_meter->Current() * factor);
-            }
-        }
+    // check for each pair of meter types.  if both exist, set active
+    // meter current value equal to target meter current value.
+    for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
+        for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
+            if (Meter* meter = it->GetMeter(meter_it->first))
+                if (Meter* targetmax_meter = it->GetMeter(meter_it->second))
+                    meter->SetCurrent(targetmax_meter->Current());
     }
 }
 
-void CreateUniverse(int size,                          Shape shape,
-                    GalaxySetupOption age,             GalaxySetupOption starlane_freq,
-                    GalaxySetupOption planet_density,  GalaxySetupOption specials_freq,
-                    GalaxySetupOption monster_freq,    GalaxySetupOption native_freq,
-                    const std::vector<SystemPosition>& positions,
-                    const std::map<int, PlayerSetupData>& player_setup_data)
-{
-    Universe& universe = GetUniverse();
-    std::vector<int> homeworld_planet_ids;
-
-    Logger().debugStream() << "CreateUniverse: universe width: " << universe.UniverseWidth();
-
-    Logger().debugStream() << "Generating Fields";
-    GenerateFields(universe, GALAXY_SETUP_MEDIUM);
-    Logger().debugStream() << "Generating Natives";
-    GenerateNatives(universe, native_freq);
-    Logger().debugStream() << "Generating Space Monsters";
-    GenerateSpaceMonsters(universe, monster_freq);
-    Logger().debugStream() << "Adding Starting Specials";
-    AddStartingSpecials(universe, specials_freq);
-
-    Logger().debugStream() << "Applying first turn effects and updating meters";
-
-    // Apply effects for 1st turn.
-    universe.ApplyAllEffectsAndUpdateMeters();
-    Logger().debugStream() << "Finished applying all effects and updating meters.";
-    // Set active meters to targets or maxes after first meter effects application
-    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
-
-    universe.BackPropegateObjectMeters();
-    Empires().BackPropegateMeters();
-
-    Logger().debugStream() << "Re-applying first turn meter effects and updating meters";
-
-    // Re-apply meter effects, so that results depending on meter values can be
-    // re-checked after initial setting of those meter values
-    universe.ApplyMeterEffectsAndUpdateMeters();
-    // Re-set active meters to targets after re-application of effects
-    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
-    // Set the population of unowned planets to a random fraction of their target values.
-    SetNativePopulationValues(universe.Objects());
-
-    universe.BackPropegateObjectMeters();
-    Empires().BackPropegateMeters();
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
-        Logger().debugStream() << universe.Objects().Dump();
+void SetNativePopulationValues(ObjectMap& object_map) {
+    for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
+        Meter* meter = it->GetMeter(METER_POPULATION);
+        Meter* targetmax_meter = it->GetMeter(METER_TARGET_POPULATION);
+        // only applies to unowned planets
+        if (meter && targetmax_meter && it->Unowned()) {
+            double r = RandZeroToOne();
+            double factor = (0.1<r)?r:0.1;
+            meter->SetCurrent(targetmax_meter->Current() * factor);
+        }
     }
-
-    universe.UpdateEmpireObjectVisibilities();
 }
 
 void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
@@ -2030,7 +1972,7 @@ namespace {
 };
 
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
-    // set ownership of home planet
+    // get home planet and system, check if they exist
     TemporaryPtr<Planet> home_planet = GetPlanet(planet_id);
     TemporaryPtr<System> home_system;
     if (home_planet)
@@ -2044,37 +1986,38 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
                            << " (planet " <<  home_planet->ID()
                            << ") to be home system for empire " << empire->EmpireID();
 
-    home_planet->SetOwner(empire->EmpireID());
-    empire->SetCapitalID(home_planet->ID());
-    empire->AddExploredSystem(home_planet->SystemID());
-
-    home_planet->SetSpecies(species_name);
-    if (Species* species = GetSpeciesManager().GetSpecies(species_name)) {
-        species->AddHomeworld(home_planet->ID());
-
-            // set homeword's planet type to the preferred type for this species
-            const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
-            if (!spte.empty()) {
-                // invert map from planet type to environments to map from
-                // environments to type, sorted by environment
-                std::map<PlanetEnvironment, PlanetType> sept;
-                for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
-                    sept[it->second] = it->first;
-                // assuming enum values are ordered in increasing goodness...
-                PlanetType preferred_planet_type = sept.rbegin()->second;
-
-                home_planet->SetType(preferred_planet_type);
-                if (preferred_planet_type == PT_ASTEROIDS)
-                    home_planet->SetSize(SZ_ASTEROIDS);
-                else if (preferred_planet_type == PT_GASGIANT)
-                    home_planet->SetSize(SZ_GASGIANT);
-            }
-
-    } else {
+    // get species, check if it exists
+    Species* species = GetSpeciesManager().GetSpecies(species_name);
+    if (!species) {
         Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
                                << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
+
+    // set homeword's planet type to the preferred type for this species
+    const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
+    if (!spte.empty()) {
+        // invert map from planet type to environments to map from
+        // environments to type, sorted by environment
+        std::map<PlanetEnvironment, PlanetType> sept;
+        for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
+            sept[it->second] = it->first;
+        // assuming enum values are ordered in increasing goodness...
+        PlanetType preferred_planet_type = sept.rbegin()->second;
+
+        home_planet->SetType(preferred_planet_type);
+        if (preferred_planet_type == PT_ASTEROIDS)
+            home_planet->SetSize(SZ_ASTEROIDS);
+        else if (preferred_planet_type == PT_GASGIANT)
+            home_planet->SetSize(SZ_GASGIANT);
+        else
+            home_planet->SetSize(SZ_MEDIUM);
+    }
+
+    home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE);
+    species->AddHomeworld(home_planet->ID());
+    empire->SetCapitalID(home_planet->ID());
+    empire->AddExploredSystem(home_planet->SystemID());
 
     return true;
 }
@@ -2091,14 +2034,14 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
     for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
          setup_data_it != player_setup_data.end(); ++setup_data_it, ++player_i)
     {
-        int         player_id =                 setup_data_it->first;
+        int         player_id =     setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
             Logger().errorStream() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
-        int         empire_id =                 player_id;
-        std::string player_name =               setup_data_it->second.m_player_name;
-        GG::Clr     empire_colour =             setup_data_it->second.m_empire_color;
+        int         empire_id =     player_id;
+        std::string player_name =   setup_data_it->second.m_player_name;
+        GG::Clr     empire_colour = setup_data_it->second.m_empire_color;
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
