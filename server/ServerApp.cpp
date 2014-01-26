@@ -1596,8 +1596,8 @@ namespace {
                      object_it != object_ids.end(); ++object_it)
                 {
                     int object_id = *object_it;
-                    Logger().debugStream() << "Setting knowledge of destroyed object " << object_id
-                                           << " for empire " << empire_id;
+                    //Logger().debugStream() << "Setting knowledge of destroyed object " << object_id
+                    //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
                     // should empire also be informed of potential fleet
@@ -1636,8 +1636,8 @@ namespace {
                      empire_it != empire_ids.end(); ++empire_it)
                 {
                     int empire_id = *empire_it;
-                    Logger().debugStream() << "Setting knowledge of destroyed object " << fleet_id
-                                           << " for empire " << empire_id;
+                    //Logger().debugStream() << "Setting knowledge of destroyed object " << fleet_id
+                    //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(fleet_id, empire_id);
                 }
             }
@@ -1690,13 +1690,12 @@ namespace {
                 for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
                      dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
                 {
-                    Logger().debugStream() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << *dest_obj_it;
-                    if (TemporaryPtr<UniverseObject> obj = GetEmpireKnownObject(*dest_obj_it, empire_id)) {
-                        Logger().debugStream() << "Object known to empire: " << obj->Dump();
-                    }
-                    else {
-                        Logger().debugStream() << "Object not known to empire";
-                    }
+                    //Logger().debugStream() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << *dest_obj_it;
+                    //if (TemporaryPtr<UniverseObject> obj = GetEmpireKnownObject(*dest_obj_it, empire_id)) {
+                    //    Logger().debugStream() << "Object known to empire: " << obj->Dump();
+                    //} else {
+                    //    Logger().debugStream() << "Object not known to empire";
+                    //}
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id,
                                                                              empire_id));
                 }
@@ -1708,30 +1707,30 @@ namespace {
                  object_it != combat_info.damaged_object_ids.end(); ++object_it)
             {
                 int damaged_object_id = *object_it;
-                Logger().debugStream() << "Checking object " << damaged_object_id << " for damaged sitrep";
+                //Logger().debugStream() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
                 if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end()) {
-                    Logger().debugStream() << "Object is destroyed and doesn't need a sitrep.";
+                    //Logger().debugStream() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
                 }
                 // which empires know about this object?
                 for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
                      empire_it != combat_info.empire_known_objects.end(); ++empire_it)
                 {
-                    Logger().debugStream() << "Checking if empire " << empire_it->first << " knows about the object.";
+                    //Logger().debugStream() << "Checking if empire " << empire_it->first << " knows about the object.";
                     // does this empire know about this object?
                     const ObjectMap& objects = empire_it->second;
                     if (!objects.Object(damaged_object_id)) {
-                        Logger().debugStream() << "Nope.";
+                        //Logger().debugStream() << "Nope.";
                         continue;
                     }
-                    Logger().debugStream() << "Yep.";
+                    //Logger().debugStream() << "Yep.";
                     // empire knows about object, so generate a sitrep about it
                     int empire_id = empire_it->first;
                     Empire* empire = Empires().Lookup(empire_id);
                     if (!empire)
                         continue;
-                    Logger().debugStream() << "Creating sitrep.";
+                    //Logger().debugStream() << "Creating sitrep.";
                     empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(damaged_object_id, combat_info.system_id,
                                                                            empire_id));
                 }
