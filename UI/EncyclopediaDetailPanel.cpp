@@ -331,7 +331,7 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     // name
     GG::Pt ul = GG::Pt();
-    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 4));
+    GG::Pt lr = ul + GG::Pt(Width() - 1, GG::Y(NAME_PTS + 4));
     m_name_text->SizeMove(ul, lr);
 
     // cost / turns
@@ -350,7 +350,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     m_description_box->SizeMove(ul, lr);
 
     // graph
-    m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr);
+    m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr - GG::Pt(GG::X1, GG::Y1));
 
     // "back" button
     ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8, Height() - BORDER_BOTTOM*2 - PTS);
