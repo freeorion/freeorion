@@ -54,7 +54,8 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
+    const double    OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
+    const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 
     template <class Key, class Value> struct constant_property
     { Value m_value; };
@@ -644,15 +645,19 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
 }
 
 double Universe::LinearDistance(int system1_id, int system2_id) const {
-    try {
-        int system1_index = m_system_id_to_graph_index.at(system1_id);
-        int system2_index = m_system_id_to_graph_index.at(system2_id);
-        return m_system_distances[system1_index][system2_index];
-    } catch (const std::out_of_range&) {
-        Logger().errorStream() << "Universe::LinearDistance passed invalid system id(s): "
-                               << system1_id << " & " << system2_id;
-        throw;
+    TemporaryPtr<const System> system1 = GetSystem(system1_id);
+    if (!system1) {
+        Logger().errorStream() << "Universe::LinearDistance passed invalid system id: " << system1_id;
+        throw std::out_of_range("system1_id invalid");
     }
+    TemporaryPtr<const System> system2 = GetSystem(system2_id);
+    if (!system2) {
+        Logger().errorStream() << "Universe::LinearDistance passed invalid system id: " << system2_id;
+        throw std::out_of_range("system2_id invalid");
+    }
+    double x_dist = system2->X() - system1->X();
+    double y_dist = system2->Y() - system1->Y();
+    return std::sqrt(x_dist*x_dist + y_dist*y_dist);
 }
 
 short Universe::JumpDistance(int system1_id, int system2_id) const {
@@ -2955,19 +2960,8 @@ void Universe::EffectDestroy(int object_id)
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
 { m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
 
-void Universe::HandleEmpireElimination(int empire_id) {
-    //for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
-    //    // ever meter has a value at the start of the turn, and a value after updating with known effects
-    //    for (std::map<MeterType, std::vector<Effect::AccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
-    //        for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
-    //            if (meter_type_it->second[i].caused_by_empire_id == empire_id)
-    //                meter_type_it->second.erase(meter_type_it->second.begin() + i);
-    //            else
-    //                ++i;
-    //        }
-    //    }
-    //}
-}
+void Universe::HandleEmpireElimination(int empire_id)
+{}
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
@@ -2977,7 +2971,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         boost::remove_vertex(i, m_graph_impl->system_graph);
     }
 
-    std::vector<int> system_ids = ::Objects().FindObjectIDs<System>();
+    std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     //Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
     //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
     //    Logger().debugStream() << " ... " << *it;
@@ -2988,8 +2982,10 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     GraphImpl::EdgeWeightPropertyMap edge_weight_map =
         boost::get(boost::edge_weight, m_graph_impl->system_graph);
 
-    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_graph_impl->system_graph of system's vertex
+    std::map<int, int> system_id_graph_index_reverse_lookup_map;        // key is system ID, value is index in m_graph_impl->system_graph of system's vertex
 
+
+    // add vertices to graph for all systems
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
         boost::add_vertex(m_graph_impl->system_graph);
@@ -2999,7 +2995,8 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         system_id_graph_index_reverse_lookup_map[system_id] = i;
     }
 
-    m_system_distances.resize(system_ids.size(), system_ids.size());
+
+    // add edges for all starlanes
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
         TemporaryPtr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
@@ -3027,28 +3024,14 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
             std::pair<EdgeDescriptor, bool> add_edge_result =
                 boost::add_edge(i, lane_dest_graph_index, m_graph_impl->system_graph);
 
-            if (add_edge_result.second) {                   // if this is a non-duplicate starlane or wormhole
-                if (it->second) {                               // if this is a wormhole
-                    edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
-                } else {                                        // if this is a starlane
-                    TemporaryPtr<const UniverseObject> system2 = GetUniverseObject(it->first);
-                    double x_dist = system2->X() - system1->X();
-                    double y_dist = system2->Y() - system1->Y();
-                    edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
-                    //std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
+            if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
+                if (it->second) {               // if this is a wormhole
+                    edge_weight_map[add_edge_result.first] = WORMHOLE_TRAVEL_DISTANCE;
+                } else {                        // if this is a starlane
+                    edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
                 }
             }
         }
-
-        // define the straight-line system distances for this system
-        for (int j = 0; j < i; ++j) {
-            int system2_id = system_ids[j];
-            TemporaryPtr<const UniverseObject> system2 = GetUniverseObject(system2_id);
-            double x_dist = system2->X() - system1->X();
-            double y_dist = system2->Y() - system1->Y();
-            m_system_distances[i][j] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
-        }
-        m_system_distances[i][i] = 0.0;
     }
 
     m_system_jumps.resize(system_ids.size(), system_ids.size());

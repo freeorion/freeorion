@@ -312,10 +312,9 @@ public:
       * be seen by the empire, updates the latest known state to note this. */
     void            UpdateEmpireStaleObjectKnowledge();
 
-    /** Resizes the system graph to the appropriate size and populates
-      * m_system_distances.  Uses the Universe latest known set of objects for
-      * the empire with id \a for_empire_id or uses the main / true / visible
-      * objects if \a for_empire_id is ALL_EMPIRES*/
+    /** Fills pathfinding data structure and determines least jumps distances
+      * between systems for the empire with id \a for_empire_id or uses the
+      * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
     void            InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
 
     /** Regenerates per-empire system view graphs by filtering the complete
@@ -458,7 +457,7 @@ private:
         { return row_ref(i, m_m); }
 
         void resize(std::size_t rows, std::size_t columns)
-        { m_m.resize(rows, columns); }
+        { m_m.resize(rows, columns, false); }   // does not preserve contents
 
     private:
         storage_type m_m;
@@ -476,7 +475,6 @@ private:
     template <class T>
     TemporaryPtr<T>            InsertID(T* obj, int id);
 
-    typedef distance_matrix<double> DistanceMatrix;
     typedef distance_matrix<short> JumpsMatrix;
 
     struct GraphImpl;
@@ -525,8 +523,7 @@ private:
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
-    DistanceMatrix                  m_system_distances;                 ///< the straight-line distances between all the systems
-    JumpsMatrix                     m_system_jumps;                     ///< the least-jumps distances between all the systems
+    JumpsMatrix                     m_system_jumps;                     ///< indexed by system graph index (not system id), the smallest number of jumps to travel between all the systems
     GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
     boost::unordered_map<int, int>  m_system_id_to_graph_index;
 
