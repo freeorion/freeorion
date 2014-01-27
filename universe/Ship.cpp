@@ -566,7 +566,6 @@ std::string NewMonsterName() {
         // load monster names from stringtable
         std::list<std::string> monster_names_list;
         UserStringList("MONSTER_NAMES", monster_names_list);
-        UserStringList("SHIP_AND_MONSTER_NAMES", monster_names_list);
 
         monster_names.reserve(monster_names_list.size());
         std::copy(monster_names_list.begin(), monster_names_list.end(), std::back_inserter(monster_names));

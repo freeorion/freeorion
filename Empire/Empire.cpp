@@ -2480,7 +2480,6 @@ std::string Empire::NewShipName() {
         // load potential names from stringtable
         std::list<std::string> ship_names_list;
         UserStringList("SHIP_NAMES", ship_names_list);
-        UserStringList("SHIP_AND_MONSTER_NAMES", ship_names_list);
 
         ship_names.reserve(ship_names_list.size());
         std::copy(ship_names_list.begin(), ship_names_list.end(), std::back_inserter(ship_names));
