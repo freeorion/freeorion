@@ -136,6 +136,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-std::string NewMonsterName();
+FO_COMMON_API std::string NewMonsterName();
 
 #endif // _Ship_h_
