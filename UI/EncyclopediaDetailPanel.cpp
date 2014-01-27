@@ -652,7 +652,10 @@ void EncyclopediaDetailPanel::Refresh() {
     m_name_text->Clear();
     m_summary_text->Clear();
     m_cost_text->Clear();
+
+    GG::Pt initial_scroll_pos = m_description_box->ScrollPosition();
     m_description_box->Clear();
+
     DetachChild(m_graph);
 
     const Encyclopedia& encyclopedia = GetEncyclopedia();
@@ -1597,6 +1600,8 @@ void EncyclopediaDetailPanel::Refresh() {
         m_description_box->SetText(detailed_description);
 
     DoLayout();
+
+    m_description_box->SetScrollPosition(initial_scroll_pos);
 }
 
 void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name) {
@@ -1626,6 +1631,7 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
         m_next_button->Disable(true);
 
     Refresh();
+    m_description_box->SetScrollPosition(GG::Pt(GG::X0, GG::Y0));   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::PopItem() {
@@ -1634,12 +1640,15 @@ void EncyclopediaDetailPanel::PopItem() {
         if (m_items_it == m_items.end() && m_items_it != m_items.begin())
             m_items_it--;
         Refresh();
+        m_description_box->SetScrollPosition(GG::Pt(GG::X0, GG::Y0));   // revert to top for new screen
     }
 }
 
 void EncyclopediaDetailPanel::ClearItems() {
     m_items.clear();
     m_items_it = m_items.end();
+    Refresh();
+    m_description_box->SetScrollPosition(GG::Pt(GG::X0, GG::Y0));   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable) {
@@ -1841,6 +1850,7 @@ void EncyclopediaDetailPanel::OnBack() {
         m_next_button->Disable(false);
 
     Refresh();
+    m_description_box->SetScrollPosition(GG::Pt(GG::X0, GG::Y0));   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::OnNext() {
@@ -1855,6 +1865,7 @@ void EncyclopediaDetailPanel::OnNext() {
         m_back_button->Disable(false);
 
     Refresh();
+    m_description_box->SetScrollPosition(GG::Pt(GG::X0, GG::Y0));   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::CloseClicked()
