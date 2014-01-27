@@ -628,6 +628,9 @@ void InvadeOrder::ExecuteImpl() const {
                            << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 }
 
 bool InvadeOrder::UndoImpl() const {
@@ -649,6 +652,9 @@ bool InvadeOrder::UndoImpl() const {
 
     planet->SetIsAboutToBeInvaded(false);
     ship->ClearInvadePlanet();
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 
     return true;
 }
@@ -720,6 +726,9 @@ void BombardOrder::ExecuteImpl() const {
                            << ship->Name() << " to bombard planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(m_planet);
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 }
 
 bool BombardOrder::UndoImpl() const {
@@ -741,6 +750,9 @@ bool BombardOrder::UndoImpl() const {
 
     planet->SetIsAboutToBeBombarded(false);
     ship->ClearBombardPlanet();
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 
     return true;
 }
