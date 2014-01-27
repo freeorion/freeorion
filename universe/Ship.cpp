@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/Random.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
@@ -318,7 +319,8 @@ const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the
     // ship's name is "Scout"
-    if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
+    // An exception is made for unowned monsters.
+    if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id) || (IsMonster() && Owner() == ALL_EMPIRES))
         return Name();
     const ShipDesign* design = Design();
     if (design)
@@ -552,4 +554,31 @@ void Ship::ClampMeters() {
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ClampCurrentToRange();
+}
+
+  ////////////////////
+ // Free Functions //
+////////////////////
+std::string NewMonsterName() {
+    static std::vector<std::string> monster_names;
+    static std::map<std::string, int> monster_names_used;
+    if (monster_names.empty()) {
+        // load monster names from stringtable
+        std::list<std::string> monster_names_list;
+        UserStringList("MONSTER_NAMES", monster_names_list);
+        UserStringList("SHIP_AND_MONSTER_NAMES", monster_names_list);
+
+        monster_names.reserve(monster_names_list.size());
+        std::copy(monster_names_list.begin(), monster_names_list.end(), std::back_inserter(monster_names));
+        if (monster_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
+            monster_names.push_back(UserString("MONSTER"));
+    }
+
+    // select name randomly from list
+    int monster_name_index = RandSmallInt(0, static_cast<int>(monster_names.size()) - 1);
+    std::string result = monster_names[monster_name_index];
+    if (monster_names_used[result]++) {
+        result += " " + RomanNumber(monster_names_used[result]);
+    }
+    return result;
 }

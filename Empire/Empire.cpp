@@ -2480,6 +2480,8 @@ std::string Empire::NewShipName() {
         // load potential names from stringtable
         std::list<std::string> ship_names_list;
         UserStringList("SHIP_NAMES", ship_names_list);
+        UserStringList("SHIP_AND_MONSTER_NAMES", ship_names_list);
+
         ship_names.reserve(ship_names_list.size());
         std::copy(ship_names_list.begin(), ship_names_list.end(), std::back_inserter(ship_names));
         if (ship_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
@@ -2487,8 +2489,8 @@ std::string Empire::NewShipName() {
     }
 
     // select name randomly from list
-    int star_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);
-    std::string retval = ship_names[star_name_idx];
+    int ship_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);
+    std::string retval = ship_names[ship_name_idx];
     int times_name_used = ++m_ship_names_used[retval];
     if (1 < times_name_used)
         retval += " " + RomanNumber(times_name_used);

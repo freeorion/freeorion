@@ -1629,7 +1629,7 @@ void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq) {
                             TemporaryPtr<Ship> ship = universe.CreateShip(ALL_EMPIRES, design_id, "", ALL_EMPIRES);
                             system->Insert(ship);
 
-                            ship->Rename(UserString(*monster_it));
+                            ship->Rename(NewMonsterName());
 
                             fleet->AddShip(ship->ID());
                             ship->SetFleetID(fleet->ID());

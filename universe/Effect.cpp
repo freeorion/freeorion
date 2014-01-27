@@ -1466,7 +1466,13 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     TemporaryPtr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
-    ship->Rename(empire ? empire->NewShipName() : ship->Design()->Name());
+    if (ship->IsMonster()) {
+        ship->Rename(NewMonsterName());
+    } else if (empire) {
+        ship->Rename(empire->NewShipName());
+    } else {
+        ship->Rename(ship->Design()->Name());
+    }
 
     ship->ResetTargetMaxUnpairedMeters();
     ship->ResetPairedActiveMeters();
