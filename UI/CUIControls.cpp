@@ -791,9 +791,19 @@ void CUILinkTextMultiEdit::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (Style() & GG::MULTI_INTEGRAL_HEIGHT)
         lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
     bool resized = lower_right - ul != Size();
+
+    // need to restore scroll position after SetText call below, so that
+    // resizing this control doesn't reset the scroll position to the top.
+    // just calling PreserveTextPositionOnNextSetText() before the SetText
+    // call doesn't work as that leaves the scrollbars unadjusted for the resize
+    GG::Pt initial_scroll_pos = ScrollPosition();
+
     GG::Edit::SizeMove(ul, lower_right);
-    if (resized)
-        SetText(RawText());
+
+    if (resized) {
+        SetText(RawText());                     // this line is the primary difference between this and MultiEdit::SizeMove
+        SetScrollPosition(initial_scroll_pos);  // restores scroll position
+    }
 }
 
 void CUILinkTextMultiEdit::SetText(const std::string& str) {

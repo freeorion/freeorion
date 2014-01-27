@@ -315,7 +315,7 @@ public:
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);   // needed primarily so the SetText call will take a RawText
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type
