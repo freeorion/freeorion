@@ -492,20 +492,6 @@ private:
     void    GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                                  const std::vector<int>& target_objects);
 
-    /** Used by GetEffectsAndTargets to process a vector of effects groups.
-      * Stores target set of specified \a effects_groups and \a source_object_id
-      * in \a targets_causes
-      * NOTE: this method will modify target_objects temporarily, but restore
-      * its contents before returning. */
-    void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                                 TemporaryPtr<const UniverseObject> source,
-                                                 EffectsCauseType effect_cause_type,
-                                                 const std::string& specific_cause_name,
-                                                 Effect::TargetSet& target_objects,
-                                                 Effect::TargetsCauses& targets_causes,
-                                                 std::map<const Condition::ConditionBase*, Effect::TargetSet>& source_cached_condition_matches,
-                                                 std::map<const Condition::ConditionBase*, Effect::TargetSet>& invariant_cached_condition_matches);
-
     /** Executes all effects.  For use on server when processing turns.
       * If \a only_meter_effects is true, then only SetMeter effects are
       * executed.  This is useful on server or clients to update meter
