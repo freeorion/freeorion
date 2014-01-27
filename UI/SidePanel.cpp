@@ -996,10 +996,12 @@ void SidePanel::PlanetPanel::DoLayout() {
     if (m_colonize_button && m_colonize_button->Parent() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
         y += m_colonize_button->Height() + EDGE_PAD;
-    } else if (m_invade_button && m_invade_button->Parent() == this) {
+    }
+    if (m_invade_button && m_invade_button->Parent() == this) {
         m_invade_button->MoveTo(GG::Pt(left, y));
         y += m_invade_button->Height() + EDGE_PAD;
-    } else if (m_bombard_button && m_bombard_button->Parent() == this) {
+    }
+    if (m_bombard_button && m_bombard_button->Parent() == this) {
         m_bombard_button->MoveTo(GG::Pt(left, y));
         y += m_bombard_button->Height() + EDGE_PAD;
     }
