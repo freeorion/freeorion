@@ -518,6 +518,9 @@ void ColonizeOrder::ExecuteImpl() const {
 
     planet->SetIsAboutToBeColonized(true);
     ship->SetColonizePlanet(m_planet);
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 }
 
 bool ColonizeOrder::UndoImpl() const {
@@ -543,6 +546,9 @@ bool ColonizeOrder::UndoImpl() const {
 
     planet->SetIsAboutToBeColonized(false);
     ship->ClearColonizePlanet();
+
+    if (TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID()))
+        fleet->StateChangedSignal();
 
     return true;
 }
