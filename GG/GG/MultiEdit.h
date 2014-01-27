@@ -81,6 +81,9 @@ public:
         keeps. This number includes the lines that are visible in the control.
         A value of ALL_LINES indicates that there is no limit. */
     std::size_t MaxLinesOfHistory() const;
+
+    /** Returns the positions of the scrollbars. */
+    Pt ScrollPosition() const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -97,6 +100,9 @@ public:
     /** Sets the maximum number of rows of text that the control will keep.
         ALL_LINES indicates no limit. */
     void           SetMaxLinesOfHistory(std::size_t max);
+
+    /** Sets scroll position, bound by valid range of scrolls of this MultiEdit. */
+    void           SetScrollPosition(Pt pt);
     //@}
 
     /** A sentinel value that indicates that there is no limit on the number
@@ -132,9 +138,6 @@ protected:
         falls outside the text, or if \a idx refers to a non-visible
         character. */
     std::pair<std::size_t, CPSize> CharAt(CPSize idx) const;
-
-    /** Returns the positions of the scrollbars. */
-    Pt ScrollPosition() const;
 
     /** Returns the code point index of the start of the UTF-8 sequence for
         the code point at \a <i>char_idx</i> in row \a row, using \a line_data

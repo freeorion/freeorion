@@ -250,9 +250,19 @@ void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
     if (m_style & MULTI_INTEGRAL_HEIGHT)
         lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
     bool resized = lower_right - ul != Size();
+
+    // need to restore scroll position after SetText call below, so that
+    // resizing this control doesn't reset the scroll position to the top.
+    // just calling PreserveTextPositionOnNextSetText() before the SetText
+    // call doesn't work as that leaves the scrollbars unadjusted for the resize
+    GG::Pt initial_scroll_pos = ScrollPosition();
+
     Edit::SizeMove(ul, lower_right);
-    if (resized)
-        SetText(Text());
+
+    if (resized) {
+        SetText(Text());                        // resets scroll position to (0, 0)
+        SetScrollPosition(initial_scroll_pos);  // restores scroll position
+    }
 }
 
 void MultiEdit::SelectAll()
@@ -370,6 +380,34 @@ void MultiEdit::SetMaxLinesOfHistory(std::size_t max)
     SetText(Text());
 }
 
+void MultiEdit::SetScrollPosition(Pt pt)
+{
+    if (m_hscroll) {
+        std::pair<int, int> range = m_hscroll->ScrollRange();
+        if (pt.x < range.first)
+            pt.x = GG::X(range.first);
+        if (pt.x > range.second)
+            pt.x = GG::X(range.second);
+        std::pair<int, int> posn_range = m_hscroll->PosnRange();
+        if (pt.x != posn_range.first) {
+            m_hscroll->ScrollTo(Value(pt.x));
+            SignalScroll(*m_hscroll, true);
+        }
+    }
+    if (m_vscroll) {
+        std::pair<int, int> range = m_vscroll->ScrollRange();
+        if (pt.y < range.first)
+            pt.y = GG::Y(range.first);
+        if (pt.y > range.second)
+            pt.y = GG::Y(range.second);
+        std::pair<int, int> posn_range = m_vscroll->PosnRange();
+        if (pt.y != posn_range.first) {
+            m_vscroll->ScrollTo(Value(pt.y));
+            SignalScroll(*m_vscroll, true);
+        }
+    }
+}
+
 bool MultiEdit::MultiSelected() const
 { return m_cursor_begin != m_cursor_end; }
 
@@ -403,7 +441,14 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 }
 
 Pt MultiEdit::ScrollPosition() const
-{ return Pt(m_first_col_shown, m_first_row_shown); }
+{
+    Pt retval(GG::X0, GG::Y0);
+    if (m_hscroll)
+        retval.x = GG::X(m_hscroll->PosnRange().first);
+    if (m_vscroll)
+        retval.y = GG::Y(m_vscroll->PosnRange().first);
+    return retval;
+}
 
 CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>* line_data) const
 {
