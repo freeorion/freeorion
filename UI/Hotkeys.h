@@ -111,11 +111,10 @@ public:
     /// main(), or something like that.
     static void AddOptions(OptionsDB& db);
 
-
     /// Parses the configuration back.
     static void ReadFromOptions(OptionsDB & db);
 
-    /// Pretty print, ie transform into somethin that may look
+    /// Pretty print, ie transform into something that may look
     /// reasonably nice for the user, but won't be parseable anymore.
     static std::string PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod);
 
@@ -190,7 +189,7 @@ public:
     };
 };
 
-template<class W> 
+template<class W>
 class FocusWindowIsA : public HotkeyCondition {
 public:
     FocusWindowIsA() { ;};
@@ -259,7 +258,7 @@ class HotkeyManager {
     Connections m_connections;
 
     /// Add the given conditional connection.
-    void AddConditionalConnection(const std::string & name, 
+    void AddConditionalConnection(const std::string & name,
                                   const boost::signals::connection & conn,
                                   HotkeyCondition * cond);
 
@@ -299,7 +298,7 @@ public:
     /// Connects a named shortcut to the target slot in the target
     /// instance.
     template<class T, class R> 
-    void Connect(T * instance, R (T::*member)(), const std::string & name, 
+    void Connect(T * instance, R (T::*member)(), const std::string & name,
                  HotkeyCondition * cond = NULL) {
         AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond);
     };
