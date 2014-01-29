@@ -52,21 +52,32 @@ namespace {
 ////////////////////////////////////////////////
 // GG::MenuItem
 ////////////////////////////////////////////////
-MenuItem::MenuItem() : 
+MenuItem::MenuItem() :
     SelectedIDSignal(new SelectedIDSignalType()),
     SelectedSignal(new SelectedSignalType()),
-    item_ID(0), 
-    disabled(false), 
-    checked(false)
+    item_ID(0),
+    disabled(false),
+    checked(false),
+    separator(false)
 {}
 
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check) : 
+MenuItem::MenuItem(bool separator) :
+    SelectedIDSignal(),
+    SelectedSignal(),
+    item_ID(0),
+    disabled(true),
+    checked(false),
+    separator(true)
+{}
+
+MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check) :
     SelectedIDSignal(new SelectedIDSignalType()),
     SelectedSignal(new SelectedSignalType()),
-    label(str), 
-    item_ID(id), 
-    disabled(disable), 
-    checked(check)
+    label(str),
+    item_ID(id),
+    disabled(disable),
+    checked(check),
+    separator(false)
 {
     if (INSTRUMENT_ALL_SIGNALS) {
         Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
@@ -74,13 +85,14 @@ MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check) :
     }
 }
 
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedIDSlotType& slot) : 
+MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedIDSlotType& slot) :
     SelectedIDSignal(new SelectedIDSignalType()),
     SelectedSignal(new SelectedSignalType()),
-    label(str), 
-    item_ID(id), 
-    disabled(disable), 
-    checked(check)
+    label(str),
+    item_ID(id),
+    disabled(disable),
+    checked(check),
+    separator(false)
 {
     SelectedIDSignal->connect(slot);
 
@@ -90,13 +102,14 @@ MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, con
     }
 }
 
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedSlotType& slot) : 
+MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedSlotType& slot) :
     SelectedIDSignal(new SelectedIDSignalType()),
     SelectedSignal(new SelectedSignalType()),
-    label(str), 
-    item_ID(id), 
-    disabled(disable), 
-    checked(check)
+    label(str),
+    item_ID(id),
+    disabled(disable),
+    checked(check),
+    separator(false)
 {
     SelectedSignal->connect(slot);
 
@@ -480,7 +493,7 @@ void PopupMenu::Render()
             m_open_levels[i] = r;
 
             // paint caret, if any
-            if (m_caret[i] != INVALID_CARET) {
+            if (m_caret[i] != INVALID_CARET && !menu.next_level[m_caret[i]].separator) {
                 Rect tmp_r = r;
                 tmp_r.ul.y += static_cast<int>(m_caret[i]) * m_font->Lineskip();
                 tmp_r.lr.y = tmp_r.ul.y + m_font->Lineskip() + 3;
@@ -498,22 +511,43 @@ void PopupMenu::Render()
             line_rect.ul.x += HORIZONTAL_MARGIN;
             line_rect.lr.x -= HORIZONTAL_MARGIN;
             for (std::size_t j = 0; j < menu.next_level.size(); ++j) {
-                Clr clr = (m_caret[i] == j) ?
-                          (menu.next_level[j].disabled ? DisabledColor(m_sel_text_color) : m_sel_text_color) :
-                                  (menu.next_level[j].disabled ? DisabledColor(m_text_color) : m_text_color);
+                Clr clr =   (m_caret[i] == j)
+                                ? (menu.next_level[j].disabled
+                                    ? DisabledColor(m_sel_text_color)
+                                    : m_sel_text_color)
+                                : (menu.next_level[j].disabled
+                                    ? DisabledColor(m_text_color)
+                                    : m_text_color);
                 glColor3ub(clr.r, clr.g, clr.b);
-                m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt);
+
+                if (!menu.next_level[j].separator) {
+                    m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt);
+                } else {
+                    glDisable(GL_TEXTURE_2D);
+                    glBegin(GL_LINE);
+                    glVertex(line_rect.ul.x + HORIZONTAL_MARGIN,
+                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0));
+                    glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0));
+                    glEnd();
+                    glEnable(GL_TEXTURE_2D);
+                }
+
                 if (menu.next_level[j].checked) {
                     FlatCheck(Pt(line_rect.lr.x - CHECK_WIDTH - HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_VERTICAL_MARGIN),
                               Pt(line_rect.lr.x - HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_VERTICAL_MARGIN + CHECK_HEIGHT),
                               clr);
                 }
-                if (menu.next_level[j].next_level.size()) {
+                // submenu indicator arrow
+                if (menu.next_level[j].next_level.size() > 0u) {
                     glDisable(GL_TEXTURE_2D);
                     glBegin(GL_TRIANGLES);
-                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_VERTICAL_MARGIN);
-                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN, line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN);
-                    glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,                                 line_rect.ul.y + m_font->Lineskip() / 2.0);
+                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + INDICATOR_VERTICAL_MARGIN);
+                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN);
+                    glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + m_font->Lineskip() / 2.0);
                     glEnd();
                     glEnable(GL_TEXTURE_2D);
                 }
@@ -532,12 +566,14 @@ void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
                 menu_ptr = &menu_ptr->next_level[m_caret[i]];
             }
         }
-        if (!menu_ptr->disabled) {
+        if (!menu_ptr->disabled && !menu_ptr->separator) {
             m_item_selected = menu_ptr;
+            m_done = true;
         }
+    } else {
+        m_done = true;
     }
     BrowsedSignal(0);
-    m_done = true;
 }
 
 void PopupMenu::LClick(const Pt& pt, Flags<ModKey> mod_keys)

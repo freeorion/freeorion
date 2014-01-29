@@ -61,7 +61,8 @@ struct GG_API MenuItem
 
     /** \name Structors */ ///@{
     MenuItem(); ///< default ctor
-    MenuItem(const std::string& str, int id, bool disable, bool check); ///< ctor
+    MenuItem(const std::string& str, int id, bool disable, bool check);
+    explicit MenuItem(bool separator);
 
     /** Ctor that allows direct attachment of this item's signal to a "slot"
         function or functor */
@@ -93,6 +94,7 @@ struct GG_API MenuItem
     int                   item_ID;    ///< ID number associated with this menu item
     bool                  disabled;   ///< set to true when this menu item is disabled
     bool                  checked;    ///< set to true when this menu item can be toggled, and is currently on
+    bool                  separator;  ///< set to true to render this menu item as a separator bar, rather than showing its text
     std::vector<MenuItem> next_level; ///< submenu off of this menu item; may be emtpy
 };
 
