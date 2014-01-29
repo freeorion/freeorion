@@ -3117,14 +3117,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && fleet->OwnedBy(client_empire_id))
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),        7, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true));
     }
     else if (system
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true));
     }
 
     // Merge fleets
@@ -3134,7 +3134,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"),   10, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true));
     }
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
@@ -3171,7 +3171,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             4, false, false));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_SHIPS_ALL_DESIGNS"), 9, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true));
     }
 
     // Rename fleet
@@ -3179,7 +3179,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         || ClientPlayerIsModerator())
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem("-", -3, true, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true));
     }
 
     bool post_scrap_bar = false;
@@ -3208,7 +3208,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         && !ClientPlayerIsModerator())
     {
         if (post_scrap_bar)
-            menu_contents.next_level.push_back(GG::MenuItem("-", -1, true, false));
+            menu_contents.next_level.push_back(GG::MenuItem(true));
 
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), -1, false, false);
         for (EmpireManager::const_iterator it = Empires().begin();
