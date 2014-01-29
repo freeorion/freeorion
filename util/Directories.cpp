@@ -123,7 +123,7 @@ const fs::path GetPythonHome() {
     return s_python_home;
 }
 
-#elif defined(FREEORION_LINUX)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
 #include "binreloc.h"
 #include <unistd.h>
 
@@ -293,7 +293,7 @@ void InitBinDir(const std::string& argv0) {
 }
 
 #else
-#  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
+#  error Neither FREEORION_LINUX, FREEORION_FREEBSD nor FREEORION_WIN32 set
 #endif
 
 const fs::path GetResourceDir() {
