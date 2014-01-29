@@ -493,7 +493,10 @@ void PopupMenu::Render()
             m_open_levels[i] = r;
 
             // paint caret, if any
-            if (m_caret[i] != INVALID_CARET && !menu.next_level[m_caret[i]].separator) {
+            if (m_caret[i] != INVALID_CARET &&
+                !menu.next_level[m_caret[i]].separator &&
+                !menu.next_level[m_caret[i]].disabled)
+            {
                 Rect tmp_r = r;
                 tmp_r.ul.y += static_cast<int>(m_caret[i]) * m_font->Lineskip();
                 tmp_r.lr.y = tmp_r.ul.y + m_font->Lineskip() + 3;
@@ -522,13 +525,14 @@ void PopupMenu::Render()
 
                 if (!menu.next_level[j].separator) {
                     m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt);
+
                 } else {
                     glDisable(GL_TEXTURE_2D);
-                    glBegin(GL_LINE);
+                    glBegin(GL_LINES);
                     glVertex(line_rect.ul.x + HORIZONTAL_MARGIN,
-                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0));
+                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0) + INDICATOR_VERTICAL_MARGIN);
                     glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,
-                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0));
+                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0) + INDICATOR_VERTICAL_MARGIN);
                     glEnd();
                     glEnable(GL_TEXTURE_2D);
                 }
@@ -538,6 +542,7 @@ void PopupMenu::Render()
                               Pt(line_rect.lr.x - HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_VERTICAL_MARGIN + CHECK_HEIGHT),
                               clr);
                 }
+
                 // submenu indicator arrow
                 if (menu.next_level[j].next_level.size() > 0u) {
                     glDisable(GL_TEXTURE_2D);
