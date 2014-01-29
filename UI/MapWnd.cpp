@@ -5142,17 +5142,22 @@ void MapWnd::HideAllPopups() {
     }
 }
 
-void MapWnd::SetFleetExploring(const int fleet_id){
+void MapWnd::SetFleetExploring(const int fleet_id) {
     std::set<int>::iterator it = std::find(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
-    if(it == m_fleets_exploring.end()){ //this fleet is not currently exploring
+    if (it == m_fleets_exploring.end()){ //this fleet is not currently exploring
         m_fleets_exploring.insert(fleet_id);
         DispatchFleetsExploring();
     }
 }
 
-void MapWnd::StopFleetExploring(const int fleet_id){
+void MapWnd::StopFleetExploring(const int fleet_id) {
     m_fleets_exploring.erase(fleet_id);
     DispatchFleetsExploring();
+    // force UI update. Removing a fleet from the UI's list of exploring fleets
+    // doesn't actually change the Fleet object's state in any way, so the UI
+    // would otherwise still show the fleet as "exploring"
+    if (TemporaryPtr<Fleet> fleet = GetFleet(fleet_id))
+        fleet->StateChangedSignal();
 }
 
 bool MapWnd::IsFleetExploring(const int fleet_id){
