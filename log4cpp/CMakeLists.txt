@@ -29,7 +29,7 @@ endif ()
 
 add_library(log4cpp STATIC ${log4cpp_SOURCES})
 
-if (CMAKE_COMPILER_IS_GNUCXX)
+if (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set_target_properties(log4cpp
         PROPERTIES
         COMPILE_FLAGS "-fPIC"
