@@ -265,7 +265,7 @@ namespace {
         std::vector<std::vector<int> > ship_id_groups;
         ship_id_groups.push_back(ship_ids);
 
-        CreateNewFleetsForShips(ship_id_groups);
+        CreateNewFleetsForShips(ship_id_groups, aggressive);
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
