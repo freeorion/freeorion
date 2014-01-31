@@ -945,9 +945,13 @@ void ShipDataPanel::DoLayout() {
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
     if (m_ship_name_text)
         m_ship_name_text->SizeMove(name_ul, name_lr);
-
     if (m_design_name_text)
         m_design_name_text->SizeMove(name_ul, name_lr);
+
+    if (ClientWidth() < 250)
+        DetachChild(m_ship_name_text);
+    else
+        AttachChild(m_ship_name_text);
 
     // position ship statistic icons one after another horizontally and centered vertically
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
@@ -1559,8 +1563,15 @@ void FleetDataPanel::DoLayout() {
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD - GG::X(Value(LabelHeight())),    LabelHeight());
-    m_fleet_name_text->SizeMove(name_ul, name_lr);
-    m_fleet_destination_text->SizeMove(name_ul, name_lr);
+    if (m_fleet_name_text)
+        m_fleet_name_text->SizeMove(name_ul, name_lr);
+    if (m_fleet_name_text)
+        m_fleet_destination_text->SizeMove(name_ul, name_lr);
+
+    if (ClientWidth() < 250)
+        DetachChild(m_fleet_name_text);
+    else
+        AttachChild(m_fleet_name_text);
 
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
