@@ -80,19 +80,11 @@ def getStarName():
         name = ""
         while len(name) == 0:
             name = star_names.pop()
-    except:
-        print sys.exc_info()[1]
-        # in case of an error set name to empty string
-        name = ""
-
-    # check if we got a valid name...
-    if len(name) == 0:
-        # ...no (either the global list is exhausted, or an error occured)
-        # in this case generate a random name instead
+    except IndexError:
+        # global list is exhausted, generate a random name instead
         for i in range(0, 3):
             name = name + random.choice(consonants + vowels).upper()
         name = name + "-" + str(random.randint(1000, 9999))
-
     return name
 
 # Returns a random empire name
