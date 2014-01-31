@@ -579,8 +579,7 @@ public:
 private:
     void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
-    void            PlanetLeftClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
-    void            DoPanelsLayout(GG::Y top);          //!< repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
+    void            PlanetLeftClicked(int planet_id);   //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
     void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
     void            DoLayout();
 
@@ -1819,9 +1818,36 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet)
         return;
+
+    TemporaryPtr<const System> system = GetSystem(planet->SystemID());    // may be null
+
+    // determine which other empires are at peace with client empire and have
+    // an owned object in this fleet's system
+    std::set<int> peaceful_empires_in_system;
+    if (system) {
+        std::vector<TemporaryPtr<const UniverseObject> > system_objects =
+            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
+        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
+             it != system_objects.end(); ++it)
+        {
+            TemporaryPtr<const UniverseObject> obj = *it;
+            if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
+                continue;
+            if (obj->Owner() == client_empire_id || obj->Unowned())
+                continue;
+            if (peaceful_empires_in_system.find(obj->Owner()) != peaceful_empires_in_system.end())
+                continue;
+            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE)
+                continue;
+            peaceful_empires_in_system.insert(obj->Owner());
+        }
+    }
+
 
     const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != MAS_NoAction) {
@@ -1834,6 +1860,32 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
 
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
+
+    if (planet->OwnedBy(client_empire_id)
+        && !peaceful_empires_in_system.empty()
+        && !ClientPlayerIsModerator())
+    {
+        menu_contents.next_level.push_back(GG::MenuItem(true));
+
+        // submenus for each available recipient empire
+        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), -1, false, false);
+        for (EmpireManager::const_iterator it = Empires().begin();
+             it != Empires().end(); ++it)
+        {
+            int other_empire_id = it->first;
+            if (peaceful_empires_in_system.find(other_empire_id) == peaceful_empires_in_system.end())
+                continue;
+            give_away_menu.next_level.push_back(GG::MenuItem(it->second->Name(), 100 + other_empire_id, false, false));
+        }
+        menu_contents.next_level.push_back(give_away_menu);
+
+        if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
+            GG::MenuItem cancel_give_away_menu(UserString("ORCER_CANCEL_GIVE_PLANET"), 12, false, false);
+            menu_contents.next_level.push_back(cancel_give_away_menu);
+        }
+    }
+
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
@@ -1855,8 +1907,29 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         {   // colonizable/suitability report
             ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id);
         }
-        default:
-        break;
+
+        case 12: { // cancel give away order for this fleet
+            const OrderSet orders = HumanClientApp::GetApp()->Orders();
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                if (boost::shared_ptr<GiveObjectToEmpireOrder> order =
+                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
+                {
+                    if (order->ObjectID() == planet->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
+
+        default: { // check for menu item indicating give to other empire order
+            if (popup.MenuID() > 100) {
+                int recipient_empire_id = popup.MenuID() - 100;
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new GiveObjectToEmpireOrder(client_empire_id, planet->ID(), recipient_empire_id)));
+            }
+            break;
+        }
         }
     }
 }
@@ -2335,9 +2408,6 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
     }
 
-    // reset scroll when resetting planets to ensure new set of planets won't be stuck scrolled up out of view
-    VScroll(0, 0, 0, 0);
-
     // disable non-selectable planet panels
     DisableNonSelectionCandidates();
 
@@ -2348,15 +2418,12 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     SelectPlanet(initial_selected_planet_panel);
 }
 
-void SidePanel::PlanetPanelContainer::DoPanelsLayout()
-{ DoPanelsLayout(m_planet_panels_top); }
-
-void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top) {
-    if (top > 0)
-        Logger().errorStream() << "SidePanel::PlanetPanelContainer::DoPanelsLaout passed positive top.  It is expected to be 0 or negative only.";
-    m_planet_panels_top = top;
-    GG::Y y = m_planet_panels_top;
+void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
+    GG::Y y = GG::Y0;
     GG::X x = GG::X0;
+
+    if (m_vscroll && m_vscroll->Parent() == this)
+        y = GG::Y(-m_vscroll->PosnRange().first);
 
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
@@ -2394,9 +2461,9 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top) {
 
 void SidePanel::PlanetPanelContainer::DoLayout() {
     GG::Pt scroll_ul(Width() - ClientUI::ScrollWidth(), GG::Y0);
-    //GG::Pt scroll_ul(ClientLowerRight().x - GG::X(ClientUI::ScrollWidth()), ClientUpperLeft().y);
     GG::Pt scroll_lr = scroll_ul + GG::Pt(GG::X(ClientUI::ScrollWidth()), Height());
     m_vscroll->SizeMove(scroll_ul, scroll_lr);
+
     DoPanelsLayout();
 }
 
@@ -2477,14 +2544,13 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
         int extra = pos_bottom - range_max;
         pos_top -= extra;
     }
-    DoPanelsLayout(GG::Y(-pos_top));    // scrolling bar down pos_top pixels causes the panels to move up that many pixels
+
+    DoPanelsLayout();
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
-    //std::cout << "SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels.  selected planet id: " << m_selected_planet_id << std::endl;
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
-    //std::cout << "  ...  after refreshing all planet panels: selected planet id: " << m_selected_planet_id << std::endl<< std::endl<< std::endl;
 }
 
 void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2820,13 +2886,6 @@ void SidePanel::RefreshImpl() {
     m_planet_panel_container->SetPlanets(known_system_planet_ids, system->GetStarType());
 
 
-    // restore planet panel container scroll position from before clearing
-    m_planet_panel_container->ScrollTo(initial_scroll_pos);
-
-    // restore planet selection
-    m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
-
-
     // populate system resource summary
 
     // get planets owned by player's empire
@@ -2868,6 +2927,12 @@ void SidePanel::RefreshImpl() {
     }
 
     DoLayout();
+
+    // restore planet panel container scroll position from before clearing
+    m_planet_panel_container->ScrollTo(initial_scroll_pos);
+
+    // restore planet selection
+    m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
 }
 
 void SidePanel::DoLayout() {
