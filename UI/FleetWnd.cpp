@@ -3097,6 +3097,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
              it != system_objects.end(); ++it)
         {
             TemporaryPtr<const UniverseObject> obj = *it;
+            if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
+                continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
                 continue;
             if (peaceful_empires_in_system.find(obj->Owner()) != peaceful_empires_in_system.end())
@@ -3210,6 +3212,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         if (post_scrap_bar)
             menu_contents.next_level.push_back(GG::MenuItem(true));
 
+        // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), -1, false, false);
         for (EmpireManager::const_iterator it = Empires().begin();
              it != Empires().end(); ++it)
@@ -3334,7 +3337,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 12: { // can give order for this fleet
+        case 12: { // cancel give away order for this fleet
             const OrderSet orders = HumanClientApp::GetApp()->Orders();
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                 if (boost::shared_ptr<GiveObjectToEmpireOrder> order =
