@@ -12,7 +12,6 @@ if (NOT OPENGL_GLU_FOUND)
 endif ()
 
 find_package(OpenAL REQUIRED)
-find_package(ALUT REQUIRED)
 find_package(OGRE REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
@@ -25,7 +24,6 @@ endif()
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${OPENAL_INCLUDE_DIR}
-    ${ALUT_INCLUDE_DIR}
     ${OGRE_INCLUDE_DIRS}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
@@ -167,7 +165,6 @@ set(freeorion_LINK_LIBS
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     ${OPENAL_LIBRARY}
-    ${ALUT_LIBRARY}
     ${Boost_LIBRARIES}
     ${OGRE_LIBRARIES}
     ${OGG_LIBRARY}

@@ -59,7 +59,6 @@ Section "MainSection" SEC01
   ExecWait "$INSTDIR\vcredist_x86.exe /q"
   Delete "$INSTDIR\vcredist_x86.exe"
 
-  File "..\alut.dll"
   File "..\boost_chrono-vc100-mt-1_51.dll"
   File "..\boost_date_time-vc100-mt-1_51.dll"
   File "..\boost_filesystem-vc100-mt-1_51.dll"
@@ -138,7 +137,6 @@ FunctionEnd
 Section Uninstall
   SetShellVarContext all
 
-  Delete "$INSTDIR\alut.dll"
   Delete "$INSTDIR\boost_chrono-vc100-mt-1_51.dll"
   Delete "$INSTDIR\boost_date_time-vc100-mt-1_51.dll"
   Delete "$INSTDIR\boost_filesystem-vc100-mt-1_51.dll"

@@ -280,17 +280,6 @@
 		478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 478417B10CF0592E00BE4710 /* libClientCommon.a */; };
 		478418EF0CF05A5600BE4710 /* libClientCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 478417B10CF0592E00BE4710 /* libClientCommon.a */; };
 		478418F70CF05AAA00BE4710 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA40CEF565700A7DF2B /* MessageQueue.cpp */; };
-		47B6160D0CF09ADC00318761 /* alutBufferData.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616000CF09ADC00318761 /* alutBufferData.c */; };
-		47B6160E0CF09ADC00318761 /* alutCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616010CF09ADC00318761 /* alutCodec.c */; };
-		47B6160F0CF09ADC00318761 /* alutError.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616020CF09ADC00318761 /* alutError.c */; };
-		47B616100CF09ADC00318761 /* alutInit.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616030CF09ADC00318761 /* alutInit.c */; };
-		47B616110CF09ADC00318761 /* alutInputStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616040CF09ADC00318761 /* alutInputStream.c */; };
-		47B616120CF09ADC00318761 /* alutLoader.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616060CF09ADC00318761 /* alutLoader.c */; };
-		47B616130CF09ADC00318761 /* alutOutputStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616070CF09ADC00318761 /* alutOutputStream.c */; };
-		47B616140CF09ADC00318761 /* alutUtil.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616080CF09ADC00318761 /* alutUtil.c */; };
-		47B616150CF09ADC00318761 /* alutVersion.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B616090CF09ADC00318761 /* alutVersion.c */; };
-		47B616160CF09ADC00318761 /* alutWaveform.c in Sources */ = {isa = PBXBuildFile; fileRef = 47B6160A0CF09ADC00318761 /* alutWaveform.c */; };
-		47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47B615BF0CF099BD00318761 /* libFREEALUT.a */; };
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
 		820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 820BDECB1848A93E009BC457 /* Hotkeys.cpp */; };
@@ -473,13 +462,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4784177C0CF0592E00BE4710;
 			remoteInfo = ClientCommon;
-		};
-		47B6163C0CF09C0500318761 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 47B615BE0CF099BD00318761;
-			remoteInfo = FREEALUT;
 		};
 		821CC22215F8C80800D48537 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1426,19 +1408,6 @@
 		478417B10CF0592E00BE4710 /* libClientCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libClientCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		479036420B04CA23001FEF7B /* default */ = {isa = PBXFileReference; explicitFileType = folder; name = default; path = ../default; sourceTree = SOURCE_ROOT; };
 		47AD8A180AA609980089CE8D /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
-		47B615BF0CF099BD00318761 /* libFREEALUT.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFREEALUT.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		47B616000CF09ADC00318761 /* alutBufferData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutBufferData.c; sourceTree = "<group>"; };
-		47B616010CF09ADC00318761 /* alutCodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutCodec.c; sourceTree = "<group>"; };
-		47B616020CF09ADC00318761 /* alutError.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutError.c; sourceTree = "<group>"; };
-		47B616030CF09ADC00318761 /* alutInit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutInit.c; sourceTree = "<group>"; };
-		47B616040CF09ADC00318761 /* alutInputStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutInputStream.c; sourceTree = "<group>"; };
-		47B616050CF09ADC00318761 /* alutInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alutInternal.h; sourceTree = "<group>"; };
-		47B616060CF09ADC00318761 /* alutLoader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutLoader.c; sourceTree = "<group>"; };
-		47B616070CF09ADC00318761 /* alutOutputStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutOutputStream.c; sourceTree = "<group>"; };
-		47B616080CF09ADC00318761 /* alutUtil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutUtil.c; sourceTree = "<group>"; };
-		47B616090CF09ADC00318761 /* alutVersion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutVersion.c; sourceTree = "<group>"; };
-		47B6160A0CF09ADC00318761 /* alutWaveform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutWaveform.c; sourceTree = "<group>"; };
-		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		8201E5F215E2C0770037D453 /* EffectParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser1.cpp; sourceTree = "<group>"; };
 		8201E5F315E2C0770037D453 /* EffectParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser2.cpp; sourceTree = "<group>"; };
 		8201E5F415E2C0770037D453 /* EffectParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParserImpl.h; sourceTree = "<group>"; };
@@ -1824,7 +1793,6 @@
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
 				34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */,
-				47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */,
 				478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */,
 				478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */,
 				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
@@ -1876,7 +1844,6 @@
 				471FEFD70A9A629800C36AA3 /* freeorionca */,
 				47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */,
 				478417B10CF0592E00BE4710 /* libClientCommon.a */,
-				47B615BF0CF099BD00318761 /* libFREEALUT.a */,
 				3402E25D0F5A317400DF6FE7 /* FreeOrion.app */,
 				82C07438149DE46200E76876 /* freeorionparse.dylib */,
 				82271C3A15F8AB900063179C /* libOIS.a */,
@@ -3264,7 +3231,6 @@
 		47960BAF0A9CBF2900D0C556 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				47B615FF0CF09ADC00318761 /* alut */,
 				8288CC3515F4AEF100F8318D /* Frameworks */,
 				8288CC3D15F4AF6000F8318D /* System Frameworks */,
 				47960BB00A9CBF4400D0C556 /* Dynamic Libraries */,
@@ -3299,26 +3265,6 @@
 				9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */,
 			);
 			name = boost;
-			sourceTree = "<group>";
-		};
-		47B615FF0CF09ADC00318761 /* alut */ = {
-			isa = PBXGroup;
-			children = (
-				47B616000CF09ADC00318761 /* alutBufferData.c */,
-				47B616010CF09ADC00318761 /* alutCodec.c */,
-				47B616020CF09ADC00318761 /* alutError.c */,
-				47B616030CF09ADC00318761 /* alutInit.c */,
-				47B616040CF09ADC00318761 /* alutInputStream.c */,
-				47B616050CF09ADC00318761 /* alutInternal.h */,
-				47B616060CF09ADC00318761 /* alutLoader.c */,
-				47B616070CF09ADC00318761 /* alutOutputStream.c */,
-				47B616080CF09ADC00318761 /* alutUtil.c */,
-				47B616090CF09ADC00318761 /* alutVersion.c */,
-				47B6160A0CF09ADC00318761 /* alutWaveform.c */,
-				47B6160B0CF09ADC00318761 /* config.h */,
-			);
-			name = alut;
-			path = dep/alut;
 			sourceTree = "<group>";
 		};
 		821CC18615F8C3C600D48537 /* log4cpp */ = {
@@ -3813,21 +3759,6 @@
 			productReference = 478417B10CF0592E00BE4710 /* libClientCommon.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		47B615BE0CF099BD00318761 /* FREEALUT */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 47B615C40CF099DC00318761 /* Build configuration list for PBXNativeTarget "FREEALUT" */;
-			buildPhases = (
-				47B615BC0CF099BD00318761 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FREEALUT;
-			productName = FREEALUT;
-			productReference = 47B615BF0CF099BD00318761 /* libFREEALUT.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		821CB8F515F8C15A00D48537 /* log4cpp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 821CB90415F8C15A00D48537 /* Build configuration list for PBXNativeTarget "log4cpp" */;
@@ -3890,7 +3821,6 @@
 				478417650CF057B800BE4710 /* PBXTargetDependency */,
 				471D65490A98B73C00DA9C21 /* PBXTargetDependency */,
 				82271C9915F8AD150063179C /* PBXTargetDependency */,
-				47B6163D0CF09C0500318761 /* PBXTargetDependency */,
 			);
 			name = FreeOrionClient;
 			productInstallPath = "$(HOME)/bin";
@@ -3924,7 +3854,6 @@
 			);
 			targets = (
 				829C76351689EFD4005881B4 /* Configure */,
-				47B615BE0CF099BD00318761 /* FREEALUT */,
 				471D5A2F0A988D5700DA9C21 /* GG */,
 				82271BF715F8AB900063179C /* OIS */,
 				821CB8F515F8C15A00D48537 /* log4cpp */,
@@ -4152,23 +4081,6 @@
 				478418E00CF059DC00BE4710 /* ClientApp.cpp in Sources */,
 				478418DF0CF059D700BE4710 /* ClientNetworking.cpp in Sources */,
 				478418F70CF05AAA00BE4710 /* MessageQueue.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		47B615BC0CF099BD00318761 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				47B6160D0CF09ADC00318761 /* alutBufferData.c in Sources */,
-				47B6160E0CF09ADC00318761 /* alutCodec.c in Sources */,
-				47B6160F0CF09ADC00318761 /* alutError.c in Sources */,
-				47B616100CF09ADC00318761 /* alutInit.c in Sources */,
-				47B616110CF09ADC00318761 /* alutInputStream.c in Sources */,
-				47B616120CF09ADC00318761 /* alutLoader.c in Sources */,
-				47B616130CF09ADC00318761 /* alutOutputStream.c in Sources */,
-				47B616140CF09ADC00318761 /* alutUtil.c in Sources */,
-				47B616150CF09ADC00318761 /* alutVersion.c in Sources */,
-				47B616160CF09ADC00318761 /* alutWaveform.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4421,11 +4333,6 @@
 			target = 4784177C0CF0592E00BE4710 /* ClientCommon */;
 			targetProxy = 478418EB0CF05A2E00BE4710 /* PBXContainerItemProxy */;
 		};
-		47B6163D0CF09C0500318761 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 47B615BE0CF099BD00318761 /* FREEALUT */;
-			targetProxy = 47B6163C0CF09C0500318761 /* PBXContainerItemProxy */;
-		};
 		821CC22315F8C80800D48537 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 821CB8F515F8C15A00D48537 /* log4cpp */;
@@ -4502,7 +4409,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -4550,7 +4456,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -4626,19 +4531,6 @@
 			};
 			name = Debug;
 		};
-		47B615C50CF099DC00318761 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
 		8218682814A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4664,7 +4556,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -4684,19 +4575,6 @@
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				ZERO_LINK = NO;
-			};
-			name = Test;
-		};
-		8218682914A9F82D009441B8 /* Test */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
 			};
 			name = Test;
 		};
@@ -4728,7 +4606,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -4857,7 +4734,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -4877,19 +4753,6 @@
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218683914AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
 			};
 			name = Release_10_5;
 		};
@@ -4921,7 +4784,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5050,7 +4912,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5070,19 +4931,6 @@
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A98114AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
 			};
 			name = Release_LLVM;
 		};
@@ -5121,7 +4969,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5286,7 +5133,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5306,19 +5152,6 @@
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		8221B230160F2211007D86B9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
 			};
 			name = Release;
 		};
@@ -5368,7 +5201,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5532,7 +5364,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5559,19 +5390,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = INIT;
-			};
-			name = Test_GCC42;
-		};
-		8263A0CB16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherit)",
-					HAVE_CONFIG_H,
-				);
-				PRODUCT_NAME = FREEALUT;
-				SDKROOT = macosx10.6;
-				ZERO_LINK = YES;
 			};
 			name = Test_GCC42;
 		};
@@ -5621,7 +5439,6 @@
 					"\"$(SOURCE_ROOT)/..\"",
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
@@ -5882,19 +5699,6 @@
 				8221B252160F2211007D86B9 /* Release */,
 				8219A99E14AAFFC300EEE387 /* Release_LLVM */,
 				8218683F14AA28BE009441B8 /* Release_10_5 */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Test;
-		};
-		47B615C40CF099DC00318761 /* Build configuration list for PBXNativeTarget "FREEALUT" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				47B615C50CF099DC00318761 /* Debug */,
-				8218682914A9F82D009441B8 /* Test */,
-				8263A0CB16DDFC9400A2AACD /* Test_GCC42 */,
-				8221B230160F2211007D86B9 /* Release */,
-				8219A98114AAFFC300EEE387 /* Release_LLVM */,
-				8218683914AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;

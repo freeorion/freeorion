@@ -431,28 +431,28 @@ namespace {
         db.Add<std::string>("UI.sound.bg-music",                UserStringNop("OPTIONS_DB_BG_MUSIC"),                          (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
         db.Add("UI.sound.music-volume",                         UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                      127,                    RangedValidator<int>(1, 255));
         db.Add("UI.sound.volume",                               UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                   255,                    RangedValidator<int>(0, 255));
-        db.Add<std::string>("UI.sound.button-rollover",         UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),          (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.wav").string());
-        db.Add<std::string>("UI.sound.button-click",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),             (GetRootDataDir() / "default" / "data" / "sound" / "button_click.wav").string());
-        db.Add<std::string>("UI.sound.turn-button-click",       UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),        (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.wav").string());
-        db.Add<std::string>("UI.sound.list-select",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),              (GetRootDataDir() / "default" / "data" / "sound" / "list_select.wav").string());
-        db.Add<std::string>("UI.sound.item-drop",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),                (GetRootDataDir() / "default" / "data" / "sound" / "list_select.wav").string());//TODO: replace with dedicated 'item_drop' sound
-        db.Add<std::string>("UI.sound.list-pulldown",           UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),            (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.wav").string());
-        db.Add<std::string>("UI.sound.text-typing",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),              (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.wav").string());
-        db.Add<std::string>("UI.sound.window-maximize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.wav").string());
-        db.Add<std::string>("UI.sound.window-minimize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.wav").string());
-        db.Add<std::string>("UI.sound.window-close",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.wav").string());
-        db.Add<std::string>("UI.sound.alert",                   UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default" / "data" / "sound" / "alert.wav").string());
-        db.Add<std::string>("UI.sound.planet-button-click",     UserStringNop("OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK"),      (GetRootDataDir() / "default" / "data" / "sound" / "button_click.wav").string());
-        db.Add<std::string>("UI.sound.fleet-button-rollover",   UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"),    (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.wav").string());
-        db.Add<std::string>("UI.sound.fleet-button-click",      UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.wav").string());
-        db.Add<std::string>("UI.sound.system-icon-rollover",    UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.wav").string());
-        db.Add<std::string>("UI.sound.sidepanel-open",          UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),           (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.wav").string());
-        db.Add<std::string>("UI.sound.farming-focus",           UserStringNop("OPTIONS_DB_UI_SOUND_FARMING_FOCUS"),            (GetRootDataDir() / "default" / "data" / "sound" / "farm_select.wav").string());
-        db.Add<std::string>("UI.sound.industry-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "industry_select.wav").string());
-        db.Add<std::string>("UI.sound.research-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "research_select.wav").string());
-        db.Add<std::string>("UI.sound.mining-focus",            UserStringNop("OPTIONS_DB_UI_SOUND_MINING_FOCUS"),             (GetRootDataDir() / "default" / "data" / "sound" / "mining_select.wav").string());
-        db.Add<std::string>("UI.sound.trade-focus",             UserStringNop("OPTIONS_DB_UI_SOUND_TRADE_FOCUS"),              (GetRootDataDir() / "default" / "data" / "sound" / "trade_select.wav").string());
-        db.Add<std::string>("UI.sound.balanced-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_BALANCED_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "balanced_select.wav").string());
+        db.Add<std::string>("UI.sound.button-rollover",         UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),          (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
+        db.Add<std::string>("UI.sound.button-click",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),             (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
+        db.Add<std::string>("UI.sound.turn-button-click",       UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),        (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
+        db.Add<std::string>("UI.sound.list-select",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),              (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
+        db.Add<std::string>("UI.sound.item-drop",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),                (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
+        db.Add<std::string>("UI.sound.list-pulldown",           UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),            (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
+        db.Add<std::string>("UI.sound.text-typing",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),              (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
+        db.Add<std::string>("UI.sound.window-maximize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
+        db.Add<std::string>("UI.sound.window-minimize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
+        db.Add<std::string>("UI.sound.window-close",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
+        db.Add<std::string>("UI.sound.alert",                   UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default" / "data" / "sound" / "alert.ogg").string());
+        db.Add<std::string>("UI.sound.planet-button-click",     UserStringNop("OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK"),      (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
+        db.Add<std::string>("UI.sound.fleet-button-rollover",   UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"),    (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("UI.sound.fleet-button-click",      UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
+        db.Add<std::string>("UI.sound.system-icon-rollover",    UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
+        db.Add<std::string>("UI.sound.sidepanel-open",          UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),           (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
+        db.Add<std::string>("UI.sound.farming-focus",           UserStringNop("OPTIONS_DB_UI_SOUND_FARMING_FOCUS"),            (GetRootDataDir() / "default" / "data" / "sound" / "farm_select.ogg").string());
+        db.Add<std::string>("UI.sound.industry-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "industry_select.ogg").string());
+        db.Add<std::string>("UI.sound.research-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "research_select.ogg").string());
+        db.Add<std::string>("UI.sound.mining-focus",            UserStringNop("OPTIONS_DB_UI_SOUND_MINING_FOCUS"),             (GetRootDataDir() / "default" / "data" / "sound" / "mining_select.ogg").string());
+        db.Add<std::string>("UI.sound.trade-focus",             UserStringNop("OPTIONS_DB_UI_SOUND_TRADE_FOCUS"),              (GetRootDataDir() / "default" / "data" / "sound" / "trade_select.ogg").string());
+        db.Add<std::string>("UI.sound.balanced-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_BALANCED_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "balanced_select.ogg").string());
 
         // fonts
         db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
@@ -809,7 +809,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
                            WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)
-        Sound::GetSound().PlaySound(SoundDir() / "alert.wav", true);
+        Sound::GetSound().PlaySound(SoundDir() / "alert.ogg", true);
     dlg.Run();
 }
 

@@ -78,7 +78,7 @@ namespace {
 
     const std::string STRINGTABLE_FILE_SUFFIX = ".txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
-    const std::string SOUND_FILE_SUFFIX = ".wav";
+    const std::string SOUND_FILE_SUFFIX = ".ogg";
     const std::string FONT_FILE_SUFFIX = ".ttf";
 
     class PlaceholderWnd : public GG::Wnd {

@@ -424,7 +424,6 @@ else ()
             Plugin_OctreeSceneManager.dll
             Plugin_ParticleFX.dll
             RenderSystem_GL.dll
-            alut.dll
             boost_date_time-vc90-mt-1_44.dll
             boost_filesystem-vc90-mt-1_44.dll
             boost_iostreams-vc90-mt-1_44.dll

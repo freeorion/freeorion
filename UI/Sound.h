@@ -64,8 +64,6 @@ private:
 
     bool UISoundsTemporarilyDisabled() const;
 
-    int RefillBuffer(ALuint *bufferName); ///< delegated here for simplicity - it's used by both PlayMusic and RenderBegin. Returns 1 if encounteres end of playback (no more music loops).
-
     static const int NUM_SOURCES = 16; // The number of sources for OpenAL to create. Should be 2 or more.
 
     ALuint                            m_sources[NUM_SOURCES]; ///< OpenAL sound sources. The first one is used for music
