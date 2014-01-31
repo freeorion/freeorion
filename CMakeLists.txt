@@ -88,6 +88,12 @@ if("${FreeOrion_WC_REVISION}" STREQUAL "???")
     set(FreeOrion_WC_REVISION "unknown")
 endif ()
 
+if (WIN32)
+    # Add icon resource file to freeorion.exe
+    if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
+        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/FreeOrion.ico\"")
+    endif ()
+endif ()
 
 ########################################
 # Build common code library            #
@@ -309,31 +315,6 @@ add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
-
-########################################
-# Win32 SDK-only steps                 #
-########################################
-if (WIN32)
-    # Add icon resource file to freeorion.exe
-    if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
-        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/FreeOrion.ico\"")
-    endif ()
-
-    get_target_property(freeorion_loc freeorion LOCATION)
-    get_target_property(freeoriond_loc freeoriond LOCATION)
-    get_target_property(freeorionca_loc freeorionca LOCATION)
-    add_custom_target(
-        COPY_BINARIES
-	ALL
-        ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGi.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGi.dll
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGiOgre.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGiOgre.dll
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGiOgrePlugin_OIS.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGiOgrePlugin_OIS.dll
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeorion_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeorion.exe
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeorionca_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeorionca.exe
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeoriond_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeoriond.exe
-	DEPENDS freeorion freeoriond freeorionca
-    )
-endif ()
 
 ########################################
 # Packaging                            #
