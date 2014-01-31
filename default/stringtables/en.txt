@@ -2405,6 +2405,12 @@ Give Fleet To...
 ORCER_CANCEL_GIVE_FLEET
 Cancel Giving Fleet
 
+ORDER_GIVE_PLANET_TO_EMPIRE
+Give Planet To...
+
+ORCER_CANCEL_GIVE_PLANET
+Cancel Giving Planet
+
 
 ###############
 #  Moderator  #
