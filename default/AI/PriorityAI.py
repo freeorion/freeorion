@@ -162,7 +162,7 @@ def calculateResearchPriority():
     if foAI.foAIstate.aggression >=fo.aggression.maniacal:
         styleIndex+= 1
 
-    cutoffSets =  [ [25, 45, 70,  110  ],  [35,  50,  70,  150  ],  [25,  50,  70,  150  ]    ]
+    cutoffSets =  [ [25, 45, 70,  110  ],  [35,  50,  70,  150  ],  [25,  50,  120,  180  ]    ]
     cutoffs = cutoffSets[styleIndex  ]
     settings = [ [1.4, .7, .5,  .4, .35  ],  [1.6,  1.0,  .8,  .6, .35   ],  [2.0,  1.4,  1.0,  .7, .35   ]    ][styleIndex  ]
 

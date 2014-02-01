@@ -56,7 +56,7 @@ def generateResearchOrders():
     if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
         research_index = empireID % 2
         if foAI.foAIstate.aggression >=fo.aggression.maniacal:
-            research_index = 2 - ((empireID % 3)%2) #so 1/3 get index 1, 2/3 get index 2
+            research_index = 2 + (empireID % 3) # so indices [2,3,4]
         elif foAI.foAIstate.aggression >=fo.aggression.typical:
             research_index += 1
         newtech = TechsListsAI.primary_meta_techs(index = research_index)
