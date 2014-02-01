@@ -17,6 +17,7 @@
 #include "../universe/Species.h"
 #include "../universe/Field.h"
 #include "../universe/Effect.h"
+#include "../universe/Predicates.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/i18n.h"

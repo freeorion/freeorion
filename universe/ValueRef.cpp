@@ -5,6 +5,7 @@
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "Planet.h"
+#include "Predicates.h"
 #include "Species.h"
 #include "System.h"
 #include "Field.h"

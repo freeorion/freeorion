@@ -4,7 +4,6 @@
 
 #include "UniverseObject.h"
 
-#include "Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
 
