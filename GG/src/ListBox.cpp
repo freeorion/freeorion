@@ -1220,21 +1220,17 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
 
 void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (m_vscroll) {
-        for (int i = 0; i < move; ++i) {
-            if (m_first_row_shown != m_rows.end() && m_first_row_shown != m_rows.begin()) {
-                m_vscroll->ScrollTo(m_vscroll->PosnRange().first -
-                                    Value((*boost::prior(m_first_row_shown))->Height()));
-                SignalScroll(*m_vscroll, true);
-            }
-        }
-        for (int i = 0; i < -move; ++i) {
-            if (m_first_row_shown != m_rows.end() && m_first_row_shown != --m_rows.end()) {
-                m_vscroll->ScrollTo(m_vscroll->PosnRange().first +
-                                    Value((*m_first_row_shown)->Height()));
-                SignalScroll(*m_vscroll, true);
-            }
-        }
+    if (Disabled() || !m_vscroll)
+        return;
+
+    // repeatedly increment scroll position for the requested number of moves.
+    for (int i = 0; i < move; ++i) {
+        m_vscroll->ScrollLineDecr(3);
+        SignalScroll(*m_vscroll, i == move - 1);
+    }
+    for (int i = 0; i < -move; ++i) {
+        m_vscroll->ScrollLineIncr(3);
+        SignalScroll(*m_vscroll, i == -move - 1);
     }
 }
 
@@ -1292,7 +1288,8 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
                 iterator last_visible_row = LastVisibleRow();
                 if (last_visible_row != m_rows.end() &&
                     (last_visible_row != --m_rows.end() ||
-                     ClientLowerRight().y < (*last_visible_row)->LowerRight().y)) {
+                     ClientLowerRight().y < (*last_visible_row)->LowerRight().y))
+                {
                     m_vscroll->ScrollTo(m_vscroll->PosnRange().first +
                                         Value((*m_first_row_shown)->Height()));
                     SignalScroll(*m_vscroll, true);
@@ -1702,7 +1699,10 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 {
     // this client area calculation disregards the thickness of scrolls
     Pt cl_sz = (LowerRight() - Pt(X(BORDER_THICK), Y(BORDER_THICK))) -
-        (UpperLeft() + Pt(X(BORDER_THICK), static_cast<int>(BORDER_THICK) + (m_header_row->empty() ? Y0 : m_header_row->Height())));
+        (UpperLeft() + Pt(X(BORDER_THICK), static_cast<int>(BORDER_THICK)
+            + (m_header_row->empty()
+               ? Y0
+               : m_header_row->Height())));
 
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
     Y total_y_extent(0);
@@ -1736,6 +1736,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
         if (!vertical_needed) { // remove scroll
             DeleteChild(m_vscroll);
             m_vscroll = 0;
+
         } else { // ensure vertical scroll has the right logical and physical dimensions
             X scroll_x = cl_sz.x - SCROLL_WIDTH;
             Y scroll_y(0);
@@ -1743,10 +1744,22 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                 m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                                     Pt(scroll_x + SCROLL_WIDTH, scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
             }
-            int line_size = Value(cl_sz.y / 8);
+
+            // find biggest row, use as vscroll step size
+            int line_size = 0;
+            for (const_iterator row_it = begin(); row_it != end(); ++row_it) {
+                Row* row = *row_it;
+                if (row->Height() > line_size)
+                    line_size = Value(row->Height());
+            }
+            if (line_size <= 0)
+                line_size = Value(cl_sz.y / 8); // default backup row increment size for scrolling
+
             int page_size = Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0));
+
             m_vscroll->SizeScroll(0, Value(total_y_extent - 1),
                                   line_size, std::max(line_size, page_size));
+
             MoveChildUp(m_vscroll);
         }
     } else if (!m_vscroll && vertical_needed) { // if scroll doesn't exist but is needed

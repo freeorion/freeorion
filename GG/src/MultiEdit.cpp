@@ -648,11 +648,11 @@ void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 
     // repeatedly increment scroll position for the requested number of moves.
     for (int i = 0; i < move; ++i) {
-        m_vscroll->ScrollLineDecr(2);
+        m_vscroll->ScrollLineDecr(3);
         SignalScroll(*m_vscroll, i == move - 1);
     }
     for (int i = 0; i < -move; ++i) {
-        m_vscroll->ScrollLineIncr(2);
+        m_vscroll->ScrollLineIncr(3);
         SignalScroll(*m_vscroll, i == -move - 1);
     }
 }
@@ -1044,7 +1044,7 @@ void MultiEdit::AdjustScrolls()
             DeleteChild(m_vscroll);
             m_vscroll = 0;
         } else { // ensure vertical scroll has the right logical and physical dimensions
-            int line_size = Value(cl_sz.y / 8);
+            int line_size = Value(GetFont()->Lineskip());
             int page_size = Value(cl_sz.y - (need_horz ? INT_SCROLL_WIDTH : 0));
             m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                                   line_size, std::max(line_size, page_size));
@@ -1059,7 +1059,7 @@ void MultiEdit::AdjustScrolls()
                 cl_sz.x + INT_GAP - INT_SCROLL_WIDTH, Y(-GAP),
                 X(SCROLL_WIDTH), cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0),
                 m_color, CLR_SHADOW);
-        int line_size = Value(cl_sz.y / 8);
+        int line_size = Value(GetFont()->Lineskip());
         int page_size = Value(cl_sz.y - (need_horz ? INT_SCROLL_WIDTH : 0));
         m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                               line_size, std::max(line_size, page_size));
