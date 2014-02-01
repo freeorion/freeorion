@@ -2733,6 +2733,7 @@ Duplicates Existing Design
 DESIGN_KNOWN_DETAIL
 This design (name, hull, parts) duplicates a design already known to this empire.
 
+
 ################
 ## Statistics ##
 ################
@@ -2744,6 +2745,18 @@ Production Output
 
 RP_OUTPUT
 Research Output
+
+PLANET_COUNT
+Planets
+
+COLONIES_COUNT
+Colonies
+
+BATTLESHIP_COUNT
+Armed Ships
+
+ARMED_MONSTER_COUNT
+Roaming Armed Monsters
 
 
 #############################################################
