@@ -887,10 +887,7 @@ namespace ValueRef {
 
         return retval;
     }
-}
 
-
-namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
