@@ -71,7 +71,8 @@ namespace {
     }
 #endif
 
-    int RefillBuffer(OggVorbis_File* ogg_file, ALenum ogg_format, ALsizei ogg_freq, ALuint bufferName, ogg_int64_t buffer_size, int& loops)
+    int RefillBuffer(OggVorbis_File* ogg_file, ALenum ogg_format, ALsizei ogg_freq,
+                     ALuint bufferName, ogg_int64_t buffer_size, int& loops)
     {
         ALenum m_openal_error;
         int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
@@ -101,13 +102,13 @@ namespace {
                     Logger().errorStream() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
             } else {
                 ov_clear(ogg_file); // the app might think we still have something to play.
-                delete array;
+                delete [] array;
                 return 1;
             }
-            delete array;
+            delete [] array;
             return 0;
         }
-        delete array;
+        delete [] array;
         return 1;
     }
 }
@@ -361,14 +362,18 @@ void Sound::FreeAllSounds() {
     ALenum m_openal_error;
 
     for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
-         it != m_buffers.end(); ++it)
+         it != m_buffers.end();)
     {
         alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
-        if (m_openal_error != AL_NONE)
+        if (m_openal_error != AL_NONE) {
             Logger().errorStream() << "FreeAllSounds: OpenAL ERROR: " << alGetString(m_openal_error);
-        else
-            m_buffers.erase(it); /* same as in FreeSound */
+            ++it;
+        } else {
+            std::map<std::string, ALuint>::iterator temp = it;
+            ++it;
+            m_buffers.erase(temp);  // invalidates erased iterator only
+        }
     }
 }
 
