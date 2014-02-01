@@ -63,7 +63,7 @@ target_link_libraries(freeorionca
 
 install(
     TARGETS freeorionca
-    RUNTIME DESTINATION .
+    RUNTIME DESTINATION bin
     COMPONENT COMPONENT_FREEORION
 )
 

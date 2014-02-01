@@ -194,7 +194,7 @@ target_link_libraries(freeorion
 
 install(
     TARGETS freeorion
-    RUNTIME DESTINATION .
+    RUNTIME DESTINATION bin
     COMPONENT COMPONENT_FREEORION
 )
 

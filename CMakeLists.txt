@@ -102,7 +102,10 @@ set(BUILD_SDL_DRIVER OFF CACHE INTERNAL "Disable building of SDL driver." FORCE)
 set(BUILD_ADAM_SUPPORT OFF CACHE INTERNAL "Disables building of Adobe Adam bindings." FORCE)
 set(BUILD_PLUGIN_SUPPORT OFF CACHE INTERNAL "Disables building of plugin support." FORCE)
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
+set(OLD_LIB_SUFFIX ${LIB_SUFFIX})
+set(LIB_SUFFIX "${LIB_SUFFIX}/freeorion")
 add_subdirectory(GG)
+set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 
 ########################################
 # Dependencies                         #
@@ -386,19 +389,37 @@ if (BUILD_SDK)
     )
 else ()
     install(
-        DIRECTORY default
-        DESTINATION .
+        DIRECTORY default/
+        DESTINATION share/freeorion/default
         COMPONENT COMPONENT_FREEORION_DATA
         PATTERN ".svn" EXCLUDE
         PATTERN "*~" EXCLUDE
+        PATTERN "*.pyc" EXCLUDE
+    )
+
+    install(
+        TARGETS freeorioncommon
+        LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
+        COMPONENT COMPONENT_FREEORION
+    )
+
+    install(
+        FILES
+        ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
+        DESTINATION share/freeorion
+        COMPONENT COMPONENT_FREEORION
+    )
+
+    install(
+        FILES
+        ${CMAKE_SOURCE_DIR}/OISInput.cfg
+        DESTINATION share/freeorion/default
+        COMPONENT COMPONENT_FREEORION
     )
 
     if (WIN32)
         install(
             FILES
-            GiGi.dll
-            GiGiOgre.dll
-            GiGiOgrePlugin_OIS.dll
             OIS.dll
             OgreMain.dll
             OpenAL32.dll
@@ -425,9 +446,7 @@ else ()
             wrap_oal.dll
             z.dll
             zlib1.dll
-            OISInput.cfg
-            ogre_plugins.cfg
-            DESTINATION .
+            DESTINATION bin
             COMPONENT COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
         )
     endif ()

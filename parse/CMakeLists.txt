@@ -92,6 +92,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     )
 endif ()
 
+install(
+    TARGETS freeorionparse
+    LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
+    COMPONENT COMPONENT_FREEORION
+)
+
 if (BUILD_TESTS)
     add_subdirectory(test)
 endif ()
