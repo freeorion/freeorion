@@ -144,7 +144,7 @@ TemporaryPtr<Ship> CombatShip::GetShip() const
 {
     std::map<int, TemporaryPtr<UniverseObject> >::const_iterator it = m_combat_universe->find(m_ship_id);
     assert(it != m_combat_universe->end());
-    return universe_object_ptr_cast<Ship>(it->second);
+    return boost::dynamic_pointer_cast<Ship>(it->second);
 }
 
 const ShipMission& CombatShip::CurrentMission() const

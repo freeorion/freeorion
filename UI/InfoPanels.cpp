@@ -2955,7 +2955,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         }
         case ECT_BUILDING: {
             name.clear();
-            if (building = universe_object_ptr_cast<const Building>(source))
+            if (building = boost::dynamic_pointer_cast<const Building>(source))
                 if (planet = GetPlanet(building->PlanetID()))
                     name = planet->Name();
             const std::string& label_template = (info_it->custom_label.empty()

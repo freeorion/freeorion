@@ -135,7 +135,7 @@ std::string ClientApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> o
     }
 
     std::string name_text = object->PublicName(m_empire_id);
-    if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(object))
+    if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(object))
         name_text = system->ApparentName(m_empire_id);
 
     return name_text;

@@ -22,10 +22,6 @@ class Field;
 
 extern const int ALL_EMPIRES;
 
-/** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
-template <class T1, class T2>
-T1 universe_object_ptr_cast(T2 ptr);
-
 /** the base class for UniverseObject visitor classes.  These visitors have Visit() overloads for each type in the UniversObject-based
     class herarchy.  Calling Visit() returns the \a obj parameter, if some predicate is true of that object.  Each UniverseObject
     subclass needs to have an Accept(const UniverseObjectVisitor& visitor) method that consists only of "visitor->Visit(this)".  Because
@@ -33,7 +29,7 @@ T1 universe_object_ptr_cast(T2 ptr);
     UniverseObjectVisitor's appropriate Visit() method to be called.  Since the specific type of the \a obj parameter is known within
     each Visit() method, \a obj can be accessed by type, without using a dynamic_cast.  Note that is is therefore safe to static_cast a
     UniversObject pointer that is returned from a UniverseObjectVisitor subclass that only returns a nonzero for one specific
-    UniverseObject subclass (e.g. UniverseObjectSubclassVisitor<Planet>).  The default behavior of all Visit() methods besides
+    UniverseObject subclass (e.g. StationaryFleetVisitor<Planet>).  The default behavior of all Visit() methods besides
     Visit(UniverseObject*) is to return the result of a call to Visit(UniverseObject*).  This means that UniverseObjectVisitor
     subclasses can override Visit(UniverseObject*) only, and calls to all Visit() overloads will work.  The default return value for
     Visit(UniverseObject*) is 0, so overridding any \a one Visit() method besides this one will ensure that only UniverseObjects
@@ -47,14 +43,6 @@ struct FO_COMMON_API UniverseObjectVisitor {
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const;
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const;
     virtual ~UniverseObjectVisitor();
-};
-
-/** returns obj iff \a obj is of type T */
-template <class T>
-struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
-{
-    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<T> obj) const;
-    virtual ~UniverseObjectSubclassVisitor() {}
 };
 
 /** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
@@ -98,29 +86,6 @@ struct OwnedVisitor : UniverseObjectVisitor
     virtual ~OwnedVisitor() {} 
     const int empire_id;
 };
-
-// template implementations
-
-template <class T1, class T2>
-TemporaryPtr<T1> universe_object_ptr_cast(TemporaryPtr<T2> ptr)
-{
-    typedef typename boost::remove_const<T1>::type T1ConstFreeType;
-
-    // If you've failed this assertion, you're trying to cast some type T2 to
-    // [const] UniverseObject.  If T2 is not derived from UniverseObject,
-    // this just doesn't make sense.  If T2 is derived from UniverseObject, no
-    // cast is necessary -- implicit conversion is already defined in the
-    // language.
-    BOOST_MPL_ASSERT((boost::mpl::not_<boost::is_same<T1ConstFreeType, UniverseObject> >));
-
-    typedef UniverseObjectSubclassVisitor<T1ConstFreeType> VisitorType;
-
-    return boost::static_pointer_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
-}
-
-template <class T>
-TemporaryPtr<UniverseObject> UniverseObjectSubclassVisitor<T>::Visit(TemporaryPtr<T> obj) const
-{ return obj; }
 
 template <class T>
 OwnedVisitor<T>::OwnedVisitor(int empire) :

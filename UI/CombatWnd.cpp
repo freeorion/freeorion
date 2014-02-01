@@ -941,7 +941,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
         TemporaryPtr<const UniverseObject> obj = m_combat_data->m_combat_universe[planet_id];
         if (!obj)
             continue;
-        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<Planet>(obj);
+        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj);
         if (!planet)
             continue;
 

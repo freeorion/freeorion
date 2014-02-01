@@ -156,7 +156,7 @@ namespace {
              it != setup_group.m_ships.end(); ++it)
         {
             assert(combat_universe.find(*it) != combat_universe.end());
-            TemporaryPtr<Ship> ship = universe_object_ptr_cast<Ship>(combat_universe.find(*it)->second);
+            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(combat_universe.find(*it)->second);
 #define LIMIT_ITERATIONS 1
 #if LIMIT_ITERATIONS
             const unsigned int MAX_PLACEMENT_ITERATIONS = 50;
@@ -404,7 +404,7 @@ CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<Co
         m_combat_universe[object_id] = object;
 
         if (TemporaryPtr<const Planet> planet =
-                universe_object_ptr_cast<const Planet>(object))
+                boost::dynamic_pointer_cast<const Planet>(object))
         {
             int orbit = system->OrbitOfPlanet(object_id);
             double orbit_radius = OrbitalRadius(orbit);
@@ -421,7 +421,7 @@ CombatData::CombatData(TemporaryPtr<System> system, std::map<int, std::vector<Co
                     new SphereObstacle(PlanetRadius(planet->Size()), position));
             }
         } else if (TemporaryPtr<Fleet> fleet =
-                   universe_object_ptr_cast<Fleet>(object))
+                   boost::dynamic_pointer_cast<Fleet>(object))
         {
             assert(!fleet->Unowned());
             int owner = fleet->Owner();

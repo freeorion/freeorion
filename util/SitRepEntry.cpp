@@ -155,7 +155,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 
     SitRepEntry sitrep;
 
-    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
+    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
         else
@@ -163,7 +163,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
-    } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
+    } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
         else
@@ -189,7 +189,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 
     SitRepEntry sitrep;
 
-    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
+    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         else
@@ -197,21 +197,21 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
-    } else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
+    } else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
         if (fleet->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         else
             sitrep = SitRepEntry(UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(object_id));
 
-    } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
+    } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         else
             sitrep = SitRepEntry(UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 
-    } else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj)) {
+    } else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
         if (building->Unowned())
             sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
         else

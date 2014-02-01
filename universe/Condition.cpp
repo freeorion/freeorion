@@ -90,9 +90,9 @@ namespace {
     }
 
     TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
-        TemporaryPtr<const Fleet> retval = universe_object_ptr_cast<const Fleet>(obj);
+        TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
-            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj))
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
                 retval = GetFleet(ship->FleetID());
         }
         return retval;
@@ -1277,9 +1277,9 @@ namespace {
                 return false;
 
             // is it a planet or a building on a planet?
-            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             TemporaryPtr<const ::Building> building;
-            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+            if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (!planet)
@@ -1420,9 +1420,9 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet?
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (!planet)
@@ -1520,7 +1520,7 @@ bool Condition::Monster::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
+    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsMonster())
             return true;
 
@@ -1553,7 +1553,7 @@ bool Condition::Armed::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
+    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsArmed())
             return true;
 
@@ -1763,7 +1763,7 @@ namespace {
                 return false;
 
             // is it a building?
-            TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
+            TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
             if (!building)
                 return false;
 
@@ -1887,7 +1887,7 @@ bool Condition::Building::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a building?
-    TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
+    TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
     if (building) {
         // match any building type?
         if (m_names.empty())
@@ -2758,9 +2758,9 @@ namespace {
                 return false;
 
             // is it a planet or on a planet?
-            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             TemporaryPtr<const ::Building> building;
-            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+            if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -2885,9 +2885,9 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -2938,9 +2938,9 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
-            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             TemporaryPtr<const ::Building> building;
-            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+            if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -3070,9 +3070,9 @@ bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -3121,9 +3121,9 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: factor out
-            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             TemporaryPtr<const ::Building> building;
-            if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+            if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
             if (planet) {
@@ -3254,9 +3254,9 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
     }
     
     // is it a planet or on a planet? TODO: factor out
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -3312,13 +3312,13 @@ namespace {
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a ship?
-            if (TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const Ship>(candidate)) {
+            if (TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate)) {
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a building on a planet?
-            if (TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const Building>(candidate)) {
+            if (TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const Building>(candidate)) {
                 TemporaryPtr<const ::Planet> planet = GetPlanet(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
@@ -3436,9 +3436,9 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet? TODO: factor out
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!planet && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
@@ -3452,7 +3452,7 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const {
         }
     }
     // is it a ship?
-    TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
+    TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
     if (ship) {
         if (m_names.empty()) {
             return !ship->SpeciesName().empty();    // match any species name
@@ -3758,7 +3758,7 @@ namespace {
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
             TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
             TemporaryPtr<const ::Building> building;
-            if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+            if (!res_center && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
                     res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
@@ -3880,7 +3880,7 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const {
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
     TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
     TemporaryPtr<const ::Building> building;
-    if (!res_center && (building = universe_object_ptr_cast<const ::Building>(candidate))) {
+    if (!res_center && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
             res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
@@ -3930,7 +3930,7 @@ namespace {
                 return false;
 
             TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
-            if (system || (system = universe_object_ptr_cast<const System>(candidate)))
+            if (system || (system = boost::dynamic_pointer_cast<const System>(candidate)))
                 return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
 
             return false;
@@ -4042,7 +4042,7 @@ bool Condition::StarType::Match(const ScriptingContext& local_context) const {
     }
 
     TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
-    if (system || (system = universe_object_ptr_cast<const System>(candidate))) {
+    if (system || (system = boost::dynamic_pointer_cast<const System>(candidate))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(local_context) == system->GetStarType())
                 return true;
@@ -4085,7 +4085,7 @@ bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) cons
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
+    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
         if (const ShipDesign* design = ship->Design())
             return (design->Hull() == m_name);
     return false;
@@ -4129,7 +4129,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate);
+            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4254,7 +4254,7 @@ namespace {
                 return false;
 
             // is it a ship?
-            TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate);
+            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4379,7 +4379,7 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
         return false;
     }
 
-    TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
+    TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
     if (!ship)
         return false;
     const ShipDesign* candidate_design = ship->Design();
@@ -4426,7 +4426,7 @@ namespace {
                 return false;
             if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
                 return false;
-            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
                 if (ship->DesignID() == m_design_id)
                     return true;
             return false;
@@ -4515,9 +4515,9 @@ namespace {
             if (!candidate)
                 return false;
 
-            if (TemporaryPtr<const ::Ship> ship = universe_object_ptr_cast<const ::Ship>(candidate))
+            if (TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate))
                 return ship->ProducedByEmpireID() == m_empire_id;
-            else if (TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate))
+            else if (TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate))
                 return building->ProducedByEmpireID() == m_empire_id;
             return false;
         }
@@ -4865,7 +4865,7 @@ namespace {
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
@@ -6028,9 +6028,9 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(candidate);
+    TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
-        if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate))
+        if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (fleet) {
@@ -6315,7 +6315,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly planet candidate";
             return false;
@@ -6323,7 +6323,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
+        TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly building candidate";
             return false;
@@ -6336,7 +6336,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
+        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             Logger().errorStream() << "CanColonize couldn't cast supposedly ship candidate";
             return false;
@@ -6379,7 +6379,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
@@ -6387,7 +6387,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        TemporaryPtr<const ::Building> building = universe_object_ptr_cast<const ::Building>(candidate);
+        TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
@@ -6400,7 +6400,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(candidate);
+        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             Logger().errorStream() << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
@@ -6448,7 +6448,7 @@ namespace {
                 return false;
             if (m_by_objects.empty())
                 return false;
-            TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(candidate);
+            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             if (!planet)
                 return false;
             int planet_id = planet->ID();
@@ -6459,7 +6459,7 @@ namespace {
             for (Condition::ObjectSet::const_iterator it = m_by_objects.begin();
                  it != m_by_objects.end(); ++it)
             {
-                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(*it);
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(*it);
                 if (!ship)
                     continue;
                 if (ship->OrderedBombardPlanet() == planet_id)

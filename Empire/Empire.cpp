@@ -2774,7 +2774,7 @@ void Empire::CheckProductionProgress() {
                     Logger().errorStream() << "Couldn't get build location for completed ship";
                     break;
                 }
-                TemporaryPtr<System> system = GetSystem(build_location->SystemID());
+                TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(build_location);
                 // TODO: account for shipyards and/or other ship production
                 // sites that are in interstellar space, if needed
                 if (!system) {
@@ -2796,7 +2796,7 @@ void Empire::CheckProductionProgress() {
                 std::string species_name;
                 if (TemporaryPtr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
                     species_name = location_pop_center->SpeciesName();
-                else if (TemporaryPtr<const Ship> location_ship = universe_object_ptr_cast<const Ship>(build_location))
+                else if (TemporaryPtr<const Ship> location_ship = boost::dynamic_pointer_cast<const Ship>(build_location))
                     species_name = location_ship->SpeciesName();
                 else if (TemporaryPtr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
                     species_name = capital_planet->SpeciesName();
@@ -3017,7 +3017,7 @@ void Empire::UpdateTradeSpending() {
 
     //std::vector<TemporaryPtr<UniverseObject> > buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
     //for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-    //    TemporaryPtr<Building> building = universe_object_ptr_cast<Building>(*it);
+    //    TemporaryPtr<Building> building = boost::dynamic_pointer_cast<Building>(*it);
     //    if (!building)
     //        continue;
     //}

@@ -125,7 +125,7 @@ Ship* Ship::Clone(int empire_id) const {
 void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    TemporaryPtr<const Ship> copied_ship = universe_object_ptr_cast<Ship>(copied_object);
+    TemporaryPtr<const Ship> copied_ship = boost::dynamic_pointer_cast<const Ship>(copied_object);
     if (!copied_ship) {
         Logger().errorStream() << "Ship::Copy passed an object that wasn't a Ship";
         return;

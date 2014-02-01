@@ -120,7 +120,7 @@ namespace {
             std::set<int> objSet = map_it->first;
             for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
                 TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
-                if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
+                if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(*obj_it);
             }
             if (!planetSet.empty())
@@ -141,7 +141,7 @@ namespace {
                  std::set<int> objSet = map_it->first;
                  for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
                      TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
-                     if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
+                     if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                          planetSet.insert(*obj_it);
                  }
                  if (!planetSet.empty())
@@ -163,7 +163,7 @@ namespace {
                  std::set<int> objSet = *sets_it;
                  for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
                      TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
-                     if (/* TemporaryPtr<const Planet> planet = */ universe_object_ptr_cast<const Planet>(location))
+                     if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                          planetSet.insert(*obj_it);
                  }
                  if (!planetSet.empty())

@@ -313,7 +313,7 @@ CombatSetupWnd::CombatSetupWnd(
 
             if (combat_ship->position() == OpenSteer::Vec3(0.0, 0.0, 0.0)) {
                 TemporaryPtr<UniverseObject> o = m_combat_universe[ship->FleetID()];
-                TemporaryPtr<Fleet> fleet = universe_object_ptr_cast<Fleet>(o);
+                TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(o);
                 ShipRow* row = new ShipRow(ship, fleet, row_size.x, row_size.y);
                 m_listbox->Insert(row);
             } else {
@@ -625,7 +625,7 @@ void CombatSetupWnd::RedoPlacementsButtonClicked() {
          ++it) {
         TemporaryPtr<Ship> ship = *Ogre::any_cast<TemporaryPtr<Ship> >(&it->second->getUserAny());
         TemporaryPtr<UniverseObject> o = m_combat_universe[ship->FleetID()];
-        TemporaryPtr<Fleet> fleet = universe_object_ptr_cast<Fleet>(o);
+        TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(o);
         ShipRow* row = new ShipRow(ship, fleet, row_size.x, row_size.y);
         m_listbox->Insert(row);
         m_remove_ship(it->first);

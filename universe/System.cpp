@@ -88,7 +88,7 @@ System* System::Clone(int empire_id) const {
 void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    TemporaryPtr<const System> copied_system = universe_object_ptr_cast<System>(copied_object);
+    TemporaryPtr<const System> copied_system = boost::dynamic_pointer_cast<const System>(copied_object);
     if (!copied_system) {
         Logger().errorStream() << "System::Copy passed an object that wasn't a System";
         return;
@@ -573,7 +573,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator
          it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) 
     {
-        if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(*it))
+        if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(*it))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
     }

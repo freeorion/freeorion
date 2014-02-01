@@ -3450,7 +3450,7 @@ void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     Logger().debugStream().flush();
 
     // check if deleted object was a fleet.  if not, abort.
-    TemporaryPtr<const Fleet> deleted_fleet = universe_object_ptr_cast<const Fleet>(obj);
+    TemporaryPtr<const Fleet> deleted_fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
     if (!deleted_fleet)
         return; // TODO: Why exactly does this function not just take a Fleet instead of a UniverseObject?  Maybe rename to FleetDeleted?
 

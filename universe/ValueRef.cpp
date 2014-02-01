@@ -43,7 +43,7 @@ namespace {
         while (first != last) {
             std::string property_name = *first;
             if (property_name == "Planet") {
-                if (TemporaryPtr<const Building> b = universe_object_ptr_cast<const Building>(obj))
+                if (TemporaryPtr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj))
                     obj = GetPlanet(b->PlanetID());
                 else
                     obj = TemporaryPtr<const UniverseObject>();
@@ -51,7 +51,7 @@ namespace {
                 if (obj)
                     obj = GetSystem(obj->SystemID());
             } else if (property_name == "Fleet") {
-                if (TemporaryPtr<const Ship> s = universe_object_ptr_cast<const Ship>(obj))
+                if (TemporaryPtr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj))
                     obj = GetFleet(s->FleetID());
                 else
                     obj = TemporaryPtr<const UniverseObject>();
@@ -327,7 +327,7 @@ namespace ValueRef {
             return INVALID_PLANET_SIZE;
         }
 
-        if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
+        if (TemporaryPtr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object)) {
             if (property_name == "PlanetSize")
                 return p->Size();
             else if (property_name == "NextLargerPlanetSize")
@@ -353,7 +353,7 @@ namespace ValueRef {
             return INVALID_PLANET_TYPE;
         }
 
-        if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object)) {
+        if (TemporaryPtr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object)) {
             if (property_name == "PlanetType")
                 return p->Type();
             else if (property_name == "OriginalType")
@@ -385,7 +385,7 @@ namespace ValueRef {
                 Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_PLANET_ENVIRONMENT;
             }
-            if (TemporaryPtr<const Planet> p = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object))
                 return p->EnvironmentForSpecies();
         }
 
@@ -432,7 +432,7 @@ namespace ValueRef {
             return INVALID_STAR_TYPE;
         }
 
-        if (TemporaryPtr<const System> s = universe_object_ptr_cast<const System>(object)) {
+        if (TemporaryPtr<const System> s = boost::dynamic_pointer_cast<const System>(object)) {
             if (property_name == "StarType")
                 return s->GetStarType();
             else if (property_name == "NextOlderStarType")
@@ -499,11 +499,11 @@ namespace ValueRef {
             return object->Y();
 
         } else if (property_name == "SizeAsDouble") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->SizeAsInt();
 
         } else if (property_name == "DistanceFromOriginalType") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->DistanceFromOriginalType();
 
         } else if (property_name == "NextTurnPopGrowth") {
@@ -551,67 +551,67 @@ namespace ValueRef {
         } else if (property_name == "Age") {
             return object->AgeInTurns();
         } else if (property_name == "TurnsSinceFocusChange") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->TurnsSinceFocusChange();
             else
                 return 0;
         } else if (property_name == "ProducedByEmpireID") {
-            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->ProducedByEmpireID();
-            else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
+            else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
                 return building->ProducedByEmpireID();
             else
                 return ALL_EMPIRES;
         } else if (property_name == "DesignID") {
-            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->DesignID();
             else
                 return ShipDesign::INVALID_DESIGN_ID;
         } else if (property_name == "Species") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
-            else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
+            else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
             else
                 return -1;
         } else if (property_name == "FleetID") {
-            if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->FleetID();
-            else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
+            else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == "PlanetID") {
-            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
+            if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
                 return building->PlanetID();
-            else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == "SystemID") {
             return object->SystemID();
         } else if (property_name == "FinalDestinationID") {
-            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->FinalDestinationID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == "NextSystemID") {
-            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->NextSystemID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == "PreviousSystemID") {
-            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->PreviousSystemID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == "NumShips") {
-            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(object))
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->NumShips();
             else
                 return 0;
         } else if (property_name == "LastTurnBattleHere") {
-            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(object))
+            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(object))
                 return system->LastTurnBattleHere();
             else
                 return INVALID_GAME_TURN;
@@ -649,24 +649,24 @@ namespace ValueRef {
             return object->Name();
 
         } else if (property_name == "Species") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->SpeciesName();
-            else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object))
+            else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->SpeciesName();
 
         } else if (property_name == "BuildingType") {
-            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(object))
+            if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
                 return building->BuildingTypeName();
 
         } else if (property_name == "Focus") {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->Focus();
 
         } else if (property_name == "PreferredFocus") {
             const Species* species = 0;
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(object)) {
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object)) {
                 species = GetSpecies(planet->SpeciesName());
-            } else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(object)) {
+            } else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object)) {
                 species = GetSpecies(ship->SpeciesName());
             }
             if (species)

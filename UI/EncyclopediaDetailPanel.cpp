@@ -945,19 +945,19 @@ void EncyclopediaDetailPanel::Refresh() {
             {
                 TemporaryPtr<const UniverseObject> obj = *obj_it;
 
-                if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj))
+                if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship->PublicName(client_empire_id)) + "  ";
 
-                else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj))
+                else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), fleet->PublicName(client_empire_id)) + "  ";
 
-                else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj))
+                else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
 
-                else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj))
+                else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj))
                     detailed_description += LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), building->PublicName(client_empire_id)) + "  ";
 
-                else if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj))
+                else if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj))
                     detailed_description += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id)) + "  ";
 
                 else

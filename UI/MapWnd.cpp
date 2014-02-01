@@ -1672,7 +1672,7 @@ void MapWnd::RenderVisibilityRadii() {
         if (obj->ObjectType() == OBJ_FLEET)
             continue;
         if (obj->ObjectType() == OBJ_SHIP) {
-            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj);
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
             TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
@@ -3376,7 +3376,7 @@ void MapWnd::RefreshFleetButtons() {
             Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
 
         // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
+        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -3422,7 +3422,7 @@ void MapWnd::RefreshFleetButtons() {
             Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
 
         // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
+        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -3454,7 +3454,7 @@ void MapWnd::RefreshFleetButtons() {
         }
 
         // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj);
+        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (fleet->Empty())
             continue;
 
@@ -4255,7 +4255,7 @@ void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
         Logger().debugStream() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         Logger().debugStream() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
+    if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
         if (it1 != m_fleet_lines.end())
             m_fleet_lines.erase(it1);

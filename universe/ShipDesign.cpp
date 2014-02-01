@@ -913,7 +913,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     // currently ships can only be built at planets, and by species that are
     // not planetbound
-    TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(location);
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(location);
     if (!planet)
         return false;
     const std::string& species_name = planet->SpeciesName();

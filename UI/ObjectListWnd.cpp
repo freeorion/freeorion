@@ -843,7 +843,7 @@ namespace {
         std::vector<boost::shared_ptr<GG::Texture> > retval;
 
         if (obj->ObjectType() == OBJ_SHIP) {
-            TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj);
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
             if (ship) {
                 if (const ShipDesign* design = ship->Design())
                     retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
@@ -852,7 +852,7 @@ namespace {
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
                 boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (head_icon)
                     retval.push_back(head_icon);
@@ -861,7 +861,7 @@ namespace {
                     retval.push_back(size_icon);
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj)) {
+            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
@@ -874,13 +874,13 @@ namespace {
                     retval.push_back(halo_texture);
             }
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj))
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
         } else if (obj->ObjectType() == OBJ_BUILDING) {
-            if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj))
+            if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj))
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
         } else if (obj->ObjectType() == OBJ_FIELD) {
-            if (TemporaryPtr<const Field> field = universe_object_ptr_cast<const Field>(obj))
+            if (TemporaryPtr<const Field> field = boost::dynamic_pointer_cast<const Field>(obj))
                 retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
         }
         if (retval.empty())
@@ -892,7 +892,7 @@ namespace {
         if (!obj)
             return EMPTY_STRING;
         if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (TemporaryPtr<const System> system = universe_object_ptr_cast<const System>(obj))
+            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj))
                 return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
         }
         return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
@@ -1278,13 +1278,13 @@ public:
                     systems.insert(object_id);
                 } else if (obj->ObjectType() == OBJ_FIELD) {
                     fields.insert(object_id);
-                } else if (TemporaryPtr<const Fleet> fleet = universe_object_ptr_cast<const Fleet>(obj)) {
+                } else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
                     system_fleets[fleet->SystemID()].insert(object_id);
-                } else if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
+                } else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
                     fleet_ships[ship->FleetID()].insert(object_id);
-                } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
+                } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
                     system_planets[planet->SystemID()].insert(object_id);
-                } else if (TemporaryPtr<const Building> building = universe_object_ptr_cast<const Building>(obj)) {
+                } else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
                     planet_buildings[building->PlanetID()].insert(object_id);
                 }
             }

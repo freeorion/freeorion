@@ -344,7 +344,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
             } else if (set_ship_part_meter_effect) {
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;   // only ships have ship part meters
-                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
                 if (!ship)
                     continue;
                 meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
@@ -397,7 +397,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
                 meter_type = meter_effect->GetMeterType();
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;
-                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
                 if (!ship)
                     continue;
                 meter = ship->GetPartMeter(meter_type, meter_effect->GetPartName());
@@ -460,7 +460,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
                 meter_type = meter_effect->GetMeterType();
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;
-                TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(target);
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
                 if (!ship)
                     continue;
 

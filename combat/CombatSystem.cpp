@@ -440,9 +440,9 @@ namespace {
     }
 
     bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
-        if (TemporaryPtr<const Ship> ship = universe_object_ptr_cast<const Ship>(obj)) {
+        if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed();
-        } else if (TemporaryPtr<const Planet> planet = universe_object_ptr_cast<const Planet>(obj)) {
+        } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
         } else {
             return false;
@@ -626,8 +626,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             Logger().debugStream() << "Attacker: " << attacker->Name();
 
 
-        TemporaryPtr<Ship> attack_ship = universe_object_ptr_cast<Ship>(attacker);
-        TemporaryPtr<Planet> attack_planet = universe_object_ptr_cast<Planet>(attacker);
+        TemporaryPtr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
+        TemporaryPtr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
 
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
@@ -708,18 +708,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
             // do actual attacks, and mark attackers as valid targets for attacked object's owners
             if (attack_ship) {
-                if (TemporaryPtr<Ship> target_ship = universe_object_ptr_cast<Ship>(target)) {
+                if (TemporaryPtr<Ship> target_ship = boost::dynamic_pointer_cast<Ship>(target)) {
                     AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
-                } else if (TemporaryPtr<Planet> target_planet = universe_object_ptr_cast<Planet>(target)) {
+                } else if (TemporaryPtr<Planet> target_planet = boost::dynamic_pointer_cast<Planet>(target)) {
                     AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             } else if (attack_planet) {
-                if (TemporaryPtr<Ship> target_ship = universe_object_ptr_cast<Ship>(target)) {
+                if (TemporaryPtr<Ship> target_ship = boost::dynamic_pointer_cast<Ship>(target)) {
                     AttackPlanetShip(attack_planet, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
-                } else if (TemporaryPtr<Planet> target_planet = universe_object_ptr_cast<Planet>(target)) {
+                } else if (TemporaryPtr<Planet> target_planet = boost::dynamic_pointer_cast<Planet>(target)) {
                     AttackPlanetPlanet(attack_planet, target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }

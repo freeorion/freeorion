@@ -60,7 +60,7 @@ Fleet* Fleet::Clone(int empire_id) const {
 void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object == this)
         return;
-    TemporaryPtr<const Fleet> copied_fleet = universe_object_ptr_cast<Fleet>(copied_object);
+    TemporaryPtr<const Fleet> copied_fleet = boost::dynamic_pointer_cast<const Fleet>(copied_object);
     if (!copied_fleet) {
         Logger().errorStream() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
