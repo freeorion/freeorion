@@ -648,11 +648,11 @@ void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 
     // repeatedly increment scroll position for the requested number of moves.
     for (int i = 0; i < move; ++i) {
-        m_vscroll->ScrollLineDecr(3);
+        m_vscroll->ScrollLineDecr(5);
         SignalScroll(*m_vscroll, i == move - 1);
     }
     for (int i = 0; i < -move; ++i) {
-        m_vscroll->ScrollLineIncr(3);
+        m_vscroll->ScrollLineIncr(5);
         SignalScroll(*m_vscroll, i == -move - 1);
     }
 }
