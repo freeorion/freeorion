@@ -16,10 +16,10 @@ class CUI_MinRestoreButton : public GG::Button {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
    enum Mode {
-       MIN_BUTTON, 
+       MIN_BUTTON,
        RESTORE_BUTTON
    };
-              
+
    CUI_MinRestoreButton(GG::X x, GG::Y y); ///< basic ctor
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
@@ -96,6 +96,9 @@ public:
     virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {return LButtonUp(pt, mod_keys);}
+    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseLeave();
 
     void            ToggleMinimized() {MinimizeClicked();}
     void            Close()           {CloseClicked();}
@@ -107,12 +110,14 @@ public:
 
 protected:
     //! \name Accessors //@{
-    virtual GG::X   MinimizedWidth() const;         //!< the width of a minimized CUIWnd
-    GG::X           LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
-    GG::Y           TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
-    GG::X           RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
-    GG::Y           BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
-    int             InnerBorderAngleOffset() const; //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    virtual GG::X   MinimizedWidth() const;             //!< the width of a minimized CUIWnd
+    GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
+    GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
+    GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
+    GG::Y           BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
+    int             InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    bool            InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
+
     //@}
 
     //! \name Mutators //@{
@@ -126,6 +131,8 @@ protected:
     bool                    m_minimized;      //!< true if the window is currently minimized
     GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
+
+    bool                    m_mouse_in_resize_tab;
 
     CUI_CloseButton*        m_close_button;     //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button

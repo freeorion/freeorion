@@ -113,6 +113,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),
     m_drag_offset(-GG::X1, -GG::Y1),
+    m_mouse_in_resize_tab(false),
     m_close_button(0),
     m_minimize_button(0)
 {
@@ -143,7 +144,8 @@ void CUIWnd::Render() {
     GG::Pt cl_lr = ClientLowerRight();
 
     if (!m_minimized) {
-        AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, true);
+        AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
+                              OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
 
         // use GL to draw the lines
         glDisable(GL_TEXTURE_2D);
@@ -165,7 +167,8 @@ void CUIWnd::Render() {
         if (m_resizable) {
             glBegin(GL_LINES);
                 // draw the extra lines of the resize tab
-                glColor(ClientUI::WndInnerBorderColor());
+                GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
+                glColor(tab_lines_colour);
 
                 glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
                 glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
@@ -187,13 +190,21 @@ void CUIWnd::Render() {
 }
 
 void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (!m_minimized && m_resizable) {
-        GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
-        GG::Pt dist_from_lr = cl_lr - pt;
-        if (Value(dist_from_lr.x) + Value(dist_from_lr.y) <= INNER_BORDER_ANGLE_OFFSET) {
-            m_drag_offset = pt - LowerRight();
-        }
-    }
+    if (!InResizeTab(pt))
+        return;
+    m_drag_offset = pt - LowerRight();
+}
+
+bool CUIWnd::InResizeTab(const GG::Pt& pt) const {
+    if (!m_resizable || m_minimized)
+        return false;
+
+    GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
+    GG::Pt dist_from_lr = cl_lr - pt;
+    if (Value(dist_from_lr.x) + Value(dist_from_lr.y) <= INNER_BORDER_ANGLE_OFFSET)
+        return true;
+
+    return false;
 }
 
 void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
@@ -235,6 +246,21 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
 void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = GG::Pt(-GG::X1, -GG::Y1); }
 
+void CUIWnd::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    m_mouse_in_resize_tab = InResizeTab(pt);
+    Wnd::MouseEnter(pt, mod_keys);
+}
+
+void CUIWnd::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    m_mouse_in_resize_tab = InResizeTab(pt);
+    Wnd::MouseHere(pt, mod_keys);
+}
+
+void CUIWnd::MouseLeave() {
+    m_mouse_in_resize_tab = false;
+    Wnd::MouseLeave();
+}
+
 GG::Pt CUIWnd::ClientUpperLeft() const
 { return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_TOP); }
 
@@ -243,9 +269,13 @@ GG::Pt CUIWnd::ClientLowerRight() const
 
 bool CUIWnd::InWindow(const GG::Pt& pt) const {
     GG::Pt lr = LowerRight();
-    GG::Pt dist_from_lr = lr - pt;
-    bool inside_lower_right_corner = OUTER_EDGE_ANGLE_OFFSET < Value(dist_from_lr.x) + Value(dist_from_lr.y);
-    return (UpperLeft() <= pt && pt < lr && inside_lower_right_corner);
+    if (m_resizable) {
+        return UpperLeft() <= pt && pt < lr;
+    } else {
+        GG::Pt dist_from_lr = lr - pt;
+        bool inside_lower_right_corner = OUTER_EDGE_ANGLE_OFFSET < Value(dist_from_lr.x) + Value(dist_from_lr.y);
+        return (UpperLeft() <= pt && pt < lr && inside_lower_right_corner);
+    }
 }
 
 void CUIWnd::InitButtons() {
