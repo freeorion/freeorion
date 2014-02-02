@@ -2737,7 +2737,7 @@ DESIGN_KNOWN
 Duplicates Existing Design
 
 DESIGN_KNOWN_DETAIL
-This design (name, hull, parts) duplicates a design already known to this empire.
+This design is a duplicate of "%1%".
 
 
 ################

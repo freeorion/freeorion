@@ -497,7 +497,6 @@ FO_COMMON_API const HullTypeManager& GetHullTypeManager();
   * 0 is returned instead. */
 FO_COMMON_API const HullType* GetHullType(const std::string& name);
 
-
 class FO_COMMON_API ShipDesign {
 public:
     /** \name Structors */ //@{
@@ -588,6 +587,8 @@ public:
     bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
+
+    friend bool operator ==(const ShipDesign& first, const ShipDesign& second);  ///< Returns true if the two designs have the same hull and parts.
     //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id

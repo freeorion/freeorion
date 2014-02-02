@@ -1752,9 +1752,10 @@ public:
     const std::string&                  DesignName() const;         //!< returns name currently entered for design
     const std::string&                  DesignDescription() const;  //!< returns description currently entered for design
 
-    boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
-    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
-    bool                                CurrentDesignIsRegistered(); //!< returns true iff current design dump text is registered as a completed design for the client
+    boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;                                //!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
+    int                                 GetCompleteDesignID() const;                                //!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
+    static std::string                  dummy;
+    bool                                CurrentDesignIsRegistered(std::string& design_name = dummy);        //!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
     //@}
 
     /** \name Mutators */ //@{
@@ -1928,13 +1929,26 @@ boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() 
 int DesignWnd::MainPanel::GetCompleteDesignID() const
 { return m_complete_design_id; }
 
-bool DesignWnd::MainPanel::CurrentDesignIsRegistered() {
-    bool is_reg = (GetCompleteDesignID() != ShipDesign::INVALID_DESIGN_ID); // though it appears this always fails
-    if (boost::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
-        std::string dump_str = GetCleanDesignDump(cur_design.get());
-        is_reg = is_reg || (m_completed_design_dump_strings.find(dump_str) != m_completed_design_dump_strings.end());
+bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id); // Had better not return 0 if we're designing a ship.
+    if (!empire) {
+        Logger().errorStream() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
+        return false;
     }
-    return (is_reg);
+
+    if (boost::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
+        for (Empire::ShipDesignItr it = empire->ShipDesignBegin();
+             it != empire->ShipDesignEnd(); ++it)
+        {
+            const ShipDesign& ship_design = *GetShipDesign(*it);
+            if (ship_design == *cur_design.get()) {
+                design_name = ship_design.Name();
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -2247,45 +2261,39 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::string design_name;
 
     if (!m_hull) {
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL"))));
 
-        m_confirm_button->Disable(false);
+        m_confirm_button->Disable(true);
     }
     else if (client_empire_id == ALL_EMPIRES) {
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
 
-        m_confirm_button->Disable(false);
+        m_confirm_button->Disable(true);
     }
     else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
 
-        m_confirm_button->Disable(false);
+        m_confirm_button->Disable(true);
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
-        // I have no idea how this would happen, so I'm not going to display a tooltip for it.
-        m_confirm_button->Disable(false);
-    }
-    else {
+        // I have no idea how this would happen, so I'm not going to display a tooltip for it. ~ Bigjoe5
         m_confirm_button->Disable(true);
     }
-
-
-    RefreshIncompleteDesign();
-    if (CurrentDesignIsRegistered()) {
-        Logger().debugStream() << "DesignWnd::MainPanel::DesignChanged found design to be already registered";
+    else if (CurrentDesignIsRegistered(design_name)) {
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("DESIGN_KNOWN"), UserString("DESIGN_KNOWN_DETAIL"))));
+            new TextBrowseWnd(UserString("DESIGN_KNOWN"),
+            boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
+
         m_confirm_button->Disable(true);
-    } else if (client_empire_id != ALL_EMPIRES && m_hull && !m_design_name->Text().empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
-        m_confirm_button->Disable(false);
+    }
     else {
-        Logger().debugStream() << "DesignWnd::MainPanel::DesignChanged found design to be NOT already registered";
-        m_confirm_button->Disable(true);
+        m_confirm_button->Disable(false);
     }
 }
 

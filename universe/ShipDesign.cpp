@@ -1154,6 +1154,24 @@ std::string ShipDesign::Dump() const {
     return retval; 
 }
 
+bool operator ==(const ShipDesign& first, const ShipDesign& second) {
+    if (first.Hull() != second.Hull())
+        return false;
+
+    std::map<std::string, int> first_parts;
+    std::map<std::string, int> second_parts;
+
+    for (std::vector<std::string>::const_iterator it = first.Parts().begin();
+         it != first.Parts().end(); ++it)
+    { ++first_parts[*it]; }
+
+    for (std::vector<std::string>::const_iterator it = second.Parts().begin();
+         it != second.Parts().end(); ++it)
+    { ++second_parts[*it]; }
+
+    return first_parts == second_parts;
+}
+
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
