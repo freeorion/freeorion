@@ -2023,17 +2023,17 @@ bool CombatWnd::ZoomToNextUnit() {
 void CombatWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager * hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &CombatWnd::OpenChatWindow, "combat.open_chat");
-    hkm->Connect(this, &CombatWnd::ShowMenu, "combat.menu");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomIn, "combat.zoom_in");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomIn, "combat.zoom_in_alt");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomOut, "combat.zoom_out");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomOut, "combat.zoom_out_alt");
-    hkm->Connect(this, &CombatWnd::ZoomToPrevUnit, "combat.zoom_prev_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToNextUnit, "combat.zoom_next_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToPrevIdleUnit, "combat.zoom_prev_idle_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToNextIdleUnit, "combat.zoom_next_idle_unit");
-    
+    hkm->Connect(this, &CombatWnd::OpenChatWindow,      "combat.open_chat");
+    hkm->Connect(this, &CombatWnd::ShowMenu,            "combat.menu");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in_alt");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out");
+    hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out_alt");
+    hkm->Connect(this, &CombatWnd::ZoomToPrevUnit,      "combat.zoom_prev_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToNextUnit,      "combat.zoom_next_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToPrevIdleUnit,  "combat.zoom_prev_idle_unit");
+    hkm->Connect(this, &CombatWnd::ZoomToNextIdleUnit,  "combat.zoom_next_idle_unit");
+
     hkm->RebuildShortcuts();
 }
 
