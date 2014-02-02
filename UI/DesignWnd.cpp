@@ -1755,7 +1755,7 @@ public:
     boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;                                //!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
     int                                 GetCompleteDesignID() const;                                //!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
     static std::string                  dummy;
-    bool                                CurrentDesignIsRegistered(std::string& design_name = dummy);        //!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
+    bool                                CurrentDesignIsRegistered(std::string& design_name = dummy);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
     //@}
 
     /** \name Mutators */ //@{
