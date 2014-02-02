@@ -1027,7 +1027,7 @@ namespace {
 
     // Wraps call to the main Python universe generator function
     void PythonCreateUniverse() {
-        object f = s_python_module.attr("createUniverse");
+        object f = s_python_module.attr("create_universe");
         if (!f) {
             Logger().errorStream() << "Unable to call Python function createUniverse ";
             return;
