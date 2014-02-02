@@ -32,13 +32,13 @@ class OptionsDB;
 /// given a certain name.
 class Hotkey {
     /// The global hotkey storage
-    static std::map<std::string, Hotkey> * s_hotkeys;
+    static std::map<std::string, Hotkey>* s_hotkeys;
 
-    Hotkey(const std::string & name, GG::Key key,
+    Hotkey(const std::string& name, GG::Key key,
            GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Returns a modifiable version of the hotkey. 
-    static Hotkey & PrivateNamedHotkey(const std::string & name);
+    static Hotkey& PrivateNamedHotkey(const std::string& name);
 
 public:
     /// Internal name (code-like).
@@ -50,7 +50,7 @@ public:
 
     /// Returns the name of the user string containing the description
     /// of the shortcut.
-    static std::string UserStringForHotkey(const std::string & name);
+    static std::string UserStringForHotkey(const std::string& name);
 
     /// Key hotkey
     ///
@@ -65,7 +65,7 @@ public:
 
     /// Registers a hotkey name (ie the one used for storing in the
     /// database) along with a description and a default value.
-    static void AddHotkey(const std::string & name, GG::Key key,
+    static void AddHotkey(const std::string& name, GG::Key key,
                           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
 
@@ -79,19 +79,19 @@ public:
 
     /// Returns the Hotkey of the given name, or raises an exception
     /// if there is no such hotkey.
-    static const Hotkey & NamedHotkey(const std::string & name);
+    static const Hotkey& NamedHotkey(const std::string& name);
 
     /// Sets the value of the given named hotkey, and updates the
     /// corresponding option.
-    static void SetHotkey(const std::string & name, GG::Key key,
+    static void SetHotkey(const std::string& name, GG::Key key,
                           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Sets the value of the given named hotkey to its default,
     /// and updates the corresponding option.
-    static void ResetHotkey(const std::string & name);
+    static void ResetHotkey(const std::string& name);
 
     /// Sets the value of the given named hotkey to no key
-    static void ClearHotkey(const std::string & name);
+    static void ClearHotkey(const std::string& name);
 
     /// Returns a string that can later be parsed again with
     /// HotkeyFromString()
@@ -100,9 +100,9 @@ public:
     std::string ToString() const;
 
     /// Converts a string back to the pair key/modifier
-    static std::pair<GG::Key, GG::Flags<GG::ModKey> > HotkeyFromString(const std::string & str);
+    static std::pair<GG::Key, GG::Flags<GG::ModKey> > HotkeyFromString(const std::string& str);
 
-    void FromString(const std::string & str);
+    void FromString(const std::string& str);
 
     /// Adds the options to the database.
     ///
@@ -112,7 +112,7 @@ public:
     static void AddOptions(OptionsDB& db);
 
     /// Parses the configuration back.
-    static void ReadFromOptions(OptionsDB & db);
+    static void ReadFromOptions(OptionsDB& db);
 
     /// Pretty print, ie transform into something that may look
     /// reasonably nice for the user, but won't be parseable anymore.
@@ -139,22 +139,22 @@ public:
 class HotkeyCondition {
 protected:
     friend class HotkeyManager;
-    HotkeyCondition() {;};
+    HotkeyCondition() {}
+
 public:
     virtual bool IsActive() const = 0;
-    virtual ~HotkeyCondition() {;};
+    virtual ~HotkeyCondition() {}
 };
 
 /// On when the given window is visible
 class VisibleWindowCondition : public HotkeyCondition {
 protected:
-
-    GG::Wnd * target;
+    GG::Wnd* target;
 
 public:
-    VisibleWindowCondition(GG::Wnd * tg) : target(tg) {;};
+    VisibleWindowCondition(GG::Wnd* tg) : target(tg) {}
     virtual bool IsActive() const {
-        if(! target)
+        if (!target)
             return false;
         return target->Visible();
     };
@@ -164,11 +164,12 @@ public:
 class InvisibleWindowCondition : public HotkeyCondition {
 protected:
     std::list<GG::Wnd*> m_blacklist;
+
 public:
-    InvisibleWindowCondition(GG::Wnd * w1, GG::Wnd * w2 = NULL, 
-                             GG::Wnd * w3 = NULL,
-                             GG::Wnd * w4 = NULL);
-    InvisibleWindowCondition(const std::list<GG::Wnd*> & bl);
+    InvisibleWindowCondition(GG::Wnd* w1, GG::Wnd* w2 = NULL,
+                             GG::Wnd* w3 = NULL,
+                             GG::Wnd* w4 = NULL);
+    InvisibleWindowCondition(const std::list<GG::Wnd*>& bl);
 
     virtual bool IsActive() const;
 };
@@ -176,15 +177,14 @@ public:
 /// On when the given window is visible
 class FocusWindowCondition : public HotkeyCondition {
 protected:
-
-    GG::Wnd * target;
+    GG::Wnd* target;
 
 public:
-    FocusWindowCondition(GG::Wnd * tg) : target(tg) {;};
+    FocusWindowCondition(GG::Wnd* tg) : target(tg) {}
     virtual bool IsActive() const {
-        if(! target)
+        if (!target)
             return false;
-        GG::Wnd * foc = GG::GUI::GetGUI()->FocusWnd();
+        GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
         return target == foc;
     };
 };
@@ -192,13 +192,12 @@ public:
 template<class W>
 class FocusWindowIsA : public HotkeyCondition {
 public:
-    FocusWindowIsA() { ;};
-
+    FocusWindowIsA() {};
 
     virtual bool IsActive() const {
-        GG::Wnd * foc = GG::GUI::GetGUI()->FocusWnd();
-        std::cout << "Focus: " << foc << std::endl;
-        if(dynamic_cast<W*>(foc))
+        GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
+        //std::cout << "Focus: " << foc << std::endl;
+        if (dynamic_cast<W*>(foc))
             return true;
         return false;
     };
@@ -208,13 +207,13 @@ class OrCondition : public HotkeyCondition {
 protected:
     std::list<HotkeyCondition*> m_conditions;
 public:
-    OrCondition(HotkeyCondition * c1, HotkeyCondition * c2,
-                HotkeyCondition * c3 = NULL,
-                HotkeyCondition * c4 = NULL,
-                HotkeyCondition * c5 = NULL,
-                HotkeyCondition * c6 = NULL,
-                HotkeyCondition * c7 = NULL,
-                HotkeyCondition * c8 = NULL);
+    OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
+                HotkeyCondition* c3 = NULL,
+                HotkeyCondition* c4 = NULL,
+                HotkeyCondition* c5 = NULL,
+                HotkeyCondition* c6 = NULL,
+                HotkeyCondition* c7 = NULL,
+                HotkeyCondition* c8 = NULL);
 
     virtual ~OrCondition();
     virtual bool IsActive() const;
@@ -228,7 +227,6 @@ class HotkeyManager {
     /// A helper class that stores both a connection and the
     /// conditions in which it should be on.
     struct ConditionalConnection {
-
         /// The condition. If null, always on.
         boost::shared_ptr<HotkeyCondition> condition;
 
@@ -236,17 +234,18 @@ class HotkeyManager {
 
         /// Block or unblocks the connection based on condition.
         void UpdateConnection() {
-            if(connection.connected()) {
+            if (connection.connected()) {
                 bool active = true;
-                if(condition)
+                if (condition)
                     active = condition->IsActive();
                 connection.block(! active);
             }
         };
 
-        ConditionalConnection(const boost::signals::connection & conn, 
-                              HotkeyCondition * cond) : 
-            condition(cond), connection(conn) {;};
+        ConditionalConnection(const boost::signals::connection& conn,
+                              HotkeyCondition* cond) :
+            condition(cond), connection(conn)
+        {}
     };
 
     typedef std::list<ConditionalConnection> ConditionalConnectionList;
@@ -258,12 +257,12 @@ class HotkeyManager {
     Connections m_connections;
 
     /// Add the given conditional connection.
-    void AddConditionalConnection(const std::string & name,
-                                  const boost::signals::connection & conn,
-                                  HotkeyCondition * cond);
+    void AddConditionalConnection(const std::string& name,
+                                  const boost::signals::connection& conn,
+                                  HotkeyCondition* cond);
 
     /// The singleton instance
-    static HotkeyManager * s_singleton;
+    static HotkeyManager* s_singleton;
 
     /// The constructor for the singleton. Private.
     HotkeyManager();
@@ -272,20 +271,19 @@ class HotkeyManager {
     bool m_disabled_alnum;
 
     /// Signals for each shortut name, created on demand.
-    std::map<std::string, GG::GUI::AcceleratorSignalType * > m_signals;
+    std::map<std::string, GG::GUI::AcceleratorSignalType*> m_signals;
 
     /// The shortcut processing function. Passed using boost::bind.
-    bool ProcessNamedShortcut(const std::string & name);
+    bool ProcessNamedShortcut(const std::string& name);
 
     /// The connections hot key (real keypress) -> named hot key
     std::set<boost::signals::connection> m_internal_connections;
 
     /// Returns the signal for the given named accelerator, creating
     /// it if necessary.
-    GG::GUI::AcceleratorSignalType & NamedSignal(const std::string & name);
+    GG::GUI::AcceleratorSignalType& NamedSignal(const std::string& name);
 
 public:
-
     /// Rebuilds all shortcuts/connections. Should be called again at
     /// the end of every function that registers new connections (just
     /// once, though cause calling it every time would get expensive),
@@ -293,18 +291,16 @@ public:
     void RebuildShortcuts();
 
     /// Returns the singleton instance
-    static HotkeyManager * GetManager();
+    static HotkeyManager* GetManager();
 
-    /// Connects a named shortcut to the target slot in the target
-    /// instance.
-    template<class T, class R> 
-    void Connect(T * instance, R (T::*member)(), const std::string & name,
-                 HotkeyCondition * cond = NULL) {
+    /// Connects a named shortcut to the target slot in the target instance.
+    template <class T, class R>
+    void Connect(T* instance, R (T::*member)(), const std::string& name,
+                 HotkeyCondition* cond = NULL) {
         AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond);
     };
 
     ~HotkeyManager();
-
 
     /// Disables all alphanumeric accelerators
     void DisableAlphaNumeric();

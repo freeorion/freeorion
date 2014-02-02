@@ -399,7 +399,6 @@ GG::GUI::AcceleratorSignalType & HotkeyManager::NamedSignal(const std::string & 
     return *sig;
 }
 
-
 bool HotkeyManager::ProcessNamedShortcut(const std::string & name) {
     if (m_disabled_alnum  && Hotkey::NamedHotkey(name).IsAlnum())
         return false;           // ignored
