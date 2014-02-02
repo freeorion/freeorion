@@ -1163,9 +1163,6 @@
 		471023740CEF3AAC00A7DF2B /* Wnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wnd.h; sourceTree = "<group>"; };
 		471023760CEF3AAC00A7DF2B /* WndEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WndEvent.h; sourceTree = "<group>"; };
 		471023770CEF3AAC00A7DF2B /* ZList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZList.h; sourceTree = "<group>"; };
-		471023780CEF3AAC00A7DF2B /* GiGi.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGi.pc.in; sourceTree = "<group>"; };
-		471023790CEF3AAC00A7DF2B /* GiGiOgre.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGiOgre.pc.in; sourceTree = "<group>"; };
-		4710237A0CEF3AAC00A7DF2B /* GiGiSDL.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGiSDL.pc.in; sourceTree = "<group>"; };
 		4710237D0CEF3AAC00A7DF2B /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
 		4710237E0CEF3AAC00A7DF2B /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
 		4710237F0CEF3AAC00A7DF2B /* config-h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "config-h.in"; sourceTree = "<group>"; };
@@ -2555,9 +2552,6 @@
 			children = (
 				4710233B0CEF3AAB00A7DF2B /* doc */,
 				4710233E0CEF3AAB00A7DF2B /* GG */,
-				471023780CEF3AAC00A7DF2B /* GiGi.pc.in */,
-				471023790CEF3AAC00A7DF2B /* GiGiOgre.pc.in */,
-				4710237A0CEF3AAC00A7DF2B /* GiGiSDL.pc.in */,
 				4710237C0CEF3AAC00A7DF2B /* libltdl */,
 				471023900CEF3AAC00A7DF2B /* src */,
 				471023C60CEF3AAC00A7DF2B /* tutorial */,
