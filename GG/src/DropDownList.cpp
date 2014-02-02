@@ -237,23 +237,23 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 void DropDownList::SetColor(Clr c)
 { m_LB->SetColor(c); }
 
-DropDownList::iterator DropDownList::Insert(Row* row, iterator it)
+DropDownList::iterator DropDownList::Insert(Row* row, iterator it, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    return m_LB->Insert(row, it);
+    return m_LB->Insert(row, it, signal);
 }
 
-DropDownList::iterator DropDownList::Insert(Row* row)
+DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    return m_LB->Insert(row);
+    return m_LB->Insert(row, signal);
 }
 
-DropDownList::Row* DropDownList::Erase(iterator it)
+DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
 {
     if (it == m_current_item)
         m_current_item = m_LB->end();
-    return m_LB->Erase(it);
+    return m_LB->Erase(it, signal);
 }
 
 void DropDownList::Clear()

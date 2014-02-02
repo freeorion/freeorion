@@ -126,15 +126,15 @@ public:
         list before \a it; returns index of insertion point.  This Row becomes
         the property of the DropDownList and should not be deleted or inserted
         into any other DropDownLists */
-    iterator       Insert(Row* row, iterator it);
+    iterator       Insert(Row* row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list at the end of the list; returns index of insertion point.  This
         Row becomes the property of the DropDownList and should not be deleted
         or inserted into any other DropDownLists */
-    iterator       Insert(Row* row);
+    iterator       Insert(Row* row, bool signal = true);
 
-    Row*           Erase(iterator it);            ///< removes and returns \a it from the list, or 0 if no such row exists
+    Row*           Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void           Clear();                       ///< empties the list
     iterator       begin();                       ///< returns an iterator to the first list row
     iterator       end();                         ///< returns an iterator to the imaginary row one past the last one
@@ -148,7 +148,7 @@ public:
     void           Select(std::size_t n);         ///< selects row-item \a it in the list
 
     void           SetInteriorColor(Clr c);       ///< sets the color painted into the client area of the control
-    void           SetDropHeight(Y h);       ///< sets the height of the drop-down list
+    void           SetDropHeight(Y h);            ///< sets the height of the drop-down list
 
     /** sets the style flags for the list to \a s (invalidates currently selected item). \see GG::ListBoxStyle */
     void           SetStyle(Flags<ListBoxStyle> s);

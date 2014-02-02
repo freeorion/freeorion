@@ -350,21 +350,21 @@ public:
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row
         becomes the property of the ListBox. */
-    iterator       Insert(Row* row, iterator it);
+    iterator       Insert(Row* row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list; returns insertion point.
         This Row becomes the property of the ListBox. */
-    iterator       Insert(Row* row);
+    iterator       Insert(Row* row, bool signal = true);
 
-    Row*           Erase(iterator it);                    ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
-    void           Clear();                               ///< empties the ListBox
-    void           SelectRow(iterator it);                ///< selects row \a it
-    void           DeselectRow(iterator it);              ///< deselects row \a it
-    void           SelectAll();                           ///< selects all rows
-    void           DeselectAll();                         ///< deselects all rows
-    iterator       begin();                               ///< returns an iterator to the first list row
-    iterator       end();                                 ///< returns an iterator to the imaginary row one past the last one
+    Row*           Erase(iterator it, bool signal = false); ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
+    void           Clear();                                 ///< empties the ListBox
+    void           SelectRow(iterator it);                  ///< selects row \a it
+    void           DeselectRow(iterator it);                ///< deselects row \a it
+    void           SelectAll();                             ///< selects all rows
+    void           DeselectAll();                           ///< deselects all rows
+    iterator       begin();                                 ///< returns an iterator to the first list row
+    iterator       end();                                   ///< returns an iterator to the imaginary row one past the last one
     reverse_iterator
                    rbegin();                              ///< returns an iterator to the last list row
     reverse_iterator

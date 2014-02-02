@@ -814,14 +814,14 @@ void ListBox::SetColor(Clr c)
         m_hscroll->SetColor(c);
 }
 
-ListBox::iterator ListBox::Insert(Row* row, iterator it)
-{ return Insert(row, it, false, true); }
+ListBox::iterator ListBox::Insert(Row* row, iterator it, bool signal/* = true*/)
+{ return Insert(row, it, false, signal); }
 
-ListBox::iterator ListBox::Insert(Row* row)
-{ return Insert(row, m_rows.end(), false, true); }
+ListBox::iterator ListBox::Insert(Row* row, bool signal/* = true*/)
+{ return Insert(row, m_rows.end(), false, signal); }
 
-ListBox::Row* ListBox::Erase(iterator it)
-{ return Erase(it, false, false); }
+ListBox::Row* ListBox::Erase(iterator it, bool signal/* = false*/)
+{ return Erase(it, false, signal); }
 
 void ListBox::Clear()
 {
