@@ -417,7 +417,7 @@ SM_KRILL_2_DESC
 SM_KRILL_3
 Large Krill Swarm
 SM_KRILL_3_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become aggressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_KRILL_4
 Plague of Krill
@@ -437,7 +437,7 @@ Dyson Forests intermittently produce a star-lane capable seed, sent away to foun
 SM_FLOATER
 Floater
 SM_FLOATER_DESC
-Gas-filled bulbous sac drifting through space.
+Dyson Forests intermittently produce a star-lane capable seed: gas-filled bulbous sacs that drift through space, sent away to found a new forest around other stars.
 
 SM_DRAGON
 Vacuum Dragon
@@ -472,7 +472,7 @@ Wardens guard cool major stuff.
 SM_KRAKEN_1
 Larval Kraken
 SM_KRAKEN_1_DESC
-In the larval form, a kraken is a cautious and harmless type of space-bourn fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+In the larval form, a kraken is a cautious and harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
 
 SM_KRAKEN_2
 Kraken
@@ -1026,7 +1026,7 @@ OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Sets size of system icons below which the fixed-size tiny icons will be shown.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Sets UI tooltip popup delay, in ms.
+Sets UI tooltip pop-up delay, in ms.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time. Otherwise, opening a fleet window will close any currently-open fleet window.
@@ -1707,7 +1707,7 @@ OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
 Range circle opacity
 
 OPTIONS_GALAXY_MAP_POPUP
-Galaxy map popup menu
+Galaxy map pop-up menu
 
 OPTIONS_STARLANES
 Starlanes
@@ -3184,7 +3184,7 @@ TELEPATHY_TEXT
 XENOPHOBIC_SPECIES_TITLE
 Xenophobic
 XENOPHOBIC_SPECIES_TEXT
-'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
+'''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced maximum population.
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
@@ -3204,7 +3204,7 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] instead increase by 6% for each planet already owned by the empire.'''
+'''The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] instead increase by 6% for each planet already owned by the empire.'''
 
 EVACUATION_TITLE
 Evacuation
@@ -3659,12 +3659,12 @@ SITREP_VICTORY_LABEL
 Victory
 
 SITREP_VICTORY_DESTRUCTION
-At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
+At last, the mysterious violent threat plaguing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
 SITREP_VICTORY_DESTRUCTION_LABEL
 Victory Destruction
 
 SITREP_VICTORY_CAPTURE
-The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen uder your control.
+The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen under your control.
 SITREP_VICTORY_CAPTURE_LABEL
 Victory Capture
 
@@ -3674,7 +3674,7 @@ SITREP_VICTORY_TECH_LABEL
 Victory Technology
 
 SITREP_VICTORY_BIO
-The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
+The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty war fleet.
 SITREP_VICTORY_BIO_LABEL
 Victory Biological
 
@@ -3926,7 +3926,7 @@ Personality:
 The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
 
 Homeworld:
-Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
+Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
 '''
 
 SP_CHATO
@@ -4008,7 +4008,7 @@ Hhhoh's describe themselves as social pragmatists. Elders are very much revered,
 SP_EAXAW
 Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
-'''Evil amazonian xenophobic agressive worms.
+'''Evil amazonian xenophobic aggressive worms.
 Prefer Terran planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 
@@ -4028,7 +4028,7 @@ Social Structure:
 Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
 
 History:
-A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
+A long time ago a derelict ship of the Precursors crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
 '''
 
 SP_DERTHREAN
@@ -4243,13 +4243,13 @@ Prefer Swamp planets.
 
 SP_PHINNERT_DESC
 '''Description:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile flyers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
+Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile fliers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
 
 Social Structure:
 Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
 
 Homeworld: 
-Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gasses. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
+Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
 
 SP_EGASSEM
@@ -4349,7 +4349,7 @@ Prefer Swamp planets.
 
 SP_SETINON_DESC
 '''Description:
-The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub subcompartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
+The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub sub-compartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
 
 Social Structure:
 Setinon society is based on two factors, firstly their strongly individualistic, defensive nature, and secondly their contrasting need to cooperate to deal with the world. Therefore Setinon society is best summed up as highly complex with multiple interacting channels of power that may change weekly.
@@ -4417,10 +4417,10 @@ Personality:
 Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
 
 Homeworld:
-The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent coverly only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
+The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
 
 Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
+There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
 
 
@@ -4439,7 +4439,7 @@ Prefers Radiated planets.
 '''
 
 SP_BEIGEGOO_DESC
-'''The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
 
 SP_SILEXIAN
@@ -4537,7 +4537,7 @@ Prefer Toxic planets.
 '''
 
 SP_GISGUFGTHRIM_DESC
-'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis life-cycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
 SP_HIDDENGARDENER
@@ -4639,7 +4639,7 @@ SP_OURBOOLS_DESC
 A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
 
 Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichtioids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
+Ourbools are inclined to a nomadic life, hunting or herding their prey ichthyoids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
 A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
 
 Homeworld:
@@ -4652,7 +4652,7 @@ The Ourbools find their sense of position via the regular movements of the 23 mo
 SP_VOLP
 Volp-Uglush
 SP_VOLP_GAMEPLAY_DESC
-'''Highly bureacratic, overcrowded burrowers.
+'''Highly bureaucratic, overcrowded burrowers.
 Prefer Barren planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
@@ -4665,15 +4665,15 @@ Prefer Barren planets.
 
 SP_VOLP_DESC
 '''Description:
-The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
+The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunneling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resource needs, as well as how societal structures affected individual behavior.
 The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
-They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of indivudually taking on various large battle engines, the chaos of combat is not their most effective environment.
+They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of individually taking on various large battle engines, the chaos of combat is not their most effective environment.
 
 Home World:
 Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
 
 Reason for Staying:
-Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
+Volp-Uglush are now too integrated and ingrown. They now totally lack the independence and innovation needed to leave Hive and start a new colony.
 '''
 
 SP_FURTHEST
@@ -4975,7 +4975,7 @@ VOID_MASTER_SPECIAL_DESC
 Monsters inside the core of this planet are dragging it into the void.  There should perhaps be some impending doom associated with this special.
 
 VOID_SLAVE_SPECIAL
-Void Metamorphisis
+Void Metamorphosis
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.
 
@@ -5086,10 +5086,10 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
 METALOIDS_SPECIAL
-High-Energy Metaloids
+High-Energy Metalloids
 METALOIDS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
+When a planet with High-Energy Metalloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
@@ -6345,7 +6345,7 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquistion of native planets.
+'''Does nothing. Later this can enable peaceful acquisition of native planets.
 
 Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
 
@@ -6358,14 +6358,14 @@ LRN_PSIONICS_DESC
 Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
 
 LRN_ARTIF_MINDS
-Nacent Artificial Intelligence
+Nascent Artificial Intelligence
 
 LRN_ARTIF_MINDS_DESC
 '''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
 
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable facsimiles may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
-Nacent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
+Nascent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
 
 LRN_XENOARCH
 Xenoarchaeology
@@ -6376,7 +6376,7 @@ Allows discoveries from Ruins
 LRN_XENOARCH_DESC
 '''Allows discoveries from [[special ANCIENT_RUINS_SPECIAL]].
 
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy. Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space. Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy. Remains, ruins and rumors of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space. Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 
 It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology. Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost. By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.'''
 
@@ -6488,7 +6488,7 @@ GRO_LIFECYCLE_MAN_DESC
 Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.'''
 
 GRO_ADV_ECOMAN
-Advanced Ecomanipulation
+Advanced Eco-Manipulation
 
 GRO_ADV_ECOMAN_DESC
 Even in an artificial environment, weather patterns and natural ecological cycles can get out of control, causing large amounts of damage. By introducing stabilizing factors, incidents of destructive ecological forces in artificial environments can be reduced, allowing large-scale environmental modifications.
@@ -6521,7 +6521,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and Hostile Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
+'''Increases the max population of Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -6555,7 +6555,7 @@ Microgravity Industry
 PRO_MICROGRAV_MAN_DESC
 '''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
 
-Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
+Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquefy and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
 The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.'''
 
@@ -6565,9 +6565,9 @@ Tectonic Mineralogy
 PRO_CORE_MINE_DESC
 '''Some sort of very aggressive mining goes here.
 
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to volcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
+Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, volcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
 PRO_ROBOTIC_PROD
 Robotic Production
@@ -6628,7 +6628,7 @@ PRO_INTSTEL_COPRO
 Interstellar Co-Production
 
 PRO_INTSTEL_COPRO_DESC
-Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems. Later developments in planetary regional cooperation permit some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefitting from concentrated expertise and economy of scale. Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility. The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
+Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems. Later developments in planetary regional cooperation permit some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefiting from concentrated expertise and economy of scale. Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility. The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
@@ -6812,7 +6812,7 @@ SHP_MIDCOMB_LOG
 Mid-Combat Logistics
 
 SHP_MIDCOMB_LOG_DESC
-When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
+When interstellar fleets are in regular, commonplace use, the transfer of personnel and material in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the co-ordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
 
 SHP_ASTEROID_HULLS
 Asteroid Hulls
@@ -7062,7 +7062,7 @@ CON_ART_PLANET
 Artificial Planet
 
 CON_ART_PLANET_DESC
-Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centres for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
+Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
 
 CON_PALACE_EXCLUDE
 Palace Excluder
@@ -7104,10 +7104,10 @@ GRO_REMOTE_TERRAFORM_DESC
 Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
 
 GRO_BIOTERROR
-Bioterror Facilites
+Bioterror Facilities
 
 GRO_BIOTERROR_DESC
-A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict, but as a weapon of terror it is unsurpassed; a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sowing despair beyond the affected area. However, care must be taken when developing such organisms to ensure they are not accidentally released. Furthermore, utter secrecy is required to dispel the risk of damaging relations with civilians and other empires.
+A research center created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict, but as a weapon of terror it is unsurpassed; a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sowing despair beyond the affected area. However, care must be taken when developing such organisms to ensure they are not accidentally released. Furthermore, utter secrecy is required to dispel the risk of damaging relations with civilians and other empires.
 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Allows remote terraforming
@@ -7671,7 +7671,7 @@ Blackshield
 SHP_BLACKSHIELD_DESC
 '''Most advanced ship shielding technology.
 
-Blackshields got their name because they create what looks like an almost inpenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
+Blackshields got their name because they create what looks like an almost impenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
 
 SPY_DIST_MOD
 Distortion Modulator
@@ -7828,7 +7828,7 @@ Imperial Palace
 BLD_IMPERIAL_PALACE_DESC
 '''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
 
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
+Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
 BLD_SUPER_TESTERS
 Super-Tester Takeover
@@ -7858,7 +7858,7 @@ BLD_SHIPYARD_CON_NANOROBO_DESC
 The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls.'''
 
 BLD_SHIPYARD_CON_GEOINT
-Geointegration Facility
+Geo-Integration Facility
 
 BLD_SHIPYARD_CON_GEOINT_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_TITANIC]]s and [[shiphull SH_SELF_GRAVITATING]]s.
@@ -7903,7 +7903,7 @@ Cellular Growth Chamber
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
 
-A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
+A specialized shipyard upgrade able to increase the size of mono-cellular organisms to truly massive proportions.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
@@ -7976,7 +7976,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. All resource meters for the planet on which it is built are able to reach target in a single turn and receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. In addition, all planets in the owning empire receive an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -8054,7 +8054,7 @@ Solar Orbital Generator
 BLD_SOL_ORB_GEN_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population for Blue and White, Yellow and Orange, or Red stars, respectively.
 
-A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
+A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an outpost.'''
 
 BLD_CLONING_CENTER
 Cloning Center
@@ -8561,7 +8561,7 @@ ST_CLOAK_3
 Dimensional Cloak
 
 ST_CLOAK_3_DESC
-'''Strong Cloking (+60)
+'''Strong Cloaking (+60)
 
 Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_TITLE]]. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
@@ -8723,7 +8723,7 @@ SP_NOVA_BOMB
 Nova Bomb
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
+A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it receives the signal from a Nova Bomb Activator not more than one starlane jump away.
 
 
 #############################################################
@@ -8783,7 +8783,7 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
@@ -9156,7 +9156,7 @@ A hull used by the Experimentors use to transport experimental equipment to othe
 SH_COSMIC_DRAGON_BODY
 Cosmic Dragon Body
 SH_COSMIC_DRAGON_BODY_DESC
-A fearsom space dragon the size of a small planet.
+A fearsome space dragon the size of a small planet.
 
 SH_DAMPENING_CLOUD_BODY
 Dampening Cloud Body
@@ -9452,7 +9452,7 @@ ORGANIC_GROWTH
 '''Organic Growth'''
 
 BASIC_CONTENTEDNESS_LABEL
-General Contentness
+General Contentedness
 
 FOCUS_PREFERENCE_LABEL
 Preferred Focus Selected
@@ -9462,7 +9462,7 @@ Preferred Focus Selected
 #############################################################
 
 ## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census popup, and specifies order in which they will be displayed.
+## in Census pop-up, and specifies order in which they will be displayed.
 ## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
 ## since those won't be displayed in the census anyway.  
 
