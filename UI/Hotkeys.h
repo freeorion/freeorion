@@ -237,7 +237,7 @@ class HotkeyManager {
         /// Block or unblocks the connection based on condition.
         void UpdateConnection() {
             if (connection.connected()) {
-                if (condition->IsActive())
+                if (condition && condition->IsActive())
                     blocker.block();
                 else
                     blocker.unblock();
