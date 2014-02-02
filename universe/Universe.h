@@ -10,6 +10,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include <vector>
 #include <list>
@@ -423,45 +424,31 @@ public:
     //@}
 
 private:
-    template <typename T>
-    class distance_matrix {
-    public:
-        typedef boost::numeric::ublas::symmetric_matrix<
-            T,
-            boost::numeric::ublas::lower
-        > storage_type;
-
-        struct const_row_ref {
-            const_row_ref(std::size_t i, const storage_type& m) : m_i(i), m_m(m) {}
-            T operator[](std::size_t j) const { return m_m(m_i, j); }
-        private:
-            std::size_t m_i;
-            const storage_type& m_m;
-        };
-
-        struct row_ref {
-            row_ref(std::size_t i, storage_type& m) : m_i(i), m_m(m) {}
-            T& operator[](std::size_t j) { return m_m(m_i, j); }
-        private:
-            std::size_t m_i;
-            storage_type& m_m;
-        };
-
-        distance_matrix() :
-            m_m()
-        {}
-
-        const_row_ref operator[](std::size_t i) const
-        { return const_row_ref(i, m_m); }
-
-        row_ref operator[](std::size_t i)
-        { return row_ref(i, m_m); }
-
-        void resize(std::size_t rows, std::size_t columns)
-        { m_m.resize(rows, columns, false); }   // does not preserve contents
-
-    private:
-        storage_type m_m;
+    /// minimal public interface for distance caches
+    template <class T> struct distance_matrix_storage {
+        typedef T value_type;
+        typedef std::vector<T>& row_ref;
+        
+        distance_matrix_storage() {};
+        distance_matrix_storage(const distance_matrix_storage<T>& src) 
+        { resize(src.m_data.size()); };
+        
+        size_t size() 
+        { return m_data.size(); }
+        
+        void resize(size_t a_size) {
+            const size_t old_size = size();
+            
+            m_data.clear();
+            m_data.resize(a_size);
+            m_row_mutexes.resize(a_size);
+            for (size_t i = old_size; i < a_size; ++i)
+                m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
+        }
+        
+        std::vector< std::vector<T> > m_data;
+        std::vector< boost::shared_ptr<boost::shared_mutex> > m_row_mutexes;
+        boost::shared_mutex m_mutex;
     };
 
     /** Inserts object \a obj into the universe; returns a TemporaryPtr
@@ -475,8 +462,6 @@ private:
       * to be consistent on client and server */
     template <class T>
     TemporaryPtr<T>            InsertID(T* obj, int id);
-
-    typedef distance_matrix<short> JumpsMatrix;
 
     struct GraphImpl;
 
@@ -524,9 +509,10 @@ private:
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
-    JumpsMatrix                     m_system_jumps;                     ///< indexed by system graph index (not system id), the smallest number of jumps to travel between all the systems
+    mutable distance_matrix_storage<short>
+                                    m_system_jumps;                     ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
     GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
-    boost::unordered_map<int, int>  m_system_id_to_graph_index;
+    boost::unordered_map<int, size_t>  m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
