@@ -1163,23 +1163,6 @@
 		471023740CEF3AAC00A7DF2B /* Wnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wnd.h; sourceTree = "<group>"; };
 		471023760CEF3AAC00A7DF2B /* WndEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WndEvent.h; sourceTree = "<group>"; };
 		471023770CEF3AAC00A7DF2B /* ZList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZList.h; sourceTree = "<group>"; };
-		4710237D0CEF3AAC00A7DF2B /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
-		4710237E0CEF3AAC00A7DF2B /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
-		4710237F0CEF3AAC00A7DF2B /* config-h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "config-h.in"; sourceTree = "<group>"; };
-		471023800CEF3AAC00A7DF2B /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
-		471023810CEF3AAC00A7DF2B /* config.sub */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
-		471023820CEF3AAC00A7DF2B /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
-		471023830CEF3AAC00A7DF2B /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
-		471023840CEF3AAC00A7DF2B /* COPYING.LIB */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.LIB; sourceTree = "<group>"; };
-		471023850CEF3AAC00A7DF2B /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
-		471023860CEF3AAC00A7DF2B /* ltdl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltdl.c; sourceTree = "<group>"; };
-		471023870CEF3AAC00A7DF2B /* ltdl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ltdl.h; sourceTree = "<group>"; };
-		471023880CEF3AAC00A7DF2B /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
-		471023890CEF3AAC00A7DF2B /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		4710238A0CEF3AAC00A7DF2B /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
-		4710238B0CEF3AAC00A7DF2B /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
-		4710238C0CEF3AAC00A7DF2B /* mkinstalldirs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkinstalldirs; sourceTree = "<group>"; };
-		4710238D0CEF3AAC00A7DF2B /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignmentFlags.cpp; sourceTree = "<group>"; };
 		471023930CEF3AAC00A7DF2B /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrowseInfoWnd.cpp; sourceTree = "<group>"; };
@@ -2552,7 +2535,6 @@
 			children = (
 				4710233B0CEF3AAB00A7DF2B /* doc */,
 				4710233E0CEF3AAB00A7DF2B /* GG */,
-				4710237C0CEF3AAC00A7DF2B /* libltdl */,
 				471023900CEF3AAC00A7DF2B /* src */,
 				471023C60CEF3AAC00A7DF2B /* tutorial */,
 			);
@@ -2659,30 +2641,6 @@
 				471023600CEF3AAB00A7DF2B /* SDLGUI.h */,
 			);
 			path = SDL;
-			sourceTree = "<group>";
-		};
-		4710237C0CEF3AAC00A7DF2B /* libltdl */ = {
-			isa = PBXGroup;
-			children = (
-				4710237D0CEF3AAC00A7DF2B /* acinclude.m4 */,
-				4710237E0CEF3AAC00A7DF2B /* aclocal.m4 */,
-				4710237F0CEF3AAC00A7DF2B /* config-h.in */,
-				471023800CEF3AAC00A7DF2B /* config.guess */,
-				471023810CEF3AAC00A7DF2B /* config.sub */,
-				471023820CEF3AAC00A7DF2B /* configure */,
-				471023830CEF3AAC00A7DF2B /* configure.ac */,
-				471023840CEF3AAC00A7DF2B /* COPYING.LIB */,
-				471023850CEF3AAC00A7DF2B /* install-sh */,
-				471023860CEF3AAC00A7DF2B /* ltdl.c */,
-				471023870CEF3AAC00A7DF2B /* ltdl.h */,
-				471023880CEF3AAC00A7DF2B /* ltmain.sh */,
-				471023890CEF3AAC00A7DF2B /* Makefile.am */,
-				4710238A0CEF3AAC00A7DF2B /* Makefile.in */,
-				4710238B0CEF3AAC00A7DF2B /* missing */,
-				4710238C0CEF3AAC00A7DF2B /* mkinstalldirs */,
-				4710238D0CEF3AAC00A7DF2B /* README */,
-			);
-			path = libltdl;
 			sourceTree = "<group>";
 		};
 		471023900CEF3AAC00A7DF2B /* src */ = {
@@ -4404,7 +4362,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4451,7 +4408,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4551,7 +4507,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4601,7 +4556,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4729,7 +4683,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4779,7 +4732,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4907,7 +4859,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -4964,7 +4915,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -5128,7 +5078,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -5196,7 +5145,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -5359,7 +5307,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
@@ -5434,7 +5381,6 @@
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",

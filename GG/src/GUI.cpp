@@ -29,7 +29,6 @@
 #include <GG/Cursor.h>
 #include <GG/EventPump.h>
 #include <GG/Layout.h>
-#include <GG/PluginInterface.h>
 #include <GG/StyleFactory.h>
 #include <GG/Edit.h>
 #include <GG/Timer.h>

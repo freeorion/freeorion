@@ -433,13 +433,6 @@
     all controls created by GG are requested from a GG::StyleFactory.  \see
     The GG::Wnd description and the GG::GUI description.
 
-    \section tour_plugins Plugins
-
-    Plugins (dynamically loaded shared libraries/DLLs not linked into the
-    application when it is built) can be created and used with GG.  Plugins
-    provide a GG::StyleFactory, and a default font name and size.  \see
-    GG::PluginInterface.
-
     \section tour_standard_dialogs Standard Dialogs
 
     Three standard dialogs are provided:

@@ -44,7 +44,6 @@ class Cursor;
 class Wnd;
 class EventPumpBase;
 class ModalEventPump;
-class PluginInterface;
 class StyleFactory;
 class Texture;
 class Timer;
