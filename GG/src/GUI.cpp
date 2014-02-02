@@ -595,6 +595,9 @@ GUI::GUI(const std::string& app_name)
 GUI::~GUI()
 { Wnd::s_default_browse_info_wnd.reset(); }
 
+const std::string& GUI::AppName() const
+{ return s_impl->m_app_name; }
+
 Wnd* GUI::FocusWnd() const
 { return s_impl->m_modal_wnds.empty() ? s_impl->m_focus_wnd : s_impl->m_modal_wnds.back().second; }
 
