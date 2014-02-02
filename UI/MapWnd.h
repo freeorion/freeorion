@@ -281,7 +281,6 @@ private:
     void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
 
     bool            ReturnToMap();
-    bool            OpenChatWindow();
 
     bool            EndTurn();
 
@@ -289,17 +288,28 @@ private:
     void            ShowModeratorActions();
     void            HideModeratorActions();
 
-    bool            ToggleObjects();
-    void            ShowObjects();
-    void            HideObjects();
+    bool            ToggleMessages();
+    void            ShowMessages();
+    bool            OpenMessages();
+    void            HideMessages();
 
     bool            ToggleSitRep();
     void            ShowSitRep();
     void            HideSitRep();
 
+    bool            ToggleEmpires();
+    void            ShowEmpires();
+    void            HideEmpires();
+
+    bool            ToggleObjects();
+    void            ShowObjects();
+    void            HideObjects();
+
     bool            TogglePedia();
     void            ShowPedia();
     void            HidePedia();
+
+    void            ShowGraphs();
 
     void            HideSidePanel();
     void            RestoreSidePanel();
@@ -418,7 +428,10 @@ private:
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection, *m_fleet;
     GG::Button                  *m_industry_wasted, *m_research_wasted;
-    SettableInWindowCUIButton   *m_btn_moderator, *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
+    SettableInWindowCUIButton   *m_btn_moderator, *m_btn_messages, *m_btn_empires,
+                                *m_btn_siterep, *m_btn_research, *m_btn_production,
+                                *m_btn_design, *m_btn_pedia, *m_btn_graphs,
+                                *m_btn_objects, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
@@ -426,7 +439,10 @@ private:
 
     std::set<int>               m_fleets_exploring;
 
+    friend class IntroMenu;
+    friend class WaitingForGameStart;
     friend class PlayingTurn;
+    friend class PlayingGame;
 };
 
 

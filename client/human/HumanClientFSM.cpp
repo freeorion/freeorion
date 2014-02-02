@@ -65,8 +65,8 @@ IntroMenu::IntroMenu(my_context ctx) :
         Client().Register(Client().GetClientUI()->GetCombatWnd());
     else {
         Client().Register(Client().GetClientUI()->GetIntroScreen());
-        Client().Remove(Client().GetClientUI()->GetMessageWnd());
-        Client().Remove(Client().GetClientUI()->GetPlayerListWnd());
+        Client().GetClientUI()->GetMapWnd()->HideMessages();
+        Client().GetClientUI()->GetMapWnd()->HideEmpires();
     }
 }
 
@@ -111,8 +111,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     Client().Networking().SetHostPlayerID(msg.m_message.ReceivingPlayer());
 
     Client().GetClientUI()->GetMapWnd()->Sanitize();
-    Client().GetClientUI()->GetMessageWnd()->Show();
-    Client().GetClientUI()->GetPlayerListWnd()->Show();
+
     return transit<PlayingGame>();
 }
 
@@ -289,8 +288,6 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     post_event(msg);
 
     Client().GetClientUI()->GetMapWnd()->Sanitize();
-    Client().GetClientUI()->GetMessageWnd()->Show();
-    Client().GetClientUI()->GetPlayerListWnd()->Show();
 
     return transit<WaitingForGameStart>();
 }
@@ -505,8 +502,9 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForGameStart";
 
-    Client().Register(Client().GetClientUI()->GetMessageWnd());
-    Client().Register(Client().GetClientUI()->GetPlayerListWnd());
+    Client().GetClientUI()->GetMapWnd()->ShowMessages();
+    Client().GetClientUI()->GetMapWnd()->ShowEmpires();
+
     Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(false);
 }
 
@@ -561,9 +559,6 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
-
-    Client().Register(Client().GetClientUI()->GetMessageWnd());
-    Client().Register(Client().GetClientUI()->GetPlayerListWnd());
     Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(false);
 }
 

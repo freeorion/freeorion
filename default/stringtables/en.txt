@@ -2005,6 +2005,12 @@ Design
 MAP_BTN_PEDIA
 Pedia
 
+MAP_BTN_EMPIRES
+Empires
+
+MAP_BTN_MESSAGES
+Messages
+
 MAP_PRODUCTION_TITLE
 Production
 

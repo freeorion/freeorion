@@ -574,11 +574,14 @@ MapWnd::MapWnd() :
     m_industry_wasted(0),
     m_research_wasted(0),
     m_btn_moderator(0),
+    m_btn_messages(0),
+    m_btn_empires(0),
     m_btn_siterep(0),
     m_btn_research(0),
     m_btn_production(0),
     m_btn_design(0),
     m_btn_pedia(0),
+    m_btn_graphs(0),
     m_btn_objects(0),
     m_btn_menu(0),
     m_FPS(0),
@@ -597,7 +600,7 @@ MapWnd::MapWnd() :
 
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                        1, 17);
+                                        1, 20);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -655,6 +658,21 @@ MapWnd::MapWnd() :
     m_btn_pedia->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
+    // Graphs button
+    m_btn_graphs = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_graphs->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts.png")));
+    m_btn_graphs->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts_clicked.png"  )));
+    m_btn_graphs->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts_mouseover.png")));
+    GG::Connect(m_btn_graphs->LeftClickedSignal, &MapWnd::ShowGraphs, this);
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_graphs),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_graphs),  boost::bind(&WndBottom, m_btn_graphs),
+                    _1);
+    m_btn_graphs->SetInWindow(in_window_func);
+    m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_graphs->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
     // Design button
     m_btn_design = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
@@ -672,7 +690,6 @@ MapWnd::MapWnd() :
     m_btn_design->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
-
     // Production button
     m_btn_production = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
@@ -688,7 +705,6 @@ MapWnd::MapWnd() :
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_production->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
-
 
     // Research button
     m_btn_research = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
@@ -706,6 +722,38 @@ MapWnd::MapWnd() :
     m_btn_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
+    // Objects button
+    m_btn_objects = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+    GG::Connect(m_btn_objects->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
+                    _1);
+    m_btn_objects->SetInWindow(in_window_func);
+    m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_objects->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
+
+    // Empires button
+    m_btn_empires = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+    m_btn_empires->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_clicked.png"  )));
+    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+    GG::Connect(m_btn_empires->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleEmpires, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_empires),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_empires),  boost::bind(&WndBottom, m_btn_empires),
+                    _1);
+    m_btn_empires->SetInWindow(in_window_func);
+    m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_empires->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES"))));
+
     // SitRep button
     m_btn_siterep = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
@@ -722,21 +770,21 @@ MapWnd::MapWnd() :
     m_btn_siterep->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
-    // Objects button
-    m_btn_objects = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
-    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
-    m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
-    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
-    GG::Connect(m_btn_objects->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
+    // Messages button
+    m_btn_messages = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+    m_btn_messages->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_clicked.png"  )));
+    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+    GG::Connect(m_btn_messages->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleMessages, this)));
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_messages),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_messages),  boost::bind(&WndBottom, m_btn_messages),
                     _1);
-    m_btn_objects->SetInWindow(in_window_func);
-    m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_objects->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
+    m_btn_messages->SetInWindow(in_window_func);
+    m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_messages->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES"))));
 
     // Moderator button
     m_btn_moderator = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
@@ -852,10 +900,6 @@ MapWnd::MapWnd() :
     layout->Add(m_research,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    //layout->SetColumnStretch(layout_column, 1.0);
-    //layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
-    //++layout_column;
-
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_fleet,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
@@ -873,14 +917,24 @@ MapWnd::MapWnd() :
     layout->Add(m_btn_moderator,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
+    layout->SetMinimumColumnWidth(layout_column, m_btn_messages->Width());
     layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_messages,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_siterep->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_siterep,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_empires->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_empires,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_research->Width());
@@ -896,6 +950,11 @@ MapWnd::MapWnd() :
     layout->SetMinimumColumnWidth(layout_column, m_btn_design->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_graphs->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_graphs,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_pedia->Width());
@@ -980,6 +1039,12 @@ MapWnd::MapWnd() :
     m_design_wnd->Hide();
 
 
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+            GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleMessages, this));    // Wnd is manually closed by user
+        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+            GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleEmpires, this));     // Wnd is manually closed by user
+    }
 
     ///////////////////
     // Misc other stuff on map screen
@@ -4308,7 +4373,7 @@ void MapWnd::Sanitize() {
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         // clearing of message window commented out because scrollbar has quirks
-        // after doing so until enough messages are added to 
+        // after doing so until enough messages are added
         //if (MessageWnd* msg_wnd = cui->GetMessageWnd())
         //    msg_wnd->Clear();
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
@@ -4399,22 +4464,6 @@ bool MapWnd::ReturnToMap() {
     if (m_production_wnd->Visible())
         ToggleProduction();
 
-    return true;
-}
-
-bool MapWnd::OpenChatWindow() {
-    Logger().debugStream() << "MapWnd::OpenChatWindow";
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui)
-        return false;
-    MessageWnd* msg_wnd = cui->GetMessageWnd();
-    if (!msg_wnd)
-        return false;
-    GG::GUI* gui = GG::GUI::GetGUI();
-    if (!gui)
-        return false;
-    gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
-    msg_wnd->OpenForInput();
     return true;
 }
 
@@ -4529,6 +4578,104 @@ bool MapWnd::ToggleSitRep() {
     return true;
 }
 
+void MapWnd::ShowMessages() {
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui)
+        return;
+    MessageWnd* msg_wnd = cui->GetMessageWnd();
+    if (!msg_wnd)
+        return;
+    GG::GUI* gui = GG::GUI::GetGUI();
+    if (!gui)
+        return;
+    gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
+    msg_wnd->Show();
+    msg_wnd->OpenForInput();
+
+    // indicate selection on button
+    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+}
+
+bool MapWnd::OpenMessages() {
+    ShowMessages();
+    return true;
+}
+
+void MapWnd::HideMessages() {
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        HumanClientApp::GetApp()->Remove(cui->GetMessageWnd());
+        cui->GetMessageWnd()->Hide();
+    }
+    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+}
+
+bool MapWnd::ToggleMessages() {
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui)
+        return false;
+    MessageWnd* msg_wnd = cui->GetMessageWnd();
+    if (!msg_wnd)
+        return false;
+    if (msg_wnd->Visible())
+        HideMessages();
+    else
+        ShowMessages();
+    return true;
+}
+
+void MapWnd::ShowEmpires() {
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui)
+        return;
+    PlayerListWnd* plr_wnd = cui->GetPlayerListWnd();
+    if (!plr_wnd)
+        return;
+    GG::GUI* gui = GG::GUI::GetGUI();
+    if (!gui)
+        return;
+    gui->Register(plr_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
+    plr_wnd->Show();
+
+    // indicate selection on button
+    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+}
+
+void MapWnd::HideEmpires() {
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        HumanClientApp::GetApp()->Remove(cui->GetPlayerListWnd());
+        cui->GetPlayerListWnd()->Hide();
+    }
+    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+}
+
+bool MapWnd::ToggleEmpires() {
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui)
+        return false;
+    PlayerListWnd* plr_wnd = cui->GetPlayerListWnd();
+    if (!plr_wnd)
+        return false;
+    if (plr_wnd->Visible())
+        HideEmpires();
+    else
+        ShowEmpires();
+    return true;
+}
+
 void MapWnd::ShowPedia() {
     ClearProjectedFleetMovementLines();
 
@@ -4560,6 +4707,11 @@ bool MapWnd::TogglePedia() {
     else
         ShowPedia();
     return true;
+}
+
+void MapWnd::ShowGraphs() {
+    ShowPedia();
+    m_pedia_panel->AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH");
 }
 
 void MapWnd::HideSidePanel() {
@@ -5068,25 +5220,24 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     return false;
 }
 
-
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager * hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &MapWnd::ReturnToMap, "map.return_to_map");
-    hkm->Connect(this, &MapWnd::OpenChatWindow, "map.open_chat");
-    hkm->Connect(this, &MapWnd::EndTurn, "map.end_turn");
-    hkm->Connect(this, &MapWnd::ToggleSitRep, "map.sit_rep");
-    hkm->Connect(this, &MapWnd::ToggleResearch, "map.research");
-    hkm->Connect(this, &MapWnd::ToggleProduction, "map.production");
-    hkm->Connect(this, &MapWnd::ToggleDesign, "map.design");
-    hkm->Connect(this, &MapWnd::ShowMenu, "map.menu");
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn, "map.zoom_in");
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn, "map.zoom_in_alt");
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut, "map.zoom_out");
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut, "map.zoom_out_alt");
-    hkm->Connect(this, &MapWnd::ZoomToHomeSystem, "map.zoom_home_system");
-    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem, "map.zoom_prev_system");
-    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem, "map.zoom_next_system");
+    hkm->Connect(this, &MapWnd::ReturnToMap,            "map.return_to_map");
+    hkm->Connect(this, &MapWnd::OpenMessages,           "map.open_chat");
+    hkm->Connect(this, &MapWnd::EndTurn,                "map.end_turn");
+    hkm->Connect(this, &MapWnd::ToggleSitRep,           "map.sit_rep");
+    hkm->Connect(this, &MapWnd::ToggleResearch,         "map.research");
+    hkm->Connect(this, &MapWnd::ToggleProduction,       "map.production");
+    hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design");
+    hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu");
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in");
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt");
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out");
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt");
+    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system");
+    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system");
+    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system");
 
     // the list of windows for which the fleet shortcuts are blacklisted.
     std::list<GG::Wnd *> bl;
@@ -5095,10 +5246,10 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     bl.push_back(m_design_wnd);
 
 
-    hkm->Connect(this, &MapWnd::ZoomToPrevFleet, "map.zoom_prev_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToNextFleet, "map.zoom_next_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet, "map.zoom_prev_idle_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet, "map.zoom_next_idle_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToPrevFleet,        "map.zoom_prev_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToNextFleet,        "map.zoom_next_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet,    "map.zoom_prev_idle_fleet", new InvisibleWindowCondition(bl));
+    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet", new InvisibleWindowCondition(bl));
 
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText, "cut");
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText, "copy");
