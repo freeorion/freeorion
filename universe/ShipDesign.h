@@ -588,7 +588,7 @@ public:
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
 
-    friend bool operator ==(const ShipDesign& first, const ShipDesign& second);  ///< Returns true if the two designs have the same hull and parts.
+    friend bool operator ==(const ShipDesign& first, const ShipDesign& second);
     //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
@@ -661,6 +661,9 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+///< Returns true if the two designs have the same hull and parts.
+FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
 
 /** Returns the ShipDesign specification object with id \a ship_design_id.  If
   * no such ShipDesign is present in the Universe (because it doesn't exist,
