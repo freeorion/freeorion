@@ -33,8 +33,11 @@ public:
 
     mutable boost::signal<void ()> TypingSignal;        // emitted when the edit gains focus.  keyboard accelerators elsehwere should be disabled
     mutable boost::signal<void ()> DoneTypingSignal;    // emitted when the edit loses focus.  not necessary when a message is sent
+    mutable boost::signal<void ()> ClosingSignal;
 
 private:
+    virtual void    CloseClicked();
+
     void            DoLayout();
     void            MessageEntered();
     void            MessageHistoryUpRequested();

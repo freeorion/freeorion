@@ -314,6 +314,9 @@ void MessageWnd::DoLayout() {
                      GG::Pt(ClientWidth() - GG::X(CUIWnd::INNER_BORDER_ANGLE_OFFSET), ClientHeight()));
 }
 
+void MessageWnd::CloseClicked()
+{ ClosingSignal(); }
+
 void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);

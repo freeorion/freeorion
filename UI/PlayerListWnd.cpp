@@ -578,6 +578,9 @@ void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void PlayerListWnd::DoLayout()
 { m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET))); }
 
+void PlayerListWnd::CloseClicked()
+{ ClosingSignal(); }
+
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not
     // selected all PlayerDataPanel that aren't in \a rows

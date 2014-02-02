@@ -31,8 +31,11 @@ public:
 
     mutable boost::signal<void ()>      SelectedPlayersChangedSignal;
     mutable boost::signal<void (int)>   PlayerDoubleClickedSignal;
+    mutable boost::signal<void ()> ClosingSignal;
 
 private:
+    virtual void    CloseClicked();
+
     void            DoLayout();
 
     void            PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows);
