@@ -497,11 +497,22 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)>               LeftClickedSignal;  ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
-    mutable boost::signal<void (int)>               RightClickedSignal; ///< emitted when the planet panel is right clicked by the user.  returns the id of the clicked planet
-    mutable boost::signal<void ()>                  ResizedSignal;      ///< emitted when resized, so external container can redo layout
-    mutable boost::signal<void (const std::string&)>FocusChangedSignal; ///< emitted when focus is changed
-    mutable boost::signal<void (int)>               BuildingRightClickedSignal;
+    /** emitted when the planet panel is left clicked by the user.
+      * returns the id of the clicked planet */
+    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
+
+    /** emitted when the planet panel is right clicked by the user.
+      * returns the id of the clicked planet */
+    mutable boost::signals2::signal<void (int)> RightClickedSignal;
+
+    /** emitted when resized, so external container can redo
+      * layout */
+    mutable boost::signals2::signal<void ()> ResizedSignal;
+
+    /** emitted when focus is changed */
+    mutable boost::signals2::signal<void (const std::string&)> FocusChangedSignal;
+
+    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
     void                    DoLayout();
@@ -532,7 +543,7 @@ private:
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
     StarType                m_star_type;
 
-    boost::signals::connection  m_planet_connection;
+    boost::signals2::connection m_planet_connection;
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -572,9 +583,13 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)> PlanetSelectedSignal;     ///< emitted when an enabled planet panel is clicked by the user
-    mutable boost::signal<void (int)> PlanetRightClickedSignal; ///< emitted when a planet panel is right-clicked
-    mutable boost::signal<void (int)> BuildingRightClickedSignal;
+    /** emitted when an enabled planet panel is clicked by the user */
+    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+
+    /** emitted when a planet panel is right-clicked */
+    mutable boost::signals2::signal<void (int)> PlanetRightClickedSignal;
+
+    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
     void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
@@ -1757,7 +1772,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal,
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
-    m_planet_connection = GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this, boost::signals::at_front);
+    m_planet_connection = GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this, boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2573,15 +2588,15 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 // SidePanel
 ////////////////////////////////////////////////
 // static(s)
-int                                         SidePanel::s_system_id = INVALID_OBJECT_ID;
-std::set<SidePanel*>                        SidePanel::s_side_panels;
-std::set<boost::signals::connection>        SidePanel::s_system_connections;
-std::map<int, boost::signals::connection>   SidePanel::s_fleet_state_change_signals;
-boost::signal<void ()>                      SidePanel::ResourceCenterChangedSignal;
-boost::signal<void (int)>                   SidePanel::PlanetSelectedSignal;
-boost::signal<void (int)>                   SidePanel::PlanetRightClickedSignal;
-boost::signal<void (int)>                   SidePanel::BuildingRightClickedSignal;
-boost::signal<void (int)>                   SidePanel::SystemSelectedSignal;
+int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
+std::set<SidePanel*>                       SidePanel::s_side_panels;
+std::set<boost::signals2::connection>      SidePanel::s_system_connections;
+std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
+boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
+boost::signals2::signal<void (int)>        SidePanel::PlanetSelectedSignal;
+boost::signals2::signal<void (int)>        SidePanel::PlanetRightClickedSignal;
+boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
+boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
 SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
@@ -2728,11 +2743,11 @@ void SidePanel::UpdateImpl() {
 
 void SidePanel::Refresh() {
     // disconnect any existing system and fleet signals
-    for (std::set<boost::signals::connection>::iterator it = s_system_connections.begin(); it != s_system_connections.end(); ++it)
+    for (std::set<boost::signals2::connection>::iterator it = s_system_connections.begin(); it != s_system_connections.end(); ++it)
         it->disconnect();
     s_system_connections.clear();
 
-    for (std::map<int, boost::signals::connection>::iterator it = s_fleet_state_change_signals.begin(); it != s_fleet_state_change_signals.end(); ++it)
+    for (std::map<int, boost::signals2::connection>::iterator it = s_fleet_state_change_signals.begin(); it != s_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();
     s_fleet_state_change_signals.clear();
 
@@ -3034,7 +3049,7 @@ void SidePanel::FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
          it != fleets.end(); ++it)
     {
         TemporaryPtr<Fleet> fleet = *it;
-        std::map<int, boost::signals::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
+        std::map<int, boost::signals2::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
         if (signal_it != s_fleet_state_change_signals.end()) {
             signal_it->second.disconnect();
             s_fleet_state_change_signals.erase(signal_it);

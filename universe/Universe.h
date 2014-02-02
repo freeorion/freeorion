@@ -6,7 +6,7 @@
 #include "ObjectMap.h"
 #include "TemporaryPtr.h"
 
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
@@ -78,7 +78,8 @@ public:
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (TemporaryPtr<const UniverseObject>)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
+    /** emitted just before the UniverseObject is deleted */
+    typedef boost::signals2::signal<void (TemporaryPtr<const UniverseObject>)> UniverseObjectDeleteSignalType;
     //@}
 
     /** \name Structors */ //@{

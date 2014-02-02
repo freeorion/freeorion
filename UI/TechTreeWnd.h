@@ -12,10 +12,10 @@ class EncyclopediaDetailPanel;
   * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd {
 public:
-    typedef boost::signal<void (const std::string&)>                    TechSignalType;
-    typedef boost::signal<void (const std::string&,
+    typedef boost::signals2::signal<void (const std::string&)>                    TechSignalType;
+    typedef boost::signals2::signal<void (const std::string&,
                                 const GG::Flags<GG::ModKey>&)>          TechClickSignalType;
-    typedef boost::signal<void (const std::vector<std::string>&, int)>  QueueAddTechsSignalType;
+    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>  QueueAddTechsSignalType;
 
     /** \name Structors */ //@{
     TechTreeWnd(GG::X w, GG::Y h);

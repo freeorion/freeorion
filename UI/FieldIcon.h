@@ -49,12 +49,12 @@ public:
 
     void            SetSelected(bool selected = true);   //!< shows/hides the selection indicator over this field
 
-    mutable boost::signal<void (int)>   MouseEnteringSignal;
-    mutable boost::signal<void (int)>   MouseLeavingSignal;
-    mutable boost::signal<void (int)>   LeftClickedSignal;
-    mutable boost::signal<void (int)>   RightClickedSignal;
-    mutable boost::signal<void (int)>   LeftDoubleClickedSignal;
-    mutable boost::signal<void (int)>   RightDoubleClickedSignal;
+    mutable boost::signals2::signal<void (int)>   MouseEnteringSignal;
+    mutable boost::signals2::signal<void (int)>   MouseLeavingSignal;
+    mutable boost::signals2::signal<void (int)>   LeftClickedSignal;
+    mutable boost::signals2::signal<void (int)>   RightClickedSignal;
+    mutable boost::signals2::signal<void (int)>   LeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (int)>   RightDoubleClickedSignal;
     //!@}
 
 private:

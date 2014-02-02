@@ -50,8 +50,11 @@ class TextControl;
 struct GG_API MenuItem
 {
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (int)> SelectedIDSignalType; ///< invokes the appropriate functor to handle the menu selection, and passes the ID assigned to the item
-    typedef boost::signal<void ()>    SelectedSignalType;   ///< invokes the appropriate functor to handle the menu selection
+    /** invokes the appropriate functor to handle the menu selection, and
+        passes the ID assigned to the item */
+    typedef boost::signals2::signal<void (int)> SelectedIDSignalType;
+    /** invokes the appropriate functor to handle the menu selection */
+    typedef boost::signals2::signal<void ()>    SelectedSignalType;
     //@}
 
     /** \name Slot Types */ ///@{
@@ -125,7 +128,8 @@ class GG_API MenuBar : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (int)> BrowsedSignalType; ///< emits the ID of an item in the menu when the cursor moves over it
+    /** emits the ID of an item in the menu when the cursor moves over it */
+    typedef boost::signals2::signal<void (int)> BrowsedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -234,7 +238,8 @@ class GG_API PopupMenu : public Wnd
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (int)> BrowsedSignalType; ///< emits the ID of an item in the menu when the cursor moves over it
+    /** emits the ID of an item in the menu when the cursor moves over it */
+    typedef boost::signals2::signal<void (int)> BrowsedSignalType;
     //@}
 
     /** \name Structors */ ///@{

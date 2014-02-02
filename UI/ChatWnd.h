@@ -31,9 +31,13 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
-    mutable boost::signal<void ()> TypingSignal;        // emitted when the edit gains focus.  keyboard accelerators elsehwere should be disabled
-    mutable boost::signal<void ()> DoneTypingSignal;    // emitted when the edit loses focus.  not necessary when a message is sent
-    mutable boost::signal<void ()> ClosingSignal;
+    /** emitted when the edit gains focus.  Keyboard accelerators elsewhere
+        should be disabled */
+    mutable boost::signals2::signal<void ()> TypingSignal;
+    /** emitted when the edit loses focus.  not necessary when a message
+        is sent */
+    mutable boost::signals2::signal<void ()> DoneTypingSignal;
+    mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
     virtual void    CloseClicked();

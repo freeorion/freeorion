@@ -29,9 +29,9 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
-    mutable boost::signal<void ()>      SelectedPlayersChangedSignal;
-    mutable boost::signal<void (int)>   PlayerDoubleClickedSignal;
-    mutable boost::signal<void ()> ClosingSignal;
+    mutable boost::signals2::signal<void ()>    SelectedPlayersChangedSignal;
+    mutable boost::signals2::signal<void (int)> PlayerDoubleClickedSignal;
+    mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
     virtual void    CloseClicked();

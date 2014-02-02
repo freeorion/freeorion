@@ -60,12 +60,12 @@ public:
     /** \name Signal Types */ ///@{
     /** Emitted whenever the text of the Edit are altered (keypresses,
         deletes, etc.); provides the new text of the Edit. */
-    typedef boost::signal<void (const std::string&)> EditedSignalType;
+    typedef boost::signals2::signal<void (const std::string&)> EditedSignalType;
 
     /** Emitted whenever the Edit has changed and has lost the input focus, or
         one of enter or return has been pressed; provides the new text of the
         Edit. */
-    typedef boost::signal<void (const std::string&)> FocusUpdateSignalType;
+    typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
     //@}
 
     /** \name Structors */ ///@{

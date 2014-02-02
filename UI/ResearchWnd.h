@@ -51,7 +51,7 @@ private:
     TechTreeWnd*                m_tech_tree_wnd;
     bool                        m_enabled;
 
-    boost::signals::connection  m_empire_connection;
+    boost::signals2::connection m_empire_connection;
 };
 
 #endif // _ResearchWnd_h_

@@ -7,7 +7,7 @@
 #include "XMLDoc.h"
 
 #include <boost/any.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include <map>
 
@@ -100,9 +100,12 @@ class FO_COMMON_API OptionsDB
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>                     OptionChangedSignalType; ///< emitted when an option has changed
-    typedef boost::signal<void (const std::string&)>   OptionAddedSignalType;   ///< emitted when an option is added
-    typedef boost::signal<void (const std::string&)>   OptionRemovedSignalType; ///< emitted when an option is removed
+    /** emitted when an option has changed */
+    typedef boost::signals2::signal<void ()>                   OptionChangedSignalType;
+    /** emitted when an option is added */
+    typedef boost::signals2::signal<void (const std::string&)> OptionAddedSignalType;
+    /** emitted when an option is removed */
+    typedef boost::signals2::signal<void (const std::string&)> OptionRemovedSignalType;
     //@}
 
     /** validates a value for an option. throws std::runtime_error if no option
@@ -256,7 +259,7 @@ private:
         bool            storable;       ///< whether this option can be stored in an XML config file for use across multiple runs
         bool            flag;
 
-        mutable boost::shared_ptr<boost::signal<void ()> > option_changed_sig_ptr;
+        mutable boost::shared_ptr<boost::signals2::signal<void ()> > option_changed_sig_ptr;
 
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };

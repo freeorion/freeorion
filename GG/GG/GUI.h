@@ -127,7 +127,7 @@ public:
     /** Emitted when a keyboard accelerator is invoked. A return value of true
         indicates that the accelerator was processed by some slot; otherwise,
         a keystroke event is processed instead. */
-    typedef boost::signal<bool (), OrCombiner> AcceleratorSignalType;
+    typedef boost::signals2::signal<bool (), OrCombiner> AcceleratorSignalType;
     //@}
 
     /// These are the only events absolutely necessary for GG to function

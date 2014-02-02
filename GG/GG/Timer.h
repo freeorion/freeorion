@@ -48,7 +48,8 @@ class GG_API Timer
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (unsigned int, Timer*)> FiredSignalType; ///< Emitted when the timer fires
+    /** Emitted when the timer fires */
+    typedef boost::signals2::signal<void (unsigned int, Timer*)> FiredSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -77,7 +78,7 @@ public:
     mutable FiredSignalType FiredSignal; ///< The fired signal object for this Timer
 
 private:
-    typedef std::map<Wnd*, boost::signals::connection> ConnectionMap;
+    typedef std::map<Wnd*, boost::signals2::connection> ConnectionMap;
 
     Timer();
     Timer(const Timer&); // disabled

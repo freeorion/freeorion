@@ -71,12 +71,12 @@ public:
     void            ShowName();                     //!< enables the system name text
     void            HideName();                     //!< disables the system name text
 
-    mutable boost::signal<void (int)>   MouseEnteringSignal;
-    mutable boost::signal<void (int)>   MouseLeavingSignal;
-    mutable boost::signal<void (int)>   LeftClickedSignal;
-    mutable boost::signal<void (int)>   RightClickedSignal;
-    mutable boost::signal<void (int)>   LeftDoubleClickedSignal;
-    mutable boost::signal<void (int)>   RightDoubleClickedSignal;
+    mutable boost::signals2::signal<void (int)> MouseEnteringSignal;
+    mutable boost::signals2::signal<void (int)> MouseLeavingSignal;
+    mutable boost::signals2::signal<void (int)> LeftClickedSignal;
+    mutable boost::signals2::signal<void (int)> RightClickedSignal;
+    mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
+    mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
     //!@}
 
 private:
@@ -97,7 +97,7 @@ private:
     OwnerColoredSystemName*         m_colored_name;             //!< the control that holds the name of the system
     bool                            m_showing_name;             //!< is the icon supposed to show its name?
 
-    boost::signals::connection      m_system_connection;
+    boost::signals2::connection     m_system_connection;
 };
 
 #endif // _SystemIcon_h_

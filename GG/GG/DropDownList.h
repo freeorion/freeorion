@@ -61,7 +61,9 @@ public:
     typedef ListBox::const_reverse_iterator const_reverse_iterator;
 
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (iterator)>   SelChangedSignalType; ///< emitted when a new item is selected; will be end() when no item is selected
+    /** emitted when a new item is selected; will be end() when no item is
+      * selected */
+    typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{

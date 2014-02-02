@@ -22,9 +22,9 @@ public:
     void            Refresh();
     //!@}
 
-    mutable boost::signal<void (int)>   ObjectDoubleClickedSignal;
-    mutable boost::signal<void (int)>   ObjectDumpSignal;
-    mutable boost::signal<void ()>      ClosingSignal;
+    mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;
+    mutable boost::signals2::signal<void (int)> ObjectDumpSignal;
+    mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
     void            DoLayout();

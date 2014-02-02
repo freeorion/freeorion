@@ -155,25 +155,25 @@ public:
 
     /** Emitted whenever the OgreGUI is ready for human input from the
         keyboard, mouse, etc. */
-    boost::signal<void ()> HandleSystemEventsSignal;
+    boost::signals2::signal<void ()> HandleSystemEventsSignal;
 
     /** Emitted whenever the OgreGUI's window's left and top positions change. */
-    boost::signal<void (X, Y)> WindowMovedSignal;
+    boost::signals2::signal<void (X, Y)> WindowMovedSignal;
 
     /** Emitted whenever the OgreGUI's AppWidth() and/or AppHeight() change. */
-    boost::signal<void (X, Y)> WindowResizedSignal;
+    boost::signals2::signal<void (X, Y)> WindowResizedSignal;
 
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         is about to close. */
-    boost::signal<void ()> WindowClosingSignal;
+    boost::signals2::signal<void ()> WindowClosingSignal;
 
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         closes or is about to close. */
-    boost::signal<void ()> WindowClosedSignal;
+    boost::signals2::signal<void ()> WindowClosedSignal;
 
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         gains or loses focus. */
-    boost::signal<void ()> FocusChangedSignal;
+    boost::signals2::signal<void ()> FocusChangedSignal;
 
     /** Allows any code to access the gui framework by calling GG::OgreGUI::GetGUI(). */
     static OgreGUI* GetGUI();

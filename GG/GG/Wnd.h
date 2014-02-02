@@ -138,7 +138,7 @@ extern GG_API const WndFlag MODAL;
 
     <h3>Signal Considerations</h3>
 
-    <br>Wnd inherits from boost::signals::trackable.  This means that any
+    <br>Wnd inherits from boost::signals2::trackable.  This means that any
     slots contained in a Wnd object or Wnd-derived object will automatically
     be disconnected from any connected signals when the Wnd is destroyed.
     Every Wnd responds to input as driven by the singleton GUI object.
@@ -217,7 +217,7 @@ extern GG_API const WndFlag MODAL;
     complete customization, each Wnd may have one installed as well.  The
     GetStyleFactory() method returns the one installed in the Wnd, if one
     exists, or the GUI-wide one otherwise. */
-class GG_API Wnd : public boost::signals::trackable
+class GG_API Wnd : public boost::signals2::trackable
 {
 public:
     /** \brief The data necessary to represent a browse info mode.

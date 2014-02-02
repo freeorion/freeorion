@@ -61,7 +61,7 @@ public:
     void                EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
     void                ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -109,7 +109,7 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()>                  ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
     void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -156,7 +156,7 @@ public:
     void                    EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -204,8 +204,8 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()>      ExpandCollapseSignal;
-    mutable boost::signal<void (int)>   BuildingRightClickedSignal;
+    mutable boost::signals2::signal<void ()>    ExpandCollapseSignal;
+    mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
     void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
@@ -244,7 +244,7 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)>   RightClickedSignal;
+    mutable boost::signals2::signal<void (int)> RightClickedSignal;
 
 private:
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;

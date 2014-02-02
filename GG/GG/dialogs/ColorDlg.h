@@ -59,7 +59,8 @@ class GG_API HueSaturationPicker : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (double, double)> ChangedSignalType; ///< emitted whenever the hue or saturation in the picker changes
+    /** emitted whenever the hue or saturation in the picker changes */
+    typedef boost::signals2::signal<void (double, double)> ChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -97,7 +98,8 @@ class GG_API ValuePicker : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (double)> ChangedSignalType; ///< emitted whenever the hue or saturation in the picker changes
+    /** emitted whenever the hue or saturation in the picker changes */
+    typedef boost::signals2::signal<void (double)> ChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{

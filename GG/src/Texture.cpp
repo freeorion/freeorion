@@ -48,6 +48,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <boost/scoped_array.hpp>
 
 
 using namespace GG;

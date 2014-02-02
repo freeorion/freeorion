@@ -40,9 +40,12 @@ public:
     
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
-    mutable boost::signal<void ()>  SettingsChangedSignal;          //!< the settings changed signal object for this GalaxySetupPanel
-    mutable boost::signal<void (boost::shared_ptr<GG::Texture>)>
-                                    ImageChangedSignal;             //!< the image changed signal object for this GalaxySetupPanel
+    /** the settings changed signal object for this GalaxySetupPanel */
+    mutable boost::signals2::signal<void ()>  SettingsChangedSignal;
+
+    /** the image changed signal object for this GalaxySetupPanel */
+    mutable boost::signals2::signal<void (boost::shared_ptr<GG::Texture>)>
+                                    ImageChangedSignal;
     //!@}
 
     /** \name Mutators*/ //!@{

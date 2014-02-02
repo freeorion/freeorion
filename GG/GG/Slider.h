@@ -58,8 +58,14 @@ class Slider : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (T, T, T)> SlidSignalType;           ///< emitted whenever the slider is moved; the tab position and the upper and lower bounds of the slider's range are indicated, respectively
-    typedef boost::signal<void (T, T, T)> SlidAndStoppedSignalType; ///< emitted when the slider's tab is stopped after being dragged, the slider is adjusted using the keyboard, or the slider is moved programmatically; the tab position and the upper and lower bounds of the slider's range are indicated, respectively
+    /**emitted whenever the slider is moved; the tab position and the upper
+       and lower bounds of the slider's range are indicated, respectively */
+    typedef boost::signals2::signal<void (T, T, T)> SlidSignalType;
+    /** emitted when the slider's tab is stopped after being dragged, the
+        slider is adjusted using the keyboard, or the slider is moved
+        programmatically; the tab position and the upper and lower bounds
+        of the slider's range are indicated, respectively */
+    typedef boost::signals2::signal<void (T, T, T)> SlidAndStoppedSignalType;
     //@}
 
     /** \name Structors */ ///@{

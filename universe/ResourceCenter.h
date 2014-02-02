@@ -5,7 +5,7 @@
 #include "Enums.h"
 #include "EnableTemporaryFromThis.h"
 #include "TemporaryPtr.h"
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include "../util/Export.h"
@@ -42,7 +42,8 @@ public:
     virtual float   CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
     virtual float   NextTurnCurrentMeterValue(MeterType type) const = 0;    ///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
-    mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
+    /** the state changed signal object for this ResourceCenter */
+    mutable boost::signals2::signal<void ()> ResourceCenterChangedSignal;
     //@}
 
     /** \name Mutators */ //@{

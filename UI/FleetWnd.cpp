@@ -512,7 +512,7 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
 
     // disconnect old active FleetWnd signals
     if (m_active_fleet_wnd) {
-        for (std::vector<boost::signals::connection>::iterator it = m_active_fleet_wnd_signals.begin(); it != m_active_fleet_wnd_signals.end(); ++it)
+        for (std::vector<boost::signals2::connection>::iterator it = m_active_fleet_wnd_signals.begin(); it != m_active_fleet_wnd_signals.end(); ++it)
             it->disconnect();
         m_active_fleet_wnd_signals.clear();
     }
@@ -1046,7 +1046,7 @@ public:
     void                Select(bool b);
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    mutable boost::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
+    mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
 private:
     void                AggressionToggleButtonPressed();
@@ -1063,7 +1063,7 @@ private:
     const bool          m_new_fleet_drop_target;
     bool                m_new_fleet_aggression;
 
-    boost::signals::connection  m_fleet_connection;
+    boost::signals2::connection  m_fleet_connection;
 
     GG::Control*        m_fleet_icon;
     GG::TextControl*    m_fleet_name_text;
@@ -2147,8 +2147,9 @@ public:
 
     void            EnableOrderIssuing(bool enabled = true);
 
-    mutable boost::signal<void (const ShipsListBox::SelectionSet&)> SelectedShipsChangedSignal; ///< emitted when the set of selected ships changes
-    mutable boost::signal<void (int)>                               ShipRightClickedSignal;
+    /** emitted when the set of selected ships changes */
+    mutable boost::signals2::signal<void (const ShipsListBox::SelectionSet&)> SelectedShipsChangedSignal;
+    mutable boost::signals2::signal<void (int)>                               ShipRightClickedSignal;
 
 private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
@@ -2162,7 +2163,7 @@ private:
 
     int                         m_fleet_id;
     bool                        m_order_issuing_enabled;
-    boost::signals::connection  m_fleet_connection;
+    boost::signals2::connection m_fleet_connection;
 
     ShipsListBox*               m_ships_lb;
 };
@@ -2220,7 +2221,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
     if (m_fleet_id != old_fleet_id && m_fleet_id != INVALID_OBJECT_ID) {
         TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id);
         if (fleet && !fleet->Empty()) {
-            m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals::at_front);
+            m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals2::at_front);
         } else {
             Logger().debugStream() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2702,7 +2703,7 @@ std::string FleetWnd::StatTooltip(const std::string& stat_name) const {
 void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (TemporaryPtr<const System> system = GetSystem(m_system_id))
-        m_system_connection = GG::Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this, boost::signals::at_front);
+        m_system_connection = GG::Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this, boost::signals2::at_front);
 }
 
 void FleetWnd::Refresh() {

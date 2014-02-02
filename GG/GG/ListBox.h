@@ -226,11 +226,16 @@ public:
     typedef std::set<iterator, RowPtrIteratorLess<std::list<Row*> > > SelectionSet;
 
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void ()>                    ClearedSignalType;    ///< emitted when the list box is cleared
-    typedef boost::signal<void (const SelectionSet&)> SelChangedSignalType; ///< emitted when one or more rows are selected or deselected
-    typedef boost::signal<void (iterator)>            RowSignalType;        ///< the signature of row-change-notification signals
-    typedef boost::signal<void (const_iterator)>      ConstRowSignalType;   ///< the signature of const row-change-notification signals
-    typedef boost::signal<void (iterator, const Pt&)> RowClickSignalType;   ///< the signature of row-click-notification signals
+    /** emitted when the list box is cleared */
+    typedef boost::signals2::signal<void ()>                    ClearedSignalType;
+    /** emitted when one or more rows are selected or deselected */
+    typedef boost::signals2::signal<void (const SelectionSet&)> SelChangedSignalType;
+    /** the signature of row-change-notification signals */
+    typedef boost::signals2::signal<void (iterator)>            RowSignalType;
+    /** the signature of const row-change-notification signals */
+    typedef boost::signals2::signal<void (const_iterator)>      ConstRowSignalType;
+    /** the signature of row-click-notification signals */
+    typedef boost::signals2::signal<void (iterator, const Pt&)> RowClickSignalType;
 
     typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
     typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box

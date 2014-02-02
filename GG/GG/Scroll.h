@@ -62,8 +62,16 @@ public:
     };
 
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (int, int, int, int)> ScrolledSignalType; ///< emitted whenever the scrollbar is moved; the upper and lower extents of the tab and the upper and lower bounds of the scroll's range are indicated, respectively
-    typedef boost::signal<void (int, int, int, int)> ScrolledAndStoppedSignalType; ///< emitted when the scrollbar's tab is stopped after being dragged, the scrollbar is adjusted using the keyboard, or the scrollbar is moved programmatically; the upper and lower extents of the tab and the upper and lower bounds of the scroll's range are indicated, respectively
+    /** emitted whenever the scrollbar is moved; the upper and lower extents
+        of the tab and the upper and lower bounds of the scroll's range are
+        indicated, respectively */
+    typedef boost::signals2::signal<void (int, int, int, int)> ScrolledSignalType;
+    /** emitted when the scrollbar's tab is stopped after being dragged, the
+        scrollbar is adjusted using the keyboard, or the scrollbar is moved
+        programmatically; the upper and lower extents of the tab and the
+        upper and lower bounds of the scroll's range are indicated,
+        respectively */
+    typedef boost::signals2::signal<void (int, int, int, int)> ScrolledAndStoppedSignalType;
     //@}
 
     /** \name Structors */ ///@{

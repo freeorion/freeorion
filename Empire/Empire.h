@@ -117,7 +117,7 @@ struct FO_COMMON_API ResearchQueue {
       * none exists. */
     iterator        UnderfundedProject();
 
-    mutable boost::signal<void ()> ResearchQueueChangedSignal;
+    mutable boost::signals2::signal<void ()> ResearchQueueChangedSignal;
     //@}
 
 private:
@@ -244,7 +244,7 @@ struct FO_COMMON_API ProductionQueue {
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
     iterator                        UnderfundedProject();
 
-    mutable boost::signal<void ()> ProductionQueueChangedSignal;
+    mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
     //@}
 
 private:
@@ -552,7 +552,7 @@ public:
       * current empire */
     static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id);
 
-    mutable boost::signal<void ()>  ShipDesignsChangedSignal;
+    mutable boost::signals2::signal<void ()>  ShipDesignsChangedSignal;
 
 private:
     void        Init();

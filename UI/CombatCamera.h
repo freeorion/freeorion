@@ -6,7 +6,7 @@
 
 #include <GG/WndEvent.h>
 
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 
 namespace Ogre {
@@ -38,7 +38,7 @@ public:
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     void HandleRotation(const GG::Pt& delta);
 
-    mutable boost::signal<void ()> CameraChangedSignal;
+    mutable boost::signals2::signal<void ()> CameraChangedSignal;
 
 private:
     void ViewportRay(double screen_x, double screen_y,

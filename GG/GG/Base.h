@@ -43,7 +43,7 @@
 
 // include useful boost headers
 #include <boost/cstdint.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 // other headers
 #include <GG/Enum.h>

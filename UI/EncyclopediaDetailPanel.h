@@ -82,7 +82,7 @@ public:
     void            OnNext();
     //@}
 
-    mutable boost::signal<void ()> ClosingSignal;
+    mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
     void            DoLayout();

@@ -55,7 +55,8 @@ public:
     };
 
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void ()> ClickedSignalType; ///< Emitted when the button is clicked by the user
+    /** Emitted when the button is clicked by the user */
+    typedef boost::signals2::signal<void ()> ClickedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -71,8 +72,10 @@ public:
     const SubTexture& PressedGraphic() const;    ///< Returns the SubTexture to be used as the image of the button when pressed
     const SubTexture& RolloverGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
-    mutable ClickedSignalType LeftClickedSignal; ///< The left clicked signal object for this Button
-    mutable ClickedSignalType RightClickedSignal;///< The right clicked signal object for this Button
+    /** The left clicked signal object for this Button */
+    mutable ClickedSignalType LeftClickedSignal;
+    /** The right clicked signal object for this Button */
+    mutable ClickedSignalType RightClickedSignal;
     //@}
 
     /** \name Mutators */ ///@{
@@ -146,7 +149,9 @@ class GG_API StateButton : public TextControl
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (bool)> CheckedSignalType; ///< Emitted when the StateButton is checked or unchecked; the checked/unchecked status is indicated by the bool parameter
+    /** Emitted when the StateButton is checked or unchecked; the checked or
+        unchecked status is indicated by the bool parameter */
+    typedef boost::signals2::signal<void (bool)> CheckedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -222,7 +227,10 @@ class GG_API RadioButtonGroup : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef boost::signal<void (std::size_t)> ButtonChangedSignalType; ///< emitted when the currently-selected button has changed; the new selected button's index in the group is provided (this may be NO_BUTTON if no button is currently selected)
+    /** emitted when the currently-selected button has changed; the new
+        selected button's index in the group is provided (this may be
+        NO_BUTTON if no button is currently selected) */
+    typedef boost::signals2::signal<void (std::size_t)> ButtonChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -338,8 +346,8 @@ protected:
     {
         ButtonSlot();
         ButtonSlot(StateButton* button_);
-        StateButton*               button;
-        boost::signals::connection connection;
+        StateButton*                button;
+        boost::signals2::connection connection;
     };
 
     /** \name Structors */ ///@{

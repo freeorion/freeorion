@@ -9,7 +9,7 @@
 #include <GG/Clr.h>
 
 #include <boost/serialization/access.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include <map>
 #include <set>
@@ -93,7 +93,7 @@ public:
     void        Clear();
     //@}
 
-    typedef boost::signal<void (int, int)>  DiploSignalType;
+    typedef boost::signals2::signal<void (int, int)>  DiploSignalType;
 
     mutable DiploSignalType DiplomaticStatusChangedSignal;
     mutable DiploSignalType DiplomaticMessageChangedSignal;

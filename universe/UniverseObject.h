@@ -11,7 +11,8 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/python/detail/destroy.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
+#include <boost/signals2/optional_last_value.hpp>
 
 #include <set>
 #include <string>
@@ -40,7 +41,7 @@ struct UniverseObjectVisitor;
 class FO_COMMON_API UniverseObject : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (), blocking_combiner<boost::last_value<void> > > StateChangedSignalType;
+    typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void> > > StateChangedSignalType;
     //@}
 
     /** \name Slot Types */ //@{

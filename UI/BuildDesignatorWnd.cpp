@@ -414,10 +414,10 @@ public:
     void    HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    mutable boost::signal<void (const BuildingType*)>                   DisplayBuildingTypeSignal;
-    mutable boost::signal<void (BuildType, const std::string&, int)>    RequestNamedBuildItemSignal;
-    mutable boost::signal<void (const ShipDesign*)>                     DisplayShipDesignSignal;
-    mutable boost::signal<void (BuildType, int, int)>                   RequestIDedBuildItemSignal;
+    mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
+    mutable boost::signals2::signal<void (BuildType, const std::string&, int)> RequestNamedBuildItemSignal;
+    mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
+    mutable boost::signals2::signal<void (BuildType, int, int)>                RequestIDedBuildItemSignal;
 
 private:
     static const GG::X TEXT_MARGIN_X;
@@ -450,7 +450,7 @@ private:
     int                                     m_production_location;
     int                                     m_empire_id;
 
-    mutable boost::signals::connection      m_empire_ship_designs_changed_signal;
+    mutable boost::signals2::connection     m_empire_ship_designs_changed_signal;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -567,7 +567,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
             m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
                                                                &BuildDesignatorWnd::BuildSelector::Refresh,
                                                                this,
-                                                               boost::signals::at_front);
+                                                               boost::signals2::at_front);
     }
 }
 
@@ -583,7 +583,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
         m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
                                                            &BuildDesignatorWnd::BuildSelector::Refresh,
                                                            this,
-                                                           boost::signals::at_front);
+                                                           boost::signals2::at_front);
     PopulateList();
 }
 

@@ -52,7 +52,7 @@ namespace {
 
         PlayerSetupData         m_player_data;
         int                     m_player_id;
-        boost::signal<void ()>  DataChangedSignal;
+        boost::signals2::signal<void ()>  DataChangedSignal;
     };
 
     // indicates and allows manipulation of player type
@@ -175,7 +175,7 @@ namespace {
             TypeChangedSignal(type_row->type);
         }
 
-        mutable boost::signal<void (Networking::ClientType)> TypeChangedSignal;
+        mutable boost::signals2::signal<void (Networking::ClientType)> TypeChangedSignal;
     };
 
 

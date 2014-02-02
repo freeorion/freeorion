@@ -77,13 +77,21 @@ public:
     void            ShowShipDesignInEncyclopedia(int design_id);
     //@}
 
-    mutable boost::signal<void (BuildType, const std::string&, int, int)>
-                                            AddNamedBuildToQueueSignal; ///< emitted when the indicated named build is indicated by the user
-    mutable boost::signal<void (BuildType, int, int, int)>
-                                            AddIDedBuildToQueueSignal;  ///< emitted when the indicated id'd build is indicated by the user
-    mutable boost::signal<void (int, int)>  BuildQuantityChangedSignal; ///< emitted when the quantity of items in a single build queue item is changed by the user
-    mutable boost::signal<void (int)>       SystemSelectedSignal;       ///< emitted when the user selects a system from within this Wnd (but not when this Wnd's system is set programatically)
-    mutable boost::signal<void (int)>       PlanetSelectedSignal;       ///< emitted when the user changes the planet selection from within this Wnd (but not when this Wnd's selected planet is set programatically)
+    /** emitted when the indicated named build is indicated by the user */
+    mutable boost::signals2::signal<void (BuildType, const std::string&, int, int)>
+                                            AddNamedBuildToQueueSignal;
+    /** emitted when the indicated id'd build is indicated by the user */
+    mutable boost::signals2::signal<void (BuildType, int, int, int)>
+                                            AddIDedBuildToQueueSignal;
+    /** emitted when the quantity of items in a single build queue item is
+      * changed by the user */
+    mutable boost::signals2::signal<void (int, int)>  BuildQuantityChangedSignal;
+    /** emitted when the user selects a system from within this Wnd (but not
+      * when this Wnd's system is set programatically) */
+    mutable boost::signals2::signal<void (int)>       SystemSelectedSignal;
+    /** emitted when the user changes the planet selection from within this
+      * Wnd (but not when this Wnd's selected planet is set programatically) */
+    mutable boost::signals2::signal<void (int)>       PlanetSelectedSignal;
 
 private:
     class BuildSelector;

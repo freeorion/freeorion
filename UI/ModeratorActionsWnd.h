@@ -6,7 +6,7 @@
 #include "CUIControls.h"
 #include "../universe/Enums.h"
 
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include <vector>
 
@@ -35,13 +35,13 @@ public:
     void            EnableActions(bool enable = true);
     //!@}
 
-    mutable boost::signal<void ()>              ClosingSignal;
-    mutable boost::signal<void ()>              NoActionSelectedSignal;
-    mutable boost::signal<void (StarType)>      CreateSystemActionSelectedSignal;
-    mutable boost::signal<void (PlanetType)>    CreatePlanetActionSelectedSignal;
-    mutable boost::signal<void ()>              DeleteObjectActionSelectedSignal;
-    mutable boost::signal<void (int)>           SetOwnerActionSelectedSignal;
-    mutable boost::signal<void ()>              AddStarlaneActionSelectedSignal;
+    mutable boost::signals2::signal<void ()>           ClosingSignal;
+    mutable boost::signals2::signal<void ()>           NoActionSelectedSignal;
+    mutable boost::signals2::signal<void (StarType)>   CreateSystemActionSelectedSignal;
+    mutable boost::signals2::signal<void (PlanetType)> CreatePlanetActionSelectedSignal;
+    mutable boost::signals2::signal<void ()>           DeleteObjectActionSelectedSignal;
+    mutable boost::signals2::signal<void (int)>        SetOwnerActionSelectedSignal;
+    mutable boost::signals2::signal<void ()>           AddStarlaneActionSelectedSignal;
 
 private:
     void            DoLayout();

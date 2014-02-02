@@ -381,10 +381,10 @@ private:
         { ButtonUpSignal(pt); }
         virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
         { ZoomedSignal(move); }
-        mutable boost::signal<void (int)>           ZoomedSignal;
-        mutable boost::signal<void (const GG::Pt&)> DraggedSignal;
-        mutable boost::signal<void (const GG::Pt&)> ButtonDownSignal;
-        mutable boost::signal<void (const GG::Pt&)> ButtonUpSignal;
+        mutable boost::signals2::signal<void (int)>           ZoomedSignal;
+        mutable boost::signals2::signal<void (const GG::Pt&)> DraggedSignal;
+        mutable boost::signals2::signal<void (const GG::Pt&)> ButtonDownSignal;
+        mutable boost::signals2::signal<void (const GG::Pt&)> ButtonUpSignal;
     };
 
     void Layout(bool keep_position);    // lays out tech panels

@@ -419,7 +419,7 @@ public:
     void SetSpecies(const std::vector<std::string>& species_names);         ///< sets the species that can be selected
     //@}
 
-    mutable boost::signal<void (const std::string&)> SpeciesChangedSignal;
+    mutable boost::signals2::signal<void (const std::string&)> SpeciesChangedSignal;
 
 private:
     void SelectionChanged(GG::DropDownList::iterator it);
@@ -440,7 +440,7 @@ public:
     void SelectColor(const GG::Clr& clr);
     //@}
 
-    mutable boost::signal<void (const GG::Clr&)> ColorChangedSignal;
+    mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
 
 private:
     void SelectionChanged(GG::DropDownList::iterator it);
@@ -459,7 +459,7 @@ public:
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
-    mutable boost::signal<void (const GG::Clr&)> ColorChangedSignal;
+    mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
 
 private:
     GG::Clr m_default_color;

@@ -59,9 +59,15 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)>       SystemSelectedSignal;   ///< emitted when the user changes the selected system in the production screen
-    mutable boost::signal<void (int)>       PlanetSelectedSignal;   ///< emitted when the user changes the selected planet in the production screen
-    mutable boost::signal<void (int,int)>RowQuantChangedSignal;           ///
+    /** emitted when the user changes the selected system in the
+      * production screen */
+    mutable boost::signals2::signal<void (int)> SystemSelectedSignal;
+
+    /** emitted when the user changes the selected planet in the
+      * production screen */
+    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+
+    mutable boost::signals2::signal<void (int,int)> RowQuantChangedSignal;
 
 private:
     void    DoLayout();
@@ -85,7 +91,7 @@ private:
     BuildDesignatorWnd*         m_build_designator_wnd;
     bool                        m_enabled;
 
-    boost::signals::connection  m_empire_connection;
+    boost::signals2::connection  m_empire_connection;
 };
 
 #endif // _ProductionWnd_h_

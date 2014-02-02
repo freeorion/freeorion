@@ -34,7 +34,7 @@
 
 #include <GG/PtRect.h>
 
-#include <boost/signals.hpp>
+#include <boost/signals2/connection.hpp>
 
 
 #ifdef _MSC_VER
@@ -83,9 +83,9 @@ private:
     virtual void HandleWindowResize(X width, Y height);
     virtual void HandleWindowClose();
 
-    boost::signals::connection m_handle_events_connection;
-    boost::signals::connection m_resize_connection;
-    boost::signals::connection m_close_connection;
+    boost::signals2::connection m_handle_events_connection;
+    boost::signals2::connection m_resize_connection;
+    boost::signals2::connection m_close_connection;
 
     static Ogre::RenderWindow* s_render_window;
 };

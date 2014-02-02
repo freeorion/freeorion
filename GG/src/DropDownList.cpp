@@ -99,8 +99,8 @@ namespace {
         Pt             m_old_lb_ul;
         Pt             m_lb_ul;
 
-        boost::signals::scoped_connection m_connection_1;
-        boost::signals::scoped_connection m_connection_2;
+        boost::signals2::scoped_connection m_connection_1;
+        boost::signals2::scoped_connection m_connection_2;
     };
 }
 

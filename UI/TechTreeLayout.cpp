@@ -2,6 +2,7 @@
 //#include "../util/i18n.h" // needed for debug UserString calls...
 #include "../util/Logger.h"
 #include <algorithm>
+#include <cmath>
 
 namespace  {
     const int NODE_CELL_HEIGHT = 2;

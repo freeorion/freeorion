@@ -5,7 +5,7 @@
 #include "../universe/Enums.h"
 #include "../util/Export.h"
 
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <vector>
@@ -40,7 +40,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    mutable boost::signal<void ()> ChangedSignal;                           ///< emitted after updating production, or called externally to indicate that stockpile and change need to be refreshed
+    /** emitted after updating production, or called externally to indicate
+      * that stockpile and change need to be refreshed. */
+    mutable boost::signals2::signal<void ()> ChangedSignal;
 
     void        SetObjects(const std::vector<int>& object_ids);
     /** specifies which sets systems can share resources.  any two sets should
@@ -88,7 +90,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    mutable boost::signal<void ()> ChangedSignal;   ///< emitted after updating population and growth numbers
+    /** emitted after updating population and growth numbers */
+    mutable boost::signals2::signal<void ()> ChangedSignal;
 
     void    SetPopCenters(const std::vector<int>& pop_center_ids);
 

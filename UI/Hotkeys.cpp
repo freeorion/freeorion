@@ -354,7 +354,7 @@ OrCondition::~OrCondition() {
 //////////////////////////////////////////////////////////////////////
 
 void HotkeyManager::RebuildShortcuts() {
-    for (std::set<boost::signals::connection>::iterator i = m_internal_connections.begin();
+    for (std::set<boost::signals2::connection>::iterator i = m_internal_connections.begin();
          i != m_internal_connections.end(); i++)
     { i->disconnect(); }
     m_internal_connections.clear();
@@ -383,7 +383,7 @@ HotkeyManager * HotkeyManager::GetManager() {
 }
 
 void HotkeyManager::AddConditionalConnection(const std::string & name,
-                                             const boost::signals::connection & conn,
+                                             const boost::signals2::connection & conn,
                                              HotkeyCondition * cond)
 {
     ConditionalConnectionList & list = m_connections[name];

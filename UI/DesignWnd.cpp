@@ -127,8 +127,8 @@ public:
     virtual void        LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
-    mutable boost::signal<void (const PartType*)> ClickedSignal;
-    mutable boost::signal<void (const PartType*)> DoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
 private:
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_background;
@@ -227,8 +227,8 @@ public:
     void            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
-    mutable boost::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
@@ -570,8 +570,8 @@ public:
     void            Reset();
     //@}
 
-    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
-    mutable boost::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 private:
     void            DoLayout();
@@ -877,16 +877,19 @@ public:
     void                            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    mutable boost::signal<void (int)>
-                                    DesignSelectedSignal;           //!< an existing complete design that is known to this empire was selected (double-clicked)
-    mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
-                                    DesignComponentsSelectedSignal; //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
-    mutable boost::signal<void (const ShipDesign*)>
-                                    DesignBrowsedSignal;            //!< a completed design was browsed (clicked once)
-    mutable boost::signal<void (const HullType*)>
-                                    HullBrowsedSignal;              //!< a hull was browsed (clicked once)
-    mutable boost::signal<void (const ShipDesign*)>
-                                    DesignRightClickedSignal;       //!< a complete design was right-clicked (once)
+    /** an existing complete design that is known to this empire
+        was selected (double-clicked) */
+    mutable boost::signals2::signal<void (int)> DesignSelectedSignal;
+    /** a hull and a set of parts (which may be empty) was selected
+        (double-clicked) */
+    mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
+                                    DesignComponentsSelectedSignal;
+    /** a completed design was browsed (clicked once) */
+    mutable boost::signals2::signal<void (const ShipDesign*)> DesignBrowsedSignal;
+    /** a hull was browsed (clicked once) */
+    mutable boost::signals2::signal<void (const HullType*)> HullBrowsedSignal;
+    /** a complete design was right-clicked (once) */
+    mutable boost::signals2::signal<void (const ShipDesign*)> DesignRightClickedSignal;
 
 private:
     void                            BaseDoubleClicked(GG::ListBox::iterator it);
@@ -905,7 +908,7 @@ private:
     std::set<int>                   m_designs_in_list;
     std::set<std::string>           m_hulls_in_list;
 
-    boost::signals::connection      m_empire_designs_changed_signal;
+    boost::signals2::connection     m_empire_designs_changed_signal;
 
     class BasesListBoxRow : public CUIListBox::Row {
     public:
@@ -1340,14 +1343,22 @@ public:
     void            HideAvailability(bool available, bool refresh_list);
     //@}
 
-    mutable boost::signal<void (int)>
-                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
-    mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
-                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
-    mutable boost::signal<void (const ShipDesign*)>
-                    DesignBrowsedSignal;                    //!< a complete design was browsed (clicked once)
-    mutable boost::signal<void (const HullType*)>
-                    HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
+    /** an existing complete design that is known to this empire
+        was selected (double-clicked) */
+    mutable boost::signals2::signal<void (int)> DesignSelectedSignal;
+
+    /** a hull and a set of parts (which may be empty) was
+        selected (double-clicked) */
+    mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
+                    DesignComponentsSelectedSignal;
+
+    /** a complete design was browsed (clicked once) */
+    mutable boost::signals2::signal<void (const ShipDesign*)>
+                    DesignBrowsedSignal;
+
+    /** a hull was browsed (clicked once) */
+    mutable boost::signals2::signal<void (const HullType*)>
+                    HullBrowsedSignal;
 private:
     void            DoLayout();
     void            WndSelected(std::size_t index);
@@ -1540,11 +1551,18 @@ public:
     void            SetPart(const PartType* part_type = 0); //!< used to programmatically set the PartControl in this slot.  Does not emit signal
     //@}
 
-    mutable boost::signal<void (const PartType*)> SlotContentsAlteredSignal;    //!< emitted when the contents of a slot are altered by the dragging a PartControl in or out of the slot.  signal should be caught and the slot contents set using SetPart accordingly
-    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
+    /** emitted when the contents of a slot are altered by the dragging
+      * a PartControl in or out of the slot.  signal should be caught and the
+      * slot contents set using SetPart accordingly */
+    mutable boost::signals2::signal<void (const PartType*)> SlotContentsAlteredSignal;
+
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
 
 private:
-    void            EmitNullSlotContentsAlteredSignal();                //!< emits SlotContentsAlteredSignal with PartType* = 0.  needed because boost::signal is noncopyable, so boost::bind can't be used to bind the parameter 0 to SlotContentsAlteredSignal::operator()
+    /** emits SlotContentsAlteredSignal with PartType* = 0.  needed because
+      * boost::signals2::signal is noncopyable, so boost::bind can't be used
+      * to bind the parameter 0 to SlotContentsAlteredSignal::operator() */
+    void            EmitNullSlotContentsAlteredSignal();
 
     bool                m_highlighted;
     ShipSlotType        m_slot_type;
@@ -1789,10 +1807,21 @@ public:
                                                                                 //!< Is used w/r/t m_confirm_button status
     //@}
 
-    mutable boost::signal<void ()>                  DesignChangedSignal;        //!< emitted when the design is changed (by adding or removing parts, not name or description changes)
-    mutable boost::signal<void (const PartType*)>   PartTypeClickedSignal;      //!< propegates signals from contained SlotControls that signal that a part has been clicked
-    mutable boost::signal<void ()>                  DesignConfirmedSignal;      //!< emitted when the user clicks the m_confirm_button to add the new design to the player's empire
-    mutable boost::signal<void (int)>               CompleteDesignClickedSignal;//!< emitted when the user clicks on the background of this main panel and a completed design is showing
+    /** emitted when the design is changed (by adding or removing parts, not
+      * name or description changes) */
+    mutable boost::signals2::signal<void ()> DesignChangedSignal;
+
+    /** propegates signals from contained SlotControls that signal that a part
+      * has been clicked */
+    mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+
+    /** emitted when the user clicks the m_confirm_button to add the new
+      * design to the player's empire */
+    mutable boost::signals2::signal<void ()> DesignConfirmedSignal;
+
+    /** emitted when the user clicks on the background of this main panel and
+      * a completed design is showing */
+    mutable boost::signals2::signal<void (int)> CompleteDesignClickedSignal;
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
@@ -1828,7 +1857,7 @@ private:
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
-    boost::signals::connection      m_empire_designs_changed_signal;
+    boost::signals2::connection      m_empire_designs_changed_signal;
 };
 
 // static

@@ -25,6 +25,7 @@
 #include <GG/WndEvent.h>
 #include <GG/Layout.h>
 #include <GG/GUI.h>
+#include <boost/signals2/shared_connection_block.hpp>
 
 
 class OptionsDB;
@@ -230,22 +231,25 @@ class HotkeyManager {
         /// The condition. If null, always on.
         boost::shared_ptr<HotkeyCondition> condition;
 
-        boost::signals::connection connection;
+        boost::signals2::connection connection;
+        boost::signals2::shared_connection_block blocker;
 
         /// Block or unblocks the connection based on condition.
         void UpdateConnection() {
             if (connection.connected()) {
-                bool active = true;
-                if (condition)
-                    active = condition->IsActive();
-                connection.block(! active);
+                if (condition->IsActive())
+                    blocker.block();
+                else
+                    blocker.unblock();
             }
         };
 
-        ConditionalConnection(const boost::signals::connection& conn,
+        ConditionalConnection(const boost::signals2::connection& conn,
                               HotkeyCondition* cond) :
-            condition(cond), connection(conn)
-        {}
+            condition(cond), connection(conn), blocker(connection)
+        {
+            blocker.unblock();
+        }
     };
 
     typedef std::list<ConditionalConnection> ConditionalConnectionList;
@@ -258,7 +262,7 @@ class HotkeyManager {
 
     /// Add the given conditional connection.
     void AddConditionalConnection(const std::string& name,
-                                  const boost::signals::connection& conn,
+                                  const boost::signals2::connection& conn,
                                   HotkeyCondition* cond);
 
     /// The singleton instance
@@ -277,7 +281,7 @@ class HotkeyManager {
     bool ProcessNamedShortcut(const std::string& name);
 
     /// The connections hot key (real keypress) -> named hot key
-    std::set<boost::signals::connection> m_internal_connections;
+    std::set<boost::signals2::connection> m_internal_connections;
 
     /// Returns the signal for the given named accelerator, creating
     /// it if necessary.

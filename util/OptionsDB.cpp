@@ -82,7 +82,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
     validator(validator_),
     storable(storable_),
     flag(flag_),
-    option_changed_sig_ptr(new boost::signal<void ()>())
+    option_changed_sig_ptr(new boost::signals2::signal<void ()>())
 {
     if (short_name_)
         short_names[short_name_] = name;

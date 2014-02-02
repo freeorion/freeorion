@@ -85,11 +85,23 @@ public:
     void                EnableOrderIssuing(bool enable = true);
     //@}
 
-    static boost::signal<void (int)>    PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user
-    static boost::signal<void (int)>    SystemSelectedSignal;           ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
-    static boost::signal<void ()>       ResourceCenterChangedSignal;    ///< emitted when a planet's resourcecenter has changed, including when focus is chanaged
-    static boost::signal<void (int)>    PlanetRightClickedSignal;       ///< emitted when a planet is right clicked
-    static boost::signal<void (int)>    BuildingRightClickedSignal;     ///< emitted when a building is right clicked
+    /** emitted when a rotating planet in the side panel is clicked by the
+      * user */
+    static boost::signals2::signal<void (int)>    PlanetSelectedSignal;
+
+    /** emitted when something in the sidepanel wants to change the selected
+      * system, including the droplist or back/forward arrows */
+    static boost::signals2::signal<void (int)>    SystemSelectedSignal;
+
+    /** emitted when a planet's resourcecenter has changed, including when
+      * focus is changed */
+    static boost::signals2::signal<void ()>       ResourceCenterChangedSignal;
+
+    /** emitted when a planet is right clicked */
+    static boost::signals2::signal<void (int)>    PlanetRightClickedSignal;
+
+    /** emitted when a building is right clicked */
+    static boost::signals2::signal<void (int)>    BuildingRightClickedSignal;
 
 private:
     class PlanetPanelContainer;
@@ -128,8 +140,8 @@ private:
 
     static std::set<SidePanel*> s_side_panels;
 
-    static std::set<boost::signals::connection>         s_system_connections;
-    static std::map<int, boost::signals::connection>    s_fleet_state_change_signals;
+    static std::set<boost::signals2::connection>      s_system_connections;
+    static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;
 };
 
 TemporaryPtr<const Ship>    ValidSelectedColonyShip(int system_id);

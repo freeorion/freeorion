@@ -113,10 +113,10 @@ public:
     void            ShowSystemNames();                                      //!< enables the system name text
     void            HideSystemNames();                                      //!< disables the system name text
 
-    mutable boost::signal<void (int)>       SystemLeftClickedSignal;
-    mutable boost::signal<void (int)>       SystemRightClickedSignal;
-    mutable boost::signal<void (int)>       SystemBrowsedSignal;
-    mutable boost::signal<void (double)>    ZoomedSignal;
+    mutable boost::signals2::signal<void (int)>    SystemLeftClickedSignal;
+    mutable boost::signals2::signal<void (int)>    SystemRightClickedSignal;
+    mutable boost::signals2::signal<void (int)>    SystemBrowsedSignal;
+    mutable boost::signals2::signal<void (double)> ZoomedSignal;
 
     void            CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
     void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
@@ -393,8 +393,8 @@ private:
     std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
     std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::map<int, boost::signals::connection>               m_fleet_state_change_signals;
-    std::map<int, std::vector<boost::signals::connection> > m_system_fleet_insert_remove_signals;
+    std::map<int, boost::signals2::connection>               m_fleet_state_change_signals;
+    std::map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
 
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd

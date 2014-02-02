@@ -999,7 +999,7 @@ public:
     void                SetHasContents(bool has_contents)
     { m_has_contents = has_contents; }
 
-    mutable boost::signal<void ()>  ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()>  ExpandCollapseSignal;
 private:
     void                DoLayout() {
         if (!m_initialized)
@@ -1116,7 +1116,7 @@ public:
     void                    ExpandCollapseClicked()
     { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
-    mutable boost::signal<void (int)>   ExpandCollapseSignal;
+    mutable boost::signals2::signal<void (int)>   ExpandCollapseSignal;
 private:
     ObjectPanel*        m_panel;
     int                 m_container_object_panel;
@@ -1224,7 +1224,7 @@ public:
 
     void            ClearContents() {
         Clear();
-        for (std::map<int, boost::signals::connection>::iterator it = m_object_change_connections.begin();
+        for (std::map<int, boost::signals2::connection>::iterator it = m_object_change_connections.begin();
              it != m_object_change_connections.end(); ++it)
         { it->second.disconnect(); }
         m_object_change_connections.clear();
@@ -1478,7 +1478,7 @@ public:
         }
     }
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
     void            AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
@@ -1495,9 +1495,9 @@ private:
                                               container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);
-        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this, boost::signals::at_front);
+        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this, boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
-        m_object_change_connections[obj->ID()] = GG::Connect(obj->StateChangedSignal, boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals::at_front);
+        m_object_change_connections[obj->ID()] = GG::Connect(obj->StateChangedSignal, boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.
@@ -1597,7 +1597,7 @@ private:
             RemoveObjectRow(obj->ID());
     }
 
-    std::map<int, boost::signals::connection>           m_object_change_connections;
+    std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
     Condition::ConditionBase*                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;

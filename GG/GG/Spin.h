@@ -74,7 +74,8 @@ class Spin : public Control
 {
 public:
     /** \name Signal Types */ ///@{
-    typedef typename boost::signal<void (T)> ValueChangedSignalType;  ///< emitted whenever the value of the Spin has changed
+    /** emitted whenever the value of the Spin has changed */
+    typedef typename boost::signals2::signal<void (T)> ValueChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{

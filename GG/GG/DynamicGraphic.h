@@ -74,14 +74,14 @@ public:
         be the first frame, if playing in reverse).  \note Unlike most other
         signals, this one is emitted during the execution of Render(), so keep
         this in mind when processing this signal.*/
-    typedef boost::signal<void (std::size_t)> StoppedSignalType;
+    typedef boost::signals2::signal<void (std::size_t)> StoppedSignalType;
 
     /** Emitted whenever the last frame of animation is reached; the argument
         is the index of the last frame (may be the first frame, if playing in
         reverse).  \note Unlike most other signals, this one is emitted during
         the execution of Render(), so keep this in mind when processing this
         signal.*/
-    typedef boost::signal<void (std::size_t)> EndFrameSignalType;
+    typedef boost::signals2::signal<void (std::size_t)> EndFrameSignalType;
     //@}
 
     /** \name Structors */ ///@{

@@ -580,7 +580,7 @@ void SystemIcon::Refresh() {
     TemporaryPtr<const System> system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
-        m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);
+        m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals2::at_front);
     }
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name

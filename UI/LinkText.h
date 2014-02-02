@@ -12,9 +12,9 @@ public:
     //@}
 
     ///< link clicked signals: first string is the link type, second string is the specific item clicked
-    mutable boost::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
-    mutable boost::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
-    mutable boost::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
+    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
 
     static const std::string ENCYCLOPEDIA_TAG;
     static const std::string GRAPH_TAG;

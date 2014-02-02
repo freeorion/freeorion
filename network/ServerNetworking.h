@@ -9,7 +9,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include <queue>
 #include <set>
@@ -204,7 +204,7 @@ public:
     void SetClientType(Networking::ClientType client_type);
     //@}
 
-    mutable boost::signal<void (const NullaryFn&)> EventSignal;
+    mutable boost::signals2::signal<void (const NullaryFn&)> EventSignal;
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr

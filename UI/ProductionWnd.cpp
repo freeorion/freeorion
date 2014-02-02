@@ -35,7 +35,7 @@ namespace {
         QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
         const int queue_index;
         const ProductionQueue::Element m_build;
-        mutable boost::signal<void (int,int,int)>RowQuantChangedSignal;
+        mutable boost::signals2::signal<void (int,int,int)>RowQuantChangedSignal;
         void RowQuantChanged(int quantity, int blocksize) {
             RowQuantChangedSignal(queue_index, quantity, blocksize);
         }
@@ -85,7 +85,7 @@ namespace {
 
     class QuantitySelector : public CUIDropDownList {
     public:
-        mutable boost::signal<void (int,int)> QuantChangedSignal;
+        mutable boost::signals2::signal<void (int,int)> QuantChangedSignal;
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset, GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress, GG::X nwidth, bool amBlockType) :
@@ -257,7 +257,7 @@ namespace {
         void UpdateQueue();
         void ItemQuantityChanged(int quant, int blocksize) ;
         void ItemBlocksizeChanged(int quant, int blocksize) ;
-        mutable boost::signal<void(int,int)>    PanelUpdateQuantSignal;
+        mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
     private:
         void Draw(GG::Clr clr, bool fill);

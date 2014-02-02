@@ -3678,7 +3678,7 @@ void MapWnd::FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleet
 
 void MapWnd::RefreshFleetSignals() {
     // disconnect old fleet statechangedsignal connections
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin();
+    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
          it != m_fleet_state_change_signals.end(); ++it)
     { it->second.disconnect(); }
     m_fleet_state_change_signals.clear();
@@ -4424,13 +4424,13 @@ void MapWnd::Sanitize() {
 
     m_fleet_buttons.clear();    // contains duplicate pointers of those in moving, departing and stationary set / maps, so don't need to delete again
 
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();
     m_fleet_state_change_signals.clear();
 
-    for (std::map<int, std::vector<boost::signals::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
-        std::vector<boost::signals::connection>& vec = it->second;
-        for (std::vector<boost::signals::connection>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
+    for (std::map<int, std::vector<boost::signals2::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
+        std::vector<boost::signals2::connection>& vec = it->second;
+        for (std::vector<boost::signals2::connection>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
             vec_it->disconnect();
         vec.clear();
     }

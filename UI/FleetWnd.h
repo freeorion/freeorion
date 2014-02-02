@@ -53,11 +53,20 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void ()>      ActiveFleetWndChangedSignal;                //!< emitted when the selected FleetWnd changes
-    mutable boost::signal<void ()>      ActiveFleetWndSelectedFleetsChangedSignal;  //!< emitted when the selected fleets in the active FleetWnd change
-    mutable boost::signal<void ()>      ActiveFleetWndSelectedShipsChangedSignal;   //!< emitted when the selected ships in the active FleetWnd change
-    mutable boost::signal<void (int)>   FleetRightClickedSignal;                    //!< emitted when a fleet is right-clicked
-    mutable boost::signal<void (int)>   ShipRightClickedSignal;                     //!< emitted when a ship is right-clicked
+    /** emitted when the selected FleetWnd changes */
+    mutable boost::signals2::signal<void ()> ActiveFleetWndChangedSignal;
+
+    /** emitted when the selected fleets in the active FleetWnd change */
+    mutable boost::signals2::signal<void ()> ActiveFleetWndSelectedFleetsChangedSignal;
+
+    /** emitted when the selected ships in the active FleetWnd change */
+    mutable boost::signals2::signal<void ()> ActiveFleetWndSelectedShipsChangedSignal;
+
+    /** emitted when a fleet is right-clicked */
+    mutable boost::signals2::signal<void (int)> FleetRightClickedSignal;
+
+    /** emitted when a ship is right-clicked */
+    mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
 
     static FleetUIManager& GetFleetUIManager();
 
@@ -70,7 +79,7 @@ private:
     bool                                    m_order_issuing_enabled;
     std::set<FleetWnd*>                     m_fleet_wnds;
     FleetWnd*                               m_active_fleet_wnd;
-    std::vector<boost::signals::connection> m_active_fleet_wnd_signals;
+    std::vector<boost::signals2::connection> m_active_fleet_wnd_signals;
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
@@ -106,11 +115,11 @@ public:
     static const GG::Pt&    LastPosition();                     ///< returns the last position of the last FleetWnd that was closed
     static const GG::Pt&    LastSize();                         ///< returns the last size ... ''
 
-    mutable boost::signal<void ()>          SelectedFleetsChangedSignal;
-    mutable boost::signal<void ()>          SelectedShipsChangedSignal;
-    mutable boost::signal<void (FleetWnd*)> ClickedSignal;
-    mutable boost::signal<void (int)>       FleetRightClickedSignal;
-    mutable boost::signal<void (int)>       ShipRightClickedSignal;
+    mutable boost::signals2::signal<void ()>          SelectedFleetsChangedSignal;
+    mutable boost::signals2::signal<void ()>          SelectedShipsChangedSignal;
+    mutable boost::signals2::signal<void (FleetWnd*)> ClickedSignal;
+    mutable boost::signals2::signal<void (int)>       FleetRightClickedSignal;
+    mutable boost::signals2::signal<void (int)>       ShipRightClickedSignal;
 
 protected:
     //! \name Mutators //@{
@@ -152,9 +161,9 @@ private:
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
     std::string     StatTooltip(const std::string& stat_name) const;
-    mutable boost::signal<void (FleetWnd*)> ClosingSignal;
+    mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 
-    boost::signals::connection  m_system_connection;
+    boost::signals2::connection  m_system_connection;
 
     std::set<int>       m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
     int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
@@ -220,8 +229,8 @@ private:
     std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
     bool                        m_selected;
-    boost::signals::connection  m_ship_connection;
-    boost::signals::connection  m_fleet_connection;
+    boost::signals2::connection  m_ship_connection;
+    boost::signals2::connection  m_fleet_connection;
 };
 
 #endif // _FleetWnd_h_

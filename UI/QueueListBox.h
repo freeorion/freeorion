@@ -27,7 +27,7 @@ public:
 
     void            Clear();
 
-    boost::signal<void (GG::ListBox::Row*, std::size_t)> QueueItemMoved;
+    boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)> QueueItemMoved;
 
 private:
     iterator    m_drop_point;

@@ -41,9 +41,9 @@ template <class C, class R GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS>
 struct GG_SIGNALS_FORWARDER_NAME
 {
-    GG_SIGNALS_FORWARDER_NAME(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig_) : sig(sig_) {}
+    GG_SIGNALS_FORWARDER_NAME(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig_) : sig(sig_) {}
     R operator()(GG_SIGNALS_SIGNAL_PARMS) {sig(GG_SIGNALS_SIGNAL_ARGS);}
-    boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig;
+    boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig;
 };
 } // namespace detail
 
@@ -53,11 +53,11 @@ struct GG_SIGNALS_FORWARDER_NAME
     writing. */
 template <class C, class R, class T1, class T2 GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig, 
-        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), 
-        T2 obj, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
+        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS),
+        T2 obj,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     return sig.connect(boost::bind(fn, obj GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_BIND_ARGS), at);
 }
@@ -68,11 +68,11 @@ Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
     this writing. */
 template <class C, class R, class T1, class T2 GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig, 
-        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS) const, 
-        T2 obj, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
+        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS) const,
+        T2 obj,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     return sig.connect(boost::bind(fn, obj GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_BIND_ARGS), at);
 }
@@ -83,12 +83,12 @@ Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
     this writing. */
 template <class C, class R, class T1, class T2 GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig, 
-        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), 
-        T2 obj, 
-        int grp, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
+        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS),
+        T2 obj,
+        int grp,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     return sig.connect(grp, boost::bind(fn, obj GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_BIND_ARGS), at);
 }
@@ -99,12 +99,12 @@ Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
     this writing. */
 template <class C, class R, class T1, class T2 GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig, 
-        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS) const, 
-        T2 obj, 
-        int grp, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
+        R (T1::* fn) (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS) const,
+        T2 obj,
+        int grp,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     return sig.connect(grp, boost::bind(fn, obj GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_BIND_ARGS), at);
 }
@@ -113,10 +113,10 @@ Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig,
     its slot group 0. */
 template <class C, class R GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig1, 
-        boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig2, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig1,
+        boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig2,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     typedef typename detail::GG_SIGNALS_FORWARDER_NAME<C, R GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_SIGNAL_TEMPLATE_ARGS> Forwarder;
     return sig1.connect(Forwarder(sig2), at);
@@ -126,11 +126,11 @@ Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig1,
     its slot group \a grp. */
 template <class C, class R GG_SIGNALS_COMMA_IF_NONZERO_ARGS
           GG_SIGNALS_SIGNAL_TEMPLATE_PARMS> inline
-boost::signals::connection 
-Connect(boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig1, 
-        boost::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig2, 
-        int grp, 
-        boost::signals::connect_position at = boost::signals::at_back)
+boost::signals2::connection
+Connect(boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig1,
+        boost::signals2::signal<R (GG_SIGNALS_SIGNAL_TEMPLATE_ARGS), C>& sig2,
+        int grp,
+        boost::signals2::connect_position at = boost::signals2::at_back)
 {
     typedef typename detail::GG_SIGNALS_FORWARDER_NAME<C, R GG_SIGNALS_COMMA_IF_NONZERO_ARGS GG_SIGNALS_SIGNAL_TEMPLATE_ARGS> Forwarder;
     return sig1.connect(grp, Forwarder(sig2), at);

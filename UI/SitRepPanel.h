@@ -32,7 +32,7 @@ public:
     void            SetHiddenSitRepTemplates(const std::set<std::string>& templates);
     //@}
 
-    mutable boost::signal<void ()> ClosingSignal;
+    mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
     virtual void    CloseClicked();
