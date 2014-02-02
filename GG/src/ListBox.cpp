@@ -1806,9 +1806,6 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
         AttachChild(m_hscroll);
         Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
     }
-
-    assert(!m_vscroll || static_cast<int>(m_vscroll->PageSize()) == ClientHeight() || ClientHeight() < 0);
-    assert(!m_hscroll || static_cast<int>(m_hscroll->PageSize()) == ClientWidth() || ClientWidth() < 0);
 }
 
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
