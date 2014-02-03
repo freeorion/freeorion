@@ -365,16 +365,6 @@ public:
       * unchanged. */
     void                CopyObject(TemporaryPtr<const UniverseObject> source, int empire_id = ALL_EMPIRES);
 
-    /** Copies the objects of the ObjectMap \a copied_map that are visible to
-      * the empire with id \a empire_id into this ObjectMap.  Copied objects
-      * are complete copies of all information in \a copied_map about objects
-      * that are visible, and no information about not-visible objects is
-      * copied.  Any existing objects in this ObjectMap that are not visible to
-      * the empire with id \a empire_id are left unchanged.  If \a empire_id is
-      * ALL_EMPIRES, then all objects in \a copied_map are copied completely
-      * and this function acts just like ObjectMap::Copy .*/
-    void                CompleteCopyVisible(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
-
     /** Adds object \a obj to the map under its ID, if it is a valid object.
       * If there already was an object in the map with the id \a id then
       * that object will be removed.  A TemporaryPtr to the new object is
@@ -402,6 +392,13 @@ public:
 
     /** */
     void                UpdateCurrentDestroyedObjects(std::set<int> destroyed_object_ids);
+
+    /** Recalculates contained objects for all objects in this ObjectMap based
+      * on what other objects exist in this ObjectMap. Useful to eliminate
+      * cases where there are inconsistencies between whan an object thinks it
+      * contains, and what other objects think they are contained by the first
+      * object. */
+    void                AuditContainment();
     //@}
 
 private:

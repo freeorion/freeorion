@@ -180,6 +180,8 @@ public:
 
 protected:
     friend class Universe;
+    friend class ObjectMap;
+
     /** \name Structors */ //@{
     Planet();                                   ///< default ctor
     Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size

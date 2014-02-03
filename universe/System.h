@@ -114,6 +114,8 @@ public:
 
 protected:
     friend class Universe;
+    friend class ObjectMap;
+
     /** \name Structors */ //@{
     System();   ///< default ctor
 

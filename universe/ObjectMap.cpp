@@ -71,27 +71,6 @@ void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire
     }
 }
 
-void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/) {
-    if (&copied_map == this)
-        return;
-
-    // loop through objects in copied map, copying or cloning each depending
-    // on whether there already is a corresponding object in this map
-    for (const_iterator<> it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
-        int object_id = it->ID();
-
-        // can empire see object at all?  if not, skip copying object's info
-        if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
-            continue;
-
-        // if object is at all visible, copy all information, not just info
-        // appropriate for the actual visibility level.  this ensures that any
-        // details previously learned about object will still be recorded in
-        // copied-to ObjectMap
-        this->CopyObject(*it, ALL_EMPIRES);
-   }
-}
-
 ObjectMap* ObjectMap::Clone(int empire_id) const {
     ObjectMap* result = new ObjectMap();
     result->Copy(*this, empire_id);
@@ -300,6 +279,67 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int> destroyed_obje
             default:
                 break;
         }
+    }
+}
+
+void ObjectMap::AuditContainment() {
+    // determine all objects that some other object thinks contains them
+    std::map<int, std::set<int> >   contained_objs;
+    std::map<int, std::set<int> >   contained_planets;
+    std::map<int, std::set<int> >   contained_buildings;
+    std::map<int, std::set<int> >   contained_fleets;
+    std::map<int, std::set<int> >   contained_ships;
+    std::map<int, std::set<int> >   contained_fields;
+
+    for (const_iterator<> it = const_begin (); it != const_end(); ++it) {
+        TemporaryPtr<const UniverseObject> contained = *it;
+        int contained_id = contained->ID();
+        int sys_id = contained->SystemID();
+        int alt_id = contained->ContainerObjectID();    // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
+        UniverseObjectType type = contained->ObjectType();
+
+        // store systems' contained objects
+        if (this->Object<System>(sys_id)) {
+            contained_objs[sys_id].insert(contained_id);
+
+            if (type == OBJ_PLANET)
+                contained_planets[sys_id].insert(contained_id);
+            else if (type == OBJ_BUILDING)
+                contained_buildings[sys_id].insert(contained_id);
+            else if (type == OBJ_FLEET)
+                contained_fleets[sys_id].insert(contained_id);
+            else if (type == OBJ_SHIP)
+                contained_ships[sys_id].insert(contained_id);
+            else if (type == OBJ_FIELD)
+                contained_fields[sys_id].insert(contained_id);
+        }
+
+        // store planets' contained buildings
+        if (type == OBJ_BUILDING && this->Object<Planet>(alt_id))
+            contained_buildings[alt_id].insert(contained_id);
+
+        // store fleets' contained ships
+        if (type == OBJ_SHIP && this->Object<Fleet>(alt_id))
+            contained_ships[alt_id].insert(contained_id);
+    }
+
+    // set contained objects of all possible containers
+    for (iterator<System> it = begin<System>(); it != end<System>(); ++it) {
+        TemporaryPtr<System> sys = *it;
+        sys->m_objects =    contained_objs[sys->ID()];
+        sys->m_planets =    contained_planets[sys->ID()];
+        sys->m_buildings =  contained_buildings[sys->ID()];
+        sys->m_fleets =     contained_fleets[sys->ID()];
+        sys->m_ships =      contained_ships[sys->ID()];
+        sys->m_fields =     contained_fields[sys->ID()];
+    }
+    for (iterator<Planet> it = begin<Planet>(); it != end<Planet>(); ++it) {
+        TemporaryPtr<Planet> plt = *it;
+        plt->m_buildings =  contained_buildings[plt->ID()];
+    }
+    for (iterator<Fleet> it = begin<Fleet>(); it != end<Fleet>(); ++it) {
+        TemporaryPtr<Fleet> flt = *it;
+        flt->m_ships =      contained_ships[flt->ID()];
     }
 }
 

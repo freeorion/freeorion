@@ -73,18 +73,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // or have a shipyard, or have neutral population
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
-    const ObjectMap& objects = Objects();
     std::set<int> owner_empire_ids;
-    std::vector<TemporaryPtr<const Planet> > all_planets = objects.FindObjects<Planet>();
-    std::vector<TemporaryPtr<const Planet> > system_planets;
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = all_planets.begin();
-         it != all_planets.end(); ++it)
-    {
-        TemporaryPtr<const Planet> planet = *it;
-        if (planet->SystemID() == system->ID())
-            system_planets.push_back(planet);
-    }
-
+    std::vector<TemporaryPtr<const Planet> > system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
     for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = system_planets.begin();
          planet_it != system_planets.end(); ++planet_it)

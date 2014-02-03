@@ -133,6 +133,8 @@ public:
 
 protected:
     friend class Universe;
+    friend class ObjectMap;
+
     /** \name Structors */ //@{
     Fleet() :
         UniverseObject(),

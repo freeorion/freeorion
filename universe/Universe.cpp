@@ -3316,9 +3316,11 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         // if encoding for all empires, copy true full universe state, and use the
         // streamlined option
         objects.CopyForSerialize(m_objects);
+
     } else if (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
         // if encoding without memory, copy all info visible to specified empire
         objects.Copy(m_objects, encoding_empire);
+
     } else {
         // if encoding for a specific empire with memory...
 
@@ -3329,6 +3331,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
 
         //the empire_latest_known_objects are already processed for visibility, so can be copied streamlined
         objects.CopyForSerialize(it->second);
+        objects.AuditContainment();
     }
 }
 
