@@ -2774,7 +2774,7 @@ void Empire::CheckProductionProgress() {
                     Logger().errorStream() << "Couldn't get build location for completed ship";
                     break;
                 }
-                TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(build_location);
+                TemporaryPtr<System> system = GetSystem(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production
                 // sites that are in interstellar space, if needed
                 if (!system) {
