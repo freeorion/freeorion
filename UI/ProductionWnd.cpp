@@ -108,14 +108,14 @@ namespace {
             //m_quantityBox->LockColWidths();
 
             int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 50, 99};
-            std::set<int> myQuantSet(quantInts,quantInts+9);
+            std::set<int> myQuantSet(quantInts, quantInts+9);
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
             else
                 myQuantSet.insert(quantity);
             GG::Y height;
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, nwidth, h, inProgress,amBlockType);
+                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, nwidth, h, inProgress, amBlockType);
                 if (newRow->width)
                     width = newRow->width;
                 GG::DropDownList::iterator latest_it = Insert(newRow);
