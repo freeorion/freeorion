@@ -31,7 +31,7 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 namespace {
-    const float EPSILON = 1.0e-5f;
+    const float EPSILON = 0.00001f;
     const std::string EMPTY_STRING;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
@@ -924,6 +924,7 @@ void ProductionQueue::Update() {
 
             unsigned int i = *el_it;
             ProductionQueue::Element& element = dpsim_queue[i];
+            //Logger().debugStream()  << "     checking element " << element.item.name << " " << element.item.design_id << " at planet id " << element.location;
 
             // get cost and time from cache
             int location_id = (element.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : element.location);
@@ -937,31 +938,38 @@ void ProductionQueue::Update() {
             float element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
             float element_per_turn_limit = item_cost / std::max(build_turns, 1);
             float additional_pp_to_complete_element = element_total_cost - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
+            //Logger().debugStream()  << " element total cost: "<<element_total_cost<<"; progress: "<<element.progress;
             if (additional_pp_to_complete_element < EPSILON) {
+                //Logger().debugStream()  << "     will complete next turn";
                 m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = 1;
                 m_queue[sim_queue_original_indices[i]].turns_left_to_completion = 1;
                 continue;
             }
 
-            unsigned int max_turns = std::max(std::max(build_turns, 1),
-                1 + static_cast<int>(additional_pp_to_complete_element /
+            // need 2+ rather than 1+ below to avoid premature halt with edge cases
+            int max_turns = std::max(std::max(build_turns+1, 1),
+                2 + static_cast<int>(additional_pp_to_complete_element /
                                      ppStillAvailable[firstTurnPPAvailable-1]));
 
-            max_turns = std::min(max_turns, DP_TURNS - firstTurnPPAvailable + 1);
+            max_turns = std::min(max_turns, int(DP_TURNS - firstTurnPPAvailable + 1));
+            //Logger().debugStream() << "     max turns simulated: "<< max_turns << "first turn pp avail: "<<(firstTurnPPAvailable-1);
 
             float allocation;
             //Logger().debugStream() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
-            for (unsigned int j = 0; j < max_turns; j++) {  // iterate over the turns necessary to complete item
+            for (int j = 0; j < max_turns; j++) {  // iterate over the turns necessary to complete item
                 // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
                 // item cost, which is the max number of PP per turn that can be put towards this item, and by the
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
+                //Logger().debugStream()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<ppStillAvailable[firstTurnPPAvailable+j-1];
                 allocation = std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1]);
                 allocation = std::max(allocation, 0.0f);     // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
                 element.progress += allocation;   // add turn's allocation
                 additional_pp_to_complete_element = element_total_cost - element.progress;
+                float item_cost_remaining = item_cost - element.progress;
+                //Logger().debugStream()  << "     allocation: " << allocation << "; new progress: "<< element.progress<< " with " << item_cost_remaining <<" remaining";
                 ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
                 if (ppStillAvailable[firstTurnPPAvailable+j-1] <= EPSILON ) {
                     ppStillAvailable[firstTurnPPAvailable+j-1] = 0;
@@ -969,12 +977,14 @@ void ProductionQueue::Update() {
                 }
 
                 // check if additional turn's PP allocation was enough to finish next item in element
-                if (item_cost - EPSILON <= element.progress ) {
+                // the 20*EPSILON check is necessary because of accumulating floating point roundoff errors for items with high build_turns
+                if ((item_cost_remaining < EPSILON ) || ((j==build_turns-1) && (item_cost_remaining < 20*EPSILON))) {
+                    //Logger().debugStream()  << "     finished an item";
                     // an item has been completed. 
                     // deduct cost of one item from accumulated PP.  don't set
                     // accumulation to zero, as this would eliminate any partial
                     // completion of the next item
-                    element.progress -= item_cost;
+                    element.progress = std::max(0.0f, element.progress-item_cost);
                     --element.remaining;  //pretty sure this just effects the dp version & should do even if also doing ORIG_SIMULATOR
 
                     //Logger().debugStream() << "ProductionQueue::Recording DP sim results for item " << element.item.name;
@@ -989,6 +999,7 @@ void ProductionQueue::Update() {
                     }
                 }
                 if (!element.remaining) {
+                    //Logger().debugStream()  << "     finished this element";
                     break; // this element all done
                 }
             } //j-loop : turns relative to firstTurnPPAvailable
@@ -1000,7 +1011,9 @@ void ProductionQueue::Update() {
     if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME)
         Logger().debugStream()  << "ProductionQueue::Update: Projections timed out after " << dp_time 
                                 << " microseconds; all remaining items in queue marked completing 'Never'.";
-
+    Logger().debugStream()  << "ProductionQueue::Update: Projections took " 
+                            << ((dp_time_end - dp_time_start).total_microseconds()) << " microseconds with "
+                            << empire->ProductionPoints() << " total Production Points";
     ProductionQueueChangedSignal();
 }
 
