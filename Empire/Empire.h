@@ -543,6 +543,11 @@ public:
 
     /** Resets empire meters. */
     void        ResetMeters();
+
+    std::map<int, int>&         EmpireShipsDestroyed()  { return m_empire_ships_destroyed; }
+    std::map<int, int>&         ShipDesignsDestroyed()  { return m_ship_designs_destroyed; }
+    std::map<std::string, int>& SpeciesShipsDestroyed() { return m_species_ships_destroyed; }
+    std::map<std::string, int>& SpeciesPlanetsInvaded() { return m_species_planets_invaded; }
     //@}
 
     /** Processes Builditems on queues of empires other than the indicated

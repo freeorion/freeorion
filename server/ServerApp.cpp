@@ -1738,6 +1738,59 @@ namespace {
         }
     }
 
+    /** Records info in Empires about what they destroyed during combat. */
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats) {
+        for (std::vector<CombatInfo>::const_iterator it = combats.begin();
+             it != combats.end(); ++it)
+        {
+            const std::vector<AttackEvent>& attacks = it->combat_events;
+            for (std::vector<AttackEvent>::const_iterator it = attacks.begin();
+                 it != attacks.end(); ++it)
+            {
+                const AttackEvent& attack = *it;
+                if (!attack.target_destroyed)
+                    continue;
+                TemporaryPtr<const UniverseObject> attacker = GetUniverseObject(attack.attacker_id);
+                if (!attacker)
+                    continue;
+                int attacker_empire_id = attacker->Owner();
+                Empire* attacker_empire = Empires().Lookup(attacker_empire_id);
+                if (!attacker_empire)
+                    continue;
+
+                TemporaryPtr<const Ship> target_ship = GetShip(attack.target_id);
+                if (!target_ship)
+                    continue;
+                int target_empire_id = target_ship->Owner();
+                int target_design_id = target_ship->DesignID();
+                const std::string& target_species_name = target_ship->SpeciesName();
+
+                std::map<int, int>::iterator map_it;
+                // record destruction of an empire's ship by attacker empire
+                map_it = attacker_empire->EmpireShipsDestroyed().find(target_empire_id);
+                if (map_it == attacker_empire->EmpireShipsDestroyed().end())
+                    attacker_empire->EmpireShipsDestroyed()[target_empire_id] = 1;
+                else
+                    map_it->second++;
+
+                // record destruction of a design by attacker empire
+                map_it = attacker_empire->ShipDesignsDestroyed().find(target_design_id);
+                if (map_it == attacker_empire->ShipDesignsDestroyed().end())
+                    attacker_empire->ShipDesignsDestroyed()[target_design_id] = 1;
+                else
+                    map_it->second++;
+
+                // record destruction of ship with a species on it by attacker empire
+                std::map<std::string, int>::iterator species_it =
+                    attacker_empire->SpeciesShipsDestroyed().find(target_species_name);
+                if (species_it == attacker_empire->SpeciesShipsDestroyed().end())
+                    attacker_empire->SpeciesShipsDestroyed()[target_species_name] = 1;
+                else
+                    species_it->second++;
+            }
+        }
+    }
+
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
         TemporaryPtr<Ship> ship = GetShip(ship_id);
@@ -2499,6 +2552,8 @@ void ServerApp::ProcessCombats() {
     }
 
     BackProjectSystemCombatInfoObjectMeters(combats);
+
+    UpdateEmpireCombatDestructionInfo(combats);
 
     DisseminateSystemCombatInfo(combats);
 
