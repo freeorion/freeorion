@@ -585,6 +585,11 @@ private:
 
     std::map<std::string, int>      m_ship_names_used;                      ///< map from name to number of times used
 
+    std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
+    std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
+    std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
+    std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire destroyed?
+
     // cached calculation results, returned by reference
     std::map<int, int>              m_supply_system_ranges;                 ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;          ///< ids of system that don't block supply from flowing
