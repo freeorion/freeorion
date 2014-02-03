@@ -11,6 +11,7 @@ import ProductionAI
 import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 from MilitaryAI import MinThreat
+import PlanetUtilsAI
 
 
 ##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
@@ -77,7 +78,10 @@ class AIstate(object):
         self.origHomeworldID = empire.capitalID
         homeworld = universe.getPlanet(self.origHomeworldID)
         self.origSpeciesName = (homeworld and homeworld.speciesName) or ""
-        self.origHomeSystemID = (homeworld and homeworld.systemID) or -1
+        if homeworld:
+            self.origHomeSystemID = homeworld.systemID
+        else:
+            self.origHomeSystemID = -1
         self.visBorderSystemIDs = {self.origHomeSystemID:1}
         self.visInteriorSystemIDs= {}
         self.expBorderSystemIDs = {self.origHomeSystemID:1}
@@ -129,14 +133,22 @@ class AIstate(object):
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
         invasionTargets[:]=[]
+        exploration_center = PlanetUtilsAI.getCapitalSysID()
+        if exploration_center == -1: #a bad state probably from an old savegame
+            exploration_center = self.origHomeSystemID
 
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
-            print "Border Exploration Update"
+            print "Border Exploration Update (relative to %s"%(PlanetUtilsAI.sysNameIDs([exploration_center,  -1])[0])
             print "-------------------------------------------------"
+        if self.visBorderSystemIDs.keys() == [-1]:
+            self.visBorderSystemIDs.clear()
+            self.visBorderSystemIDs[exploration_center] = 1
         for sysID in list(self.visBorderSystemIDs):
-            ExplorationAI.followVisSystemConnections(sysID,  self.origHomeSystemID)
+            if fo.currentTurn() < 50:
+                print "Considering border system %s"%(PlanetUtilsAI.sysNameIDs([sysID,  -1])[0])
+            ExplorationAI.followVisSystemConnections(sysID,  exploration_center)
         newlyExplored = ExplorationAI.updateExploredSystems()
         nametags=[]
         universe = fo.getUniverse()

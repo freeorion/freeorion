@@ -29,8 +29,8 @@ import ResourcesAI
 using_statprof = False
 try:
     import statprof
-    statprof.start()
-    using_statprof = True
+    #statprof.start()
+    #using_statprof = True
 except:
     pass
 
