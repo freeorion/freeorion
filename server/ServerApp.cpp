@@ -1791,6 +1791,36 @@ namespace {
         }
     }
 
+    /** Records info in Empires about where they invaded. */
+    void UpdateEmpireInvasionInfo(const std::map<int, std::map<int, double> >& planet_empire_invasion_troops) {
+        for (std::map<int, std::map<int, double> >::const_iterator it = planet_empire_invasion_troops.begin();
+             it != planet_empire_invasion_troops.end(); ++it)
+        {
+            int planet_id = it->first;
+            TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+            if (!planet)
+                continue;
+            const std::string& planet_species = planet->SpeciesName();
+            if (planet_species.empty())
+                continue;
+
+            for (std::map<int, double>::const_iterator empire_it = it->second.begin();
+                 empire_it != it->second.end(); ++empire_it)
+            {
+                Empire* invader_empire = Empires().Lookup(empire_it->first);
+                if (!invader_empire)
+                    continue;
+
+                std::map<std::string, int>::iterator species_it =
+                    invader_empire->SpeciesPlanetsInvaded().find(planet_species);
+                if (species_it == invader_empire->SpeciesPlanetsInvaded().end())
+                    invader_empire->SpeciesPlanetsInvaded()[planet_species] = 1;
+                else
+                    species_it->second++;
+            }
+        }
+    }
+
     /** Does colonization, with safety checks */
     bool ColonizePlanet(int ship_id, int planet_id) {
         TemporaryPtr<Ship> ship = GetShip(ship_id);
@@ -1999,8 +2029,8 @@ namespace {
       * ground combat resolution */
     void HandleInvasion() {
         std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
-        std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
-        std::vector<TemporaryPtr<Planet> > planets = GetUniverse().Objects().FindObjects<Planet>();
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>();
+        std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>();
 
         // assemble invasion forces from each invasion ship
         for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
@@ -2053,8 +2083,12 @@ namespace {
             GetUniverse().RecursiveDestroy(ship->ID());
         }
 
+        // store invasion info in empires
+        UpdateEmpireInvasionInfo(planet_empire_troops);
+
         // check each planet for other troops, such as due to empire troops, native troops, or rebel troops
-        for (std::vector<TemporaryPtr<Planet> >::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+        for (std::vector<TemporaryPtr<Planet> >::iterator planet_it = planets.begin();
+             planet_it != planets.end(); ++planet_it) {
             TemporaryPtr<Planet> planet = *planet_it;
             if (!planet) {
                 Logger().errorStream() << "HandleInvasion couldn't get planet";
