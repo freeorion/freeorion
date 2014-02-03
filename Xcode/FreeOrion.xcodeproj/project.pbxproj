@@ -198,7 +198,6 @@
 		471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C20CEF3AAC00A7DF2B /* Wnd.cpp */; };
 		471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C40CEF3AAC00A7DF2B /* WndEvent.cpp */; };
 		471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C50CEF3AAC00A7DF2B /* ZList.cpp */; };
-		471024A90CEF3DF100A7DF2B /* PluginInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023B40CEF3AAC00A7DF2B /* PluginInterface.cpp */; };
 		4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */; };
 		471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F890CEF55F700A7DF2B /* ClientFSMEvents.cpp */; };
 		471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */; };
@@ -1188,7 +1187,6 @@
 		471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OISInput.cfg; sourceTree = "<group>"; };
 		471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISInput.cpp; sourceTree = "<group>"; };
 		471023B30CEF3AAC00A7DF2B /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
-		471023B40CEF3AAC00A7DF2B /* PluginInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInterface.cpp; sourceTree = "<group>"; };
 		471023B50CEF3AAC00A7DF2B /* PtRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtRect.cpp; sourceTree = "<group>"; };
 		471023B70CEF3AAC00A7DF2B /* Scroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scroll.cpp; sourceTree = "<group>"; };
 		471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLGUI.cpp; sourceTree = "<group>"; };
@@ -2672,7 +2670,6 @@
 				471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */,
 				471023A90CEF3AAC00A7DF2B /* Ogre */,
 				471023B30CEF3AAC00A7DF2B /* Plugin.cpp */,
-				471023B40CEF3AAC00A7DF2B /* PluginInterface.cpp */,
 				471023B50CEF3AAC00A7DF2B /* PtRect.cpp */,
 				471023B70CEF3AAC00A7DF2B /* Scroll.cpp */,
 				471023B80CEF3AAC00A7DF2B /* SDL */,
@@ -3982,7 +3979,6 @@
 				471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */,
 				471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */,
 				471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */,
-				471024A90CEF3DF100A7DF2B /* PluginInterface.cpp in Sources */,
 				343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */,
 				8243E08C147EEAC800636C9E /* memory.cpp in Sources */,
 				8243E08D147EEAC800636C9E /* name.cpp in Sources */,
