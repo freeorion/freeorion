@@ -258,6 +258,8 @@ public:
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
     void            ApplyMeterEffectsAndUpdateMeters();
+    /** Like ApplyMeterEffectsAndUpdateMeters(), but only target, max and unpaired meters are updated.*/
+    void            ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters();
 
     /** Executes effects that modify objects' appearance in the human client. */
     void            ApplyAppearanceEffects(const std::vector<int>& object_ids);
@@ -511,7 +513,7 @@ private:
 
     mutable distance_matrix_storage<short>
                                     m_system_jumps;                     ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
+    boost::shared_ptr<GraphImpl>    m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
     boost::unordered_map<int, size_t>  m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter

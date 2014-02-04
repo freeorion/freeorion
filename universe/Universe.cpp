@@ -437,7 +437,6 @@ Universe::Universe() :
 
 Universe::~Universe() {
     Clear();
-    delete m_graph_impl;
 }
 
 void Universe::Clear() {
@@ -781,7 +780,8 @@ short Universe::JumpDistance(int system1_id, int system2_id) const {
         
         if (maybe_jumps) {
             // cache hit, any locks are already released
-            jumps = maybe_jumps.get();
+            // get_value_or() in order to silence potentially-uninitialized warning
+            jumps = maybe_jumps.get_value_or(SHRT_MAX);
         } else {
             // cache miss, still holding a lock in cache_guard
             // we are keeping the row locked during computation so other 
@@ -1058,6 +1058,20 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->ResetMeters();
     ExecuteEffects(targets_causes, true, true, false, true);
+
+    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
+        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+}
+
+void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters() {
+    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
+
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes);
+
+    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) 
+    { (*it)->ResetTargetMaxUnpairedMeters(); }
+    ExecuteEffects(targets_causes, false, true, false, true);
 
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
@@ -3098,34 +3112,30 @@ void Universe::HandleEmpireElimination(int empire_id)
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-
-    for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->system_graph)) - 1; i >= 0; --i) {
-        boost::clear_vertex(i, m_graph_impl->system_graph);
-        boost::remove_vertex(i, m_graph_impl->system_graph);
-    }
-
+    boost::shared_ptr<GraphImpl> new_graph_impl(new GraphImpl());
     std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
+    // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
+    bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
     //Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
     //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
     //    Logger().debugStream() << " ... " << *it;
 
     GraphImpl::SystemIDPropertyMap sys_id_property_map =
-        boost::get(vertex_system_id_t(), m_graph_impl->system_graph);
+        boost::get(vertex_system_id_t(), new_graph_impl->system_graph);
 
     GraphImpl::EdgeWeightPropertyMap edge_weight_map =
-        boost::get(boost::edge_weight, m_graph_impl->system_graph);
+        boost::get(boost::edge_weight, new_graph_impl->system_graph);
 
     // add vertices to graph for all systems
     for (size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
-        boost::add_vertex(m_graph_impl->system_graph);
+        boost::add_vertex(new_graph_impl->system_graph);
         int system_id = system_ids[system_index];
         sys_id_property_map[system_index] = system_id;
-        // add record of index in m_graph_impl->system_graph of this system
+        // add record of index in new_graph_impl->system_graph of this system
         m_system_id_to_graph_index[system_id] = system_index;
     }
 
-    m_system_jumps.resize(system_ids.size());
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
@@ -3143,14 +3153,14 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
             if (lane_dest_id >= system1_id)
                 continue;
 
-            // get m_graph_impl->system_graph index for this system
+            // get new_graph_impl->system_graph index for this system
             boost::unordered_map<int, size_t>::iterator reverse_lookup_map_it = m_system_id_to_graph_index.find(lane_dest_id);
             if (reverse_lookup_map_it == m_system_id_to_graph_index.end())
                 continue;   // couldn't find destination system id in vertex lookup map; don't add to graph
             size_t lane_dest_graph_index = reverse_lookup_map_it->second;
 
             std::pair<EdgeDescriptor, bool> add_edge_result =
-                boost::add_edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph);
+                boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
 
             if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
                 if (it->second) {               // if this is a wormhole
@@ -3158,10 +3168,21 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
                 }
+                graph_changed = graph_changed || !boost::edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph).second;
             }
         }
     }
-
+    
+    // if all previous edges still exist in the new graph, and the number of vertices and edges hasn't changed, 
+    // then no vertices or edges can have been added either, so it is still the same graph
+    graph_changed = graph_changed || boost::num_edges(new_graph_impl->system_graph) != boost::num_edges(m_graph_impl->system_graph);
+    
+    if (graph_changed) {
+        new_graph_impl.swap(m_graph_impl);
+        // clear jumps distance cache
+        // NOTE: re-filling the cache is O(#vertices * (#vertices + #edges)) in the worst case!
+        m_system_jumps.resize(system_ids.size());
+    }
     UpdateEmpireVisibilityFilteredSystemGraphs(for_empire_id);
 }
 
