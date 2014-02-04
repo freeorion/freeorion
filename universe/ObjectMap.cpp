@@ -297,9 +297,11 @@ void ObjectMap::AuditContainment() {
         int sys_id = contained->SystemID();
         int alt_id = contained->ContainerObjectID();    // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet
         UniverseObjectType type = contained->ObjectType();
+        if (type == OBJ_SYSTEM)
+            continue;
 
         // store systems' contained objects
-        if (this->Object<System>(sys_id)) {
+        if (this->Object(sys_id)) { // although this is expected to be a system, can't use Object<System> here due to CopyForSerialize not copying the type-specific objects info
             contained_objs[sys_id].insert(contained_id);
 
             if (type == OBJ_PLANET)
@@ -315,31 +317,38 @@ void ObjectMap::AuditContainment() {
         }
 
         // store planets' contained buildings
-        if (type == OBJ_BUILDING && this->Object<Planet>(alt_id))
+        if (type == OBJ_BUILDING && this->Object(alt_id))
             contained_buildings[alt_id].insert(contained_id);
 
         // store fleets' contained ships
-        if (type == OBJ_SHIP && this->Object<Fleet>(alt_id))
+        if (type == OBJ_SHIP && this->Object(alt_id))
             contained_ships[alt_id].insert(contained_id);
     }
 
     // set contained objects of all possible containers
-    for (iterator<System> it = begin<System>(); it != end<System>(); ++it) {
-        TemporaryPtr<System> sys = *it;
-        sys->m_objects =    contained_objs[sys->ID()];
-        sys->m_planets =    contained_planets[sys->ID()];
-        sys->m_buildings =  contained_buildings[sys->ID()];
-        sys->m_fleets =     contained_fleets[sys->ID()];
-        sys->m_ships =      contained_ships[sys->ID()];
-        sys->m_fields =     contained_fields[sys->ID()];
-    }
-    for (iterator<Planet> it = begin<Planet>(); it != end<Planet>(); ++it) {
-        TemporaryPtr<Planet> plt = *it;
-        plt->m_buildings =  contained_buildings[plt->ID()];
-    }
-    for (iterator<Fleet> it = begin<Fleet>(); it != end<Fleet>(); ++it) {
-        TemporaryPtr<Fleet> flt = *it;
-        flt->m_ships =      contained_ships[flt->ID()];
+    for (iterator<> it = begin(); it != end(); ++it) {
+        TemporaryPtr<UniverseObject> obj = *it;
+        if (obj->ObjectType() == OBJ_SYSTEM) {
+            TemporaryPtr<System> sys = boost::dynamic_pointer_cast<System>(obj);
+            if (!sys)
+                continue;
+            sys->m_objects =    contained_objs[sys->ID()];
+            sys->m_planets =    contained_planets[sys->ID()];
+            sys->m_buildings =  contained_buildings[sys->ID()];
+            sys->m_fleets =     contained_fleets[sys->ID()];
+            sys->m_ships =      contained_ships[sys->ID()];
+            sys->m_fields =     contained_fields[sys->ID()];
+        } else if (obj->ObjectType() == OBJ_PLANET) {
+            TemporaryPtr<Planet> plt = boost::dynamic_pointer_cast<Planet>(obj);
+            if (!plt)
+                continue;
+            plt->m_buildings =  contained_buildings[plt->ID()];
+        } else if (obj->ObjectType() == OBJ_FLEET) {
+            TemporaryPtr<Fleet> flt = boost::dynamic_pointer_cast<Fleet>(obj);
+            if (!flt)
+                continue;
+            flt->m_ships =      contained_ships[flt->ID()];
+        }
     }
 }
 
