@@ -382,7 +382,7 @@ void ObjectMap::SwapMap(std::map<int, boost::shared_ptr<T> >& map, ObjectMap& rh
 
 template <class T>
 void ObjectMap::TryInsertIntoMap(std::map<int, boost::shared_ptr<T> >& map, boost::shared_ptr<UniverseObject> item) {
-    if (T* t_item = dynamic_cast<T*>(item.get()))
+    if (dynamic_cast<T*>(item.get()))
         map[item->ID()] = boost::dynamic_pointer_cast<T, UniverseObject>(item);
 }
 

@@ -1987,6 +1987,7 @@ void MapWnd::InitTurn() {
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
 
+    // FIXME: this is actually only needed when there was no mid-turn update
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
     // update effect accounting and meter estimates
