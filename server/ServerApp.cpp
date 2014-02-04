@@ -2674,6 +2674,10 @@ void ServerApp::PostCombatProcessTurns() {
     Seed(CurrentTurn());
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
+    // regenerate system connectivity graph after executing effects, which may
+    // have added or removed starlanes.
+    m_universe.InitializeSystemGraph();
+
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
         Logger().debugStream() << objects.Dump();
@@ -2734,22 +2738,6 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
 
-    // Execute meter-related effects on objects created this turn, so that new
-    // UniverseObjects will have effects applied to them this turn, allowing
-    // (for example) ships to have max fuel meters greater than 0 on the turn
-    // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-        Logger().debugStream() << objects.Dump();
-    }
-
-    // regenerate system connectivity graph after executing effects, which may
-    // have added or removed starlanes.
-    m_universe.InitializeSystemGraph();
-
-
     // Population growth or loss, resource current meter growth, etc.
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
         it->PopGrowthProductionResearchPhase();
@@ -2759,6 +2747,22 @@ void ServerApp::PostCombatProcessTurns() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+        Logger().debugStream() << objects.Dump();
+    }
+
+
+    // Execute meter-related effects on objects created this turn, so that new
+    // UniverseObjects will have effects applied to them this turn, allowing
+    // (for example) ships to have max fuel meters greater than 0 on the turn
+    // they are created.
+    m_universe.ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters();
+    
+    // store initial values of meters for this turn.
+    m_universe.BackPropegateObjectMeters();
+    empires.BackPropegateMeters();
+
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
         Logger().debugStream() << objects.Dump();
     }
 
@@ -2774,10 +2778,6 @@ void ServerApp::PostCombatProcessTurns() {
         }
     }
 
-
-    // store initial values of meters for this turn.
-    m_universe.BackPropegateObjectMeters();
-    empires.BackPropegateMeters();
 
 
     // store any changes in objects from various progress functions
