@@ -2880,36 +2880,23 @@ void SidePanel::RefreshImpl() {
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-
-    // find all planets in this system.  need to check all known planets, since
-    // the objects this system object reports to contain don't include objects
-    // that aren't visible this turn to this client's player.  Also need to
-    // make sure that a known object isn't also known to be destroyed, in which
-    // case it shouldn't be shown.
-    const std::set<int>& destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(app_empire_id);
-    std::vector<int> known_system_planet_ids;
-    const ObjectMap& objects = Objects();
-    std::vector<TemporaryPtr<const Planet> > all_planets = objects.FindObjects<Planet>();
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
-        TemporaryPtr<const Planet> planet = *it;
-        int planet_id = planet->ID();
-        if (planet->SystemID() == s_system_id) {
-            if (destroyed_object_ids.find(planet_id) == destroyed_object_ids.end()) // to be displayed, planet should not be in set of known destroyed objects
-                known_system_planet_ids.push_back(planet_id);
-        }
-    }
-    m_planet_panel_container->SetPlanets(known_system_planet_ids, system->GetStarType());
+    const std::set<int>& planet_ids = system->PlanetIDs();
+    std::vector<int> planet_ids_vec(planet_ids.begin(), planet_ids.end());
+    m_planet_panel_container->SetPlanets(planet_ids_vec, system->GetStarType());
 
 
     // populate system resource summary
 
-    // get planets owned by player's empire
+    // get just planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
-    for (std::vector<int>::const_iterator it = known_system_planet_ids.begin(); it != known_system_planet_ids.end(); ++it) {
-        TemporaryPtr<const Planet> planet = GetPlanet(*it);
-        if (planet && planet->OwnedBy(empire_id))
-            owned_planets.push_back(*it);
+    std::vector<TemporaryPtr<const Planet> > planets_here = Objects().FindObjects<const Planet>(planet_ids);
+    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets_here.begin();
+         it != planets_here.end(); ++it)
+    {
+        TemporaryPtr<const Planet> planet = *it;
+        if (planet->OwnedBy(empire_id))
+            owned_planets.push_back(planet->ID());
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
@@ -2919,8 +2906,10 @@ void SidePanel::RefreshImpl() {
     meter_types.push_back(std::make_pair(METER_TRADE,       METER_TARGET_TRADE));
 
     // refresh the system resource summary.
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8, owned_planets, meter_types);
-    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4), 140 - m_system_resource_summary->Height()));
+    m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8,
+                                                            owned_planets, meter_types);
+    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
+                                             140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
 
 
@@ -2929,7 +2918,9 @@ void SidePanel::RefreshImpl() {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = meter_types.begin(); it != meter_types.end(); ++it) {
+        for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = meter_types.begin();
+             it != meter_types.end(); ++it)
+        {
             MeterType type = it->first;
             // add tooltip for each meter type
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(
