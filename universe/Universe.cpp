@@ -3352,7 +3352,13 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
 
         //the empire_latest_known_objects are already processed for visibility, so can be copied streamlined
         objects.CopyForSerialize(it->second);
-        objects.AuditContainment();
+
+        std::map< int, std::set< int > >::const_iterator destroyed_ids_it =
+                m_empire_known_destroyed_object_ids.find(encoding_empire);
+        bool map_avail = (destroyed_ids_it != m_empire_known_destroyed_object_ids.end());
+        const std::set<int>& destroyed_object_ids = map_avail ? destroyed_ids_it->second : std::set<int>();
+
+        objects.AuditContainment(destroyed_object_ids);
     }
 }
 

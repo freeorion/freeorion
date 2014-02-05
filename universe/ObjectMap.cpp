@@ -232,7 +232,7 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     return result;
 }
 
-void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int> destroyed_object_ids) {
+void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids) {
     m_existing_objects.clear();
     m_existing_buildings.clear();
     m_existing_fields.clear();
@@ -282,7 +282,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int> destroyed_obje
     }
 }
 
-void ObjectMap::AuditContainment() {
+void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     // determine all objects that some other object thinks contains them
     std::map<int, std::set<int> >   contained_objs;
     std::map<int, std::set<int> >   contained_planets;
@@ -293,6 +293,9 @@ void ObjectMap::AuditContainment() {
 
     for (const_iterator<> it = const_begin (); it != const_end(); ++it) {
         TemporaryPtr<const UniverseObject> contained = *it;
+        if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
+            continue;
+
         int contained_id = contained->ID();
         int sys_id = contained->SystemID();
         int alt_id = contained->ContainerObjectID();    // planet or fleet id for a building or ship, or system id again for a fleet, field, or planet

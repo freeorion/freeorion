@@ -391,14 +391,14 @@ public:
     void                swap(ObjectMap& rhs);
 
     /** */
-    void                UpdateCurrentDestroyedObjects(std::set<int> destroyed_object_ids);
+    void                UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids);
 
     /** Recalculates contained objects for all objects in this ObjectMap based
       * on what other objects exist in this ObjectMap. Useful to eliminate
       * cases where there are inconsistencies between whan an object thinks it
       * contains, and what other objects think they are contained by the first
       * object. */
-    void                AuditContainment();
+    void                AuditContainment(const std::set<int>& destroyed_object_ids);
     //@}
 
 private:
