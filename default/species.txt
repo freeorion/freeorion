@@ -2615,6 +2615,7 @@ ADVANCED_FOCUS_EFFECTS
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
+            accountinglabel = "SHP_INTSTEL_LOG"
             effects = SetSupply Value + 2
 '''
 
