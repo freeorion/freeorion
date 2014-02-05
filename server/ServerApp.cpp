@@ -2757,8 +2757,8 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters();
-    
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+
     // store initial values of meters for this turn.
     m_universe.BackPropegateObjectMeters();
     empires.BackPropegateMeters();
