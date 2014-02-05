@@ -242,7 +242,9 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
     m_existing_pop_centers.clear();
     m_existing_resource_centers.clear();
     m_existing_systems.clear();
-    for ( std::map< int, boost::shared_ptr< UniverseObject > >::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (std::map<int, boost::shared_ptr<UniverseObject> >::iterator it = m_objects.begin();
+         it != m_objects.end(); ++it)
+    {
         if (!it->second)
             continue;
         if (destroyed_object_ids.find(it->first) != destroyed_object_ids.end())

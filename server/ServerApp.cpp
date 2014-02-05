@@ -2401,15 +2401,17 @@ void ServerApp::PreCombatProcessTurns() {
         it->second->UpdateProductionQueue();
     }
 
-    Logger().debugStream() << "ServerApp::ProcessTurns colonization and scrapping";
-
     // player notifications
     m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
 
+    Logger().debugStream() << "ServerApp::ProcessTurns colonization";
     HandleColonization();
+    Logger().debugStream() << "ServerApp::ProcessTurns invasion";
     HandleInvasion();
+    Logger().debugStream() << "ServerApp::ProcessTurns gifting";
     HandleGifting();
 
+    Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
     // scrap orders
     //std::vector<int> scrapped_object_ids;
     for (ObjectMap::iterator<Ship> it = objects.begin<Ship>(); it != objects.end<Ship>(); ++it) {
