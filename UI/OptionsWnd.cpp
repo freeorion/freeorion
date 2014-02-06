@@ -345,6 +345,7 @@ void OptionsWnd::BeginPage(const std::string& name) {
     m_current_option_list = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_current_option_list->SetColor(GG::CLR_ZERO);
     m_current_option_list->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_current_option_list->SetVScrollWheelIncrement(ClientUI::Pts() * 10);
     m_tabs->AddWnd(m_current_option_list, name);
     m_tabs->SetCurrentWnd(m_num_wnds++);
 }

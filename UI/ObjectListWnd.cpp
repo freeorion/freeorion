@@ -1141,6 +1141,8 @@ public:
         SetColWidth(0, GG::X0);
         LockColWidths();
 
+        SetVScrollWheelIncrement(Value(ListRowHeight())*4);
+
         m_filter_condition = new Condition::All();
 
         //m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);

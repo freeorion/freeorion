@@ -415,6 +415,8 @@ ListBox::ListBox() :
     m_rows(),
     m_vscroll(0),
     m_hscroll(0),
+    m_vscroll_wheel_scroll_increment(0),
+    m_hscroll_wheel_scroll_increment(0),
     m_caret(m_rows.end()),
     m_selections(RowPtrIteratorLess<std::list<Row*> >(&m_rows)),
     m_old_sel_row(m_rows.end()),
@@ -451,6 +453,8 @@ ListBox::ListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
     m_rows(),
     m_vscroll(0),
     m_hscroll(0),
+    m_vscroll_wheel_scroll_increment(0),
+    m_hscroll_wheel_scroll_increment(0),
     m_caret(m_rows.end()),
     m_selections(RowPtrIteratorLess<std::list<Row*> >(&m_rows)),
     m_old_sel_row(m_rows.end()),
@@ -944,6 +948,18 @@ void ListBox::SetFirstRowShown(iterator it)
     }
 }
 
+void ListBox::SetVScrollWheelIncrement(unsigned int increment)
+{
+    m_vscroll_wheel_scroll_increment = increment;
+    AdjustScrolls(false);
+}
+
+void ListBox::SetHScrollWheelIncrement(unsigned int increment)
+{
+    m_hscroll_wheel_scroll_increment = increment;
+    AdjustScrolls(false);
+}
+
 void ListBox::SetInteriorColor(Clr c)
 { m_int_color = c; }
 
@@ -1222,16 +1238,8 @@ void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (Disabled() || !m_vscroll)
         return;
-
-    // repeatedly increment scroll position for the requested number of moves.
-    for (int i = 0; i < move; ++i) {
-        m_vscroll->ScrollLineDecr(5);
-        SignalScroll(*m_vscroll, i == move - 1);
-    }
-    for (int i = 0; i < -move; ++i) {
-        m_vscroll->ScrollLineIncr(5);
-        SignalScroll(*m_vscroll, i == -move - 1);
-    }
+    m_vscroll->ScrollLineIncr(-move);
+    SignalScroll(*m_vscroll, true);
 }
 
 void ListBox::DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
@@ -1742,20 +1750,17 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
             Y scroll_y(0);
             if (adjust_for_resize) {
                 m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
-                                    Pt(scroll_x + SCROLL_WIDTH, scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+                                    Pt(scroll_x + SCROLL_WIDTH,
+                                       scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
             }
 
-            // find biggest row, use as vscroll step size
-            int line_size = 0;
-            for (const_iterator row_it = begin(); row_it != end(); ++row_it) {
-                Row* row = *row_it;
-                if (row->Height() > line_size)
-                    line_size = Value(row->Height());
+            unsigned int line_size = m_vscroll_wheel_scroll_increment;
+            if (line_size == 0 && !this->Empty()) {
+                const Row* row = *begin();
+                line_size = Value(row->Height());
             }
-            if (line_size <= 0)
-                line_size = Value(cl_sz.y / 8); // default backup row increment size for scrolling
 
-            int page_size = Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0));
+            unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
             m_vscroll->SizeScroll(0, Value(total_y_extent - 1),
                                   line_size, std::max(line_size, page_size));
@@ -1768,8 +1773,15 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                 cl_sz.x - SCROLL_WIDTH, Y0,
                 X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0),
                 m_color, CLR_SHADOW);
-        int line_size = Value(cl_sz.y / 8);
-        int page_size = Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0));
+
+        unsigned int line_size = m_vscroll_wheel_scroll_increment;
+        if (line_size == 0 && !this->Empty()) {
+            const Row* row = *begin();
+            line_size = Value(row->Height());
+        }
+
+        unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+
         m_vscroll->SizeScroll(0, Value(total_y_extent - 1),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_vscroll);
@@ -1785,10 +1797,18 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
             Y scroll_y = cl_sz.y - SCROLL_WIDTH;
             if (adjust_for_resize) {
                 m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
-                                    Pt(scroll_x + cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), scroll_y + SCROLL_WIDTH));
+                                    Pt(scroll_x + cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0),
+                                       scroll_y + SCROLL_WIDTH));
             }
-            int line_size = Value(cl_sz.x / 8);
-            int page_size = Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0));
+
+            unsigned int line_size = m_hscroll_wheel_scroll_increment;
+            if (line_size == 0 && !this->Empty()) {
+                const Row* row = *begin();
+                line_size = Value(row->Height());
+            }
+
+            unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
+
             m_hscroll->SizeScroll(0, Value(total_x_extent - 1),
                                   line_size, std::max(line_size, page_size));
             MoveChildUp(m_hscroll);
@@ -1799,8 +1819,15 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                 X0, cl_sz.y - SCROLL_WIDTH,
                 cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH),
                 m_color, CLR_SHADOW);
-        int line_size = Value(cl_sz.x / 8);
-        int page_size = Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0));
+
+        unsigned int line_size = m_hscroll_wheel_scroll_increment;
+        if (line_size == 0 && !this->Empty()) {
+            const Row* row = *begin();
+            line_size = Value(row->Height());
+        }
+
+        unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
+
         m_hscroll->SizeScroll(0, Value(total_x_extent - 1),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_hscroll);

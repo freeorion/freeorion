@@ -103,6 +103,10 @@ public:
 
     /** Sets scroll position, bound by valid range of scrolls of this MultiEdit. */
     void           SetScrollPosition(Pt pt);
+
+    /** Sets how much to scroll when scrolled using the mousewheel. */
+    void           SetVScrollWheelIncrement(unsigned int increment);
+    void           SetHScrollWheelIncrement(unsigned int increment);
     //@}
 
     /** A sentinel value that indicates that there is no limit on the number
@@ -229,18 +233,20 @@ private:
     std::pair<std::size_t, CPSize> m_cursor_end;   ///< The row and character index + 1 of the last character in the hilited selection
     // if m_cursor_begin == m_cursor_end, the caret is draw at m_cursor_end
 
-    Pt          m_contents_sz;          ///< The size of the entire text block in the control (not just the visible part)
+    Pt              m_contents_sz;          ///< The size of the entire text block in the control (not just the visible part)
 
-    X           m_first_col_shown;      ///< The position (counted from the left side of the text) of the first pixel shown
-    Y           m_first_row_shown;      ///< The position (counted from the top of the text) of the first pixel shown
+    X               m_first_col_shown;      ///< The position (counted from the left side of the text) of the first pixel shown
+    Y               m_first_row_shown;      ///< The position (counted from the top of the text) of the first pixel shown
 
-    std::size_t m_max_lines_history;
+    std::size_t     m_max_lines_history;
 
-    Scroll*     m_vscroll;
-    Scroll*     m_hscroll;
+    Scroll*         m_vscroll;
+    Scroll*         m_hscroll;
+    unsigned int    m_vscroll_wheel_scroll_increment;
+    unsigned int    m_hscroll_wheel_scroll_increment;
 
-    bool        m_preserve_text_position_on_next_set_text;
-    bool        m_ignore_adjust_scrolls;
+    bool            m_preserve_text_position_on_next_set_text;
+    bool            m_ignore_adjust_scrolls;
 };
 
 } // namespace GG

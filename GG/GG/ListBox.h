@@ -376,6 +376,10 @@ public:
     void           BringRowIntoView(iterator it);         ///< moves the scrollbars so that row \a it is visible
     void           SetFirstRowShown(iterator it);         ///< moves the scrollbars so that row \a it is the first visible
 
+    /** Sets how much to scroll when scrolled using the mousewheel. */
+    void           SetVScrollWheelIncrement(unsigned int increment);
+    void           SetHScrollWheelIncrement(unsigned int increment);
+
     void           SetInteriorColor(Clr c);               ///< sets the color painted into the client area of the control
     void           SetHiliteColor(Clr c);                 ///< sets the color behind selected line items
 
@@ -516,6 +520,9 @@ private:
 
     Scroll*         m_vscroll;          ///< vertical scroll bar on right
     Scroll*         m_hscroll;          ///< horizontal scroll bar at bottom
+    unsigned int    m_vscroll_wheel_scroll_increment;
+    unsigned int    m_hscroll_wheel_scroll_increment;
+
     iterator        m_caret;            ///< the item currently selected, or the last item selected by the user 
     SelectionSet    m_selections;       ///< vector of indexes of selected items
     iterator        m_old_sel_row;      ///< used to make sure clicks end on the same row where they started
