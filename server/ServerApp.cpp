@@ -2718,7 +2718,6 @@ void ServerApp::PostCombatProcessTurns() {
         Logger().debugStream() << objects.Dump();
     }
 
-
     Logger().debugStream() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
     // Consume distributed resources to planets and on queues, create new
@@ -2739,6 +2738,16 @@ void ServerApp::PostCombatProcessTurns() {
         Logger().debugStream() << objects.Dump();
     }
 
+    // Execute meter-related effects on objects created this turn, so that new
+    // UniverseObjects will have effects applied to them this turn, allowing
+    // (for example) ships to have max fuel meters greater than 0 on the turn
+    // they are created.
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
+        Logger().debugStream() << objects.Dump();
+    }
 
     // Population growth or loss, resource current meter growth, etc.
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
@@ -2752,21 +2761,9 @@ void ServerApp::PostCombatProcessTurns() {
         Logger().debugStream() << objects.Dump();
     }
 
-
-    // Execute meter-related effects on objects created this turn, so that new
-    // UniverseObjects will have effects applied to them this turn, allowing
-    // (for example) ships to have max fuel meters greater than 0 on the turn
-    // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
-
     // store initial values of meters for this turn.
     m_universe.BackPropegateObjectMeters();
     empires.BackPropegateMeters();
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-        Logger().debugStream() << objects.Dump();
-    }
 
 
     // check for loss of empire capitals
