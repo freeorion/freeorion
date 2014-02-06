@@ -639,54 +639,20 @@ namespace {
         default:            return EMPTY_STRING;
         }
     }
-}
 
-void EncyclopediaDetailPanel::Refresh() {
-    if (m_icon) {
-        DeleteChild(m_icon);
-        m_icon = 0;
-    }
-    if (m_other_icon) {
-        DeleteChild(m_other_icon);
-        m_other_icon = 0;
-    }
-    m_name_text->Clear();
-    m_summary_text->Clear();
-    m_cost_text->Clear();
-
-    GG::Pt initial_scroll_pos = m_description_box->ScrollPosition();
-    m_description_box->Clear();
-
-    DetachChild(m_graph);
-
-    const Encyclopedia& encyclopedia = GetEncyclopedia();
-
-    // get details of item as applicable in order to set summary, cost, description TextControls
-    std::string name;
-    boost::shared_ptr<GG::Texture> texture;
-    boost::shared_ptr<GG::Texture> other_texture;
-    int turns = -1;
-    float cost = 0.0f;
-    std::string cost_units;             // "PP" or "RP" or empty string, depending on whether and what something costs
-    std::string general_type;           // general type of thing being shown, eg. "Building" or "Ship Part"
-    std::string specific_type;          // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)
-    std::string detailed_description;
-    GG::Clr color(GG::CLR_ZERO);
-
-    using boost::io::str;
-    if (m_items.empty())
-        return;
-
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const ObjectMap& objects = Objects();
-
-    if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
-        detailed_description = PediaDirText(m_items_it->second);
+    void RefreshDetailPanelPediaTag(        const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        detailed_description = PediaDirText(item_name);
         if (!detailed_description.empty()) {
             // attempt to treat as a directory
-            name = UserString(m_items_it->second);
+            name = UserString(item_name);
 
-        } else if (m_items_it->second == "ENC_GALAXY_SETUP") {
+        } else if (item_name == "ENC_GALAXY_SETUP") {
             const GalaxySetupData& gsd = ClientApp::GetApp()->GetGalaxySetupData();
 
             name = UserString("ENC_GALAXY_SETUP");
@@ -705,14 +671,17 @@ void EncyclopediaDetailPanel::Refresh() {
 
         } else {
             // couldn't find a directory; look up in custom encyclopedia entries
-            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = encyclopedia.articles.begin();
+            const Encyclopedia& encyclopedia = GetEncyclopedia();
+
+            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+                     category_it = encyclopedia.articles.begin();
                  category_it != encyclopedia.articles.end(); ++category_it)
             {
                 const std::vector<EncyclopediaArticle>& articles = category_it->second;
                 for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
                      article_it != articles.end(); ++article_it)
                 {
-                    if (article_it->name != m_items_it->second)
+                    if (article_it->name != item_name)
                         continue;
                     name = UserString(article_it->name);
                     detailed_description = UserString(article_it->description);
@@ -723,17 +692,25 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
             }
         }
+    }
 
-    } else if (m_items_it->first == "ENC_SHIP_PART") {
-        const PartType* part = GetPartType(m_items_it->second);
+    void RefreshDetailPanelShipPartTag(     const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const PartType* part = GetPartType(item_name);
         if (!part) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Ship Parts
-        name = UserString(m_items_it->second);
-        texture = ClientUI::PartIcon(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::PartIcon(item_name);
         int default_location_id = DefaultLocationForEmpire(client_empire_id);
         turns = part->ProductionTime(client_empire_id, default_location_id);
         cost = part->ProductionCost(client_empire_id, default_location_id);
@@ -753,7 +730,7 @@ void EncyclopediaDetailPanel::Refresh() {
         if (!slot_types_list.empty())
             detailed_description += "\n\n" +UserString("ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES") + slot_types_list;
 
-        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, m_items_it->second));
+        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (std::vector<std::string>::const_iterator unlock_tech_it = unlocked_by_techs.begin();
@@ -768,18 +745,25 @@ void EncyclopediaDetailPanel::Refresh() {
             if (!part->Effects().empty())
                 detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(part->Effects()));
         }
+    }
 
-
-    } else if (m_items_it->first == "ENC_SHIP_HULL") {
-        const HullType* hull = GetHullType(m_items_it->second);
+    void RefreshDetailPanelShipHullTag(     const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const HullType* hull = GetHullType(item_name);
         if (!hull) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Ship Hulls
-        name = UserString(m_items_it->second);
-        texture = ClientUI::HullTexture(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::HullTexture(item_name);
         int default_location_id = DefaultLocationForEmpire(client_empire_id);
         turns = hull->ProductionTime(client_empire_id, default_location_id);
         cost = hull->ProductionCost(client_empire_id, default_location_id);
@@ -788,7 +772,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         detailed_description += UserString(hull->Description()) + "\n\n" + hull->StatDescription();
 
-        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, m_items_it->second));
+        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (std::vector<std::string>::const_iterator unlock_tech_it = unlocked_by_techs.begin();
@@ -803,17 +787,25 @@ void EncyclopediaDetailPanel::Refresh() {
             if (!hull->Effects().empty())
                 detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(hull->Effects()));
         }
+    }
 
-    } else if (m_items_it->first == "ENC_TECH") {
-        const Tech* tech = GetTech(m_items_it->second);
+    void RefreshDetailPanelTechTag(         const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const Tech* tech = GetTech(item_name);
         if (!tech) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Technologies
-        name = UserString(m_items_it->second);
-        texture = ClientUI::TechIcon(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::TechIcon(item_name);
         other_texture = ClientUI::CategoryIcon(tech->Category()); 
         color = ClientUI::CategoryColor(tech->Category());
         turns = tech->ResearchTime(client_empire_id);
@@ -872,7 +864,8 @@ void EncyclopediaDetailPanel::Refresh() {
         detailed_description += UserString(tech->Description());
 
         if (GetOptionsDB().Get<bool>("UI.autogenerated-effects-descriptions") && !tech->Effects().empty()) {
-            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(tech->Effects()));
+            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR"))
+                % EffectsDescription(tech->Effects()));
         }
 
         const std::set<std::string>& unlocked_by_techs = tech->Prerequisites();
@@ -883,18 +876,25 @@ void EncyclopediaDetailPanel::Refresh() {
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, *it) + "  "; }
             detailed_description += "\n\n";
         }
+    }
 
-
-    } else if (m_items_it->first == "ENC_BUILDING_TYPE") {
-        const BuildingType* building_type = GetBuildingType(m_items_it->second);
+    void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const BuildingType* building_type = GetBuildingType(item_name);
         if (!building_type) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Building types
-        name = UserString(m_items_it->second);
-        texture = ClientUI::BuildingIcon(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::BuildingIcon(item_name);
         int default_location_id = DefaultLocationForEmpire(client_empire_id);
         turns = building_type->ProductionTime(client_empire_id, default_location_id);
         cost = building_type->ProductionCost(client_empire_id, default_location_id);
@@ -910,7 +910,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(building_type->Effects()));
         }
 
-        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_BUILDING, m_items_it->second));
+        std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_BUILDING, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (std::vector<std::string>::const_iterator unlock_tech_it = unlocked_by_techs.begin();
@@ -918,25 +918,32 @@ void EncyclopediaDetailPanel::Refresh() {
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, *unlock_tech_it) + "  "; }
             detailed_description += "\n\n";
         }
+    }
 
-
-    } else if (m_items_it->first == "ENC_SPECIAL") {
-        const Special* special = GetSpecial(m_items_it->second);
+    void RefreshDetailPanelSpecialTag(      const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const Special* special = GetSpecial(item_name);
         if (!special) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Specials
-        name = UserString(m_items_it->second);
-        texture = ClientUI::SpecialIcon(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::SpecialIcon(item_name);
         detailed_description = UserString(special->Description());
         general_type = UserString("ENC_SPECIAL");
 
         // objects that have special
         std::vector<TemporaryPtr<const UniverseObject> > objects_with_special;
-        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
-            if (obj_it->Specials().find(m_items_it->second) != obj_it->Specials().end())
+        for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it)
+            if (obj_it->Specials().find(item_name) != obj_it->Specials().end())
                 objects_with_special.push_back(*obj_it);
 
         if (!objects_with_special.empty()) {
@@ -976,22 +983,31 @@ void EncyclopediaDetailPanel::Refresh() {
             if (!special->Effects().empty())
                 detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(special->Effects()));
         }
+    }
 
-    } else if (m_items_it->first == "ENC_EMPIRE") {
+    void RefreshDetailPanelEmpireTag(       const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
         int empire_id = ALL_EMPIRES;
         try {
-            empire_id = boost::lexical_cast<int>(m_items_it->second);
+            empire_id = boost::lexical_cast<int>(item_name);
         } catch(...)
         {}
         const Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
         }
 
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
         // Empires
         name = empire->Name();
-        TemporaryPtr<const Planet> capital = objects.Object<Planet>(empire->CapitalID());
+        TemporaryPtr<const Planet> capital = GetPlanet(empire->CapitalID());
         if (capital)
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
@@ -1007,10 +1023,10 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         // Planets
-        std::vector<TemporaryPtr<const UniverseObject> > empire_planets = objects.FindObjects(OwnedVisitor<Planet>(empire_id));
+        std::vector<TemporaryPtr<UniverseObject> > empire_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
-            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator planet_it = empire_planets.begin();
+            for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator planet_it = empire_planets.begin();
                  planet_it != empire_planets.end(); ++planet_it)
             {
                 TemporaryPtr<const UniverseObject> obj = *planet_it;
@@ -1021,10 +1037,10 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         // Fleets
-        std::vector<TemporaryPtr<const UniverseObject> > empire_fleets = objects.FindObjects(OwnedVisitor<Fleet>(empire_id));
+        std::vector<TemporaryPtr<UniverseObject> > empire_fleets = Objects().FindObjects(OwnedVisitor<Fleet>(empire_id));
         if (!empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
-            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator fleet_it = empire_fleets.begin();
+            for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator fleet_it = empire_fleets.begin();
                  fleet_it != empire_fleets.end(); ++fleet_it)
             {
                 TemporaryPtr<const UniverseObject> obj = *fleet_it;
@@ -1043,17 +1059,25 @@ void EncyclopediaDetailPanel::Refresh() {
         } else {
             detailed_description += "\n\n" + UserString("NO_OWNED_FLEETS_KNOWN");
         }
+    }
 
-    } else if (m_items_it->first == "ENC_SPECIES") {
-        const Species* species = GetSpecies(m_items_it->second);
+    void RefreshDetailPanelSpeciesTag(      const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const Species* species = GetSpecies(item_name);
         if (!species) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Species
-        name = UserString(m_items_it->second);
-        texture = ClientUI::SpeciesIcon(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::SpeciesIcon(item_name);
         general_type = UserString("ENC_SPECIES");
         detailed_description = UserString(species->GameplayDescription());
 
@@ -1108,42 +1132,54 @@ void EncyclopediaDetailPanel::Refresh() {
             for (std::set<int>::const_iterator hw_it = species->Homeworlds().begin();
                  hw_it != species->Homeworlds().end(); ++hw_it)
             {
-                if (TemporaryPtr<const Planet> homeworld = objects.Object<Planet>(*hw_it))
-                    detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, *hw_it, homeworld->PublicName(client_empire_id)) + "\n";
+                if (TemporaryPtr<const Planet> homeworld = GetPlanet(*hw_it))
+                    detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, *hw_it,
+                                                             homeworld->PublicName(client_empire_id)) + "\n";
                 else
                     detailed_description += UserString("UNKNOWN_PLANET") + "\n";
             }
         }
 
         // occupied planets
-        std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
+        std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>();
         std::vector<TemporaryPtr<const Planet> > species_occupied_planets;
-        for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+        for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
+             planet_it != planets.end(); ++planet_it)
+        {
             TemporaryPtr<const Planet> planet = *planet_it;
-            if (planet->SpeciesName() == m_items_it->second)
+            if (planet->SpeciesName() == item_name)
                 species_occupied_planets.push_back(planet);
         }
         if (!species_occupied_planets.empty()) {
             detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
-            for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = species_occupied_planets.begin();
+            for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it =
+                     species_occupied_planets.begin();
                  planet_it != species_occupied_planets.end(); ++planet_it)
             {
                 TemporaryPtr<const Planet> planet = *planet_it;
-                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "  ";
+                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
+                                                         planet->PublicName(client_empire_id)) + "  ";
             }
             detailed_description += "\n";
         }
+    }
 
-    } else if (m_items_it->first == "ENC_FIELD_TYPE") {
-        const FieldType* field_type = GetFieldType(m_items_it->second);
+    void RefreshDetailPanelFieldTypeTag(    const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
             return;
         }
 
         // Field types
-        name = UserString(m_items_it->second);
-        texture = ClientUI::FieldTexture(m_items_it->second);
+        name = UserString(item_name);
+        texture = ClientUI::FieldTexture(item_name);
         general_type = UserString("ENC_FIELD_TYPE");
 
         detailed_description += UserString(field_type->Description());
@@ -1152,14 +1188,22 @@ void EncyclopediaDetailPanel::Refresh() {
             if (!field_type->Effects().empty())
                 detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(field_type->Effects()));
         }
+    }
 
-    } else if (m_items_it->first == "ENC_SHIP_DESIGN") {
-        int design_id = boost::lexical_cast<int>(m_items_it->second);
-        const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(m_items_it->second));
+    void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        int design_id = boost::lexical_cast<int>(item_name);
+        const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(item_name));
         if (!design) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << item_name;
             return;
         }
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // Ship Designs
         name = design->Name();
@@ -1219,9 +1263,9 @@ void EncyclopediaDetailPanel::Refresh() {
         GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
         // ships of this design
-        std::vector<TemporaryPtr<const Ship> > all_ships = objects.FindObjects<Ship>();
+        std::vector<TemporaryPtr<Ship> > all_ships = Objects().FindObjects<Ship>();
         std::vector<TemporaryPtr<const Ship> > design_ships;
-        for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = all_ships.begin();
+        for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = all_ships.begin();
              ship_it != all_ships.end(); ++ship_it)
         {
             TemporaryPtr<const Ship> ship = *ship_it;
@@ -1233,15 +1277,24 @@ void EncyclopediaDetailPanel::Refresh() {
             for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = design_ships.begin();
                  ship_it != design_ships.end(); ++ship_it)
             {
-                detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->PublicName(client_empire_id)) + "  ";
+                detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(),
+                                                         (*ship_it)->PublicName(client_empire_id)) + "  ";
             }
         } else {
             detailed_description += "\n\n" + UserString("NO_SHIPS_OF_DESIGN");
         }
+    }
 
+    void RefreshDetailPanelIncomplDesignTag(const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color, boost::weak_ptr<const ShipDesign>& inc_design)
+    {
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    } else if (m_items_it->first == INCOMPLETE_DESIGN) {
-        boost::shared_ptr<const ShipDesign> incomplete_design = m_incomplete_design.lock();
+        boost::shared_ptr<const ShipDesign> incomplete_design = inc_design.lock();
         if (incomplete_design) {
             // incomplete design.  not yet in game universe; being created on design screen
             name = incomplete_design->Name();
@@ -1310,14 +1363,22 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
+    }
 
-    } else if (m_items_it->first == UNIVERSE_OBJECT) {
-        int id = boost::lexical_cast<int>(m_items_it->second);
+    void RefreshDetailPanelObjectTag(       const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        int id = boost::lexical_cast<int>(item_name);
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         if (id != INVALID_OBJECT_ID) {
-            TemporaryPtr<const UniverseObject> obj = objects.Object(id);
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(id);
             if (!obj) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_items_it->second;
+                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
                 return;
             }
 
@@ -1325,15 +1386,22 @@ void EncyclopediaDetailPanel::Refresh() {
             name = obj->PublicName(client_empire_id);
             general_type = GeneralTypeOfObject(obj->ObjectType());
             if (general_type.empty()) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << m_items_it->second << ")";
+                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
                 return;
             }
         }
+    }
 
-    } else if (m_items_it->first == PLANET_SUITABILITY_REPORT) {
+    void RefreshDetailPanelSuitabilityTag(  const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
-        int planet_id = boost::lexical_cast<int>(m_items_it->second);
+        int planet_id = boost::lexical_cast<int>(item_name);
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
 
         std::string original_planet_species = planet->SpeciesName();
@@ -1353,7 +1421,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Collect species colonizing/environment hospitality information
         for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
-            TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
             TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
             if (!pc)
                 continue;
@@ -1462,21 +1530,29 @@ void EncyclopediaDetailPanel::Refresh() {
         planet->SetOwner(original_owner_id);
         planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
         GetUniverse().UpdateMeterEstimates(planet_id);
+    }
 
-    } else if (m_items_it->first == COMBAT_LOG) {
-        int log_id = boost::lexical_cast<int>(m_items_it->second);
+    void RefreshDetailPanelCombatTag(       const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        int log_id = boost::lexical_cast<int>(item_name);
         bool available = CombatLogAvailable(log_id);
         if (!available) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << m_items_it->second;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << item_name;
             return;
         }
         const CombatLog& log = GetCombatLog(log_id);
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         name = UserString("ENC_COMBAT_LOG");
         texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/combat.png", true);
         general_type = UserString("ENC_COMBAT_LOG");
 
-        TemporaryPtr<const System> system = objects.Object<System>(log.system_id);
+        TemporaryPtr<const System> system = GetSystem(log.system_id);
         const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
         detailed_description = str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
@@ -1486,7 +1562,7 @@ void EncyclopediaDetailPanel::Refresh() {
         for (std::vector<AttackEvent>::const_iterator it = log.attack_events.begin();
              it != log.attack_events.end(); ++it)
         {
-            TemporaryPtr<const UniverseObject> attacker = objects.Object(it->attacker_id);
+            TemporaryPtr<const UniverseObject> attacker = GetUniverseObject(it->attacker_id);
             std::string attacker_link;
             if (attacker) {
                 const std::string& attacker_name = attacker->PublicName(client_empire_id);
@@ -1496,7 +1572,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 attacker_link = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
             }
 
-            TemporaryPtr<const UniverseObject> target = objects.Object(it->target_id);
+            TemporaryPtr<const UniverseObject> target = GetUniverseObject(it->target_id);
             std::string target_link;
             if (target) {
                 const std::string& target_name = target->PublicName(client_empire_id);
@@ -1516,8 +1592,119 @@ void EncyclopediaDetailPanel::Refresh() {
                                         % it->damage
                                         % it->round) + "\n";
         }
+    }
 
-    } else if (m_items_it->first == TextLinker::GRAPH_TAG) {
+    void GetRefreshDetailPanelInfo(             const std::string& item_type, const std::string& item_name,
+                                                std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                                boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                                float& cost, std::string& cost_units, std::string& general_type,
+                                                std::string& specific_type, std::string& detailed_description,
+                                                GG::Clr& color, boost::weak_ptr<const ShipDesign>& incomplete_design)
+    {
+        if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
+            RefreshDetailPanelPediaTag(         item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_SHIP_PART") {
+            RefreshDetailPanelShipPartTag(      item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_SHIP_HULL") {
+            RefreshDetailPanelShipHullTag(      item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_TECH") {
+            RefreshDetailPanelTechTag(          item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_BUILDING_TYPE") {
+            RefreshDetailPanelBuildingTypeTag(  item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_SPECIAL") {
+            RefreshDetailPanelSpecialTag(       item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_EMPIRE") {
+            RefreshDetailPanelEmpireTag(        item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_SPECIES") {
+            RefreshDetailPanelSpeciesTag(       item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_FIELD_TYPE") {
+            RefreshDetailPanelFieldTypeTag(     item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == "ENC_SHIP_DESIGN") {
+            RefreshDetailPanelShipDesignTag(    item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == INCOMPLETE_DESIGN) {
+            RefreshDetailPanelIncomplDesignTag( item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color,
+                                                incomplete_design);
+        } else if (item_type == UNIVERSE_OBJECT) {
+            RefreshDetailPanelObjectTag(        item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == PLANET_SUITABILITY_REPORT) {
+            RefreshDetailPanelSuitabilityTag(   item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == COMBAT_LOG) {
+            RefreshDetailPanelCombatTag(        item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == TextLinker::GRAPH_TAG) {
+            // should be handled externally...
+        }
+
+    }
+}
+
+void EncyclopediaDetailPanel::Refresh() {
+    if (m_icon) {
+        DeleteChild(m_icon);
+        m_icon = 0;
+    }
+    if (m_other_icon) {
+        DeleteChild(m_other_icon);
+        m_other_icon = 0;
+    }
+    m_name_text->Clear();
+    m_summary_text->Clear();
+    m_cost_text->Clear();
+
+    GG::Pt initial_scroll_pos = m_description_box->ScrollPosition();
+    m_description_box->Clear();
+
+    DetachChild(m_graph);
+
+    // get details of item as applicable in order to set summary, cost, description TextControls
+    std::string name;
+    boost::shared_ptr<GG::Texture> texture;
+    boost::shared_ptr<GG::Texture> other_texture;
+    int turns = -1;
+    float cost = 0.0f;
+    std::string cost_units;             // "PP" or "RP" or empty string, depending on whether and what something costs
+    std::string general_type;           // general type of thing being shown, eg. "Building" or "Ship Part"
+    std::string specific_type;          // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)
+    std::string detailed_description;
+    GG::Clr color(GG::CLR_ZERO);
+
+    using boost::io::str;
+    if (m_items.empty())
+        return;
+
+    GetRefreshDetailPanelInfo(m_items_it->first, m_items_it->second,
+                              name, texture, other_texture, turns, cost, cost_units,
+                              general_type, specific_type, detailed_description, color,
+                              m_incomplete_design);
+
+    if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
 
         const std::map<std::string, std::map<int, std::map<int, double> > >&
@@ -1554,7 +1741,7 @@ void EncyclopediaDetailPanel::Refresh() {
             m_graph->Show();
         }
 
-        name = UserString(m_items_it->second);
+        name = UserString(graph_id);
         general_type = UserString("ENC_GRAPH");
     }
 
