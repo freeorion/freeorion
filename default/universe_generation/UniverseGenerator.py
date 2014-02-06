@@ -356,7 +356,7 @@ def generate_home_system_list(num_home_systems, systems):
     return home_systems
 
 # Sets up various aspects of an empire, like empire name, homeworld, etc.
-def setupEmpire(empire, empire_name, home_system, starting_species, player_name):
+def setup_empire(empire, empire_name, home_system, starting_species, player_name):
 
     # set empire name, if no one is given, pick one randomly
     if empire_name == "":
@@ -375,7 +375,7 @@ def setupEmpire(empire, empire_name, home_system, starting_species, player_name)
     planets = fo.sysGetPlanets(home_system)
     # if the system is empty, throw an exception
     if len(planets) == 0:
-        raise Exception("Python setupEmpire: got home system with no planets")
+        raise Exception("Python setup_empire: got home system with no planets")
     homeworld = random.choice(planets)
 
     # set selected planet as empire homeworld with selected starting species
@@ -405,7 +405,7 @@ def setupEmpire(empire, empire_name, home_system, starting_species, player_name)
     # give homeworld starting buildings
     # use the list provided in starting_buildings.txt
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in load_string_list("starting_buildings.txt"):
+    for building in load_string_list("../starting_buildings.txt"):
         fo.createBuilding(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
@@ -746,7 +746,7 @@ def create_universe():
         empire = psd_entry.key()
         psd = psd_entry.data()
         home_system = home_systems.pop()
-        setupEmpire(empire, psd.empireName, home_system, psd.startingSpecies, psd.playerName)
+        setup_empire(empire, psd.empireName, home_system, psd.startingSpecies, psd.playerName)
 
     # iterate over all systems and name their planets
     # this needs to be done after empire home systems have been set, as

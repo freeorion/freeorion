@@ -988,9 +988,11 @@ namespace {
             return;
         }
 
+        std::string universe_generation_script_dir = GetResourceDir().string() + "/universe_generation";
+
         // set Python current work directory to resource dir
         script = "import os\n"
-        "os.chdir(r'" + (GetResourceDir()).string() + "')\n"
+        "os.chdir(r'" + universe_generation_script_dir + "')\n"
         "print 'Python current directory set to', os.getcwd()";
         if (!PythonExecScript(script)) {
             Logger().errorStream() << "Unable to set Python current directory";
@@ -998,7 +1000,7 @@ namespace {
         }
 
         // tell Python the path in which to locate universe generator script file
-        std::string command = "sys.path.append(r'" + (GetResourceDir()).string() + "')";
+        std::string command = "sys.path.append(r'" + universe_generation_script_dir + "')";
         if (!PythonExecScript(command)) {
             Logger().errorStream() << "Unable to set universe generator script dir";
             return;
