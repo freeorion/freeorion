@@ -112,6 +112,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
         GetOptionsDB().Add<std::string>("version-string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
                                         FreeOrionVersionString(),   Validator<std::string>(),                  true);
+        GetOptionsDB().AddFlag('r', "render-simple",        UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),         false);
 
         // Add the keyboard shortcuts
         Hotkey::AddOptions(GetOptionsDB());
@@ -193,6 +194,12 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }
+        }
+
+        if (GetOptionsDB().Get<bool>("render-simple")) {
+            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",false);
+            GetOptionsDB().Set<bool>("UI.galaxy-starfields",    false);
+            GetOptionsDB().Set<bool>("show-fps",                true);
         }
 
     } catch (const std::invalid_argument& e) {

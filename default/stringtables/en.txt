@@ -710,6 +710,9 @@ Uses default settings, settings from any existing config.xml file, and settings 
 OPTIONS_DB_VERSION_STRING
 Tracks the FreeOrion version for which config.xml was generated. Config.xml for different versions will be ignored.
 
+OPTIONS_DB_RENDER_SIMPLE
+Sets several map and GUI rendering options to improve frame rate and reduce rendering CPU use. Useful for configuring to run on lower-powered graphics adapters without adjusting each setting separately.
+
 OPTIONS_DB_SOUND_ON
 Enables sound in the game.
 
