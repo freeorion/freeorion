@@ -2735,7 +2735,9 @@ void FleetWnd::Refresh() {
         // get fleets to show from system, based on required ownership
         const ObjectMap& objects = Objects();
         std::vector<TemporaryPtr<const Fleet> > all_fleets = objects.FindObjects<Fleet>();
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = all_fleets.begin();
+             it != all_fleets.end(); ++it)
+        {
             TemporaryPtr<const Fleet> fleet = *it;
             int fleet_id = fleet->ID();
 

@@ -430,24 +430,24 @@ private:
     template <class T> struct distance_matrix_storage {
         typedef T value_type;
         typedef std::vector<T>& row_ref;
-        
+
         distance_matrix_storage() {};
-        distance_matrix_storage(const distance_matrix_storage<T>& src) 
+        distance_matrix_storage(const distance_matrix_storage<T>& src)
         { resize(src.m_data.size()); };
-        
+
         size_t size() 
         { return m_data.size(); }
-        
+
         void resize(size_t a_size) {
             const size_t old_size = size();
-            
+
             m_data.clear();
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
             for (size_t i = old_size; i < a_size; ++i)
                 m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
         }
-        
+
         std::vector< std::vector<T> > m_data;
         std::vector< boost::shared_ptr<boost::shared_mutex> > m_row_mutexes;
         boost::shared_mutex m_mutex;

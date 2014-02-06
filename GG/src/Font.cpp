@@ -684,7 +684,8 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
         std::string::const_iterator string_end_it = text.end();
         for (CPSize j = ((i == begin_line) ? begin_char : CP0);
              j < ((i == end_line - 1) ? end_char : CPSize(line.char_data.size()));
-             ++j) {
+             ++j)
+        {
             for (std::size_t k = 0; k < line.char_data[Value(j)].tags.size(); ++k) {
                 HandleTag(line.char_data[Value(j)].tags[k], orig_color, render_state);
             }
