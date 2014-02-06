@@ -2957,8 +2957,8 @@ UNOWNED_MOVE
 MONSTER_MOVE_ALWAYS
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
             ]
             activation = And [
                 Turn low = 10
@@ -2977,8 +2977,8 @@ MONSTER_MOVE_ALWAYS
 MONSTER_MOVE_PRE
 '''EffectsGroup
             scope = And [
-                Fleet
                 Object id = Source.FleetID
+                Fleet
             ]
             activation = And [
                 Stationary
