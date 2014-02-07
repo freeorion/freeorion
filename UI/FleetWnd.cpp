@@ -2731,31 +2731,20 @@ void FleetWnd::Refresh() {
     }
 
     // repopulate m_fleet_ids according to FleetWnd settings
-    if (GetSystem(m_system_id)) {
+    if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
         // get fleets to show from system, based on required ownership
         const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const Fleet> > all_fleets = objects.FindObjects<Fleet>();
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = all_fleets.begin();
-             it != all_fleets.end(); ++it)
+        std::vector<TemporaryPtr<const Fleet> > system_fleets = objects.FindObjects<Fleet>(system->FleetIDs());
+        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = system_fleets.begin();
+             it != system_fleets.end(); ++it)
         {
             TemporaryPtr<const Fleet> fleet = *it;
             int fleet_id = fleet->ID();
-
-            // skip fleets in wrong system
-            if (fleet->SystemID() != m_system_id)
-                continue;
-            // skip empty fleets
-            //if (fleet->Empty())
-            //    continue;
 
             // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end() ||
                 this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
             { continue; }
-
-            // skip fleets outside systems
-            if (fleet->SystemID() == INVALID_OBJECT_ID)
-                continue;
 
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
                 m_fleet_ids.insert(fleet_id);
