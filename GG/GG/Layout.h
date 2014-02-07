@@ -105,7 +105,8 @@ class GG_API Layout : public Wnd
 public:
     /** \name Structors */ ///@{
     /** Ctor. */
-    Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns, unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
+    Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
+           unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
     //@}
 
     /** \name Accessors */ ///@{
