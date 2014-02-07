@@ -827,7 +827,7 @@ private:
 
             // find visibilities for this object type
             std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.find(uot);
-            std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
+            const std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
 
             // set all button checks depending on whether that buttons visibility is to be shown
             for (std::map<VIS_DISPLAY, GG::StateButton*>::const_iterator button_it = buttons.begin();
