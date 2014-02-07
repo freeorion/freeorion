@@ -3242,6 +3242,19 @@ Aggressive:
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
+# Functional list; do not translate.  Used for logging during universe creation
+GROWTH_SPECIALS_LIST
+'''PROBIOTIC_SPECIAL
+FRUIT_SPECIAL
+SPICE_SPECIAL
+MONOPOLE_SPECIAL
+SUPERCONDUCTOR_SPECIAL
+POSITRONIUM_SPECIAL
+MINERALS_SPECIAL
+CRYSTALS_SPECIAL
+METALOIDS_SPECIAL
+'''
+
 ####################
 # Combat Messages  #
 ####################

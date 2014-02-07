@@ -1440,6 +1440,16 @@ void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
                 break;
         }
     }
+    std::list<std::string> growth_specials;
+    UserStringList("GROWTH_SPECIALS_LIST", growth_specials);
+    Logger().debugStream() << "Growth Special Summary:"; 
+    for (std::list< std::string >::iterator specials_it = growth_specials.begin();
+                specials_it != growth_specials.end(); ++specials_it) {
+        int this_count = specials_added[*specials_it];
+        if (this_count > 0) {
+            Logger().debugStream() << "... Applied Special: " << *specials_it << " to " << this_count << " planets"; 
+        }
+    }
 }
 
 namespace {
@@ -1462,6 +1472,7 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq) {
         return;
 
     SpeciesManager& species_manager = GetSpeciesManager();
+    std::map<std::string, int> species_summary;
 
     std::vector<TemporaryPtr<Planet> > planet_vec = Objects().FindObjects<Planet>();
     Condition::ObjectSet planet_set(planet_vec.size());
@@ -1514,6 +1525,7 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq) {
         int species_idx = RandSmallInt(0, suitable_species.size() - 1);
         const std::string& species_name = suitable_species.at(species_idx);
         planet->SetSpecies(species_name);
+        species_summary[species_name]++;
 
         // set planet as a homeworld for that species
         if (Species* species = species_manager.GetSpecies(species_name))
@@ -1529,6 +1541,15 @@ void GenerateNatives(Universe& universe, GalaxySetupOption freq) {
         }
 
         Logger().debugStream() << "Added native " << species_name << " to planet " << planet->Name();
+    }
+
+    Logger().debugStream() << "Natives Placement Summary, with "<< species_summary.size() << " native species selected from "
+                            << std::distance(species_manager.native_begin(),species_manager.native_end()) << " total native species possible"; 
+    for (std::map< std::string, int >::iterator species_it = species_summary.begin();
+                species_it != species_summary.end(); ++species_it) {
+        if (species_it->second > 0) {
+            Logger().debugStream() << "... Settled Natives: " << species_it->first << " with " << species_it->second << " planets"; 
+        }
     }
 }
 
