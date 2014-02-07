@@ -7,6 +7,7 @@
 #include "../universe/Tech.h"
 #include "../util/i18n.h"
 #include "../util/Order.h"
+#include "../util/OptionsDB.h"
 #include "../UI/TechTreeWnd.h"
 #include "../client/human/HumanClientApp.h"
 
@@ -29,13 +30,14 @@ namespace {
         std::string tech_name;
     };
 
+
     //////////////////////////////////////////////////
     // QueueTechPanel
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
         QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
-                       int turns_left, double turns_completed);
+                       int turns_left, double turns_completed, int empire_id);
         virtual void Render();
 
     private:
@@ -50,6 +52,7 @@ namespace {
         bool                    m_in_progress;
         int                     m_total_turns;
         double                  m_turns_completed;
+        int                     m_empire_id;
     };
 
     //////////////////////////////////////////////////
@@ -59,19 +62,19 @@ namespace {
         GG::ListBox::Row(),
         tech_name(queue_element.name)
     {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = Empires().Lookup(queue_element.empire_id);
 
         const Tech* tech = GetTech(tech_name);
-        double per_turn_cost = tech ? tech->PerTurnCost(empire_id) : 1;
+        double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
         double progress = 0.0;
         if (empire && empire->TechResearched(tech_name))
-            progress = tech->ResearchCost(empire_id);
+            progress = tech->ResearchCost(queue_element.empire_id);
         else if (empire)
             progress = empire->ResearchProgress(tech_name);
 
         GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
-                                                queue_element.turns_left, progress / per_turn_cost);
+                                                queue_element.turns_left, progress / per_turn_cost,
+                                                queue_element.empire_id);
         Resize(panel->Size());
         push_back(panel);
 
@@ -82,12 +85,13 @@ namespace {
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
-                                   int turns_left, double turns_completed) :
+                                   int turns_left, double turns_completed, int empire_id) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
-        m_turns_completed(turns_completed)
+        m_turns_completed(turns_completed),
+        m_empire_id(empire_id)
     {
         const int MARGIN = 2;
 
@@ -104,11 +108,13 @@ namespace {
 
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
-            m_total_turns = tech->ResearchTime(HumanClientApp::GetApp()->EmpireID());
+            m_total_turns = tech->ResearchTime(m_empire_id);
 
         Resize(GG::Pt(w, HEIGHT));
 
-        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr clr = m_in_progress
+                        ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                        : ClientUI::ResearchableTechTextAndBorderColor();
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         GG::Y top(MARGIN);
@@ -119,23 +125,20 @@ namespace {
                                        ClientUI::TechIcon(m_tech_name),
                                        GG::GRAPHIC_FITGRAPHIC);
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
-
         left += m_icon->Width() + MARGIN;
 
         m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
                                           UserString(m_tech_name),
                                           font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
+        top += m_name_text->Height();
 
-        top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
-
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()) : 1,
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime(m_empire_id) : 1,
                                                   turns_completed,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
         m_progress_bar->MoveTo(GG::Pt(left, top));
-
         top += m_progress_bar->Height() + MARGIN;
 
         using boost::io::str;
@@ -152,6 +155,9 @@ namespace {
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);
 
+
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseInfoWnd(TechPanelRowBrowseWnd(tech_name, m_empire_id));
 
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
@@ -308,8 +314,12 @@ void ResearchWnd::UpdateQueue() {
     m_queue_lb->Clear();
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
-    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it)
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it));
+    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
+        const ResearchQueue::Element& elem = *it;
+        QueueRow* row = new QueueRow(QUEUE_WIDTH, elem);
+        row->SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, empire->EmpireID()));
+        m_queue_lb->Insert(row);
+    }
 
     if (!m_queue_lb->Empty())
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());

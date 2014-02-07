@@ -8,14 +8,17 @@
 class Tech;
 class EncyclopediaDetailPanel;
 
+/** Returns a browse wnd for tech panels */
+boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id);
+
 /** Contains the tech graph layout, some controls to control what is visible in
   * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd {
 public:
-    typedef boost::signals2::signal<void (const std::string&)>                    TechSignalType;
+    typedef boost::signals2::signal<void (const std::string&)>                      TechSignalType;
     typedef boost::signals2::signal<void (const std::string&,
-                                const GG::Flags<GG::ModKey>&)>          TechClickSignalType;
-    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>  QueueAddTechsSignalType;
+                                          const GG::Flags<GG::ModKey>&)>            TechClickSignalType;
+    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>    QueueAddTechsSignalType;
 
     /** \name Structors */ //@{
     TechTreeWnd(GG::X w, GG::Y h);

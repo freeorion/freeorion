@@ -42,15 +42,18 @@ struct FO_COMMON_API ResearchQueue {
     struct Element {
         Element() :
             name(),
+            empire_id(ALL_EMPIRES),
             allocated_rp(0.0),
             turns_left(0)
         {}
-        Element(const std::string& name_, float spending_, int turns_left_) :
+        Element(const std::string& name_, int empire_id_, float spending_, int turns_left_) :
             name(name_),
+            empire_id(empire_id_),
             allocated_rp(spending_),
             turns_left(turns_left_)
         {}
         std::string name;
+        int         empire_id;
         float       allocated_rp;
         int         turns_left;
     private:

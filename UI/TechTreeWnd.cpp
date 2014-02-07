@@ -68,6 +68,102 @@ namespace {
     };
 }
 
+///////////////////////////
+// TechPanelRowBrowseWnd //
+///////////////////////////
+boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
+    const Empire* empire = Empires().Lookup(empire_id);
+    const Tech* tech = GetTech(tech_name);
+    if (!tech) {
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+        return browse_wnd;
+    }
+
+    std::string main_text;
+
+    main_text += UserString(tech->Category()) + " ";
+    main_text += UserString(boost::lexical_cast<std::string>(tech->Type())) + "  :  ";
+    main_text += UserString(tech->ShortDescription()) + "\n";
+
+    if (empire) {
+        TechStatus tech_status = empire->GetTechStatus(tech_name);
+        if (!tech->Researchable()) {
+            main_text += UserString("TECH_WND_UNRESEARCHABLE") + "\n";
+
+        } else if (tech_status == TS_UNRESEARCHABLE) {
+            main_text += UserString("TECH_WND_STATUS_LOCKED") + "\n";
+
+            const std::set<std::string>& prereqs = tech->Prerequisites();
+            std::vector<std::string> unresearched_prereqs;
+            for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+                TechStatus prereq_status = empire->GetTechStatus(*it);
+                if (prereq_status != TS_COMPLETE)
+                    unresearched_prereqs.push_back(*it);
+            }
+            if (!unresearched_prereqs.empty()) {
+                main_text += UserString("TECH_WND_UNRESEARCHED_PREREQUISITES");
+                for (std::vector<std::string>::const_iterator it = unresearched_prereqs.begin();
+                        it != unresearched_prereqs.end(); ++it)
+                { main_text += UserString(*it) + "  "; }
+                main_text += "\n";
+            }
+
+        } else if (tech_status == TS_RESEARCHABLE) {
+            main_text += UserString("TECH_WND_STATUS_RESEARCHABLE") + "\n";
+
+        } else if (tech_status == TS_COMPLETE) {
+            main_text += UserString("TECH_WND_STATUS_COMPLETED") + "\n";
+        }
+
+        const ResearchQueue& queue = empire->GetResearchQueue();
+        ResearchQueue::const_iterator queue_it = queue.find(tech_name);
+        if (queue_it != queue.end()) {
+            main_text += UserString("TECH_WND_ENQUEUED") + "\n";
+
+            double progress = empire->ResearchProgress(tech_name);
+            double total_cost = tech->ResearchCost(empire_id);
+            double allocation = queue_it->allocated_rp;
+            double max_allocation = tech->PerTurnCost(empire_id);
+
+            // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn
+            main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_PROGRESS"))
+                    % DoubleToString(progress, 3, false)
+                    % DoubleToString(total_cost, 3, false)
+                    % DoubleToString(allocation, 3, false)
+                    % DoubleToString(max_allocation, 3, false)) + "\n";
+
+            int ETA = queue_it->turns_left;
+            if (ETA != -1)
+                main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
+                    % ETA);
+
+        } else if (tech->Researchable()) {
+            int turns = tech->ResearchTime(empire_id);
+            double cost = tech->ResearchCost(empire_id);
+            const std::string& cost_units = UserString("ENC_RP");
+
+            main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
+                % DoubleToString(cost, 3, false)
+                % cost_units
+                % turns);
+        }
+
+    } else if (tech->Researchable()) {
+        int turns = tech->ResearchTime(empire_id);
+        double cost = tech->ResearchCost(empire_id);
+        const std::string& cost_units = UserString("ENC_RP");
+
+        main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
+            % DoubleToString(cost, 3, false)
+            % cost_units
+            % turns);
+    }
+
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+        ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
+    return browse_wnd;
+}
+
 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechTreeControls                //
@@ -663,103 +759,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave() {
 
 void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
 { m_selected = select; }
-
-namespace {
-    boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name,
-                                                               int empire_id)
-    {
-        const Empire* empire = Empires().Lookup(empire_id);
-        const Tech* tech = GetTech(tech_name);
-        if (!tech) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-            return browse_wnd;
-        }
-
-        std::string main_text;
-
-        main_text += UserString(tech->Category()) + " ";
-        main_text += UserString(boost::lexical_cast<std::string>(tech->Type())) + "  :  ";
-        main_text += UserString(tech->ShortDescription()) + "\n";
-
-        if (empire) {
-            TechStatus tech_status = empire->GetTechStatus(tech_name);
-            if (!tech->Researchable()) {
-                main_text += UserString("TECH_WND_UNRESEARCHABLE") + "\n";
-
-            } else if (tech_status == TS_UNRESEARCHABLE) {
-                main_text += UserString("TECH_WND_STATUS_LOCKED") + "\n";
-
-                const std::set<std::string>& prereqs = tech->Prerequisites();
-                std::vector<std::string> unresearched_prereqs;
-                for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-                    TechStatus prereq_status = empire->GetTechStatus(*it);
-                    if (prereq_status != TS_COMPLETE)
-                        unresearched_prereqs.push_back(*it);
-                }
-                if (!unresearched_prereqs.empty()) {
-                    main_text += UserString("TECH_WND_UNRESEARCHED_PREREQUISITES");
-                    for (std::vector<std::string>::const_iterator it = unresearched_prereqs.begin();
-                            it != unresearched_prereqs.end(); ++it)
-                    { main_text += UserString(*it) + "  "; }
-                    main_text += "\n";
-                }
-
-            } else if (tech_status == TS_RESEARCHABLE) {
-                main_text += UserString("TECH_WND_STATUS_RESEARCHABLE") + "\n";
-
-            } else if (tech_status == TS_COMPLETE) {
-                main_text += UserString("TECH_WND_STATUS_COMPLETED") + "\n";
-            }
-
-            const ResearchQueue& queue = empire->GetResearchQueue();
-            ResearchQueue::const_iterator queue_it = queue.find(tech_name);
-            if (queue_it != queue.end()) {
-                main_text += UserString("TECH_WND_ENQUEUED") + "\n";
-
-                double progress = empire->ResearchProgress(tech_name);
-                double total_cost = tech->ResearchCost(empire_id);
-                double allocation = queue_it->allocated_rp;
-                double max_allocation = tech->PerTurnCost(empire_id);
-
-                // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn
-                main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_PROGRESS"))
-                        % DoubleToString(progress, 3, false)
-                        % DoubleToString(total_cost, 3, false)
-                        % DoubleToString(allocation, 3, false)
-                        % DoubleToString(max_allocation, 3, false)) + "\n";
-
-                int ETA = queue_it->turns_left;
-                if (ETA != -1)
-                    main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
-                        % ETA);
-
-            } else if (tech->Researchable()) {
-                int turns = tech->ResearchTime(empire_id);
-                double cost = tech->ResearchCost(empire_id);
-                const std::string& cost_units = UserString("ENC_RP");
-
-                main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
-                    % DoubleToString(cost, 3, false)
-                    % cost_units
-                    % turns);
-            }
-
-        } else if (tech->Researchable()) {
-            int turns = tech->ResearchTime(empire_id);
-            double cost = tech->ResearchCost(empire_id);
-            const std::string& cost_units = UserString("ENC_RP");
-
-            main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
-                % DoubleToString(cost, 3, false)
-                % cost_units
-                % turns);
-        }
-
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-            ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
-        return browse_wnd;
-    }
-}
 
 void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     Select(m_layout_panel->m_selected_tech_name == m_tech_name);

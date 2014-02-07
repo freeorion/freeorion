@@ -438,10 +438,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 }
 
 void ResearchQueue::push_back(const std::string& tech_name)
-{ m_queue.push_back(Element(tech_name, 0.0, -1)); }
+{ m_queue.push_back(Element(tech_name, m_empire_id, 0.0f, -1)); }
 
 void ResearchQueue::insert(iterator it, const std::string& tech_name)
-{ m_queue.insert(it, Element(tech_name, 0.0, -1)); }
+{ m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1)); }
 
 void ResearchQueue::erase(iterator it) {
     assert(it != end());
