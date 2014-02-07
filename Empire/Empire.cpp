@@ -1154,12 +1154,10 @@ namespace {
 // Empire //
 ////////////
 Empire::Empire() :
-    m_id(-1),
+    m_id(ALL_EMPIRES),
     m_capital_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
-    m_production_queue(m_id),
-    m_resource_pools(),
-    m_population_pool()
+    m_production_queue(m_id)
 { Init(); }
 
 Empire::Empire(const std::string& name, const std::string& player_name,
@@ -1170,9 +1168,7 @@ Empire::Empire(const std::string& name, const std::string& player_name,
     m_color(color),
     m_capital_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
-    m_production_queue(m_id),
-    m_resource_pools(),
-    m_population_pool()
+    m_production_queue(m_id)
 {
     Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour)";
     Init();
