@@ -705,6 +705,7 @@ public:
                  const Condition::ConditionBase* const condition_filter) :
         CUIWnd(UserString("FILTERS"), x, y, GG::X(400), GG::Y(250), GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
         m_vis_filters(vis_filters),
+        m_filter_buttons(),
         m_accept_changes(false),
         m_filters_layout(0),
         m_cancel_button(0),
@@ -732,42 +733,57 @@ private:
         m_filters_layout->SetColumnStretch(0, 0.0);
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr color = ClientUI::TextColor();
+        GG::X button_width = GG::X(ClientUI::Pts()*8);
+        GG::Button* label = 0;
 
-        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("VISIBLE"),              font, color),
-                              1, 0, GG::ALIGN_CENTER);
-        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("PREVIOUSLY_VISIBLE"),   font, color),
-                              2, 0, GG::ALIGN_CENTER);
-        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("DESTROYED"),            font, color),
-                              3, 0, GG::ALIGN_CENTER);
+        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("VISIBLE"), font);
+        m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
+        GG::Connect(label->LeftClickedSignal,
+                    boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
+
+        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("PREVIOUSLY_VISIBLE"), font);
+        m_filters_layout->Add(label, 2, 0, GG::ALIGN_CENTER);
+        GG::Connect(label->LeftClickedSignal,
+                    boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_PREVIOUSLY_VISIBLE));
+
+        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("DESTROYED"), font);
+        m_filters_layout->Add(label, 3, 0, GG::ALIGN_CENTER);
+        GG::Connect(label->LeftClickedSignal,
+                    boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
 
         int col = 1;
         for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();
              uot_it != m_vis_filters.end(); ++uot_it, ++col)
         {
             const UniverseObjectType& uot = uot_it->first;
-            const std::string& uot_label = UserString(GG::GetEnumMap<UniverseObjectType>().FromEnum(uot));
+            const std::string& uot_label = " " + UserString(GG::GetEnumMap<UniverseObjectType>().FromEnum(uot)) + " ";
             const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
+            GG::Clr text_color = ClientUI::TextColor();
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
-            m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, uot_label, font, color, GG::FORMAT_CENTER),
-                                  0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            label = new CUIButton(GG::X0, GG::Y0, GG::X1, uot_label, font);
+            m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            GG::Connect(label->LeftClickedSignal,
+                        boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
             CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
+            m_filter_buttons[uot][SHOW_VISIBLE] = button;
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
+            m_filter_buttons[uot][SHOW_PREVIOUSLY_VISIBLE] = button;
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
             m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
+            m_filter_buttons[uot][SHOW_DESTROYED] = button;
         }
 
 
@@ -801,35 +817,95 @@ private:
         m_done = true;
     }
 
-    void    UpdateVisfiltersFromStateButtons(bool button_checked) {
-        std::vector<std::vector<const GG::Wnd*> > layout_cells = m_filters_layout->Cells();
-
-        int col = 1;
-        for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.begin();
-             uot_it != m_vis_filters.end(); ++uot_it, ++col)
+    void    UpdateStateButtonsFromVisFilters() {
+        // set state button checks to match current visibility filter settings
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
+             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
         {
-            const UniverseObjectType& uot = uot_it->first;
-            std::set<VIS_DISPLAY>& vis_display = uot_it->second;
-            vis_display.clear();
+            UniverseObjectType uot = it->first;
+            std::map<VIS_DISPLAY, GG::StateButton*>& buttons = it->second;
 
-            const GG::Wnd* wnd = layout_cells[1][col];
-            const CUIStateButton* button = dynamic_cast<const CUIStateButton*>(wnd);
-            if (button && button->Checked())
-                m_vis_filters[uot].insert(SHOW_VISIBLE);
+            // find visibilities for this object type
+            std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.find(uot);
+            std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
 
-            wnd = layout_cells[2][col];
-            button = dynamic_cast<const CUIStateButton*>(wnd);
-            if (button && button->Checked())
-                m_vis_filters[uot].insert(SHOW_PREVIOUSLY_VISIBLE);
-
-            wnd = layout_cells[3][col];
-            button = dynamic_cast<const CUIStateButton*>(wnd);
-            if (button && button->Checked())
-                m_vis_filters[uot].insert(SHOW_DESTROYED);
+            // set all button checks depending on whether that buttons visibility is to be shown
+            for (std::map<VIS_DISPLAY, GG::StateButton*>::const_iterator button_it = buttons.begin();
+                 button_it != buttons.end(); ++button_it)
+            {
+                if (!button_it->second)
+                    continue;
+                button_it->second->SetCheck(shown_vis.find(button_it->first) != shown_vis.end());
+            }
         }
     }
 
+    void    UpdateVisFiltersFromStateButtons(bool button_checked) {
+        m_vis_filters.clear();
+        // set all filters based on state button settings
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
+             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
+        {
+            UniverseObjectType uot = it->first;
+            std::map<VIS_DISPLAY, GG::StateButton*>& buttons = it->second;
+
+            for (std::map<VIS_DISPLAY, GG::StateButton*>::const_iterator button_it = buttons.begin();
+                 button_it != buttons.end(); ++button_it)
+            {
+                if (!button_it->second)
+                    continue;
+                if (button_it->second->Checked())
+                    m_vis_filters[uot].insert(button_it->first);
+            }
+        }
+    }
+
+    void    UpdateVisFiltersFromObjectTypeButton(UniverseObjectType type) {
+        // toggle visibilities for this object type
+
+        // if all on, turn all off. otherwise, turn all on
+        bool all_on = (m_vis_filters[type].size() == 3);
+        if (!all_on) {
+            m_vis_filters[type].insert(SHOW_VISIBLE);
+            m_vis_filters[type].insert(SHOW_PREVIOUSLY_VISIBLE);
+            m_vis_filters[type].insert(SHOW_DESTROYED);
+        } else {
+            m_vis_filters[type].clear();
+        }
+        UpdateStateButtonsFromVisFilters();
+    }
+
+    void    UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
+        // toggle types for this visibility
+
+        // determine if all types are already on for requested visibility
+        bool all_on = true;
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
+             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
+        {
+            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[it->first];
+            if (type_vis.find(vis) == type_vis.end()) {
+                all_on = false;
+                break;
+            }
+        }
+        // if all on, turn all off. otherwise, turn all on
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
+             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
+        {
+            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[it->first];
+            if (!all_on)
+                type_vis.insert(vis);
+            else
+                type_vis.erase(vis);
+        }
+
+        UpdateStateButtonsFromVisFilters();
+    }
+
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
+    std::map<UniverseObjectType,
+             std::map<VIS_DISPLAY, GG::StateButton*> >      m_filter_buttons;
     bool                                                    m_accept_changes;
 
     ConditionWidget*    m_condition_widget;
@@ -1497,9 +1573,11 @@ private:
                                               container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);
-        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this, boost::signals2::at_front);
+        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,
+                    this, boost::signals2::at_front);
         m_object_change_connections[obj->ID()].disconnect();
-        m_object_change_connections[obj->ID()] = GG::Connect(obj->StateChangedSignal, boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
+        m_object_change_connections[obj->ID()] = GG::Connect(obj->StateChangedSignal,
+            boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals2::at_front);
     }
 
     // Removes row of indicated object, and all contained rows, recursively.
