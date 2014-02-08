@@ -2660,11 +2660,30 @@ Enqueue production projects by selecting a planet on the side-panel, then double
 
 Note that ships can only be built on planets with a shipyard, and that various other objects may have other restrictions on build location.'''
 
+PRODUCTION_WND_PROGRESS
+'''%1% / %2% PP
++ %3% / %4% PP/turn'''
+
 PRODUCTION_QUEUE_ITEM_LOCATION
 At %1%
 
+PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
+Enqueued at %1%
+
+PRODUCTION_LOCATION_OK
+Can be produced here
+
+PRODUCTION_LOCATION_INVALID
+CANNOT be produced here
+
 DELETE_QUEUE_ITEM
-Delete Item from Queue
+Remove from Queue
+
+MOVE_UP_QUEUE_ITEM
+Move to Queue Top
+
+MOVE_DOWN_QUEUE_ITEM
+Move to Queue Bottom
 
 ###############
 #  DesignWnd  #

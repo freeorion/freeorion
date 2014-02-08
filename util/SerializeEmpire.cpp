@@ -47,6 +47,7 @@ template <class Archive>
 void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(item)
+        & BOOST_SERIALIZATION_NVP(empire_id)
         & BOOST_SERIALIZATION_NVP(ordered)
         & BOOST_SERIALIZATION_NVP(remaining)
         & BOOST_SERIALIZATION_NVP(blocksize)

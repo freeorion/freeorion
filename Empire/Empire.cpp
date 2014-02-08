@@ -542,6 +542,7 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
 // ProductionQueue::Element //
 //////////////////////////////
 ProductionQueue::Element::Element() :
+    empire_id(ALL_EMPIRES),
     ordered(0),
     blocksize(1),
     remaining(0),
@@ -554,8 +555,9 @@ ProductionQueue::Element::Element() :
     turns_left_to_completion(-1)
 {}
 
-ProductionQueue::Element::Element(ProductionItem item_, int ordered_,
+ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
+    empire_id(empire_id_),
     item(item_),
     ordered(ordered_),
     blocksize(1),
@@ -569,8 +571,9 @@ ProductionQueue::Element::Element(ProductionItem item_, int ordered_,
     turns_left_to_completion(-1)
 {}
 
-ProductionQueue::Element::Element(BuildType build_type, std::string name, int ordered_,
+ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
+    empire_id(empire_id_),
     item(build_type, name),
     ordered(ordered_),
     blocksize(1),
@@ -584,8 +587,9 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
     turns_left_to_completion(-1)
 {}
 
-ProductionQueue::Element::Element(BuildType build_type, int design_id, int ordered_,
+ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
+    empire_id(empire_id_),
     item(build_type, design_id),
     ordered(ordered_),
     blocksize(1),
@@ -2239,7 +2243,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
         return;
 
-    ProductionQueue::Element build(build_type, name, number, number, location);
+    ProductionQueue::Element build(build_type, name, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
@@ -2253,7 +2257,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
         return;
 
-    ProductionQueue::Element build(build_type, design_id, number, number, location);
+    ProductionQueue::Element build(build_type, design_id, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
         m_production_queue.push_back(build);
     else
@@ -2373,7 +2377,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
                 } else if (result == CR_CAPTURE) {
                     if (to_empire) {
                         // item removed from current queue, added to conquerer's queue
-                        ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
+                        ProductionQueue::Element build(item, empire_id, elem.ordered, elem.remaining, location_id);
                         build.progress=elem.progress;
                         to_empire->m_production_queue.push_back(build);
 

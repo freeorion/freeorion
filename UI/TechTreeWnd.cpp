@@ -120,12 +120,12 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
         if (queue_it != queue.end()) {
             main_text += UserString("TECH_WND_ENQUEUED") + "\n";
 
-            double progress = empire->ResearchProgress(tech_name);
-            double total_cost = tech->ResearchCost(empire_id);
-            double allocation = queue_it->allocated_rp;
-            double max_allocation = tech->PerTurnCost(empire_id);
+            float progress = empire->ResearchProgress(tech_name);
+            float total_cost = tech->ResearchCost(empire_id);
+            float allocation = queue_it->allocated_rp;
+            float max_allocation = tech->PerTurnCost(empire_id);
 
-            // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn
+            // %1% / %2%  +  %3% / %4% RP/turn
             main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_PROGRESS"))
                     % DoubleToString(progress, 3, false)
                     % DoubleToString(total_cost, 3, false)
@@ -139,7 +139,7 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
 
         } else if (tech->Researchable()) {
             int turns = tech->ResearchTime(empire_id);
-            double cost = tech->ResearchCost(empire_id);
+            float cost = tech->ResearchCost(empire_id);
             const std::string& cost_units = UserString("ENC_RP");
 
             main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
@@ -150,7 +150,7 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
 
     } else if (tech->Researchable()) {
         int turns = tech->ResearchTime(empire_id);
-        double cost = tech->ResearchCost(empire_id);
+        float cost = tech->ResearchCost(empire_id);
         const std::string& cost_units = UserString("ENC_RP");
 
         main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))

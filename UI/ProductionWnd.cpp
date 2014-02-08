@@ -7,6 +7,7 @@
 #include "CUIControls.h"
 #include "QueueListBox.h"
 #include "SidePanel.h"
+#include "InfoPanels.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
@@ -33,17 +34,19 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
-        const int queue_index;
-        const ProductionQueue::Element m_build;
-        mutable boost::signals2::signal<void (int,int,int)>RowQuantChangedSignal;
-        void RowQuantChanged(int quantity, int blocksize) {
-            RowQuantChangedSignal(queue_index, quantity, blocksize);
-        }
+
+        const int                                           queue_index;
+        const ProductionQueue::Element                      m_build;
+        mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
+
+        void RowQuantChanged(int quantity, int blocksize)
+        { RowQuantChangedSignal(queue_index, quantity, blocksize); }
     };
 
     class QuantLabel : public GG::Control {
     public:
-        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress, bool amBlockType) :
+        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth,
+                    GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::Flags<GG::WndFlag>())
         {
             GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
@@ -58,27 +61,31 @@ namespace {
             AttachChild(text);
             Resize(GG::Pt(nwidth, text->Height()));
         }
-        void Render()
-        {}
+
+        void Render() {}
     };
 
     class QuantRow : public GG::ListBox::Row {
     public:
-        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress, bool amBlockType) :
+        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h,
+                 bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
             width(0),
             m_quant(quantity)
         {
-            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress,amBlockType);
+            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress, amBlockType);
             width = newLabel->Width();
             height = newLabel->Height();
             push_back(newLabel);
             Resize(GG::Pt(nwidth, height-GG::Y0));//might subtract more; assessing aesthetics
             //OffsetMove(GG::Pt(GG::X0, GG::Y(-2))); // didn't appear to have an effect
         }
+
         GG::X width;
         GG::Y height;
+
         int Quant() const { return m_quant; }
+
     private:
         int m_quant;
     };
@@ -88,9 +95,17 @@ namespace {
         mutable boost::signals2::signal<void (int,int)> QuantChangedSignal;
 
         /** \name Structors */
-        QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset, GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress, GG::X nwidth, bool amBlockType) :
-            CUIDropDownList(xoffset, yoffset, nwidth,h-GG::Y(2), h, inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor(), 
-                           ( inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor() ) ),
+        QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
+                         GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress,
+                         GG::X nwidth, bool amBlockType) :
+            CUIDropDownList(xoffset, yoffset, nwidth,h-GG::Y(2), h,
+                            inProgress
+                                ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                                : ClientUI::ResearchableTechTextAndBorderColor(),
+                            inProgress
+                                ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+                                : ClientUI::ResearchableTechFillColor()
+                           ),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
@@ -253,10 +268,12 @@ namespace {
     public:
         QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost,
                         int turns, int number, int turns_completed, double partially_complete_turn);
-        virtual void Render();
-        void UpdateQueue();
-        void ItemQuantityChanged(int quant, int blocksize) ;
-        void ItemBlocksizeChanged(int quant, int blocksize) ;
+
+        virtual void    Render();
+        void            UpdateQueue();
+        void            ItemQuantityChanged(int quant, int blocksize) ;
+        void            ItemBlocksizeChanged(int quant, int blocksize) ;
+
         mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
     private:
@@ -276,6 +293,89 @@ namespace {
         int                             m_turns_completed;
         double                          m_partially_complete_turn;
     };
+
+    /////////////////////////////
+    // ProductionItemBrowseWnd //
+    /////////////////////////////
+    boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
+        const Empire* empire = Empires().Lookup(elem.empire_id);
+
+        std::string main_text;
+        std::string item_name;
+
+        int min_turns = 1;
+        float total_cost = 0.0f;
+        float max_allocation = 0.0f;
+        boost::shared_ptr<GG::Texture> icon;
+        //bool available = false;
+        bool location_ok = false;
+
+        if (elem.item.build_type == BT_BUILDING) {
+            const BuildingType* building_type = GetBuildingType(elem.item.name);
+            if (!building_type) {
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                return browse_wnd;
+            }
+            main_text += UserString("BUILDING") + "\n";
+
+            item_name = UserString(elem.item.name);
+            //available = empire->BuildingTypeAvailable(elem.item.name);
+            location_ok = building_type->ProductionLocation(elem.empire_id, elem.location);
+            min_turns = building_type->ProductionTime(elem.empire_id, elem.location);
+            total_cost = building_type->ProductionCost(elem.empire_id, elem.location);
+            max_allocation = building_type->PerTurnCost(elem.empire_id, elem.location);
+            icon = ClientUI::BuildingIcon(elem.item.name);
+
+        } else if (elem.item.build_type == BT_SHIP) {
+            const ShipDesign* design = GetShipDesign(elem.item.design_id);
+            if (!design) {
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                return browse_wnd;
+            }
+            main_text += UserString("SHIP") + "\n";
+
+            item_name = design->Name(true);
+            //available = empire->ShipDesignAvailable(elem.item.design_id);
+            location_ok = design->ProductionLocation(elem.empire_id, elem.location);
+            min_turns = design->ProductionTime(elem.empire_id, elem.location);
+            total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
+            max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
+            icon = ClientUI::ShipDesignIcon(elem.item.design_id);
+        }
+
+        if (TemporaryPtr<UniverseObject> location = GetUniverseObject(elem.location))
+            main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
+                            % location->Name()) + "\n";
+
+        if (location_ok)
+            main_text += UserString("PRODUCTION_LOCATION_OK") + "\n";
+        else
+            main_text += UserString("PRODUCTION_LOCATION_INVALID") + "\n";
+
+        float progress = elem.progress;
+        float allocation = elem.allocated_pp;
+
+        // %1% / %2%  +  %3% / %4% PP/turn
+        main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_PROGRESS"))
+                        % DoubleToString(progress, 3, false)
+                        % DoubleToString(total_cost, 3, false)
+                        % DoubleToString(allocation, 3, false)
+                        % DoubleToString(max_allocation, 3, false)) + "\n";
+
+        int ETA = elem.turns_left_to_completion;
+        if (ETA != -1)
+            main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
+                            % ETA);
+
+        std::string title_text;
+        if (elem.blocksize > 1)
+            title_text = boost::lexical_cast<std::string>(elem.blocksize) + "x ";
+        title_text += item_name;
+
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(icon, title_text, main_text));
+        return browse_wnd;
+    }
+
 
     //////////////////////////////////////////////////
     // QueueRow implementation
@@ -303,13 +403,19 @@ namespace {
         Resize(panel->Size());
         push_back(panel);
 
+        SetDragDropDataType("PRODUCTION_QUEUE_ROW");
+
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
+
         GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
     }
 
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending,
+                                     int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_name_text(0),
@@ -338,7 +444,9 @@ namespace {
 
         Resize(GG::Pt(w, HEIGHT));
 
-        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr clr = m_in_progress
+            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            : ClientUI::ResearchableTechTextAndBorderColor();
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         // get graphic and player-visible name text for item
@@ -449,8 +557,12 @@ namespace {
     { PanelUpdateQuantSignal(m_build.remaining, blocksize); }
 
     void QueueBuildPanel::Render() {
-        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr fill = m_in_progress
+            ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+            : ClientUI::ResearchableTechFillColor();
+        GG::Clr text_and_border = m_in_progress
+            ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+            : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
@@ -477,21 +589,23 @@ namespace {
   * scripts or saved (on disk) designs from previous games. */
 class ProdQueueListBox : public QueueListBox {
 public:
-    ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str);
+    ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str,
+                     const std::string& prompt_str);
 
-private: 
+private:
     void ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 };
 
-ProdQueueListBox::ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str):
+ProdQueueListBox::ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str,
+                                   const std::string& prompt_str) :
     QueueListBox(x, y, w, h, drop_type_str, prompt_str)
 {
     GG::Connect(GG::ListBox::RightClickedSignal,     &ProdQueueListBox::ItemRightClicked,    this);
 }
 
-/** create popup menu with a Delete Item command to provide same functionality as
- * DoubleClick since under laggy conditions it DoubleClick can have trouble
- * being interpreted correctly (can instead be treated as simply two unrelated left clicks) */
+/** Create popup menu with a Delete Item command to provide same functionality as
+  * DoubleClick since under laggy conditions it DoubleClick can have trouble
+  * being interpreted correctly (can instead be treated as simply two unrelated left clicks) */
 void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"), 1, false, false));

@@ -160,11 +160,12 @@ struct FO_COMMON_API ProductionQueue {
     /** The type of a single element in the production queue. */
     struct Element {
         Element(); ///< default ctor.
-        Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
-        Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
-        Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
+        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_);
+        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_);
+        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_);
 
         ProductionItem  item;
+        int             empire_id;
         int             ordered;                    ///< how many of item (blocks) to produce
         int             blocksize;                  ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
