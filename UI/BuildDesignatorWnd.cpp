@@ -292,7 +292,7 @@ namespace {
                 }
             }
 
-            m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, m_location_id, m_empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
