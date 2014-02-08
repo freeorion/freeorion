@@ -511,15 +511,6 @@
 
 */
 
-/** \page tutorials Tutorials
-    \section tut_using Using the Tutorials
-    The following tutorials are available in the tutorial directory.  They are built by default when you build GG.
-    \section tut_1 Tutorial 1: Minimal (minimal.cpp)
-    This is the minimal interesting GG application, and uses one of the default input drivers, SDL.
-    \section tut_2 Tutorial 2: Controls (controls.cpp)
-    This builds upon Tutorial 1 by adding one of every type of Control, and connecting some signals and slots.
-*/
-
 /** \mainpage GG Documentation Overviews
     \section Overviews
     -# \ref design
@@ -529,5 +520,4 @@
     -# \ref drag_n_drop
     -# \ref brief_tour
     -# \ref building
-    -# \ref tutorials
 */

@@ -58,9 +58,6 @@ option(BUILD_DEVEL_PACKAGE
        "Install development files."
        ON)
 
-cmake_dependent_option(BUILD_TUTORIALS "Build tutorial applications." OFF BUILD_SDL_DRIVER OFF)
-cmake_dependent_option(BUILD_TESTS "Build tests applications." OFF BUILD_SDL_DRIVER OFF)
-
 if (NOT DEFINED USE_STATIC_LIBS)
     add_definitions(-DBOOST_ALL_DYN_LINK)
 endif ()
@@ -156,15 +153,6 @@ endif ()
 # Recurse Into Sources                 #
 ########################################
 add_subdirectory(src)
-
-if (BUILD_TESTS)
-    add_subdirectory(test)
-endif ()
-
-if (BUILD_TUTORIALS)
-    add_subdirectory(tutorial)
-endif ()
-
 
 ########################################
 # Documentation                        #
