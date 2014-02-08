@@ -708,6 +708,7 @@ def create_universe():
 
     # Generate and populate systems
     systems = []
+    planet_type_summary = {}
     for position in system_positions:
         systemxy = (position.x, position.y)
         star_type = star_type_assignments.get(systemxy, fo.starType.noStar)
@@ -721,9 +722,15 @@ def create_universe():
             if planet_size in planet_sizes:
                 # ok, we want a planet, determine planet type and generate the planet
                 planet_type = calc_planet_type(star_type, orbit, planet_size)
+                planet_type_summary.setdefault(planet_type, [0])[0]+=1
                 generate_planet(planet_size, planet_type, system, orbit)
     print len(systems), "systems generated and populated"
-
+    planet_type_names=dict(zip(planet_types_all, ["Swamp", "Radiated", "Toxic", "Inferno", "Barren", "Tundra", "Desert", "Terran", "Ocean", "Asteroids", "Gas Giant"]))
+    planet_total = sum([type_tally[0] for type_tally in planet_type_summary.values()])
+    print "\nPlanet Type Summary for a total of %d placed planets"%(planet_total)
+    for planet_type in planet_type_summary:
+        print "\t %12s: %.1f%%"%(planet_type_names[planet_type], (100.0*planet_type_summary.get(planet_type,[0])[0])/planet_total)
+    print
     # generate Starlanes
     fo.generateStarlanes(gsd.starlaneFrequency)
     print "Starlanes generated"
