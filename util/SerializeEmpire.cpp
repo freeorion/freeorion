@@ -12,6 +12,7 @@ template <class Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(empire_id)
         & BOOST_SERIALIZATION_NVP(allocated_rp)
         & BOOST_SERIALIZATION_NVP(turns_left);
 }

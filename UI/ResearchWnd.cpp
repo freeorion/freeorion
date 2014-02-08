@@ -79,6 +79,9 @@ namespace {
         push_back(panel);
 
         SetDragDropDataType("RESEARCH_QUEUE_ROW");
+
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseInfoWnd(TechPanelRowBrowseWnd(queue_element.name, queue_element.empire_id));
     }
 
     //////////////////////////////////////////////////
@@ -154,10 +157,6 @@ namespace {
         m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);
-
-
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(TechPanelRowBrowseWnd(tech_name, m_empire_id));
 
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
@@ -316,9 +315,7 @@ void ResearchWnd::UpdateQueue() {
 
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
         const ResearchQueue::Element& elem = *it;
-        QueueRow* row = new QueueRow(QUEUE_WIDTH, elem);
-        row->SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, empire->EmpireID()));
-        m_queue_lb->Insert(row);
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, elem));
     }
 
     if (!m_queue_lb->Empty())
