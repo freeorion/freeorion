@@ -4810,8 +4810,14 @@ SP_SUPER_TEST_DESC
 MODERATE_TECH_NATIVES_SPECIAL
 Moderate Tech Natives
 
+MODERATE_TECH_NATIVES_SPECIAL_DESC
+The natives on this planet have developed moderately advanced technology, giving their planet stronger defenses against attack and invasion when independent of an empire.
+
 HIGH_TECH_NATIVES_SPECIAL
 High Tech Natives
+
+HIGH_TECH_NATIVES_SPECIAL_DESC
+The natives on this planet have developed very advanced technology, giving their planet much stronger defenses against attack and invasion when independent of an empire.
 
 GAIA_SPECIAL
 Gaia

@@ -4,8 +4,13 @@ Special
     name = "MODERATE_TECH_NATIVES_SPECIAL"
     description = "MODERATE_TECH_NATIVES_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.0
-    spawnlimit = 0
+    spawnrate = 50
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not OwnedBy AnyEmpire
+        Species
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
@@ -16,14 +21,19 @@ Special
                 SetMaxTroops Value + 10
             ]
     ]
-    graphic = ""
+    graphic = "icons/tech/categories/learning.png"
 
 Special
     name = "HIGH_TECH_NATIVES_SPECIAL"
     description = "HIGH_TECH_NATIVES_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.0
-    spawnlimit = 0
+    spawnrate = 25
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not OwnedBy AnyEmpire
+        Species
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
@@ -34,7 +44,7 @@ Special
                 SetMaxTroops Value + 30
             ]
     ]
-    graphic = ""
+    graphic = "icons/tech/categories/learning.png"
 
 Special
     name = "STARSPAWN_NEBULA_SPECIAL"
