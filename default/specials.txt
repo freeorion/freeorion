@@ -1086,6 +1086,22 @@ Special
             ]
 
         EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            activation = And [
+                Ship
+                Number low = 1 condition = And [
+                    Object Source.SystemID
+                    HasSpecial "DERELICT_SPECIAL2"
+                ]
+            ]
+            effects = [
+                AddSpecial "DERELICT_SPECIAL2" // renew the special (that was just removed above) if have moved into system that has (had) the special
+            ]
+
+        EffectsGroup
             scope = NumberOf 1 And [
                 Ship
                 InSystem Source.SystemID
