@@ -1378,18 +1378,35 @@ void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
          special_it != special_names.end(); ++special_it)
     {
         specials_added[*special_it] = 0;
+        if (const Special* special = GetSpecial(*special_it)) {
+            Logger().debugStream() << "Special " << *special_it << " has spawnrate " << special->SpawnRate();
+        }
     }
 
     // attempt to apply a special to every object by finding a special that can
     // be applied to it and hasn't been added too many times, and then attempt
     // to add that special by testing its spawn rate
-    std::vector<std::string>::const_iterator special_name_it = special_names.begin();
+    const double add_attempt_repeat_prob = 0.08; // a small chance to try more than one special at an object
     for (ObjectMap::iterator<> obj_it = universe.Objects().begin(); obj_it != universe.Objects().end(); ++obj_it) {
-        // for this object, find a suitable special
-        std::vector<std::string>::const_iterator initial_special_name_it = special_name_it;
-        while (true) {
+
+        // for this object, find a suitable special.  Start by making a new random order
+        // in which to consider specials
+        std::list<std::string> orig_special_names (special_names.begin(), special_names.end());
+        std::vector<std::string> new_specials_order (special_names.size());
+        std::list< std::string >::iterator next_it;
+        //Logger().debugStream() << "    Considering object " << obj_it->Name() << " and choosing new specials order";
+        while (orig_special_names.size() > 0) {
+            next_it = orig_special_names.begin();
+            advance(next_it, RandSmallInt(0, orig_special_names.size()-1));
+            new_specials_order.push_back(*next_it);
+            orig_special_names.erase(next_it);
+        }
+
+        for (std::vector< std::string >::iterator special_name_it = new_specials_order.begin(); 
+                    special_name_it != new_specials_order.end(); special_name_it++) {
             const std::string& special_name = *special_name_it;
             const Special* special = GetSpecial(special_name);
+            //Logger().debugStream() << "        Considering special " << special_name;
 
             bool special_add_attempted = false;
 
@@ -1430,13 +1447,8 @@ void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
                 //Logger().debugStream() << "... ... has been added " << specials_added[special_name] << " times, which is >= the limit of " << special->SpawnLimit();
             }
 
-            // increment special name iterator
-            special_name_it++;
-            if (special_name_it == special_names.end())
-                special_name_it = special_names.begin();
-
-            // stop attempting to add specials here?
-            if (special_name_it == initial_special_name_it || special_add_attempted)
+            // stop attempting to add specials here?  Give a small chance to try more than one special
+            if (special_add_attempted && RandZeroToOne() > add_attempt_repeat_prob)
                 break;
         }
     }
@@ -1445,10 +1457,7 @@ void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq) {
     Logger().debugStream() << "Growth Special Summary:"; 
     for (std::list< std::string >::iterator specials_it = growth_specials.begin();
                 specials_it != growth_specials.end(); ++specials_it) {
-        int this_count = specials_added[*specials_it];
-        if (this_count > 0) {
-            Logger().debugStream() << "... Applied Special: " << *specials_it << " to " << this_count << " planets"; 
-        }
+        Logger().debugStream() << "... Applied Special: " << *specials_it << " to " << specials_added[*specials_it] << " planets"; 
     }
 }
 
