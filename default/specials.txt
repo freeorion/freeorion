@@ -1076,6 +1076,16 @@ Special
     ]
     effectsgroups = [
         EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = [
+                SetDetection Value + 100
+                RemoveSpecial "DERELICT_SPECIAL2"
+            ]
+
+        EffectsGroup
             scope = NumberOf 1 And [
                 Ship
                 InSystem Source.SystemID
@@ -1112,16 +1122,6 @@ Special
                 ]
             ]
             effects = [
-                RemoveSpecial "DERELICT_SPECIAL2"
-            ]
-
-        EffectsGroup
-            scope = And [
-                Source
-                Ship
-            ]
-            effects = [
-                SetDetection Value + 100
                 RemoveSpecial "DERELICT_SPECIAL2"
             ]
     ]
