@@ -344,7 +344,6 @@
 		82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82271C3A15F8AB900063179C /* libOIS.a */; };
 		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
-		8243E08C147EEAC800636C9E /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		8243E08D147EEAC800636C9E /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
@@ -376,7 +375,6 @@
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
-		82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
@@ -795,7 +793,6 @@
 		34BAB1E70FC5CFE500EF792E /* typedefs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = typedefs.hpp; sourceTree = "<group>"; };
 		34BAB1E80FC5CFE500EF792E /* utilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = utilities.hpp; sourceTree = "<group>"; };
 		34BAB1E90FC5CFE500EF792E /* virtual_locator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = virtual_locator.hpp; sourceTree = "<group>"; };
-		34BAB1FB0FC5D02600EF792E /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memory.cpp; path = adobe/memory.cpp; sourceTree = "<group>"; };
 		34BAB1FC0FC5D02600EF792E /* name.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = name.cpp; path = adobe/name.cpp; sourceTree = "<group>"; };
 		34BAB1FF0FC5D02600EF792E /* string_pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string_pool.cpp; path = adobe/string_pool.cpp; sourceTree = "<group>"; };
 		34C44954118271590071E09A /* Math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Math.cpp; sourceTree = "<group>"; };
@@ -1810,7 +1807,6 @@
 		34BAB21C0FC5D06000EF792E /* adobe */ = {
 			isa = PBXGroup;
 			children = (
-				34BAB1FB0FC5D02600EF792E /* memory.cpp */,
 				34BAB1FC0FC5D02600EF792E /* name.cpp */,
 				34BAB1FF0FC5D02600EF792E /* string_pool.cpp */,
 			);
@@ -3299,7 +3295,6 @@
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
 				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
 				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
-				82EE6E6317D9C10C00A8BCB5 /* memory.cpp in Sources */,
 				82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */,
 				82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */,
 			);
@@ -3345,7 +3340,6 @@
 				471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */,
 				471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */,
 				343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */,
-				8243E08C147EEAC800636C9E /* memory.cpp in Sources */,
 				8243E08D147EEAC800636C9E /* name.cpp in Sources */,
 				8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */,
 			);
