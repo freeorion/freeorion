@@ -98,8 +98,9 @@ namespace {
                 return boost::get<float>(spstats);
                 break;
             case PC_GENERAL:
+            case PC_BOMBARD:
             default:
-                return 0.9f;
+                return 0.0f;
         }
     }
     typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::vector<const PartType* > > partGroupsType;
