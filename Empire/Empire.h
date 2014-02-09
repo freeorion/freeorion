@@ -554,12 +554,14 @@ public:
 
     std::map<std::string, int>& SpeciesPlanetsInvaded() { return m_species_planets_invaded; }
 
-    std::map<std::string, int>& SpeciesSproduced()      { return m_species_ships_produced; }
+    std::map<std::string, int>& SpeciesShipsProduced()  { return m_species_ships_produced; }
     std::map<int, int>&         ShipDesignsProduced()   { return m_ship_designs_produced; }
 
     std::map<std::string, int>& SpeciesShipsLost()      { return m_species_ships_lost; }
     std::map<int, int>&         ShipDesignsLost()       { return m_ship_designs_lost; }
 
+    std::map<std::string, int>& SpeciesPlanetsDepoped() { return m_species_planets_depoped; }
+    std::map<std::string, int>& SpeciesPlanetsBombed()  { return m_species_planets_bombed; }
     //@}
 
     /** Processes Builditems on queues of empires other than the indicated
@@ -606,10 +608,12 @@ private:
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
     std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire destroyed?
-    std::map<std::string, int>      m_species_ships_produced;
-    std::map<int, int>              m_ship_designs_produced;
-    std::map<std::string, int>      m_species_ships_lost;
-    std::map<int, int>              m_ship_designs_lost;
+    std::map<std::string, int>      m_species_ships_produced;   ///< how many ships crewed by each species has this empire produced?
+    std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
+    std::map<std::string, int>      m_species_ships_lost;       ///< how mahy ships crewed by each species has this empire lost in combat?
+    std::map<int, int>              m_ship_designs_lost;        ///< how many ships of each design has this empire lost in combat?
+    std::map<std::string, int>      m_species_planets_depoped;  ///< how many planets populated by each species have depopulated while owned by this empire?
+    std::map<std::string, int>      m_species_planets_bombed;   ///< how many planets populated by each species has this empire bombarded?
 
     // cached calculation results, returned by reference
     std::map<int, int>              m_supply_system_ranges;                 ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
