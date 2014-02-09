@@ -1198,12 +1198,9 @@ namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no fleets. */
-    bool EmpireEliminated(const Empire* empire, const Universe& universe) {
-        if (!empire)
-            return false;
-        int empire_id = empire->EmpireID();
-        return (universe.Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-                universe.Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
+    bool EmpireEliminated(int empire_id) {
+        return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
     }
 
     /** Compiles and return set of ids of empires that are controlled by a
@@ -2116,10 +2113,14 @@ namespace {
             std::map<int, double>& empires_troops = planet_it->second;
             if (empires_troops.empty())
                 continue;
-            else if (empires_troops.size() < 2) {
+            else if (empires_troops.size() == 1) {
                 int empire_with_troops_id = empires_troops.begin()->first;
+                if (planet->Unowned() && empire_with_troops_id == ALL_EMPIRES)
+                    continue;
+
                 if (planet->OwnedBy(empire_with_troops_id)) {
                     continue;   // if troops all belong to planet owner, not a combat.
+
                 } else {
                     //Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
                     if (planet_initial_owner_id != ALL_EMPIRES)
@@ -2896,8 +2897,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //        continue;   // don't double-eliminate an empire
     //    Logger().debugStream() << "empire " << empire_id << " not yet eliminated";
 
-    //    const Empire* empire = it->second;
-    //    if (!EmpireEliminated(empire, m_universe))
+    //    if (!EmpireEliminated(empire_id))
     //        continue;
     //    Logger().debugStream() << " ... but IS eliminated this turn";
 
