@@ -96,9 +96,6 @@
     <ClInclude Include="..\..\network\MessageQueue.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\TurnProgressWnd.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\About.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -416,9 +413,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\TurnProgressWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\About.cpp">

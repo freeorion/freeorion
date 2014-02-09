@@ -156,7 +156,6 @@
     <ClInclude Include="..\..\UI\SystemIcon.h" />
     <ClInclude Include="..\..\UI\TechTreeLayout.h" />
     <ClInclude Include="..\..\UI\TechTreeWnd.h" />
-    <ClInclude Include="..\..\UI\TurnProgressWnd.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
@@ -272,7 +271,6 @@
     <ClCompile Include="..\..\UI\SystemIcon.cpp" />
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
-    <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
   <ItemGroup>
