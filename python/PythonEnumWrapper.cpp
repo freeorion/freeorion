@@ -152,6 +152,7 @@ namespace FreeOrionPython {
             .value("battleSpeed",   PC_BATTLE_SPEED)
             .value("starlaneSpeed", PC_STARLANE_SPEED)
             .value("general",       PC_GENERAL)
+            .value("bombard",       PC_BOMBARD)
         ;
         enum_<UnlockableItemType>("unlockableItemType")
             .value("invalid",       INVALID_UNLOCKABLE_ITEM_TYPE)

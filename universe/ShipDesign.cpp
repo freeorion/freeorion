@@ -691,6 +691,7 @@ ShipDesign::ShipDesign() :
     m_3D_model(),
     m_name_desc_in_stringtable(false),
     m_is_armed(false),
+    m_can_bombard(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
     m_troop_capacity(0.0),
@@ -729,6 +730,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
+    m_can_bombard(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
     m_troop_capacity(0.0),
@@ -1110,6 +1112,8 @@ void ShipDesign::BuildStatCaches() {
         case PC_DETECTION:
             m_detection += boost::get<float>(part->Stats());
             break;
+        case PC_BOMBARD:
+            m_can_bombard = true;
         default:
             break;
         }

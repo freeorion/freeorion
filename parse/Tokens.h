@@ -38,6 +38,7 @@
     (BattleSpeed)                               \
     (BlackHole)                                 \
     (Blue)                                      \
+    (Bombard)                                   \
     (Bomber)                                    \
     (BuildCost)                                 \
     (Building)                                  \

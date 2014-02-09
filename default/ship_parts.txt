@@ -27,11 +27,6 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = OrderedBombardedBy condition = Source
-            stackinggroup = "TEST_DEPOPULATION_STACK"
-            effects = SetPopulation Value / 2
     icon = "icons/ship_parts/mass-driver-1.png"
     
 Part
@@ -910,16 +905,17 @@ Part
 Part
     name = "SP_DEATH_SPORE"
     description = "SP_DEATH_SPORE_DESC"
-    class = General
+    class = Bombard
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = All
     effectsgroups = [
-        EffectsGroup
+        EffectsGroup    // players can order death spores used on enemies
             scope = And [
                 Planet
                 InSystem Source.SystemID
+                OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -927,10 +923,6 @@ Part
                 VisibleToEmpire Source.Owner
                 HasTag "ORGANIC"
             ]
-            activation = And [ 
-                            OwnedBy AnyEmpire
-                            InSystem
-                        ]
             effects = [
                 SetPopulation Value - 0.5
                 GenerateSitRepMessage
@@ -941,7 +933,7 @@ Part
                     empire = Target.Owner
             ]
 
-        EffectsGroup
+        EffectsGroup    // monsters use death spores on player planets
             scope = And [
                 Planet
                 InSystem Source.SystemID
@@ -952,7 +944,7 @@ Part
             activation = And [
                             Not OwnedBy AnyEmpire
                             InSystem
-                        ]
+                         ]
             effects = [
                 SetPopulation Value - 0.5
                 GenerateSitRepMessage
@@ -968,16 +960,17 @@ Part
 Part
     name = "SP_BIOTERM"
     description = "SP_BIOTERM_DESC"
-    class = General
+    class = Bombard
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = All
     effectsgroups = [
-        EffectsGroup
+        EffectsGroup    // players can order terminators used on enemies
             scope = And [
                 Planet
                 InSystem Source.SystemID
+                OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -985,10 +978,6 @@ Part
                 VisibleToEmpire Source.Owner
                 HasTag "ORGANIC"
             ]
-            activation = And [
-                            OwnedBy AnyEmpire
-                            InSystem
-                        ]
             effects = [
                 SetPopulation Value - 1
                 GenerateSitRepMessage
@@ -999,7 +988,7 @@ Part
                     empire = Target.Owner
             ]
 
-        EffectsGroup
+        EffectsGroup    // monsters use terminators on player planets
             scope = And [
                 Planet
                 InSystem Source.SystemID
@@ -1010,7 +999,7 @@ Part
             activation = And [
                             Not OwnedBy AnyEmpire
                             InSystem
-                        ]
+                         ]
             effects = [
                 SetPopulation Value - 1
                 GenerateSitRepMessage

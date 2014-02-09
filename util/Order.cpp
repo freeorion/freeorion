@@ -683,8 +683,8 @@ void BombardOrder::ExecuteImpl() const {
         Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (ship->TotalWeaponsDamage() <= 0) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't attack / bombard";
+    if (!ship->CanBombard()) {
+        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't bombard";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {

@@ -309,8 +309,10 @@ bool Ship::HasTroops() const {
     return design && design->HasTroops();
 }
 
-bool Ship::CanBombard() const
-{ return true; }    // TODO: this
+bool Ship::CanBombard() const {
+    const ShipDesign* design = Design();
+    return design && design->CanBombard();
+}
 
 float Ship::Speed() const
 { return CurrentMeterValue(METER_STARLANE_SPEED); }

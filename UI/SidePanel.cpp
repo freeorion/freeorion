@@ -1192,10 +1192,16 @@ namespace {
 
         // is there a valid single selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(*ss_it))
-                if (ship->SystemID() == system_id && (ship->TotalWeaponsDamage() > 0.0f) && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                    retval.insert(ship);
+        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin();
+             ss_it != selected_ship_ids.end(); ++ss_it)
+        {
+            TemporaryPtr<Ship> ship = GetShip(*ss_it);
+            if (!ship || ship->SystemID() != system_id)
+                continue;
+            if (!ship->CanBombard() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                continue;
+            retval.insert(ship);
+        }
 
         return retval;
     }

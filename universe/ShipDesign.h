@@ -546,6 +546,7 @@ public:
 
     bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
+    bool                            CanBombard() const      { return m_can_bombard; }
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            IsMonster() const       { return m_is_monster; }
 
@@ -632,6 +633,7 @@ private:
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
     bool    m_is_armed;
+    bool    m_can_bombard;
     float   m_detection;
     float   m_colony_capacity;
     float   m_troop_capacity;

@@ -5526,6 +5526,8 @@ PC_STARLANE_SPEED
 Starlane Speed
 PC_GENERAL
 General
+PC_BOMBARD
+Bombardment
 
 
 #############################################################
