@@ -2326,6 +2326,64 @@ namespace {
         }
     }
 
+    /** Destroys suitable objects that have been ordered scrapped.*/
+    void HandleScrapping() {
+        //// debug
+        //for (ObjectMap::iterator<Ship> it = Objects().begin<Ship>(); it != Objects().end<Ship>(); ++it) {
+        //    TemporaryPtr<Ship> ship = *it;
+        //    if (!ship->OrderedScrapped())
+        //        continue;
+        //    Logger().debugStream() << "... ship: " << ship->ID() << " ordered scrapped";
+        //}
+        //// end debug
+
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>();
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
+             it != ships.end(); ++it)
+        {
+            TemporaryPtr<Ship> ship = *it;
+            if (!ship->OrderedScrapped())
+                continue;
+
+            Logger().debugStream() << "... ship: " << ship->ID() << " ordered scrapped";
+
+            TemporaryPtr<System> system = GetSystem(ship->SystemID());
+            if (system)
+                system->Remove(ship->ID());
+
+            TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
+            if (fleet) {
+                fleet->RemoveShip(ship->ID());
+                if (fleet->Empty()) {
+                    //scrapped_object_ids.push_back(fleet->ID());
+                    system->Remove(fleet->ID());
+                    GetUniverse().Destroy(fleet->ID());
+                }
+            }
+
+            //scrapped_object_ids.push_back(ship->ID());
+            GetUniverse().Destroy(ship->ID());
+        }
+
+        std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>();
+        for (std::vector<TemporaryPtr<Building> >::iterator it = buildings.begin();
+             it != buildings.end(); ++it)
+        {
+            TemporaryPtr<Building> building = *it;
+            if (!building->OrderedScrapped())
+                continue;
+
+            if (TemporaryPtr<Planet> planet = GetPlanet(building->PlanetID()))
+                planet->RemoveBuilding(building->ID());
+
+            if (TemporaryPtr<System> system = GetSystem(building->SystemID()))
+                system->Remove(building->ID());
+
+            //scrapped_object_ids.push_back(building->ID());
+            GetUniverse().Destroy(building->ID());
+        }
+    }
+
     /** Removes bombardment state info from objects. Actual effects of
       * bombardment are handled during */
     void CleanUpBombardmentStateInfo() {
@@ -2406,47 +2464,15 @@ void ServerApp::PreCombatProcessTurns() {
 
     Logger().debugStream() << "ServerApp::ProcessTurns colonization";
     HandleColonization();
+
     Logger().debugStream() << "ServerApp::ProcessTurns invasion";
     HandleInvasion();
+
     Logger().debugStream() << "ServerApp::ProcessTurns gifting";
     HandleGifting();
 
     Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
-    // scrap orders
-    //std::vector<int> scrapped_object_ids;
-    for (ObjectMap::iterator<Ship> it = objects.begin<Ship>(); it != objects.end<Ship>(); ++it) {
-        TemporaryPtr<Ship> ship = *it;
-        if (!ship->OrderedScrapped())
-            continue;
-        TemporaryPtr<System> system = GetSystem(ship->SystemID());
-        if (system)
-            system->Remove(ship->ID());
-
-        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
-        if (fleet) {
-            fleet->RemoveShip(ship->ID());
-            if (fleet->Empty()) {
-                //scrapped_object_ids.push_back(fleet->ID());
-                system->Remove(fleet->ID());
-                m_universe.Destroy(fleet->ID());
-            }
-        }
-
-        //scrapped_object_ids.push_back(ship->ID());
-        m_universe.Destroy(ship->ID());
-    }
-    for (ObjectMap::iterator<Building> it = objects.begin<Building>(); it != objects.end<Building>(); ++it) {
-        TemporaryPtr<Building> building = *it;
-        if (!building->OrderedScrapped())
-            continue;
-        if (TemporaryPtr<Planet> planet = GetPlanet(building->PlanetID()))
-            planet->RemoveBuilding(building->ID());
-        if (TemporaryPtr<System> system = GetSystem(building->SystemID()))
-            system->Remove(building->ID());
-
-        //scrapped_object_ids.push_back(building->ID());
-        m_universe.Destroy(building->ID());
-    }
+    HandleScrapping();
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns movement";

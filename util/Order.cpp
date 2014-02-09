@@ -1155,8 +1155,12 @@ void ScrapOrder::ExecuteImpl() const {
     int empire_id = EmpireID();
 
     if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
-        if (ship->SystemID() != INVALID_OBJECT_ID && ship->OwnedBy(empire_id))
+        if (ship->SystemID() != INVALID_OBJECT_ID && ship->OwnedBy(empire_id)) {
             ship->SetOrderedScrapped(true);
+            //Logger().debugStream() << "ScrapOrder::ExecuteImpl empire: " << empire_id
+            //                       << " on ship: " << ship->ID() << " at system: " << ship->SystemID()
+            //                       << " ... ordered scrapped?: " << ship->OrderedScrapped();
+        }
     } else if (TemporaryPtr<Building> building = GetBuilding(m_object_id)) {
         int planet_id = building->PlanetID();
         if (TemporaryPtr<const Planet> planet = GetPlanet(planet_id)) {
