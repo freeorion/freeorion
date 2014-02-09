@@ -1735,7 +1735,7 @@ namespace {
         }
     }
 
-    /** Records info in Empires about what they destroyed during combat. */
+    /** Records info in Empires about what they destroyed or had destroyed during combat. */
     void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats) {
         for (std::vector<CombatInfo>::const_iterator it = combats.begin();
              it != combats.end(); ++it)
@@ -1752,8 +1752,6 @@ namespace {
                     continue;
                 int attacker_empire_id = attacker->Owner();
                 Empire* attacker_empire = Empires().Lookup(attacker_empire_id);
-                if (!attacker_empire)
-                    continue;
 
                 TemporaryPtr<const Ship> target_ship = GetShip(attack.target_id);
                 if (!target_ship)
@@ -1761,29 +1759,49 @@ namespace {
                 int target_empire_id = target_ship->Owner();
                 int target_design_id = target_ship->DesignID();
                 const std::string& target_species_name = target_ship->SpeciesName();
+                Empire* target_empire = Empires().Lookup(target_empire_id);
 
                 std::map<int, int>::iterator map_it;
-                // record destruction of an empire's ship by attacker empire
-                map_it = attacker_empire->EmpireShipsDestroyed().find(target_empire_id);
-                if (map_it == attacker_empire->EmpireShipsDestroyed().end())
-                    attacker_empire->EmpireShipsDestroyed()[target_empire_id] = 1;
-                else
-                    map_it->second++;
+                std::map<std::string, int>::iterator species_it;
 
-                // record destruction of a design by attacker empire
-                map_it = attacker_empire->ShipDesignsDestroyed().find(target_design_id);
-                if (map_it == attacker_empire->ShipDesignsDestroyed().end())
-                    attacker_empire->ShipDesignsDestroyed()[target_design_id] = 1;
-                else
-                    map_it->second++;
+                if (attacker_empire) {
+                    // record destruction of an empire's ship by attacker empire
+                    map_it = attacker_empire->EmpireShipsDestroyed().find(target_empire_id);
+                    if (map_it == attacker_empire->EmpireShipsDestroyed().end())
+                        attacker_empire->EmpireShipsDestroyed()[target_empire_id] = 1;
+                    else
+                        map_it->second++;
 
-                // record destruction of ship with a species on it by attacker empire
-                std::map<std::string, int>::iterator species_it =
-                    attacker_empire->SpeciesShipsDestroyed().find(target_species_name);
-                if (species_it == attacker_empire->SpeciesShipsDestroyed().end())
-                    attacker_empire->SpeciesShipsDestroyed()[target_species_name] = 1;
-                else
-                    species_it->second++;
+                    // record destruction of a design by attacker empire
+                    map_it = attacker_empire->ShipDesignsDestroyed().find(target_design_id);
+                    if (map_it == attacker_empire->ShipDesignsDestroyed().end())
+                        attacker_empire->ShipDesignsDestroyed()[target_design_id] = 1;
+                    else
+                        map_it->second++;
+
+                    // record destruction of ship with a species on it by attacker empire
+                    species_it = attacker_empire->SpeciesShipsDestroyed().find(target_species_name);
+                    if (species_it == attacker_empire->SpeciesShipsDestroyed().end())
+                        attacker_empire->SpeciesShipsDestroyed()[target_species_name] = 1;
+                    else
+                        species_it->second++;
+                }
+
+                if (target_empire) {
+                    // record destruction of a ship with a species on it owned by defender empire
+                    species_it = target_empire->SpeciesShipsLost().find(target_species_name);
+                    if (species_it == target_empire->SpeciesShipsLost().end())
+                        target_empire->SpeciesShipsLost()[target_species_name] = 1;
+                    else
+                        species_it->second++;
+
+                    // record destruction of with a design owned by defender empire
+                    map_it = target_empire->ShipDesignsLost().find(target_design_id);
+                    if (map_it == target_empire->ShipDesignsLost().end())
+                        target_empire->ShipDesignsLost()[target_design_id] = 1;
+                    else
+                        map_it->second++;
+                }
             }
         }
     }
