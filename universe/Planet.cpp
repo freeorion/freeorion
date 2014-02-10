@@ -656,7 +656,7 @@ void Planet::Conquer(int conquerer) {
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
     const Species* species = 0;
-    
+
     // if desired pop > 0, we want a colony, not an outpost, so we need to do some checks
     if (population > 0.0) {
         // check if specified species exists and get reference
@@ -671,7 +671,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
             return false;
         }
     }
-    
+
     // reset the planet to unowned/unpopulated
     Reset();
 
@@ -694,7 +694,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
                 break;
             }
         }
-        
+
         if (!found_preference)
             SetFocus(*available_foci.begin());
     }
@@ -702,6 +702,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // set colony population
     GetMeter(METER_POPULATION)->SetCurrent(population);
     GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
+    GetMeter(METER_HAPPINESS)->SetCurrent(20.0f);
     BackPropegateMeters();
 
     // set specified empire as owner
