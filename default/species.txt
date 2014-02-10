@@ -408,6 +408,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+    
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
