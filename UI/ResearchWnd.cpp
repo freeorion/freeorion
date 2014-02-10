@@ -19,8 +19,14 @@
 #include <cmath>
 
 namespace {
-    const GG::X RESEARCH_INFO_AND_QUEUE_WIDTH(250);
     const float OUTER_LINE_THICKNESS = 2.0f;
+
+    void AddOptions(OptionsDB& db) {
+        // queue width used also on production screen. prevent double-adding...
+        if (!db.OptionExists("UI.queue-width"))
+            db.Add("UI.queue-width",    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 300,    RangedValidator<int>(200, 500));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 
     //////////////////////////////////////////////////
     // QueueRow
@@ -29,7 +35,6 @@ namespace {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element);
         std::string tech_name;
     };
-
 
     //////////////////////////////////////////////////
     // QueueTechPanel
@@ -198,8 +203,11 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_tech_tree_wnd(0),
     m_enabled(false)
 {
-    m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
-                                                    OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+    m_research_info_panel = new ProductionInfoPanel(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y(200),
+                                                    UserString("RESEARCH_INFO_PANEL_TITLE"),
+                                                    UserString("RESEARCH_INFO_RP"),
+                                                    OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(),
+                                                    ClientUI::KnownTechTextAndBorderColor());
 
     m_queue_lb = new QueueListBox(GG::X(2),
                                   m_research_info_panel->Height(),

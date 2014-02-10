@@ -1049,6 +1049,12 @@ Sets size of smallest-rendered rotating planets on side-panel.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Sets whether to show rendered planets / asteroids on the side-panel.
 
+OPTIONS_DB_UI_QUEUE_WIDTH
+Sets width of queues on research and production screens.
+
+OPTIONS_DB_UI_PROD_QUEUE_LOCATION
+Sets whether to show the production location for items on the production queue
+
 OPTIONS_DB_GAMESETUP_SEED
 '''The seed used for randomly generating the galaxy.
 Galaxies generated with the same settings and the same seed will be identical.'''
@@ -1175,6 +1181,8 @@ Test 3D combat resolution.
 
 OPTIONS_DB_LOAD
 Loads the specified single-player save game.
+
+
 
 #################
 # File Dialog   #
@@ -1735,6 +1743,12 @@ Fleet supply line dot rate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Default starlane color
+
+OPTIONS_UI_QUEUE_WIDTH
+Queue width
+
+OPTIONS_UI_PROD_QUEUE_LOCATION
+Queue Production Location
 
 OPTIONS_MUSIC
 Music
