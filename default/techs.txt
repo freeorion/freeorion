@@ -1872,7 +1872,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 25 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "SHP_MIL_ROBO_CONT"
     unlock = Item type = ShipHull name = "SH_SPATIAL_FLUX"
