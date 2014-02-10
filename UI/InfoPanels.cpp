@@ -2730,7 +2730,7 @@ void MeterBrowseWnd::Render() {
 
 namespace {
     const std::string& MeterToUserString(MeterType meter_type) {
-        return UserString(GG::GetEnumMap<MeterType>().FromEnum(meter_type));
+        return UserString(EnumToString(meter_type));
     }
 }
 

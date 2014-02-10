@@ -33,6 +33,7 @@
 
 #include <GG/ClrConstants.h>
 #include <GG/TextControl.h>
+#include <GG/Enum.h>
 
 
 namespace GG {
@@ -48,11 +49,11 @@ class GG_API Button : public TextControl
 {
 public:
     /// the states of being for a GG::Button
-    enum ButtonState {
+    GG_CLASS_ENUM(ButtonState,
         BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
         BN_UNPRESSED,  ///< The button is unpressed
         BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
-    };
+    )
 
     /** \name Signal Types */ ///@{
     /** Emitted when the button is clicked by the user */
@@ -122,16 +123,6 @@ private:
     SubTexture     m_pressed_graphic;   ///< Graphic used to display button when it's depressed
     SubTexture     m_rollover_graphic;  ///< Graphic used to display button when it's under the mouse and not pressed
 };
-
-// define EnumMap and stream operators for Button::ButtonState
-GG_ENUM_MAP_BEGIN(Button::ButtonState)
-    GG_ENUM_MAP_INSERT(Button::BN_PRESSED)
-    GG_ENUM_MAP_INSERT(Button::BN_UNPRESSED)
-    GG_ENUM_MAP_INSERT(Button::BN_ROLLOVER)
-GG_ENUM_MAP_END
-
-GG_ENUM_STREAM_IN(Button::ButtonState)
-GG_ENUM_STREAM_OUT(Button::ButtonState)
 
 
 /** \brief This is a basic state button control.

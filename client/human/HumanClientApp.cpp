@@ -796,7 +796,7 @@ void HumanClientApp::RenderBegin() {
 
 void HumanClientApp::HandleMessage(Message& msg) {
     if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
+        std::cerr << "HumanClientApp::HandleMessage(" << msg.Type() << ")\n";
 
     switch (msg.Type()) {
     case Message::ERROR_MSG:            m_fsm->process_event(Error(msg));                   break;
@@ -829,7 +829,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
 
 void HumanClientApp::HandleSaveGameDataRequest() {
     if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << MessageTypeStr(Message::SAVE_GAME) << ")\n";
+        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
     m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));

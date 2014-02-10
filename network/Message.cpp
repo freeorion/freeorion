@@ -35,88 +35,16 @@
 
 
 namespace {
-    const std::string MESSAGE_SCOPE_PREFIX = "Message::";
     const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
     const std::string ACKNOWLEDGEMENT = "ACK";
-    std::string StripMessageScoping(const std::string& str) {
-        return boost::algorithm::starts_with(str, MESSAGE_SCOPE_PREFIX) ?
-            boost::algorithm::erase_first_copy(str, MESSAGE_SCOPE_PREFIX) :
-            str;
-    }
 }
 
 ////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////
-namespace GG {
-    GG_ENUM_MAP_BEGIN(Message::MessageType)
-    GG_ENUM_MAP_INSERT(Message::UNDEFINED)
-    GG_ENUM_MAP_INSERT(Message::DEBUG)
-    GG_ENUM_MAP_INSERT(Message::HOST_SP_GAME)
-    GG_ENUM_MAP_INSERT(Message::HOST_MP_GAME)
-    GG_ENUM_MAP_INSERT(Message::JOIN_GAME)
-    GG_ENUM_MAP_INSERT(Message::HOST_ID)
-    GG_ENUM_MAP_INSERT(Message::LOBBY_UPDATE)
-    GG_ENUM_MAP_INSERT(Message::LOBBY_CHAT)
-    GG_ENUM_MAP_INSERT(Message::LOBBY_EXIT)
-    GG_ENUM_MAP_INSERT(Message::START_MP_GAME)
-    GG_ENUM_MAP_INSERT(Message::SAVE_GAME)
-    GG_ENUM_MAP_INSERT(Message::LOAD_GAME)
-    GG_ENUM_MAP_INSERT(Message::GAME_START)
-    GG_ENUM_MAP_INSERT(Message::TURN_UPDATE)
-    GG_ENUM_MAP_INSERT(Message::TURN_PARTIAL_UPDATE)
-    GG_ENUM_MAP_INSERT(Message::TURN_ORDERS)
-    GG_ENUM_MAP_INSERT(Message::TURN_PROGRESS)
-    GG_ENUM_MAP_INSERT(Message::PLAYER_STATUS)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_SAVE_DATA)
-    GG_ENUM_MAP_INSERT(Message::COMBAT_START)
-    GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_UPDATE)
-    GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_ORDERS)
-    GG_ENUM_MAP_INSERT(Message::COMBAT_END)
-    GG_ENUM_MAP_INSERT(Message::PLAYER_CHAT)
-    GG_ENUM_MAP_INSERT(Message::DIPLOMACY)
-    GG_ENUM_MAP_INSERT(Message::DIPLOMATIC_STATUS)
-    GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
-    GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
-    GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
-    GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_DESIGN_ID)
-    GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_DESIGN_ID)
-    GG_ENUM_MAP_INSERT(Message::VICTORY_DEFEAT)
-    GG_ENUM_MAP_INSERT(Message::END_GAME)
-    GG_ENUM_MAP_INSERT(Message::MODERATOR_ACTION)
-    GG_ENUM_MAP_INSERT(Message::SHUT_DOWN_SERVER)
-    GG_ENUM_MAP_END
-}
-
-std::string MessageTypeStr(Message::MessageType type)
-{ return StripMessageScoping(GG::GetEnumMap<Message::MessageType>().FromEnum(type)); }
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(Message::TurnProgressPhase)
-    GG_ENUM_MAP_INSERT(Message::FLEET_MOVEMENT)
-    GG_ENUM_MAP_INSERT(Message::COMBAT)
-    GG_ENUM_MAP_INSERT(Message::EMPIRE_PRODUCTION)
-    GG_ENUM_MAP_INSERT(Message::WAITING_FOR_PLAYERS)
-    GG_ENUM_MAP_INSERT(Message::PROCESSING_ORDERS)
-    GG_ENUM_MAP_INSERT(Message::COLONIZE_AND_SCRAP)
-    GG_ENUM_MAP_INSERT(Message::DOWNLOADING)
-    GG_ENUM_MAP_INSERT(Message::LOADING_GAME)
-    GG_ENUM_MAP_INSERT(Message::GENERATING_UNIVERSE)
-    GG_ENUM_MAP_INSERT(Message::STARTING_AIS)
-    GG_ENUM_MAP_END
-}
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(Message::PlayerStatus)
-    GG_ENUM_MAP_INSERT(Message::PLAYING_TURN)
-    GG_ENUM_MAP_INSERT(Message::RESOLVING_COMBAT)
-    GG_ENUM_MAP_INSERT(Message::WAITING)
-    GG_ENUM_MAP_END
-}
-
 std::ostream& operator<<(std::ostream& os, const Message& msg) {
     os << "Message: "
-       << MessageTypeStr(msg.Type()) << " "
+       << msg.Type() << " "
        << msg.SendingPlayer();
 
     if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)

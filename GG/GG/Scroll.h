@@ -55,11 +55,11 @@ class GG_API Scroll : public Control
 {
 public:
     /// the clickable regions of a Scroll
-    enum ScrollRegion {
+    GG_CLASS_ENUM(ScrollRegion,
         SBR_NONE,
         SBR_PAGE_DN,
         SBR_PAGE_UP
-    };
+    )
 
     /** \name Signal Types */ ///@{
     /** emitted whenever the scrollbar is moved; the upper and lower extents
@@ -161,16 +161,6 @@ private:
     bool              m_dragging_tab;
     bool              m_tab_dragged;
 };
-
-// define EnumMap and stream operators for Scroll::ScrollRegion
-GG_ENUM_MAP_BEGIN(Scroll::ScrollRegion)
-    GG_ENUM_MAP_INSERT(Scroll::SBR_NONE)
-    GG_ENUM_MAP_INSERT(Scroll::SBR_PAGE_DN)
-    GG_ENUM_MAP_INSERT(Scroll::SBR_PAGE_UP)
-GG_ENUM_MAP_END
-
-GG_ENUM_STREAM_IN(Scroll::ScrollRegion)
-GG_ENUM_STREAM_OUT(Scroll::ScrollRegion)
 
 /** A convenience function that signals \a scroll's position, via
     Scroll::ScrolledSignal.  If \a stopped is true, the position is

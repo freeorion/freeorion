@@ -172,7 +172,7 @@ std::string UniverseObject::Dump() const {
         os << "(" << it->first << ", " << it->second << ") ";
     os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        os << UserString(GG::GetEnumMap<MeterType>().FromEnum(it->first))
+        os << UserString(EnumToString(it->first))
            << ": " << it->second.Dump() << "  ";
     return os.str();
 }

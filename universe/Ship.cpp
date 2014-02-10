@@ -261,7 +261,7 @@ std::string Ship::Dump() const {
         const Meter& meter = it->second;
         ++it;
         os << UserString(part_name) << " "
-           << UserString(GG::GetEnumMap<MeterType>().FromEnum(meter_type))
+           << UserString(EnumToString(meter_type))
            << ": " << meter.Current() << "  ";
     }
     return os.str();

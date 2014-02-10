@@ -4,6 +4,7 @@
 
 #include "Networking.h"
 #include "../util/Export.h"
+#include <GG/Enum.h>
 
 #include <boost/shared_array.hpp>
 
@@ -55,7 +56,7 @@ FO_COMMON_API void HeaderToBuffer(const Message& message, int* header_buf);
 class FO_COMMON_API Message {
 public:
     /** Represents the type of the message */
-    enum MessageType {
+    GG_CLASS_ENUM(MessageType,
         UNDEFINED = 0,
         DEBUG,                  ///< used to send special messages used for debugging purposes
         ERROR_MSG,              ///< used to communicate errors between server and clients
@@ -92,9 +93,9 @@ public:
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER        ///< sent by host client to server to kill the server process
-    };
+    )
 
-    enum TurnProgressPhase {
+    GG_CLASS_ENUM(TurnProgressPhase,
         FLEET_MOVEMENT,         ///< fleet movement turn progress message
         COMBAT,                 ///< combat turn progress message
         EMPIRE_PRODUCTION,      ///< empire production turn progress message
@@ -105,24 +106,24 @@ public:
         LOADING_GAME,           ///< loading gamestate from save
         GENERATING_UNIVERSE,    ///< creating new universe
         STARTING_AIS            ///< creating AI clients
-    };
+    )
 
-    enum PlayerStatus {
+    GG_CLASS_ENUM(PlayerStatus,
         PLAYING_TURN,           ///< player is playing a turn, on the galax map
         RESOLVING_COMBAT,       ///< player is resolving a combat interactively
         WAITING                 ///< player is waiting for others to submit orders, to resolve combats, or for turn processing to complete
-    };
+    )
 
-    enum EndGameReason {
+    GG_CLASS_ENUM(EndGameReason,
         LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
         YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
-    };
+    )
 
-    enum VictoryOrDefeat {
+    GG_CLASS_ENUM(VictoryOrDefeat,
         VICTORY,                ///< a player or players have met a victory condition
         DEFEAT                  ///< a player or players have met a defeat condition
-    };
+    )
 
     /** \name Structors */ //@{
     Message(); ///< Default ctor.
@@ -172,9 +173,6 @@ FO_COMMON_API void swap(Message& lhs, Message& rhs); ///< Swaps the contents of 
 ////////////////////////////////////////////////
 // Message stringification
 ////////////////////////////////////////////////
-
-/** Returns a string representation of \a type. */
-FO_COMMON_API std::string MessageTypeStr(Message::MessageType type);
 
 /** Writes \a msg to \a os.  The format of the output is designed for debugging purposes. */
 FO_COMMON_API std::ostream& operator<<(std::ostream& os, const Message& msg);

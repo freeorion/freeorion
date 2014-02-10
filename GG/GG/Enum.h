@@ -30,115 +30,163 @@
 #ifndef _GG_Enum_h_
 #define _GG_Enum_h_
 
-#include <boost/config.hpp>
-
+#include <cstdlib>
+#include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 
+#include <boost/algorithm/string/trim.hpp>
 
 namespace GG {
 
-/** \brief A base type for all templated EnumMap types. */
-struct EnumMapBase
-{
-    BOOST_STATIC_CONSTANT(long int, BAD_VALUE = -5000000);
+    #define GG_ENUM_NAME_BUFFER_SIZE 80
 
-    virtual ~EnumMapBase() {} ///< Virtual dtor.
+    template <class EnumType>
+    class EnumMap {
+    public:
+        const std::string& operator[](EnumType value) const;
+        EnumType operator[](const std::string& name) const;
 
-    /** Returns the string associated with the enumeration value \a i, or the
-        empty string if \a i is unknown. */
-    virtual const std::string& FromEnum(long int i) const = 0;
+        void Insert(int& default_value, const std::string& entry);
+        size_t size() const;
 
-    /** Returns the enumeration value associated with the string \a str, or
-        BAD_VALUE if \a str is unknown. */
-    virtual long int FromString (const std::string& str) const = 0;
-};
+        static const EnumType BAD_VALUE = (EnumType)INT_MIN;
+    private:
+        std::map<std::string, EnumType> m_name_to_value_map;
+        std::map<EnumType, std::string> m_value_to_name_map;
+    };
 
-/** \brief A mapping between the values of an enum and the string
-    representations of the enum's values.
-
-    A specialization should be declared for each enumerated type for which an
-    EnumMap is desired. */
-template <class E> struct EnumMap : EnumMapBase
-{
-    virtual ~EnumMap() {} ///< Virtual dtor.
-    virtual const std::string& FromEnum(long int) const
-    { static std::string empty; return empty; }
-    virtual long int FromString (const std::string&) const {return 0;}
-};
-
-/** Returns a map of the values of an enum to the corresponding string
-    representation of that value. */
-template <class E> EnumMap<E> GetEnumMap()
-{
-    static EnumMap<E> enum_map;
-    return enum_map;
-}
-
-/** Declares the beginning of a template specialization of EnumMap, for
-    enumerated type \a name.  Text-to-enum conversion is one of those places
-    that calls for macro magic.  To use these for e.g. "enum Foo {FOO, BAR};",
-    write:
-    \verbatim 
-    GG_ENUM_MAP_BEGIN( Foo ) 
-        GG_ENUM_MAP_INSERT( FOO )
-        GG_ENUM_MAP_INSERT( BAR )
-        ...
-    GG_ENUM_MAP_END \endverbatim */
-#define GG_ENUM_MAP_BEGIN( name )                                       \
-template <> struct EnumMap< name > : EnumMapBase                        \
-{                                                                       \
-    typedef name EnumType;                                              \
-    typedef std::map<EnumType, std::string> MapType;                    \
-    EnumMap ()                                                          \
-    {
-
-/** Adds a single value from an enumerated type, and its corresponding string
-    representation, to an EnumMap. */
-#define GG_ENUM_MAP_INSERT( value ) m_map[ value ] = #value ;
-
-/** Declares the end of a template specialization of EnumMap, for enumerated
-    type \a name. */
-#define GG_ENUM_MAP_END                                                 \
-    }                                                                   \
-    virtual const std::string& FromEnum(long int i) const               \
-    {                                                                   \
-        static const std::string ERROR_STR;                             \
-        std::map<EnumType, std::string>::const_iterator it =            \
-            m_map.find(EnumType(i));                                    \
-        return it == m_map.end() ? ERROR_STR : it->second;              \
-    }                                                                   \
-    long int FromString (const std::string &str) const                  \
-    {                                                                   \
-        for (MapType::const_iterator it = m_map.begin();                \
-             it != m_map.end();                                         \
-             ++it) {                                                    \
-            if (it->second == str)                                      \
-                return it->first;                                       \
-        }                                                               \
-        return BAD_VALUE;                                               \
-    }                                                                   \
-    MapType m_map;                                                      \
-};
-
-/** Defines an input stream operator for enumerated type \a name.  Note that
-    the generated function requires that EnumMap<name> be defined. */
-#define GG_ENUM_STREAM_IN( name )                                       \
-    inline std::istream& operator>>(std::istream& is, name& v)          \
-    {                                                                   \
-        std::string str;                                                \
-        is >> str;                                                      \
-        v = name (GG::GetEnumMap< name >().FromString(str));            \
-        return is;                                                      \
+    template <class EnumType>
+    const std::string& EnumMap<EnumType>::operator[](EnumType value) const {
+        std::map<EnumType, std::string>::const_iterator it = m_value_to_name_map.find(value);
+        if (it != m_value_to_name_map.end()) {
+            return it->second;
+        } else {
+            static std::string none("None");
+            return none;
+        }
     }
 
-/** Defines an output stream operator for enumerated type \a name.  Note that
-    the generated function requires that EnumMap<name> be defined. */
-#define GG_ENUM_STREAM_OUT( name )                                      \
-    inline std::ostream& operator<<(std::ostream& os, name v)           \
-    {                                                                   \
-        os << GG::GetEnumMap< name >().FromEnum(v);                     \
-        return os;                                                      \
+    template <class EnumType>
+    EnumType EnumMap<EnumType>::operator[](const std::string& name) const {
+        std::map<std::string, EnumType>::const_iterator it = m_name_to_value_map.find(name);
+        if (it != m_name_to_value_map.end()) {
+            return it->second;
+        } else {
+            return BAD_VALUE;
+        }
+    }
+
+    template <class EnumType>
+    EnumMap<EnumType>& GetEnumMap() {
+        static EnumMap<EnumType> map;
+        return map;
+    }
+
+    template <class EnumType>
+    void BuildEnumMap(EnumMap<EnumType>& map, const std::string& enum_name, const char* comma_separated_names) {
+        std::stringstream name_stream(comma_separated_names);
+
+        int default_value = 0;
+        std::string name;
+        while (std::getline(name_stream, name, ',')) {
+            map.Insert(default_value, name);
+        }
+    }
+
+    template <class EnumType>
+    void EnumMap<EnumType>::Insert(int& default_value, const std::string& entry) {
+        std::stringstream name_and_value(entry);
+
+        std::string name;
+        std::getline(name_and_value, name, '=');
+
+        std::string value_str;
+        EnumType value;
+        if (std::getline(name_and_value, value_str)) {
+            value = (EnumType)strtol(value_str.c_str(), 0, 0);
+        }
+        else {
+            value = (EnumType)default_value;
+        }
+
+        boost::trim(name);
+
+        m_name_to_value_map[name] = value;
+        m_value_to_name_map[value] = name;
+        default_value = value + 1;
+    }
+
+    template <class EnumType>
+    size_t EnumMap<EnumType>::size() const {
+        return m_name_to_value_map.size();
+    }
+
+#define GG_CLASS_ENUM(EnumName, ...)                                                    \
+    enum EnumName {                                                                     \
+        __VA_ARGS__                                                                     \
+     };                                                                                 \
+                                                                                        \
+    static friend inline std::istream& operator>>(std::istream& is, EnumName& value) {  \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        std::string name;                                                               \
+        is >> name;                                                                     \
+        value = map[name];                                                              \
+        return is;                                                                      \
+    }                                                                                   \
+                                                                                        \
+    static friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {   \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        const std::string& name = map[value];                                           \
+        return os << name;                                                              \
+    }                                                                                   \
+                                                                                        \
+    static friend inline const std::string& EnumToString(EnumName value) {              \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        return map[value];                                                              \
+    }
+
+#define GG_ENUM(EnumName, ...)                                                          \
+    enum EnumName {                                                                     \
+        __VA_ARGS__                                                                     \
+     };                                                                                 \
+                                                                                        \
+    static inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        std::string name;                                                               \
+        is >> name;                                                                     \
+        value = map[name];                                                              \
+        return is;                                                                      \
+    }                                                                                   \
+                                                                                        \
+    static inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        const std::string& name = map[value];                                           \
+        return os << name;                                                              \
+    }                                                                                   \
+                                                                                        \
+    static inline const std::string& EnumToString(EnumName value) {                     \
+        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        if (map.size() == 0)                                                            \
+            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
+                                                                                        \
+        return map[value];                                                              \
     }
 
 } // namespace GG

@@ -756,7 +756,7 @@ private:
              uot_it != m_vis_filters.end(); ++uot_it, ++col)
         {
             const UniverseObjectType& uot = uot_it->first;
-            const std::string& uot_label = " " + UserString(GG::GetEnumMap<UniverseObjectType>().FromEnum(uot)) + " ";
+            const std::string& uot_label = " " + UserString(EnumToString(uot)) + " ";
             const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
             GG::Clr text_color = ClientUI::TextColor();
 

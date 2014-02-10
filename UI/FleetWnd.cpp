@@ -51,7 +51,7 @@ namespace {
     const std::string   COLONY_CAPACITY_STAT_STRING = "Colony Capacity";
     const std::string   TROOP_CAPACITY_STAT_STRING = "Troop Capacity";
     const std::string   MeterStatString(MeterType meter_type) {
-        std::string retval = GG::GetEnumMap<MeterType>().FromEnum(meter_type);
+        std::string retval = EnumToString(meter_type);
         //std::cout << "MeterStatString for meter type " << boost::lexical_cast<std::string>(meter_type) << " returning: " << retval << std::endl;
         return retval;
     }

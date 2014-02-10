@@ -194,7 +194,7 @@ UniverseObjectType System::ObjectType() const
 std::string System::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
-    os << " star type: " << UserString(GG::GetEnumMap<StarType>().FromEnum(m_star))
+    os << " star type: " << UserString(EnumToString(m_star))
        << "  last combat on turn: " << m_last_turn_battle_here
        << "  starlanes: ";
 
