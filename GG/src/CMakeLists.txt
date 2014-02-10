@@ -38,7 +38,6 @@ add_library(GiGi
     DropDownList.cpp
     DynamicGraphic.cpp
     Edit.cpp
-    Enum.cpp
     EventPump.cpp
     Font.cpp
     GroupBox.cpp
