@@ -3265,7 +3265,7 @@ Maniacal:
 GROWTH_SPECIALS_LIST
 '''CRYSTALS_SPECIAL
 FRUIT_SPECIAL
-METALOIDS_SPECIAL
+ELERIUM_SPECIAL
 MINERALS_SPECIAL
 MONOPOLE_SPECIAL
 POSITRONIUM_SPECIAL
@@ -4850,61 +4850,13 @@ PANOPTICON_SPECIAL_DESC
 
 Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
 
-TUNNELS_SPECIAL
-Natural Tunnels
-
-TUNNELS_SPECIAL_DESCRIPTION
-'''Increases max Population by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-
-This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
-
-TECTONIC_INSTABILITY_SPECIAL
-Tectonically Unstable
-
-TECTONIC_INSTABILITY_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Prevents [[tech GRO_SUBTER_HAB]] from increasing population capacity.
-
-This planet is tectonically unstable. Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''
-
-SOLID_CORE_SPECIAL
-Solid Core
-
-SOLID_CORE_SPECIAL_DESC
-'''Reduces max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
-
-This planet's core has solidified, and it has a very weak magnetic field. The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
-
-HIGH_AXIAL_TILT_SPECIAL
-High Axial Tilt
-
-HIGH_AXIAL_TILT_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20.
-
-This planet's rotational axis is highly tilted relative to its orbital plane. Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.'''
-
-SLOW_ROTATION_SPECIAL
-Very Slow Rotation
-
-SLOW_ROTATION_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Decreases max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
-
-This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure and growth are reduced.'''
-
-TIDAL_LOCK_SPECIAL
-Tidally Locked Rotation
-
-TIDAL_LOCK_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 10, but [[encyclopedia INDUSTRY_TITLE]] is increased by 0.2 per Population when Focus is set to Industry.
-
-This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.'''
-
 ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on the planet is decreased by 20, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
+'''Population on the planet is decreased by 3, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
 
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.'''
+This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit population growth, but provide a beneficial platform for research.'''
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -4949,7 +4901,7 @@ JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 HEAD_ON_A_SPIKE_SPECIAL
-Head on a spike
+Head on a Spike
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
@@ -5107,10 +5059,10 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 Positronium Ash make better robots brains!'''
 
 MINERALS_SPECIAL
-Rich Minerals
+Ferric Minerals
 MINERALS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
+When a planet with Ferric Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
@@ -5126,15 +5078,15 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
-METALOIDS_SPECIAL
-High-Energy Metalloids
-METALOIDS_SPECIAL_DESC
+ELERIUM_SPECIAL
+Native Elerium
+ELERIUM_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with High-Energy Metalloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
+When a planet with Native Elerium is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
+This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.'''
 
 STARSPAWN_NEBULA_SPECIAL
 Starspawn Nebula
@@ -7067,14 +7019,6 @@ CON_ORBITAL_CON_DESC
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
-CON_SUBTER_CONST
-Subterranean Construction
-
-CON_SUBTER_CONST_DESC
-'''Increases [[encyclopedia INFRASTRUCTURE_TITLE]] by 10.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
-
-When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
-
 CON_CONC_CAMP
 Concentration Camps
 
@@ -7117,7 +7061,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.'''
+'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENOME_BANK
 Genome Bank
@@ -9353,7 +9297,7 @@ ENV_ENCAPSUL_LABEL
 SELF_SUSTAINING_LABEL
 '''Self-Sustaining'''
 
-TUNNELS_LABEL
+SUBTERRANEAN_LABEL
 '''Subterranean Bonus'''
 
 GAIA_LABEL

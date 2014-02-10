@@ -96,107 +96,9 @@ Special
             activation = Source
             effects = [
                 SetTargetResearch Value + 3
-                SetTargetConstruction Value - 20
+                SetTargetPopulation Value - 3
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
-
-Special
-    name = "TIDAL_LOCK_SPECIAL"
-    description = "TIDAL_LOCK_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            effects = SetTargetConstruction Value - 10
-
-        EffectsGroup
-             scope = AND [
-                 Source
-                 Focus "FOCUS_INDUSTRY"
-             ]
-             effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
-    ]
-    graphic = "icons/specials_huge/tidal_lock.png"
-
-Special
-    name = "SLOW_ROTATION_SPECIAL"
-    description = "SLOW_ROTATION_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            effects = SetTargetPopulation Value - 1 * Target.SizeAsDouble
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetTargetConstruction Value - 20
-    ]
-    graphic = "icons/specials_huge/slow_rotation.png"
-
-Special
-    name = "HIGH_AXIAL_TILT_SPECIAL"
-    description = "HIGH_AXIAL_TILT_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = EffectsGroup
-        scope = Source
-        activation = Source
-        effects = SetTargetConstruction Value - 20
-    graphic = "icons/specials_huge/high_axial_tilt.png"
-
-Special
-    name = "SOLID_CORE_SPECIAL"
-    description = "SOLID_CORE_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = EffectsGroup
-        scope = Source
-        activation = Source
-        effects = SetTargetPopulation Value - 1 * Target.SizeAsDouble
-    graphic = "icons/specials_huge/solid_core.png"
-
-Special
-    name = "TECTONIC_INSTABILITY_SPECIAL"
-    description = "TECTONIC_INSTABILITY_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = EffectsGroup
-        scope = Source
-        activation = Source
-        effects = SetTargetConstruction Value - 20
-    graphic = "icons/specials_huge/tectonic_instability.png"
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
@@ -400,23 +302,6 @@ Special
             effects = CreateShip "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"
-
-Special
-    name = "TUNNELS_SPECIAL"
-    description = "TUNNELS_SPECIAL_DESCRIPTION"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            effects = SetTargetConstruction Value + 10
-    graphic = "icons/specials_huge/tunnels.png"
 
 Special
     name = "RESONANT_MOON_SPECIAL"
@@ -1091,7 +976,7 @@ Special
                 Ship
             ]
             effects = [
-                SetDetection Value + 100
+                SetDetection Value + 60
                 RemoveSpecial "DERELICT_SPECIAL2"
             ]
 
@@ -1286,49 +1171,6 @@ Special
     spawnrate = 0
     spawnlimit = 0
     graphic = "icons/specials_huge/nova_boom.png"
-
-/*
-Special
-    name = "EXPERIMENTOR_OUTPOST_SPECIAL"
-    description = "EXPERIMENTOR_OUTPOST_SPECIAL_DESC"
-    spawnrate = 0
-    spawnlimit = 0
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = Contains And [
-                OwnedBy AnyEmpire
-                Species "SP_EXPERIMENTOR"
-            ]
-            stackinggroup = "VICTORY_SITREP"
-            effects = [
-                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_CAPTURE"
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
-            stackinggroup = "VICTORY_SITREP"
-            effects = [
-                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_DESTRUCTION"
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Contains Species "SP_EXPERIMENTOR"
-            stackinggroup = "VICTORY_SITREP"
-            effects = [
-                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_BIO"
-            ]
-    ]
-    graphic = ""
-*/
 
 Special
     name = "PROBIOTIC_SPECIAL"
@@ -1713,8 +1555,8 @@ Special
     graphic = "icons/specials_huge/crystals.png"
 
 Special
-    name = "METALOIDS_SPECIAL"
-    description = "METALOIDS_SPECIAL_DESC"
+    name = "ELERIUM_SPECIAL"
+    description = "ELERIUM_SPECIAL_DESC"
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
@@ -1745,7 +1587,7 @@ Special
                 TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
-            stackinggroup = "METALOIDS_STACK"
+            stackinggroup = "ELERIUM_STACK"
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1753,7 +1595,7 @@ Special
                 Source
                 HasTag "LITHIC"
             ]
-            stackinggroup = "METALOIDS_STACK"
+            stackinggroup = "ELERIUM_STACK"
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1781,7 +1623,6 @@ STANDARD_INDUSTRY_BOOST
             effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
 '''
-
 
 REMOVE_CLOUD_COVER
 '''EffectsGroup

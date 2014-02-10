@@ -41,7 +41,6 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-        [[TUNNELS_SPECIAL]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -1419,7 +1418,6 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-        [[TUNNELS_SPECIAL]]
         [[HUGE_PLANET]]
     ]
     
@@ -1942,7 +1940,7 @@ HAS_GROWTH_FOCUS
                 HasSpecial name = "SPICE_SPECIAL"
                 HasSpecial name = "FRUIT_SPECIAL"
                 HasSpecial name = "PROBIOTIC_SPECIAL"
-                HasSpecial name = "METALOIDS_SPECIAL"
+                HasSpecial name = "ELERIUM_SPECIAL"
                 HasSpecial name = "CRYSTALS_SPECIAL"
                 HasSpecial name = "MINERALS_SPECIAL"
             ]
@@ -1956,7 +1954,7 @@ HAS_MINING_FOCUS
             location = And [
                 HasSpecial "MINERALS_SPECIAL"
                 HasSpecial "CRYSTALS_SPECIAL"
-                HasSpecial "METALOIDS_SPECIAL"
+                HasSpecial "ELERIUM_SPECIAL"
             ]
             graphic = "icons/focus/mining.png"
 
@@ -2073,7 +2071,7 @@ AVERAGE_POPULATION
         [[PHOTOTROPHIC_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
         [[GAIA_POP_MODIFIER]]
-        [[TUNNELS_MODIFIER]]
+        [[GRO_HAB_MODIFIER]]
         [[POPULATION_TECHS]]
         
         // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
@@ -2342,19 +2340,15 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
 
-TUNNELS_MODIFIER
+GRO_HAB_MODIFIER
 '''     EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Or [
-                    HasSpecial "TUNNELS_SPECIAL"
-                    OwnerHasTech "GRO_SUBTER_HAB"
-                ]
-                Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
+                OwnerHasTech "GRO_SUBTER_HAB"
                 TargetPopulation low = 0 high = 9999
             ]
-            accountinglabel = "TUNNELS_LABEL"
+            accountinglabel = "SUBTERRANEAN_LABEL"
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
 
@@ -3460,19 +3454,6 @@ NOT_HUGE_PLANET
         ]
         effects = SetPlanetSize Large
 '''
-
-//#####      S P E C I A L S     #####//
-
-TUNNELS_SPECIAL
-'''EffectsGroup
-        scope = Source
-        activation = And [
-            Planet
-            Turn high = 0
-        ]
-        effects = AddSpecial name = "TUNNELS_SPECIAL"
-'''
-
 
 //#####      M U L T I P L I E R S     #####//
 
