@@ -108,6 +108,11 @@ public:
     typedef boost::signals2::signal<void (const std::string&)> OptionRemovedSignalType;
     //@}
 
+    /** indicuates whether an option with name \a name has been added to this
+        OptionsDB. */
+    bool        OptionExists(const std::string& name) const
+    { return m_options.find(name) != m_options.end(); }
+
     /** validates a value for an option. throws std::runtime_error if no option
       * \a name exists.  throws bad_lexical_cast if \a value cannot be
       * converted to the type of the option \a name. */
