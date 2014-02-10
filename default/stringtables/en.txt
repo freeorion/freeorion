@@ -3075,13 +3075,19 @@ OUTPOSTS_TEXT
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+'''The Growth Focus represents exporting rare materials and substances that can increase population of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
+
+A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.
+
+A Homeworld focused on Growth only helps other planets of the same species.
+
+Growth Special planets focused on growth, only help a single classification of species. Some specials function for organic species only, some for lithic species only, and some for robotic species only.'''
 
 MINING_FOCUS_TITLE
 Mining Focus
 MINING_FOCUS_TEXT
 '''Mining Focus is currently disabled.'''
-#The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.
+#The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus
