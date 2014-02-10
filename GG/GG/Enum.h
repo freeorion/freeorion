@@ -35,6 +35,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <climits>
 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -92,7 +93,7 @@ namespace GG {
         __VA_ARGS__                                                                     \
      };                                                                                 \
                                                                                         \
-    static friend inline std::istream& operator>>(std::istream& is, EnumName& value) {  \
+    friend inline std::istream& operator>>(std::istream& is, EnumName& value) {  \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -103,7 +104,7 @@ namespace GG {
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    static friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {   \
+    friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {   \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -112,7 +113,7 @@ namespace GG {
         return os << name;                                                              \
     }                                                                                   \
                                                                                         \
-    static friend inline const std::string& EnumToString(EnumName value) {              \
+    friend inline const std::string& EnumToString(EnumName value) {              \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -129,7 +130,7 @@ namespace GG {
         __VA_ARGS__                                                                     \
      };                                                                                 \
                                                                                         \
-    static inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
+    inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -140,7 +141,7 @@ namespace GG {
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    static inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
+    inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -149,7 +150,7 @@ namespace GG {
         return os << name;                                                              \
     }                                                                                   \
                                                                                         \
-    static inline const std::string& EnumToString(EnumName value) {                     \
+    inline const std::string& EnumToString(EnumName value) {                     \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
         if (map.size() == 0)                                                            \
             ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
@@ -162,7 +163,7 @@ namespace GG {
     /////////////
     template <class EnumType>
     const std::string& EnumMap<EnumType>::operator[](EnumType value) const {
-        std::map<EnumType, std::string>::const_iterator it = m_value_to_name_map.find(value);
+        typename std::map<EnumType, std::string>::const_iterator it = m_value_to_name_map.find(value);
         if (it != m_value_to_name_map.end()) {
             return it->second;
         } else {
@@ -173,7 +174,7 @@ namespace GG {
 
     template <class EnumType>
     EnumType EnumMap<EnumType>::operator[](const std::string& name) const {
-        std::map<std::string, EnumType>::const_iterator it = m_name_to_value_map.find(name);
+        typename std::map<std::string, EnumType>::const_iterator it = m_name_to_value_map.find(name);
         if (it != m_name_to_value_map.end()) {
             return it->second;
         } else {
