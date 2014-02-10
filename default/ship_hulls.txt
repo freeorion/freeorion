@@ -146,7 +146,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 75 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -178,14 +178,14 @@ Hull
     description = "SH_SPATIAL_FLUX_DESC"
     speed = 80
     starlaneSpeed = 80
-    fuel = 10
+    fuel = 6
     stealth = 15
     structure = 3
     slots = [
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.60, 0.50)
     ]
-    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [

@@ -8648,6 +8648,18 @@ SH_MULTISPEC_DESC
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
+ROBOTIC_INTERFACE_EFFECT
+Robotic crew network
+
+ROBOTIC_INTERFACE_SHIELDS
+Robotic Interface: Shields
+
+ROBOTIC_INTERFACE_SHIELDS_DESC
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength.
+
+Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
+'''
+
 CO_COLONY_POD
 Colony Pod
 

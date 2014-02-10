@@ -1860,7 +1860,11 @@ Tech
     researchcost = 12 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = Item type = ShipHull name = "SH_ROBOTIC"
+    unlock = [
+        Item type = ShipHull name = "SH_ROBOTIC"
+        Item type = ShipPart name = "ROBOTIC_INTERFACE_SHIELDS"
+    ]
+    graphic = "icons/ship_hulls/robotic_hull_small.png"
 
 Tech
     name = "SHP_SPACE_FLUX_DRIVE"

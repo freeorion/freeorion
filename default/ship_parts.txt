@@ -1,5 +1,57 @@
 include "shared_macros.txt"
 
+COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS
+'''
+Count condition = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+                VisibleToEmpire Source.Owner
+                HasTag "ROBOTIC"
+                Not Source
+                DesignHasPart 1 999 "ROBOTIC_INTERFACE_SHIELDS"
+				Or [
+                    DesignHasHull name = "SH_ROBOTIC"
+                    DesignHasHull name = "SH_SELF_GRAVITATING"
+                    DesignHasHull name = "SH_NANOROBOTIC"
+                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
+                    DesignHasHull name = "SH_TITANIC"
+                ]
+                WithinStarlaneJumps 0 Source
+            ]
+'''
+
+Part
+    name = "ROBOTIC_INTERFACE_SHIELDS"
+    description = "ROBOTIC_INTERFACE_SHIELDS_DESC"
+    class = Shield
+    capacity = 0
+    mountableSlotTypes = [Internal]
+    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    location = And [
+		OwnedBy TheEmpire Source.Owner
+		HasTag "ROBOTIC"
+	]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ROBOTIC"
+                Or [
+                    DesignHasHull name = "SH_ROBOTIC"
+                    DesignHasHull name = "SH_SELF_GRAVITATING"
+                    DesignHasHull name = "SH_NANOROBOTIC"
+                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
+                    DesignHasHull name = "SH_TITANIC"
+                ]
+            ]
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + min(min(
+                (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]])),            
+                ((([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]]) * 7 ) ^ 0.5 )), 20)
+    icon = "icons/ship_parts/robotic-interface-shields.png"
+
+
 Part
     name = "GT_TROOP_POD"
     description = "GT_TROOP_POD_DESC"
