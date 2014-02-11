@@ -1567,6 +1567,9 @@ Window titles
 OPTIONS_TECH_SPACING
 Tech spacing
 
+OPTIONS_QUEUES
+Queues
+
 OPTIONS_HORIZONTAL
 Horizontal
 
@@ -1748,7 +1751,7 @@ OPTIONS_UI_QUEUE_WIDTH
 Queue width
 
 OPTIONS_UI_PROD_QUEUE_LOCATION
-Queue Production Location
+Show Queue Production Location
 
 OPTIONS_MUSIC
 Music
@@ -2598,7 +2601,9 @@ RESEARCH_INFO_RP
 RP
 
 RESEARCH_QUEUE_PROMPT
-Double-click or shift-click on an available item to add it to the research queue.
+'''Double-click or shift-click on an available item to add it to the research queue.
+
+Hold control while clicking to add to the top of the queue.'''
 
 
 ####################
