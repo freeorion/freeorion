@@ -1041,6 +1041,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             max_pop_size -= 4
             detail.append("DIM_RIFT_MASTER_SPECIAL(maxPop-4)")
+        if "ECCENTRIC_ORBIT_SPECIAL" in planet.specials:
+            max_pop_size -= 3
+            detail.append("ECCENTRIC_ORBIT_SPECIAL(maxPop-3)")
+
         detail.append("maxPop %.1f"%max_pop_size)
 
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
