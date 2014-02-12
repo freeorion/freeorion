@@ -6935,6 +6935,12 @@ SHP_SOLAR_CONT_DESC
 
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
+SHP_KRILL_SPAWN
+Krill Spawner
+
+SHP_KRILL_SPAWN_DESC
+Unlocks the Krill Spawner ship part, which causes wild space krill to appear in systems with asteroid belts.
+
 SPY_ROOT_DECEPTION
 Deception
 SPY_ROOT_DECEPTION_DESC
@@ -8748,6 +8754,12 @@ Nova Bomb
 
 SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it receives the signal from a Nova Bomb Activator not more than one starlane jump away.
+
+SP_KRILL_SPAWNER
+Krill Spawner
+
+SP_KRILL_SPAWNER_DESC
+Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
 
 
 #############################################################

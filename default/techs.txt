@@ -2142,7 +2142,6 @@ Tech
         Item type = ShipHull name = "SH_BIOADAPTIVE"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
-    
 
 Tech
     name = "SHP_CONT_BIOADAPT"
@@ -2180,7 +2179,6 @@ Tech    name = "SHP_SENT_HULL"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
-    
 Tech
     name = "SHP_FRC_ENRG_COMP"
     description = "SHP_FRC_ENRG_COMP_DESC"
@@ -2789,6 +2787,20 @@ Tech
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 0.01
     graphic = ""
+
+
+//#     Ship Other
+
+Tech
+    name = "SHP_KRILL_SPAWN"
+    description = "SHP_KRILL_SPAWN_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 9999
+    researchturns = 9999
+    Unresearchable
+    unlock = Item type = ShipPart name = "SP_KRILL_SPAWNER"
 
 
 //########################################################

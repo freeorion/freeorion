@@ -244,6 +244,31 @@ Special
 
         EffectsGroup
             scope = Source
+            activation = And [
+                Not OwnerHasTech "SHP_KRILL_SPAWN"
+                OwnerHasTech "LRN_XENOARCH"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech "SHP_KRILL_SPAWN" empire = Target.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH_RUMORS"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "tech" data = "SHP_KRILL_SPAWN"
+                    ]
+            ]
+
+        EffectsGroup
+            scope = Source
             activation = OwnerHasTech "LRN_XENOARCH"
             effects = [
                 AddSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
