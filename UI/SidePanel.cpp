@@ -841,7 +841,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
     }
-    
+
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // create planet name text

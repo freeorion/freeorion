@@ -3172,11 +3172,11 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
             }
         }
     }
-    
+
     // if all previous edges still exist in the new graph, and the number of vertices and edges hasn't changed, 
     // then no vertices or edges can have been added either, so it is still the same graph
     graph_changed = graph_changed || boost::num_edges(new_graph_impl->system_graph) != boost::num_edges(m_graph_impl->system_graph);
-    
+
     if (graph_changed) {
         new_graph_impl.swap(m_graph_impl);
         // clear jumps distance cache

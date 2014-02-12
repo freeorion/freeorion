@@ -1,24 +1,5 @@
 include "shared_macros.txt"
 
-COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS
-'''
-Count condition = And [
-                Ship
-                OwnedBy TheEmpire Source.Owner
-                VisibleToEmpire Source.Owner
-                HasTag "ROBOTIC"
-                Not Source
-                DesignHasPart 1 999 "ROBOTIC_INTERFACE_SHIELDS"
-				Or [
-                    DesignHasHull name = "SH_ROBOTIC"
-                    DesignHasHull name = "SH_SELF_GRAVITATING"
-                    DesignHasHull name = "SH_NANOROBOTIC"
-                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
-                    DesignHasHull name = "SH_TITANIC"
-                ]
-                WithinStarlaneJumps 0 Source
-            ]
-'''
 
 Part
     name = "ROBOTIC_INTERFACE_SHIELDS"
@@ -29,9 +10,9 @@ Part
     buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = And [
-		OwnedBy TheEmpire Source.Owner
-		HasTag "ROBOTIC"
-	]
+        OwnedBy TheEmpire Source.Owner
+        HasTag "ROBOTIC"
+    ]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -62,10 +43,6 @@ Part
     buildtime = 1
     tags = "COMFORTABLE"
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = OrderedBombardedBy condition = Source
-            effects = SetMaxTroops Value + 100
     icon = "icons/ship_parts/troops.png"
 
 Part
@@ -1109,356 +1086,25 @@ Part
     icon = ""
 
 
-/*
 
------- TEMPORARILY REMOVED WEAPONS
-Part
-    name = "SR_WEAPON_2"
-    description = "SR_WEAPON_2_DESC"
-    class = ShortRange
-    damage = 1
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/laser.png"
 
-Part
-    name = "SR_ION_CANNON"
-    description = "SR_ION_CANNON_DESC"
-    class = ShortRange
-    damage = 3
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/ion_cannon.png"
 
-Part
-    name = "SR_WEAPON_1"
-    description = "SR_WEAPON_1_DESC"
-    class = ShortRange
-    damage = 5
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/mass_driver.png"
-
-Part
-    name = "SR_WEAPON_4"
-    description = "SR_WEAPON_4_DESC"
-    class = ShortRange
-    damage = 100
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "PD_PULSE_LASER"
-    description = "PD_PULSE_LASER_DESC"
-    class = PointDefense
-    damage = 1
-    ROF = 10
-    range = 20
-    mountableSlotTypes = External
-    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "PD_PHASOR"
-    description = "PD_PHASOR_DESC"
-    class = PointDefense
-    damage = 2
-    ROF = 20
-    range = 20
-    mountableSlotTypes = External
-    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "PD_PARTICLE_BEAM"
-    description = "PD_PARTICLE_BEAM_DESC"
-    class = PointDefense
-    damage = 3
-    ROF = 100
-    range = 20
-    mountableSlotTypes = External
-    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "FI_INTERCEPTOR"
-    description = "FI_INTERCEPTOR_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 1
-    launchrate = 6
-    fighterweaponrange = 20
-    speed = 75
-    stealth = 0
-    structure = 1
-    detection = 1
-    capacity = 12
-    mountableSlotTypes = External
-    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "FI_BOMBER"
-    description = "FI_BOMBER_DESC"
-    class = Fighters
-    type = Bomber
-    antishipdamage = 2
-    antifighterdamage = 0
-    launchrate = 3
-    fighterweaponrange = 20
-    speed = 60
-    stealth = 0
-    structure = 2
-    detection = 1
-    capacity = 6
-    mountableSlotTypes = External
-    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "FI_RECON"
-    description = "FI_RECON_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 0
-    launchrate = 6
-    fighterweaponrange = 1
-    speed = 100
-    stealth = 0
-    structure = 1
-    detection = 20
-    capacity = 12
-    mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "FI_BIOINTERCEPTOR"
-    description = "FI_BIOINTERCEPTOR_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 3
-    launchrate = 6
-    fighterweaponrange = 25
-    speed = 90
-    stealth = 15
-    structure = 3
-    detection = 40
-    capacity = 36
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = And [
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    icon = ""
-
-Part
-    name = "FI_BIOBOMBER"
-    description = "FI_BIOBOMBER_DESC"
-    class = Fighters
-    type = Bomber
-    antishipdamage = 6
-    antifighterdamage = 0
-    launchrate = 3
-    fighterweaponrange = 25
-    speed = 70
-    stealth = 15
-    structure = 5
-    detection = 40
-    capacity = 18
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = And [
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    icon = ""
-
-Part
-    name = "LR_NUCLEAR_MISSILE"
-    description = "LR_NUCLEAR_MISSILE"
-    class = Missiles
-    damage = 3
-    ROF = 1
-    range = 125
-    speed = 15
-    stealth = 0
-    structure = 1
-    capacity = 20
-    mountableSlotTypes = External
-    buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/nuclear_missile.png"
-
-Part
-    name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
-    description = "LR_NEUTRONIUM_PLATE_NUC_MIS_DESC"
-    class = Missiles
-    damage = 3
-    ROF = 1
-    range = 125
-    speed = 15
-    stealth = 0
-    structure = 6
-    capacity = 20
-    mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 8
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_NEUTRONIUM_FORGE"
-        Number low = 1 high = 999 condition = And [
-            OwnedBy TheEmpire Source.Owner
-            Or [
-                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
-                Building name = "BLD_NEUTRONIUM_SYNTH"
-            ]
-        ]
-    ]
-    icon = ""
-
-Part
-    name = "LR_SPECTRAL_MISSILE"
-    description = "LR_SPECTRAL_MISSILE_DESC"
-    class = Missiles
-    damage = 10
-    ROF = 1
-    range = 125
-    speed = 50
-    stealth = 15
-    structure = 1
-    capacity = 20
-    mountableSlotTypes = External
-    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 6
-    location = OwnedBy TheEmpire Source.Owner
-    icon = ""
-
-Part
-    name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
-    description = "LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC"
-    class = Missiles
-    damage = 10
-    ROF = 1
-    range = 125
-    speed = 50
-    stealth = 15
-    structure = 6
-    capacity = 20
-    mountableSlotTypes = External
-    buildcost = 125 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 12
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_NEUTRONIUM_FORGE"
-        Number low = 1 high = 999 condition = And [
-            OwnedBy TheEmpire Source.Owner
-            Or [
-                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
-                Building name = "BLD_NEUTRONIUM_SYNTH"
-            ]
-        ]
-    ]
-    icon = ""
-
-Part
-    name = "LR_ANTIMATTER_TORPEDO"
-    description = "LR_ANTIMATTER_TORPEDO_DESC"
-    class = Missiles
-    damage = 8
-    ROF = 0.5
-    range = 175
-    speed = 50
-    stealth = 0
-    structure = 1
-    capacity = 10
-    mountableSlotTypes = External
-    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = And [
-        Number low = 1 high = 999 And [
-            Or [
-                Building "BLD_SHIPYARD_CON_ENGINE"
-                Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            ]
-            Or [
+COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS
+'''
+Count condition = And [
+                Ship
                 OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
+                VisibleToEmpire Source.Owner
+                HasTag "ROBOTIC"
+                Not Source
+                DesignHasPart 1 999 "ROBOTIC_INTERFACE_SHIELDS"
+                Or [
+                    DesignHasHull name = "SH_ROBOTIC"
+                    DesignHasHull name = "SH_SELF_GRAVITATING"
+                    DesignHasHull name = "SH_NANOROBOTIC"
+                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
+                    DesignHasHull name = "SH_TITANIC"
+                ]
+                WithinStarlaneJumps 0 Source
             ]
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    icon = ""
-
-Part
-    name = "LR_PLASMA_TORPEDO"
-    description = "LR_PLASMA_TORPEDO_DESC"
-    class = Missiles
-    damage = 25
-    ROF = 0.5
-    range = 175
-    speed = 75
-    stealth = 25
-    structure = 1
-    capacity = 10
-    mountableSlotTypes = External
-    buildcost = 300 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = And [
-        Number low = 1 high = 999 And [
-            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            Or [
-                OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
-            ]
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    icon = ""
-*/
+'''
