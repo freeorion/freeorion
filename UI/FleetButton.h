@@ -61,7 +61,10 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);
+boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet>, FleetButton::SizeType size_type);
+
+/* returns head icon for passed fleets at passed icon size */
+boost::shared_ptr<GG::Texture> FleetHeadIcon(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
 boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);

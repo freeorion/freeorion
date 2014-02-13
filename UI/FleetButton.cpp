@@ -234,27 +234,15 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     }
 
 
-    // select icon(s) for fleet(s), and get a fleet for use later
-    TemporaryPtr<const Fleet> first_fleet;
-    if (m_fleets.size() != 1) {
-        first_fleet = *(fleets.begin());
-
-        // if there are multiple fleets, default to generic fleet icon by
-        // passing null pointer (0) to FleetHeadIcon.  TODO: instead, check if
-        // all fleets would use the same icon, and if so, use that icon, and
-        // only default to generic icon in cases where there are multiple
-        // different icons for the various fleets being represented
-        m_head_icon = FleetHeadIcon(TemporaryPtr<Fleet>(), size_type);
-        int num_ships = 0;
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
-            num_ships += (*it)->NumShips();
-        m_size_icon = FleetSizeIcon(num_ships, size_type);
-
-    } else if (!m_fleets.empty()) {
-        first_fleet = *fleets.begin();
-        m_head_icon = FleetHeadIcon(first_fleet, size_type);
-        m_size_icon = FleetSizeIcon(first_fleet, size_type);
+    // select icon(s) for fleet(s)
+    int num_ships = 0;
+    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<const Fleet> fleet = *it;
+        if (fleet)
+            num_ships += fleet->NumShips();
     }
+    m_size_icon = FleetSizeIcon(num_ships, size_type);
+    m_head_icon = FleetHeadIcon(fleets, size_type);
 
     // resize to fit icon by first determining necessary size, and then resizing
     GG::X texture_width(0);
@@ -274,6 +262,10 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // a starlane, which is the case if the fleet is not in a system and has a valid next system
     GG::Pt direction_vector(GG::X(0), GG::Y(1));    // default, unrotated button orientation
 
+    TemporaryPtr<const Fleet> first_fleet;
+    if (!m_fleets.empty())
+        first_fleet = *fleets.begin();
+    
     if (first_fleet && first_fleet->SystemID() == INVALID_OBJECT_ID) {
         int next_sys_id = first_fleet->NextSystemID();
         if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(next_sys_id)) {
@@ -430,6 +422,11 @@ void FleetButton::PlayFleetButtonOpenSound()
 // Free Functions
 /////////////////////
 boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {
+    std::vector< TemporaryPtr<const Fleet> > fleets(1U, fleet);
+    return FleetHeadIcon(fleets, size_type);
+}
+
+boost::shared_ptr<GG::Texture> FleetHeadIcon(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type) {
     if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
         return boost::shared_ptr<GG::Texture>();
 
@@ -438,21 +435,56 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, Fl
     if (size_prefix.empty())
         return boost::shared_ptr<GG::Texture>();
 
+    // the set of fleets is treated like a fleet that contains all the ships
+    bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
+    for (std::vector< TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+        const TemporaryPtr<const Fleet> fleet = *fleet_it;
+        if (!fleet) 
+            continue;
+        
+        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips();
+        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips();
+        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips();
+        hasMonsters     = hasMonsters     || fleet->HasMonsters();
+        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips();
+    }
+    
     // get file name main part depending on type of fleet
+    // symbol type prioritized by the ship type arbitrarily deemed "most important"
     std::string main_filename = "head-scout.png";
-    if (fleet && fleet->HasColonyShips())
-        main_filename = "head-colony.png";
-    else if (fleet && fleet->HasOutpostShips())
-        main_filename = "head-outpost.png";
-    else if (fleet && fleet->HasTroopShips())
-        main_filename = "head-lander.png";
-    else if (fleet && fleet->HasMonsters() && fleet->HasArmedShips())
-        main_filename = "head-monster.png";
-    else if (fleet && fleet->HasMonsters() && !fleet->HasArmedShips())
-        main_filename = "head-monster-harmless.png";
-    else if (fleet && fleet->HasArmedShips())
+    if (hasArmedShips) {
         main_filename = "head-warship.png";
-
+        if (hasTroopShips)
+            main_filename = "head-lander.png";
+        else if (hasMonsters)
+            main_filename = "head-monster.png";
+    } else {
+        if (hasTroopShips)
+            main_filename = "head-lander.png";
+        else if (hasColonyShips)
+            main_filename = "head-colony.png";
+        else if (hasOutpostShips)
+            main_filename = "head-outpost.png";
+        else if (hasMonsters)
+            main_filename = "head-monster-harmless.png";
+    }
+    // reset to generic icon in cases where the above is too imprecise
+    if (hasArmedShips) {
+        if (hasColonyShips)
+            main_filename = "head-scout.png";
+        else if (hasOutpostShips)
+            main_filename = "head-scout.png";
+        else if (hasMonsters && main_filename != "head-monster.png")
+            main_filename = "head-scout.png";
+    } else {
+        if (hasColonyShips && main_filename != "head-colony.png")
+            main_filename = "head-scout.png";
+        else if (hasOutpostShips && main_filename != "head-outpost.png")
+            main_filename = "head-scout.png";
+        else if (hasMonsters && main_filename != "head-monster-harmless.png")
+            main_filename = "head-scout.png";
+    }
+    
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + main_filename), false);
 }
 
