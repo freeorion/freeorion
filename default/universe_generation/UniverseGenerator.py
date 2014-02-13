@@ -192,7 +192,8 @@ def calc_planet_size(star_type, orbit):
             roll = random.randint(1, 100) \
                 + fo.densityModToPlanetSizeDist(gsd.planetDensity, candidate) \
                 + fo.starTypeModToPlanetSizeDist(star_type, candidate) \
-                + fo.orbitModToPlanetSizeDist(orbit, candidate)
+                + fo.orbitModToPlanetSizeDist(orbit, candidate) \
+                + fo.galaxyShapeModToPlanetSizeDist(gsd.shape, candidate)
             if max_roll < roll:
                 max_roll = roll
                 planet_size = candidate
@@ -586,15 +587,24 @@ def create_universe():
     # choose star types and planet sizes, before choosting names, so naming can have special handling of Deep Space
     star_type_assignments = {}
     planet_size_assignments = {}
+    planet_count_dist = {}
     for position in system_positions:
         star_type = pick_star_type() # needed to determine planet size
         star_type_assignments[(position.x, position.y)] = star_type
         these_planets = {}
+        planet_count = 0
         for orbit in range(0, system_orbits):
             # check for each orbit if a planet shall be created by determining planet size
             planet_size = calc_planet_size(star_type, orbit)
             these_planets[orbit] = planet_size
+            if planet_size in planet_sizes:
+                planet_count += 1
         planet_size_assignments[(position.x, position.y)] = these_planets
+        planet_count_dist.setdefault(planet_count, [0])[0] += 1
+    print "\n Planet Count Distribution: planets_in_system | num_systems"
+    for planet_count,sys_count in planet_count_dist.items():
+        print "\t\t\t%2d  | %5d"%(planet_count, sys_count[0])
+    print
 
     # will name name a portion of stars on a group basis, where the stars of each group share the same base star name, 
     # suffixed by different (default greek) letters or characters (options at top of file)

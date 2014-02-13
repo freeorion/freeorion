@@ -33,6 +33,7 @@
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/date_time/posix_time/time_formatters.hpp>
 
 #ifdef FREEORION_MACOSX
 #include <sys/param.h>
@@ -99,6 +100,7 @@ namespace {
     const std::vector<std::vector<int> >&   g_universe_age_mod_to_star_type_dist    = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
     const std::vector<std::vector<int> >&   g_density_mod_to_planet_size_dist       = UniverseDataTables()["DensityModToPlanetSizeDist"];
     const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_size_dist     = UniverseDataTables()["StarTypeModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >&   g_galaxy_shape_mod_to_planet_size_dist  = UniverseDataTables()["GalaxyShapeModToPlanetSizeDist"];
     const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_size_dist         = UniverseDataTables()["OrbitModToPlanetSizeDist"];
     const std::vector<std::vector<int> >&   g_planet_size_mod_to_planet_type_dist   = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
     const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_type_dist         = UniverseDataTables()["OrbitModToPlanetTypeDist"];
@@ -116,6 +118,9 @@ namespace {
 
     int StarTypeModToPlanetSizeDist(StarType star_type, PlanetSize size)
     { return g_star_type_mod_to_planet_size_dist[star_type][size]; }
+
+    int GalaxyShapeModToPlanetSizeDist(Shape shape, PlanetSize size)
+    { return g_galaxy_shape_mod_to_planet_size_dist[shape][size]; }
 
     int OrbitModToPlanetSizeDist(int orbit, PlanetSize size)
     { return g_orbit_mod_to_planet_size_dist[orbit][size]; }
@@ -835,6 +840,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("universeAgeModToStarTypeDist",     UniverseAgeModToStarTypeDist);
     def("densityModToPlanetSizeDist",       DensityModToPlanetSizeDist);
     def("starTypeModToPlanetSizeDist",      StarTypeModToPlanetSizeDist);
+    def("galaxyShapeModToPlanetSizeDist",   GalaxyShapeModToPlanetSizeDist);
     def("orbitModToPlanetSizeDist",         OrbitModToPlanetSizeDist);
     def("planetSizeModToPlanetTypeDist",    PlanetSizeModToPlanetTypeDist);
     def("orbitModToPlanetTypeDist",         OrbitModToPlanetTypeDist);
@@ -1062,6 +1068,16 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
             std::size_t h = string_hash(g_galaxy_setup_data->m_seed);
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
+    }
+    if (g_galaxy_setup_data->m_seed.empty()) {
+        //ClockSeed();
+        // replicate ClockSeed code here so can log the seed used
+        boost::posix_time::ptime ltime = boost::posix_time::microsec_clock::local_time();
+        std::string newseed = boost::posix_time::to_simple_string(ltime);
+        boost::hash<std::string> string_hash;
+        std::size_t h = string_hash(newseed);
+        Logger().debugStream() << "CreateUniverse:: using clock for Seed:" << newseed;
+        seed = static_cast<unsigned int>(h);
     }
     Seed(seed);
     Logger().debugStream() << "GenerateUniverse with seed: " << seed;

@@ -11,7 +11,7 @@
 <4x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
 NoneUnused                      9999        0           0       0       -5       -10   0               0
-LowDensity                      90          0           0       0       -5       -10   0               0
+LowDensity                      85          0           0       0       -5       -10   0               0
 AverageDensity                  70          0           0       0       -5       -10   0               0
 HighDensity                     50          0           0       0       -5       -10   0               0
 
@@ -38,6 +38,18 @@ Orbit7                          0           0           5       5       15      
 Orbit8                          0           0           10      5       10      5        5              30
 Orbit9                          5           0           10      5       5       5        5              30
 Orbit10                         10          0           10      0       0       0        5              10
+
+<9x8>
+GalaxyShapeModToPlanetSizeDist  NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
+SPIRAL_2                        0           0           0       0       0       0       0               0
+SPIRAL_3                        0           0           0       0       0       0       0               0
+SPIRAL_4                        0           0           0       0       0       0       0               0
+CLUSTER                         0           0           0       0       0       0       0               0
+ELLIPTICAL                      0           0           0       0       0       0       0               0
+IRREGULAR                       0           0           0       0       0       0       0               0
+RING                            0           0           0       0       0       0       0               0
+PYTHON_TEST                     0           0           0       0       0       0       0               0
+RANDOM                          0           0           0       0       0       0       0               0
 
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
