@@ -72,24 +72,23 @@ IntroMenu::IntroMenu(my_context ctx) :
 
 IntroMenu::~IntroMenu() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
-    if (GetOptionsDB().Get<bool>("tech-demo"))
-        Client().Remove(Client().GetClientUI()->GetCombatWnd());
-
-    Client().Remove(Client().GetClientUI()->GetIntroScreen());
 }
 
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
+    Client().Remove(Client().GetClientUI()->GetIntroScreen());
     return transit<WaitingForSPHostAck>();
 }
 
 boost::statechart::result IntroMenu::react(const HostMPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostMPGameRequested";
+    Client().Remove(Client().GetClientUI()->GetIntroScreen());
     return transit<WaitingForMPHostAck>();
 }
 
 boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.JoinMPGameRequested";
+    Client().Remove(Client().GetClientUI()->GetIntroScreen());
     return transit<WaitingForMPJoinAck>();
 }
 
