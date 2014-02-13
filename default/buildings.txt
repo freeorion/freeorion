@@ -880,6 +880,10 @@ BuildingType
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
         Not Planet environment = [Uninhabitable Good]
+        Not And [
+            Species "SP_EXOBOT"
+            Planet environment = Adequate
+        ]
     ]
     effectsgroups = [
         EffectsGroup
