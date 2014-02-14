@@ -10,7 +10,6 @@ namespace { struct string_parser_rules {
             qi::_b_type _b;
             qi::_val_type _val;
             qi::as_string_type as_string;
-            using phoenix::bind;
             using phoenix::construct;
             using phoenix::push_back;
             using phoenix::new_;
@@ -45,20 +44,20 @@ namespace { struct string_parser_rules {
 
             free_variable
                 =   tok.Value_       [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
-                |   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
+                |   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
                 ;
 
             variable
                 = (
                         variable_scope()  [ _b = _1 ] > '.'
-                    >  -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
+                    >  -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
                     >   (
                             variable_name
-                            [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<std::string> >(_b, _a) ]
+                            [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<std::string> >(_b, _a) ]
                         |   int_var_variable_name()
-                            [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
+                            [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
                         |   double_var_variable_name()
-                            [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_b, _a)) ]
+                            [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_b, _a)) ]
                         )
                     )
                 ;

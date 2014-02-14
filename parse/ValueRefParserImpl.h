@@ -205,15 +205,14 @@ void initialize_bound_variable_parser(
     qi::_a_type _a;
     qi::_b_type _b;
     qi::_val_type _val;
-    using phoenix::bind;
     using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
 
     bound_variable
         =   variable_scope() [ _b = _1 ] > '.'
-        > -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
-        >   variable_name    [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        > -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
+        >   variable_name    [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
 
@@ -230,7 +229,6 @@ void initialize_numeric_statistic_parser(
     qi::_c_type _c;
     qi::_val_type _val;
     qi::eps_type eps;
-    using phoenix::bind;
     using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
@@ -248,8 +246,8 @@ void initialize_numeric_statistic_parser(
               |   (
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_token)
-                   >>       -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] >> '.')
-                   >>       variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ]
+                   >>       -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] >> '.')
+                   >>       variable_name [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
              )
@@ -270,7 +268,6 @@ void initialize_nonnumeric_statistic_parser(
     qi::_c_type _c;
     qi::_val_type _val;
     qi::eps_type eps;
-    using phoenix::bind;
     using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
@@ -280,8 +277,8 @@ void initialize_nonnumeric_statistic_parser(
         =    (
                   tok.Mode_ [ _b = ValueRef::MODE ]
               >>  parse::label(Property_token)
-              >>        -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
-              >>        variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ]
+              >>        -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
+              >>        variable_name [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ]
               >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]

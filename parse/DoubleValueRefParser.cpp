@@ -7,7 +7,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_val_type _val;
-            using phoenix::bind;
             using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
@@ -45,7 +44,7 @@ namespace {
                 |    tok.BattleSpeed_
                 |    tok.StarlaneSpeed_
                 |    tok.TradeStockpile_
-                |    tok.DistanceToSource_
+                //|    tok.DistanceToSource_    // Note: DistanceToSource will be a Source-variant property, but without an explicit Source reference, so will be treated as Source-invariant by ValueRef and parsing code. This is bad.
                 |    tok.X_
                 |    tok.Y_
                 |    tok.SizeAsDouble_
@@ -61,27 +60,31 @@ namespace {
 
             free_variable
                 =
-                        tok.Value_ [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
-                    |
+                    tok.Value_ [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
+                |
                     (
                         tok.UniverseCentreX_
                     |   tok.UniverseCentreY_
                         // add more object-independent ValueRef int functions here
-                    ) [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
+                    ) [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))),
+                        _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
                 ;
 
             variable
                 = (
-                        variable_scope() [ _b = _1 ] > '.'
-                    >  -(container_type() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))) ] > '.')
+                        variable_scope() [ _b = _1 ] > '.'  // determines reference type from explicit use of Source, Target, LocalCandiate, or RootCandidate in expression
+                    >  -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
                     >   (
-                            variable_name [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<double> >(_b, _a) ]
-                        |   int_var_variable_name() [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
+                            variable_name [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))),
+                                            _val = new_<ValueRef::Variable<double> >(_b, _a) ]
+                        |   int_var_variable_name() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))),
+                                                      _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
                         )
                   )
                 | (
                         tok.CurrentTurn_
-                        [ push_back(_a, construct<std::string>(bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
+                        [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))),
+                          _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
                   )
                 ;
 
