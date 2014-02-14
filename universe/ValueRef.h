@@ -568,7 +568,7 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
 
     if (m_stat_type != rhs_.m_stat_type)
         return false;
-    if (m_property_name != rhs_.m_property_name)
+    if (this->m_property_name != rhs_.m_property_name)
         return false;
 
     if (m_sampling_condition == rhs_.m_sampling_condition) {
@@ -935,7 +935,7 @@ bool ValueRef::ComplexVariable<T>::operator==(const ValueRef::ValueRefBase<T>& r
         return false;
     const ValueRef::ComplexVariable<T>& rhs_ = static_cast<const ValueRef::ComplexVariable<T>&>(rhs);
 
-    if (m_property_name != rhs_.m_property_name)
+    if (this->m_property_name != rhs_.m_property_name)
         return false;
 
     if (m_int_ref1 == rhs_.m_int_ref1) {
