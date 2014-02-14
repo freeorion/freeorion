@@ -127,10 +127,26 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
             ]
             stackinggroup = "IMPERIAL_PALACE_EFFECT"
-            effects = [
+            effects =
                 SetTargetConstruction Value + 20
-//                SetMaxDefense Value + 5
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                Species Source.Planet.Species
             ]
+            activation = And [
+                OwnedBy Source.ProducedByEmpireID
+                ContainedBy And [
+                    Object Source.PlanetID
+                    Planet
+                    Species
+                ]
+            ]
+            stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
+            effects =
+                SetTargetHappiness Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
         ]
     icon = "icons/building/palace.png"
 
