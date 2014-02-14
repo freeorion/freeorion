@@ -146,7 +146,7 @@ private:
 };
 
 /** The variable value ValueRef class.  The value returned by this node is
-  * taken from either the \a source or \a target parameters to Eval. */
+  * taken from the gamestate, most often from the Source or Target objects. */
 template <class T>
 struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
@@ -184,6 +184,7 @@ struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
     Statistic(const std::vector<std::string>& property_name,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
+    ~Statistic();
 
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
 
@@ -218,6 +219,50 @@ private:
     StatisticType                   m_stat_type;
     const Condition::ConditionBase* m_sampling_condition;
 
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The complex variable ValueRef class. The value returned by this node
+  * is taken from the gamestate. */
+template <class T>
+struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
+{
+    explicit ComplexVariable(const std::string& variable_name,
+                             const ValueRefBase<int>* int_ref1 = 0,
+                             const ValueRefBase<int>* int_ref2 = 0,
+                             const ValueRefBase<std::string>* string_ref1 = 0,
+                             const ValueRefBase<std::string>* string_ref2 = 0);
+
+    explicit ComplexVariable(const std::string& variable_name,
+                             const ValueRefBase<int>* int_ref1,
+                             const ValueRefBase<std::string>* string_ref1,
+                             const ValueRefBase<int>* int_ref2 = 0,
+                             const ValueRefBase<std::string>* string_ref2 = 0);
+
+    ~ComplexVariable();
+
+    virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    const ValueRefBase<int>*        IntRef1() const;
+    const ValueRefBase<int>*        IntRef2() const;
+    const ValueRefBase<std::string>*StringRef1() const;
+    const ValueRefBase<std::string>*StringRef2() const;
+    virtual T                       Eval(const ScriptingContext& context) const;
+    virtual bool                    RootCandidateInvariant() const;
+    virtual bool                    LocalCandidateInvariant() const;
+    virtual bool                    TargetInvariant() const;
+    virtual bool                    SourceInvariant() const;
+    virtual std::string             Description() const;
+    virtual std::string             Dump() const;
+
+protected:
+    const ValueRefBase<int>*        m_int_ref1;
+    const ValueRefBase<int>*        m_int_ref2;
+    const ValueRefBase<std::string>*m_string_ref1;
+    const ValueRefBase<std::string>*m_string_ref2;
+
+private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -281,9 +326,10 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
 {
-    Operation(OpType op_type, const ValueRefBase<T>* operand1, const ValueRefBase<T>* operand2); ///< binary operation ctor
-    Operation(OpType op_type, const ValueRefBase<T>* operand); ///< unary operation ctor
-    ~Operation(); ///< dtor
+    Operation(OpType op_type, const ValueRefBase<T>* operand1,
+              const ValueRefBase<T>* operand2);                 ///< binary operation ctor
+    Operation(OpType op_type, const ValueRefBase<T>* operand);  ///< unary operation ctor
+    ~Operation();
 
     virtual bool            operator==(const ValueRef::ValueRefBase<T>& rhs) const;
     OpType                  GetOpType() const;
@@ -309,7 +355,7 @@ private:
 
 namespace ValueRef {
     FO_COMMON_API std::string ReconstructName(const std::vector<std::string>& property_name,
-                                ReferenceType ref_type);
+                                              ReferenceType ref_type);
 }
 
 // Template Implementations
@@ -409,7 +455,6 @@ void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
-
 template <class T>
 ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
     m_ref_type(ref_type),
@@ -509,6 +554,10 @@ ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
 {}
 
 template <class T>
+ValueRef::Statistic<T>::~Statistic()
+{ delete m_sampling_condition; }
+
+template <class T>
 bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
 {
     if (&rhs == this)
@@ -518,6 +567,8 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
     const ValueRef::Statistic<T>& rhs_ = static_cast<const ValueRef::Statistic<T>&>(rhs);
 
     if (m_stat_type != rhs_.m_stat_type)
+        return false;
+    if (m_property_name != rhs_.m_property_name)
         return false;
 
     if (m_sampling_condition == rhs_.m_sampling_condition) {
@@ -835,6 +886,190 @@ void ValueRef::Statistic<T>::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
         & BOOST_SERIALIZATION_NVP(m_stat_type)
         & BOOST_SERIALIZATION_NVP(m_sampling_condition);
+}
+
+///////////////////////////////////////////////////////////
+// ComplexVariable                                       //
+///////////////////////////////////////////////////////////
+template <class T>
+ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
+                                              const ValueRefBase<int>* int_ref1,
+                                              const ValueRefBase<int>* int_ref2,
+                                              const ValueRefBase<std::string>* string_ref1,
+                                              const ValueRefBase<std::string>* string_ref2) :
+    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, std::vector<std::string>(variable_name, 1u)),
+    m_int_ref1(int_ref1),
+    m_int_ref2(int_ref2),
+    m_string_ref1(string_ref1),
+    m_string_ref2(string_ref2)
+{}
+
+template <class T>
+ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
+                                              const ValueRefBase<int>* int_ref1,
+                                              const ValueRefBase<std::string>* string_ref1,
+                                              const ValueRefBase<int>* int_ref2,
+                                              const ValueRefBase<std::string>* string_ref2) :
+    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, std::vector<std::string>(variable_name, 1u)),
+    m_int_ref1(int_ref1),
+    m_int_ref2(int_ref2),
+    m_string_ref1(string_ref1),
+    m_string_ref2(string_ref2)
+{}
+
+template <class T>
+ValueRef::ComplexVariable<T>::~ComplexVariable()
+{
+    delete m_int_ref1;
+    delete m_int_ref2;
+    delete m_string_ref1;
+    delete m_string_ref2;
+}
+
+template <class T>
+bool ValueRef::ComplexVariable<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::ComplexVariable<T>& rhs_ = static_cast<const ValueRef::ComplexVariable<T>&>(rhs);
+
+    if (m_property_name != rhs_.m_property_name)
+        return false;
+
+    if (m_int_ref1 == rhs_.m_int_ref1) {
+        // check next member
+    } else if (!m_int_ref1 || !rhs_.m_int_ref1) {
+        return false;
+    } else {
+        if (*m_int_ref1 != *(rhs_.m_int_ref1))
+            return false;
+    }
+
+    if (m_int_ref2 == rhs_.m_int_ref2) {
+        // check next member
+    } else if (!m_int_ref2 || !rhs_.m_int_ref2) {
+        return false;
+    } else {
+        if (*m_int_ref2 != *(rhs_.m_int_ref2))
+            return false;
+    }
+
+    if (m_string_ref1 == rhs_.m_string_ref1) {
+        // check next member
+    } else if (!m_string_ref1 || !rhs_.m_string_ref1) {
+        return false;
+    } else {
+        if (*m_string_ref1 != *(rhs_.m_string_ref1))
+            return false;
+    }
+
+    if (m_string_ref2 == rhs_.m_string_ref2) {
+        // check next member
+    } else if (!m_string_ref2 || !rhs_.m_string_ref2) {
+        return false;
+    } else {
+        if (*m_string_ref2 != *(rhs_.m_string_ref2))
+            return false;
+    }
+
+    return true;
+}
+
+template <class T>
+const ValueRef::ValueRefBase<int>* ValueRef::ComplexVariable<T>::IntRef1() const
+{ return m_int_ref1; }
+
+template <class T>
+const ValueRef::ValueRefBase<int>* ValueRef::ComplexVariable<T>::IntRef2() const
+{ return m_int_ref2; }
+
+template <class T>
+const ValueRef::ValueRefBase<std::string>* ValueRef::ComplexVariable<T>::StringRef1() const
+{ return m_string_ref1; }
+
+template <class T>
+const ValueRef::ValueRefBase<std::string>* ValueRef::ComplexVariable<T>::StringRef2() const
+{ return m_string_ref2; }
+
+template <class T>
+bool ValueRef::ComplexVariable<T>::RootCandidateInvariant() const
+{
+    return ValueRef::Variable<T>::RootCandidateInvariant()
+        && (!m_int_ref1 || m_int_ref1->RootCandidateInvariant())
+        && (!m_int_ref2 || m_int_ref2->RootCandidateInvariant())
+        && (!m_string_ref1 || m_string_ref1->RootCandidateInvariant())
+        && (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
+}
+
+template <class T>
+bool ValueRef::ComplexVariable<T>::LocalCandidateInvariant() const
+{
+    return (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant())
+        && (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant())
+        && (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant())
+        && (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
+}
+
+template <class T>
+bool ValueRef::ComplexVariable<T>::TargetInvariant() const
+{
+    return (!m_int_ref1 || m_int_ref1->TargetInvariant())
+        && (!m_int_ref2 || m_int_ref2->TargetInvariant())
+        && (!m_string_ref1 || m_string_ref1->TargetInvariant())
+        && (!m_string_ref2 || m_string_ref2->TargetInvariant());
+}
+
+template <class T>
+bool ValueRef::ComplexVariable<T>::SourceInvariant() const
+{
+    return (!m_int_ref1 || m_int_ref1->SourceInvariant())
+        && (!m_int_ref2 || m_int_ref2->SourceInvariant())
+        && (!m_string_ref1 || m_string_ref1->SourceInvariant())
+        && (!m_string_ref2 || m_string_ref2->SourceInvariant());
+}
+
+template <class T>
+std::string ValueRef::ComplexVariable<T>::Description() const
+{ return UserString("DESC_COMPLEX"); }
+
+template <class T>
+std::string ValueRef::ComplexVariable<T>::Dump() const
+{ return "ComplexVariable"; }
+
+namespace ValueRef {
+    template <>
+    PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    double ComplexVariable<double>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    int ComplexVariable<int>::Eval(const ScriptingContext& context) const;
+}
+
+template <class T>
+template <class Archive>
+void ValueRef::ComplexVariable<T>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
+        & BOOST_SERIALIZATION_NVP(m_int_ref1)
+        & BOOST_SERIALIZATION_NVP(m_int_ref2)
+        & BOOST_SERIALIZATION_NVP(m_string_ref1)
+        & BOOST_SERIALIZATION_NVP(m_string_ref2);
 }
 
 ///////////////////////////////////////////////////////////

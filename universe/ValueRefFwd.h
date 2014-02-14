@@ -19,6 +19,7 @@ namespace ValueRef {
     template <class T> struct Constant;
     template <class T> struct Variable;
     template <class T> struct Statistic;
+    template <class T> struct ComplexVariable;
     enum StatisticType {
         INVALID_STATISTIC_TYPE = -1,
         COUNT,  // returns the number of objects matching the condition

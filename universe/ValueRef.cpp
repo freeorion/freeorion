@@ -803,6 +803,69 @@ namespace ValueRef {
 }
 
 ///////////////////////////////////////////////////////////
+// ComplexVariable                                       //
+///////////////////////////////////////////////////////////
+namespace ValueRef {
+    template <>
+    PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return INVALID_PLANET_SIZE;
+    }
+
+    template <>
+    PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return INVALID_PLANET_TYPE;
+    }
+
+    template <>
+    PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return INVALID_PLANET_ENVIRONMENT;
+    }
+
+    template <>
+    UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return INVALID_UNIVERSE_OBJECT_TYPE;
+    }
+
+    template <>
+    StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return INVALID_STAR_TYPE;
+    }
+
+    template <>
+    double ComplexVariable<double>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return 0.0;
+    }
+
+    template <>
+    int ComplexVariable<int>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return 0;
+    }
+
+    template <>
+    std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
+    {
+        const std::string& variable_name = m_property_name.back();
+        return "";
+    }
+
+#undef IF_CURRENT_VALUE
+}
+
+///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
