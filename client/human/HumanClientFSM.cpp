@@ -582,7 +582,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
     int current_turn = INVALID_GAME_TURN;
-    Client().PlayerStatus().clear();
 
     try {
         ExtractMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
