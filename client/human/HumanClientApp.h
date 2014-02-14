@@ -44,6 +44,7 @@ public:
 
     /** \name Accessors */ //@{
     bool                SinglePlayerGame() const;   ///< returns true iff this game is a single-player game
+    bool                CanSaveNow() const;         ///< returns true / false to indicate whether this client can currently safely initiate a game save
     //@}
 
     /** \name Mutators */ //@{

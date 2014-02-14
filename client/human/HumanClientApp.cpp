@@ -269,6 +269,16 @@ HumanClientApp::~HumanClientApp() {
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
+bool HumanClientApp::CanSaveNow() const {
+    // only host can save in multiplayer
+    if (!SinglePlayerGame() && !Networking().PlayerIsHost(PlayerID()))
+        return false;
+
+    // can't save while AIs are playing their turns...
+    // TODO: this
+    return true;
+}
+
 void HumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
 { m_single_player_game = sp; }
 
@@ -811,7 +821,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));              break;
     case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));       break;
     case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));            break;
-    case Message::PLAYER_STATUS:        m_fsm->process_event(PlayerStatus(msg));            break;
+    case Message::PLAYER_STATUS:        m_fsm->process_event(::PlayerStatus(msg));          break;
     case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));             break;
     case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));       break;
     case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));               break;
@@ -904,7 +914,7 @@ void HumanClientApp::HandleWindowClosing()
 
 void HumanClientApp::HandleWindowClose() {
     Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
-    EndGame(true);
+    EndGame();
     Exit(0);
 }
 

@@ -31,7 +31,7 @@ public:
 
     mutable boost::signals2::signal<void ()>    SelectedPlayersChangedSignal;
     mutable boost::signals2::signal<void (int)> PlayerDoubleClickedSignal;
-    mutable boost::signals2::signal<void ()> ClosingSignal;
+    mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
     virtual void    CloseClicked();

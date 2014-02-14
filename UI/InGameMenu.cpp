@@ -52,11 +52,12 @@ InGameMenu::InGameMenu():
     GG::Connect(m_done_btn->LeftClickedSignal,      &InGameMenu::Done,      this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
-        // only host can save multiplayer games
-        if (!HumanClientApp::GetApp()->Networking().PlayerIsHost(HumanClientApp::GetApp()->PlayerID()))
-            m_save_btn->Disable();
         // need lobby to load a multiplayer game; menu load of a file is insufficient
         m_load_btn->Disable();
+    }
+
+    if (!HumanClientApp::GetApp()->CanSaveNow()) {
+        m_save_btn->Disable();
     }
 }
 
@@ -77,6 +78,15 @@ void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flag
 
 void InGameMenu::Save() {
     Logger().debugStream() << "InGameMenu::Save";
+
+    HumanClientApp* app = HumanClientApp::GetApp();
+    if (!app)
+        return;
+    if (!app->CanSaveNow()) {
+        Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
+        return;
+    }
+
     const std::string SAVE_GAME_EXTENSION =
         HumanClientApp::GetApp()->SinglePlayerGame() ?
         SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
@@ -94,7 +104,7 @@ void InGameMenu::Save() {
         dlg.Run();
         if (!dlg.Result().empty()) {
             Logger().debugStream() << "... initiating save";
-            HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
+            app->SaveGame(*dlg.Result().begin());
             CloseClicked();
             Logger().debugStream() << "... save done";
         }
