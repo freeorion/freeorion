@@ -2,7 +2,6 @@
 
 #include "../combat/CombatOrder.h"
 #include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
@@ -103,6 +102,18 @@ const std::map<int, PlayerInfo>& ClientApp::Players() const
 
 std::map<int, PlayerInfo>& ClientApp::Players()
 { return m_player_info; }
+
+const std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus() const
+{ return m_player_status; }
+
+std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus()
+{ return m_player_status; }
+
+void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
+    if (player_id != Networking::INVALID_PLAYER_ID)
+        return;
+    m_player_status[player_id] = status;
+}
 
 void ClientApp::StartTurn() {
     m_networking.SendMessage(TurnOrdersMessage(m_networking.PlayerID(), m_orders));

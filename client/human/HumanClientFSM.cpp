@@ -367,6 +367,7 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     Message::PlayerStatus status;
     ExtractMessageData(msg.m_message, about_player_id, status);
 
+    Client().SetPlayerStatus(about_player_id, status);
     Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
     Client().GetClientUI()->GetPlayerListWnd()->HandlePlayerStatusUpdate(status, about_player_id);
     // TODO: tell the map wnd or something else as well?
@@ -522,6 +523,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     bool single_player_game = false;
     int empire_id = ALL_EMPIRES;
     int current_turn = INVALID_GAME_TURN;
+    Client().PlayerStatus().clear();
 
     ExtractMessageData(msg.m_message,       single_player_game,             empire_id,
                        current_turn,        Empires(),                      GetUniverse(),
@@ -580,6 +582,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
     int current_turn = INVALID_GAME_TURN;
+    Client().PlayerStatus().clear();
 
     try {
         ExtractMessageData(msg.m_message,           Client().EmpireID(),    current_turn,

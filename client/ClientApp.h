@@ -27,9 +27,11 @@ public:
     int                     EmpireID() const;         ///< returns the empire ID of this client
     int                     CurrentTurn() const;      ///< returns the current game turn
 
-    int                     EmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
+    int                     EmpirePlayerID(int empire_id) const;///< returns the player ID for the player playing the empire with ID \a empire_id
 
-    const std::map<int, PlayerInfo>& Players() const; ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
+    const std::map<int, PlayerInfo>&Players() const;            ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
+    const std::map<int, Message::PlayerStatus>&
+                                    PlayerStatus() const;       ///< returns the map, indexed by player ID, of the latest known PlayerStatus for each player in the game
 
     const Universe&                 GetUniverse() const;        ///< returns client's local copy of Universe
     const GalaxySetupData&          GetGalaxySetupData() const; ///< returns the settings used in creating the current Universe
@@ -58,10 +60,13 @@ public:
     CombatOrderSet&             CombatOrders(); ///< returns CombatOrder set for this client's player
     ClientNetworking&           Networking();   ///< returns the networking object for this client's player
     std::map<int, PlayerInfo>&  Players();      ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
+    std::map<int, Message::PlayerStatus>&
+                                PlayerStatus(); ///< returns the map, indexed by player ID, of the latest known PlayerStatus for each player in the game
 
     void SetEmpireID(int id);                   ///< sets the empire ID of this client
     void SetCurrentTurn(int turn);              ///< sets the current game turn
     void SetSinglePlayerGame(bool sp = true);   ///< sets whether the current game is single player (sp = true) or multiplayer (sp = false)
+    void SetPlayerStatus(int player_id, Message::PlayerStatus status);
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
@@ -87,7 +92,9 @@ protected:
     ClientNetworking            m_networking;
     int                         m_empire_id;
     int                         m_current_turn;
-    std::map<int, PlayerInfo>   m_player_info;    ///< indexed by player id, contains info about all players in the game
+    std::map<int, PlayerInfo>   m_player_info;      ///< indexed by player id, contains info about all players in the game
+    std::map<int, Message::PlayerStatus>
+                                m_player_status;    ///< indexed by player id, the last known PlayerStatus for each player
 
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
