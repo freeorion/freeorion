@@ -47,20 +47,7 @@ const bool  STORE_FULLSCREEN_FLAG = true;
 #endif
 
 
-#ifdef FREEORION_LINUX
-int main(int argc, char* argv[]) {
-    // copy command line arguments to vector
-    std::vector<std::string> args;
-    for (int i = 0; i < argc; ++i)
-        args.push_back(argv[i]);
-
-    // set options from command line or config.xml, or generate config.xml
-    if (mainConfigOptionsSetup(args) != 0) {
-        std::cerr << "main() failed config." << std::endl;
-        return 1;
-    }
-#endif
-#ifdef FREEORION_FREEBSD
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
 int main(int argc, char* argv[]) {
     // copy command line arguments to vector
     std::vector<std::string> args;
