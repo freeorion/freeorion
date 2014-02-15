@@ -110,7 +110,7 @@ std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus()
 { return m_player_status; }
 
 void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
-    if (player_id != Networking::INVALID_PLAYER_ID)
+    if (player_id == Networking::INVALID_PLAYER_ID)
         return;
     m_player_status[player_id] = status;
 }

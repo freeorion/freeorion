@@ -275,7 +275,24 @@ bool HumanClientApp::CanSaveNow() const {
         return false;
 
     // can't save while AIs are playing their turns...
-    // TODO: this
+    for (std::map<int, PlayerInfo>::const_iterator player_it = this->m_player_info.begin();
+         player_it != this->m_player_info.end(); ++player_it)
+    {
+        const PlayerInfo& info = player_it->second;
+        if (info.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
+            continue;   // only care about AIs
+
+        std::map<int, Message::PlayerStatus>::const_iterator
+            status_it = this->m_player_status.find(player_it->first);
+
+        if (status_it == this->m_player_status.end()) {
+            return false;  // missing status for AI; can't assume it's ready
+        }
+        if (status_it->second != Message::WAITING) {
+            return false;
+        }
+    }
+
     return true;
 }
 

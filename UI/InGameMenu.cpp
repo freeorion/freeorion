@@ -103,6 +103,11 @@ void InGameMenu::Save() {
         FileDlg dlg(path_string, "", true, false, save_file_types);
         dlg.Run();
         if (!dlg.Result().empty()) {
+            if (!app->CanSaveNow()) {
+                Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
+                std::string error_text = UserString("UNABLE_TO_SAVE_NOW_TRY_AGAIN");
+                throw std::exception(error_text.c_str());
+            }
             Logger().debugStream() << "... initiating save";
             app->SaveGame(*dlg.Result().begin());
             CloseClicked();

@@ -676,6 +676,9 @@ Error when writing save file.
 UNABLE_TO_READ_SAVE_FILE
 Error when reading save file.
 
+UNABLE_TO_SAVE_NOW_TRY_AGAIN
+Unable to save during AI processing. Try again when AIs have finished turns.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 You do not control an empire and cannot issue orders.
 
