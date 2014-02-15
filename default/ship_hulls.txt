@@ -2943,6 +2943,10 @@ UNOWNED_MOVE
                 Stationary
                 Not OwnedBy AnyEmpire
                 Random probability = 0.9
+                Not And [
+                    DesignHasHull name = "SH_ASTEROID"
+                    Monster
+                ]
             ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
