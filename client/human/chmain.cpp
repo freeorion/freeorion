@@ -60,6 +60,19 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 #endif
+#ifdef FREEORION_FREEBSD
+int main(int argc, char* argv[]) {
+    // copy command line arguments to vector
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; ++i)
+        args.push_back(argv[i]);
+
+    // set options from command line or config.xml, or generate config.xml
+    if (mainConfigOptionsSetup(args) != 0) {
+        std::cerr << "main() failed config." << std::endl;
+        return 1;
+    }
+#endif
 #ifdef FREEORION_WIN32
 int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // copy UTF-16 command line arguments to UTF-8 vector
