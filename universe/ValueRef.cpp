@@ -852,6 +852,38 @@ namespace ValueRef {
     int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     {
         const std::string& variable_name = m_property_name.back();
+
+        if (variable_name == "EmpireSpeciesShipsDestroyed") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_ships_destroyed = empire->SpeciesShipsDestroyed();
+            std::map<std::string, int>::const_iterator it = species_ships_destroyed.find(species_name);
+            if (it == species_ships_destroyed.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireEmpireShipsDestroyed") {
+            if (!m_int_ref1 || !m_int_ref2)
+                return 0;
+            int empire1_id = m_int_ref1->Eval(context);
+            int empire2_id = m_int_ref2->Eval(context);
+
+            Empire* empire = Empires().Lookup(empire1_id);
+            if (!empire)
+                return 0;
+
+            const std::map<int, int>& empire_ships_destroyed = empire->EmpireShipsDestroyed();
+            std::map<int, int>::const_iterator it = empire_ships_destroyed.find(empire2_id);
+            if (it == empire_ships_destroyed.end())
+                return 0;
+            return it->second;
+        }
+
         return 0;
     }
 
