@@ -377,6 +377,7 @@
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		82EE6E6417D9C10C00A8BCB5 /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		82EE6E6517D9C10C00A8BCB5 /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
+		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Ogre, OIS config files */ = {isa = PBXBuildFile; fileRef = 9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */; };
@@ -1447,6 +1448,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8288432E1850A1770023C4D7 /* Python.framework in Frameworks */,
+				82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */,
 				8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */,
 				3ABEAB971749C93400E34912 /* libboost_signals.a in Frameworks */,
 				3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */,
@@ -3688,6 +3690,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -3833,6 +3836,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -4008,6 +4012,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 					NDEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -4184,6 +4189,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 					NDEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -4403,6 +4409,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 					NDEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -4633,6 +4640,7 @@
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
 					__MACOSX__,
+					BOOST_DATE_TIME_NO_LOCALE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = 4.2;

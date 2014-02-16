@@ -87,7 +87,7 @@ def load_string_list(file_name):
 
 # Retrieves a list of names from the string tables
 def get_name_list(name_list):
-    return fo.userString(name_list).splitlines()
+    return fo.user_string(name_list).splitlines()
 
 # Returns a random star system name
 def get_star_name():
@@ -159,7 +159,7 @@ def pick_star_type():
     try:
         max_roll = 0
         for candidate in star_types:
-            roll = random.randint(1, 100) + fo.universeAgeModToStarTypeDist(gsd.age, candidate) + fo.baseStarTypeDist(candidate)
+            roll = random.randint(1, 100) + fo.universe_age_mod_to_star_type_dist(gsd.age, candidate) + fo.base_star_type_dist(candidate)
             if max_roll < roll:
                 max_roll = roll
                 star_type = candidate
@@ -176,7 +176,7 @@ def pick_star_type():
 
     # get a name, create and insert the system into the universe
     # and return ID of the newly created system
-    #return fo.createSystem(star_type, (name or get_star_name()), position.x, position.y)
+    #return fo.create_system(star_type, (name or get_star_name()), position.x, position.y)
     return star_type
 
 # Calculate planet size for a potential new planet based on
@@ -190,10 +190,10 @@ def calc_planet_size(star_type, orbit):
         max_roll = 0        
         for candidate in planet_sizes_all:
             roll = random.randint(1, 100) \
-                + fo.densityModToPlanetSizeDist(gsd.planetDensity, candidate) \
-                + fo.starTypeModToPlanetSizeDist(star_type, candidate) \
-                + fo.orbitModToPlanetSizeDist(orbit, candidate) \
-                + fo.galaxyShapeModToPlanetSizeDist(gsd.shape, candidate)
+                + fo.density_mod_to_planet_size_dist(gsd.planetDensity, candidate) \
+                + fo.star_type_mod_to_planet_size_dist(star_type, candidate) \
+                + fo.orbit_mod_to_planet_size_dist(orbit, candidate) \
+                + fo.galaxy_shape_mod_to_planet_size_dist(gsd.shape, candidate)
             if max_roll < roll:
                 max_roll = roll
                 planet_size = candidate
@@ -240,9 +240,9 @@ def calc_planet_type(star_type, orbit, planet_size):
 # Generate a new planet in specified system and orbit
 def generate_planet(planet_size, planet_type, system, orbit):
     try:
-        planet = fo.createPlanet(planet_size, planet_type, system, orbit, "")
+        planet = fo.create_planet(planet_size, planet_type, system, orbit, "")
     except:
-        planet = fo.invalidObject();
+        planet = fo.invalid_object();
         print "Python generate_planet: Create planet failed"
         print sys.exc_info()[1]
     return planet
@@ -254,29 +254,29 @@ def generate_planet(planet_size, planet_type, system, orbit):
 def name_planets(system):
     planet_number = 1
     # iterate over all planets in the system
-    for planet in fo.sysGetPlanets(system):
+    for planet in fo.sys_get_planets(system):
         # use different naming methods for "normal" planets and asteroid belts
-        if fo.planetGetType(planet) == fo.planetType.asteroids:
+        if fo.planet_get_type(planet) == fo.planetType.asteroids:
             # get localized text from stringtable
-            name = fo.userString("PL_ASTEROID_BELT_OF_SYSTEM")
+            name = fo.user_string("PL_ASTEROID_BELT_OF_SYSTEM")
             # %1% parameter in the localized string is the system name
-            name = name.replace("%1%", fo.getName(system))
+            name = name.replace("%1%", fo.get_name(system))
         else:
             # set name to system name + planet number as roman number...
-            name = fo.getName(system) + " " + fo.romanNumber(planet_number)
+            name = fo.get_name(system) + " " + fo.roman_number(planet_number)
             # ...and increase planet number
             planet_number = planet_number + 1
         # do the actual renaming
-        fo.setName(planet, name)
+        fo.set_name(planet, name)
 
 # Checks if a system is too close to the other home systems
 # Home systems should be at least 200 units (linear distance)
 # and 2 jumps apart 
 def is_too_close_to_other_home_systems(system, home_systems):
     for home_system in home_systems:
-        if fo.linearDistance(system, home_system) < 200:
+        if fo.linear_distance(system, home_system) < 200:
             return True
-        elif fo.jumpDistance(system, home_system) < 2:
+        elif fo.jump_distance(system, home_system) < 2:
             return True
     return False
 
@@ -306,9 +306,9 @@ def generate_home_system_list(num_home_systems, systems):
             # for the first 50 attempts, only consider systems with "real" stars and at least one planet
             # if we haven't found a system after 50 attempts, consider all systems
             if (attempts < 50):
-                if fo.sysGetStarType(candidate) not in real_star_types:
+                if fo.sys_get_star_type(candidate) not in real_star_types:
                     continue
-                if len(fo.sysGetPlanets(candidate)) == 0:
+                if len(fo.sys_get_planets(candidate)) == 0:
                     continue
             # if our candidate is too close to the already choosen home systems, don't use it
             if is_too_close_to_other_home_systems(candidate, home_systems):
@@ -340,17 +340,17 @@ def generate_home_system_list(num_home_systems, systems):
             raise Exception("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems, aborting" % (num_home_systems, len(systems)))
 
         # if choosen system has no "real" star, change star type to a randomly selected "real" star
-        if fo.sysGetStarType(candidate) not in real_star_types:
+        if fo.sys_get_star_type(candidate) not in real_star_types:
             star_type = random.choice(real_star_types)
-            print "Home system #", len(home_systems), "has star type", fo.sysGetStarType(candidate), ", changing that to", star_type
-            fo.sysSetStarType(candidate, star_type)
+            print "Home system #", len(home_systems), "has star type", fo.sys_get_star_type(candidate), ", changing that to", star_type
+            fo.sys_set_star_type(candidate, star_type)
 
         # if choosen system has no planets, create one in a random orbit
         # we take random values for type and size, as these will be
         # set to suitable values later
-        if len(fo.sysGetPlanets(candidate)) == 0:
+        if len(fo.sys_get_planets(candidate)) == 0:
             print "Home system #", len(home_systems), "has no planets, adding one"
-            if generate_planet(random.choice(real_planet_sizes), random.choice(planet_types), candidate, random.randint(0, fo.sysGetNumOrbits(candidate) - 1)) == fo.invalidObject():
+            if generate_planet(random.choice(real_planet_sizes), random.choice(planet_types), candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1)) == fo.invalid_object():
                 # generate planet failed, throw an exception
                 raise Exception("Python generate_home_system_list: couldn't create planet in home system")
 
@@ -363,34 +363,34 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     if empire_name == "":
         print "No empire name set for player", player_name, ", picking one randomly"
         empire_name = get_empire_name()
-    fo.empireSetName(empire, empire_name)
+    fo.empire_set_name(empire, empire_name)
     print "Empire name for player", player_name, "is", empire_name
 
     # check starting species, if no one is given, pick one randomly
     if starting_species == "":
         print "No starting species set for player", player_name, ", picking one randomly"
-        starting_species = random.choice(fo.getPlayableSpecies())
+        starting_species = random.choice(fo.get_playable_species())
     print "Starting species for player", player_name, "is", starting_species
 
     # pick a planet from the specified home system as homeworld
-    planets = fo.sysGetPlanets(home_system)
+    planets = fo.sys_get_planets(home_system)
     # if the system is empty, throw an exception
     if len(planets) == 0:
         raise Exception("Python setup_empire: got home system with no planets")
     homeworld = random.choice(planets)
 
     # set selected planet as empire homeworld with selected starting species
-    fo.empireSetHomeworld(empire, homeworld, starting_species)
+    fo.empire_set_homeworld(empire, homeworld, starting_species)
 
     # set homeworld focus
     # check if the preferred focus for the starting species is among
     # the foci available on the homeworld planet
-    available_foci = fo.planetAvailableFoci(homeworld)
-    preferred_focus = fo.speciesPreferredFocus(starting_species)
+    available_foci = fo.planet_available_foci(homeworld)
+    preferred_focus = fo.species_preferred_focus(starting_species)
     if preferred_focus in available_foci:
         # if yes, set the homeworld focus to the preferred focus
         print "Player", player_name, ": setting preferred focus", preferred_focus, "on homeworld"
-        fo.planetSetFocus(homeworld, preferred_focus)
+        fo.planet_set_focus(homeworld, preferred_focus)
     elif len(available_foci) > 0:
         # if no, and there is at least one available focus,
         # just take the first of the list
@@ -398,7 +398,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
             print "Player", player_name, ": starting species", starting_species, "has no preferred focus, using", available_foci[0], "instead"
         else:
             print "Player", player_name, ": preferred focus", preferred_focus, "for starting species", starting_species, "not available on homeworld, using", available_foci[0], "instead"
-        fo.planetSetFocus(homeworld, available_foci[0])
+        fo.planet_set_focus(homeworld, available_foci[0])
     else:
         # if no focus is available on the homeworld, don't set any focus
         print "Player", player_name, ": no available foci on homeworld for starting species", starting_species
@@ -407,34 +407,34 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # use the list provided in starting_buildings.txt
     print "Player", player_name, ": add starting buildings to homeworld"
     for building in load_string_list("../starting_buildings.txt"):
-        fo.createBuilding(building, homeworld, empire)
+        fo.create_building(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
     # use content file preunlocked_items.txt
     print "Player", player_name, ": add unlocked items"
-    for item in fo.loadItemSpecList("preunlocked_items.txt"):
-        fo.empireUnlockItem(empire, item.type, item.name)
+    for item in fo.load_item_spec_list("preunlocked_items.txt"):
+        fo.empire_unlock_item(empire, item.type, item.name)
 
     # add premade ship designs to empire
     print "Player", player_name, ": add premade ship designs"
-    for ship_design in fo.designGetPremadeList():
-        fo.empireAddShipDesign(empire, ship_design)
+    for ship_design in fo.design_get_premade_list():
+        fo.empire_add_ship_design(empire, ship_design)
 
     # add starting fleets to empire
     # use content file starting_fleets.txt
     print "Player", player_name, ": add starting fleets"
-    fleet_plans = fo.loadFleetPlanList("starting_fleets.txt")
+    fleet_plans = fo.load_fleet_plan_list("starting_fleets.txt")
     for fleet_plan in fleet_plans:
         # first, create the fleet
-        fleet = fo.createFleet(fleet_plan.name(), home_system, empire)
+        fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
         # if the fleet couldn't be created, throw an exception
-        if fleet == fo.invalidObject():
+        if fleet == fo.invalid_object():
             raise Exception("Python setup empire: couldn't create fleet " + fleet_plan.name())
         # second, iterate over the list of ship design names in the fleet plan
-        for ship_design in fleet_plan.shipDesigns():
+        for ship_design in fleet_plan.ship_designs():
             # create a ship in the fleet
             # if the ship couldn't be created, throw an exception
-            if fo.createShip("", ship_design, starting_species, fleet) == fo.invalidObject:
+            if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
                 raise Exception("Python setup empire: couldn't create ship " + ship_design + " for fleet " + fleet_plan.name())
 
 # used in clustering
@@ -523,8 +523,8 @@ def create_universe():
 
     # fetch universe and player setup data
     global gsd, psd_list
-    gsd = fo.getGalaxySetupData()
-    psd_list = fo.getPlayerSetupData()
+    gsd = fo.get_galaxy_setup_data()
+    psd_list = fo.get_player_setup_data()
     total_players = len(psd_list)
 
     # initialize RNG
@@ -546,8 +546,8 @@ def create_universe():
     print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
 
     # get typical width for universe based on number of systems
-    width = fo.calcTypicalUniverseWidth(gsd.size)
-    fo.setUniverseWidth(width)
+    width = fo.calc_typical_universe_width(gsd.size)
+    fo.set_universe_width(width)
     print "Set universe width to", width
 
     # Calling universe generator helper functions to calculate positions
@@ -556,13 +556,13 @@ def create_universe():
     if gsd.shape == fo.galaxyShape.random:
         gsd.shape = random.choice(galaxy_shapes)
     if gsd.shape == fo.galaxyShape.spiral2:
-        fo.spiralGalaxyCalcPositions(system_positions, 2, gsd.size, width, width)
+        fo.spiral_galaxy_calc_positions(system_positions, 2, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.spiral3:
-        fo.spiralGalaxyCalcPositions(system_positions, 3, gsd.size, width, width)
+        fo.spiral_galaxy_calc_positions(system_positions, 3, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.spiral4:
-        fo.spiralGalaxyCalcPositions(system_positions, 4, gsd.size, width, width)
+        fo.spiral_galaxy_calc_positions(system_positions, 4, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.elliptical:
-        fo.ellipticalGalaxyCalcPositions(system_positions, gsd.size, width, width)
+        fo.elliptical_galaxy_calc_positions(system_positions, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.cluster:
         # Typically a galaxy with 100 systems should have ~5 clusters
         avg_clusters = gsd.size / 20
@@ -571,16 +571,16 @@ def create_universe():
         # Add a bit of random variation (+/- 20%)
         clusters = random.randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
         if clusters >= 2:
-            fo.clusterGalaxyCalcPositions(system_positions, clusters, gsd.size, width, width)
+            fo.cluster_galaxy_calc_positions(system_positions, clusters, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.ring:
-        fo.ringGalaxyCalcPositions(system_positions, gsd.size, width, width)
+        fo.ring_galaxy_calc_positions(system_positions, gsd.size, width, width)
     elif gsd.shape == fo.galaxyShape.test:
         test_galaxy_calc_positions(system_positions, gsd.size, width)
     # Check if any positions have been calculated...
     if len(system_positions) <= 0:
         # ...if not, fall back on irregular shape
         gsd.shape = fo.galaxyShape.irregular
-        fo.irregularGalaxyPositions(system_positions, gsd.size, width, width)
+        fo.irregular_galaxy_positions(system_positions, gsd.size, width, width)
     gsd.size = len(system_positions)
     print gsd.shape, "galaxy created, final number of systems:", gsd.size
 
@@ -723,10 +723,10 @@ def create_universe():
         systemxy = (position.x, position.y)
         star_type = star_type_assignments.get(systemxy, fo.starType.noStar)
         star_name = star_name_map.get(systemxy, "") or get_star_name()
-        system = fo.createSystem(star_type, star_name, position.x, position.y)
+        system = fo.create_system(star_type, star_name, position.x, position.y)
         systems.append(system)
         these_planets = planet_size_assignments[systemxy]
-        for orbit in range(0, fo.sysGetNumOrbits(system)):
+        for orbit in range(0, fo.sys_get_num_orbits(system)):
             # check for each orbit if a planet shall be created by determining planet size
             planet_size = these_planets.get(orbit, fo.planetSize.noWorld)
             if planet_size in planet_sizes:
@@ -742,7 +742,7 @@ def create_universe():
         print "\t %12s: %.1f%%"%(planet_type_names[planet_type], (100.0*planet_type_summary.get(planet_type,[0])[0])/planet_total)
     print
     # generate Starlanes
-    fo.generateStarlanes(gsd.starlaneFrequency)
+    fo.generate_starlanes(gsd.starlaneFrequency)
     print "Starlanes generated"
 
     print "Generate list of home systems..."
@@ -763,7 +763,7 @@ def create_universe():
         empire = psd_entry.key()
         psd = psd_entry.data()
         home_system = home_systems.pop()
-        setup_empire(empire, psd.empireName, home_system, psd.startingSpecies, psd.playerName)
+        setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name)
 
     # iterate over all systems and name their planets
     # this needs to be done after empire home systems have been set, as

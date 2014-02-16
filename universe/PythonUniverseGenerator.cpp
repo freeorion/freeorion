@@ -809,10 +809,10 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
         .def(vector_indexing_suite<std::vector<SystemPosition>, true>());
 
     class_<PlayerSetupData>("PlayerSetupData")
-        .def_readonly("playerName",         &PlayerSetupData::m_player_name)
-        .def_readonly("empireName",         &PlayerSetupData::m_empire_name)
-        .def_readonly("empireColor",        &PlayerSetupData::m_empire_color)
-        .def_readonly("startingSpecies",    &PlayerSetupData::m_starting_species_name);
+        .def_readonly("player_name",        &PlayerSetupData::m_player_name)
+        .def_readonly("empire_name",        &PlayerSetupData::m_empire_name)
+        .def_readonly("empire_color",       &PlayerSetupData::m_empire_color)
+        .def_readonly("starting_species",   &PlayerSetupData::m_starting_species_name);
 
     class_<std::map<int, PlayerSetupData>, noncopyable>("PlayerSetupDataMap", no_init)
         .def(map_indexing_suite<std::map<int, PlayerSetupData>, true>());
@@ -822,85 +822,85 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
         .def_readonly("name",   &ItemSpec::name);
 
     class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
-        .def("name",        &FleetPlanWrapper::Name)
-        .def("shipDesigns", &FleetPlanWrapper::ShipDesigns);
+        .def("name",            &FleetPlanWrapper::Name)
+        .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
-    def("getGalaxySetupData",               GetGalaxySetupData,             return_value_policy<reference_existing_object>());
-    def("getPlayerSetupData",               GetPlayerSetupData,             return_value_policy<reference_existing_object>());
+    def("get_galaxy_setup_data",                GetGalaxySetupData,             return_value_policy<reference_existing_object>());
+    def("get_player_setup_data",                GetPlayerSetupData,             return_value_policy<reference_existing_object>());
 
-    def("userString",                       make_function(&UserString,      return_value_policy<copy_const_reference>()));
-    def("romanNumber",                      RomanNumber);
+    def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
+    def("roman_number",                         RomanNumber);
 
-    def("allEmpires",                       AllEmpires);
-    def("invalidObject",                    InvalidObjectID);
-    def("minSystemSeparation",              MinSystemSeparation);
-    def("largeMeterValue",                  LargeMeterValue);
+    def("all_empires",                          AllEmpires);
+    def("invalid_object",                       InvalidObjectID);
+    def("min_system_separation",                MinSystemSeparation);
+    def("large_meter_value",                    LargeMeterValue);
 
-    def("baseStarTypeDist",                 BaseStarTypeDist);
-    def("universeAgeModToStarTypeDist",     UniverseAgeModToStarTypeDist);
-    def("densityModToPlanetSizeDist",       DensityModToPlanetSizeDist);
-    def("starTypeModToPlanetSizeDist",      StarTypeModToPlanetSizeDist);
-    def("galaxyShapeModToPlanetSizeDist",   GalaxyShapeModToPlanetSizeDist);
-    def("orbitModToPlanetSizeDist",         OrbitModToPlanetSizeDist);
-    def("planetSizeModToPlanetTypeDist",    PlanetSizeModToPlanetTypeDist);
-    def("orbitModToPlanetTypeDist",         OrbitModToPlanetTypeDist);
-    def("starTypeModToPlanetTypeDist",      StarTypeModToPlanetTypeDist);
-    def("calcTypicalUniverseWidth",         CalcTypicalUniverseWidth);
+    def("base_star_type_dist",                  BaseStarTypeDist);
+    def("universe_age_mod_to_star_type_dist",   UniverseAgeModToStarTypeDist);
+    def("density_mod_to_planet_size_dist",      DensityModToPlanetSizeDist);
+    def("star_type_mod_to_planet_size_dist",    StarTypeModToPlanetSizeDist);
+    def("galaxy_shape_mod_to_planet_size_dist", GalaxyShapeModToPlanetSizeDist);
+    def("orbit_mod_to_planet_size_dist",        OrbitModToPlanetSizeDist);
+    def("planet_size_mod_to_planet_type_dist",  PlanetSizeModToPlanetTypeDist);
+    def("orbit_mod_to_planet_type_dist",        OrbitModToPlanetTypeDist);
+    def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
+    def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
-    def("spiralGalaxyCalcPositions",        SpiralGalaxyCalcPositions);
-    def("ellipticalGalaxyCalcPositions",    EllipticalGalaxyCalcPositions);
-    def("clusterGalaxyCalcPositions",       ClusterGalaxyCalcPositions);
-    def("ringGalaxyCalcPositions",          RingGalaxyCalcPositions);
-    def("irregularGalaxyPositions",         IrregularGalaxyPositions);
-    def("generateStarlanes",                GenerateStarlanes);
+    def("spiral_galaxy_calc_positions",         SpiralGalaxyCalcPositions);
+    def("elliptical_galaxy_calc_positions",     EllipticalGalaxyCalcPositions);
+    def("cluster_galaxy_calc_positions",        ClusterGalaxyCalcPositions);
+    def("ring_galaxy_calc_positions",           RingGalaxyCalcPositions);
+    def("irregular_galaxy_positions",           IrregularGalaxyPositions);
+    def("generate_starlanes",                   GenerateStarlanes);
 
-    def("speciesPreferredFocus",            SpeciesPreferredFocus);
-    def("getAllSpecies",                    GetAllSpecies);
-    def("getPlayableSpecies",               GetPlayableSpecies);
-    def("getNativeSpecies",                 GetNativeSpecies);
+    def("species_preferred_focus",              SpeciesPreferredFocus);
+    def("get_all_species",                      GetAllSpecies);
+    def("get_playable_species",                 GetPlayableSpecies);
+    def("get_native_species",                   GetNativeSpecies);
 
-    def("empireSetName",                    EmpireSetName);
-    def("empireSetHomeworld",               EmpireSetHomeworld);
-    def("empireUnlockItem",                 EmpireUnlockItem);
-    def("empireAddShipDesign",              EmpireAddShipDesign);
+    def("empire_set_name",                      EmpireSetName);
+    def("empire_set_homeworld",                 EmpireSetHomeworld);
+    def("empire_unlock_item",                   EmpireUnlockItem);
+    def("empire_add_ship_design",               EmpireAddShipDesign);
 
-    def("designCreate",                     ShipDesignCreate);
-    def("designGetPremadeList",             ShipDesignGetPremadeList);
-    def("designGetMosterList",              ShipDesignGetMonsterList);
+    def("design_create",                        ShipDesignCreate);
+    def("design_get_premade_list",              ShipDesignGetPremadeList);
+    def("design_get_moster_list",               ShipDesignGetMonsterList);
 
-    def("loadItemSpecList",                 LoadItemSpecList);
-    def("loadFleetPlanList",                LoadFleetPlanList);
+    def("load_item_spec_list",                  LoadItemSpecList);
+    def("load_fleet_plan_list",                 LoadFleetPlanList);
 
-    def("getName",                          GetName);
-    def("setName",                          SetName);
-    def("getOwner",                         GetOwner);
+    def("get_name",                             GetName);
+    def("set_name",                             SetName);
+    def("get_owner",                            GetOwner);
 
-    def("getUniverseWidth",                 GetUniverseWidth);
-    def("setUniverseWidth",                 SetUniverseWidth);
-    def("linearDistance",                   LinearDistance);
-    def("jumpDistance",                     JumpDistance);
-    def("createSystem",                     CreateSystem);
-    def("createPlanet",                     CreatePlanet);
-    def("createBuilding",                   CreateBuilding);
-    def("createFleet",                      CreateFleet);
-    def("createShip",                       CreateShip);
+    def("get_universe_width",                   GetUniverseWidth);
+    def("set_universe_width",                   SetUniverseWidth);
+    def("linear_distance",                      LinearDistance);
+    def("jump_distance",                        JumpDistance);
+    def("create_system",                        CreateSystem);
+    def("create_planet",                        CreatePlanet);
+    def("create_building",                      CreateBuilding);
+    def("create_fleet",                         CreateFleet);
+    def("create_ship",                          CreateShip);
 
-    def("sysGetStarType",                   SystemGetStarType);
-    def("sysSetStarType",                   SystemSetStarType);
-    def("sysGetNumOrbits",                  SystemGetNumOrbits);
-    def("sysGetPlanets",                    SystemGetPlanets);
+    def("sys_get_star_type",                    SystemGetStarType);
+    def("sys_set_star_type",                    SystemSetStarType);
+    def("sys_get_num_orbits",                   SystemGetNumOrbits);
+    def("sys_get_planets",                      SystemGetPlanets);
 
-    def("planetGetType",                    PlanetGetType);
-    def("planetSetType",                    PlanetSetType);
-    def("planetGetSize",                    PlanetGetSize);
-    def("planetSetSize",                    PlanetSetSize);
-    def("planetGetSpecies",                 PlanetGetSpecies);
-    def("planetSetSpecies",                 PlanetSetSpecies);
-    def("planetGetFocus",                   PlanetGetFocus);
-    def("planetSetFocus",                   PlanetSetFocus);
-    def("planetAvailableFoci",              PlanetAvailableFoci);
-    def("planetMakeOutpost",                PlanetMakeOutpost);
-    def("planetMakeColony",                 PlanetMakeColony);
+    def("planet_get_type",                      PlanetGetType);
+    def("planet_set_type",                      PlanetSetType);
+    def("planet_get_size",                      PlanetGetSize);
+    def("planet_set_size",                      PlanetSetSize);
+    def("planet_get_species",                   PlanetGetSpecies);
+    def("planet_set_species",                   PlanetSetSpecies);
+    def("planet_get_focus",                     PlanetGetFocus);
+    def("planet_set_focus",                     PlanetSetFocus);
+    def("planet_available_foci",                PlanetAvailableFoci);
+    def("planet_make_outpost",                  PlanetMakeOutpost);
+    def("planet_make_colony",                   PlanetMakeColony);
 
     // Enums
     FreeOrionPython::WrapGameStateEnums();
