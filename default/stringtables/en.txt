@@ -8562,6 +8562,12 @@ Zero-Point Fuel Generator
 FU_ZERO_FUEL_DESC
 Generates energy using Zero-Point generation and converts it into fuel using matter-energy conversion techniques.
 
+FU_RAMSCOOP
+Ramscoop
+
+FU_RAMSCOOP_DESC
+Slowly generates fuel while in systems by collecting hydrogen from the diffuse gas in space.
+
 ST_CLOAK_1
 Electromagnetic Damper
 

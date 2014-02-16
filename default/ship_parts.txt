@@ -608,6 +608,23 @@ Part
     icon = "icons/ship_parts/antimatter_tank.png"
 
 Part
+    name = "FU_RAMSCOOP"
+    description = "FU_RAMSCOOP_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = External
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 6
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Stationary
+            stackinggroup = "RAMSCOOP_STACK"
+            effects = SetFuel Value + 0.1
+    icon = "icons/ship_parts/antimatter_tank.png"
+
+Part
     name = "FU_ZERO_FUEL"
     description = "FU_ZERO_FUEL_DESC"
     class = Fuel

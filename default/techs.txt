@@ -2357,7 +2357,10 @@ Tech
         "SHP_GAL_EXPLO"
         "PRO_FUSION_GEN"
     ]
-    unlock = Item type = ShipPart name = "FU_DEUTERIUM_TANK"
+    unlock = [
+        Item type = ShipPart name = "FU_DEUTERIUM_TANK"
+        Item type = ShipPart name = "FU_RAMSCOOP"
+    ]
     graphic = "icons/ship_parts/deuterium_tank.png"
 
 Tech
