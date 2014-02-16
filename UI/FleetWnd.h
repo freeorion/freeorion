@@ -160,7 +160,7 @@ private:
 
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
-    std::string     StatTooltip(const std::string& stat_name) const;
+    std::string     StatTooltip(MeterType meter) const;
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 
     boost::signals2::connection  m_system_connection;
@@ -177,7 +177,7 @@ private:
 
     static GG::Pt       s_last_position;    ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
     static GG::Pt       s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
-    std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   /// statistic icons and associated meter types for multi-fleet aggregate
+    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   /// statistic icons and associated meter types for multi-fleet aggregate
     
     friend class FleetUIManager;
 };
@@ -206,7 +206,7 @@ public:
     //@}
 
 private:
-    double          StatValue(const std::string& stat_name) const;
+    double          StatValue(MeterType stat_name) const;
 
     void            SetShipIcon();
     void            Refresh();
@@ -226,7 +226,7 @@ private:
     GG::TextControl*            m_ship_name_text;
     GG::TextControl*            m_design_name_text;
 
-    std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
     bool                        m_selected;
     boost::signals2::connection  m_ship_connection;

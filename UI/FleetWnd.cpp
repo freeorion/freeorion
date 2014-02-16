@@ -43,33 +43,6 @@ namespace {
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
-    const std::string   COUNT_STAT_STRING = "Count Stat";
-    const std::string   DAMAGE_STAT_STRING = "Damage Stat";
-    const std::string   SHIELD_STAT_STRING = "Sheild Stat";
-    const std::string   STRUCTURE_STAT_STRING = "Structure Stat";
-    const std::string   SPEED_STAT_STRING = "Speed Stat";
-    const std::string   COLONY_CAPACITY_STAT_STRING = "Colony Capacity";
-    const std::string   TROOP_CAPACITY_STAT_STRING = "Troop Capacity";
-    const std::string   MeterStatString(MeterType meter_type) {
-        std::string retval = EnumToString(meter_type);
-        //std::cout << "MeterStatString for meter type " << boost::lexical_cast<std::string>(meter_type) << " returning: " << retval << std::endl;
-        return retval;
-    }
-
-    MeterType           MeterTypeFromStatString(const std::string& stat_name) {
-        //std::cout << "MeterTypeFromStatString passed stat_name " << stat_name << std::endl;
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1)) {
-            std::string meter_name_string = MeterStatString(meter_type);
-            //std::cout << " ... comparing to meter name string " << meter_name_string << " which was derived from meter type " << boost::lexical_cast<std::string>(meter_type) << std::endl;
-            if (meter_name_string == stat_name) {
-                //std::cout << " ... ... match! returning " << boost::lexical_cast<std::string>(meter_type) << std::endl;
-                return meter_type;
-            }
-        }
-        //std::cout << " ... didn't find match.  returning INVALID_METER_TYPE" << std::endl;
-        return INVALID_METER_TYPE;
-    }
-
     GG::Y LabelHeight()
     { return GG::Y(ClientUI::Pts()*3/2); }
 
@@ -854,7 +827,7 @@ void ShipDataPanel::Refresh() {
             delete m_design_name_text;
             m_design_name_text = 0;
         }
-        for (std::vector<std::pair<std::string, StatisticIcon*> >::iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
+        for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
             delete it->second;
         m_stat_icons.clear();
         return;
@@ -884,23 +857,20 @@ void ShipDataPanel::Refresh() {
 
 
     // update stat icon values and browse wnds
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
          it != m_stat_icons.end(); ++it)
     {
-        //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
         it->second->SetValue(StatValue(it->first));
 
         it->second->ClearBrowseInfoWnd();
-        if (it->first == DAMAGE_STAT_STRING) {
+        if (it->first == METER_DAMAGE) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
                 UserString("SHIP_DAMAGE_STAT_MAIN")));
             it->second->SetBrowseInfoWnd(browse_wnd);
         } else {
-            MeterType meter_type = MeterTypeFromStatString(it->first);
-            MeterType associated_meter_type = AssociatedMeterType(meter_type);
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
-                m_ship_id, meter_type, associated_meter_type));
+                m_ship_id, it->first, AssociatedMeterType(it->first)));
             it->second->SetBrowseInfoWnd(browse_wnd);
         }
     }
@@ -908,18 +878,15 @@ void ShipDataPanel::Refresh() {
     DoLayout();
 }
 
-double ShipDataPanel::StatValue(const std::string& stat_name) const {
+double ShipDataPanel::StatValue(MeterType stat_name) const {
     if (TemporaryPtr<const Ship> ship = GetShip(m_ship_id)) {
-        if (stat_name == DAMAGE_STAT_STRING)
+        if (stat_name == METER_DAMAGE)
             return ship->TotalWeaponsDamage();
 
-        MeterType meter_type = MeterTypeFromStatString(stat_name);
-        //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
-        if (ship->UniverseObject::GetMeter(meter_type)) {
-            //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
-            return ship->CurrentMeterValue(meter_type);
+        if (ship->UniverseObject::GetMeter(stat_name)) {
+            return ship->CurrentMeterValue(stat_name);
         }
-        Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
+        Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
     }
     return 0.0;
 }
@@ -955,7 +922,7 @@ void ShipDataPanel::DoLayout() {
 
     // position ship statistic icons one after another horizontally and centered vertically
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
@@ -996,7 +963,7 @@ void ShipDataPanel::Init() {
     // damage stat icon
     StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                             DamageIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+    m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
     AttachChild(icon);
     icon->SetBrowseModeTime(tooltip_delay);
 
@@ -1007,7 +974,7 @@ void ShipDataPanel::Init() {
     for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                 ClientUI::MeterIcon(*it), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
+        m_stat_icons.push_back(std::make_pair(*it, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     }
@@ -1054,8 +1021,7 @@ private:
     void                Refresh();
     void                SetStatIconValues();
     void                UpdateAggressionToggle();
-    double              StatValue(const std::string& stat_name) const;
-    std::string         StatTooltip(const std::string& stat_name) const;
+    std::string         StatTooltip(MeterType stat_name) const;
     void                DoLayout();
 
     const int           m_fleet_id;
@@ -1072,7 +1038,7 @@ private:
     GG::StaticGraphic*  m_gift_indicator;
     ScanlineControl*    m_scanline_control;
 
-    std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
     bool                m_selected;
 };
@@ -1106,49 +1072,49 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         // stat icon for fleet count
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  FleetCountIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(COUNT_STAT_STRING, icon));
+        m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(COUNT_STAT_STRING));
+        icon->SetBrowseText(StatTooltip(METER_SIZE));
         AttachChild(icon);
 
         // stat icon for fleet damage
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  DamageIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+        m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(DAMAGE_STAT_STRING));
+        icon->SetBrowseText(StatTooltip(METER_DAMAGE));
         AttachChild(icon);
 
         // stat icon for fleet structure
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(STRUCTURE_STAT_STRING, icon));
+        m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(STRUCTURE_STAT_STRING));
+        icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
         AttachChild(icon);
 
         // stat icon for fleet shields
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(SHIELD_STAT_STRING, icon));
+        m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(SHIELD_STAT_STRING));
+        icon->SetBrowseText(StatTooltip(METER_SHIELD));
         AttachChild(icon);
 
         // stat icon for fleet fuel
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                 ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(MeterStatString(METER_FUEL), icon));
+        m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(MeterStatString(METER_FUEL)));
+        icon->SetBrowseText(StatTooltip(METER_FUEL));
         AttachChild(icon);
 
         // stat icon for fleet speed
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  SpeedIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
+        m_stat_icons.push_back(std::make_pair(METER_STARLANE_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(SPEED_STAT_STRING));
+        icon->SetBrowseText(StatTooltip(METER_STARLANE_SPEED));
         AttachChild(icon);
 
 
@@ -1480,21 +1446,21 @@ void FleetDataPanel::SetStatIconValues() {
         min_fuel = *std::min_element(fuels.begin(), fuels.end());
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it =
         m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
     {
-        const std::string stat_name = it->first;
-        if (stat_name == SPEED_STAT_STRING)
+        MeterType stat_name = it->first;
+        if (stat_name == METER_STARLANE_SPEED)
             it->second->SetValue(min_speed); 
-        else if (stat_name == MeterStatString(METER_FUEL))
+        else if (stat_name == METER_FUEL)
             it->second->SetValue(min_fuel);
-        else if (stat_name == SHIELD_STAT_STRING)
+        else if (stat_name == METER_SHIELD)
             it->second->SetValue(shield_tally/ship_count);
-        else if (stat_name == STRUCTURE_STAT_STRING)
+        else if (stat_name == METER_STRUCTURE)
             it->second->SetValue(structure_tally);
-        else if (stat_name == DAMAGE_STAT_STRING)
+        else if (stat_name == METER_DAMAGE)
             it->second->SetValue(damage_tally);
-        else if (stat_name == COUNT_STAT_STRING)
+        else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
     }
 }
@@ -1533,18 +1499,18 @@ void FleetDataPanel::UpdateAggressionToggle() {
     }
 }
 
-std::string FleetDataPanel::StatTooltip(const std::string& stat_name) const {
-    if (stat_name == SPEED_STAT_STRING)
+std::string FleetDataPanel::StatTooltip(MeterType stat_name) const {
+    if (stat_name == METER_STARLANE_SPEED)
         return UserString("FW_FLEET_SPEED_SUMMARY");
-    else if (stat_name ==  MeterStatString(METER_FUEL))
+    else if (stat_name ==  METER_FUEL)
         return UserString("FW_FLEET_FUEL_SUMMARY");
-    else if (stat_name == SHIELD_STAT_STRING)
+    else if (stat_name == METER_SHIELD)
         return UserString("FW_FLEET_SHIELD_SUMMARY");
-    else if (stat_name == STRUCTURE_STAT_STRING)
+    else if (stat_name == METER_STRUCTURE)
         return UserString("FW_FLEET_STRUCTURE_SUMMARY");
-    else if (stat_name == DAMAGE_STAT_STRING) 
+    else if (stat_name == METER_DAMAGE)
         return UserString("FW_FLEET_DAMAGE_SUMMARY");
-    else if (stat_name == COUNT_STAT_STRING) 
+    else if (stat_name == METER_SIZE)
         return UserString("FW_FLEET_COUNT_SUMMARY");
     else
         return "";
@@ -1575,7 +1541,7 @@ void FleetDataPanel::DoLayout() {
 
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
@@ -1771,7 +1737,6 @@ public:
             // get source fleet of ship(s).  assumes all ships are from the same source fleet.
             TemporaryPtr<const Ship> first_ship = dropped_ships[0];
             assert(first_ship);
-            int fleet_id = first_ship->FleetID();
 
             // compile ship IDs into a vector, while also recording original fleets from which ships are being taken
             std::vector<int> ship_ids_vec;
@@ -2556,33 +2521,33 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet count
     StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                             FleetCountIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(COUNT_STAT_STRING, icon));
+    m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(COUNT_STAT_STRING));
+    icon->SetBrowseText(StatTooltip(METER_SIZE));
     AttachChild(icon);
 
     // stat icon for fleet damage
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              DamageIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+    m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(DAMAGE_STAT_STRING));
+    icon->SetBrowseText(StatTooltip(METER_DAMAGE));
     AttachChild(icon);
 
     // stat icon for fleet structure
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(STRUCTURE_STAT_STRING, icon));
+    m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(STRUCTURE_STAT_STRING));
+    icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
     AttachChild(icon);
 
     // stat icon for fleet shields
     icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                              ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(SHIELD_STAT_STRING, icon));
+    m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(SHIELD_STAT_STRING));
+    icon->SetBrowseText(StatTooltip(METER_SHIELD));
     AttachChild(icon);
 
     // create fleet list box
@@ -2668,33 +2633,33 @@ void FleetWnd::SetStatIconValues() {
         }
     }
     
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it =
         m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
     {
-        const std::string stat_name = it->first;
-        if (stat_name == SHIELD_STAT_STRING)
+        MeterType stat_name = it->first;
+        if (stat_name == METER_SHIELD)
             it->second->SetValue(shield_tally/ship_count);
-        else if (stat_name == STRUCTURE_STAT_STRING)
+        else if (stat_name == METER_STRUCTURE)
             it->second->SetValue(structure_tally);
-        else if (stat_name == DAMAGE_STAT_STRING)
+        else if (stat_name == METER_DAMAGE)
             it->second->SetValue(damage_tally);
-        else if (stat_name == COUNT_STAT_STRING)
+        else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
     }
 }
 
-std::string FleetWnd::StatTooltip(const std::string& stat_name) const {
-    if (stat_name == SPEED_STAT_STRING)
+std::string FleetWnd::StatTooltip(MeterType stat_type) const {
+    if (stat_type == METER_STARLANE_SPEED)
         return UserString("FW_FLEET_SPEED_SUMMARY");
-    else if (stat_name ==  MeterStatString(METER_FUEL))
+    else if (stat_type ==  METER_FUEL)
         return UserString("FW_FLEET_FUEL_SUMMARY");
-    else if (stat_name == SHIELD_STAT_STRING)
+    else if (stat_type == METER_SHIELD)
         return UserString("FW_FLEET_SHIELD_SUMMARY");
-    else if (stat_name == STRUCTURE_STAT_STRING)
+    else if (stat_type == METER_STRUCTURE)
         return UserString("FW_FLEET_STRUCTURE_SUMMARY");
-    else if (stat_name == DAMAGE_STAT_STRING) 
+    else if (stat_type == METER_DAMAGE)
         return UserString("FW_FLEET_DAMAGE_SUMMARY");
-    else if (stat_name == COUNT_STAT_STRING) 
+    else if (stat_type == METER_SIZE)
         return UserString("FW_FLEET_COUNT_SUMMARY");
     else
         return "";
@@ -2824,7 +2789,7 @@ void FleetWnd::DoLayout() {
     
     // position fleet aggregate stat icons
     GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
-    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
