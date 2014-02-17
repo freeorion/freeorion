@@ -788,11 +788,12 @@ short Universe::JumpDistance(int system1_id, int system2_id) const {
             // threads waiting for the same row will see a cache hit
             typedef boost::iterator_property_map<std::vector<short>::iterator, boost::identity_property_map> DistancePropertyMap;
             
-            std::vector<short> private_distance_buffer(m_system_jumps.size());
+            std::vector<short> private_distance_buffer(m_system_jumps.size(), SHRT_MAX);
             DistancePropertyMap distance_property_map(private_distance_buffer.begin());
             boost::distance_recorder<DistancePropertyMap, boost::on_tree_edge> distance_recorder(distance_property_map);
 
             // FIXME: dont compute m_system_jumps[i][j] again as m_system_jumps[j][i]
+            private_distance_buffer[smaller_index] = 0;
             boost::breadth_first_search(m_graph_impl->system_graph, smaller_index, boost::visitor(boost::make_bfs_visitor(distance_recorder)));
             jumps = private_distance_buffer[other_index];
             cache.swap_and_unlock_row(smaller_index, private_distance_buffer, cache_guard);
