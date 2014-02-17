@@ -4,15 +4,6 @@
 
 #include <OgreMaterial.h>
 
-
-namespace Ogre {
-    class Entity;
-    class Quaternion;
-    class SceneManager;
-    class SceneNode;
-    class Vector3;
-}
-
 namespace OpenSteer {
     class Vec3;
 }

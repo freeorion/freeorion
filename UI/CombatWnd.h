@@ -6,21 +6,10 @@
 #include "../combat/CombatEventListener.h"
 #include "../combat/CombatOrder.h"
 
-#include <OgreFrameListener.h>
-#include <OgreManualObject.h>
-#include <OgreMath.h>
-#include <OgreVector3.h>
-
 #include <GG/Wnd.h>
 
-namespace Ogre {
-    class Camera;
-    class MovableObject;
-    class PlaneBoundedVolumeListSceneQuery;
-    class RaySceneQuery;
-    class Timer;
-    class Viewport;
-}
+#include <OgreFrameListener.h>
+#include <OgreSceneQuery.h>
 
 namespace GG {
     class Texture;

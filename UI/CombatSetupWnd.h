@@ -7,17 +7,7 @@
 #include "../combat/CombatOrder.h"
 #include "../universe/TemporaryPtr.h"
 
-
-namespace Ogre {
-    class Entity;
-    class Material;
-    class MaterialPtr;
-    class MovableObject;
-    class Quaternion;
-    class SceneManager;
-    class SceneNode;
-    class Vector3;
-}
+#include <OgreSceneManager.h>
 
 struct CombatSetupGroup;
 class CombatWnd;

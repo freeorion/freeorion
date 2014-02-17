@@ -45,10 +45,10 @@
 #include <Carbon/Carbon.h>
 #endif
 
-#include <OgreDataStream.h>
 #include <OgreRenderTargetListener.h>
-#include <OgreSharedPtr.h>
 #include <OgreTimer.h>
+#include <OgreSharedPtr.h>
+#include <OgreDataStream.h>
 #include <OgreWindowEventUtilities.h>
 
 #include <GG/GUI.h>
@@ -64,10 +64,6 @@
 #else
 # define GG_OGRE_API
 #endif
-
-namespace Ogre {
-    class RenderWindow;
-}
 
 namespace GG {
 

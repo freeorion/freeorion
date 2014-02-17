@@ -39,19 +39,9 @@
 #include "PagedGeometry.h"
 #include "TreeLoader3D.h"
 
-#include <OgreBillboard.h>
-#include <OgreBillboardSet.h>
 #include <OgreCompositorManager.h>
 #include <OgreConfigFile.h>
-#include <OgreEntity.h>
-#include <OgreMaterialManager.h>
-#include <OgreMeshManager.h>
-#include <OgreRoot.h>
 #include <OgreRenderQueueListener.h>
-#include <OgreRenderSystem.h>
-#include <OgreRenderTarget.h>
-#include <OgreSceneQuery.h>
-#include <OgreSubEntity.h>
 
 #include <btBulletCollisionCommon.h>
 

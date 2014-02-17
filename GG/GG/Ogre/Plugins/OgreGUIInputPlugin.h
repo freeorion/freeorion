@@ -31,6 +31,7 @@
 #define _GG_OgreGUIInputPlugin_h_
 
 #include <OgrePlugin.h>
+#include <OgreRenderWindow.h>
 
 #include <GG/PtRect.h>
 
@@ -46,8 +47,6 @@
 #else
 # define GG_OGRE_PLUGIN_API
 #endif
-
-namespace Ogre { class RenderWindow; }
 
 namespace GG {
 

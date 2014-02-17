@@ -34,10 +34,8 @@
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
 
-#include <OgreRoot.h>
-#include <OgreVector3.h>
 #include <OgreRenderWindow.h>
-#include <OgreRenderSystem.h>
+#include <OgreRoot.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>

@@ -19,9 +19,8 @@
 #include <GG/Layout.h>
 
 #include <OgreEntity.h>
-#include <OgreMaterialManager.h>
+#include <OgreManualObject.h>
 #include <OgreMeshManager.h>
-#include <OgreSceneManager.h>
 
 #include <boost/cast.hpp>
 

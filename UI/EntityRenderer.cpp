@@ -18,17 +18,9 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
-#include <OgreCamera.h>
 #include <OgreEntity.h>
 #include <OgreHardwarePixelBuffer.h>
-#include <OgreMaterialManager.h>
-#include <OgreQuaternion.h>
-#include <OgreRenderTexture.h>
-#include <OgreRoot.h>
 #include <OgreSubEntity.h>
-#include <OgreTextureManager.h>
-#include <OgreTimer.h>
-#include <OgreVector3.h>
 
 #include <GG/Texture.h>
 

@@ -13,16 +13,8 @@
 #include <set>
 #include <vector>
 
-
 struct HumanClientFSM;
 class MultiPlayerLobbyWnd;
-namespace Ogre {
-    class Root;
-    class RenderWindow;
-    class SceneManager;
-    class Camera;
-    class Viewport;
-}
 
 /** the application framework class for the human player FreeOrion client. */
 class HumanClientApp :

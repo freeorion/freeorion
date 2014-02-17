@@ -2,18 +2,11 @@
 #ifndef _CombatCamera_h_
 #define _CombatCamera_h_
 
-#include <OgreVector3.h>
-
-#include <GG/WndEvent.h>
-
 #include <boost/signals2/signal.hpp>
 
+#include <OgreCamera.h>
 
-namespace Ogre {
-    class Animation;
-    class AnimationState;
-    class Camera;
-}
+#include <GG/WndEvent.h>
 
 class CombatCamera
 {

@@ -26,9 +26,8 @@
 
 #include <GG/EventPump.h>
 
-#include <OgreRenderSystem.h>
-#include <OgreRenderWindow.h>
 #include <OgreRoot.h>
+#include <OgreRenderWindow.h>
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #include <GL/gl.h>
