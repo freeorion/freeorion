@@ -20,7 +20,7 @@
 #
 # $FREETYPE_DIR is an environment variable that would correspond to the
 # ./configure --prefix=$FREETYPE_DIR used in building FREETYPE.
-#
+
 #=============================================================================
 # CMake - Cross Platform Makefile Generator
 # Copyright 2000-2011 Kitware, Inc., Insight Software Consortium
@@ -79,7 +79,7 @@
 #
 #  * Kitware, Inc.
 #=============================================================================
-#
+
 # Created by Eric Wing.
 # Modifications by Alexander Neundorf.
 # This file has been renamed to "FindFreetype.cmake" instead of the correct
@@ -111,7 +111,10 @@ find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   PATH_SUFFIXES include/freetype2 include
 )
 
-find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
+find_path(FREETYPE_INCLUDE_DIR_freetype2
+  NAMES
+    freetype/config/ftheader.h
+    config/ftheader.h
   HINTS
     ENV FREETYPE_DIR
   PATHS
@@ -128,10 +131,17 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
 # set the user variables
 if(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
   set(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR_ft2build};${FREETYPE_INCLUDE_DIR_freetype2}")
+  list(REMOVE_DUPLICATES FREETYPE_INCLUDE_DIRS)
 endif()
 
-if(FREETYPE_INCLUDE_DIR_freetype2 AND EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h")
-    file(STRINGS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h" freetype_version_str
+if(EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h")
+  set(FREETYPE_H "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h")
+elseif(EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype.h")
+  set(FREETYPE_H "${FREETYPE_INCLUDE_DIR_freetype2}/freetype.h")
+endif()
+
+if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
+    file(STRINGS "${FREETYPE_H}" freetype_version_str
          REGEX "^#[\t ]*define[\t ]+FREETYPE_(MAJOR|MINOR|PATCH)[\t ]+[0-9]+$")
 
     unset(FREETYPE_VERSION_STRING)
