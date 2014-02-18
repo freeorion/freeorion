@@ -2322,18 +2322,15 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
             scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Not Homeworld name = RootCandidate.Species
-                Number low = 1 condition = And [
-                    Source
-                    Planet
-                    Homeworld name = RootCandidate.Species
-                ]
+                Species Source.Species
+                Not Homeworld name = Source.Species
                 TargetPopulation low = 0 high = 9999
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
                 Planet
                 Focus "FOCUS_GROWTH"
+                Homeworld
             ]
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
@@ -2476,7 +2473,7 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = Planet
             accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
-            effects = SetTargetHappiness Value + 20
+            effects = SetTargetHappiness Value + 10
         
         EffectsGroup
             scope = Source
