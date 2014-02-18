@@ -256,7 +256,7 @@ Special
                     icon = "icons/specials_large/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
-                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                        tag = "tech" data = "SHP_KRILL_SPAWN"
                     ]
                     empire = Source.Owner
                 GenerateSitRepMessage
