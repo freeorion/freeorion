@@ -538,21 +538,33 @@ public:
             render_system->setStencilBufferParams(
                 Ogre::CMPF_ALWAYS_PASS,
                 OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+#if (OGRE_VERSION >= ((1 << 16 | 9 << 8)))
+                0xFFFFFFFF,
+#endif
                 Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
         } else if (queue_group_id == SELECTION_HILITING_OUTLINED_RENDER_QUEUE) { // outline object's selection hiliting
             render_system->setStencilBufferParams(
                 Ogre::CMPF_NOT_EQUAL,
                 OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+#if (OGRE_VERSION >= ((1 << 16 | 9 << 8)))
+                0xFFFFFFFF,
+#endif
                 Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
         } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's stencil-writing pass
             render_system->setStencilBufferParams(
                 Ogre::CMPF_ALWAYS_PASS,
                 FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+#if (OGRE_VERSION >= ((1 << 16 | 9 << 8)))
+                0xFFFFFFFF,
+#endif
                 Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
         } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's rendering pass
             render_system->setStencilBufferParams(
                 Ogre::CMPF_EQUAL,
                 FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+#if (OGRE_VERSION >= ((1 << 16 | 9 << 8)))
+                0xFFFFFFFF,
+#endif
                 Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_ZERO, false);
         }
     }
