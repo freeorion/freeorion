@@ -1,17 +1,14 @@
 import sys
 import random
 import math
-import os
-
-from pprint import pprint
 
 import foUniverseGenerator as fo
 
-## star group naming options 
-# if star_groups_use_chars is true use entries from the stringtable entry STAR_GROUP_CHARS (single characters), 
-# otherwise use words like 'Alpha' from the stringtable entry STAR_GROUP_WORDS. 
+## star group naming options
+# if star_groups_use_chars is true use entries from the stringtable entry STAR_GROUP_CHARS (single characters),
+# otherwise use words like 'Alpha' from the stringtable entry STAR_GROUP_WORDS.
 star_groups_use_chars = True
-postfix_stargroup_modifiers = True # if false then prefix 
+postfix_stargroup_modifiers = True # if false then prefix
 
 # the target proportion of systems to be given individual names, dependent on size of galaxy
 target_indiv_ratio_small = 0.6
@@ -61,8 +58,8 @@ planet_types = (fo.planetType.swamp,  fo.planetType.radiated,  fo.planetType.tox
                 fo.planetType.ocean)
 
 # for starname modifiers
-stargroup_words=[]
-stargroup_chars=[]
+stargroup_words = []
+stargroup_chars = []
 stargroup_modifiers = []
 greek_letters = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa",
                 "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi",
@@ -132,9 +129,9 @@ def get_empire_name():
 
 # This function checks if there are enough systems to give all
 # players adequately-separated homeworlds, and increases the
-# number of systems accordingly if not 
+# number of systems accordingly if not
 def adjust_universe_size(size, total_players):
-    min_sys = total_players*3;
+    min_sys = total_players * 3
     if size < min_sys:
         return min_sys
     else:
@@ -187,7 +184,7 @@ def calc_planet_size(star_type, orbit):
     # for each planet size, and take the highest modified roll
     planet_size = fo.planetSize.unknown
     try:
-        max_roll = 0        
+        max_roll = 0
         for candidate in planet_sizes_all:
             roll = random.randint(1, 100) \
                 + fo.density_mod_to_planet_size_dist(gsd.planetDensity, candidate) \
@@ -242,7 +239,7 @@ def generate_planet(planet_size, planet_type, system, orbit):
     try:
         planet = fo.create_planet(planet_size, planet_type, system, orbit, "")
     except:
-        planet = fo.invalid_object();
+        planet = fo.invalid_object()
         print "Python generate_planet: Create planet failed"
         print sys.exc_info()[1]
     return planet
@@ -271,7 +268,7 @@ def name_planets(system):
 
 # Checks if a system is too close to the other home systems
 # Home systems should be at least 200 units (linear distance)
-# and 2 jumps apart 
+# and 2 jumps apart
 def is_too_close_to_other_home_systems(system, home_systems):
     for home_system in home_systems:
         if fo.linear_distance(system, home_system) < 200:
@@ -289,7 +286,7 @@ def generate_home_system_list(num_home_systems, systems):
         err_msg = "Python generate_home_system_list: no systems to choose from"
         print err_msg
         raise Exception(err_msg)
-    
+
     # initialize list of home systems
     home_systems = []
 
@@ -439,13 +436,13 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
 
 # used in clustering
 def recalc_centers(ctrs, points, assignments):
-    tallies = [ [[],[]] for ctr in ctrs ]
+    tallies = [[[], []] for ctr in ctrs]
     for index_p, index_ctr in enumerate(assignments):
         tallies[index_ctr][0].append(points[index_p][0])
         tallies[index_ctr][1].append(points[index_p][1])
     for index_ctr, tally in enumerate(tallies):
         num_here = len(tally[0])
-        if num_here==0:
+        if num_here == 0:
             pass # leave ctr unchanged if no points assigned to it last round
         else:
             ctrs[index_ctr] = [float(sum(tally[0]))/num_here, float(sum(tally[1]))/num_here]
@@ -455,7 +452,7 @@ def assign_clusters(points, ctrs):
     assignments = []
     for point in points:
         best_dist_sqr = 1e20
-        best_ctr=0
+        best_ctr = 0
         for index_ctr, ctr in enumerate(ctrs):
             this_dist_sqr = (ctr[0] - point[0])**2 + (ctr[1] - point[1])**2
             if this_dist_sqr < best_dist_sqr:
@@ -484,15 +481,15 @@ def cluster_stars(positions, num_star_groups):
             print "falling through system clustering iteration loop without convergence"
         pass
     return clusters[1-oldC]
-    
+
 def check_deep_space(group_list, star_type_assignments, planet_size_assignments):
-    deep_space=[]
-    not_deep=[]
+    deep_space = []
+    not_deep = []
     for systemxy in group_list:
         if star_type_assignments.get(systemxy, fo.starType.noStar) != fo.starType.noStar:
             not_deep.append(systemxy)
         else:
-            for psize in planet_size_assignments.get(systemxy,{}).values():
+            for psize in planet_size_assignments.get(systemxy, {}).values():
                 if psize != fo.planetSize.noWorld:
                     not_deep.append(systemxy)
                     break
@@ -536,8 +533,8 @@ def create_universe():
     # randomly shuffle the list so we don't get the names always
     # in the same order when we pop names from the list later
     random.shuffle(star_names)
-    
-    # make sure there are enough systems for the given number of players 
+
+    # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
     new_size = adjust_universe_size(gsd.size, total_players)
     if new_size > gsd.size:
@@ -602,11 +599,11 @@ def create_universe():
         planet_size_assignments[(position.x, position.y)] = these_planets
         planet_count_dist.setdefault(planet_count, [0])[0] += 1
     print "\n Planet Count Distribution: planets_in_system | num_systems"
-    for planet_count,sys_count in planet_count_dist.items():
-        print "\t\t\t%2d  | %5d"%(planet_count, sys_count[0])
+    for planet_count, sys_count in planet_count_dist.items():
+        print "\t\t\t%2d  | %5d" % (planet_count, sys_count[0])
     print
 
-    # will name name a portion of stars on a group basis, where the stars of each group share the same base star name, 
+    # will name name a portion of stars on a group basis, where the stars of each group share the same base star name,
     # suffixed by different (default greek) letters or characters (options at top of file)
     star_name_map = {}
     group_names = get_name_list("STAR_GROUP_NAMES")
@@ -634,7 +631,7 @@ def create_universe():
     num_systems = len(system_positions)
     target_indiv_ratio = [target_indiv_ratio_small, target_indiv_ratio_large][ num_systems >= naming_large_galaxy_size ]
     #TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than 50% potential_group_names used for groups
-    num_individual_stars = int(max(min( num_systems * target_indiv_ratio, 
+    num_individual_stars = int(max(min( num_systems * target_indiv_ratio,
                                len(individual_names)+int(0.5*len(potential_group_names))),
                                num_systems - 0.8*len(stargroup_modifiers)*(len(group_names)+int(0.5*len(potential_group_names)))))
     star_group_size = 1 + int( (num_systems-num_individual_stars)/(max(1, len(group_names)+int(0.5*len(potential_group_names)))))
@@ -645,8 +642,8 @@ def create_universe():
     #print "num indiv names:", len(individual_names), "num group_names:", len(group_names), "num potential_group_names:", len(potential_group_names)
 
     # first cluster all systems, then remove some to be individually named (otherwise groups can have too many individually
-    # named systems in their middle).  First remove any that are too small (only 1 or 2 systems).  The clusters with the most systems 
-    # are generally the most closely spaced, and though they might make good logical candidates for groups, their names are then prone 
+    # named systems in their middle).  First remove any that are too small (only 1 or 2 systems).  The clusters with the most systems
+    # are generally the most closely spaced, and though they might make good logical candidates for groups, their names are then prone
     # to overlapping on the galaxy map, so after removing small groups, remove the groups with the most systems.
     position_list = list(system_positions)
     random.shuffle(position_list) #just to be sure it is randomized
@@ -656,7 +653,7 @@ def create_universe():
         this_pos = position_list[index_pos]
         star_groups.setdefault(index_group, []).append( (this_pos.x, this_pos.y) )
     indiv_systems = []
-    
+
     # remove groups with only one non-deep-system
     for groupindex, group_list in star_groups.items():
         max_can_transfer = len(potential_group_names)-len(star_groups)+len(individual_names)-len(indiv_systems)
@@ -672,7 +669,7 @@ def create_universe():
         del star_groups[groupindex]
 
     # remove tiny groups
-    group_sizes = [(len(group), index) for index,group in star_groups.items()]
+    group_sizes = [(len(group), index) for index, group in star_groups.items()]
     group_sizes.sort()
     while (len(indiv_systems) < num_individual_stars) and len(group_sizes)>0:
         groupsize, groupindex = group_sizes.pop()
@@ -684,7 +681,7 @@ def create_universe():
         for systemxy in star_groups[groupindex]:
             indiv_systems.append(systemxy)
         del star_groups[groupindex]
-        
+
     # remove largest (likely most compact) groups
     while (len(indiv_systems) < num_individual_stars) and len(group_sizes)>0:
         groupsize, groupindex = group_sizes.pop(-1)
@@ -702,7 +699,7 @@ def create_universe():
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names)/2, num_individual_stars+1-len(individual_names)),len(potential_group_names))
+    num_for_indiv = min(max(len(potential_group_names)/2, num_individual_stars+1-len(individual_names)), len(potential_group_names))
     individual_names.extend( potential_group_names[:num_for_indiv])
     group_names.extend( potential_group_names[num_for_indiv:])
 
@@ -735,11 +732,11 @@ def create_universe():
                 planet_type_summary.setdefault(planet_type, [0])[0]+=1
                 generate_planet(planet_size, planet_type, system, orbit)
     print len(systems), "systems generated and populated"
-    planet_type_names=dict(zip(planet_types_all, ["Swamp", "Radiated", "Toxic", "Inferno", "Barren", "Tundra", "Desert", "Terran", "Ocean", "Asteroids", "Gas Giant"]))
+    planet_type_names = dict(zip(planet_types_all, ["Swamp", "Radiated", "Toxic", "Inferno", "Barren", "Tundra", "Desert", "Terran", "Ocean", "Asteroids", "Gas Giant"]))
     planet_total = sum([type_tally[0] for type_tally in planet_type_summary.values()])
-    print "\nPlanet Type Summary for a total of %d placed planets"%(planet_total)
+    print "\nPlanet Type Summary for a total of %d placed planets" % (planet_total)
     for planet_type in planet_type_summary:
-        print "\t %12s: %.1f%%"%(planet_type_names[planet_type], (100.0*planet_type_summary.get(planet_type,[0])[0])/planet_total)
+        print "\t %12s: %.1f%%" % (planet_type_names[planet_type], (100.0*planet_type_summary.get(planet_type, [0])[0])/planet_total)
     print
     # generate Starlanes
     fo.generate_starlanes(gsd.starlaneFrequency)
@@ -748,7 +745,7 @@ def create_universe():
     print "Generate list of home systems..."
     home_systems = generate_home_system_list(total_players, systems)
     print "...systems choosen:", home_systems
-    
+
     # store list of possible empire names in global container
     global empire_names
     print "Load list of empire names..."
@@ -757,7 +754,7 @@ def create_universe():
     # randomly shuffle the list so we don't get the names always
     # in the same order when we pop names from the list later
     random.shuffle(empire_names)
-    
+
     # set up empires for each player
     for psd_entry in psd_list:
         empire = psd_entry.key()
