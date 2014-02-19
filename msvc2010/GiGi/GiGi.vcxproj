@@ -42,7 +42,6 @@
     <ClInclude Include="..\..\GG\GG\MultiEdit.h" />
     <ClInclude Include="..\..\GG\GG\MultiEditFwd.h" />
     <ClInclude Include="..\..\GG\GG\PtRect.h" />
-    <ClInclude Include="..\..\GG\GG\ReportParseError.h" />
     <ClInclude Include="..\..\GG\GG\Scroll.h" />
     <ClInclude Include="..\..\GG\GG\Signal0.h" />
     <ClInclude Include="..\..\GG\GG\Signal1.h" />
