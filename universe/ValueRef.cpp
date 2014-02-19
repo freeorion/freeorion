@@ -110,6 +110,7 @@ namespace {
             map["Troops"] = METER_TROOPS;
             map["RebelTroops"] = METER_REBEL_TROOPS;
             map["Supply"] = METER_SUPPLY;
+            map["MaxSupply"] = METER_MAX_SUPPLY;
             map["Stealth"] = METER_STEALTH;
             map["Detection"] = METER_DETECTION;
             map["BattleSpeed"] = METER_BATTLE_SPEED;

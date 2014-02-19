@@ -158,6 +158,7 @@
     (MaximumNumberOf)                           \
     (MaxShield)                                 \
     (MaxStructure)                              \
+    (MaxSupply)                                 \
     (MaxTroops)                                 \
     (Mean)                                      \
     (Medium)                                    \
@@ -284,6 +285,7 @@
     (SetMaxFuel)                                \
     (SetMaxShield)                              \
     (SetMaxStructure)                           \
+    (SetMaxSupply)                              \
     (SetMaxTroops)                              \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
@@ -324,7 +326,9 @@
     (ShortRange)                                \
     (Sin)                                       \
     (Size)                                      \
-    (SizeAsDouble)                              \
+    (SizeAsDouble)
+
+#define TOKEN_SEQ_5                             \
     (Slot)                                      \
     (Slots)                                     \
     (SlotType)                                  \
@@ -398,6 +402,8 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_4)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_5)
 #undef DECLARE_TOKEN
+
 
 #endif

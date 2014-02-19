@@ -179,6 +179,7 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_MAX_FUEL:
         icon_filename = "fuel.png";         break;
     case METER_SUPPLY:
+    case METER_MAX_SUPPLY:
         icon_filename = "supply.png";       break;
     case METER_STEALTH:
         icon_filename = "stealth.png";      break;
