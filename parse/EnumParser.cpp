@@ -333,6 +333,7 @@ namespace parse {
             |    tok.MaxShield_             [ _val = METER_MAX_SHIELD ]
             |    tok.MaxStructure_          [ _val = METER_MAX_STRUCTURE ]
             |    tok.MaxTroops_             [ _val = METER_MAX_TROOPS ]
+            |    tok.MaxSupply_             [ _val = METER_MAX_SUPPLY ]
 
             |    tok.Construction_          [ _val = METER_CONSTRUCTION ]
             |    tok.Industry_              [ _val = METER_INDUSTRY ]
@@ -346,9 +347,9 @@ namespace parse {
             |    tok.Shield_                [ _val = METER_SHIELD ]
             |    tok.Structure_             [ _val = METER_STRUCTURE ]
             |    tok.Troops_                [ _val = METER_TROOPS ]
+            |    tok.Supply_                [ _val = METER_SUPPLY ]
 
             |    tok.RebelTroops_           [ _val = METER_REBEL_TROOPS ]
-            |    tok.Supply_                [ _val = METER_SUPPLY ]
             |    tok.Stealth_               [ _val = METER_STEALTH ]
             |    tok.Detection_             [ _val = METER_DETECTION ]
             |    tok.BattleSpeed_           [ _val = METER_BATTLE_SPEED ]
@@ -409,6 +410,7 @@ namespace parse {
             |    tok.SetMaxShield_          [ _val = METER_MAX_SHIELD ]
             |    tok.SetMaxStructure_       [ _val = METER_MAX_STRUCTURE ]
             |    tok.SetMaxTroops_          [ _val = METER_MAX_TROOPS ]
+            |    tok.SetMaxSupply_          [ _val = METER_MAX_SUPPLY ]
 
             |    tok.SetConstruction_       [ _val = METER_CONSTRUCTION ]
             |    tok.SetIndustry_           [ _val = METER_INDUSTRY ]
@@ -422,9 +424,9 @@ namespace parse {
             |    tok.SetShield_             [ _val = METER_SHIELD ]
             |    tok.SetStructure_          [ _val = METER_STRUCTURE ]
             |    tok.SetTroops_             [ _val = METER_TROOPS ]
+            |    tok.SetSupply_             [ _val = METER_SUPPLY ]
 
             |    tok.SetRebelTroops_        [ _val = METER_REBEL_TROOPS ]
-            |    tok.SetSupply_             [ _val = METER_SUPPLY ]
             |    tok.SetStealth_            [ _val = METER_STEALTH ]
             |    tok.SetDetection_          [ _val = METER_DETECTION ]
             |    tok.SetBattleSpeed_        [ _val = METER_BATTLE_SPEED ]

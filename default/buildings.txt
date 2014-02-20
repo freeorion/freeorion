@@ -114,7 +114,7 @@ BuildingType
                 OwnedBy TheEmpire Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetSupply Value + 1
+            effects = SetMaxSupply Value + 1
 
         EffectsGroup
             scope = And [
@@ -636,7 +636,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
-            effects = SetSupply Value + 2
+            effects = SetMaxSupply Value + 2
     ]
     icon = "icons/building/megalith.png"
 
@@ -711,7 +711,7 @@ BuildingType
                 Planet
             ]
             activation = Source
-            effects = SetSupply Value * 2
+            effects = SetMaxSupply Value * 2
     icon = ""
 
 BuildingType

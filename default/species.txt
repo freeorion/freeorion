@@ -2052,14 +2052,65 @@ STANDARD_CONSTRUCTION
             activation = Planet
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction Value + 20
-            
-        EffectsGroup
-            scope = Source
+'''
+
+NO_SUPPLY
+'''
+'''
+
+BAD_SUPPLY
+'''        EffectsGroup
+            scope = And [
+                Source
+                Planet size = [Tiny Small]
+            ]
             activation = Planet
             accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetSupply Value + 1
-            
+            effects = SetMaxSupply Value + 1
 '''
+
+AVERAGE_SUPPLY
+'''        EffectsGroup
+            scope = And [
+                Source
+                Planet size = [Tiny Small Medium]
+            ]
+            activation = Planet
+            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 1
+'''
+
+GREAT_SUPPLY
+'''        EffectsGroup
+            scope = And [
+                Source
+                Planet size = Tiny
+            ]
+            activation = Planet
+            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 1.5
+
+        EffectsGroup
+            scope = And [
+                Source
+                Planet size = [Small Medium Large]
+            ]
+            activation = Planet
+            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 1
+'''
+
+ULTIMATE_SUPPLY
+'''        EffectsGroup
+            scope = And [
+                Source
+                Planet size = [Tiny Small Medium Large Huge]
+            ]
+            activation = Planet
+            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 1.5
+'''
+
 
 //#####     P O P U L A T I O N   #####  
 
@@ -2079,6 +2130,7 @@ AVERAGE_POPULATION
         [[FOCUS_CHANGE_PENALTY]]
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
+        [[GREAT_SUPPLY]]
 '''
 
 BAD_POPULATION
@@ -2609,7 +2661,7 @@ ADVANCED_FOCUS_EFFECTS
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
             accountinglabel = "SHP_INTSTEL_LOG"
-            effects = SetSupply Value + 3
+            effects = SetMaxSupply Value + 3
 '''
 
 //#####      I N D U S T R Y    #####//

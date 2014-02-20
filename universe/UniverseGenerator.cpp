@@ -1337,6 +1337,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     meters[METER_STRUCTURE] =    METER_MAX_STRUCTURE;
     meters[METER_DEFENSE] =      METER_MAX_DEFENSE;
     meters[METER_TROOPS] =       METER_MAX_TROOPS;
+    meters[METER_SUPPLY] =       METER_MAX_SUPPLY;
 
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.

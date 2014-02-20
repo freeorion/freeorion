@@ -91,6 +91,7 @@ namespace {
         case METER_TARGET_HAPPINESS:
             return GG::Clr(255, 255, 0, 255);
         case METER_SUPPLY:
+        case METER_MAX_SUPPLY:
         case METER_CONSTRUCTION:
         case METER_TARGET_CONSTRUCTION:
         case METER_POPULATION:
@@ -842,7 +843,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     meters.push_back(std::make_pair(METER_TROOPS, METER_MAX_TROOPS));
     meters.push_back(std::make_pair(METER_DETECTION, INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_STEALTH, INVALID_METER_TYPE));
-    meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
+    meters.push_back(std::make_pair(METER_SUPPLY, METER_MAX_SUPPLY));
 
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
@@ -917,7 +918,7 @@ void MilitaryPanel::Update() {
     m_stealth_stat->SetValue(obj->InitialMeterValue(METER_STEALTH));
 
     // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY));
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY, METER_MAX_SUPPLY));
     m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
 
