@@ -1865,7 +1865,6 @@
 				4710233B0CEF3AAB00A7DF2B /* doc */,
 				4710233E0CEF3AAB00A7DF2B /* GG */,
 				471023900CEF3AAC00A7DF2B /* src */,
-				471023C60CEF3AAC00A7DF2B /* tutorial */,
 			);
 			path = GG;
 			sourceTree = "<group>";
@@ -2050,13 +2049,6 @@
 				471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */,
 			);
 			path = SDL;
-			sourceTree = "<group>";
-		};
-		471023C60CEF3AAC00A7DF2B /* tutorial */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = tutorial;
 			sourceTree = "<group>";
 		};
 		47102F9D0CEF562700A7DF2B /* AI */ = {
