@@ -12,9 +12,6 @@
     <Filter Include="Source Files\parse">
       <UniqueIdentifier>{75d24163-deb9-408c-9659-e28b7bddde67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\adobe">
-      <UniqueIdentifier>{b19ff882-0104-4fb0-9dda-efe425822fa0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\parse">
       <UniqueIdentifier>{89466642-7734-480c-ab15-5146bdcc8962}</UniqueIdentifier>
     </Filter>
@@ -145,12 +142,6 @@
     </ClCompile>
     <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp">
       <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp">
-      <Filter>Source Files\adobe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
-      <Filter>Source Files\adobe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp">
       <Filter>Source Files\parse</Filter>

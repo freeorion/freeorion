@@ -2,13 +2,8 @@
 #ifndef _Tokens_h_
 #define _Tokens_h_
 
-#include <GG/adobe/name.hpp>
-
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
-
-#include "../util/Export.h"
-
 
 #define TOKEN_SEQ_1                             \
     (Abs)                                       \
@@ -397,7 +392,7 @@
     (Y)                                         \
     (Yellow)
 
-#define DECLARE_TOKEN(r, _, elem) extern FO_COMMON_API adobe::aggregate_name_t BOOST_PP_CAT(elem, _token);
+#define DECLARE_TOKEN(r, _, elem) extern const char* BOOST_PP_CAT(elem, _token);
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)

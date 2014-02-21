@@ -22,7 +22,7 @@ struct lexer_test_rules
     test_rule lexer_4;
     test_rule lexer_5;
 
-    static std::set<adobe::name_t> unchecked_tokens;
+    static std::set<const char*> unchecked_tokens;
 };
 
 enum test_type {

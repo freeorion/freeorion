@@ -61,7 +61,6 @@ lexer::lexer() :
     lex::_end_type _end;
     lex::_start_type _start;
     lex::_val_type _val;
-    using boost::phoenix::bind;
     using boost::phoenix::construct;
 
     self
@@ -83,11 +82,11 @@ lexer::lexer() :
         |     ']'
         ;
 
-#define REGISTER_TOKEN(r, _, name)                                        \
-    {                                                                   \
-        adobe::name_t n(BOOST_PP_CAT(name, _token));                    \
-        self += BOOST_PP_CAT(name, _) [ _val = n ];                     \
-        m_name_tokens[n] = &BOOST_PP_CAT(name, _);                      \
+#define REGISTER_TOKEN(r, _, name)                                    \
+    {                                                                 \
+        const char* n(BOOST_PP_CAT(name, _token));                    \
+        self += BOOST_PP_CAT(name, _) [ _val = n ];                   \
+        m_name_tokens[n] = &BOOST_PP_CAT(name, _);                    \
     }
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(REGISTER_TOKEN, _, TOKEN_SEQ_2)
@@ -112,8 +111,8 @@ const lexer& lexer::instance() {
     return retval;
 }
 
-const boost::spirit::lex::token_def<adobe::name_t>& lexer::name_token(adobe::name_t name) const {
-    std::map<adobe::name_t, boost::spirit::lex::token_def<adobe::name_t>*>::const_iterator it = m_name_tokens.find(name);
+const boost::spirit::lex::token_def<const char*>& lexer::name_token(const char* name) const {
+    std::map<const char*, boost::spirit::lex::token_def<const char*>*>::const_iterator it = m_name_tokens.find(name);
     assert(it != m_name_tokens.end());
     return *it->second;
 }
@@ -121,12 +120,12 @@ const boost::spirit::lex::token_def<adobe::name_t>& lexer::name_token(adobe::nam
 namespace boost { namespace spirit { namespace traits {
 
     // This template specialization is required by Spirit.Lex to automatically
-    // convert an iterator pair to an adobe::name_t in the lexer.
-    void assign_to_attribute_from_iterators<adobe::name_t, parse::text_iterator, void>::
-    call(const parse::text_iterator& first, const parse::text_iterator& last, adobe::name_t& attr) {
+    // convert an iterator pair to an const char* in the lexer.
+    void assign_to_attribute_from_iterators<const char*, parse::text_iterator, void>::
+    call(const parse::text_iterator& first, const parse::text_iterator& last, const char*& attr) {
         std::string str(first, last);
         boost::algorithm::to_lower(str);
-        attr = adobe::name_t(str.c_str());
+        attr = str.c_str();
     }
 
     void assign_to_attribute_from_iterators<bool, parse::text_iterator, void>::

@@ -343,7 +343,7 @@ int main(int argc, char* argv[])
     if(test == lexer && !lexer_test_rules::unchecked_tokens.empty())
     {
         std::cout << "There were unhandled tokens: " << std::endl;
-        for(std::set<adobe::name_t>::iterator it = lexer_test_rules::unchecked_tokens.begin(); it != lexer_test_rules::unchecked_tokens.end(); ++it)
+        for(std::set<const char*>::iterator it = lexer_test_rules::unchecked_tokens.begin(); it != lexer_test_rules::unchecked_tokens.end(); ++it)
         {
             std::cout << *it << std::endl;
             ++failures;

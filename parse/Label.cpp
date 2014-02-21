@@ -2,9 +2,9 @@
 
 
 namespace parse {
-    label_rule& label(adobe::name_t name) {
-        static std::map<adobe::name_t, label_rule> rules;
-        std::map<adobe::name_t, label_rule>::iterator it = rules.find(name);
+    label_rule& label(const char* name) {
+        static std::map<const char*, label_rule> rules;
+        std::map<const char*, label_rule>::iterator it = rules.find(name);
         if (it == rules.end()) {
             const lexer& l = lexer::instance();
             label_rule& retval = rules[name];
@@ -14,7 +14,7 @@ namespace parse {
                       >>  '='
                      )
                 ;
-            retval.name(std::string(name.c_str()) + " =");
+            retval.name(std::string(name) + " =");
             return retval;
         } else {
             return it->second;

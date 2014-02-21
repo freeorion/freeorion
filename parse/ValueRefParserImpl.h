@@ -18,7 +18,7 @@ namespace phoenix = boost::phoenix;
 // These are just here to satisfy the requirements of qi::debug(<rule>).
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<adobe::name_t>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<const char*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<int>*> >&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<double>*> >&) { return os; }
 }
@@ -32,7 +32,7 @@ typedef qi::rule<
 
 typedef qi::rule<
     parse::token_iterator,
-    adobe::name_t (),
+    const char* (),
     parse::skipper_type
 > name_token_rule;
 
@@ -211,8 +211,8 @@ void initialize_bound_variable_parser(
 
     bound_variable
         =   variable_scope() [ _b = _1 ] > '.'
-        > -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
-        >   variable_name    [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        > -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+        >   variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
 
@@ -246,8 +246,8 @@ void initialize_numeric_statistic_parser(
               |   (
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_token)
-                   >>       -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] >> '.')
-                   >>       variable_name [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ]
+                   >>       -(container_type() [ push_back(_a, construct<std::string>(_1)) ] >> '.')
+                   >>       variable_name [ push_back(_a, construct<std::string>(_1)) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
              )
@@ -277,8 +277,8 @@ void initialize_nonnumeric_statistic_parser(
         =    (
                   tok.Mode_ [ _b = ValueRef::MODE ]
               >>  parse::label(Property_token)
-              >>        -(container_type() [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ] > '.')
-              >>        variable_name [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))) ]
+              >>        -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+              >>        variable_name [ push_back(_a, construct<std::string>(_1)) ]
               >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]

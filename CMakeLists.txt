@@ -125,8 +125,6 @@ include_directories(
     OpenSteer/include
 )
 
-add_definitions(-DADOBE_STD_SERIALIZATION)
-
 if (FREEORION_RELEASE)
     add_definitions(-DFREEORION_RELEASE)
 endif ()

@@ -17,12 +17,12 @@ struct remove_
     struct result
     { typedef void type; };
 
-    void operator()(const adobe::name_t& arg1) const
+    void operator()(const char*& arg1) const
         { lexer_test_rules::unchecked_tokens.erase(arg1); }
 };
 const boost::phoenix::function<remove_> do_erase;
 
-std::set<adobe::name_t> lexer_test_rules::unchecked_tokens;
+std::set<const char*> lexer_test_rules::unchecked_tokens;
 
 lexer_test_rules::lexer_test_rules()
 {

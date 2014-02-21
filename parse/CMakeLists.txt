@@ -73,8 +73,6 @@ set (freeorionparse_SOURCE
     Tokens.cpp
     UniverseObjectTypeValueRefParser.cpp
     ValueRefParserImpl.cpp
-    ../GG/src/adobe/name.cpp
-    ../GG/src/adobe/string_pool.cpp
 )
 
 add_library(freeorionparse

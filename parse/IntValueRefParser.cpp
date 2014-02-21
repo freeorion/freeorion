@@ -43,7 +43,7 @@ namespace {
 
             // add more object-independent ValueRef int functions here
             free_variable
-                =   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(phoenix::bind(&adobe::name_t::c_str, _1))), _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
+                =   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
                 |   tok.Value_       [ _val = new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
                 ;
 

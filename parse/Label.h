@@ -13,7 +13,7 @@ namespace parse {
         skipper_type
     > label_rule;
 
-    label_rule& label(adobe::name_t name);
+    label_rule& label(const char* name);
 }
 
 #endif

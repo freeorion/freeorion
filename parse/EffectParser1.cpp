@@ -184,7 +184,7 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             string_and_string_ref_pair (),
-            qi::locals<std::string>, // TODO: Consider making this an adobe::name_t, and removing the quotes in the script source files.
+            qi::locals<std::string>,
             parse::skipper_type
         > string_and_string_ref_rule;
 
