@@ -89,6 +89,16 @@
     (EffectsGroups)                             \
     (Empire)                                    \
     (EmpireMeter)                               \
+    (EmpireEmpireShipsDestroyed)                \
+    (EmpireShipDesignsDestroyed)                \
+    (EmpireShipDesignsLost)                     \
+    (EmpireShipDesignsProduced)                 \
+    (EmpireSpeciesPlanetsBombed)                \
+    (EmpireSpeciesPlanetsDepoped)               \
+    (EmpireSpeciesPlanetsInvaded)               \
+    (EmpireSpeciesShipsDestroyed)               \
+    (EmpireSpeciesShipsLost)                    \
+    (EmpireSpeciesShipsProduced)                \
     (Endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
