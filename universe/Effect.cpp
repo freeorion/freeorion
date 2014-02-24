@@ -1,6 +1,7 @@
 #include "Effect.h"
 
 #include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -278,6 +279,149 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
     m_scope->GetDefaultInitialCandidateObjects(ScriptingContext(source),
             *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
     GetTargetSet(source_id, targets, potential_targets);
+}
+
+void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
+                           AccountingMap* accounting_map/* = 0*/,
+                           bool only_meter_effects/* = false*/,
+                           bool only_appearance_effects/* = false*/,
+                           bool include_empire_meter_effects/* = false*/) const
+{
+    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
+
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
+    {
+        std::set<int> non_stacking_targets;
+        const EffectBase* effect = *effect_it;
+        MeterType meter_type = INVALID_METER_TYPE;
+
+        // for meter effects, need to separately call effect's Execute for each
+        // target and do meter accounting before and after.
+        const SetMeter* set_meter_effect = 0;
+        const SetShipPartMeter* set_ship_part_meter_effect = 0;
+
+        if (set_meter_effect = dynamic_cast<const SetMeter*>(effect)) {
+            meter_type = set_meter_effect->GetMeterType();
+
+        } else if (set_ship_part_meter_effect = dynamic_cast<const SetShipPartMeter*>(effect)) {
+            meter_type = set_ship_part_meter_effect->GetMeterType();
+        }
+
+
+        for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
+            targets_it != targets_causes.end(); ++targets_it)
+        {
+            const Effect::SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+            int                                source_id             = sourced_effects_group.source_object_id;
+            TemporaryPtr<const UniverseObject> source                = GetUniverseObject(source_id);
+            ScriptingContext                   source_context(source);
+            const Effect::TargetsAndCause&     targets_and_cause     = targets_it->second;
+            Effect::TargetSet                  targets               = targets_and_cause.target_set;
+
+            // if other sources have affected some of the targets, skip them
+            // use std::set::find if non_stacking_targets.size() >= targets.size()
+            // FIXME: use std::sort(targets) and std::lower_bound otherwise
+            for (Effect::TargetSet::iterator object_it = targets.begin();
+                object_it != targets.end(); )
+            {
+                int object_id                    = (*object_it)->ID();
+                std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
+
+                if (it != non_stacking_targets.end()) {
+                    *object_it = targets.back();
+                    targets.pop_back();
+                } else {
+                    non_stacking_targets.insert(object_id);
+                    ++object_it;
+                }
+            }
+
+            if (targets.empty())
+                continue;
+
+            if (log_verbose) {
+                Logger().debugStream() << "ExecuteEffects effectsgroup: \n" << Dump();
+                Logger().debugStream() << "ExecuteEffects Targets before: ";
+                for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                    Logger().debugStream() << " ... " << (*t_it)->Dump();
+            }
+
+            // execute Effects in the EffectsGroup
+            if (only_appearance_effects) {
+                if (!dynamic_cast<const SetTexture*>(effect) && !dynamic_cast<const SetOverlayTexture*>(effect))
+                    continue;
+            } else if (only_meter_effects) {
+                if (!set_meter_effect && !set_ship_part_meter_effect) {
+                    if (!include_empire_meter_effects)
+                        continue;
+                    if (!dynamic_cast<const SetEmpireMeter*>(effect))
+                        continue;
+                }
+            }
+
+            if (log_verbose) {
+                Logger().debugStream() << "ExecuteEffects Targets after: ";
+                for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                    Logger().debugStream() << " ... " << (*t_it)->Dump();
+            }
+
+            if (!accounting_map || (!set_meter_effect && !set_ship_part_meter_effect)) {
+                // for non-meter effects, can do default batch execute
+                effect->Execute(source_context, targets);
+                continue;
+            }
+
+            // accounting info for this effect on this meter, starting with
+            // non-target-dependent info
+            Effect::AccountingInfo info;
+            info.cause_type =           targets_and_cause.effect_cause.cause_type;
+            info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+            info.custom_label =         targets_and_cause.effect_cause.custom_label;
+            info.source_id =            source_id;
+
+            // process each target separately to do effect accounting
+            for (TargetSet::const_iterator target_it = targets.begin();
+                target_it != targets.end(); ++target_it)
+            {
+                TemporaryPtr<UniverseObject> target = *target_it;
+
+                // get Meter for this effect and target
+                const Meter* meter = 0;
+
+                if (set_meter_effect) {
+                    meter = target->GetMeter(meter_type);
+
+                } else if (set_ship_part_meter_effect) {
+                    if (target->ObjectType() != OBJ_SHIP)
+                        continue;   // only ships have ship part meters
+                    TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
+                    if (!ship)
+                        continue;
+                    meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
+                }
+
+                if (!meter)
+                    continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+
+                // record pre-effect meter values...
+
+                // accounting info for this effect on this meter of this target
+                info.running_meter_total =  meter->Current();
+
+                // actually execute effect to modify meter
+                effect->Execute(ScriptingContext(source, target));
+
+                // update for meter change and new total
+                info.meter_change = meter->Current() - info.running_meter_total;
+                info.running_meter_total = meter->Current();
+
+                // add accounting for this effect to end of vector
+                (*accounting_map)[target->ID()][meter_type].push_back(info);
+            }
+        }
+    }
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {

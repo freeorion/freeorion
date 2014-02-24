@@ -97,6 +97,11 @@ public:
       * order to leave potential_targets unchanged. */
     void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
 
+    void    Execute(const Effect::TargetsCauses& targets_causes,
+                    AccountingMap* accounting_map = 0,
+                    bool only_meter_effects = false,
+                    bool only_appearance_effects = false,
+                    bool include_empire_meter_effects = false) const;
     /** execute all effects in group */
     void    Execute(int source_id, const TargetSet& targets) const;
     void    Execute(int source_id, const TargetsAndCause& targets_and_cause,

@@ -1916,78 +1916,76 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     m_marked_for_victory.clear();
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
+    std::map<const Effect::EffectsGroup*, Effect::TargetsCauses> dispatched_targets_causes;
 
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
          targets_it != targets_causes.end(); ++targets_it)
     {
-        if (log_verbose)
-            Logger().debugStream() << " * * * * * * * * * * * (new effects group log entry)";
-
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(targets_it->first.source_object_id);
-        ScopedTimer update_timer("Universe::ExecuteEffects effgrp (source " +
-                                 (source ? source->Name() : "No Source!") +
-                                 ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
-
-        // if other EffectsGroups with the same stacking group have affected some of the targets in
-        // the scope of the current EffectsGroup, skip them
         const Effect::SourcedEffectsGroup& sourced_effects_group = targets_it->first;
-        const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
-        const Effect::TargetsAndCause& targets_and_cause = targets_it->second;
-        Effect::TargetSet targets = targets_and_cause.target_set;
-        if (targets.empty())
-            continue;
+        const Effect::EffectsGroup* const  effects_group         = sourced_effects_group.effects_group.get();
 
-        std::map<std::string, Effect::TargetSet>::iterator non_stacking_it =
-            executed_nonstacking_effects.find(effects_group->StackingGroup());
-        if (non_stacking_it != executed_nonstacking_effects.end()) {
-            for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin();
-                 object_it != non_stacking_it->second.end(); ++object_it)
-            {
-                Effect::TargetSet::iterator it = std::find(targets.begin(), targets.end(), *object_it);
-                if (it != targets.end()) {
-                    *it = targets.back();
-                    targets.pop_back();
+        dispatched_targets_causes[effects_group].push_back(*targets_it);
+    }
+
+    for (std::map<const Effect::EffectsGroup*, Effect::TargetsCauses>::iterator effect_group_it = dispatched_targets_causes.begin();
+         effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
+    {
+        const Effect::EffectsGroup* const effects_group        = effect_group_it->first;
+        Effect::TargetsCauses&            group_targets_causes = effect_group_it->second;
+        ScopedTimer update_timer(
+            "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
+            + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
+        );
+
+        for (Effect::TargetsCauses::iterator targets_it = group_targets_causes.begin();
+             targets_it != group_targets_causes.end(); ++targets_it)
+        {
+            // if other EffectsGroups with the same stacking group have affected some of the targets in
+            // the scope of the current EffectsGroup, skip them
+            Effect::TargetsAndCause&           targets_and_cause     = targets_it->second;
+            Effect::TargetSet&                 targets               = targets_and_cause.target_set;
+
+            std::map<std::string, Effect::TargetSet>::iterator non_stacking_it =
+                executed_nonstacking_effects.find(effects_group->StackingGroup());
+            if (non_stacking_it != executed_nonstacking_effects.end()) {
+                // FIXME: this is a set difference algorithm: targets -= non_stacking_it->second
+                // FIXME: 30% of effects execution computation is wasted for this.
+                // FIXME: make non_stacking_it->second a std::set
+                // FIXME: use std::set::find if non_stacking_it->second.size() >= targets.size()
+                // FIXME: use std::sort(targets) and std::lower_bound otherwise
+                for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin();
+                     object_it != non_stacking_it->second.end(); ++object_it)
+                {
+                    Effect::TargetSet::iterator it = std::find(targets.begin(), targets.end(), *object_it);
+                    if (it != targets.end()) {
+                        *it = targets.back();
+                        targets.pop_back();
+                    }
                 }
             }
         }
-        if (targets.empty())
-            continue;
-        Effect::TargetsAndCause filtered_targets_and_cause(targets, targets_and_cause.effect_cause);
 
-        if (log_verbose) {
-            Logger().debugStream() << "ExecuteEffects effectsgroup: \n" << effects_group->Dump();
-            Logger().debugStream() << "ExecuteEffects Targets before: ";
-            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                Logger().debugStream() << " ... " << (*t_it)->Dump();
-        }
+        if (log_verbose)
+            Logger().debugStream() << " * * * * * * * * * * * (new effects group log entry)";
 
         // execute Effects in the EffectsGroup
-        if (only_appearance_effects) {
-            effects_group->ExecuteAppearanceModifications(  sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        } else if (update_effect_accounting && only_meter_effects) {
-            effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
-            if (include_empire_meter_effects)
-                effects_group->ExecuteSetEmpireMeter(       sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        } else if (only_meter_effects) {
-            effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-            if (include_empire_meter_effects)
-                effects_group->ExecuteSetEmpireMeter(       sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        } else if (update_effect_accounting) {
-            effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
-        } else {
-            effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        }
+        effects_group->Execute( group_targets_causes,
+                                update_effect_accounting ? &m_effect_accounting_map : NULL,
+                                only_meter_effects,
+                                only_appearance_effects,
+                                include_empire_meter_effects);
 
-        if (log_verbose) {
-            Logger().debugStream() << "ExecuteEffects Targets after: ";
-            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                Logger().debugStream() << " ... " << (*t_it)->Dump();
-        }
+        for (Effect::TargetsCauses::const_iterator targets_it = group_targets_causes.begin();
+             targets_it != group_targets_causes.end(); ++targets_it)
+        {
+            const Effect::TargetsAndCause&     targets_and_cause     = targets_it->second;
+            const Effect::TargetSet&           targets               = targets_and_cause.target_set;
 
-        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (!effects_group->StackingGroup().empty()) {
-            Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
-            std::copy(targets.begin(), targets.end(), std::back_inserter(affected_targets));
+            // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
+            if (!effects_group->StackingGroup().empty()) {
+                Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
+                std::copy(targets.begin(), targets.end(), std::back_inserter(affected_targets));
+            }
         }
     }
 
