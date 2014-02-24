@@ -83,70 +83,6 @@ namespace {
                 part_name, stacking_group));
     }
 
-    struct DescriptionVisitor : public boost::static_visitor<>
-    {
-        DescriptionVisitor(ShipPartClass part_class, std::string& description) :
-            m_class(part_class),
-            m_description(description)
-        {}
-        void operator()(const float& d) const {
-            std::string desc_string;
-
-            switch(m_class){
-            case PC_FUEL: 
-            case PC_TROOPS: 
-            case PC_COLONY: 
-                desc_string += UserString("PART_DESC_CAPACITY");
-                break;
-            case PC_SHIELD: 
-                desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
-                break;
-            case PC_DETECTION: 
-                desc_string = UserString("PART_DESC_DETECTION");
-                break;
-            default:
-                desc_string = UserString("PART_DESC_STRENGTH");
-                break;
-            }
-            m_description +=
-                str(FlexibleFormat(desc_string) % d);
-        }
-        void operator()(const DirectFireStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
-                    % stats.m_damage
-                    % stats.m_ROF
-                    % stats.m_range);
-        }
-        void operator()(const LRStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
-                    % stats.m_damage
-                    % stats.m_ROF
-                    % stats.m_range
-                    % stats.m_speed
-                    % stats.m_structure
-                    % stats.m_stealth
-                    % stats.m_capacity);
-        }
-        void operator()(const FighterStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
-                    % (stats.m_type == BOMBER ? UserString("BOMBER") : UserString("INTERCEPTOR"))
-                    % stats.m_anti_ship_damage
-                    % stats.m_anti_fighter_damage
-                    % stats.m_launch_rate
-                    % stats.m_speed
-                    % stats.m_stealth
-                    % stats.m_structure
-                    % stats.m_detection
-                    % stats.m_capacity);
-        }
-
-        const ShipPartClass m_class;
-        std::string& m_description;
-    };
-
     bool DesignsTheSame(const ShipDesign& one, const ShipDesign& two) {
         return (
             one.Name()              == two.Name() &&
@@ -201,7 +137,7 @@ PartTypeManager::PartTypeManager() {
         Logger().debugStream() << "Part Types:";
         for (iterator it = begin(); it != end(); ++it) {
             const PartType* p = it->second;
-            Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class() << " stats: " << p->StatDescription();
+            Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class();
         }
     }
 }
@@ -463,12 +399,6 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 PartType::~PartType()
 { delete m_location; }
 
-std::string PartType::StatDescription() const {
-    std::string retval;
-    boost::apply_visitor(DescriptionVisitor(m_class, retval), m_stats);
-    return retval;
-}
-
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
         return false;
@@ -554,16 +484,6 @@ void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 HullType::~HullType()
 { delete m_location; }
 
-std::string HullType::StatDescription() const {
-    std::string retval = 
-        str(FlexibleFormat(UserString("HULL_DESC"))
-            % m_starlane_speed
-            % m_fuel
-            % m_battle_speed
-            % m_structure);
-    return retval;
-}
-
 unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     unsigned int count = 0;
     for (std::vector<Slot>::const_iterator it = m_slots.begin(); it != m_slots.end(); ++it)
@@ -645,7 +565,7 @@ HullTypeManager::HullTypeManager() {
         Logger().debugStream() << "Hull Types:";
         for (iterator it = begin(); it != end(); ++it) {
             const HullType* h = it->second;
-            Logger().debugStream() << " ... " << h->Name();// << " stats: " << h->StatDescription();
+            Logger().debugStream() << " ... " << h->Name();
         }
     }
 }

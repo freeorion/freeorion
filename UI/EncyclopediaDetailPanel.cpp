@@ -249,6 +249,72 @@ namespace {
     }
 }
 
+namespace {
+    struct DescriptionVisitor : public boost::static_visitor<>
+    {
+        DescriptionVisitor(ShipPartClass part_class, std::string& description) :
+            m_class(part_class),
+            m_description(description)
+        {}
+        void operator()(const float& d) const {
+            std::string desc_string;
+
+            switch(m_class){
+            case PC_FUEL:
+            case PC_TROOPS:
+            case PC_COLONY:
+                desc_string += UserString("PART_DESC_CAPACITY");
+                break;
+            case PC_SHIELD:
+                desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
+                break;
+            case PC_DETECTION:
+                desc_string = UserString("PART_DESC_DETECTION");
+                break;
+            default:
+                desc_string = UserString("PART_DESC_STRENGTH");
+                break;
+            }
+            m_description +=
+                str(FlexibleFormat(desc_string) % d);
+        }
+        void operator()(const DirectFireStats& stats) const {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
+                    % stats.m_damage
+                    % stats.m_ROF
+                    % stats.m_range);
+        }
+        void operator()(const LRStats& stats) const {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
+                    % stats.m_damage
+                    % stats.m_ROF
+                    % stats.m_range
+                    % stats.m_speed
+                    % stats.m_structure
+                    % stats.m_stealth
+                    % stats.m_capacity);
+        }
+        void operator()(const FighterStats& stats) const {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
+                    % (stats.m_type == BOMBER ? UserString("BOMBER") : UserString("INTERCEPTOR"))
+                    % stats.m_anti_ship_damage
+                    % stats.m_anti_fighter_damage
+                    % stats.m_launch_rate
+                    % stats.m_speed
+                    % stats.m_stealth
+                    % stats.m_structure
+                    % stats.m_detection
+                    % stats.m_capacity);
+        }
+
+        const ShipPartClass m_class;
+        std::string& m_description;
+    };
+}
+
 std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
 std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
@@ -718,7 +784,9 @@ namespace {
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
 
-        detailed_description += UserString(part->Description()) + "\n\n" + part->StatDescription();
+        std::string stat_description;
+        boost::apply_visitor(DescriptionVisitor(part->Class(), stat_description), part->Stats());
+        detailed_description += UserString(part->Description()) + "\n\n" + stat_description;
 
         std::string slot_types_list;
         if (part->CanMountInSlotType(SL_EXTERNAL))
@@ -770,7 +838,11 @@ namespace {
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
 
-        detailed_description += UserString(hull->Description()) + "\n\n" + hull->StatDescription();
+        detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
+            % hull->StarlaneSpeed()
+            % hull->Fuel()
+            % hull->BattleSpeed()
+            % hull->Structure());
 
         std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
