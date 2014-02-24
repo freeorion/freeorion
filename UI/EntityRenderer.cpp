@@ -40,22 +40,6 @@ namespace {
                 entityKey << "-" << entity->getSubEntity(i)->getMaterialName();
         return entityKey.str();
     }
-
-    std::string removeInvalidCharacters(std::string s) {
-        Ogre::StringUtil::StrStreamType s2;
-
-        for (std::size_t i = 0; i < s.size(); ++i) {
-            char c = s[i];
-            if (c == '/' || c == '\\' || c == ':' || c == '*' || c == '?' ||
-                c == '\"' || c == '<' || c == '>' || c == '|') {
-                s2 << '-';
-            } else {
-                s2 << c;
-            }
-        }
-
-        return s2.str();
-    }
 }
 
 ////////////////////////////////////////////////////////////

@@ -236,9 +236,6 @@ namespace {
 
         GG::TextControl*        m_summary_title;
 
-        GG::TextControl*        m_sum_label;
-        GG::TextControl*        m_sum_value;
-
         std::vector<std::pair<GG::TextControl*, GG::TextControl*> >
                                 m_effect_labels_and_values;
 
@@ -2158,7 +2155,6 @@ private:
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
 
         GG::X left(GG::X0);
-        GG::Y top(GG::Y0);
         GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
 
         if (m_show_icon)
@@ -3048,8 +3044,6 @@ namespace {
         m_meter_type(meter_type),
         m_source_object_id(object_id),
         m_summary_title(0),
-        m_sum_label(0),
-        m_sum_value(0),
         m_row_height(1),
         m_initialized(false)
     {}

@@ -12,14 +12,6 @@
 #include <GG/WndEvent.h>
 #include <GG/Menu.h>
 
-namespace {
-    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
-        static std::vector<boost::shared_ptr<GG::Texture> > normal_textures =
-            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection", "system_selection", true);
-        return normal_textures;
-    }
-}
-
 ////////////////////////////////////////////////
 // FieldIcon
 ////////////////////////////////////////////////
@@ -31,25 +23,6 @@ FieldIcon::FieldIcon(GG::X x, GG::Y y, int field_id) :
     m_selected(false),
     m_name(0)
 {
-    //// selection indicator graphic
-    //const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetSelectionIndicatorTextures();
-    //GG::X texture_width = textures.at(0)->DefaultWidth();
-    //GG::Y texture_height = textures.at(0)->DefaultHeight();
-    //m_selection_indicator = new GG::DynamicGraphic(GG::X0, GG::Y0,
-    //                                               texture_width, texture_height, true,
-    //                                               texture_width, texture_height, 0, textures,
-    //                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    //m_selection_indicator->SetFPS(ClientUI::SystemSelectionIndicatorFPS());
-    //AttachChild(m_selection_indicator);
-    //m_selection_indicator->Play();
-
-    //// mouseover indicator graphic
-    //boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
-    //texture_width = mouseover_texture->DefaultWidth();
-    //texture_height = mouseover_texture->DefaultHeight();
-    //m_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, texture_width, texture_height,
-    //                                              mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-
     Refresh();
 }
 

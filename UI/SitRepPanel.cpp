@@ -138,11 +138,9 @@ namespace {
         void            DoLayout() {
             if (!m_initialized)
                 return;
-            const GG::Y ICON_HEIGHT(ClientHeight());
             const GG::X ICON_WIDTH(Value(ClientHeight()));
 
             GG::X left(GG::X0);
-            GG::Y top(GG::Y0);
             GG::Y bottom(ClientHeight());
 
             m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));

@@ -6,14 +6,14 @@
 #include <map>
 #include <string>
 
-struct PlayerSaveGameData;
-struct ServerSaveGameData;
-struct SaveGameEmpireData;
-class Universe;
+class CombatLogManager;
 class EmpireManager;
 class SpeciesManager;
-class CombatLogManager;
-class GalaxySetupData;
+class Universe;
+struct GalaxySetupData;
+struct PlayerSaveGameData;
+struct SaveGameEmpireData;
+struct ServerSaveGameData;
 
 /** Saves the provided data to savefile \a filename. */
 void SaveGame(const std::string& filename,

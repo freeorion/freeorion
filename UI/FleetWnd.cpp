@@ -2784,7 +2784,6 @@ void FleetWnd::DoLayout() {
     const GG::Y FLEET_STAT_HEIGHT(StatIconSize().y + PAD);
     const GG::Y AVAILABLE_HEIGHT(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET+PAD) - FLEET_STAT_HEIGHT );
     GG::Y top( GG::Y0 + GG::Y(PAD) );
-    const GG::Y BOTTOM(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     const GG::Y ROW_HEIGHT(m_fleets_lb->ListRowSize().y);
     
     // position fleet aggregate stat icons

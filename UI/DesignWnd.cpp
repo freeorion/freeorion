@@ -1364,8 +1364,6 @@ private:
     void            DoLayout();
     void            WndSelected(std::size_t index);
 
-    int                                 m_empire_id;
-
     GG::TabWnd*                         m_tabs;
     BasesListBox*                       m_hulls_list;           // empty hulls on which a new design can be based
     BasesListBox*                       m_designs_list;         // designs this empire has created or learned how to make
@@ -1374,7 +1372,6 @@ private:
 
 DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
-    m_empire_id(ALL_EMPIRES),
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0)
@@ -2027,7 +2024,7 @@ void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int sl
 
 void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
     //Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
-    if (slot < 0 || slot > m_slots.size()) {
+    if (slot > m_slots.size()) {
         Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }

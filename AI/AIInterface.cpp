@@ -74,24 +74,6 @@ namespace {
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
         universe.InitMeterEstimatesAndDiscrepancies();
     }
-
-    // start of turn initialization for Empire ResourcePools.  determines where supplies can be delivered, and 
-    // between which systems resources can be exchanged (which is necessary to know before resource pools can be
-    // updated
-    // ** not used currently because this info is all provided by Server, and having client recalculate it simply 
-    // risks overwriting with inaccurate information
-    void InitResourcePoolsAndSupply() {
-        EmpireManager& manager = AIClientApp::GetApp()->Empires();
-
-        // determine systems where fleets can delivery supply, and groups of systems that can exchange resources
-        for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-            Empire* empire = it->second;
-            empire->UpdateSupplyUnobstructedSystems();
-            empire->UpdateSystemSupplyRanges();
-            empire->UpdateSupply();
-            empire->InitResourcePools();
-        }
-    }
 }
 
 namespace AIInterface {
@@ -181,7 +163,6 @@ namespace AIInterface {
 
         InitMeterEstimatesAndDiscrepancies();
         UpdateMeterEstimates();
-        //InitResourcePoolsAndSupply(); //unneeded & was overwriting/erasing info provided by Server
         UpdateResourcePools();
 
         Logger().debugStream() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);

@@ -55,25 +55,6 @@ namespace {
     const std::string STARTYPE_CONDITION(UserStringNop("CONDITION_STARTYPE"));
     const std::string METERVALUE_CONDITION(UserStringNop("CONDITION_METERVALUE"));
 
-    ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
-        if (const ValueRef::Constant<std::string>* constant =
-            dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
-        { return new ValueRef::Constant<std::string>(constant->Value()); }
-        return new ValueRef::Constant<std::string>("");
-    }
-    ValueRef::ValueRefBase<int>*            CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
-        if (const ValueRef::Constant<int>* constant =
-            dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
-        { return new ValueRef::Constant<int>(constant->Value()); }
-        return new ValueRef::Constant<int>(0);
-    }
-    ValueRef::ValueRefBase<double>*         CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
-        if (const ValueRef::Constant<double>* constant =
-            dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
-        { return new ValueRef::Constant<double>(constant->Value()); }
-        return new ValueRef::Constant<double>(0.0);
-    }
-
     template <class enumT>
     ValueRef::ValueRefBase<enumT>*          CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
         if (const ValueRef::Constant<enumT>* constant =
@@ -758,7 +739,6 @@ private:
             const UniverseObjectType& uot = uot_it->first;
             const std::string& uot_label = " " + UserString(EnumToString(uot)) + " ";
             const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
-            GG::Clr text_color = ClientUI::TextColor();
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
@@ -1081,7 +1061,6 @@ private:
         if (!m_initialized)
             return;
 
-        const GG::Y ICON_HEIGHT(ClientHeight());
         const GG::X ICON_WIDTH(Value(ClientHeight()));
 
         GG::X indent(ICON_WIDTH * m_indent);

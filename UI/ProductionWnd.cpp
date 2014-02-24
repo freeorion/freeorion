@@ -304,7 +304,7 @@ namespace {
     // ProductionItemBrowseWnd //
     /////////////////////////////
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
-        const Empire* empire = Empires().Lookup(elem.empire_id);
+        //const Empire* empire = Empires().Lookup(elem.empire_id);
 
         std::string main_text;
         std::string item_name;

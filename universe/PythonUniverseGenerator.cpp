@@ -785,12 +785,6 @@ namespace {
 
         return planet->Colonize(empire_id, species, population);
     }
-    
-    // Misc. helper functions/wrappers
-    //
-    // Wrapper function for i18n::RomanNumber
-    object RomanNumberWrapper(unsigned int n)
-    { return object(RomanNumber(n)); }
 }
 
 // Python module for logging functions

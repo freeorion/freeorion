@@ -1198,10 +1198,10 @@ namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no fleets. */
-    bool EmpireEliminated(int empire_id) {
-        return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-                Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
-    }
+    //bool EmpireEliminated(int empire_id) {
+    //    return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+    //            Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
+    //}
 
     /** Compiles and return set of ids of empires that are controlled by a
       * human player.*/

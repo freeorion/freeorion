@@ -140,11 +140,6 @@ namespace {
             return UserString("EMPIRE");
         }
     }
-
-    std::string GenerateEmpireName() {
-        std::list<std::pair<int, PlayerSetupData> > empty_data;
-        return GenerateEmpireName(empty_data);
-    }
 }
 
 

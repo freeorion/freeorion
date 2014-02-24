@@ -49,12 +49,6 @@ namespace {
     std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
     void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
-    void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
-    void        PlayIndustryFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.industry-focus"), true);}
-    void        PlayResearchFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.research-focus"), true);}
-    void        PlayMiningFocusClickSound()    {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.mining-focus"), true);}
-    void        PlayTradeFocusClickSound()     {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.trade-focus"), true);}
-    void        PlayBalancedFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"), true);}
 
     struct RotatingPlanetData {
         RotatingPlanetData(const XMLElement& elem) {
@@ -447,21 +441,6 @@ namespace {
         return retval;
     }
 
-    /** Returns map from object ID to issued colonize orders affecting it. */
-    std::map<int, int> PendingScrapOrders() {
-        std::map<int, int> retval;
-        const ClientApp* app = ClientApp::GetApp();
-        if (!app)
-            return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
-                retval[order->ObjectID()] = it->first;
-            }
-        }
-        return retval;
-    }
-
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
@@ -746,17 +725,6 @@ namespace {
     private:
         int m_system_id;
     };
-
-    XMLElement  GetXMLChild(XMLElement &node,const std::string &child_path) {
-        int index;
-
-        if (-1 == (index=child_path.find_first_of('.')))
-            return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
-        else
-            return node.ContainsChild(child_path.substr(0,index)) ?
-                GetXMLChild(node.Child(child_path.substr(0, index)), child_path.substr(index + 1, child_path.length() - index - 1))
-              : XMLElement();
-    }
 
     const std::vector<boost::shared_ptr<GG::Texture> >& GetAsteroidTextures() {
         static std::vector<boost::shared_ptr<GG::Texture> > retval;
@@ -1204,25 +1172,6 @@ namespace {
         }
 
         return retval;
-    }
-
-    bool OwnedColonyShipsInSystem(int empire_id, int system_id) {
-        if (!GetSystem(system_id))
-            return false;
-
-        const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
-        for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-            TemporaryPtr<const Ship> ship = *it;
-            if (ship->SystemID() == system_id &&
-                ship->OwnedBy(empire_id) &&
-                ship->CanColonize())
-            {
-                return true;
-                break;
-            }
-        }
-        return false;
     }
 }
 
@@ -2817,7 +2766,6 @@ void SidePanel::RefreshImpl() {
 
 
     // get info with which to repopulate
-    int app_empire_id = HumanClientApp::GetApp()->EmpireID();
     TemporaryPtr<const System> system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)

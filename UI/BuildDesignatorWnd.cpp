@@ -68,7 +68,6 @@ namespace {
             if (!m_initialized)
                 return;
 
-            const GG::Y ICON_HEIGHT(ClientHeight());
             const GG::X ICON_WIDTH(Value(ClientHeight()));
             const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
             const GG::X COST_WIDTH(ClientUI::Pts() * 4);
@@ -76,7 +75,6 @@ namespace {
             const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
 
             GG::X left(GG::X0);
-            GG::Y top(GG::Y0);
             GG::Y bottom(ClientHeight());
 
             m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));

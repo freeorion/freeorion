@@ -557,8 +557,8 @@ ProductionQueue::Element::Element() :
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
-    empire_id(empire_id_),
     item(item_),
+    empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),
@@ -573,8 +573,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
-    empire_id(empire_id_),
     item(build_type, name),
+    empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),
@@ -589,8 +589,8 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
                                   int remaining_, int location_) :
-    empire_id(empire_id_),
     item(build_type, design_id),
+    empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),

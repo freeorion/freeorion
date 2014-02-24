@@ -56,7 +56,6 @@ namespace {
         MultiTurnProgressBar*   m_progress_bar;
         bool                    m_in_progress;
         int                     m_total_turns;
-        double                  m_turns_completed;
         int                     m_empire_id;
     };
 
@@ -98,7 +97,6 @@ namespace {
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
-        m_turns_completed(turns_completed),
         m_empire_id(empire_id)
     {
         const int MARGIN = 2;

@@ -29,7 +29,6 @@ namespace {
     boost::shared_ptr<GG::Texture> CombatIcon()     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png"); }
     boost::shared_ptr<GG::Texture> WarIcon()        { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png"); }
     boost::shared_ptr<GG::Texture> PeaceIcon()      { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png"); }
-    boost::shared_ptr<GG::Texture> DeadIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png"); }
     boost::shared_ptr<GG::Texture> UnknownIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png"); }
     boost::shared_ptr<GG::Texture> ShipIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
     boost::shared_ptr<GG::Texture> ProductionIcon() { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }

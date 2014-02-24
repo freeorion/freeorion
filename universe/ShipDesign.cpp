@@ -619,7 +619,7 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
-            return 999999.9f;
+            return 999999;
 
         ScriptingContext context(source, location);
 

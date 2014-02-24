@@ -676,10 +676,6 @@ namespace {
             delete *it;
         m_plans.clear();
     }
-
-    /** returns the singleton fleet plan manager */
-    const FleetPlanManager& GetFleetPlanManager()
-    { return FleetPlanManager::GetFleetPlanManager(); }
 };
 
 /////////////////////////////
@@ -790,10 +786,6 @@ namespace {
         for (iterator it = begin(); it != end(); ++it)
             empire->UnlockItem(*it);
     }
-
-    /** returns the singleton item spec manager */
-    const ItemSpecManager& GetItemSpecManager()
-    { return ItemSpecManager::GetItemSpecManager(); }
 };
 
 namespace {
@@ -1138,189 +1130,6 @@ namespace {
                 }
             }
             lanesToRemoveIter++;
-        }
-    }
-
-    /** Grows trees to connect stars...  takes an array of sets of potential
-      * starlanes for each star, and puts the starlanes of the tree into
-      * another set. */
-    void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray,
-                           std::vector<std::set<int> >& laneSetArray)
-    {
-        // array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
-        std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
-
-        //  map index by tree number, containing a list for each tree, each of which contains the systems in a particular tree
-        std::map<int, std::list<int> > treeSysListsMap;
-        std::map<int, std::list<int> >::iterator treeSysListsMapIter, treeSysListsMapEnd;
-        std::pair<int, std::list<int> > mapInsertable;
-        std::list<int> treeSysList, *pTreeSysList, *pTreeToMergeSysList;
-        std::list<int>::iterator sysListIter;
-        std::set<int>::iterator lanesSetIter, lanesSetEnd;
-
-        int n, q, d, curTree, destTree, curSys, destSys, mergeSys;
-
-        int numSys = potentialLaneSetArray.size();
-        int numTrees = roots.size();
-
-        // number of new connections to make from each connected node that is processed.  
-        // could be made a parameter, possibly a function of the starlane frequency
-
-        // make sure data is consistent
-        if (static_cast<int>(laneSetArray.size()) != numSys) {
-            Logger().errorStream() << "GrowSpanningTrees got different size vectors of potential lane set(s) and systems.  Doing nothing.";
-            return;
-        }
-        if ((numTrees < 1) || (numTrees > numSys)) {
-            Logger().errorStream() << "GrowSpanningTrees was asked to grow too many or too few trees simultaneously.  Doing nothing.";
-            return;
-        }
-        if (static_cast<int>(roots.size()) > numSys) {
-            Logger().errorStream() << "GrowSpanningTrees was asked to grow more separate trees than there are systems to grow from.  Doing nothing.";
-            return;
-        }
-
-        laneSetArray.resize(numSys);
-
-        // set up data structures...
-        treeOfSystemArray.resize(numSys);
-        for (n = 0; n < numSys; n++) 
-            treeOfSystemArray[n] = -1;  // sentinel value for not connected to any tree
-
-        treeSysListsMap.clear();
-        for (n = 0; n < numTrees; n++) {
-            // check that next root is within valid range...
-            q = roots[n];
-            if ((q >= numSys) || (q < 0)) {
-                //Logger().debugStream() << "GrowSpanningTrees was asked to grow to grow a tree from a system that doesn't exist.";
-                return;
-            }
-
-            // make new tree to put into map
-            treeSysList.clear();        
-            treeSysList.push_front(q);
-
-            // put new list into into map (for tree n), indexed by tree number
-            mapInsertable = std::pair<int, std::list<int> >(n, treeSysList);
-            treeSysListsMap.insert(mapInsertable);
-
-            // record the tree to which root system of tree n, roots[n], belongs (tree n)
-            treeOfSystemArray[q] = n;
-        }
-
-        //Logger().debugStream() << "Growing Trees Algorithm Starting...";
-
-        // loop through map (indexed by tree number) of lists of systems, until map (and all lists) are empty...
-        treeSysListsMapIter = treeSysListsMap.begin();
-        treeSysListsMapEnd = treeSysListsMap.end();
-        while (treeSysListsMapIter != treeSysListsMapEnd) {
-            // extract number and list of tree
-            curTree = treeSysListsMapIter->first;
-            pTreeSysList = &(treeSysListsMapIter->second);
-
-            if (pTreeSysList->empty()) {
-                // no systems left for tree to grow.  Remove it from map of growing trees.
-                treeSysListsMap.erase(curTree);
-                //Logger().debugStream() << "Tree " << curTree << " was empty, so was removed from map of trees.";
-
-                // check if set is empty...
-                if (treeSysListsMap.empty()) break;  // and stop loop if it is
-                // (iterator invalidated by erasing, so set to first tree remaining in map)
-                treeSysListsMapIter = treeSysListsMap.begin();
-            }
-            else {
-                //Logger().debugStream() << "Tree " << curTree << " contains " << pTreeSysList->size() << " systems.";
-                // tree has systems left to grow.
-
-                // extract and remove a random system from the list
-
-                // iterate to the position of the random system
-                sysListIter = pTreeSysList->begin();
-                for (d = RandSmallInt(0, pTreeSysList->size() - 1); d > 0; --d) // RandSmallInt(int min, int max);
-                    sysListIter++;
-
-                curSys = *sysListIter; // extract
-                pTreeSysList->erase(sysListIter); // erase
-
-                //Logger().debugStream() << "Processing system " << curSys << " from tree " << curTree;
-
-                // iterate through list of potential lanes for current system
-                lanesSetIter = potentialLaneSetArray[curSys].begin();
-                lanesSetEnd = potentialLaneSetArray[curSys].end();
-                while (lanesSetIter != lanesSetEnd) {
-                    // get destination system of potential lane
-                    destSys = *lanesSetIter;
-
-                    // get which, if any, tree the destination system belongs to currently
-                    destTree = treeOfSystemArray[destSys];
-
-                    //Logger().debugStream() << "Considering lane from system " << curSys << " to system " << destSys << " of tree " << destTree;
-
-                    // check if the destination system already belongs to the current tree.
-                    if (curTree != destTree) {
-                        // destination system is either in no tree, or is in a tree other than the current tree
-
-                        // add lane between current and destination systems
-                        laneSetArray[curSys].insert(destSys);
-                        laneSetArray[destSys].insert(curSys);
-
-                        // mark destination system as part of this tree
-                        treeOfSystemArray[destSys] = curTree;
-
-                        //Logger().debugStream() << "Added lane from " << curSys << " to " << destSys << ", and added " << destSys << " to list of systems to process in tree " << curTree;
-                    }
-                    //else
-                    //    Logger().debugStream() << "Both systems were already part of the same tree, so no lane was added";
-
-                    // check what, if any, tree the destination system was before being added to the current tree
-                    if (-1 == destTree) {
-                        // destination system was not yet part of any tree.
-                        // add system to list of systems to consider for this tree in future
-                        pTreeSysList->push_back(destSys);
-
-                        //Logger().debugStream() << "System was not yet part of an tree, so was added to the list of systems to process for tree " << curTree;
-                    }
-                    else if (destTree != curTree) {
-                        // tree was already part of another tree
-                        // merge the two trees.
-
-                        //Logger().debugStream() << "Merging tree " << destTree << " into current tree " << curTree;
-
-                        pTreeToMergeSysList = &((treeSysListsMap.find(destTree))->second);
-
-                        //Logger().debugStream() << "...got pointer to systems list for tree to merge into current tree";
-                        //Logger().debugStream() << "...list to merge has " << pTreeToMergeSysList->size() << " systems.";
-
-                        // extract systems from tree to be merged into current tree
-                        while (!pTreeToMergeSysList->empty()) {
-                            // get system from list
-                            mergeSys = pTreeToMergeSysList->front();
-                            pTreeToMergeSysList->pop_front();
-                            // add to current list
-                            pTreeSysList->push_back(mergeSys);
-
-                            //Logger().debugStream() << "Adding system " << mergeSys << " to current tree " << curTree << " from old tree " << destTree;
-                        }
-
-                        // reassign all systems from destination tree to current tree (gets systems even after they're removed
-                        // from the list of systems for the dest tree)
-                        for (q = 0; q < numSys; q++) 
-                            if (treeOfSystemArray[q] == destTree)
-                                treeOfSystemArray[q] = curTree;
-
-                        treeSysListsMap.erase(destTree);
-                    }
-
-                    lanesSetIter++;
-                }
-            }
-
-            //Logger().debugStream() << "Moving to next tree...";
-
-            treeSysListsMapIter++;
-            treeSysListsMapEnd = treeSysListsMap.end();  // incase deleting or merging trees messed things up
-            if (treeSysListsMapIter == treeSysListsMapEnd)
-                treeSysListsMapIter = treeSysListsMap.begin();
         }
     }
 }
@@ -1811,54 +1620,6 @@ void GenerateStarlanes(GalaxySetupOption freq) {
 
     Logger().debugStream() << "Initializing System Graph";
     GetUniverse().InitializeSystemGraph();
-
-
-    //for (n = 0; n < numSys; n++)
-    //    laneSetArray[n].clear();
-
-    //// array of indices of systems from which to start growing spanning tree(s).  This can later be replaced with
-    //// some sort of user input.  It can also be ommited entirely, so just the ConnectedWithin loop below is used.
-    //std::vector<int> roots(4);
-    //roots[0] = 0;  roots[1] = 1;  roots[2] = 2;  roots[3] = 3;
-    //GrowSpanningTrees(roots, potentialLaneSetArray, laneSetArray);
-    ////Logger().debugStream() << "Constructed initial spanning trees.";
-
-    //// add starlanes of spanning tree to stars
-    //for (n = 0; n < numSys; n++) {
-    //    laneSetIter = laneSetArray[n].begin();
-    //    laneSetEnd = laneSetArray[n].end();
-    //    while (laneSetIter != laneSetEnd) {
-    //        s1 = *laneSetIter;
-    //        // add the starlane to the stars
-    //        sys_vec[n]->AddStarlane(s1);
-    //        sys_vec[s1]->AddStarlane(n);
-    //        laneSetIter++;
-    //    } // end while
-    //} // end for n
-
-
-    //// loop through stars, seeing if any are too far away from stars they could be connected to by a
-    //// potential starlane.  If so, add the potential starlane to the stars to directly connect them
-    //for (n = 0; n < numSys; n++) {
-    //    laneSetIter = potentialLaneSetArray[n].begin();
-    //    laneSetEnd = potentialLaneSetArray[n].end();
-
-    //    while (laneSetIter != laneSetEnd) {
-    //        s1 = *laneSetIter;
-
-    //        if (!ConnectedWithin(n, s1, maxJumpsBetweenSystems, laneSetArray)) {
-
-    //            // add the starlane to the sets of starlanes for each star
-    //            laneSetArray[n].insert(s1);
-    //            laneSetArray[s1].insert(n);
-    //            // add the starlane to the stars
-    //            sys_vec[n]->AddStarlane(s1);
-    //            sys_vec[s1]->AddStarlane(n);
-    //        }
-
-    //        laneSetIter++;
-    //    } // end while
-    //} // end for n
 }
 
 void GenerateHomeworlds(Universe& universe, int players, std::vector<int>& homeworld_planet_ids) {
@@ -1978,29 +1739,6 @@ void GenerateFields(Universe& universe, GalaxySetupOption freq) {
     //TemporaryPtr<Field> field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
     //Insert(field);
 }
-
-namespace {
-    /** Reads list of strings from file, surrounded by enclosing quotes. */
-    void LoadNames(std::vector<std::string>& names, const std::string& file_name) {
-        names.clear();
-        std::string input;
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            std::getline(ifs, input, '\0');
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-        }
-        using namespace boost::algorithm;
-        split(names, input, is_any_of("\"\n"), token_compress_on);
-        for (std::size_t i = 0; i < names.size(); ) {
-            if (names[i].empty())
-                names.erase(names.begin() + i);
-            else
-                ++i;
-        }
-    }
-};
 
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
     // get home planet and system, check if they exist

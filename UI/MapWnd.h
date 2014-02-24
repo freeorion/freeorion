@@ -439,10 +439,10 @@ private:
 
     std::set<int>               m_fleets_exploring;
 
-    friend class IntroMenu;
-    friend class WaitingForGameStart;
-    friend class PlayingTurn;
-    friend class PlayingGame;
+    friend struct IntroMenu;
+    friend struct WaitingForGameStart;
+    friend struct PlayingTurn;
+    friend struct PlayingGame;
 };
 
 

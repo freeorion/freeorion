@@ -1014,9 +1014,9 @@ ShipDesignOrder::ShipDesignOrder() :
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
     m_design_id(existing_design_id_to_remember),
+    m_update_name_or_description(false),
     m_delete_design_from_empire(false),
     m_create_new_design(false),
-    m_update_name_or_description(false),
     m_designed_on_turn(0),
     m_is_monster(false),
     m_name_desc_in_stringtable(false)
@@ -1025,9 +1025,9 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember)
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
     m_design_id(design_id_to_erase),
+    m_update_name_or_description(false),
     m_delete_design_from_empire(true),
     m_create_new_design(false),
-    m_update_name_or_description(false),
     m_designed_on_turn(0),
     m_is_monster(false),
     m_name_desc_in_stringtable(false)
@@ -1036,9 +1036,9 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
     Order(empire),
     m_design_id(new_design_id),
+    m_update_name_or_description(false),
     m_delete_design_from_empire(false),
     m_create_new_design(true),
-    m_update_name_or_description(false),
     m_name(ship_design.Name()),
     m_description(ship_design.Description()),
     m_designed_on_turn(ship_design.DesignedOnTurn()),
@@ -1053,9 +1053,9 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
     Order(empire),
     m_design_id(existing_design_id),
+    m_update_name_or_description(true),
     m_delete_design_from_empire(false),
     m_create_new_design(false),
-    m_update_name_or_description(true),
     m_name(new_name),
     m_description(new_description),
     m_designed_on_turn(0),
