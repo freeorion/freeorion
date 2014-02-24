@@ -289,6 +289,7 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
 {
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
+    // execute each effect of the group one by one, unless filtered by flags
     for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
          effect_it != m_effects.end(); ++effect_it)
     {
@@ -308,7 +309,7 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
             meter_type = set_ship_part_meter_effect->GetMeterType();
         }
 
-
+        // apply this effect to each source causing it
         for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
             targets_it != targets_causes.end(); ++targets_it)
         {
@@ -319,21 +320,24 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
             const Effect::TargetsAndCause&     targets_and_cause     = targets_it->second;
             Effect::TargetSet                  targets               = targets_and_cause.target_set;
 
-            // if other sources have affected some of the targets, skip them
+            // if other sources with the same stacking group have affected some of the targets in
+            // the scope of the current EffectsGroup, skip them
             // use std::set::find if non_stacking_targets.size() >= targets.size()
             // FIXME: use std::sort(targets) and std::lower_bound otherwise
-            for (Effect::TargetSet::iterator object_it = targets.begin();
-                object_it != targets.end(); )
-            {
-                int object_id                    = (*object_it)->ID();
-                std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
-
-                if (it != non_stacking_targets.end()) {
-                    *object_it = targets.back();
-                    targets.pop_back();
-                } else {
-                    non_stacking_targets.insert(object_id);
-                    ++object_it;
+            if (!m_stacking_group.empty()) {
+                for (Effect::TargetSet::iterator object_it = targets.begin();
+                     object_it != targets.end(); )
+                {
+                    int object_id                    = (*object_it)->ID();
+                    std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
+                    
+                    if (it != non_stacking_targets.end()) {
+                        *object_it = targets.back();
+                        targets.pop_back();
+                    } else {
+                        non_stacking_targets.insert(object_id);
+                        ++object_it;
+                    }
                 }
             }
 
@@ -347,7 +351,7 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
                     Logger().debugStream() << " ... " << (*t_it)->Dump();
             }
 
-            // execute Effects in the EffectsGroup
+            // filter executed effects according to flags
             if (only_appearance_effects) {
                 if (!dynamic_cast<const SetTexture*>(effect) && !dynamic_cast<const SetOverlayTexture*>(effect))
                     continue;
@@ -366,8 +370,8 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
                     Logger().debugStream() << " ... " << (*t_it)->Dump();
             }
 
+            // for non-meter effects, can do default batch execute
             if (!accounting_map || (!set_meter_effect && !set_ship_part_meter_effect)) {
-                // for non-meter effects, can do default batch execute
                 effect->Execute(source_context, targets);
                 continue;
             }
