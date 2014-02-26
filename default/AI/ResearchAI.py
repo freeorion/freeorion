@@ -10,6 +10,15 @@ import random
 
 inProgressTechs={}
 
+def get_research_index():
+    empireID = fo.empireID()
+    research_index = empireID % 2
+    if foAI.foAIstate.aggression >=fo.aggression.aggressive: #maniacal
+        research_index = 2 + (empireID % 3) # so indices [2,3,4]
+    elif foAI.foAIstate.aggression >=fo.aggression.typical:
+        research_index += 1
+    return research_index
+
 def generateResearchOrders():
     "generate research orders"
 
@@ -54,11 +63,7 @@ def generateResearchOrders():
     # set starting techs, or after turn 100 add any additional default techs
     #
     if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
-        research_index = empireID % 2
-        if foAI.foAIstate.aggression >=fo.aggression.maniacal:
-            research_index = 2 + (empireID % 3) # so indices [2,3,4]
-        elif foAI.foAIstate.aggression >=fo.aggression.typical:
-            research_index += 1
+        research_index = get_research_index()
         newtech = TechsListsAI.primary_meta_techs(index = research_index)
         print "Empire %s (%d) is selecting research index %d"%(empire.name,  empireID,  research_index)
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
@@ -105,7 +110,7 @@ def generateResearchOrders():
             else:
                 insertIdx=max(0,  min(40, len(researchQueueList)-10))
             if "SHP_DEFLECTOR_SHIELD" in researchQueueList:
-                insertIdx = min(insertIdx,  researchQueueList.index("SHP_ASTEROID_HULLS"))
+                insertIdx = min(insertIdx,  researchQueueList.index("SHP_DEFLECTOR_SHIELD"))
             for ccTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP"]:
                 if   ccTech not in researchQueueList[:insertIdx+1]  and  empire.getTechStatus(ccTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(ccTech, insertIdx)
@@ -201,13 +206,13 @@ def generateResearchOrders():
         if ColonisationAI.gotRuins and empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete:
             if "LRN_ARTIF_MINDS" in researchQueueList:
                 insert_idx = 7+ researchQueueList.index("LRN_ARTIF_MINDS")
-            elif "PRO_FUSION_GEN" in researchQueueList:
-                insert_idx = max(0, researchQueueList.index("PRO_FUSION_GEN") + 1 )
+            elif "GRO_SYMBIOTIC_BIO" in researchQueueList:
+                insert_idx = researchQueueList.index("GRO_SYMBIOTIC_BIO") + 1 
             else:
                 insert_idx = num_techs_accelerated
             if "LRN_XENOARCH" not in researchQueueList[:insert_idx]:
                 for xenoTech in [  "LRN_XENOARCH",  "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ,  "LRN_ALGO_ELEGANCE"]:
-                    if (empire.getTechStatus(xenoTech) != fo.techStatus.complete) and (  xenoTech  not in researchQueueList[:4])  :
+                    if (empire.getTechStatus(xenoTech) != fo.techStatus.complete) and (  xenoTech  not in researchQueueList[:(insert_idx+4)])  :
                         res=fo.issueEnqueueTechOrder(xenoTech,insert_idx)
                         num_techs_accelerated += 1
                         print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s  to enable LRN_XENOARCH,  got result %d"%(xenoTech, res)
@@ -219,8 +224,8 @@ def generateResearchOrders():
         if ColonisationAI.gotAst and empire.getTechStatus("SHP_ASTEROID_HULLS") != fo.techStatus.complete and (
                         ("SHP_ASTEROID_HULLS" not in researchQueueList[num_techs_accelerated])): #if needed but not top item, will block acceleration of pro_orb_gen
             if ("SHP_ASTEROID_HULLS" not in researchQueueList[:2+num_techs_accelerated]):
-                if "CON_ORBITAL_CON" in researchQueueList:
-                    insert_idx = 1+ researchQueueList.index("CON_ORBITAL_CON")
+                if "GRO_SYMBIOTIC_BIO" in researchQueueList:
+                    insert_idx = 1+ researchQueueList.index("GRO_SYMBIOTIC_BIO")
                 else:
                     insert_idx = num_techs_accelerated
                 for ast_tech in ["SHP_ASTEROID_HULLS", "PRO_MICROGRAV_MAN"]:
@@ -231,8 +236,8 @@ def generateResearchOrders():
                 researchQueueList = getResearchQueueTechs()
         elif ColonisationAI.gotGG and empire.getTechStatus("PRO_ORBITAL_GEN") != fo.techStatus.complete  and (
                     "PRO_ORBITAL_GEN" not in researchQueueList[:3+num_techs_accelerated]):
-            if "CON_ORBITAL_CON" in researchQueueList:
-                insert_idx = 1+ researchQueueList.index("CON_ORBITAL_CON")
+            if "GRO_SYMBIOTIC_BIO" in researchQueueList:
+                insert_idx = 1+ researchQueueList.index("GRO_SYMBIOTIC_BIO")
             else:
                 insert_idx = num_techs_accelerated
             res=fo.issueEnqueueTechOrder("PRO_ORBITAL_GEN",insert_idx)

@@ -129,7 +129,7 @@ def getInvasionFleets():
                 break
 
     for pid in list(foAI.foAIstate.qualifyingTroopBaseTargets):
-        planet = universe.getPlanet(pid)
+        planet = universe.getPlanet(pid) #TODO: also check that still have a colony in this system that can make troops
         if planet and planet.owner == empireID:
             del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
 
@@ -143,10 +143,12 @@ def getInvasionFleets():
             if planet:
                 allInvasionTargetedSystemIDs.add( planet.systemID )
             continue  #already building for here
+        this_sys_status = foAI.foAIstate.systemStatus.get( sysID,  {} )
+        if  ((planet.currentMeterValue(fo.meterType.shield) > 0) and 
+                    (this_sys_status.get('myFleetRating', 0) < (0.8 * this_sys_status.get('totalThreat', 0)))):
+            continue
         loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
         this_score,  p_troops = evaluateInvasionPlanet(pid, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions,  False)
-        if  (planet.currentMeterValue(fo.meterType.shield)) > 0:
-            continue
         bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION,  loc)
         if not bestShip:
             #print "Error: no troop base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
@@ -316,8 +318,8 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                 maxJumps =  len(leastJumpsPath)
     system_status = foAI.foAIstate.systemStatus.get(pSysID, {})
     sysFThrt = system_status.get('fleetThreat', 1000 )
-    sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
-    sysPThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('planetThreat', 0 )
+    sysMThrt =system_status.get('monsterThreat', 0 )
+    sysPThrt = system_status.get('planetThreat', 0 )
     sysTotThrt = sysFThrt + sysMThrt + sysPThrt
     max_path_threat = sysFThrt
     mil_ship_rating = ProductionAI.curBestMilShipRating()

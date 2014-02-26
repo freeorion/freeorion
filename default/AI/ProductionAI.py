@@ -263,10 +263,13 @@ def addScoutDesigns():
     db = "DT_DETECTOR_%1d"
     is1,  is2  = "FU_BASIC_TANK",  "SH_DEFLECTOR"
 
-    nb,  hull =  designNameBases[1]+"-%1d-%1d",   "SH_ORGANIC"
+    nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_SMALL"
     for d_id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb%(d_id, 0),  desc,  "SH_BASIC_SMALL",  [ db%d_id],  "",  model)   ]
-    nb,  hull =  designNameBases[2]+"-%1d-%1d",   "SH_ENDOMORPHIC"
+        newScoutDesigns += [ (nb%(d_id),  desc,  hull,  [ db%d_id],  "",  model)   ]
+    nb,  hull =  designNameBases[2]+"-%1d",   "SH_SPATIAL_FLUX"
+    for d_id in [2, 3, 4]:
+        newScoutDesigns += [ (nb%(d_id),  desc,  hull,  [ db%d_id],  "",  model)   ]
+    
     #for d_id in [3, 4]:
     #    newScoutDesigns += [ (nb%(d_id, iw),  desc,  hull,  [ db%d_id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
     addDesigns(shipType,   newScoutDesigns,  shipProdPriority)
