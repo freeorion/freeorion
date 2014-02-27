@@ -655,6 +655,9 @@ void Planet::Conquer(int conquerer) {
 
     // replace ownership
     SetOwner(conquerer);
+
+    GetMeter(METER_SUPPLY)->SetCurrent(0.0f);
+    GetMeter(METER_SUPPLY)->BackPropegate();
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
@@ -770,10 +773,11 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
 void Planet::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
+    bool just_conquered = m_just_conquered;
     // do not do production if planet was just conquered
-    if (m_just_conquered)
-        m_just_conquered = false;
-    else
+    m_just_conquered = false;
+
+    if (!just_conquered)
         ResourceCenterPopGrowthProductionResearchPhase();
 
     PopCenterPopGrowthProductionResearchPhase();
@@ -797,11 +801,13 @@ void Planet::PopGrowthProductionResearchPhase() {
         SetSpecies("");
     }
 
-    GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
-    GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
-    GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
-    GetMeter(METER_REBEL_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_REBEL_TROOPS));
-    GetMeter(METER_SUPPLY)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SUPPLY));
+    if (!just_conquered) {
+        GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
+        GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
+        GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
+        GetMeter(METER_REBEL_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_REBEL_TROOPS));
+        GetMeter(METER_SUPPLY)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SUPPLY));
+    }
 
     StateChangedSignal();
 }
