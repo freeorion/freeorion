@@ -1328,7 +1328,7 @@ def generateProductionOrders():
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                     else:
                         #TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
-                        print "Error enqueing Conc Camp despite bldType.canBeProduced(empire.empireID,  pid) reporting ",  canBuildCamp
+                        print "Error enqueing Conc Camp at %s despite bldType.canBeProduced(empire.empireID,  pid) reporting "%planet.Name,  canBuildCamp
         if verboseCamp:
             print "conc camp status at %s : checkedCamp: %s,  builtCamp: %s"%( planet.name,  canBuildCamp,  builtCamp)
 

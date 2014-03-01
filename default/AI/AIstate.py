@@ -284,7 +284,7 @@ class AIstate(object):
                     dead_fleet = fleetID in destroyedObjIDs
                     if not fleet.ownedBy( -1 ):
                         e_rating = self.rateFleet(fleetID)
-                        e_f_dict = [  cur_e_fighters,  old_e_fighters ][ dead_fleet ]
+                        e_f_dict = [  cur_e_fighters,  old_e_fighters ][ dead_fleet ] # track old/dead enemy fighters for rating assessments in case not enough current info
                         for count, sum_stats in e_rating['summary']:
                             if sum_stats[0] > 0:
                                 e_f_dict.setdefault( sum_stats,  [0])[0] += count
@@ -306,6 +306,7 @@ class AIstate(object):
             sysStatus['myfleets']=myFleetsBySystem.get(sysID,  [])
             sysStatus['myFleetsAccessible']=fleetSpotPosition.get(sysID,  [])
             localEnemyFleetIDs=enemiesBySystem.get(sysID,  [])
+            sysStatus['localEnemyFleetIDs'] = localEnemyFleetIDs
             if system:
                 sysStatus['name']=system.name
                 for fid in system.fleetIDs:

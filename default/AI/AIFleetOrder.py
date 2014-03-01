@@ -327,7 +327,11 @@ class AIFleetOrder(object):
             targ1 = universe.getSystem(targetID)
             targ1Name = (targ1 and targ1.name) or "unknown"
             fleetRating = foAI.foAIstate.getRating(fleetID).get('overall', 0)
-            threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  0) + foAI.foAIstate.systemStatus.get(targetID,  {}).get('planetThreat',  0)+ foAI.foAIstate.systemStatus.get(targetID,  {}).get('monsterThreat',  0)
+            target_sys_status = foAI.foAIstate.systemStatus.get(targetID,  {})
+            f_threat = target_sys_status.get('fleetThreat',  0)
+            m_threat = target_sys_status.get('monsterThreat',  0)
+            p_threat = target_sys_status.get('planetThreat',  0)
+            threat =  f_threat + m_threat + p_threat
 
             safetyFactor = 1.1
             if fleetRating >= safetyFactor* threat:
@@ -341,6 +345,11 @@ class AIFleetOrder(object):
                 if  (myOtherFleetsRating > 1.5 * safetyFactor * threat) or (myOtherFleetsRating + fleetRating  > 2.0 * safetyFactor * threat):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
+                    return True
+                elif ((threat == p_threat) and ( not fleet.aggressive ) and (myOtherFleetsRating == 0) and (len(target_sys_status.get('localEnemyFleetIDs', [-1]))==0) ) :
+                    if verbose:
+                        print ( "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with planet threat %d because nonaggressive" +
+                               " and no other fleets present to trigger combat")%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
                     return True
                 else:
                     if verbose:

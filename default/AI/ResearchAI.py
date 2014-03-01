@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import TechsListsAI
 from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
+import AIDependencies
 import AIstate
 import traceback
 import sys
@@ -302,10 +303,15 @@ def generateResearchOrders():
     #
     # if we own a blackhole, accelerate sing_gen and conc camp
     if True: #just to help with cold-folding /  organization
-        if fo.currentTurn() >50 and len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and foAI.foAIstate.aggression > fo.aggression.cautious:
-            for singTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP",  "LRN_GRAVITONICS" ,  "PRO_SINGULAR_GEN"]:
-                if (empire.getTechStatus(singTech) != fo.techStatus.complete) and (  singTech  not in researchQueueList[:4])  :
-                    res=fo.issueEnqueueTechOrder(singTech,0)
+        if ( fo.currentTurn() >50 and len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and 
+                    foAI.foAIstate.aggression > fo.aggression.cautious and (empire.getTechStatus(AIDependencies.sing_tech_name) != fo.techStatus.complete) ):
+            #sing_tech_list = [  "LRN_GRAVITONICS" ,  "PRO_SINGULAR_GEN"]   # formerly also "CON_ARCH_PSYCH",  "CON_CONC_CAMP",  
+            sing_gen_tech = fo.getTech(AIDependencies.sing_tech_name)
+            sing_tech_list =  [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empireID) if (empire.getTechStatus(pre_req) != fo.techStatus.complete) ]
+            sing_tech_list += [ AIDependencies.sing_tech_name ]
+            for singTech in sing_tech_list:
+                if (  singTech  not in researchQueueList[:num_techs_accelerated+1  ])  :
+                    res=fo.issueEnqueueTechOrder(singTech,num_techs_accelerated)
                     num_techs_accelerated += 1
                     print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%(singTech, res)
             researchQueueList = getResearchQueueTechs()

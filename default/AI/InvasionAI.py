@@ -221,12 +221,21 @@ def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
                 targetedPlanets.append(planetID)
 
     return targetedPlanets
+    
+def retaliation_risk_factor(empire_id):
+    "a multiplicative adjustment to planet scores to account for risk of retaliation from planet owner"
+    #TODO implement (in militaryAI) actual military risk assessment of other empires
+    if empire_id == -1:  # unowned
+        return 1.5  # since no risk of retaliation, increase score
+    else:
+        return 1.0
 
 def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empire):
     "creates a dictionary that takes planetIDs as key and their invasion score as value"
 
     planetValues = {}
     neighbor_values = {}
+    neighbor_val_ratio = .95
     universe = fo.getUniverse()    
     secureAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE])
     for planetID in planetIDs:
@@ -239,12 +248,20 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
             system = universe.getSystem(planet.systemID)
             if not system:
                 continue
+            planet_industries = {}
+            for pid2 in system.planetIDs:
+                planet2 = universe.getPlanet(pid2)
+                specName2 = (planet2 and planet2.speciesName) or ""
+                species2 = fo.getSpecies(specName2)
+                if species2 and species2.canProduceShips:
+                    planet_industries[pid2] = planet2.currentMeterValue(fo.meterType.industry) + 0.1 # to prevent divide-by-zero
+            industry_ratio = planet_industries[planetID] / max(planet_industries.values())
             for pid2 in system.planetIDs:
                 if pid2 == planetID:
                     continue
                 planet2 = universe.getPlanet(pid2)
                 if planet2 and (planet2.owner != empire.empireID) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)): #TODO check for allies
-                    planetValues[planetID][0] += 0.5 * (neighbor_values.setdefault( pid2, evaluateInvasionPlanet(pid2, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions))[0])
+                    planetValues[planetID][0] += industry_ratio * neighbor_val_ratio * (neighbor_values.setdefault( pid2, evaluateInvasionPlanet(pid2, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions))[0])
     return planetValues
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions,  verbose=True):
@@ -381,7 +398,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
-    planet_score = threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost)
+    planet_score = retaliation_risk_factor(planet.owner) * threatFactor * max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost)
     if clear_path:
         planet_score *= 1.5
     invscore =  [ planet_score,  plannedTroops ]
