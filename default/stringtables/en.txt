@@ -2699,7 +2699,7 @@ PRODUCTION_LOCATION_INVALID
 CANNOT be produced here
 
 DELETE_QUEUE_ITEM
-Remove from Queue
+<rgba 255 0 0 255>Remove from Queue</rgba>
 
 MOVE_UP_QUEUE_ITEM
 Move to Queue Top
