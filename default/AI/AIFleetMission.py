@@ -518,7 +518,8 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         ntargets=0
         for aiFleetMissionType in self.getAIMissionTypes():
             ntargets += len( self.getAITargets(aiFleetMissionType) )
-        if ntargets ==0:
+        if (ntargets ==0) and (systemID not in  set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + 
+                                                    AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)  ):
             if self.need_repair():
                 repairAIFleetOrder = MoveUtilsAI.getRepairAIFleetOrder(self.getAITarget(), start_sys_id)
                 if repairAIFleetOrder.isValid():
