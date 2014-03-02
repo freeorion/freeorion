@@ -79,7 +79,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         allMilitaryFleetIDs = milFleetIDs
     else:
         allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
-    if tryReset and ((fo.currentTurn()+empireID) % 10 ==0) and thisround=="Main": 
+    if tryReset and ((fo.currentTurn()+empireID) % 30 ==0) and thisround=="Main": 
         tryAgain(allMilitaryFleetIDs,  tryReset=False,  thisround = thisround+" Reset")
 
     num_milships = 0
