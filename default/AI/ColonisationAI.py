@@ -660,7 +660,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     if detail is None:
         detail = []
     retval = 0
-    discountMultiplier = 20.0
+    discountMultiplier = [30.0, 40.0][ fo.empireID() % 2 ]
     species=fo.getSpecies(specName or "") #in case None is passed as specName
     pilotVal = 0
     if species and species.canProduceShips:
