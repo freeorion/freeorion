@@ -624,6 +624,8 @@ ProdQueueListBox::ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std
 void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"), 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"), 2, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 3, false, false));
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, GG::CLR_RED,
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (popup.Run()) {
@@ -631,6 +633,20 @@ void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         case 1: { // delete item
             // emit a signal so that the ProductionWnd can take necessary steps
             DoubleClickedSignal(it);
+            break;
+        }
+        case 2: { // move item to top
+            // emit a signal so that the ProductionWnd can take necessary steps
+            if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
+                QueueItemMoved(queue_row, 0);
+            }
+            break;
+        }
+        case 3: { // moe item to bottom
+            // emit a signal so that the ProductionWnd can take necessary steps
+            if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
+                QueueItemMoved(queue_row, NumRows());
+            }
             break;
         }
 
