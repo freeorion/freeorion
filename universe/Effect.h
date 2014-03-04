@@ -97,27 +97,12 @@ public:
       * order to leave potential_targets unchanged. */
     void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
 
+    /** execute all effects in group */
     void    Execute(const Effect::TargetsCauses& targets_causes,
                     AccountingMap* accounting_map = 0,
                     bool only_meter_effects = false,
                     bool only_appearance_effects = false,
                     bool include_empire_meter_effects = false) const;
-    /** execute all effects in group */
-    void    Execute(int source_id, const TargetSet& targets) const;
-    void    Execute(int source_id, const TargetsAndCause& targets_and_cause,
-                    AccountingMap& accounting_map) const;
-
-    /** execute all SetMeter effects in group.  This is useful for doing meter
-      * estimate updates and effect accounting, for which executing non-meter
-      * effects is neither needed nor useful. */
-    void    ExecuteSetMeter(int source_id, const TargetSet& targets) const;
-    void    ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
-                            AccountingMap& accounting_map) const;
-
-    void    ExecuteSetEmpireMeter(int source_id, const TargetSet& targets) const;
-
-    /** execute all appearance modifying effects in group. */
-    void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 
     const std::string&              StackingGroup() const       { return m_stacking_group; }
     const Condition::ConditionBase* Scope() const               { return m_scope; }
@@ -156,6 +141,12 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const = 0;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
+    virtual void        Execute(const Effect::TargetsCauses& targets_causes,
+                                bool stacking,
+                                AccountingMap* accounting_map = 0,
+                                bool only_meter_effects = false,
+                                bool only_appearance_effects = false,
+                                bool include_empire_meter_effects = false) const;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 

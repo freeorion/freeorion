@@ -1370,48 +1370,83 @@ namespace {
     class StoreTargetsAndCausesOfEffectsGroupsWorkItem {
     public:
         struct ConditionCache : public boost::noncopyable {
-            std::map<const Condition::ConditionBase*, std::pair<bool,Effect::TargetSet> > entries;
-            boost::shared_mutex mutex;
-            boost::condition_variable_any state_changed;
+        public:
+            std::pair<bool, Effect::TargetSet>* Find(const Condition::ConditionBase* cond, bool insert);
+            void MarkComplete(std::pair<bool, Effect::TargetSet>* cache_entry);
+            void LockShared(boost::shared_lock<boost::shared_mutex>& guard);
+        private:
+            std::map<const Condition::ConditionBase*, std::pair<bool,Effect::TargetSet> > m_entries;
+            boost::shared_mutex m_mutex;
+            boost::condition_variable_any m_state_changed;
         };
         StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& the_effects_groups,
-            TemporaryPtr<const UniverseObject> the_source,
-            EffectsCauseType                   the_effect_cause_type,
-            const std::string&                 the_specific_cause_name,
-            const Effect::TargetSet&           the_target_objects,
-            Effect::TargetsCauses&             the_targets_causes,
-            ConditionCache&                    the_source_cached_condition_matches,
-            ConditionCache&                    the_invariant_cached_condition_matches,
-            boost::shared_mutex&               the_global_mutex
+            const boost::shared_ptr<const Effect::EffectsGroup>&     the_effects_group,
+            const std::vector< TemporaryPtr<const UniverseObject> >& the_sources,
+            EffectsCauseType                                         the_effect_cause_type,
+            const std::string&                                       the_specific_cause_name,
+            const Effect::TargetSet&                                 the_target_objects,
+            Effect::TargetsCauses&                                   the_targets_causes,
+            std::map<int, boost::shared_ptr<ConditionCache> >&       the_source_cached_condition_matches,
+            ConditionCache&                                          the_invariant_cached_condition_matches,
+            boost::shared_mutex&                                     the_global_mutex
         );
         void operator ()();
     private:
-        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >* m_effects_groups;
-        TemporaryPtr<const UniverseObject>     m_source;
-        EffectsCauseType                       m_effect_cause_type;
-        const std::string*                     m_specific_cause_name;
-        const Effect::TargetSet*               m_target_objects;
-        Effect::TargetsCauses*                 m_targets_causes;
-        ConditionCache*                        m_source_cached_condition_matches;
-        ConditionCache*                        m_invariant_cached_condition_matches;
-        boost::shared_mutex*                   m_global_mutex;
+        // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
+        boost::shared_ptr<const Effect::EffectsGroup>            m_effects_group;
+        const std::vector< TemporaryPtr<const UniverseObject> >* m_sources;
+        EffectsCauseType                                         m_effect_cause_type;
+        const std::string                                        m_specific_cause_name;
+        const Effect::TargetSet*                                 m_target_objects;
+        Effect::TargetsCauses*                                   m_targets_causes;
+        std::map<int, boost::shared_ptr<ConditionCache> >*       m_source_cached_condition_matches;
+        ConditionCache*                                          m_invariant_cached_condition_matches;
+        boost::shared_mutex*                                     m_global_mutex;
+
+        static Effect::TargetSet& GetConditionMatches(
+            const Condition::ConditionBase*    cond,
+            ConditionCache&                    cached_condition_matches,
+            TemporaryPtr<const UniverseObject> source,
+            const ScriptingContext&            source_context,
+            Effect::TargetSet&                 target_objects);
     };
 
-    std::pair<bool, Effect::TargetSet>* FindConditionMatchCacheEntry(const Condition::ConditionBase* cond, 
-                                                  StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& cached_condition_matches, 
-                                                  bool insert) 
+    StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+            const boost::shared_ptr<const Effect::EffectsGroup>&     the_effects_group,
+            const std::vector< TemporaryPtr<const UniverseObject> >& the_sources,
+            EffectsCauseType                                         the_effect_cause_type,
+            const std::string&                                       the_specific_cause_name,
+            const Effect::TargetSet&                                 the_target_objects,
+            Effect::TargetsCauses&                                   the_targets_causes,
+            std::map<int, boost::shared_ptr<ConditionCache> >&       the_source_cached_condition_matches,
+            ConditionCache&                                          the_invariant_cached_condition_matches,
+            boost::shared_mutex&                                     the_global_mutex
+        ) :
+            m_effects_group                         (the_effects_group),
+            m_sources                               (&the_sources),
+            m_effect_cause_type                     (the_effect_cause_type),
+            // create a deep copy just in case string methods do unlocked copy-on-write or other unsafe things
+            m_specific_cause_name                   (the_specific_cause_name.c_str()),
+            m_target_objects                        (&the_target_objects),
+            m_targets_causes                        (&the_targets_causes),
+            m_source_cached_condition_matches       (&the_source_cached_condition_matches),
+            m_invariant_cached_condition_matches    (&the_invariant_cached_condition_matches),
+            m_global_mutex                          (&the_global_mutex)
+    {}
+
+    std::pair<bool, Effect::TargetSet>* StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::Find(
+        const Condition::ConditionBase* cond, bool insert) 
     {
         // have to iterate through cached condition matches, rather than using
         // find, since there is no operator< for comparing conditions by value
         // and by pointer is irrelivant.
-        boost::unique_lock<boost::shared_mutex> unique_guard(cached_condition_matches.mutex, boost::defer_lock_t());
-        boost::shared_lock<boost::shared_mutex> shared_guard(cached_condition_matches.mutex, boost::defer_lock_t());
+        boost::unique_lock<boost::shared_mutex> unique_guard(m_mutex, boost::defer_lock_t());
+        boost::shared_lock<boost::shared_mutex> shared_guard(m_mutex, boost::defer_lock_t());
 
         if (insert) unique_guard.lock(); else shared_guard.lock();
 
         for (std::map<const Condition::ConditionBase*, std::pair<bool,Effect::TargetSet> >::iterator
-                it = cached_condition_matches.entries.begin(); it != cached_condition_matches.entries.end(); ++it)
+                it = m_entries.begin(); it != m_entries.end(); ++it)
         {
             if (*cond == *(it->first)) {
                 //Logger().debugStream() << "Reused target set!";
@@ -1424,7 +1459,7 @@ namespace {
 
                 // wait for cache fill
                 while (!it->second.first)
-                    cached_condition_matches.state_changed.wait(shared_guard);
+                    m_state_changed.wait(shared_guard);
 
                 return &it->second;
             }
@@ -1433,39 +1468,43 @@ namespace {
         // nothing found
         if (insert)
             // set up storage
-            return &cached_condition_matches.entries[cond];
+            return &m_entries[cond];
 
         return NULL;
     }
 
-    void ConditionMatchCacheEntryComplete(std::pair<bool, Effect::TargetSet>* cache_entry, 
-                                          StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& cached_condition_matches)
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::MarkComplete(std::pair<bool, Effect::TargetSet>* cache_entry)
     {
-        boost::unique_lock<boost::shared_mutex> cache_guard(cached_condition_matches.mutex); // make sure threads are waiting for completion, not checking for completion
+        boost::unique_lock<boost::shared_mutex> cache_guard(m_mutex); // make sure threads are waiting for completion, not checking for completion
         cache_entry->first = true;
-        cached_condition_matches.state_changed.notify_all(); // signal cachefill
+        m_state_changed.notify_all(); // signal cachefill
+    }
+
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::LockShared(boost::shared_lock<boost::shared_mutex>& guard) {
+        boost::shared_lock<boost::shared_mutex> tmp_guard(m_mutex);
+        guard.swap(tmp_guard);
     }
 
     Effect::TargetSet EMPTY_TARGET_SET;
 
-    Effect::TargetSet& GetConditionMatches(const Condition::ConditionBase* cond,
-                                           StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache&
-                                               cached_condition_matches,
-                                           TemporaryPtr<const UniverseObject> source,
-                                           const ScriptingContext& source_context,
-                                           Effect::TargetSet& target_objects)
+    Effect::TargetSet& StoreTargetsAndCausesOfEffectsGroupsWorkItem::GetConditionMatches(
+        const Condition::ConditionBase*                               cond,
+        StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& cached_condition_matches,
+        TemporaryPtr<const UniverseObject>                            source,
+        const ScriptingContext&                                       source_context,
+        Effect::TargetSet&                                            target_objects)
     {
         std::pair<bool, Effect::TargetSet>* cache_entry = NULL;
 
         if (!cond)
             return EMPTY_TARGET_SET;
 
-        cache_entry = FindConditionMatchCacheEntry(cond, cached_condition_matches, false);
+        cache_entry = cached_condition_matches.Find(cond, false);
         if (cache_entry)
             return cache_entry->second;
 
         // no cached result (yet). create cache entry
-        cache_entry = FindConditionMatchCacheEntry(cond, cached_condition_matches, true);
+        cache_entry = cached_condition_matches.Find(cond, true);
         if (cache_entry->first)
             return cache_entry->second; // some other thread was faster creating the cache entry
 
@@ -1489,84 +1528,56 @@ namespace {
             target_objects.insert(target_objects.end(), target_set->begin(), target_set->end());
         }
 
-        ConditionMatchCacheEntryComplete(cache_entry, cached_condition_matches);
+        cached_condition_matches.MarkComplete(cache_entry);
 
         //Logger().debugStream() << "Generated new target set!";
         return *target_set; 
     }
-
-    StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            // const Universe*                        the_universe,
-            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& the_effects_groups,
-            TemporaryPtr<const UniverseObject>     the_source,
-            EffectsCauseType                       the_effect_cause_type,
-            const std::string&                     the_specific_cause_name,
-            const Effect::TargetSet&               the_target_objects,
-            Effect::TargetsCauses&                 the_targets_causes,
-            StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& the_source_cached_condition_matches,
-            StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& the_invariant_cached_condition_matches,
-            boost::shared_mutex&                   the_global_mutex
-        ) :
-            // m_universe              (the_universe),
-            m_effects_groups        (&the_effects_groups),
-            m_source                (the_source),
-            m_effect_cause_type     (the_effect_cause_type),
-            m_specific_cause_name   (&the_specific_cause_name),
-            m_target_objects        (&the_target_objects),
-            m_targets_causes        (&the_targets_causes),
-            m_source_cached_condition_matches       (&the_source_cached_condition_matches),
-            m_invariant_cached_condition_matches    (&the_invariant_cached_condition_matches),
-            m_global_mutex          (&the_global_mutex)
-    {}
-
+    
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator ()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
-        // create a deep copy just in case string methods do unlocked copy-on-write or other unsafe things
-        std::string specific_cause_name(m_specific_cause_name->c_str());
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
-            int source_id = (m_source ? m_source->ID() : INVALID_OBJECT_ID);
-            Logger().debugStream() << "StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_id << ", , specific cause: " << specific_cause_name << ", , )";
+            Logger().debugStream() << "StoreTargetsAndCausesOfEffectsGroups(effects group: " << m_effects_group->AccountingLabel() << ", , , specific cause: " << m_specific_cause_name << ", , )";
         }
 
-        ScriptingContext source_context(m_source);
-        int source_object_id = (m_source ? m_source->ID() : INVALID_OBJECT_ID);
+        // get objects matched by scope
+        const Condition::ConditionBase* scope = m_effects_group->Scope();
+        if (!scope)
+            return;
 
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
-        // process all effects groups in set provided
-        int eg_count = 1;
-        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
-        for (effects_it = m_effects_groups->begin(); effects_it != m_effects_groups->end(); ++effects_it) {
+        // process all sources in set provided
+        std::vector< TemporaryPtr<const UniverseObject> >::const_iterator source_it;
+        for (source_it = m_sources->begin(); source_it != m_sources->end(); ++source_it) {
+            TemporaryPtr<const UniverseObject> source = *source_it;
+            ScriptingContext source_context(source);
+            int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
                                     boost::lexical_cast<std::string>(source_object_id) +
-                                    " cause: " + specific_cause_name +
-                                    " effects group " + boost::lexical_cast<std::string>(eg_count++));
+                                    " cause: " + m_specific_cause_name);
 
-            // get effects group to process for this iteration
-            // NOTE: boost::shared_ptr copying is not thread-safe. 
-            // boost::shared_ptr<const Effect::EffectsGroup> effects_group = effects_it;
-
-            // skip inactive effects groups
-            const Condition::ConditionBase* activation = (*effects_it)->Activation();
-            if (activation && !activation->Eval(source_context, m_source))
+            // skip inactive sources
+            // FIXME: is it safe to move this out of the loop? 
+            // Activation condition must not contain "Source" subconditions in that case
+            const Condition::ConditionBase* activation = m_effects_group->Activation();
+            if (activation && !activation->Eval(source_context, source))
                 continue;
 
-            // get objects matched by scope
-            const Condition::ConditionBase* scope = (*effects_it)->Scope();
-            if (!scope)
-                continue;
-            bool source_invariant = !m_source || scope->SourceInvariant();
-            StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache* condition_cache = source_invariant ? m_invariant_cached_condition_matches : m_source_cached_condition_matches;
+            bool source_invariant = !source || scope->SourceInvariant();
+            ConditionCache* condition_cache = source_invariant ? m_invariant_cached_condition_matches : (*m_source_cached_condition_matches)[source_object_id].get();
             Effect::TargetSet& target_set = GetConditionMatches(scope,
                                                                 *condition_cache,
-                                                                m_source,
+                                                                source,
                                                                 source_context,
                                                                 target_objects);
             {
-                boost::shared_lock<boost::shared_mutex> cache_guard(condition_cache->mutex);
+                boost::shared_lock<boost::shared_mutex> cache_guard;
+                
+                condition_cache->LockShared(cache_guard);
                 if (target_set.empty())
                     continue;
             }
@@ -1575,14 +1586,13 @@ namespace {
                 // NOTE: boost::shared_ptr copying is not thread-safe. 
                 // FIXME: use TemporaryPtr here, or a dedicated lock
                 boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
-                boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
                 // combine effects group and source object id into a sourced effects group
-                Effect::SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);
+                Effect::SourcedEffectsGroup sourced_effects_group(source_object_id, m_effects_group);
 
                 // combine cause type and specific cause into effect cause
-                Effect::EffectCause effect_cause(m_effect_cause_type, specific_cause_name,
-                                                (*effects_it)->AccountingLabel());
+                Effect::EffectCause effect_cause(m_effect_cause_type, m_specific_cause_name,
+                                                 m_effects_group->AccountingLabel());
 
                 // combine target set and effect cause
                 Effect::TargetsAndCause target_and_cause(target_set, effect_cause);
@@ -1620,11 +1630,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // scope conditions. Index INVALID_OBJECT_ID stores results for
     // source-invariant conditions
     typedef StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache ConditionCache;
-    std::map<int, boost::shared_ptr<ConditionCache> >
-        cached_source_condition_matches;
-
-    boost::shared_mutex global_mutex;
-    std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
+    std::map<int, boost::shared_ptr<ConditionCache> > cached_source_condition_matches;
 
     // prepopulate the cache for safe concurrent access
     std::vector<int> all_objects = m_objects.FindObjectIDs();
@@ -1638,14 +1644,21 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     boost::timer type_timer;
     boost::timer eval_timer;
+
+    std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
     RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(16U);
+    boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue
+
     eval_timer.restart();
 
     // 1) EffectsGroups from Species
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     type_timer.restart();
+
+    // find each species planets in single pass, maintaining object map order per-species
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > species_objects;
     std::vector<TemporaryPtr<Planet> > planets = m_objects.FindObjects<Planet>();
     for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
          planet_it != planets.end(); ++planet_it)
@@ -1661,17 +1674,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-        run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                             species->Effects(), planet, ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes_reorder_buffer.back(),
-                                             *cached_source_condition_matches[planet->ID()],
-                                             invariant_condition_matches,
-                                             global_mutex));
+        species_objects[species_name].push_back(planet);
     }
+    
     double planet_species_time = type_timer.elapsed();
     type_timer.restart();
 
+    // find each species ships in single pass, maintaining object map order per-species
     std::vector<TemporaryPtr<Ship> > ships = m_objects.FindObjects<Ship>();
     for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
          ship_it != ships.end(); ++ship_it)
@@ -1687,38 +1696,71 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-        run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                             species->Effects(), ship, ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes_reorder_buffer.back(),
-                                             *cached_source_condition_matches[ship->ID()],
-                                             invariant_condition_matches,
-                                             global_mutex));
+        species_objects[species_name].push_back(ship);
     }
     double ship_species_time = type_timer.elapsed();
-    type_timer.restart();
 
+    // enforce species effects order
+    for (SpeciesManager::iterator species_it  = GetSpeciesManager().begin(); species_it != GetSpeciesManager().end(); ++species_it) {
+        const std::string& species_name = species_it->first;
+        const Species*     species      = species_it->second;
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator species_objects_it = species_objects.find(species_name);
+        
+        if (species_objects_it == species_objects.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = species->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+            targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
+            run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+                                                 *effects_group_it, species_objects_it->second, ECT_SPECIES, species_name,
+                                                 all_potential_targets, targets_causes_reorder_buffer.back(),
+                                                 cached_source_condition_matches,
+                                                 invariant_condition_matches,
+                                                 global_mutex));
+        }
+    }
+    
     // 2) EffectsGroups from Specials
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > specials_objects;
+    // determine objects with specials in a single pass
     for (ObjectMap::const_iterator<> obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
         int source_object_id = obj_it->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
         const std::map<std::string, int>& specials = obj_it->Specials();
         for (std::map<std::string, int>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
-            const Special* special = GetSpecial(special_it->first);
+            const std::string& special_name = special_it->first;
+            const Special*     special      = GetSpecial(special_name);
             if (!special) {
-                Logger().errorStream() << "GetEffectsAndTargets couldn't get Special " << special_it->first;
+                Logger().errorStream() << "GetEffectsAndTargets couldn't get Special " << special_name;
                 continue;
             }
-
+            specials_objects[special_name].push_back(*obj_it);
+        }
+    }
+    // enforce specials effects order
+    std::vector<std::string> special_names = SpecialNames();
+    for (std::vector<std::string>::iterator special_it = special_names.begin(); special_it !=special_names.end(); ++special_it) {
+        const std::string& special_name = *special_it;
+        const Special*     special      = GetSpecial(special_name);
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator specials_objects_it = specials_objects.find(special_name);
+        
+        if (specials_objects_it == specials_objects.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = special->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                                 special->Effects(), *obj_it, ECT_SPECIAL, special->Name(),
+                                                 *effects_group_it, specials_objects_it->second, ECT_SPECIAL, special_name,
                                                  all_potential_targets, targets_causes_reorder_buffer.back(),
-                                                 *cached_source_condition_matches[source_object_id],
+                                                 cached_source_condition_matches,
                                                  invariant_condition_matches,
                                                  global_mutex));
         }
@@ -1729,6 +1771,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     type_timer.restart();
+    std::list< std::vector< TemporaryPtr<const UniverseObject> > > tech_sources;
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         int source_id = empire->CapitalID();
@@ -1755,20 +1798,28 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 }
             }
         }
+
+        if (!source) {
+            Logger().errorStream() << "somehow to to storing targets and causes of tech effectsgroup without a source...?";
+            continue;
+        }
+
+        tech_sources.push_back(std::vector< TemporaryPtr<const UniverseObject> >(1U, source));
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
-            if (!source) {
-                Logger().errorStream() << "somehow to to storing targets and causes of tech effectsgroup without a source...?";
-                break;
+            
+            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = tech->Effects();
+            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+            for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+                targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
+                run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+                                                     *effects_group_it, tech_sources.back(), ECT_TECH, tech->Name(),
+                                                     all_potential_targets, targets_causes_reorder_buffer.back(),
+                                                     cached_source_condition_matches,
+                                                     invariant_condition_matches,
+                                                     global_mutex));
             }
-            targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-            run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                                 tech->Effects(), source, ECT_TECH, tech->Name(),
-                                                 all_potential_targets, targets_causes_reorder_buffer.back(),
-                                                 *cached_source_condition_matches[source_id],
-                                                 invariant_condition_matches,
-                                                 global_mutex));
         }
     }
     double tech_time = type_timer.elapsed();
@@ -1777,6 +1828,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     type_timer.restart();
+    
+    // determine buildings of each type in a single pass
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > buildings_by_type;
     std::vector<TemporaryPtr<Building> > buildings = m_objects.FindObjects<Building>();
     for (std::vector<TemporaryPtr<Building> >::const_iterator building_it = buildings.begin();
          building_it != buildings.end(); ++building_it)
@@ -1784,20 +1838,36 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         TemporaryPtr<const Building> building = *building_it;
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
-        const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
+        const std::string&  building_type_name = building->BuildingTypeName();
+        const BuildingType* building_type = GetBuildingType(building_type_name);
         if (!building_type) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
             continue;
         }
 
-        targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-        run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                             building_type->Effects(), building,
-                                             ECT_BUILDING, building_type->Name(),
-                                             all_potential_targets, targets_causes_reorder_buffer.back(),
-                                             *cached_source_condition_matches[building->ID()],
-                                             invariant_condition_matches,
-                                             global_mutex));
+        buildings_by_type[building_type_name].push_back(building);
+    }
+    
+    // enforce building types effects order
+    for (BuildingTypeManager::iterator building_type_it  = GetBuildingTypeManager().begin(); building_type_it != GetBuildingTypeManager().end(); ++building_type_it) {
+        const std::string&  building_type_name = building_type_it->first;
+        const BuildingType* building_type      = building_type_it->second;
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator buildings_by_type_it = buildings_by_type.find(building_type_name);
+        
+        if (buildings_by_type_it == buildings_by_type.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = building_type->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+            targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
+            run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+                                                 *effects_group_it, buildings_by_type_it->second, ECT_BUILDING, building_type_name,
+                                                 all_potential_targets, targets_causes_reorder_buffer.back(),
+                                                 cached_source_condition_matches,
+                                                 invariant_condition_matches,
+                                                 global_mutex));
+        }
     }
     double building_time = type_timer.elapsed();
 
@@ -1805,6 +1875,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
     type_timer.restart();
+    // determine ship hulls and parts of each type in a single pass
+    // the same ship might be added multiple times if it contains the part multiple times
+    // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > ships_by_hull_type;
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > ships_by_part_type;
     ships = m_objects.FindObjects<Ship>();
     for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         TemporaryPtr<const Ship> ship = *ship_it;
@@ -1821,15 +1896,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             Logger().errorStream() << "GetEffectsAndTargets couldn't get HullType";
             continue;
         }
-
-        targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-        run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                             hull_type->Effects(), ship, ECT_SHIP_HULL,
-                                             hull_type->Name(),
-                                             all_potential_targets, targets_causes_reorder_buffer.back(),
-                                             *cached_source_condition_matches[ship->ID()],
-                                             invariant_condition_matches,
-                                             global_mutex));
+        
+        ships_by_hull_type[hull_type->Name()].push_back(ship);
 
         const std::vector<std::string>& parts = ship_design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
@@ -1841,12 +1909,49 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 Logger().errorStream() << "GetEffectsAndTargets couldn't get PartType";
                 continue;
             }
+            
+            ships_by_part_type[part].push_back(ship);
+        }
+    }
+    
+    // enforce hull types effects order
+    for (HullTypeManager::iterator hull_type_it  = GetHullTypeManager().begin(); hull_type_it != GetHullTypeManager().end(); ++hull_type_it) {
+        const std::string& hull_type_name = hull_type_it->first;
+        const HullType*    hull_type      = hull_type_it->second;
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
+        
+        if (ships_by_hull_type_it == ships_by_hull_type.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = hull_type->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                                 part_type->Effects(), ship, ECT_SHIP_PART,
-                                                 part_type->Name(),
+                                                 *effects_group_it, ships_by_hull_type_it->second, ECT_SHIP_HULL, hull_type_name,
                                                  all_potential_targets, targets_causes_reorder_buffer.back(),
-                                                 *cached_source_condition_matches[ship->ID()],
+                                                 cached_source_condition_matches,
+                                                 invariant_condition_matches,
+                                                 global_mutex));
+        }
+    }
+    // enforce part types effects order
+    for (PartTypeManager::iterator part_type_it  = GetPartTypeManager().begin(); part_type_it != GetPartTypeManager().end(); ++part_type_it) {
+        const std::string& part_type_name = part_type_it->first;
+        const PartType*    part_type      = part_type_it->second;
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_part_type_it = ships_by_part_type.find(part_type_name);
+        
+        if (ships_by_part_type_it == ships_by_part_type.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = part_type->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+            targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
+            run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+                                                 *effects_group_it, ships_by_part_type_it->second, ECT_SHIP_PART, part_type_name,
+                                                 all_potential_targets, targets_causes_reorder_buffer.back(),
+                                                 cached_source_condition_matches,
                                                  invariant_condition_matches,
                                                  global_mutex));
         }
@@ -1857,26 +1962,44 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for FIELDS";
     type_timer.restart();
+    // determine fields of each type in a single pass
+    std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > fields_by_type;
     std::vector<TemporaryPtr<Field> > fields = m_objects.FindObjects<Field>();
     for (std::vector<TemporaryPtr<Field> >::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
         TemporaryPtr<const Field> field = *field_it;
         if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
 
-        const FieldType* field_type = GetFieldType(field->FieldTypeName());
+        const std::string& field_type_name = field->FieldTypeName();
+        const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get FieldType " << field->FieldTypeName();
             continue;
         }
 
-        targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
-        run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                                             field_type->Effects(), field, ECT_FIELD,
-                                             field_type->Name(),
-                                             all_potential_targets, targets_causes_reorder_buffer.back(),
-                                             *cached_source_condition_matches[field->ID()],
-                                             invariant_condition_matches,
-                                             global_mutex));
+        fields_by_type[field_type_name].push_back(field);
+    }
+    
+    // enforce field types effects order
+    for (FieldTypeManager::iterator field_type_it  = GetFieldTypeManager().begin(); field_type_it != GetFieldTypeManager().end(); ++field_type_it) {
+        const std::string& field_type_name = field_type_it->first;
+        const FieldType*   field_type      = field_type_it->second;
+        std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator fields_by_type_it = fields_by_type.find(field_type_name);
+        
+        if (fields_by_type_it == fields_by_type.end())
+            continue;
+        
+        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = field_type->Effects();
+        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
+        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+            targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
+            run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
+                                                 *effects_group_it, fields_by_type_it->second, ECT_FIELD, field_type_name,
+                                                 all_potential_targets, targets_causes_reorder_buffer.back(),
+                                                 cached_source_condition_matches,
+                                                 invariant_condition_matches,
+                                                 global_mutex));
+        }
     }
     double fields_time = type_timer.elapsed();
 
@@ -1885,6 +2008,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     
     eval_timer.restart();
     // add results to targets_causes in issue order
+    // FIXME: each job is an effectsgroup, and we need that separation for execution anyway, so maintain it here instead of merging.
     for (std::list<Effect::TargetsCauses>::const_iterator job_it = targets_causes_reorder_buffer.begin(); job_it != targets_causes_reorder_buffer.end(); ++job_it) {
         Effect::TargetsCauses job_results = *job_it;
         
@@ -1914,26 +2038,39 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
-    std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
+    std::map< std::string, std::set<int> > executed_nonstacking_effects;
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
-    std::map<const Effect::EffectsGroup*, Effect::TargetsCauses> dispatched_targets_causes;
-
-    // (Stable!) sort of (source, effectsgroup) pairs by effects group
-    for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
-         targets_it != targets_causes.end(); ++targets_it)
+    
+    // grouping targets causes by effects group
+    // sorting by effects group has already been done in GetEffectsAndTargets()
+    // FIXME: GetEffectsAndTargets already produces this separation, exploit that
+    std::vector< std::pair<const Effect::EffectsGroup*, Effect::TargetsCauses> > dispatched_targets_causes;
     {
-        const Effect::SourcedEffectsGroup& sourced_effects_group = targets_it->first;
-        const Effect::EffectsGroup* const  effects_group         = sourced_effects_group.effects_group.get();
+        const Effect::EffectsGroup* last_effects_group   = 0;
+        Effect::TargetsCauses*      group_targets_causes = 0;
 
-        dispatched_targets_causes[effects_group].push_back(*targets_it);
+        for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
+             targets_it != targets_causes.end(); ++targets_it)
+        {
+            const Effect::SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+            const Effect::EffectsGroup* const  effects_group         = sourced_effects_group.effects_group.get();
+
+            if (effects_group != last_effects_group) {
+                last_effects_group = effects_group;
+                dispatched_targets_causes.push_back(std::make_pair(effects_group, Effect::TargetsCauses()));
+                group_targets_causes = &dispatched_targets_causes.back().second;
+            }
+            group_targets_causes->push_back(*targets_it);
+        }
     }
 
     // execute each effects group one by one
-    for (std::map<const Effect::EffectsGroup*, Effect::TargetsCauses>::iterator effect_group_it = dispatched_targets_causes.begin();
-         effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
+    std::vector< std::pair<const Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
+    for (effect_group_it = dispatched_targets_causes.begin(); effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
     {
         const Effect::EffectsGroup* const effects_group        = effect_group_it->first;
         Effect::TargetsCauses&            group_targets_causes = effect_group_it->second;
+        std::string                       stacking_group       = effects_group->StackingGroup();
         ScopedTimer update_timer(
             "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
             + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
@@ -1941,31 +2078,45 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
         // if other EffectsGroups or sources with the same stacking group have affected some of the 
         // targets in the scope of the current EffectsGroup, skip them
-        for (Effect::TargetsCauses::iterator targets_it = group_targets_causes.begin();
-             targets_it != group_targets_causes.end(); ++targets_it)
-        {
-            Effect::TargetsAndCause&           targets_and_cause     = targets_it->second;
-            Effect::TargetSet&                 targets               = targets_and_cause.target_set;
+        // and add the remaining objects affected by it to executed_nonstacking_effects
+        if (!stacking_group.empty()) {
+            std::set<int>& non_stacking_targets = executed_nonstacking_effects[stacking_group];
+            
+            for (Effect::TargetsCauses::iterator targets_it = group_targets_causes.begin();
+                 targets_it != group_targets_causes.end();)
+            {
+                Effect::TargetsAndCause&           targets_and_cause     = targets_it->second;
+                Effect::TargetSet&                 targets               = targets_and_cause.target_set;
 
-            std::map<std::string, Effect::TargetSet>::iterator non_stacking_it =
-                executed_nonstacking_effects.find(effects_group->StackingGroup());
-            if (non_stacking_it != executed_nonstacking_effects.end()) {
-                // FIXME: this is a set difference algorithm: targets -= non_stacking_it->second
-                // FIXME: 30% of effects execution computation is wasted for this.
-                // FIXME: make non_stacking_it->second a std::set
-                // FIXME: use std::set::find if non_stacking_it->second.size() >= targets.size()
-                // FIXME: use std::sort(targets) and std::lower_bound otherwise
-                for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin();
-                     object_it != non_stacking_it->second.end(); ++object_it)
+                // this is a set difference/union algorithm: 
+                // targets              -= non_stacking_targets
+                // non_stacking_targets += targets
+                for (Effect::TargetSet::iterator object_it = targets.begin();
+                        object_it != targets.end(); )
                 {
-                    Effect::TargetSet::iterator it = std::find(targets.begin(), targets.end(), *object_it);
-                    if (it != targets.end()) {
-                        *it = targets.back();
+                    int object_id                    = (*object_it)->ID();
+                    std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
+                    
+                    if (it != non_stacking_targets.end()) {
+                        *object_it = targets.back();
                         targets.pop_back();
+                    } else {
+                        non_stacking_targets.insert(object_id);
+                        ++object_it;
                     }
+                }
+                
+                if (targets.empty()) {
+                    *targets_it = group_targets_causes.back();
+                    group_targets_causes.pop_back();
+                } else {
+                    ++targets_it;
                 }
             }
         }
+        
+        if (group_targets_causes.empty())
+            continue;
 
         if (log_verbose)
             Logger().debugStream() << " * * * * * * * * * * * (new effects group log entry)";
@@ -1976,19 +2127,6 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                                 only_meter_effects,
                                 only_appearance_effects,
                                 include_empire_meter_effects);
-
-        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        for (Effect::TargetsCauses::const_iterator targets_it = group_targets_causes.begin();
-             targets_it != group_targets_causes.end(); ++targets_it)
-        {
-            const Effect::TargetsAndCause&     targets_and_cause     = targets_it->second;
-            const Effect::TargetSet&           targets               = targets_and_cause.target_set;
-
-            if (!effects_group->StackingGroup().empty()) {
-                Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
-                std::copy(targets.begin(), targets.end(), std::back_inserter(affected_targets));
-            }
-        }
     }
 
     // actually do destroy effect action.  Executing the effect just marks
