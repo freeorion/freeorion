@@ -62,6 +62,73 @@ namespace {
         return obj;
     }
 
+    // Generates a debug  trace that can be included in error logs, augmenting the ReconstructName() info with
+    // additional info identifying the object references that were successfully followed.
+    std::string TraceReference(const std::vector<std::string>& property_name, ValueRef::ReferenceType ref_type,
+                                                       const ScriptingContext& context)
+    {
+        TemporaryPtr<const UniverseObject> obj;
+        std::string retval = ReconstructName(property_name, ref_type) + " :  ";
+        switch(ref_type) {
+        case ValueRef::NON_OBJECT_REFERENCE:
+            retval += " | Non Object Reference |";
+            return retval;   
+            break;
+        case ValueRef::SOURCE_REFERENCE:
+            retval += " | Source: ";
+            obj = context.source;
+            break;
+        case ValueRef::EFFECT_TARGET_REFERENCE:
+            retval += " | Effect Target: ";
+            obj = context.effect_target;
+            break;
+        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:
+            retval += " | Root Candidate: ";
+            obj = context.condition_root_candidate;
+            break;
+        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+        default:                                                
+            retval += " | Local Candidate: ";
+            obj = context.condition_local_candidate;    
+            break;
+        }
+        if (obj) {
+            retval += obj->TypeName() + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
+        }
+        retval += " | ";
+
+        std::vector<std::string>::const_iterator first = property_name.begin();
+        std::vector<std::string>::const_iterator last = property_name.end();
+        while (first != last) {
+            std::string property_name = *first;
+            retval += " " + property_name;
+            if (property_name == "Planet") {
+                if (TemporaryPtr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj)) {
+                    retval += " (" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
+                    obj = GetPlanet(b->PlanetID());
+                } else
+                    obj = TemporaryPtr<const UniverseObject>();
+            } else if (property_name == "System") {
+                if (obj) {
+                    retval += " (" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
+                    obj = GetSystem(obj->SystemID());
+                }
+            } else if (property_name == "Fleet") {
+                if (TemporaryPtr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj))  {
+                    retval += " (" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
+                    obj = GetFleet(s->FleetID());
+                } else
+                    obj = TemporaryPtr<const UniverseObject>();
+            }
+            ++first;
+            if (obj) {
+                retval += obj->TypeName() + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
+            }
+            retval += " | ";
+        }
+        return retval;
+    }
+
     struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
@@ -325,7 +392,7 @@ namespace ValueRef {
 
         TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return INVALID_PLANET_SIZE;
         }
 
@@ -338,7 +405,7 @@ namespace ValueRef {
                 return p->NextSmallerPlanetSize();
         }
 
-        Logger().errorStream() << "Variable<PlanetSize>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<PlanetSize>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_PLANET_SIZE;
     }
 
@@ -351,7 +418,7 @@ namespace ValueRef {
 
         TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return INVALID_PLANET_TYPE;
         }
 
@@ -370,7 +437,7 @@ namespace ValueRef {
                 return p->CounterClockwiseNextPlanetType();
         }
 
-        Logger().errorStream() << "Variable<PlanetType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<PlanetType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_PLANET_TYPE;
     }
 
@@ -384,14 +451,14 @@ namespace ValueRef {
         if (property_name == "PlanetEnvironment") {
             TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+                Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
                 return INVALID_PLANET_ENVIRONMENT;
             }
             if (TemporaryPtr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object))
                 return p->EnvironmentForSpecies();
         }
 
-        Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_PLANET_ENVIRONMENT;
     }
 
@@ -405,7 +472,7 @@ namespace ValueRef {
         if (property_name == "ObjectType") {
             TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+                Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
                 return INVALID_UNIVERSE_OBJECT_TYPE;
             }
             ObjectTypeVisitor v;
@@ -417,7 +484,7 @@ namespace ValueRef {
                 return OBJ_PROD_CENTER;
         }
 
-        Logger().errorStream() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
@@ -430,7 +497,7 @@ namespace ValueRef {
 
         TemporaryPtr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return INVALID_STAR_TYPE;
         }
 
@@ -443,7 +510,7 @@ namespace ValueRef {
                 return s->NextYoungerStarType();
         }
 
-        Logger().errorStream() << "Variable<StarType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<StarType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_STAR_TYPE;
     }
 
@@ -464,7 +531,7 @@ namespace ValueRef {
             }
 
             // add more non-object reference double functions here
-            Logger().errorStream() << "Variable<double>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<double>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
             return 0.0;
         }
 
@@ -472,7 +539,7 @@ namespace ValueRef {
             FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<double>::Eval unable to follow reference: "
-                                   << ReconstructName(m_property_name, m_ref_type);
+                                   << TraceReference(m_property_name, m_ref_type, context);
             return 0.0;
         }
 
@@ -517,7 +584,7 @@ namespace ValueRef {
 
         }
 
-        Logger().errorStream() << "Variable<double>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<double>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return 0.0;
     }
 
@@ -533,14 +600,14 @@ namespace ValueRef {
                 return CurrentTurn();
 
             // add more non-object reference int functions here
-            Logger().errorStream() << "Variable<int>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
             return 0;
         }
 
         TemporaryPtr<const UniverseObject> object =
             FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return 0;
         }
 
@@ -623,7 +690,7 @@ namespace ValueRef {
             return -1;
         }
 
-        Logger().errorStream() << "Variable<int>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return 0;
     }
 
@@ -636,14 +703,14 @@ namespace ValueRef {
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
             // add non-object reference string functions here
-            Logger().errorStream() << "Variable<std::string>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
             return "";
         }
 
         TemporaryPtr<const UniverseObject> object =
             FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return "";
         }
 
@@ -706,7 +773,7 @@ namespace ValueRef {
             return empire->TopPriorityEnqueuedTech(true);
         }
 
-        Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
+        Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
         return "";
     }
 
