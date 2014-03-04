@@ -19,6 +19,18 @@
 			name = Configure;
 			productName = INIT;
 		};
+		82EC621C18C6109D000237C2 /* MakeDMG */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 82EC622518C610C9000237C2 /* Build configuration list for PBXAggregateTarget "MakeDMG" */;
+			buildPhases = (
+				82EC621B18C6109D000237C2 /* ShellScript */,
+			);
+			dependencies = (
+				82EC622418C610AB000237C2 /* PBXTargetDependency */,
+			);
+			name = MakeDMG;
+			productName = MakeDMG;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -498,6 +510,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 82C073D8149DE46200E76876;
 			remoteInfo = Parse;
+		};
+		82EC622318C610AB000237C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3402E25C0F5A317400DF6FE7;
+			remoteInfo = FreeOrion;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -3002,6 +3021,7 @@
 				8DD76F620486A84900D96B5E /* FreeOrionClient */,
 				471FEF870A9A629800C36AA3 /* FreeOrionAI */,
 				3402E25C0F5A317400DF6FE7 /* FreeOrion */,
+				82EC621C18C6109D000237C2 /* MakeDMG */,
 			);
 		};
 /* End PBXProject section */
@@ -3050,6 +3070,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode 3\"\nfi";
+		};
+		82EC621B18C6109D000237C2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/make_dmg.py\" $BUILT_PRODUCTS_DIR\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3493,6 +3526,11 @@
 			isa = PBXTargetDependency;
 			target = 82C073D8149DE46200E76876 /* Parse */;
 			targetProxy = 82C0747D149DE82600E76876 /* PBXContainerItemProxy */;
+		};
+		82EC622418C610AB000237C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3402E25C0F5A317400DF6FE7 /* FreeOrion */;
+			targetProxy = 82EC622318C610AB000237C2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4721,6 +4759,55 @@
 			};
 			name = Debug;
 		};
+		82EC621D18C6109D000237C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = MakeDMG;
+			};
+			name = Debug;
+		};
+		82EC621E18C6109D000237C2 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MakeDMG;
+			};
+			name = Test;
+		};
+		82EC621F18C6109D000237C2 /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MakeDMG;
+			};
+			name = Test_GCC42;
+		};
+		82EC622018C6109D000237C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = MakeDMG;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		82EC622118C6109D000237C2 /* Release_LLVM */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MakeDMG;
+			};
+			name = Release_LLVM;
+		};
+		82EC622218C6109D000237C2 /* Release_10_5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MakeDMG;
+			};
+			name = Release_10_5;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4876,6 +4963,19 @@
 				8221B242160F2211007D86B9 /* Release */,
 				8219A98E14AAFFC300EEE387 /* Release_LLVM */,
 				8218683D14AA28BE009441B8 /* Release_10_5 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Test;
+		};
+		82EC622518C610C9000237C2 /* Build configuration list for PBXAggregateTarget "MakeDMG" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82EC621D18C6109D000237C2 /* Debug */,
+				82EC621E18C6109D000237C2 /* Test */,
+				82EC621F18C6109D000237C2 /* Test_GCC42 */,
+				82EC622018C6109D000237C2 /* Release */,
+				82EC622118C6109D000237C2 /* Release_LLVM */,
+				82EC622218C6109D000237C2 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
