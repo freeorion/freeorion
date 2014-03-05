@@ -495,7 +495,7 @@ public:
 
 private:
     void                    DoLayout();
-    void                    CheckDisplayPlanets();
+    void                    RefreshPlanetGraphic();
     void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
     void                    ClickColonize();                    ///< called if colonize button is pressed
     void                    ClickInvade();                      ///< called if invade button is pressed
@@ -1014,7 +1014,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 
     GG::Y min_height(MaxPlanetDiameter());
 
-    CheckDisplayPlanets();
+    RefreshPlanetGraphic();
     if (m_planet_graphic)
         min_height = m_planet_graphic->Height();
     // TODO: get following to resize panel properly...
@@ -1026,7 +1026,7 @@ void SidePanel::PlanetPanel::DoLayout() {
     ResizedSignal();
 }
 
-void SidePanel::PlanetPanel::CheckDisplayPlanets() {
+void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
