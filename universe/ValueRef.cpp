@@ -93,7 +93,7 @@ namespace {
             break;
         }
         if (obj) {
-            retval += obj->TypeName() + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
+            retval += boost::lexical_cast<std::string>(obj->ObjectType()) + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
         }
         retval += " | ";
 
@@ -122,7 +122,7 @@ namespace {
             }
             ++first;
             if (obj) {
-                retval += obj->TypeName() + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
+                retval += boost::lexical_cast<std::string>(obj->ObjectType()) + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
             }
             retval += " | ";
         }

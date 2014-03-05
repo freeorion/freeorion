@@ -219,9 +219,6 @@ bool Ship::HasTag(const std::string& name) const {
     return false;
 }
 
-const std::string& Ship::TypeName() const
-{ return UserString("SHIP"); }
-
 UniverseObjectType Ship::ObjectType() const
 { return OBJ_SHIP; }
 

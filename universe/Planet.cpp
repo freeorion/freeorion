@@ -179,9 +179,6 @@ bool Planet::HasTag(const std::string& name) const {
     return species && species->Tags().count(name);
 }
 
-const std::string& Planet::TypeName() const
-{ return UserString("PLANET"); }
-
 UniverseObjectType Planet::ObjectType() const
 { return OBJ_PLANET; }
 

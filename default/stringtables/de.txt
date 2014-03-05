@@ -157,27 +157,6 @@ Erdimperium
 DEFAULT_PLAYER_NAME
 Menschlicher_Spieler
 
-UNIVERSEOBJECT
-Allgemeines Objekt
-
-SYSTEM
-System
-
-FLEET
-Flotte
-
-SHIP
-Raumschiff
-
-PLANET
-Planet
-
-BUILDING
-Gebäude
-
-FIELD
-Feld
-
 PASSED
 <rgba 0 255 0 255>(BESTANDEN)</rgba>
 
@@ -4923,6 +4902,8 @@ Systems with this special have a nebula created around them. This nebula may col
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Allgemeines Objekt
 OBJ_BUILDING
 Gebäude
 OBJ_SHIP

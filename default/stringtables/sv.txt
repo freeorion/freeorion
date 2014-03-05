@@ -1753,19 +1753,19 @@ Denna planets bana är väldigt excentrisk. Den har ett stort avstånd mellan de
 # UniverseObjectTypes
 
 OBJ_BUILDING
-building
+Building
 OBJ_SHIP
-ship
+Ship
 OBJ_FLEET
-fleet
+Fleet
 OBJ_PLANET
-planet
+Planet
 OBJ_POP_CENTER
-population center
+Population center
 OBJ_PROD_CENTER
-production center
+Production center
 OBJ_SYSTEM
-system
+System
 
 
 # StarTypes

@@ -146,27 +146,6 @@ Impero Terrestre
 DEFAULT_PLAYER_NAME
 Giocatore_Umano
 
-UNIVERSEOBJECT
-Oggetto Generico
-
-SYSTEM
-Sistema
-
-FLEET
-Flotta
-
-SHIP
-Nave
-
-PLANET
-Pianeta
-
-BUILDING
-Edificio
-
-FIELD
-Campo
-
 PASSED
 <rgba 0 255 0 255>(PASSATO)</rgba>
 
@@ -4694,22 +4673,24 @@ This planet has a rich natural deposit of minerals, boosting production or Lithi
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Oggetto Generico
 OBJ_BUILDING
-struttura
+Edificio
 OBJ_SHIP
-nave
+Nave
 OBJ_FLEET
-flotta
+Flotta
 OBJ_PLANET
-pianeta
+Pianeta
 OBJ_POP_CENTER
-centro popolazione
+Centro popolazione
 OBJ_PROD_CENTER
-centro di produzione
+Centro di produzione
 OBJ_SYSTEM
 Sistema
 OBJ_FIELD
-campo
+Campo
 
 
 # StarTypes

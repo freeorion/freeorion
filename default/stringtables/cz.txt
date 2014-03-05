@@ -105,24 +105,6 @@ Naše Impérium
 DEFAULT_PLAYER_NAME
 Lidský_Hráč
 
-UNIVERSEOBJECT
-Generic Object
-
-SYSTEM
-Systém
-
-FLEET
-Loďstvo
-
-SHIP
-Loď
-
-PLANET
-Planeta
-
-BUILDING
-Budova
-
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -2202,6 +2184,8 @@ Dráha této planety je velmi výstřední. Má velký rozdíl mezi jeho nejbli�
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Generic Object
 OBJ_BUILDING
 Budova
 OBJ_SHIP
@@ -2209,13 +2193,13 @@ Loď
 OBJ_FLEET
 Loďstvo
 OBJ_PLANET
-planeta
+Planeta
 OBJ_POP_CENTER
-populační centrum
+Populační centrum
 OBJ_PROD_CENTER
-produkční centrum
+Produkční centrum
 OBJ_SYSTEM
-systém
+Systém
 
 
 # StarTypes

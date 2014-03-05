@@ -103,25 +103,6 @@ Terran Imperiumi
 DEFAULT_PLAYER_NAME
 Ihmis_pelaaja
 
-UNIVERSEOBJECT
-Yleinen objekti
-
-SYSTEM
-Järjestelmä
-
-FLEET
-Laivasto
-
-SHIP
-Alus
-
-PLANET
-Planeetta
-
-BUILDING
-Rakennus
-
-
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -2218,20 +2199,22 @@ Tämän planeetan kiertorata on hyvin epäsäännöllinen. Planeetan etäisyys t
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Yleinen objekti
 OBJ_BUILDING
-rakennus
+Rakennus
 OBJ_SHIP
-alus
+Alus
 OBJ_FLEET
-laivasto
+Laivasto
 OBJ_PLANET
-planeetta
+Planeetta
 OBJ_POP_CENTER
-väestökeskus
+Väestökeskus
 OBJ_PROD_CENTER
-tuotantokeskus
+Tuotantokeskus
 OBJ_SYSTEM
-järjestelmä
+Järjestelmä
 
 
 # StarTypes

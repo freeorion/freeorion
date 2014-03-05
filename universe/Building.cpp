@@ -96,9 +96,6 @@ bool Building::HasTag(const std::string& name) const {
     return type && type->Tags().count(name);
 }
 
-const std::string& Building::TypeName() const
-{ return UserString("BUILDING"); }
-
 UniverseObjectType Building::ObjectType() const
 { return OBJ_BUILDING; }
 

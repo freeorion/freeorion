@@ -152,27 +152,6 @@ DEFAULT_EMPIRE_NAME
 DEFAULT_PLAYER_NAME
 Игрок
 
-UNIVERSEOBJECT
-Объект
-
-SYSTEM
-Система
-
-FLEET
-Флот
-
-SHIP
-Корабль
-
-PLANET
-Планета
-
-BUILDING
-Здание
-
-FIELD
-Поле
-
 PASSED
 <rgba 0 255 0 255>(ЕСТЬ)</rgba>
 
@@ -4950,20 +4929,22 @@ Systems with this special have a nebula created around them. This nebula may col
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Объект
 OBJ_BUILDING
-строение
+Здание
 OBJ_SHIP
-корабль
+Корабль
 OBJ_FLEET
-флот
+Флот
 OBJ_PLANET
-планета
+Планета
 OBJ_POP_CENTER
-центр населения
+Центр населения
 OBJ_PROD_CENTER
-продуктовый центр
+Продуктовый центр
 OBJ_SYSTEM
-система
+Система
 OBJ_FIELD
 Поле
 

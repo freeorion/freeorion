@@ -9,6 +9,7 @@
 #include "Predicates.h"
 
 #include <stdexcept>
+#include <boost/lexical_cast.hpp>
 
 
 // static(s)
@@ -150,9 +151,6 @@ std::set<std::string> UniverseObject::Tags() const
 bool UniverseObject::HasTag(const std::string& name) const
 { return false; }
 
-const std::string& UniverseObject::TypeName() const
-{ return UserString("UNIVERSEOBJECT"); }
-
 UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
@@ -161,7 +159,7 @@ std::string UniverseObject::Dump() const {
 
     std::stringstream os;
 
-    os << TypeName() << " "
+    os << boost::lexical_cast<std::string>(this->ObjectType()) << " "
        << this->ID() << ": "
        << this->Name()
        << (system ? ("  at: " + system->Name()) : "")

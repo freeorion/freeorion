@@ -25,7 +25,6 @@ struct UniverseObjectVisitor;
 class FO_COMMON_API System : public UniverseObject {
 public:
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType  ObjectType() const;
     virtual std::string         Dump() const;
 

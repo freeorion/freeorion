@@ -105,9 +105,6 @@ bool Field::HasTag(const std::string& name) const {
     return type && type->Tags().count(name);
 }
 
-const std::string& Field::TypeName() const
-{ return UserString("FIELD"); }
-
 UniverseObjectType Field::ObjectType() const
 { return OBJ_FIELD; }
 

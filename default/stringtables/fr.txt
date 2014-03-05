@@ -152,7 +152,7 @@ Empire terrien
 DEFAULT_PLAYER_NAME
 Joueur humain
 
-UNIVERSEOBJECT
+INVALID_UNIVERSE_OBJECT_TYPE
 Objet générique
 
 SYSTEM

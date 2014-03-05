@@ -67,7 +67,6 @@ public:
     virtual std::set<std::string>   Tags() const;                                   ///< returns all tags this object has
     virtual bool                    HasTag(const std::string& name) const;          ///< returns true iff this object has the tag with the indicated \a name
 
-    virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual UniverseObjectType  ObjectType() const;
     virtual std::string         Dump() const;                       ///< outputs textual description of object to logger
 

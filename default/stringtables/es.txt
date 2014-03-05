@@ -102,24 +102,6 @@ El Imperio Terran
 DEFAULT_PLAYER_NAME
 Jugador_Humano
 
-UNIVERSEOBJECT
-Objeto Genérico
-
-SYSTEM
-Sistema
-
-FLEET
-Flota
-
-SHIP
-Nave
-
-PLANET
-Planeta
-
-BUILDING
-Edificio
-
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -2222,20 +2204,22 @@ Este planeta tiene un satelite natural, cuyo periodo orbital esta en resonancia 
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Objeto Genérico
 OBJ_BUILDING
-edificio
+Edificio
 OBJ_SHIP
-nave
+Nave
 OBJ_FLEET
-flota
+Flota
 OBJ_PLANET
-planeta
+Planeta
 OBJ_POP_CENTER
-centro de población
+Centro de población
 OBJ_PROD_CENTER
-centro de producción
+Centro de producción
 OBJ_SYSTEM
-sistema
+Sistema
 
 
 # StarTypes

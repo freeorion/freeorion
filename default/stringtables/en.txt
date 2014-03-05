@@ -152,29 +152,8 @@ Terran Imperium
 DEFAULT_PLAYER_NAME
 Human_Player
 
-UNIVERSEOBJECT
-Generic Object
-
-SYSTEM
-System
-
-FLEET
-Fleet
-
-SHIP
-Ship
-
 MONSTER
 Monster
-
-PLANET
-Planet
-
-BUILDING
-Building
-
-FIELD
-Field
 
 PASSED
 <rgba 0 255 0 255>(PASSED)</rgba>
@@ -5129,22 +5108,24 @@ Systems with this special have a nebula created around them. This nebula may col
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Generic Object
 OBJ_BUILDING
-building
+Building
 OBJ_SHIP
-ship
+Ship
 OBJ_FLEET
-fleet
+Fleet
 OBJ_PLANET
-planet
+Planet
 OBJ_POP_CENTER
-population center
+Population center
 OBJ_PROD_CENTER
-production center
+Production center
 OBJ_SYSTEM
-system
+System
 OBJ_FIELD
-field
+Field
 
 
 # StarTypes

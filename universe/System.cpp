@@ -185,9 +185,6 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
     }
 }
 
-const std::string& System::TypeName() const
-{ return UserString("SYSTEM"); }
-
 UniverseObjectType System::ObjectType() const
 { return OBJ_SYSTEM; }
 
