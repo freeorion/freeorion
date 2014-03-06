@@ -318,6 +318,8 @@ void SitRepPanel::FilterClicked() {
     std::map<int, std::string> menu_index_templates;
     std::map<int, bool> menu_index_checked;
     int index = 1;
+    bool all_checked = true;
+    int ALL_INDEX = 9999;
 
     GG::MenuItem menu_contents;
     for (std::vector<std::string>::const_iterator it = all_templates.begin();
@@ -325,12 +327,16 @@ void SitRepPanel::FilterClicked() {
     {
         menu_index_templates[index] = *it;
         bool check = true;
-        if (m_hidden_sitrep_templates.find(*it) != m_hidden_sitrep_templates.end())
+        if (m_hidden_sitrep_templates.find(*it) != m_hidden_sitrep_templates.end()) {
             check = false;
+            all_checked = false;
+        }
         menu_index_checked[index] = check;
         const std::string& menu_label = UserString(*it + "_LABEL");
         menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
     }
+    menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
+                                       ALL_INDEX, false, false));
 
     GG::PopupMenu popup(m_filter_button->UpperLeft().x, m_filter_button->LowerRight().y,
                         ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
@@ -339,14 +345,29 @@ void SitRepPanel::FilterClicked() {
         return;
     int selected_menu_item = popup.MenuID();
     if (selected_menu_item == 0)
-        return;
-    const std::string& selected_template_string = menu_index_templates[selected_menu_item];
-    if (menu_index_checked[selected_menu_item]) {
-        // disable showing this template string
-        m_hidden_sitrep_templates.insert(selected_template_string);
+        return; // nothing was selected
+
+    if (selected_menu_item == ALL_INDEX) {
+        // select / deselect all templates
+        if (all_checked) {
+            // deselect all
+            for (std::vector<std::string>::const_iterator it = all_templates.begin();
+                 it != all_templates.end(); ++it, ++index)
+            { m_hidden_sitrep_templates.insert(*it); }
+        } else {
+            // select all
+            m_hidden_sitrep_templates.clear();
+        }
     } else {
-        // re-enabled showing this template string
-        m_hidden_sitrep_templates.erase(selected_template_string);
+        // select / deselect the chosen template
+        const std::string& selected_template_string = menu_index_templates[selected_menu_item];
+        if (menu_index_checked[selected_menu_item]) {
+            // disable showing this template string
+            m_hidden_sitrep_templates.insert(selected_template_string);
+        } else {
+            // re-enabled showing this template string
+            m_hidden_sitrep_templates.erase(selected_template_string);
+        }
     }
     Update();
 }

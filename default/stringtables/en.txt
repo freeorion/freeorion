@@ -82,6 +82,9 @@ Host
 ALL
 All
 
+NONE
+None
+
 RENAME
 Rename
 
