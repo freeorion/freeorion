@@ -61,6 +61,9 @@ IntroMenu::IntroMenu(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
     Client().KillServer();
 
+    Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().GetClientUI()->GetMapWnd()->Hide();
+
     if (GetOptionsDB().Get<bool>("tech-demo"))
         Client().Register(Client().GetClientUI()->GetCombatWnd());
     else {
@@ -311,9 +314,14 @@ boost::statechart::result MPLobby::react(const Error& msg) {
 ////////////////////////////////////////////////////////////
 // PlayingGame
 ////////////////////////////////////////////////////////////
-PlayingGame::PlayingGame() :
-    Base()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame"; }
+PlayingGame::PlayingGame(my_context ctx) :
+    Base(ctx)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame";
+
+    Client().Register(Client().GetClientUI()->GetMapWnd());
+    Client().GetClientUI()->GetMapWnd()->Show();
+}
 
 PlayingGame::~PlayingGame() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingGame";

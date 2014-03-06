@@ -207,8 +207,8 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
 
 /** The human client state in which a game has been started, and a turn is being
   * played. */
-struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForGameStart> {
-    typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForGameStart> Base;
+struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, WaitingForGameStart> {
+    typedef boost::statechart::state<PlayingGame, HumanClientFSM, WaitingForGameStart> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostID>,
@@ -226,7 +226,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
         boost::statechart::custom_reaction<TurnPartialUpdate>
     > reactions;
 
-    PlayingGame();
+    PlayingGame(my_context ctx);
     ~PlayingGame();
 
     boost::statechart::result react(const HostID& msg);
