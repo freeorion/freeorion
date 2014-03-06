@@ -5060,11 +5060,15 @@ void MapWnd::UpdateEmpireResourcePools() {
 }
 
 bool MapWnd::ZoomToHomeSystem() {
-    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitalID();
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return false;
+    int home_id = empire->CapitalID();
 
-    if (id != INVALID_OBJECT_ID) {
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject(id);
-        if (!object) return false;
+    if (home_id != INVALID_OBJECT_ID) {
+        TemporaryPtr<const UniverseObject> object = GetUniverseObject(home_id);
+        if (!object)
+            return false;
         CenterOnObject(object->SystemID());
         SelectSystem(object->SystemID());
     }
