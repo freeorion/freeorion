@@ -1098,7 +1098,8 @@ MapWnd::MapWnd() :
             &MapWnd::EnableAlphaNumAccels,     this);
 
     DoLayout();
-    // Connect keyboard accelerators for once and for all.
+
+    // Connect keyboard accelerators for map
     ConnectKeyboardAcceleratorSignals();
 }
 
@@ -4347,7 +4348,6 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 
 void MapWnd::Cleanup() {
     CloseAllPopups();
-    DisconnectKeyboardAcceleratorSignals();
     HideResearch();
     HideProduction();
     HideDesign();
@@ -5226,58 +5226,52 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
 }
 
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
-    HotkeyManager * hkm = HotkeyManager::GetManager();
+    HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &MapWnd::ReturnToMap,            "map.return_to_map");
-    hkm->Connect(this, &MapWnd::OpenMessages,           "map.open_chat");
-    hkm->Connect(this, &MapWnd::EndTurn,                "map.end_turn");
-    hkm->Connect(this, &MapWnd::ToggleSitRep,           "map.sit_rep");
-    hkm->Connect(this, &MapWnd::ToggleResearch,         "map.research");
-    hkm->Connect(this, &MapWnd::ToggleProduction,       "map.production");
-    hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design");
-    hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu");
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in");
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt");
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out");
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt");
-    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system");
-    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system");
-    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system");
+    hkm->Connect(this, &MapWnd::ReturnToMap,            "map.return_to_map",    new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::OpenMessages,           "map.open_chat",        new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::EndTurn,                "map.end_turn",         new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ToggleSitRep,           "map.sit_rep",          new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ToggleResearch,         "map.research",         new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ToggleProduction,       "map.production",       new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design",           new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu",             new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in",          new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt",      new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out",         new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt",     new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system", new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system", new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system", new VisibleWindowCondition(this));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
-    std::list<GG::Wnd *> bl;
+    std::list<GG::Wnd*> bl;
     bl.push_back(m_research_wnd);
     bl.push_back(m_production_wnd);
     bl.push_back(m_design_wnd);
 
+    hkm->Connect(this, &MapWnd::ZoomToPrevFleet,        "map.zoom_prev_fleet",      new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(this, &MapWnd::ZoomToNextFleet,        "map.zoom_next_fleet",      new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet,    "map.zoom_prev_idle_fleet", new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet", new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
 
-    hkm->Connect(this, &MapWnd::ZoomToPrevFleet,        "map.zoom_prev_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToNextFleet,        "map.zoom_next_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet,    "map.zoom_prev_idle_fleet", new InvisibleWindowCondition(bl));
-    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet", new InvisibleWindowCondition(bl));
-
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText, "cut");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText, "copy");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText, "paste");
+    // these are general-use hotkeys, only connected here as a convenient location to do so once.
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText,              "cut");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText,             "copy");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText,   "paste");
 
     hkm->RebuildShortcuts();
 }
 
-void MapWnd::DisconnectKeyboardAcceleratorSignals() {
-    // m_hotkey_manager.DisconnectAll();
-}
+void MapWnd::DisableAlphaNumAccels()
+{ HotkeyManager::GetManager()->DisableAlphaNumeric(); }
 
-void MapWnd::SetAccelerators() {
-    // m_hotkey_manager.SetAccelerators();
-}
-
-void MapWnd::DisableAlphaNumAccels() {
-    HotkeyManager::GetManager()->DisableAlphaNumeric();
-}
-
-void MapWnd::EnableAlphaNumAccels() {
-    HotkeyManager::GetManager()->EnableAlphaNumeric();
-}
+void MapWnd::EnableAlphaNumAccels()
+{ HotkeyManager::GetManager()->EnableAlphaNumeric(); }
 
 void MapWnd::ChatMessageSentSlot()
 {}
