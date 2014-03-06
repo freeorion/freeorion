@@ -407,18 +407,17 @@ namespace {
 
         // We also register shortcut names/default values, for the
         // context "map".
-        Hotkey::AddHotkey("combat.open_chat", GG::GGK_RETURN);
-        Hotkey::AddHotkey("combat.end_turn", GG::GGK_RETURN, GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("combat.menu", GG::GGK_F10);
-        Hotkey::AddHotkey("combat.zoom_in", GG::GGK_e);
-        Hotkey::AddHotkey("combat.zoom_in_alt", GG::GGK_KP_PLUS);
-        Hotkey::AddHotkey("combat.zoom_out", GG::GGK_r);
-        Hotkey::AddHotkey("combat.zoom_out_alt", GG::GGK_KP_MINUS);
-        Hotkey::AddHotkey("combat.zoom_prev_unit", GG::GGK_v);
-        Hotkey::AddHotkey("combat.zoom_next_unit", GG::GGK_b);
+        Hotkey::AddHotkey("combat.open_chat",           GG::GGK_RETURN);
+        Hotkey::AddHotkey("combat.end_turn",            GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.menu",                GG::GGK_F10);
+        Hotkey::AddHotkey("combat.zoom_in",             GG::GGK_e);
+        Hotkey::AddHotkey("combat.zoom_in_alt",         GG::GGK_KP_PLUS);
+        Hotkey::AddHotkey("combat.zoom_out",            GG::GGK_r);
+        Hotkey::AddHotkey("combat.zoom_out_alt",        GG::GGK_KP_MINUS);
+        Hotkey::AddHotkey("combat.zoom_prev_unit",      GG::GGK_v);
+        Hotkey::AddHotkey("combat.zoom_next_unit",      GG::GGK_b);
         Hotkey::AddHotkey("combat.zoom_prev_idle_unit", GG::GGK_f);
         Hotkey::AddHotkey("combat.zoom_next_idle_unit", GG::GGK_g);
-        
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -2025,16 +2024,19 @@ bool CombatWnd::ZoomToNextUnit() {
 void CombatWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager * hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &CombatWnd::OpenChatWindow,      "combat.open_chat");
-    hkm->Connect(this, &CombatWnd::ShowMenu,            "combat.menu");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in_alt");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out");
-    hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out_alt");
-    hkm->Connect(this, &CombatWnd::ZoomToPrevUnit,      "combat.zoom_prev_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToNextUnit,      "combat.zoom_next_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToPrevIdleUnit,  "combat.zoom_prev_idle_unit");
-    hkm->Connect(this, &CombatWnd::ZoomToNextIdleUnit,  "combat.zoom_next_idle_unit");
+    // disable combat hotkeys for now to prevent potential crashes.
+    // need conditions specified when connecting these...
+
+    //hkm->Connect(this, &CombatWnd::OpenChatWindow,      "combat.open_chat");
+    //hkm->Connect(this, &CombatWnd::ShowMenu,            "combat.menu");
+    //hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in");
+    //hkm->Connect(this, &CombatWnd::KeyboardZoomIn,      "combat.zoom_in_alt");
+    //hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out");
+    //hkm->Connect(this, &CombatWnd::KeyboardZoomOut,     "combat.zoom_out_alt");
+    //hkm->Connect(this, &CombatWnd::ZoomToPrevUnit,      "combat.zoom_prev_unit");
+    //hkm->Connect(this, &CombatWnd::ZoomToNextUnit,      "combat.zoom_next_unit");
+    //hkm->Connect(this, &CombatWnd::ZoomToPrevIdleUnit,  "combat.zoom_prev_idle_unit");
+    //hkm->Connect(this, &CombatWnd::ZoomToNextIdleUnit,  "combat.zoom_next_idle_unit");
 
     hkm->RebuildShortcuts();
 }
