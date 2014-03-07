@@ -69,11 +69,6 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-configure_file(
-    ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
-    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
-)
-
 find_package(Subversion)
 set(FreeOrion_WC_REVISION ???)
 set(FreeOrion_BUILDSYS "CMake")
@@ -401,13 +396,6 @@ else ()
     install(
         TARGETS freeorioncommon
         LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
-        COMPONENT COMPONENT_FREEORION
-    )
-
-    install(
-        FILES
-        ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
-        DESTINATION share/freeorion
         COMPONENT COMPONENT_FREEORION
     )
 

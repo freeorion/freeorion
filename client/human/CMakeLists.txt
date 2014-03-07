@@ -192,9 +192,21 @@ target_link_libraries(freeorion
     ${freeorion_LINK_LIBS}
 )
 
+configure_file(
+    ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
+    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
+)
+
 install(
     TARGETS freeorion
     RUNTIME DESTINATION bin
+    COMPONENT COMPONENT_FREEORION
+)
+
+install(
+    FILES
+    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
+    DESTINATION share/freeorion
     COMPONENT COMPONENT_FREEORION
 )
 
