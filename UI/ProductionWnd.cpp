@@ -690,8 +690,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
     SetChildClippingMode(ClipToClient);
 
-    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     static_cast<void (ProductionWnd::*)(BuildType, const std::string&, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
+    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      static_cast<void (ProductionWnd::*)(BuildType, int, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
     GG::Connect(m_queue_lb->QueueItemMoved,                             &ProductionWnd::QueueItemMoved, this);

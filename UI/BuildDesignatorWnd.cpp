@@ -853,10 +853,10 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
 
 
-    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    &EncyclopediaDetailPanel::SetItem,          m_enc_detail_panel);
-    GG::Connect(m_build_selector->DisplayShipDesignSignal,      &EncyclopediaDetailPanel::SetItem,          m_enc_detail_panel);
-    GG::Connect(m_build_selector->RequestNamedBuildItemSignal,  &BuildDesignatorWnd::BuildItemRequested,    this);
-    GG::Connect(m_build_selector->RequestIDedBuildItemSignal,   &BuildDesignatorWnd::BuildItemRequested,    this);
+    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),          m_enc_detail_panel);
+    GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),          m_enc_detail_panel);
+    GG::Connect(m_build_selector->RequestNamedBuildItemSignal,  static_cast<void (BuildDesignatorWnd::*)(BuildType, const std::string&, int)>(&BuildDesignatorWnd::BuildItemRequested),    this);
+    GG::Connect(m_build_selector->RequestIDedBuildItemSignal,   static_cast<void (BuildDesignatorWnd::*)(BuildType, int, int)>(&BuildDesignatorWnd::BuildItemRequested),    this);
 
     GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);

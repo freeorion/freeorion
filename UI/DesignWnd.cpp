@@ -2408,28 +2408,28 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
 
     m_main_panel = new MainPanel(most_panels_width, main_height);
     AttachChild(m_main_panel);
-    GG::Connect(m_main_panel->PartTypeClickedSignal,            &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
+    GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
     GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
                                                                             m_detail_panel,
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));
-    GG::Connect(m_main_panel->CompleteDesignClickedSignal,      &EncyclopediaDetailPanel::SetDesign,m_detail_panel);
+    GG::Connect(m_main_panel->CompleteDesignClickedSignal,      static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign),m_detail_panel);
     m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
     m_main_panel->Sanitize();
 
     m_part_palette = new PartPalette(most_panels_width, part_palette_height);
     AttachChild(m_part_palette);
-    GG::Connect(m_part_palette->PartTypeClickedSignal,          &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
+    GG::Connect(m_part_palette->PartTypeClickedSignal,          static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
     m_part_palette->MoveTo(GG::Pt(most_panels_left, part_palette_top));
 
     m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
     AttachChild(m_base_selector);
-    GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
+    GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),              m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
-    GG::Connect(m_base_selector->DesignBrowsedSignal,           &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
-    GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
+    GG::Connect(m_base_selector->DesignBrowsedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
+    GG::Connect(m_base_selector->HullBrowsedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     m_base_selector->MoveTo(GG::Pt());
 }
 
