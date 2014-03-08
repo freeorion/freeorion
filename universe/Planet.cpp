@@ -655,6 +655,18 @@ void Planet::Conquer(int conquerer) {
 
     GetMeter(METER_SUPPLY)->SetCurrent(0.0f);
     GetMeter(METER_SUPPLY)->BackPropegate();
+    GetMeter(METER_INDUSTRY)->SetCurrent(0.0f);
+    GetMeter(METER_INDUSTRY)->BackPropegate();
+    GetMeter(METER_RESEARCH)->SetCurrent(0.0f);
+    GetMeter(METER_RESEARCH)->BackPropegate();
+    GetMeter(METER_TRADE)->SetCurrent(0.0f);
+    GetMeter(METER_TRADE)->BackPropegate();
+    GetMeter(METER_CONSTRUCTION)->SetCurrent(0.0f);
+    GetMeter(METER_CONSTRUCTION)->BackPropegate();
+    GetMeter(METER_DEFENSE)->SetCurrent(0.0f);
+    GetMeter(METER_DEFENSE)->BackPropegate();
+    GetMeter(METER_SHIELD)->SetCurrent(0.0f);
+    GetMeter(METER_SHIELD)->BackPropegate();
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
