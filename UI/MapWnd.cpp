@@ -672,7 +672,7 @@ MapWnd::MapWnd() :
     m_btn_graphs->SetInWindow(in_window_func);
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_graphs->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
+        new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
 
     // Design button
     m_btn_design = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
