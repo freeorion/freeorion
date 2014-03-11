@@ -219,44 +219,6 @@ IntroScreen::IntroScreen() :
     m_splash->AttachChild(m_menu);
     m_splash->AttachChild(m_version);
 
-    //size calculation consts and variables
-    const GG::X MIN_BUTTON_WIDTH(160);
-    const GG::Y MIN_BUTTON_HEIGHT(40);
-    const GG::X H_BUTTON_MARGIN(16); //horizontal empty space
-    const GG::Y V_BUTTON_MARGIN(16); //vertical empty space
-    GG::X button_width(0); //width of the buttons
-    GG::Y button_height(0); //height of the buttons
-    const GG::X H_MAINMENU_MARGIN(40); //horizontal empty space
-    const GG::Y V_MAINMENU_MARGIN(40); //vertical empty space
-    GG::X mainmenu_width(0);  //width of the mainmenu
-    GG::Y mainmenu_height(0); //height of the mainmenu
-
-    //calculate necessary button width
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_SINGLE_PLAYER")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_QUICK_START")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_MULTI_PLAYER")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_LOAD_GAME")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_OPTIONS")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_ABOUT")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_CREDITS")).x, button_width);
-    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_EXIT")).x, button_width);
-    button_width += H_BUTTON_MARGIN;
-    button_width = std::max(MIN_BUTTON_WIDTH, button_width);
-    //calculate  necessary button height
-    button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
-    //culate window width and height
-    mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 8.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
-
-    // position menu window
-    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2);
-    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
-              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
-
-    m_menu->SizeMove(ul, lr);
-
     //create buttons
     m_single_player = new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"));
     m_quick_start =   new CUIButton(UserString("INTRO_BTN_QUICK_START"));
@@ -277,35 +239,6 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_credits);
     m_menu->AttachChild(m_exit_game);
 
-    // place buttons
-    GG::Pt button_ul(GG::X(15), GG::Y(12));
-    GG::Pt button_lr(button_width, ClientUI::GetFont()->Lineskip() + 6);
-
-    button_lr += button_ul;
-
-    m_single_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_quick_start->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_multi_player->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_load_game->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_options->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_about->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
-    m_credits->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height) * 1.75;
-    button_lr.y += GG::Y(button_height) * 1.75;
-    m_exit_game->SizeMove(button_ul, button_lr);
-
     //connect signals and slots
     GG::Connect(m_single_player->LeftClickedSignal, &IntroScreen::OnSinglePlayer,   this);
     GG::Connect(m_quick_start->LeftClickedSignal,   &IntroScreen::OnQuickStart,     this);
@@ -315,6 +248,8 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_about->LeftClickedSignal,         &IntroScreen::OnAbout,          this);
     GG::Connect(m_credits->LeftClickedSignal,       &IntroScreen::OnCredits,        this);
     GG::Connect(m_exit_game->LeftClickedSignal,     &IntroScreen::OnExitGame,       this);
+
+    DoLayout();
 }
 
 IntroScreen::~IntroScreen() {
@@ -433,13 +368,51 @@ void IntroScreen::DoLayout() {
 
     //calculate necessary button width
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    button_width = std::max(button_width, font->TextExtent(m_single_player->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_quick_start->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_multi_player->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_load_game->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_options->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_about->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_credits->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_exit_game->Text()).x);
     button_width += H_BUTTON_MARGIN;
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
+
     //calculate  necessary button height
     button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
     //culate window width and height
     mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
     mainmenu_height = 8.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+
+    // place buttons
+    GG::Pt button_ul(GG::X(15), GG::Y(12));
+    GG::Pt button_lr(button_width, ClientUI::GetFont()->Lineskip() + 6);
+
+    button_lr += button_ul;
+
+    m_single_player->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_quick_start->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_multi_player->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_load_game->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_options->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_about->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_credits->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height) * 1.75;
+    button_lr.y += GG::Y(button_height) * 1.75;
+    m_exit_game->SizeMove(button_ul, button_lr);
 
     // position menu window
     GG::Pt ul(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
@@ -448,23 +421,4 @@ void IntroScreen::DoLayout() {
               Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
 
     m_menu->SizeMove(ul, lr);
-
-    //create buttons
-    GG::Y button_y(12); //relativ buttonlocation
-    GG::X button_x(15);
-    m_single_player->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_quick_start->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_multi_player->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_load_game->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_options->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_about->MoveTo(GG::Pt(button_x, button_y));
-    button_y += button_height;
-    m_credits->MoveTo(GG::Pt(button_x, button_y));
-    button_y += 1.75 * button_height;
-    m_exit_game->MoveTo(GG::Pt(button_x, button_y));
 }
