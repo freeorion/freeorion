@@ -258,23 +258,14 @@ IntroScreen::IntroScreen() :
     m_menu->SizeMove(ul, lr);
 
     //create buttons
-    GG::Y button_y(12); //relativ buttonlocation
-    GG::X button_x(15);
-    m_single_player =   new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_quick_start =     new CUIButton(UserString("INTRO_BTN_QUICK_START"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_multi_player =    new CUIButton(UserString("INTRO_BTN_MULTI_PLAYER"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_load_game =       new CUIButton(UserString("INTRO_BTN_LOAD_GAME"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_options =         new CUIButton(UserString("INTRO_BTN_OPTIONS"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_about =           new CUIButton(UserString("INTRO_BTN_ABOUT"), button_x, button_y, button_width);
-    button_y += button_height;
-    m_credits =         new CUIButton(UserString("INTRO_BTN_CREDITS"), button_x, button_y, button_width);
-    button_y += 1.75 * button_height;
-    m_exit_game =       new CUIButton(UserString("INTRO_BTN_EXIT"), button_x, button_y, button_width);
+    m_single_player = new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_quick_start =   new CUIButton(UserString("INTRO_BTN_QUICK_START"));
+    m_multi_player =  new CUIButton(UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game =     new CUIButton(UserString("INTRO_BTN_LOAD_GAME"));
+    m_options =       new CUIButton(UserString("INTRO_BTN_OPTIONS"));
+    m_about =         new CUIButton(UserString("INTRO_BTN_ABOUT"));
+    m_credits =       new CUIButton(UserString("INTRO_BTN_CREDITS"));
+    m_exit_game =     new CUIButton(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
     m_menu->AttachChild(m_single_player);
@@ -285,6 +276,35 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_about);
     m_menu->AttachChild(m_credits);
     m_menu->AttachChild(m_exit_game);
+
+    // place buttons
+    GG::Pt button_ul(GG::X(15), GG::Y(12));
+    GG::Pt button_lr(button_width, ClientUI::GetFont()->Lineskip() + 6);
+
+    button_lr += button_ul;
+
+    m_single_player->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_quick_start->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_multi_player->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_load_game->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_options->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_about->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_credits->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height) * 1.75;
+    button_lr.y += GG::Y(button_height) * 1.75;
+    m_exit_game->SizeMove(button_ul, button_lr);
 
     //connect signals and slots
     GG::Connect(m_single_player->LeftClickedSignal, &IntroScreen::OnSinglePlayer,   this);
