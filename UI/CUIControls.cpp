@@ -65,7 +65,7 @@ namespace {
     const int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+CUIButton::CUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                      GG::Clr color/* = ClientUI::CtrlColor()*/,
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                      GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
@@ -168,14 +168,14 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category) {
 ///////////////////////////////////////
 // class SettableInWindowCUIButton
 ///////////////////////////////////////
-SettableInWindowCUIButton::SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
                                                      const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                                      GG::Clr color/* = ClientUI::CtrlColor()*/,
                                                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/,
                                                      int thick/* = 2*/, 
                                                      GG::Clr text_color/* = ClientUI::TextColor()*/,
                                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    CUIButton(x, y, w, str, font, color, border, thick, text_color, flags)
+    CUIButton(str, x, y, w, font, color, border, thick, text_color, flags)
 {}
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
@@ -192,11 +192,11 @@ void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)>
 ///////////////////////////////////////
 // class CUITurnButton
 ///////////////////////////////////////
-CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+CUITurnButton::CUITurnButton(const std::string& str, GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                              GG::Clr color/* = ClientUI::WndColor()*/, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                              GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
-    CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
+    CUIButton(str, x, y, w, FontOrDefaultFont(font), color, border, thick, text_color, flags)
 { GG::Connect(LeftClickedSignal, &PlayTurnButtonClickSound, -1); }
 
 
@@ -265,7 +265,7 @@ void CUIArrowButton::RenderUnpressed() {
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
+CUIStateButton::CUIStateButton(const std::string& str, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
                                GG::Clr color/* = ClientUI::CtrlColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :

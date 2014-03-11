@@ -410,9 +410,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
                                  GG::X(Value(m_galaxy_setup_panel->LowerRight().y + 100)), m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
                                  GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("NEW_GAME_BN"), GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN,
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
@@ -462,8 +462,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_players_lb = new CUIListBox(x, y, ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
-    m_start_game_bn = new CUIButton(GG::X0, GG::Y0, GG::X(125), UserString("START_GAME_BN"));
-    m_cancel_bn = new CUIButton(GG::X0, GG::Y0, GG::X(125), UserString("CANCEL"));
+    m_start_game_bn = new CUIButton(UserString("START_GAME_BN"), GG::X0, GG::Y0, GG::X(125));
+    m_cancel_bn = new CUIButton(UserString("CANCEL"), GG::X0, GG::Y0, GG::X(125));
     m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(),
                                    ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));

@@ -336,7 +336,7 @@ OptionsWnd::OptionsWnd():
 {
     SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
-    m_done_button = new CUIButton(GG::X(15), PAGE_HEIGHT + 17, GG::X(75), UserString("DONE"));
+    m_done_button = new CUIButton(UserString("DONE"), GG::X(15), PAGE_HEIGHT + 17, GG::X(75));
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), PAGE_WIDTH, PAGE_HEIGHT + 20, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     Init();
 }
@@ -375,7 +375,7 @@ void OptionsWnd::EndSection() {
 
 CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(text, GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, m_indentation_level));
@@ -432,7 +432,7 @@ void OptionsWnd::HotkeyOption(const std::string& hotkey_name) {
     std::string text = UserString(Hotkey::UserStringForHotkey(hotkey_name));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
-    CUIButton* button = new CUIButton(GG::X0, GG::Y0, GG::X1, hk.PrettyPrint());
+    CUIButton* button = new CUIButton(hk.PrettyPrint());
 
     layout->Add(text_control, 0, 0);
     layout->Add(button, 0, 1);
@@ -512,7 +512,7 @@ CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const 
 
 void OptionsWnd::MusicVolumeOption() {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
@@ -537,7 +537,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
                               VolumeSliderHandler volume_slider_handler, bool toggle_value)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(text, GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
@@ -566,7 +566,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
     CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
-    CUIButton* button = new CUIButton(GG::X0, GG::Y0, GG::X1, "...");
+    CUIButton* button = new CUIButton("...");
     button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));
     button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
@@ -774,8 +774,9 @@ void OptionsWnd::ResolutionOption() {
 
     // apply button, sized to fit text
     std::string apply_button_text = UserString("OPTIONS_APPLY");
-    GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
-                                             apply_button_text, ClientUI::GetFont());
+    GG::Button* apply_button = new CUIButton(apply_button_text,
+                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
+                                             ClientUI::GetFont());
     row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));
@@ -863,8 +864,9 @@ void OptionsWnd::Init() {
 
     // flush stringtable button
     std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
-    GG::Button* flush_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
-                                             flush_button_text, ClientUI::GetFont());
+    GG::Button* flush_button = new CUIButton(flush_button_text,
+                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
+                                             ClientUI::GetFont());
     GG::ListBox::Row* row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, m_indentation_level));

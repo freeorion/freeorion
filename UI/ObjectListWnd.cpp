@@ -717,17 +717,17 @@ private:
         GG::X button_width = GG::X(ClientUI::Pts()*8);
         GG::Button* label = 0;
 
-        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("VISIBLE"), font);
+        label = new CUIButton(UserString("VISIBLE"), GG::X0, GG::Y0, button_width, font);
         m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
 
-        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("PREVIOUSLY_VISIBLE"), font);
+        label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"), GG::X0, GG::Y0, button_width, font);
         m_filters_layout->Add(label, 2, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_PREVIOUSLY_VISIBLE));
 
-        label = new CUIButton(GG::X0, GG::Y0, button_width, UserString("DESTROYED"), font);
+        label = new CUIButton(UserString("DESTROYED"), GG::X0, GG::Y0, button_width, font);
         m_filters_layout->Add(label, 3, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
@@ -742,24 +742,24 @@ private:
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
-            label = new CUIButton(GG::X0, GG::Y0, GG::X1, uot_label, font);
+            label = new CUIButton(uot_label, GG::X0, GG::Y0, GG::X1, font);
             m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
-            CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            CUIStateButton* button = new CUIStateButton(" ", GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
             m_filter_buttons[uot][SHOW_VISIBLE] = button;
 
-            button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            button = new CUIStateButton(" ", GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
             m_filter_buttons[uot][SHOW_PREVIOUSLY_VISIBLE] = button;
 
-            button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            button = new CUIStateButton(" ", GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
             m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
@@ -771,11 +771,11 @@ private:
         m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
         AttachChild(m_condition_widget);
 
-        m_cancel_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("CANCEL"), font);
+        m_cancel_button = new CUIButton(UserString("CANCEL"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), font);
         AttachChild(m_cancel_button);
         GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
 
-        m_apply_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("APPLY"), font);
+        m_apply_button = new CUIButton(UserString("APPLY"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), font);
         AttachChild(m_apply_button);
         GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
 
@@ -1681,21 +1681,21 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     GG::Connect(m_list_box->ExpandCollapseSignal,       &ObjectListWnd::DoLayout,               this);
     AttachChild(m_list_box);
 
-    m_filter_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("FILTERS"));
+    m_filter_button = new CUIButton(UserString("FILTERS"), GG::X0, GG::Y0, GG::X(30));
     GG::Connect(m_filter_button->LeftClickedSignal,     &ObjectListWnd::FilterClicked,          this);
     AttachChild(m_filter_button);
 
-    m_sort_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("SORT"));
+    m_sort_button = new CUIButton(UserString("SORT"), GG::X0, GG::Y0, GG::X(30));
     GG::Connect(m_sort_button->LeftClickedSignal,       &ObjectListWnd::SortClicked,            this);
     AttachChild(m_sort_button);
     m_sort_button->Disable();
 
-    m_columns_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("COLUMNS"));
+    m_columns_button = new CUIButton(UserString("COLUMNS"), GG::X0, GG::Y0, GG::X(30));
     GG::Connect(m_columns_button->LeftClickedSignal,    &ObjectListWnd::ColumnsClicked,         this);
     AttachChild(m_columns_button);
     m_columns_button->Disable();
 
-    m_collapse_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("COLLAPSE_ALL"));
+    m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"), GG::X0, GG::Y0, GG::X(30));
     GG::Connect(m_collapse_button->LeftClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
     AttachChild(m_collapse_button);
 

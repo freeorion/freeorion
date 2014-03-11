@@ -260,21 +260,21 @@ IntroScreen::IntroScreen() :
     //create buttons
     GG::Y button_y(12); //relativ buttonlocation
     GG::X button_x(15);
-    m_single_player =   new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_single_player =   new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"), button_x, button_y, button_width);
     button_y += button_height;
-    m_quick_start =     new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_QUICK_START"));
+    m_quick_start =     new CUIButton(UserString("INTRO_BTN_QUICK_START"), button_x, button_y, button_width);
     button_y += button_height;
-    m_multi_player =    new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_multi_player =    new CUIButton(UserString("INTRO_BTN_MULTI_PLAYER"), button_x, button_y, button_width);
     button_y += button_height;
-    m_load_game =       new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_LOAD_GAME"));
+    m_load_game =       new CUIButton(UserString("INTRO_BTN_LOAD_GAME"), button_x, button_y, button_width);
     button_y += button_height;
-    m_options =         new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_OPTIONS"));
+    m_options =         new CUIButton(UserString("INTRO_BTN_OPTIONS"), button_x, button_y, button_width);
     button_y += button_height;
-    m_about =           new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_ABOUT"));
+    m_about =           new CUIButton(UserString("INTRO_BTN_ABOUT"), button_x, button_y, button_width);
     button_y += button_height;
-    m_credits =         new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_CREDITS"));
+    m_credits =         new CUIButton(UserString("INTRO_BTN_CREDITS"), button_x, button_y, button_width);
     button_y += 1.75 * button_height;
-    m_exit_game =       new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_EXIT"));
+    m_exit_game =       new CUIButton(UserString("INTRO_BTN_EXIT"), button_x, button_y, button_width);
 
     //attach buttons
     m_menu->AttachChild(m_single_player);

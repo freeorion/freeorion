@@ -89,7 +89,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_seed_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_seed_edit->Height()) / 2));
 
     // random seed button
-    m_random = new CUIButton(2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, row * PANEL_CONTROL_SPACING + 5, GG::X(20), "", font, GG::CLR_WHITE);
+    m_random = new CUIButton("", 2 * LABELS_WIDTH + 3 * CONTROL_MARGIN - 30, row * PANEL_CONTROL_SPACING + 5, GG::X(20), font, GG::CLR_WHITE);
     m_random->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize.png")));
     m_random->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_clicked.png"  )));
     m_random->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_mouseover.png")));
@@ -495,8 +495,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image =  new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
 
-    m_ok = new CUIButton(GG::X(10), ypos, GG::X(75), UserString("OK"));
-    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, ypos, GG::X(75), UserString("CANCEL"));
+    m_ok = new CUIButton(UserString("OK"), GG::X(10), ypos, GG::X(75));
+    m_cancel = new CUIButton(UserString("CANCEL"), 10 + m_ok->Size().x + 15, ypos, GG::X(75));
 
     Init();
 }

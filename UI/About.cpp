@@ -23,9 +23,9 @@ About::About():
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
-    m_done_btn = new CUIButton(GG::X(400), GG::Y(440), GG::X(75), UserString("DONE"));
-    m_license = new CUIButton(GG::X(310), GG::Y(440), GG::X(75), UserString("LICENSE"));
-    m_vision = new CUIButton(GG::X(220), GG::Y(440), GG::X(75), UserString("VISION"));
+    m_done_btn = new CUIButton(UserString("DONE"), GG::X(400), GG::Y(440), GG::X(75));
+    m_license = new CUIButton(UserString("LICENSE"), GG::X(310), GG::Y(440), GG::X(75));
+    m_vision = new CUIButton(UserString("VISION"), GG::X(220), GG::Y(440), GG::X(75));
     m_info = new CUIMultiEdit(GG::X(20), GG::Y(20), GG::X(550), GG::Y(400), UserString("FREEORION_VISION"), 
                               GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
                               ClientUI::GetFont(),

@@ -463,15 +463,15 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
+    m_build_type_buttons[BT_BUILDING] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
+    m_build_type_buttons[BT_SHIP] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE")));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items

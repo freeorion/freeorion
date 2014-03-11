@@ -641,7 +641,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_stencil_op_frame_listener(new StencilOpQueueListener),
     m_fps_text(new FPSIndicator(GG::X(5), GG::Y(5))),
     m_menu_showing(false),
-    m_end_turn_button(new CUIButton(GG::X0, GG::Y0, GG::X(75), UserString("TURN"))),
+    m_end_turn_button(new CUIButton(UserString("TURN"), GG::X0, GG::Y0, GG::X(75))),
     m_time_since_last_turn_update(0.0),
     m_exit(false)
 {
@@ -853,10 +853,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         // TODO: For prototyping only.
         GG::X width(150);
         CUIButton* done_button =
-            new CUIButton(GG::GUI::GetGUI()->AppWidth() - width - GG::X(5),
+            new CUIButton("End Combat",
+                          GG::GUI::GetGUI()->AppWidth() - width - GG::X(5),
                           GG::GUI::GetGUI()->AppHeight() - GG::Y(25),
-                          width,
-                          "End Combat");
+                          width);
         GG::Connect(done_button->LeftClickedSignal, &EndCombatButtonClicked);
         AttachChild(done_button);
 

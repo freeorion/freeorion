@@ -219,31 +219,31 @@ TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     for (unsigned int i = 0; i < cats.size(); ++i) {
-        m_category_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString(cats[i])));
+        m_category_buttons.push_back(new CUIButton(UserString(cats[i]), GG::X0, GG::Y0, GG::X(20)));
         AttachChild(m_category_buttons.back());
         m_category_buttons.back()->MarkNotSelected();
     }
     // and one for "ALL"
-    m_category_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("ALL")));
+    m_category_buttons.push_back(new CUIButton(UserString("ALL"), GG::X0, GG::Y0, GG::X(20)));
     AttachChild(m_category_buttons.back());
     m_category_buttons.back()->MarkNotSelected();
 
     // create a button for each tech status
-    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("TECH_WND_STATUS_LOCKED"));
+    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"), GG::X0, GG::Y0, GG::X(20));
     AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
-    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("TECH_WND_STATUS_RESEARCHABLE"));
+    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"), GG::X0, GG::Y0, GG::X(20));
     AttachChild(m_tech_status_buttons[TS_RESEARCHABLE]);
-    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("TECH_WND_STATUS_COMPLETED"));
+    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"), GG::X0, GG::Y0, GG::X(20));
     AttachChild(m_tech_status_buttons[TS_COMPLETE]);
     // colour
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
         it->second->MarkNotSelected();
 
     // create buttons to switch between tree and list views
-    m_list_view_button = new CUIButton(GG::X0, GG::Y0, GG::X(80), UserString("TECH_WND_LIST_VIEW"));
+    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"), GG::X0, GG::Y0, GG::X(80));
     m_list_view_button->MarkNotSelected();
     AttachChild(m_list_view_button);
-    m_tree_view_button = new CUIButton(GG::X0, GG::Y(30), GG::X(80), UserString("TECH_WND_TREE_VIEW"));
+    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"), GG::X0, GG::Y(30), GG::X(80));
     m_tree_view_button->MarkNotSelected();
     AttachChild(m_tree_view_button);
 
@@ -833,10 +833,10 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
 
-    m_zoom_in_button = new CUIButton(GG::X1, GG::Y1, ZBSIZE, "+", font, ClientUI::WndColor(),
+    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, font, ClientUI::WndColor(),
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
                                      GG::INTERACTIVE | GG::ONTOP);
-    m_zoom_out_button = new CUIButton(GG::X1, GG::Y1, ZBSIZE, "-", font, ClientUI::WndColor(),
+    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, font, ClientUI::WndColor(),
                                       ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
                                       GG::INTERACTIVE | GG::ONTOP);
 

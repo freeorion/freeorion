@@ -915,20 +915,23 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_env_size);
 
 
-    m_colonize_button = new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      UserString("PL_COLONIZE"), ClientUI::GetFont(),
+    m_colonize_button = new CUIButton(UserString("PL_COLONIZE"),
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+                                      ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_colonize_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_invade_button =   new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      UserString("PL_INVADE"), ClientUI::GetFont(),
+    m_invade_button =   new CUIButton(UserString("PL_INVADE"),
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+                                      ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_invade_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
-    m_bombard_button =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      UserString("PL_BOMBARD"), ClientUI::GetFont(),
+    m_bombard_button =  new CUIButton(UserString("PL_BOMBARD"),
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+                                      ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);

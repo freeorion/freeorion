@@ -30,11 +30,11 @@ InGameMenu::InGameMenu():
 {
     const GG::X BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
     const GG::X BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
-    m_save_btn = new CUIButton(BUTTON_X, GG::Y(22), BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(BUTTON_X, GG::Y(62), BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
-    m_options_btn = new CUIButton(BUTTON_X, GG::Y(102), BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(BUTTON_X, GG::Y(142), BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(BUTTON_X, GG::Y(192), BUTTON_WIDTH, UserString("DONE"));
+    m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"), BUTTON_X, GG::Y(22), BUTTON_WIDTH);
+    m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"), BUTTON_X, GG::Y(62), BUTTON_WIDTH);
+    m_options_btn = new CUIButton(UserString("INTRO_BTN_OPTIONS"), BUTTON_X, GG::Y(102), BUTTON_WIDTH);
+    m_exit_btn = new CUIButton(UserString("GAME_MENU_RESIGN"), BUTTON_X, GG::Y(142), BUTTON_WIDTH);
+    m_done_btn = new CUIButton(UserString("DONE"), BUTTON_X, GG::Y(192), BUTTON_WIDTH);
 
     // call to InGameMenu::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(InGameMenu::MinimizedWidth(), MinSize().y));

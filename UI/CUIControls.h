@@ -30,7 +30,7 @@
 class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
+    CUIButton(const std::string& str, GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
               GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
               GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
@@ -68,7 +68,7 @@ private:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+    SettableInWindowCUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
                               const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                               GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(),
                               int thick = 1,  GG::Clr text_color = ClientUI::TextColor(),
@@ -91,7 +91,7 @@ private:
 class CUITurnButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+    CUITurnButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
                   const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
                   GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(),
                   int thick = 1,  GG::Clr text_color = ClientUI::TextColor(),
@@ -133,7 +133,7 @@ private:
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
+    CUIStateButton(const std::string& str, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
                    GG::Clr color = ClientUI::StateButtonColor(), const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                    GG::Clr text_color = ClientUI::TextColor(), GG::Clr interior = GG::CLR_ZERO,
                    GG::Clr border = ClientUI::CtrlBorderColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< ctor

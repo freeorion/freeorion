@@ -613,7 +613,7 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(part_class))));
+        m_class_buttons[part_class] = (new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::X(10), GG::Y(10), GG::X(10)));
         AttachChild(m_class_buttons[part_class]);
         GG::Connect(m_class_buttons[part_class]->LeftClickedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
@@ -621,19 +621,19 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
 
     //// slot type buttons
     //for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
-    //    m_slot_type_buttons[slot_type] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(slot_type))));
+    //    m_slot_type_buttons[slot_type] = (new CUIButton(UserString(boost::lexical_cast<std::string>(slot_type)), GG::X(10), GG::Y(10), GG::X(10)));
     //    AttachChild(m_slot_type_buttons[slot_type]);
     //    GG::Connect(m_slot_type_buttons[slot_type]->ClickedSignal,
     //                boost::bind(&DesignWnd::PartPalette::ToggleSlotType, this, slot_type, true));
     //}
 
     //// availability buttons
-    //CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    //CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
     //m_availability_buttons.first = button;
     //AttachChild(button);
     //GG::Connect(button->ClickedSignal,
     //            boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    //button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    //button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
     //m_availability_buttons.second = button;
     //AttachChild(button);
     //GG::Connect(button->ClickedSignal, 
@@ -1376,13 +1376,13 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_hulls_list(0),
     m_designs_list(0)
 {
-    CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
     m_availability_buttons.first = button;
     AttachChild(button);
     GG::Connect(button->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
     m_availability_buttons.second = button;
     AttachChild(button);
     GG::Connect(button->LeftClickedSignal,
@@ -1899,13 +1899,13 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
                                        ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::CtrlColor(),
+    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"), GG::X0, GG::Y0, GG::X(10), font, ClientUI::CtrlColor(),
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::CtrlColor(),
+    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"), GG::X0, GG::Y0, GG::X(10), font, ClientUI::CtrlColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
