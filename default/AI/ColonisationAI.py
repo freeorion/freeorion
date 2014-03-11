@@ -12,6 +12,7 @@ import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AIFocusType
 import EnumsAI
 from time import time
+import math
 
 
 empireSpecies = {}
@@ -59,9 +60,9 @@ popSizeModMap={
                             }
 
 nestValMap = {
-              "SNOWFLAKE_NEST_SPECIAL": 5,
-              "KRAKEN_NEST_SPECIAL":10,
-              "JUGGERNAUT_NEST_SPECIAL":20,
+              "SNOWFLAKE_NEST_SPECIAL": 15,
+              "KRAKEN_NEST_SPECIAL":40,
+              "JUGGERNAUT_NEST_SPECIAL":80,
               }
 
 def dictFromMap(this_map):
@@ -231,7 +232,7 @@ def getColonyFleets():
 
     #unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
     unOwnedPlanetIDs = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-    print "UnOwned annexable PlanetIDs:             " + str(PlanetUtilsAI.planetNameIDs(unOwnedPlanetIDs))
+    print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unOwnedPlanetIDs))
 
     colony_status['colonies_under_attack'] = []
     colony_status['colonies_under_threat'] = []
@@ -697,9 +698,36 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         print "Planet %d object not available; visMap: %s"%(planetID,  VisMap)
         return 0
     detail.append("%s : "%planet.name )
-    system = universe.getSystem(planet.systemID)
-    
-    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  empire.empireID)).get(fo.visibility.partial, -9999)
+    this_sysid = planet.systemID
+    haveExistingPresence=False
+    if  AIstate.colonizedSystems.get(this_sysid,  []) not in [ [],  [planetID]]: #if existing presence is target planet, don't count
+        haveExistingPresence=True
+    system = universe.getSystem(this_sysid)
+    sys_status = foAI.foAIstate.systemStatus.get(planet.systemID,  {})
+    myrating = sys_status.get('myFleetRating', 0)
+    fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating ) / float(curBestMilShipRating)
+    monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(curBestMilShipRating)
+    neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0) )  / float(curBestMilShipRating)) + min( 0,  fleet_threat_ratio ) # last portion gives credit for inner extra defenses
+    myrating = sys_status.get('my_neighbor_rating', 0)
+    jump2_threat_ratio = ((sys_status.get('jump2_threat', 0) - myrating ) / float(curBestMilShipRating)) + min( 0,  neighbor_threat_ratio ) # last portion gives credit for inner extra defenses
+
+    thrtFactor = 1.0
+    ship_limit = 2 * (2**(fo.currentTurn() / 40.0))
+    threat_tally = fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio
+    if haveExistingPresence:
+        threat_tally += 0.3 * jump2_threat_ratio
+        threat_tally *= 0.8
+    else:
+        threat_tally += 0.6 * jump2_threat_ratio
+    if ( threat_tally ) > ship_limit:
+        thrtFactor = 0.1
+    elif ( fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio ) > 0.6*ship_limit:
+        thrtFactor = 0.4
+    elif ( fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio ) > 0.2*ship_limit:
+        thrtFactor = 0.8
+
+
+    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(this_sysid,  empire.empireID)).get(fo.visibility.partial, -9999)
     planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empire.empireID)).get(fo.visibility.partial, -9999)
 
     if planetPartialVisTurn < sysPartialVisTurn:
@@ -713,14 +741,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     growthVal = 0
     fixedInd = 0
     fixedRes = 0
-    haveExistingPresence=False
-    if  AIstate.colonizedSystems.get(planet.systemID,  [planetID]) != [planetID]: #if existing presence is target planet, don't count
-        haveExistingPresence=True
     if species:
         tagList = list( species.tags )
     starPopMod=0
     if system:
-        alreadyGotThisOne= planet.systemID in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs)
+        alreadyGotThisOne= this_sysid in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs)
         if "PHOTOTROPHIC" in tagList:
             starPopMod = photoMap.get( system.starType,  0 )
             detail.append( "PHOTOTROPHIC popMod %.1f"%starPopMod    )
@@ -757,7 +782,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 if len (claimedStars.get(fo.starType.blackHole,  []))==0:
                     starBonus +=200*discountMultiplier #pretty rare planets, good for generator
                     detail.append( "PRO_SINGULAR_GEN %.1f"%(200* discountMultiplier  )  )
-                elif  planet.systemID not in claimedStars.get(fo.starType.blackHole,  []):
+                elif  this_sysid not in claimedStars.get(fo.starType.blackHole,  []):
                     starBonus +=100*discountMultiplier*backupFactor #still has extra value as an alternate location for generators & for blocking enemies generators
                     detail.append( "PRO_SINGULAR_GEN Backup %.1f"%(100* discountMultiplier*backupFactor  )  )
             elif system.starType in [fo.starType.red] and ( len (claimedStars.get(fo.starType.blackHole,  [])) )==0:
@@ -778,7 +803,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 if len (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) )    ==0:
                     colonyStarBonus += initVal #pretty rare planets, good for energy shipyards
                     detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(initVal  )  )
-                elif  planet.systemID not in (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) ):
+                elif  this_sysid not in (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) ):
                     colonyStarBonus +=0.5*initVal*backupFactor #still has extra value as an alternate location for energy shipyard
                     detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(0.5*initVal*backupFactor  )  )
     retval +=starBonus
@@ -865,15 +890,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 detail.extend( GGDetail )
             else:
                 detail.append( "Won't GGG")
-        thrtFactor = 1.0
-        if ( foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0) )> 2*curBestMilShipRating:
-            thrtFactor = 0.5
+        if thrtFactor < 1.0:
             retval *=thrtFactor
-            detail.append( "threat reducing value" )
+            detail.append( "threat reducing value by %3d %%"%(100*(1-thrtFactor)))
         if haveExistingPresence:
-            detail.append("multiplanet presence")
-            if thrtFactor < 1.0:
-                retval = (retval/thrtFactor) * (0.5 + 0.5*thrtFactor) #mitigate threat
+            detail.append("preexisting system colony")
             retval *=1.5
         return int(retval)
     else: #colonization mission
@@ -1091,7 +1112,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         distanceFactor = 0
         if homeworld:
             homeSystemID = homeworld.systemID
-            evalSystemID = planet.systemID
+            evalSystemID = this_sysid
             if (homeSystemID != -1) and (evalSystemID != -1):
                 leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
                 distanceFactor = 1.001 / (leastJumps + 1)
@@ -1116,33 +1137,20 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             return 0
 
         retval  += max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
-        if planet.systemID in annexableRing1:
+        if this_sysid in annexableRing1:
             retval += 10
-        elif planet.systemID in annexableRing2:
+        elif this_sysid in annexableRing2:
             retval += 20
-        elif planet.systemID in annexableRing3:
+        elif this_sysid in annexableRing3:
             retval += 10
 
         retval *= priorityScaling
-        thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
-        if False:
-            if thrtRatio > 4:
-                retval = 0.3*retval
-            elif thrtRatio >= 2:
-                retval = 0.7* retval
-            elif thrtRatio > 0:
-                retval = 0.85* retval
 
-        thrtFactor = 1.0
-        if thrtRatio > 1:
-            detail.append("threat reducing value")
-            thrtFactor = 0.85
-            retval  *= thrtFactor
-
+        if thrtFactor < 1.0:
+            retval *=thrtFactor
+            detail.append( "threat reducing value by %3d %%"%(100*(1-thrtFactor)))
         if haveExistingPresence:
-            detail.append("multiplanet presence")
-            if thrtFactor < 1.0:
-                retval = (retval/thrtFactor) * (0.5 + 0.5*thrtFactor) #mitigate threat
+            detail.append("preexisting system colony")
             retval *=1.5
 
     return retval

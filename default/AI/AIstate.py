@@ -89,7 +89,12 @@ class AIstate(object):
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.origHomeSystemID:1}
         self.fleetStatus={} #keys: 'sysID', 'nships', 'rating'
-        self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'myfleets', 'neighbors', 'name', 'myDefenses', 'myFleetsAccessible'(not just next desitination)
+        # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring'
+        #                             'fleetThreat', 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'totalThreat', 'localEnemyFleetIDs',
+        #                             'neighborThreat', 'max_neighbor_threat', 'jump2_threat' (up to 2 jumps away), 'jump3_threat', 'jump4_threat'
+        #                             'myDefenses' (planet rating), 'myfleets', 'myFleetsAccessible'(not just next desitination), 'myFleetRating'
+        #                             'my_neighbor_rating' (up to 1 jump away), 'my_jump2_rating', 'my_jump3_rating', my_jump4_rating'
+        self.systemStatus={} 
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
         self.aggression=aggression
@@ -415,21 +420,51 @@ class AIstate(object):
 
             system = universe.getSystem(sysID)
             neighborDict = dictFromMap( universe.getSystemNeighborsMap(sysID,  self.empireID) )
-            neighbors = neighborDict.keys()
-            sysStatus['neighbors'] = neighborDict
-            max_n_threat = 0
-            if system:
-                threat=0
-                for neighborID in neighbors:
-                    neighborStatus= self.systemStatus.get(neighborID,  {})
-                    nfthreat = neighborStatus.get('fleetThreat', 0)
-                    if nfthreat > max_n_threat:
-                        max_n_threat = nfthreat
-                    threat += nfthreat
-                sysStatus['neighborThreat'] = int( threat + 0.5 )
-                sysStatus['max_neighbor_threat'] = int(max_n_threat)
-            else:
-                sysStatus['neighborThreat'] = 0.9*sysStatus.get('neighborThreat',  0) # if no current info, leave as previous with partial reduction, or 0 if no previous rating
+            neighbors = set(neighborDict.keys())
+            sysStatus['neighbors'] = neighbors
+            
+        for sysID in sysIDList:
+            sysStatus = self.systemStatus[sysID]
+            neighbors = sysStatus.get('neighbors',  set())
+            jumps2 = set()
+            jumps3 = set()
+            jumps4 = set()
+            for seta,  setb in [(neighbors,  jumps2),  (jumps2, jumps3),  (jumps3, jumps4)]:
+                for sys2id in seta:
+                    setb.update( self.systemStatus.get(sys2id,  {}).get('neighbors',  set()) )
+            jump2ring = jumps2 - neighbors - set([sysID])
+            jump3ring = jumps3 - jumps2
+            jump4ring = jumps4 - jumps3
+            sysStatus['2jump_ring'] = jump2ring
+            sysStatus['3jump_ring'] = jump3ring
+            sysStatus['4jump_ring'] = jump4ring
+            threat,  max_threat,  myrating = self.area_ratings(neighbors)
+            sysStatus['neighborThreat'] = threat
+            sysStatus['max_neighbor_threat'] = max_threat
+            sysStatus['my_neighbor_rating'] = myrating
+            threat,  max_threat,  myrating = self.area_ratings(jump2ring)
+            sysStatus['jump2_threat'] = threat
+            sysStatus['my_jump2_rating'] = myrating
+            threat,  max_threat,  myrating = self.area_ratings(jump3ring)
+            sysStatus['jump3_threat'] = threat
+            sysStatus['my_jump3_rating'] = myrating
+            #threat,  max_threat,  myrating = self.area_ratings(jump4ring)
+            #sysStatus['jump4_threat'] = threat
+            #sysStatus['my_jump4_rating'] = myrating
+
+    def area_ratings(self,  system_ids):
+        "returns (fleet_threat, max_threat, myFleetRating) compiled over a group of systems"
+        max_threat = 0
+        threat=0
+        myrating = 0
+        for sys_id in system_ids:
+            sys_status= self.systemStatus.get(sys_id,  {})
+            fthreat = sys_status.get('fleetThreat', 0)
+            if fthreat > max_threat:
+                max_threat = fthreat
+            threat += fthreat
+            myrating += sys_status.get('myFleetRating', 0)
+        return (threat,  max_threat,  myrating)
 
     def afterTurnCleanup(self):
         "removes not required information to save from AI state after AI complete its turn"

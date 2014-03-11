@@ -238,12 +238,21 @@ def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
     global allottedColonyTargets
     totalPP=fo.getEmpire().productionPoints
-    colonyCost=120*(1+ 0.06*len( list(AIstate.popCtrIDs) ))
+    num_colonies = len( list(AIstate.popCtrIDs) )
+    colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
-    allottedPortion = [0.4,  0.5][ random.choice([0, 1]) ]    #fo.empireID() % 2
-    if ( foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) 
-            > 2 * foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
+    mil_prio = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
+    if fo.currentTurn() <= 100:
+        allottedPortion = [0.3,  0.4][ fo.empireID() % 2 ]    #
+    #if ( foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) 
+    #        > 2 * foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
+    #    allottedPortion *= 1.5
+    if ( mil_prio < 100 ):
+        allottedPortion *= 2
+    elif ( mil_prio < 200 ):
         allottedPortion *= 1.5
+    elif (fo.currentTurn() > 100):
+        allottedPortion *= 0.75**(num_colonies/10.0)
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
@@ -394,8 +403,14 @@ def calculateMilitaryPriority():
                 monsterThreat = baseMonsterThreat
             else:
                 monsterThreat = 2000 + (currentTurn/100.0 - 1) *(baseMonsterThreat-2000)
+        elif currentTurn>30:
+            if baseMonsterThreat <2000:
+                monsterThreat = baseMonsterThreat
         else:
-            monsterThreat = 0
+            if baseMonsterThreat <200:
+                monsterThreat = baseMonsterThreat
+            else:
+                monsterThreat = 0
         if sysID in mySystems:
             threatRoot = status.get('fleetThreat', 0)**0.5 + 0.8*status.get('max_neighbor_threat', 0)**0.5 + 0.2*status.get('neighborThreat', 0)**0.5 + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
         else:
@@ -403,7 +418,7 @@ def calculateMilitaryPriority():
         shipsNeeded += math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
 
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
-    militaryPriority = int( 40 + max(0,  75*shipsNeeded) )
+    militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(75*shipsNeeded) )
     if not have_mod_weaps:
         militaryPriority /= 2
     #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)

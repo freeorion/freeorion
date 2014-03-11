@@ -60,7 +60,7 @@ def getInvasionFleets():
         print "Invasion Warning: this empire has no identifiable homeworld,  will therefor treat all visible planets as accessible."
         accessibleSystemIDs = visibleSystemIDs #TODO: check if any troop ships still owned, use their system as home system
     acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
-    print "Accessible Systems: " + str(PlanetUtilsAI.sysNameIDs(accessibleSystemIDs))
+    print "Accessible Systems: ",  ",  ".join(PlanetUtilsAI.sysNameIDs(accessibleSystemIDs))
     print
 
     #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
@@ -68,24 +68,24 @@ def getInvasionFleets():
     # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
 
     allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)#need this for natives
-    print "All Visible and accessible Populated PlanetIDs (including this empire's): " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
+    print "All Visible and accessible Populated PlanetIDs (including this empire's): ",  ",  ".join(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
     print
-    print "Prime Invadable Target Systems: " + str(PlanetUtilsAI.sysNameIDs(primeInvadableSystemIDs))
+    print "Prime Invadable Target Systems: ",  ",  ".join(PlanetUtilsAI.sysNameIDs(primeInvadableSystemIDs))
     print
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
 
     invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allOwnedPlanetIDs).union(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
-    print "Prime Invadable PlanetIDs:              " + str(PlanetUtilsAI.planetNameIDs(invadablePlanetIDs))
+    print "Prime Invadable PlanetIDs:              ",  ", ".join(PlanetUtilsAI.planetNameIDs(invadablePlanetIDs))
 
     print ""
-    print "Current Invasion Targeted SystemIDs:       " + str(PlanetUtilsAI.sysNameIDs(AIstate.invasionTargetedSystemIDs))
+    print "Current Invasion Targeted SystemIDs:       ",  ", ".join(PlanetUtilsAI.sysNameIDs(AIstate.invasionTargetedSystemIDs))
     invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
     invasionTargetedPlanetIDs.extend( getInvasionTargetedPlanetIDs(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, empireID))
     allInvasionTargetedSystemIDs = set(PlanetUtilsAI.getSystems(invasionTargetedPlanetIDs))
 
-    print "Current Invasion Targeted PlanetIDs:       " + str(PlanetUtilsAI.planetNameIDs(invasionTargetedPlanetIDs))
+    print "Current Invasion Targeted PlanetIDs:       ",  ", ".join(PlanetUtilsAI.planetNameIDs(invasionTargetedPlanetIDs))
 
     invasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
     if not invasionFleetIDs:
@@ -310,10 +310,10 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species: #this call iterates over this Empire's available species with which it could colonize after an invasion
-        planetEval = ColonisationAI.assignColonisationValues([planetID],  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  None,  empire, detail) #evaluatePlanet is imported from ColonisationAI
+        planetEval = ColonisationAI.assignColonisationValues([planetID],  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  None,  empire, detail) 
         popVal = max( 0.75*planetEval.get(planetID,  [0])[0],   ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  [planetID],  None,  empire, detail)  )
     else:
-        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  specName,  empire, detail) #evaluatePlanet is imported from ColonisationAI
+        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  specName,  empire, detail) 
 
     bldTally=0
     for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:

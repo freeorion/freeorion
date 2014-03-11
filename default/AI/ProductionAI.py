@@ -582,10 +582,10 @@ def generateProductionOrders():
     try:    addOutpostDesigns()
     except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
-    if (currentTurn==1) and (productionQueue.totalSpent < totalPP):
+    if (currentTurn in [1, 4]) and ((productionQueue.totalSpent < totalPP) or (len(productionQueue) <=3)):
         bestDesignID,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
         if len(AIstate.opponentPlanetIDs) == 0:
-            init_scouts = 4
+            init_scouts = 3
         else:
             init_scouts = 0
         if bestDesignID:
@@ -650,7 +650,7 @@ def generateProductionOrders():
             print
             queuedBldgNames=[ bldg.name for bldg in capitolQueuedBldgs ]
 
-            if ( totalPP >40 or currentTurn > 40 ) and ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
+            if ( totalPP >40 or ((currentTurn > 40 ) and (ColonisationAI.empire_status.get('industrialists', 0) >= 20 ))) and ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                 res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d"%res
                 if res:

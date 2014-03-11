@@ -177,7 +177,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     else:
         threatBias = 0
 
-    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression]
+    safetyFactor = [ 4.0,  3.0,  2.0,  1.5,  1.2,  1.0    ][foAI.foAIstate.aggression]
 
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20]
     topTargetPlanets.extend( foAI.foAIstate.qualifyingTroopBaseTargets.keys() )
@@ -198,7 +198,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
             return
     if neededRating > 0:
         newAlloc = min(remainingMilRating,  neededRating )
-        allocations.append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  )
+        allocations.append( ( capitalSysID,  newAlloc,  True,  1.6*capitalThreat)  )
         allocationGroups.setdefault('capitol',  []).append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  )
         remainingMilRating -= newAlloc
     if "Main" in thisround or newAlloc >0:
@@ -224,7 +224,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         ocSysAlloc = 0
         for sid,  thrt in ocSysTotThreat:
             curAlloc=alreadyAssignedRating[sid]
-            neededRating = ratingNeeded( 1.4*thrt,  curAlloc)
+            neededRating = ratingNeeded( 1.3*thrt,  curAlloc)
             if (neededRating > 0.8*(remainingMilRating )) and tryReset:
                 tryAgain(allMilitaryFleetIDs)
                 return
@@ -232,7 +232,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
             if ( neededRating>0 ) and remainingMilRating > 0:
                 thisAlloc = max(0,  min( neededRating,  0.5*availMilRating,  remainingMilRating))
                 newAlloc+=thisAlloc
-                allocations.append(  (sid,  thisAlloc,  True,  2*thrt) )
+                allocations.append(  (sid,  thisAlloc,  True,  1.6*thrt) )
                 allocationGroups.setdefault('occupied',  []).append( (sid,  thisAlloc,  True,  2*thrt) )
                 remainingMilRating -= thisAlloc
                 ocSysAlloc += thisAlloc
@@ -306,7 +306,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
             if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
                 thisAlloc = max(0,  min( neededRating,  remainingMilRating))
                 newAlloc+=thisAlloc
-                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                maxAlloc = safetyFactor*3*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
                 allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
                 allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
@@ -340,7 +340,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
             if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
                 thisAlloc = max(0,  min( neededRating,  remainingMilRating))
                 newAlloc+=thisAlloc
-                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                maxAlloc = safetyFactor*3*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
                 allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
                 allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc

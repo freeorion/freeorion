@@ -163,20 +163,14 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
         statusStr += " -- is %s partially visible "%(["not",  ""][isVisible])
         statusStr += " -- is %s visibly connected to homesystem "%(["not",  ""][isConnected])
         if isVisible:
-            sysStatus = foAI.foAIstate.systemStatus.get(curSystemID, {})
+            sysStatus = foAI.foAIstate.systemStatus.setdefault(curSystemID, {})
             foAI.foAIstate.visInteriorSystemIDs[curSystemID] = 1
             if curSystemID in foAI.foAIstate.visBorderSystemIDs:
                 del foAI.foAIstate.visBorderSystemIDs[curSystemID]
             #neighbors= dict( [(el.key(), el.data()) for el in  universe.getSystemNeighborsMap(curSystemID,  empireID)] )  #
-            neighbors = dictFromMap( universe.getSystemNeighborsMap(curSystemID,  empireID) ).keys()
-            if neighbors !={}:
-                sysNeighbors=sysStatus.get('neighbors', {})
-                for neighbor in neighbors:
-                    if neighbor not in sysNeighbors:
-                        sysNeighbors.setdefault(neighbor, {}).setdefault('placeholder',"")
-                sysStatus['neighbors']=sysNeighbors
-            neighbors=sysStatus['neighbors'].keys()
-            sysPlanets=sysStatus.get('planets', {})
+            neighbors = set(dictFromMap( universe.getSystemNeighborsMap(curSystemID,  empireID) ).keys())
+            sysStatus.setdefault('neighbors', set()).update(neighbors)
+            sysPlanets=sysStatus.setdefault('planets', {})
             if fo.currentTurn() < 50:
                 print "    previously knew of system %d planets %s"%(curSystemID,  sysPlanets.keys())
             if system:
@@ -195,10 +189,8 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
                                 print "  * updating troops of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  troops,  sysPlanets[planet]['troops'])
                         sysPlanets[planet]['targetPop']= newPop
                         sysPlanets[planet]['troops']= troops
-                sysStatus['planets']=sysPlanets
             if fo.currentTurn() < 50:
                 print "    now know of system %d planets %s"%(curSystemID,  sysPlanets.keys())
-            foAI.foAIstate.systemStatus[curSystemID]=sysStatus
             #neighbors = list(  universe.getImmediateNeighbors(curSystemID,  empireID) )   #imNeighbors
             #if set(neighbors) != set(neighbors2):
             #    print "Error with neighbors: imn giving %s ; giN giving %s"%(neighbors2,  neighbors)
