@@ -331,7 +331,7 @@ const std::string& Ship::PublicName(int empire_id) const {
     else if (Unowned() && GetVisibility(empire_id) > VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_SHIP");
     else
-        return UserString("SHIP");
+        return UserString("OBJ_SHIP");
 }
 
 TemporaryPtr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const

@@ -2497,7 +2497,7 @@ std::string Empire::NewShipName() {
         ship_names.reserve(ship_names_list.size());
         std::copy(ship_names_list.begin(), ship_names_list.end(), std::back_inserter(ship_names));
         if (ship_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
-            ship_names.push_back(UserString("SHIP"));
+            ship_names.push_back(UserString("OBJ_SHIP"));
     }
 
     // select name randomly from list

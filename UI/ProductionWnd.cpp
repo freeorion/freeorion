@@ -322,7 +322,7 @@ namespace {
                 boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
                 return browse_wnd;
             }
-            main_text += UserString("BUILDING") + "\n";
+            main_text += UserString("OBJ_BUILDING") + "\n";
 
             item_name = UserString(elem.item.name);
             //available = empire->BuildingTypeAvailable(elem.item.name);
@@ -338,7 +338,7 @@ namespace {
                 boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
                 return browse_wnd;
             }
-            main_text += UserString("SHIP") + "\n";
+            main_text += UserString("OBJ_SHIP") + "\n";
 
             item_name = design->Name(true);
             //available = empire->ShipDesignAvailable(elem.item.design_id);

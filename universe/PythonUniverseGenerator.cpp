@@ -579,7 +579,7 @@ namespace {
                 ship->Rename(empire->NewShipName());
             } else {
                 // ...no, so construct a name using the new ships id
-                ship->Rename(UserString("SHIP") + " " + boost::lexical_cast<std::string>(ship->ID()));
+                ship->Rename(UserString("OBJ_SHIP") + " " + boost::lexical_cast<std::string>(ship->ID()));
             }
         } else {
             // ...yes, name has been specified, so use it

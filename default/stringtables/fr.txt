@@ -152,27 +152,6 @@ Empire terrien
 DEFAULT_PLAYER_NAME
 Joueur humain
 
-INVALID_UNIVERSE_OBJECT_TYPE
-Objet générique
-
-SYSTEM
-Système
-
-FLEET
-Flotte
-
-SHIP
-Astronef
-
-PLANET
-Planète
-
-BUILDING
-Installation
-
-FIELD
-Champ
-
 PASSED
 <rgba 0 255 0 255>(RÉUSSI)</rgba>
 
@@ -4997,6 +4976,8 @@ Les systèmes présentant cette Particularité sont en fait positionnés au cœu
 
 # UniverseObjectTypes
 
+INVALID_UNIVERSE_OBJECT_TYPE
+Objet générique
 OBJ_BUILDING
 Bâti
 OBJ_SHIP
