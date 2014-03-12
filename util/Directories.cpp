@@ -185,8 +185,7 @@ void InitBinDir(const std::string& argv0) {
     bool problem = false;
     try {
         // get this executable's path by following link
-        const size_t BUF_SIZE = 2048;
-        char buf[BUF_SIZE] = {0};
+        char buf[2048] = {'\0'};
 
 #ifdef __FreeBSD__
         int mib[4];
@@ -197,19 +196,11 @@ void InitBinDir(const std::string& argv0) {
         size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
 #else
-        ssize_t exe_path_size = readlink("/proc/self/exe", buf, BUF_SIZE);
-        if (exe_path_size == static_cast<size_t>(-1)) {
-            problem = true;
-
-        } else {
-            if (exe_path_size >= BUF_SIZE || exe_path_size < 0)
-                exe_path_size = BUF_SIZE - 1;   // ensure buffer isn't accessed out of range
-            buf[exe_path_size] = 0;             // null terminate c-string
-        }
+        problem = (-1 == readlink("/proc/self/exe", buf, sizeof(buf) - 1));
 #endif
 
         if (!problem) {
-            buf[BUF_SIZE - 1] = 0;              // to be safe, else initializing an std::string with a non-null-terminated string could read invalid data outside the buffer range
+            buf[sizeof(buf) - 1] = '\0';              // to be safe, else initializing an std::string with a non-null-terminated string could read invalid data outside the buffer range
             std::string path_text(buf);
 
             fs::path binary_file = fs::system_complete(fs::path(path_text));
