@@ -28,16 +28,11 @@ InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
            (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::INTERACTIVE | GG::MODAL)
 {
-    const GG::X BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
-    const GG::X BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
-    m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"), BUTTON_X, GG::Y(22), BUTTON_WIDTH);
-    m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"), BUTTON_X, GG::Y(62), BUTTON_WIDTH);
-    m_options_btn = new CUIButton(UserString("INTRO_BTN_OPTIONS"), BUTTON_X, GG::Y(102), BUTTON_WIDTH);
-    m_exit_btn = new CUIButton(UserString("GAME_MENU_RESIGN"), BUTTON_X, GG::Y(142), BUTTON_WIDTH);
-    m_done_btn = new CUIButton(UserString("DONE"), BUTTON_X, GG::Y(192), BUTTON_WIDTH);
-
-    // call to InGameMenu::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(InGameMenu::MinimizedWidth(), MinSize().y));
+    m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"));
+    m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"));
+    m_options_btn = new CUIButton(UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = new CUIButton(UserString("GAME_MENU_RESIGN"));
+    m_done_btn = new CUIButton(UserString("DONE"));
 
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
@@ -59,6 +54,8 @@ InGameMenu::InGameMenu():
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();
     }
+
+    DoLayout();
 }
 
 InGameMenu::~InGameMenu()
@@ -69,6 +66,64 @@ GG::X InGameMenu::MinimizedWidth() const
 
 void InGameMenu::Render()
 { CUIWnd::Render(); }
+
+void InGameMenu::DoLayout() {
+    //size calculation consts and variables
+    const GG::X MIN_BUTTON_WIDTH(160);
+    const GG::Y MIN_BUTTON_HEIGHT(40);
+    const GG::X H_BUTTON_MARGIN(16);    //horizontal empty space
+    const GG::Y V_BUTTON_MARGIN(16);    //vertical empty space
+    GG::X button_width(0);              //width of the buttons
+    GG::Y button_height(0);             //height of the buttons
+    const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
+    const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
+    GG::X mainmenu_width(0);            //width of the mainmenu
+    GG::Y mainmenu_height(0);           //height of the mainmenu
+
+    //calculate necessary button width
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    button_width = std::max(button_width, font->TextExtent(m_save_btn->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_load_btn->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_options_btn->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_exit_btn->Text()).x);
+    button_width = std::max(button_width, font->TextExtent(m_done_btn->Text()).x);
+    button_width += H_BUTTON_MARGIN;
+    button_width = std::max(MIN_BUTTON_WIDTH, button_width);
+
+    //calculate  necessary button height
+    button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
+    //culate window width and height
+    mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
+    mainmenu_height = 5.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+
+    // place buttons
+    GG::Pt button_ul(GG::X(15), GG::Y(12));
+    GG::Pt button_lr(button_width, ClientUI::GetFont()->Lineskip() + 6);
+
+    button_lr += button_ul;
+
+    m_save_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_load_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_options_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height);
+    button_lr.y += GG::Y(button_height);
+    m_exit_btn->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_height) * 1.75;
+    button_lr.y += GG::Y(button_height) * 1.75;
+    m_done_btn->SizeMove(button_ul, button_lr);
+
+    // position menu window
+    GG::Pt ul(GG::GUI::GetGUI()->AppWidth()  * 0.5 - mainmenu_width/2,
+              GG::GUI::GetGUI()->AppHeight() * 0.5 - mainmenu_height/2);
+    GG::Pt lr(GG::GUI::GetGUI()->AppWidth()  * 0.5 + mainmenu_width/2,
+              GG::GUI::GetGUI()->AppHeight() * 0.5 + mainmenu_height/2);
+
+    this->SizeMove(ul, lr);
+}
 
 void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     // Same behaviour as if "done" was pressed

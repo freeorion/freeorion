@@ -17,8 +17,10 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void Render();
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+
+    void         DoLayout();
+    virtual void Render();
     //@}
 
 protected:
