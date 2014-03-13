@@ -164,7 +164,7 @@ const std::string& Fleet::PublicName(int empire_id) const {
     else if (Unowned() && GetVisibility(empire_id) > VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_FLEET");
     else
-        return UserString("FLEET");
+        return UserString("OBJ_FLEET");
 }
 
 const std::list<int>& Fleet::TravelRoute() const {
