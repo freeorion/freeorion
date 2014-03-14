@@ -492,18 +492,18 @@ ListBox::ListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
     InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(ClearedSignal, ListSignalEcho(*this, "ListBox::ClearedSignal"));
-        Connect(BeforeInsertSignal, ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
-        Connect(AfterInsertSignal, ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
-        Connect(SelChangedSignal, ListSignalEcho(*this, "ListBox::SelChangedSignal"));
-        Connect(DroppedSignal, ListSignalEcho(*this, "ListBox::DroppedSignal"));
-        Connect(DropAcceptableSignal, ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
-        Connect(LeftClickedSignal, ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
-        Connect(RightClickedSignal, ListSignalEcho(*this, "ListBox::RightClickedSignal"));
-        Connect(DoubleClickedSignal, ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
-        Connect(BeforeEraseSignal, ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
-        Connect(AfterEraseSignal, ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
-        Connect(BrowsedSignal, ListSignalEcho(*this, "ListBox::BrowsedSignal"));
+        Connect(ClearedSignal,          ListSignalEcho(*this, "ListBox::ClearedSignal"));
+        Connect(BeforeInsertSignal,     ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
+        Connect(AfterInsertSignal,      ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
+        Connect(SelChangedSignal,       ListSignalEcho(*this, "ListBox::SelChangedSignal"));
+        Connect(DroppedSignal,          ListSignalEcho(*this, "ListBox::DroppedSignal"));
+        Connect(DropAcceptableSignal,   ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
+        Connect(LeftClickedSignal,      ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
+        Connect(RightClickedSignal,     ListSignalEcho(*this, "ListBox::RightClickedSignal"));
+        Connect(DoubleClickedSignal,    ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
+        Connect(BeforeEraseSignal,      ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
+        Connect(AfterEraseSignal,       ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
+        Connect(BrowsedSignal,          ListSignalEcho(*this, "ListBox::BrowsedSignal"));
     }
 }
 
@@ -823,6 +823,12 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool signal/* = true*/)
 
 ListBox::iterator ListBox::Insert(Row* row, bool signal/* = true*/)
 { return Insert(row, m_rows.end(), false, signal); }
+
+void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
+{ Insert(rows, it, false, signal); }
+
+void ListBox::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
+{ Insert(rows, m_rows.end(), false, signal); }
 
 ListBox::Row* ListBox::Erase(iterator it, bool signal/* = false*/)
 { return Erase(it, false, signal); }
@@ -1535,6 +1541,82 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
         AfterInsertSignal(it);
 
     return retval;
+}
+
+void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal)
+{
+    if (rows.empty())
+        return;
+
+    if (signal || dropped) {
+        // need to signal or handle dropping for each row, so add individually
+        for (std::vector<Row*>::const_iterator row_it = rows.begin();
+             row_it != rows.end(); ++row_it)
+        { Insert(*row_it, it, dropped, signal); }
+        return;
+    }
+
+    // don't need to signal or handle dropping issues, so can add rows at once
+    // without externally handling after each
+
+
+    // The first row inserted into an empty list box defines the number of
+    // columns, and initializes the column widths and alignments.
+    if (m_col_widths.empty() || !m_keep_col_widths) {
+        Row* row = *rows.begin();
+
+        const GG::X WIDTH = ClientSize().x - SCROLL_WIDTH;
+
+        m_col_widths.resize(row->size());
+        m_col_alignments.resize(row->size());
+        GG::X total = GG::X0;
+        for (std::size_t i = 0; i < row->size(); ++i) {
+            // use the column width from the Row
+            total += row->ColWidth(i);
+
+            // use the column alignment from the Row, if it has been set;
+            // otherwise, use the one dictated by the ListBoxStyle flags
+            Alignment a = row->ColAlignment(i);
+            if (a == ALIGN_NONE)
+                a = AlignmentFromStyle(m_style);
+            m_col_alignments[i] = a;
+        }
+
+        const GG::X_d SCALE_FACTOR = 1.0 * WIDTH / total;
+
+        total = GG::X0;
+        for (std::size_t i = 0; i < row->size(); ++i) {
+            total += (m_col_widths[i] = row->ColWidth(i) * SCALE_FACTOR);
+        }
+        m_col_widths.back() += total - WIDTH;
+
+        if (!m_header_row->empty())
+            NormalizeRow(m_header_row);
+    }
+
+    // add each row, adjusting positions of other rows accordingly
+    for (std::vector<Row*>::const_iterator row_it = rows.begin();
+         row_it != rows.end(); ++row_it)
+    {
+        Row* row = *row_it;
+
+        row->InstallEventFilter(this);
+        NormalizeRow(row);
+
+        if (m_rows.empty()) {
+            m_rows.push_back(row);
+            it = m_rows.end();
+        } else {
+            m_rows.insert(it, row);
+            ++it;
+        }
+
+        AttachChild(row);
+    }
+
+    Resort();
+
+    AdjustScrolls(false);
 }
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)

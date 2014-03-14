@@ -733,9 +733,14 @@ void FileDlg::UpdateList()
             } catch (const fs::filesystem_error&) {
             }
         }
-        for (std::multimap<std::string, ListBox::Row*>::const_iterator it = sorted_rows.begin(); it != sorted_rows.end(); ++it) {
-            m_files_list->Insert(it->second);
-        }
+
+        std::vector<ListBox::Row*> rows;
+        rows.reserve(sorted_rows.size());
+        for (std::multimap<std::string, ListBox::Row*>::const_iterator it = sorted_rows.begin();
+             it != sorted_rows.end(); ++it)
+        { rows.push_back(it->second); }
+        m_files_list->Insert(rows, false);
+
         if (!m_select_directories) {
             sorted_rows.clear();
             for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {

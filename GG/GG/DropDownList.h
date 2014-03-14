@@ -134,6 +134,15 @@ public:
         or inserted into any other DropDownLists */
     iterator       Insert(Row* row, bool signal = true);
 
+    /** Insertion sorts \a rows into a sorted list, or inserts into an unsorted
+        list before \a it. The Rows become the property of this DropDownList. */
+    void            Insert(const std::vector<Row*>& rows, iterator it, bool signal = true);
+
+    /** Insertion sorts \a rows into sorted list, or inserts into an unsorted
+        list at the end of the list. The Rows become the property of thiis
+        DropDownList. */
+    void            Insert(const std::vector<Row*>& rows, bool signal = true);
+
     Row*           Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void           Clear();                       ///< empties the list
     iterator       begin();                       ///< returns an iterator to the first list row

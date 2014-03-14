@@ -1976,6 +1976,8 @@ public:
             GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
         const std::set<int> ship_ids = fleet->ShipIDs();
+        std::vector<GG::ListBox::Row*> rows;
+        rows.reserve(ship_ids.size());
         for (std::set<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
             int ship_id = *it;
 
@@ -1986,9 +1988,11 @@ public:
                 continue;
 
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
-            Insert(row); //ShipsListBox::iterator row_it = Insert(row);
-            row->Resize(row_size);
+            rows.push_back(row);
         }
+        Insert(rows, false);
+        for (std::vector<GG::ListBox::Row*>::iterator it = rows.begin(); it != rows.end(); ++it)
+        { (*it)->Resize(row_size); }
 
         SelChangedSignal(this->Selections());
     }

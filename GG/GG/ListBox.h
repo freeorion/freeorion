@@ -265,20 +265,17 @@ public:
     virtual Pt      ClientUpperLeft() const;
     virtual Pt      ClientLowerRight() const;
 
-    bool            Empty() const;          ///< returns true when the ListBox is empty
-    const_iterator  begin() const;          ///< returns an iterator to the first list row
-    const_iterator  end() const;            ///< returns an iterator to the imaginary row one past the last
-    const_reverse_iterator
-                    rbegin() const;         ///< returns an iterator to the last list row
-    const_reverse_iterator
-                    rend() const;           ///< returns an iterator to the imaginary row one past the first one
-    const Row&      GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    iterator        Caret() const;          ///< returns the row that has the caret
-    const SelectionSet&
-                    Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
-    bool            Selected(iterator it) const; ///< returns true if row \a it is selected
-    Clr             InteriorColor() const;  ///< returns the color painted into the client area of the control
-    Clr             HiliteColor() const;    ///< returns the color behind selected line items
+    bool                    Empty() const;          ///< returns true when the ListBox is empty
+    const_iterator          begin() const;          ///< returns an iterator to the first list row
+    const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
+    const_reverse_iterator  rbegin() const;         ///< returns an iterator to the last list row
+    const_reverse_iterator  rend() const;           ///< returns an iterator to the imaginary row one past the first one
+    const Row&              GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    iterator                Caret() const;          ///< returns the row that has the caret
+    const SelectionSet&     Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
+    bool                    Selected(iterator it) const; ///< returns true if row \a it is selected
+    Clr                     InteriorColor() const;  ///< returns the color painted into the client area of the control
+    Clr                     HiliteColor() const;    ///< returns the color behind selected line items
 
     /** Returns the style flags of the listbox \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;
@@ -323,8 +320,8 @@ public:
     unsigned int    AutoScrollInterval() const;
 
     mutable ClearedSignalType        ClearedSignal;         /// the cleared signal object for this ListBox
-    mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal objet for this ListBox
-    mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal objet for this ListBox
+    mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal object for this ListBox
+    mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal object for this ListBox
     mutable SelChangedSignalType     SelChangedSignal;      ///< the selection change signal object for this ListBox
     mutable DroppedSignalType        DroppedSignal;         ///< the dropped signal object for this ListBox
     mutable DropAcceptableSignalType DropAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
@@ -337,38 +334,48 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
-    virtual void   AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt);
-    virtual void   ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
-    virtual void   Render();
+    virtual void    StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
+    virtual void    AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt);
+    virtual void    ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
+    virtual void    Render();
 
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);  ///< resizes the control, then resizes the scrollbars as needed
+    virtual void    SizeMove(const Pt& ul, const Pt& lr);  ///< resizes the control, then resizes the scrollbars as needed
 
-    virtual void   Disable(bool b = true);
-    virtual void   SetColor(Clr c);
+    virtual void    Disable(bool b = true);
+    virtual void    SetColor(Clr c);
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row
-        becomes the property of the ListBox. */
-    iterator       Insert(Row* row, iterator it, bool signal = true);
+        becomes the property of this ListBox. */
+    iterator        Insert(Row* row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox at the end of the list; returns insertion point.
-        This Row becomes the property of the ListBox. */
-    iterator       Insert(Row* row, bool signal = true);
+        This Row becomes the property of this ListBox. */
+    iterator        Insert(Row* row, bool signal = true);
 
-    Row*           Erase(iterator it, bool signal = false); ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
-    void           Clear();                                 ///< empties the ListBox
-    void           SelectRow(iterator it);                  ///< selects row \a it
-    void           DeselectRow(iterator it);                ///< deselects row \a it
-    void           SelectAll();                             ///< selects all rows
-    void           DeselectAll();                           ///< deselects all rows
-    iterator       begin();                                 ///< returns an iterator to the first list row
-    iterator       end();                                   ///< returns an iterator to the imaginary row one past the last one
-    reverse_iterator
-                   rbegin();                              ///< returns an iterator to the last list row
-    reverse_iterator
-                   rend();                                ///< returns an iterator to the imaginary row one past the first one
+    /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
+        unsorted ListBox before \a it. The Rows become the property of this
+        ListBox. */
+    void            Insert(const std::vector<Row*>& rows, iterator it, bool signal = true);
+
+    /** Insertion sorts \a rows into the ListBox if sorted, or inserts into an
+        unsorted ListBox at the end of the list. The Rows become the property
+        of this ListBox. */
+    void            Insert(const std::vector<Row*>& rows, bool signal = true);
+
+    Row*            Erase(iterator it, bool signal = false); ///< removes and returns the row that \a it points to from the ListBox, or 0 if no such row exists
+    void            Clear();                                 ///< empties the ListBox
+    void            SelectRow(iterator it);                  ///< selects row \a it
+    void            DeselectRow(iterator it);                ///< deselects row \a it
+    void            SelectAll();                             ///< selects all rows
+    void            DeselectAll();                           ///< deselects all rows
+
+    iterator            begin();                          ///< returns an iterator to the first list row
+    iterator            end();                            ///< returns an iterator to the imaginary row one past the last one
+    reverse_iterator    rbegin();                         ///< returns an iterator to the last list row
+    reverse_iterator    rend();                           ///< returns an iterator to the imaginary row one past the first one
+
     Row&           GetRow(std::size_t n);                 ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
     void           SetSelections(const SelectionSet& s);  ///< sets the set of selected rows to \a s
@@ -497,7 +504,8 @@ protected:
 
     virtual bool    EventFilter(Wnd* w, const WndEvent& event);
 
-    iterator        Insert(Row* row, iterator it, bool dropped, bool signal); ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    iterator        Insert(Row* row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    void            Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
     void            RecreateScrolls();              ///< recreates the vertical and horizontal scrolls as needed.

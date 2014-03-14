@@ -249,6 +249,22 @@ DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
     return m_LB->Insert(row, signal);
 }
 
+void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
+{
+    for (std::vector<Row*>::const_iterator rows_it = rows.begin();
+         rows_it != rows.end(); ++rows_it)
+    { (*rows_it)->SetDragDropDataType(""); }
+    m_LB->Insert(rows, it, signal);
+}
+
+void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
+{
+    for (std::vector<Row*>::const_iterator rows_it = rows.begin();
+         rows_it != rows.end(); ++rows_it)
+    { (*rows_it)->SetDragDropDataType(""); }
+    m_LB->Insert(rows, signal);
+}
+
 DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
 {
     if (it == m_current_item)
