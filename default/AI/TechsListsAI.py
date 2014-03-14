@@ -69,13 +69,13 @@ def tech_group_1b():  # early _lrn_artif_minds
     
 def tech_group_2a():  # prioritizes growth & defense over weapons
     result = [
-            "GRO_SYMBIOTIC_BIO",
             "SHP_ZORTRIUM_PLATE",
+            "DEF_DEFENSE_NET_1",
+            "DEF_GARRISON_1", 
             "PRO_ROBOTIC_PROD",
             "PRO_FUSION_GEN",
-            "DEF_GARRISON_1", 
-            "DEF_DEFENSE_NET_1",
             "SPY_DETECT_2",
+            "GRO_SYMBIOTIC_BIO",
             "PRO_INDUSTRY_CENTER_I",
             "LRN_FORCE_FIELD",
             "SHP_WEAPON_2_1",
@@ -93,12 +93,12 @@ def tech_group_2b():  # prioritizes weapons over growth & defense
             "SHP_WEAPON_2_3",
             "PRO_ROBOTIC_PROD",
             "PRO_FUSION_GEN",
-            "GRO_SYMBIOTIC_BIO",
             "DEF_DEFENSE_NET_1",
             "SHP_WEAPON_2_4",
             "PRO_INDUSTRY_CENTER_I",
             "DEF_GARRISON_1",
             "SPY_DETECT_2",
+            "GRO_SYMBIOTIC_BIO",
             "LRN_FORCE_FIELD",
     ]
     return result

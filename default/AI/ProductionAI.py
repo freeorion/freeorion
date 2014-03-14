@@ -828,18 +828,18 @@ def generateProductionOrders():
     popCtrs = list(AIstate.popCtrIDs)
     enrgyShipyardLocs={}
     for bldName in [ "BLD_SHIPYARD_ENRG_COMP"  ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >200 or currentTurn > 150 ):
+        if empire.buildingTypeAvailable(bldName):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
-            for pid in popCtrs:
+            blue_popctrs = [ (ColonisationAI.pilotRatings.get(pid,  0),  pid) for pid in popCtrs if colonySystems.get(pid,  -1) in AIstate.empireStars.get(fo.starType.blue,  [])]
+            bh_popctrs = [ (ColonisationAI.pilotRatings.get(pid,  0),  pid) for pid in popCtrs if colonySystems.get(pid,  -1) in AIstate.empireStars.get(fo.starType.blackHole,  [])]
+            for pilot_rating,  pid in sorted(blue_popctrs,  reverse = True) + sorted(bh_popctrs,  reverse = True):
                 if len(queuedBldLocs)>1: #build a max of 2 at once
                     break
-                if colonySystems.get(pid,  -1) not in   ( AIstate.empireStars.get(fo.starType.blackHole,  [])  +  AIstate.empireStars.get(fo.starType.blue,  [])  ):
-                    continue
                 this_planet = universe.getPlanet(pid)
                 if not (this_planet and this_planet.speciesName in ColonisationAI.empireShipBuilders): #TODO: also check that not already one for this spec in this sys
                     continue
-                enrgyShipyardLocs.setdefault(this_planet.systemID,  []).append(pid)
+                enrgyShipyardLocs.setdefault(this_planet.systemID,  []).append( (pilot_rating,  pid) )
                 if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):
                     res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
                     print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
@@ -854,17 +854,18 @@ def generateProductionOrders():
     bldName = "BLD_SHIPYARD_BASE"
     if empire.buildingTypeAvailable(bldName) and  (bldgExpense<bldgRatio*totalPP) and ( totalPP >50 or currentTurn > 80 ):
         bldType = fo.getBuildingType(bldName)
-        for sys_id, pid in enrgyShipyardLocs.items(): #Todo ensure only one or 2 per sys
-            if  pid not in queuedShipyardLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
-                if res:
-                    queuedShipyardLocs.append(pid)
-                    cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
-                    bldgExpense +=  cost/time  # productionQueue[productionQueue.size -1].blocksize *
-                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                    print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
-                    break #only start one per turn
+        for sys_id in enrgyShipyardLocs: #Todo ensure only one or 2 per sys
+            for pilot_rating,  pid in sorted(enrgyShipyardLocs[sys_id],  reverse=True)[:2]:
+                if  pid not in queuedShipyardLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if res:
+                        queuedShipyardLocs.append(pid)
+                        cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
+                        bldgExpense +=  cost/time  # productionQueue[productionQueue.size -1].blocksize *
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+                        break #only start one per turn
 
     for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ,  "BLD_SHIPYARD_ORG_XENO_FAC" ]:
         if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >40 or currentTurn > 40 ):

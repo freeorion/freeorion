@@ -242,8 +242,7 @@ def calculateColonisationPriority():
     colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    if fo.currentTurn() <= 100:
-        allottedPortion = [0.3,  0.4][ fo.empireID() % 2 ]    #
+    allottedPortion = [0.3,  0.4][ fo.empireID() % 2 ]    #
     #if ( foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) 
     #        > 2 * foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     #    allottedPortion *= 1.5
@@ -396,20 +395,17 @@ def calculateMilitaryPriority():
         my_defenses = status.get('mydefenses',  {}).get('overall', 0)
         baseMonsterThreat = status.get('monsterThreat', 0)
         #scale monster threat so that in early - mid game big monsters don't over-drive military production
+        monsterThreat = baseMonsterThreat
         if currentTurn>200:
-            monsterThreat = baseMonsterThreat
+            pass
         elif currentTurn>100:
-            if baseMonsterThreat <2000:
-                monsterThreat = baseMonsterThreat
-            else:
+            if baseMonsterThreat >=2000:
                 monsterThreat = 2000 + (currentTurn/100.0 - 1) *(baseMonsterThreat-2000)
         elif currentTurn>30:
-            if baseMonsterThreat <2000:
-                monsterThreat = baseMonsterThreat
+            if baseMonsterThreat >=2000:
+                monsterThreat = 0
         else:
-            if baseMonsterThreat <200:
-                monsterThreat = baseMonsterThreat
-            else:
+            if baseMonsterThreat >200:
                 monsterThreat = 0
         if sysID in mySystems:
             threatRoot = status.get('fleetThreat', 0)**0.5 + 0.8*status.get('max_neighbor_threat', 0)**0.5 + 0.2*status.get('neighborThreat', 0)**0.5 + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5

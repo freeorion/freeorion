@@ -143,6 +143,7 @@ def getInvasionFleets():
             if planet:
                 allInvasionTargetedSystemIDs.add( planet.systemID )
             continue  #already building for here
+        sysID = planet.systemID
         this_sys_status = foAI.foAIstate.systemStatus.get( sysID,  {} )
         if  ((planet.currentMeterValue(fo.meterType.shield) > 0) and 
                     (this_sys_status.get('myFleetRating', 0) < (0.8 * this_sys_status.get('totalThreat', 0)))):
