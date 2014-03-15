@@ -680,12 +680,12 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         // check if specified species exists and get reference
         species = GetSpecies(species_name);
         if (!species) {
-            Logger().errorStream() << "Planet::Colonize couldn't get species with name: " << species_name;
+            Logger().errorStream() << "Planet::Colonize couldn't get species already on planet with name: " << species_name;
             return false;
         }
         // check if specified species can colonize this planet
-        if (population > 0.0 && EnvironmentForSpecies(species_name) < PE_HOSTILE) {
-            Logger().errorStream() << "Planet::Colonize: can't colonize planet with species " << species_name;
+        if (EnvironmentForSpecies(species_name) < PE_HOSTILE) {
+            Logger().errorStream() << "Planet::Colonize: can't colonize planet already populated by species " << species_name;
             return false;
         }
     }
@@ -722,6 +722,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
     GetMeter(METER_HAPPINESS)->SetCurrent(20.0f);
     BackPropegateMeters();
+
 
     // set specified empire as owner
     SetOwner(empire_id);
