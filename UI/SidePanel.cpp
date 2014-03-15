@@ -888,6 +888,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
     m_focus_drop->MoveTo(GG::Pt(GG::X1, GG::Y1));   // force auto-resize so height is correct for subsequent layout stuff
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
 
     // meter panels
@@ -1612,18 +1613,28 @@ void SidePanel::PlanetPanel::Refresh() {
 
         // refresh items in list
         m_focus_drop->Clear();
+        std::vector<GG::DropDownList::Row*> rows;
+        rows.reserve(available_foci.size());
         for (std::vector<std::string>::const_iterator it = available_foci.begin();
              it != available_foci.end(); ++it)
         {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(*it), true);
+            std::cout << "focus icon for (" << *it << "): " << planet->FocusIcon(*it) << std::endl;
             GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2,
                                                                MeterIconSize().y*3/2, texture,
                                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
             row->push_back(dynamic_cast<GG::Control*>(graphic));
-            m_focus_drop->Insert(row);
+            rows.push_back(row);
+            std::cout << " ... row: " << row << std::endl;
         }
+        m_focus_drop->Insert(rows, false);
+
+        std::cout << "all rows: " << std::endl;
+        for (std::vector<GG::DropDownList::Row*>::const_iterator row_it = rows.begin();
+             row_it != rows.end(); ++row_it)
+        { std::cout << *row_it << std::endl; }
 
         int drop_items = std::min(5, static_cast<int>(available_foci.size()));
         m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
@@ -2780,22 +2791,30 @@ void SidePanel::RefreshImpl() {
     // populate droplist of system names
     {
         ScopedTimer droplist_population_timer("SidePanel::RefreshImpl droplist population", true);
-        std::map< std::string, int > system_map; //alphabetize Systems here
+        std::map<std::string, int> system_map; //alphabetize Systems here
         for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
              sys_it != Objects().const_end<System>(); ++sys_it) 
         {
-            if (!sys_it->Name().empty() || sys_it->ID()==s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
                 system_map.insert(std::make_pair<std::string, int>(sys_it->Name(), sys_it->ID()));
         }
-        for ( std::map< std::string, int >::iterator sys_it = system_map.begin(); sys_it != system_map.end(); sys_it++) {
+        std::vector<GG::DropDownList::Row*> rows;
+        rows.reserve(system_map.size());
+        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); sys_it++) {
             int sys_id = sys_it->second;
-
-            GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));
-
-            if (sys_id == s_system_id)
-                m_system_name->Select(latest_it);
+            rows.push_back(new SystemRow(sys_id));
         }
-
+        m_system_name->Insert(rows, false);
+        for (GG::DropDownList::iterator it = m_system_name->begin();
+             it != m_system_name->end(); ++it)
+        {
+            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+                if (s_system_id == row->SystemID()) {
+                    m_system_name->Select(it);
+                    break;
+                }
+            }
+        }
 
         // set dropheight.  shrink to fit a small number, but cap at a reasonable max
         const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
