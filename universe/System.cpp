@@ -314,8 +314,11 @@ bool System::Contains(int object_id) const {
     return m_objects.find(object_id) != m_objects.end();
 }
 
-TemporaryPtr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<System>(boost::static_pointer_cast<const System>(TemporaryFromThis()))); }
+TemporaryPtr<const UniverseObject> System::Accept(UniverseObjectVisitor* visitor) const
+{ return UniverseObject::Accept(this, visitor); }
+
+TemporaryPtr<UniverseObject> System::Accept(UniverseObjectVisitor* visitor)
+{ return UniverseObject::Accept(this, visitor); }
 
 void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
     if (!obj) {

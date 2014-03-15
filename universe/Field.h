@@ -23,7 +23,9 @@ public:
 
     const std::string&          FieldTypeName() const { return m_type_name; }
     virtual TemporaryPtr<UniverseObject>
-                                Accept(const UniverseObjectVisitor& visitor) const;
+                                Accept(UniverseObjectVisitor* visitor);
+    virtual TemporaryPtr<const UniverseObject>
+                                Accept(UniverseObjectVisitor* visitor) const;
 
     virtual int                 ContainerObjectID() const;                          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
     virtual bool                ContainedBy(int object_id) const;                   ///< returns true if there is an object with id \a object_id that contains this UniverseObject

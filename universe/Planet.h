@@ -77,9 +77,11 @@ public:
 
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet :
-    public UniverseObject,
-    public PopCenter,
-    public ResourceCenter
+    virtual public UniverseObject,
+    // these inheritances must be virtual 
+    // because otherwise instantiating boost::is_base_of<...,Planet> causes compile errors
+    virtual public PopCenter,
+    virtual public ResourceCenter
 {
 public:
     /** \name Accessors */ //@{
@@ -127,7 +129,9 @@ public:
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
     virtual TemporaryPtr<UniverseObject>
-                                Accept(const UniverseObjectVisitor& visitor) const;
+                                Accept(UniverseObjectVisitor* visitor);
+    virtual TemporaryPtr<const UniverseObject>
+                                Accept(UniverseObjectVisitor* visitor) const;
 
     virtual float               InitialMeterValue(MeterType type) const;
     virtual float               CurrentMeterValue(MeterType type) const;

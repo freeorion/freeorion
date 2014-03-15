@@ -95,7 +95,10 @@ public:
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
 
-    virtual TemporaryPtr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const;
+    virtual TemporaryPtr<UniverseObject>
+                                Accept(UniverseObjectVisitor* visitor);
+    virtual TemporaryPtr<const UniverseObject>
+                                Accept(UniverseObjectVisitor* visitor) const;
     //@}
 
     /** \name Mutators */ //@{

@@ -6,7 +6,6 @@
 #include "System.h"
 #include "Special.h"
 #include "Universe.h"
-#include "Predicates.h"
 
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
@@ -248,8 +247,11 @@ Visibility UniverseObject::GetVisibility(int empire_id) const
 const std::string& UniverseObject::PublicName(int empire_id) const
 { return m_name; }
 
-TemporaryPtr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<UniverseObject>(TemporaryFromThis()));}
+TemporaryPtr<const UniverseObject> UniverseObject::Accept(UniverseObjectVisitor* visitor) const
+{ return UniverseObject::Accept(this, visitor); }
+
+TemporaryPtr<UniverseObject> UniverseObject::Accept(UniverseObjectVisitor* visitor)
+{ return UniverseObject::Accept(this, visitor); }
 
 void UniverseObject::SetID(int id) {
     m_id = id;

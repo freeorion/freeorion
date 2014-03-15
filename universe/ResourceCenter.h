@@ -3,8 +3,8 @@
 #define _ResourceCenter_h_
 
 #include "Enums.h"
-#include "EnableTemporaryFromThis.h"
 #include "TemporaryPtr.h"
+#include "UniverseObject.h"
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -12,7 +12,6 @@
 
 class Empire;
 class Meter;
-class UniverseObject;
 
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (minerals, etc.).  Most
@@ -22,7 +21,7 @@ class UniverseObject;
   * classes could be made from it as well (e.g., a trade-ship or mining vessel,
   * or a non-Planet UniverseObject- and PopCenter- derived object of some
   * sort. */
-class FO_COMMON_API ResourceCenter : virtual public EnableTemporaryFromThis<UniverseObject> {
+class FO_COMMON_API ResourceCenter : virtual public UniverseObject {
 public:
     /** \name Structors */ //@{
     ResourceCenter();                               ///< default ctor

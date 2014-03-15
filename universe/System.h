@@ -77,7 +77,9 @@ public:
     int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 
     virtual TemporaryPtr<UniverseObject>
-                            Accept(const UniverseObjectVisitor& visitor) const;
+                                Accept(UniverseObjectVisitor* visitor);
+    virtual TemporaryPtr<const UniverseObject>
+                                Accept(UniverseObjectVisitor* visitor) const;
 
     const std::string&      OverlayTexture() const      { return m_overlay_texture; }
     double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units

@@ -303,4 +303,8 @@ struct CombatSetupGroup {
 
 // Note: *::serialize() implemented in SerializeMultiplayerCommon.cpp.
 
+// TemporaryPtr<System> doesn't allow incomplete "System" type in the final .cpp
+// in order to avoid cyclic inclusion problems, we #include this as late as possible
+#include "../universe/System.h"
+
 #endif // _MultiplayerCommon_h_
