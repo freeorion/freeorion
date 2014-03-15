@@ -1594,27 +1594,31 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
             NormalizeRow(m_header_row);
     }
 
-    // add each row, adjusting positions of other rows accordingly
+    // housekeeping of rows...
     for (std::vector<Row*>::const_iterator row_it = rows.begin();
          row_it != rows.end(); ++row_it)
     {
         Row* row = *row_it;
-
         row->InstallEventFilter(this);
         NormalizeRow(row);
-
-        if (m_rows.empty()) {
-            m_rows.push_back(row);
-            it = m_rows.end();
-        } else {
-            m_rows.insert(it, row);
-            ++it;
-        }
-
         AttachChild(row);
     }
 
-    Resort();
+    // add row at requested location (or default end position)
+    m_rows.insert(it, rows.begin(), rows.end());
+
+    // sort?
+    if (!(m_style & LIST_NOSORT)) {
+        Resort();
+    } else {
+        // reposition rows to account for insertion
+        Y y(0);
+        for (it = m_rows.begin(); it != m_rows.end(); ++it) {
+            Row* row = *it;
+            row->MoveTo(Pt(X0, y));
+            y += row->Height();
+        }
+    }
 
     AdjustScrolls(false);
 }
