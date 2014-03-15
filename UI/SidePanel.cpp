@@ -1620,22 +1620,16 @@ void SidePanel::PlanetPanel::Refresh() {
         {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(*it), true);
-            std::cout << "focus icon for (" << *it << "): " << planet->FocusIcon(*it) << std::endl;
             GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2,
                                                                MeterIconSize().y*3/2, texture,
                                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
             row->push_back(dynamic_cast<GG::Control*>(graphic));
             rows.push_back(row);
-            std::cout << " ... row: " << row << std::endl;
         }
         m_focus_drop->Insert(rows, false);
 
-        std::cout << "all rows: " << std::endl;
-        for (std::vector<GG::DropDownList::Row*>::const_iterator row_it = rows.begin();
-             row_it != rows.end(); ++row_it)
-        { std::cout << *row_it << std::endl; }
-
+        // set drop height
         int drop_items = std::min(5, static_cast<int>(available_foci.size()));
         m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
 
@@ -1654,6 +1648,7 @@ void SidePanel::PlanetPanel::Refresh() {
         }
         m_focus_drop->SetBrowseText(focus_text);
 
+        // prevent manipulation for unowned planets
         if (!planet->OwnedBy(client_empire_id))
             m_focus_drop->Disable();
     }
