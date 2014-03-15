@@ -332,6 +332,8 @@ namespace {
             SetNumCols(1);
             SetColWidth(0, GG::X0);
             LockColWidths();
+
+            SetVScrollWheelIncrement(Value(ListRowHeight())*3);
         }
 
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -741,7 +743,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                                                                 m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
-        m_buildable_items->Insert(rows);
+        m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
         for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
             it != m_buildable_items->end(); ++it)
@@ -779,7 +781,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                                                                 m_empire_id, m_production_location);
             rows.push_back(item_row);
         }
-        m_buildable_items->Insert(rows);
+        m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
         for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
             it != m_buildable_items->end(); ++it)
