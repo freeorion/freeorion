@@ -11,6 +11,7 @@
 #include "InfoPanels.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -570,7 +571,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 }
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
-    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::Refresh()";
+    ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
     if (TemporaryPtr<const UniverseObject> prod_loc = GetUniverseObject(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
@@ -728,23 +729,29 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
-
+        // craete and insert rows...
+        std::vector<GG::ListBox::Row*> rows;
+        rows.reserve(std::distance(manager.begin(), manager.end()));
         for (BuildingTypeManager::iterator it = manager.begin(); it != manager.end(); ++it, ++i) {
             const std::string name = it->first;
-
-            if (!BuildableItemVisible(BT_BUILDING, name)) continue;
-
+            if (!BuildableItemVisible(BT_BUILDING, name))
+                continue;
             ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
                                                                 ProductionQueue::ProductionItem(BT_BUILDING, name),
                                                                 m_empire_id, m_production_location);
-
-            GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
-            if (item_row->DragDropDataType() == initial_first_row_name)
-                new_first_row_it = row_it;
-
-            item_row->Resize(row_size);
+            rows.push_back(item_row);
+        }
+        m_buildable_items->Insert(rows);
+        // resize inserted rows and record first row to show
+        for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
+            it != m_buildable_items->end(); ++it)
+        {
+            if ((*it)->DragDropDataType() == initial_first_row_name)
+                new_first_row_it = it;
+            (*it)->Resize(row_size);
         }
     }
+
     // populate with ship designs
     //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
     if (m_build_types_shown.find(BT_SHIP) != m_build_types_shown.end()) {
@@ -757,25 +764,29 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 design_ids.push_back(it->first);
 
+        // craete and insert rows...
+        std::vector<GG::ListBox::Row*> rows;
+        rows.reserve(design_ids.size());
         for (std::vector<int>::const_iterator it = design_ids.begin(); it != design_ids.end(); ++it, ++i) {
             int ship_design_id = *it;
-
-            if (!BuildableItemVisible(BT_SHIP, ship_design_id)) continue;
-
+            if (!BuildableItemVisible(BT_SHIP, ship_design_id))
+                continue;
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
-            if (!ship_design) continue;
-
-            // add build item panel
-
+            if (!ship_design)
+                continue;
             ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
                                                                 ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
                                                                 m_empire_id, m_production_location);
-
-            GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
-            if (item_row->DragDropDataType() == initial_first_row_name)
-                new_first_row_it = row_it;
-
-            item_row->Resize(row_size);
+            rows.push_back(item_row);
+        }
+        m_buildable_items->Insert(rows);
+        // resize inserted rows and record first row to show
+        for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
+            it != m_buildable_items->end(); ++it)
+        {
+            if ((*it)->DragDropDataType() == initial_first_row_name)
+                new_first_row_it = it;
+            (*it)->Resize(row_size);
         }
     }
 
