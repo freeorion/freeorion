@@ -1676,7 +1676,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
         species_objects[species_name].push_back(planet);
     }
-    
+
     double planet_species_time = type_timer.elapsed();
     type_timer.restart();
 
@@ -1721,7 +1721,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                                                  global_mutex));
         }
     }
-    
+
     // 2) EffectsGroups from Specials
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
@@ -1828,7 +1828,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     type_timer.restart();
-    
+
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > buildings_by_type;
     std::vector<TemporaryPtr<Building> > buildings = m_objects.FindObjects<Building>();
@@ -1847,7 +1847,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         buildings_by_type[building_type_name].push_back(building);
     }
-    
+
     // enforce building types effects order
     for (BuildingTypeManager::iterator building_type_it  = GetBuildingTypeManager().begin(); building_type_it != GetBuildingTypeManager().end(); ++building_type_it) {
         const std::string&  building_type_name = building_type_it->first;
@@ -1913,16 +1913,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             ships_by_part_type[part].push_back(ship);
         }
     }
-    
+
     // enforce hull types effects order
     for (HullTypeManager::iterator hull_type_it  = GetHullTypeManager().begin(); hull_type_it != GetHullTypeManager().end(); ++hull_type_it) {
         const std::string& hull_type_name = hull_type_it->first;
         const HullType*    hull_type      = hull_type_it->second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
-        
+
         if (ships_by_hull_type_it == ships_by_hull_type.end())
             continue;
-        
+
         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = hull_type->Effects();
         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
         for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
@@ -1940,10 +1940,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         const std::string& part_type_name = part_type_it->first;
         const PartType*    part_type      = part_type_it->second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_part_type_it = ships_by_part_type.find(part_type_name);
-        
+
         if (ships_by_part_type_it == ships_by_part_type.end())
             continue;
-        
+
         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = part_type->Effects();
         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
         for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
@@ -1979,16 +1979,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         fields_by_type[field_type_name].push_back(field);
     }
-    
+
     // enforce field types effects order
     for (FieldTypeManager::iterator field_type_it  = GetFieldTypeManager().begin(); field_type_it != GetFieldTypeManager().end(); ++field_type_it) {
         const std::string& field_type_name = field_type_it->first;
         const FieldType*   field_type      = field_type_it->second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator fields_by_type_it = fields_by_type.find(field_type_name);
-        
+
         if (fields_by_type_it == fields_by_type.end())
             continue;
-        
+
         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups = field_type->Effects();
         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_group_it;
         for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
@@ -2005,13 +2005,14 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     run_queue.Wait(global_lock);
     double eval_time = eval_timer.elapsed();
-    
+
     eval_timer.restart();
     // add results to targets_causes in issue order
-    // FIXME: each job is an effectsgroup, and we need that separation for execution anyway, so maintain it here instead of merging.
+    // FIXME: each job is an effectsgroup, and we need that separation for
+    // execution anyway, so maintain it here instead of merging.
     for (std::list<Effect::TargetsCauses>::const_iterator job_it = targets_causes_reorder_buffer.begin(); job_it != targets_causes_reorder_buffer.end(); ++job_it) {
         Effect::TargetsCauses job_results = *job_it;
-        
+
         for (Effect::TargetsCauses::const_iterator result_it = job_results.begin(); result_it != job_results.end(); ++result_it) {
             targets_causes.push_back(*result_it);
         }

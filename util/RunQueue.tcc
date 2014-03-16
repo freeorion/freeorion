@@ -46,13 +46,13 @@ void ThreadQueue<WorkItem>::operator ()() {
 }
 
 template <class WorkItem>
-RunQueue<WorkItem>::RunQueue(unsigned n_threads) : 
-    m_terminate (false),  
-    m_schedule_mutex(),  
+RunQueue<WorkItem>::RunQueue(unsigned n_threads) :
+    m_terminate (false),
+    m_schedule_mutex(),
     m_work_available(),
     m_work_done(),
-    m_thread_queues(), 
-    m_transfer_queue(), 
+    m_thread_queues(),
+    m_transfer_queue(),
     m_transfer_queue_size(0U)
 {
     boost::unique_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
@@ -78,7 +78,7 @@ template <class WorkItem>
 void RunQueue<WorkItem>::AddWork(WorkItem* item) {
     boost::shared_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
     const unsigned old_transfer_queue_size = m_transfer_queue_size++;
-    
+
     if (m_transfer_queue.size() < m_transfer_queue_size)
         m_transfer_queue.resize(m_transfer_queue_size);
     m_transfer_queue[old_transfer_queue_size] = item;
@@ -102,10 +102,10 @@ void RunQueue<WorkItem>::Wait(boost::unique_lock<boost::shared_mutex>& lock) {
 
     while (true) {
         unsigned total_workload,  scheduleable_workload;
-        
+
         GetTotalWorkload(total_workload, scheduleable_workload);
         if (total_workload == 0) break;
-            
+
         if (scheduleable_workload > 0) m_work_available.notify_one();
         m_work_done.wait(schedule_lock); // m_schedule_mutex is unlocked by wait() while the thread waits
     }
@@ -193,7 +193,7 @@ bool RunQueue<WorkItem>::Schedule(ThreadQueue<WorkItem>& requested_by) {
 
         m_work_available.wait(schedule_lock); // m_schedule_mutex is unlocked by wait() while the thread waits
     }   // new work -> start over and try if we got or can get some of it
- 
+
     return false; // should be unreachable
 }
 

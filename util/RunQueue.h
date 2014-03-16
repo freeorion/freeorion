@@ -14,15 +14,15 @@ class RunQueue;
 
 template <class WorkItem>
 struct ThreadQueue : public boost::noncopyable {
-    RunQueue<WorkItem>* global_queue;
-    volatile unsigned   running_queue_size;
-    volatile unsigned   schedule_queue_size;
+    RunQueue<WorkItem>*     global_queue;
+    volatile unsigned       running_queue_size;
+    volatile unsigned       schedule_queue_size;
     std::vector<WorkItem*>* running_queue;
     std::vector<WorkItem*>* schedule_queue;
     std::vector<WorkItem*>  work_queue_1;
     std::vector<WorkItem*>  work_queue_2;
-    boost::thread       thread;
-    
+    boost::thread           thread;
+
     ThreadQueue(RunQueue<WorkItem>* the_global_queue);
     void operator ()();
 };
@@ -34,16 +34,16 @@ public:
     ~RunQueue();
     void AddWork(WorkItem* item);
     void Wait(boost::unique_lock<boost::shared_mutex>& lock);
-    
+
 private:
-    volatile bool m_terminate;
-    boost::shared_mutex m_schedule_mutex;
-    boost::condition_variable_any m_work_available;
-    boost::condition_variable_any m_work_done;
+    volatile bool                   m_terminate;
+    boost::shared_mutex             m_schedule_mutex;
+    boost::condition_variable_any   m_work_available;
+    boost::condition_variable_any   m_work_done;
     std::vector< boost::shared_ptr< ThreadQueue<WorkItem> > > m_thread_queues;
-    std::vector<WorkItem*> m_transfer_queue;
-    volatile unsigned m_transfer_queue_size;
-    
+    std::vector<WorkItem*>          m_transfer_queue;
+    volatile unsigned               m_transfer_queue_size;
+
     friend struct ThreadQueue<WorkItem>;
     void GetTotalWorkload(unsigned& total_workload, unsigned& scheduleable_workload);
     bool Schedule(ThreadQueue<WorkItem>& requested_by);
