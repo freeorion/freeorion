@@ -85,6 +85,8 @@ public:
       * ModeratorActionsWnd. */
     ModeratorActionSetting      GetModeratorActionSetting() const;
 
+    bool                        AutoEndTurnEnabled() const;
+
     /** returns the position on the screen that corresponds to the specified
       * universe X and Y coordinates. */
     GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
@@ -283,6 +285,7 @@ private:
     bool            ReturnToMap();
 
     bool            EndTurn();
+    void            ToggleAutoEndTurn();
 
     bool            ToggleModeratorActions();
     void            ShowModeratorActions();
@@ -414,7 +417,9 @@ private:
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
-    CUITurnButton*              m_turn_update;      //!< button that updates player's turn
+    CUIButton*                  m_btn_turn;         //!< button that updates player's turn
+    GG::Button*                 m_btn_auto_turn;    //!< button that toggles whether to automatically end turns
+    bool                        m_auto_end_turn;    //!< should turns be ended automatically by this client?
     std::list<MapWndPopup*>     m_popups;           //!< list of currently active popup windows
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;

@@ -25,9 +25,6 @@ namespace {
     void PlayButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
-    void PlayTurnButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
-
     struct PlayButtonCheckSound {
         PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
         void operator()(bool checked) const {
@@ -190,20 +187,10 @@ void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)>
 
 
 ///////////////////////////////////////
-// class CUITurnButton
-///////////////////////////////////////
-CUITurnButton::CUITurnButton(const std::string& str, GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                             GG::Clr color/* = ClientUI::WndColor()*/, 
-                             GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
-                             GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
-    CUIButton(str, x, y, w, FontOrDefaultFont(font), color, border, thick, text_color, flags)
-{ GG::Connect(LeftClickedSignal, &PlayTurnButtonClickSound, -1); }
-
-
-///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
-CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
+CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation,
+                               GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)

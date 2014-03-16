@@ -30,7 +30,8 @@
 class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIButton(const std::string& str, GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+    CUIButton(const std::string& str, GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1,
+              const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
               GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
               GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
@@ -85,18 +86,6 @@ public:
 
 private:
     boost::function<bool(const GG::Pt&)>    m_in_window_func;
-};
-
-/** a FreeOrion next-turn button control */
-class CUITurnButton : public CUIButton {
-public:
-    /** \name Structors */ //@{
-    CUITurnButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
-                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-                  GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(),
-                  int thick = 1,  GG::Clr text_color = ClientUI::TextColor(),
-                  GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
-    //@}
 };
 
 /** a FreeOrion triangular arrow button */

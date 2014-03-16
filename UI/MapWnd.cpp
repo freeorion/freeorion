@@ -26,6 +26,7 @@
 #include "TurnProgressWnd.h"
 #include "ShaderProgram.h"
 #include "Hotkeys.h"
+#include "Sound.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -260,6 +261,9 @@ namespace {
 
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+
+    void PlayTurnButtonClickSound()
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
 }
 
 
@@ -557,7 +561,9 @@ MapWnd::MapWnd() :
     m_resourceCenters(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
-    m_turn_update(0),
+    m_btn_turn(0),
+    m_btn_auto_turn(0),
+    m_auto_end_turn(false),
     m_popups(),
     m_menu_showing(false),
     m_current_owned_system(INVALID_OBJECT_ID),
@@ -600,7 +606,7 @@ MapWnd::MapWnd() :
 
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                        1, 20);
+                                        1, 21);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -614,8 +620,17 @@ MapWnd::MapWnd() :
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
     GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + GG::X(12);
     // create button using determined width
-    m_turn_update = new CUITurnButton(turn_button_longest_reasonable_text, GG::X0, GG::Y0, button_width);
-    GG::Connect(m_turn_update->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
+    m_btn_turn = new CUIButton(turn_button_longest_reasonable_text, GG::X0, GG::Y0, button_width);
+    GG::Connect(m_btn_turn->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
+    GG::Connect(m_btn_turn->LeftClickedSignal, &PlayTurnButtonClickSound);
+
+    // auto turn button
+    m_btn_auto_turn = new GG::Button(GG::X0, GG::Y0, GG::X(24), GG::Y(24), "", ClientUI::GetFont(),
+                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+    GG::Connect(m_btn_auto_turn->LeftClickedSignal, &MapWnd::ToggleAutoEndTurn, this);
+    m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
+    ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
+    ToggleAutoEndTurn();
 
 
     // FPS indicator
@@ -806,32 +821,32 @@ MapWnd::MapWnd() :
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(24);
-    m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+    m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0, 3, false);
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
+    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_btn_turn->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0, 3, false);
     m_industry->SetName("Industry StatisticIcon");
 
-    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
+    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_btn_turn->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
                                    0, 3, false);
     m_research->SetName("Research StatisticIcon");
 
-    m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+    m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
 
-    m_fleet = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+    m_fleet = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                 ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                 0, 3, false);
     m_fleet->SetName("Fleet StatisticIcon");
 
-    m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+    m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                     ClientUI::MeterIcon(METER_DETECTION),
                                     0, 3, false);
     m_detection->SetName("Detection StatisticIcon");
@@ -872,9 +887,14 @@ MapWnd::MapWnd() :
     /////////////////////////////////////
     int layout_column(0);
 
-    layout->SetMinimumColumnWidth(layout_column, m_turn_update->Width());
+    layout->SetMinimumColumnWidth(layout_column, m_btn_turn->Width());
     layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_turn_update,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_btn_turn,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_auto_turn,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, GG::X(ClientUI::Pts()*4));
@@ -1060,7 +1080,7 @@ MapWnd::MapWnd() :
     // Zoom slider
     const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
               ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = new CUISlider<double>(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+    m_zoom_slider = new CUISlider<double>(m_btn_turn->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->SlideTo(m_zoom_steps_in);
@@ -1154,6 +1174,9 @@ bool MapWnd::InProductionViewMode() const
 
 ModeratorActionSetting MapWnd::GetModeratorActionSetting() const
 { return m_moderator_wnd->SelectedAction(); }
+
+bool MapWnd::AutoEndTurnEnabled() const
+{ return m_auto_end_turn; }
 
 void MapWnd::Render() {
     // HACK! This is placed here so we can be sure it is executed frequently
@@ -1972,7 +1995,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     }
 
     m_moderator_wnd->EnableActions(enable && moderator);
-    m_turn_update->Disable(!enable);
+    m_btn_turn->Disable(!enable);
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
     m_research_wnd->EnableOrderIssuing(enable);
@@ -2022,9 +2045,9 @@ void MapWnd::InitTurn() {
 
 
     // set turn button to current turn
-    m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
                                           boost::lexical_cast<std::string>(turn_number)));
-    MoveChildUp(m_turn_update);
+    MoveChildUp(m_btn_turn);
 
 
     // are there any sitreps to show?
@@ -2125,6 +2148,13 @@ void MapWnd::InitTurn() {
         HideModeratorActions();
         m_btn_moderator->Disable();
         m_btn_moderator->Hide();
+    }
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        m_btn_auto_turn->Disable();
+        m_btn_auto_turn->Hide();
+    } else {
+        m_btn_auto_turn->Disable(false);
+        m_btn_auto_turn->Show();
     }
 
     m_moderator_wnd->Refresh();
@@ -4485,6 +4515,20 @@ bool MapWnd::EndTurn() {
     }
     HumanClientApp::GetApp()->StartTurn();
     return true;
+}
+
+void MapWnd::ToggleAutoEndTurn() {
+    if (m_auto_end_turn) {
+        m_auto_end_turn = false;
+        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
+        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
+        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
+    } else {
+        m_auto_end_turn = true;
+        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
+        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
+        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
+    }
 }
 
 void MapWnd::ShowModeratorActions() {
