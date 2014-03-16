@@ -41,8 +41,8 @@ struct TurnEnded : boost::statechart::event<TurnEnded> {};
   * IntroMenu. */
 struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
 
-// Posted by PlayingTurn's ctor when --auto-advance-first-turn is in use.
-struct AutoAdvanceFirstTurn : boost::statechart::event<AutoAdvanceFirstTurn> {};
+// Posted to advance the turn, including when auto-advancing the first turn
+struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 
 /** This is a Boost.Preprocessor list of all the events above.  As new events
   * are added above, they should be added to this list as well. */
@@ -293,18 +293,20 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
-        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>,
+        boost::statechart::custom_reaction<AdvanceTurn>,
         boost::statechart::custom_reaction<TurnUpdate>,
-        boost::statechart::custom_reaction<TurnEnded>
+        boost::statechart::custom_reaction<TurnEnded>,
+        boost::statechart::custom_reaction<PlayerStatus>
     > reactions;
 
     PlayingTurn(my_context ctx);
     ~PlayingTurn();
 
     boost::statechart::result react(const SaveGame& d);
-    boost::statechart::result react(const AutoAdvanceFirstTurn& d);
+    boost::statechart::result react(const AdvanceTurn& d);
     boost::statechart::result react(const TurnUpdate& msg);
     boost::statechart::result react(const TurnEnded& d);
+    boost::statechart::result react(const PlayerStatus& msg);
 
     CLIENT_ACCESSOR
 };

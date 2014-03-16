@@ -615,6 +615,10 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 ////////////////////////////////////////////////////////////
 // PlayingTurn
 ////////////////////////////////////////////////////////////
+namespace {
+    static bool once = true;
+}
+
 PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
@@ -635,14 +639,19 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // be back in WaitingForTurnData, so posting TurnEnded here has the effect
     // of keeping observers in the WaitingForTurnData state so they can receive
     // updates from the server.
-    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
         post_event(TurnEnded());
 
-    else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
-        static bool once = true;
-        if (once) {
-            post_event(AutoAdvanceFirstTurn());
+    } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled()) {
             once = false;
+            post_event(AdvanceTurn());
+        }
+
+    } else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
+        if (once) {
+            once = false;
+            post_event(AdvanceTurn());
         }
     }
 }
@@ -656,7 +665,7 @@ boost::statechart::result PlayingTurn::react(const SaveGame& msg) {
     return discard_event();
 }
 
-boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d) {
+boost::statechart::result PlayingTurn::react(const AdvanceTurn& d) {
     Client().GetClientUI()->GetMapWnd()->m_btn_turn->LeftClickedSignal();
     return discard_event();
 }
@@ -678,6 +687,50 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
     return transit<WaitingForTurnData>();
 }
 
+boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.PlayerStatus";
+    int about_player_id;
+    Message::PlayerStatus status;
+    ExtractMessageData(msg.m_message, about_player_id, status);
+
+    Client().SetPlayerStatus(about_player_id, status);
+    Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+    Client().GetClientUI()->GetPlayerListWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+
+    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR &&
+        Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled())
+    {
+        // check status of all non-mod non-obs players: are they all done their turns?
+        bool all_participants_waiting = true;
+        const std::map<int, Message::PlayerStatus>& player_status = Client().PlayerStatus();
+        const std::map<int, PlayerInfo>& players = Client().Players();
+        for (std::map<int, PlayerInfo>::const_iterator it = players.begin();
+                it != players.end(); ++it)
+        {
+            int player_id = it->first;
+
+            if (it->second.client_type != Networking::CLIENT_TYPE_AI_PLAYER &&
+                it->second.client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            { continue; }   // only active participants matter...
+
+            std::map<int, Message::PlayerStatus>::const_iterator status_it = player_status.find(player_id);
+            if (status_it == player_status.end()) {
+                all_participants_waiting = false;
+                break;
+            }
+            if (status_it->second != Message::WAITING) {
+                all_participants_waiting = false;
+                break;
+            }
+        }
+
+        // if all participants waiting, can end turn immediately
+        if (all_participants_waiting)
+            post_event(AdvanceTurn());
+    }
+
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // ResolvingCombat
