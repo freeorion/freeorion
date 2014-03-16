@@ -1483,16 +1483,16 @@ void FleetDataPanel::UpdateAggressionToggle() {
     }
 
     if (aggressive) {
-        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon(),          GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon(),             GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon(), GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon()));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     } else {
-        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon(),             GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon(),          GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon(),    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
