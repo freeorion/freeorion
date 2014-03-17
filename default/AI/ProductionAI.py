@@ -106,9 +106,8 @@ def getBestShipInfo(priority,  loc=None):
             return shipDesignID,  shipDesign, validLocs
     return None,  None,  None #must be missing a Shipyard or other orbital (or missing tech)
 
-def getBestShipRatings(loc=None):
+def getBestShipRatings(loc=None,  verbose = False):
     "returns list of [partition, pid, designID, design] sublists"
-    verbose=False
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -135,14 +134,18 @@ def getBestShipRatings(loc=None):
     locDetail=[]
     theseDesignIDs.sort(reverse=True)
     bestCostRating = 0.0
+    style_index = fo.empireID() %2
     if verbose:
-        print "getBestShipRatings checking %d designs on planetIDs %s from loc set %s" % (len(theseDesignIDs),  planetIDs, loc)
+        print "getBestShipRatings checking %d designs w/r/t enemy stats %s  on planetIDs %s from loc set %s" % (
+                    len(theseDesignIDs),  foAI.foAIstate.fleet_summary_to_estats([(1,  foAI.foAIstate.empire_standard_enemy)]),  planetIDs, loc)
     for pid in planetIDs:
         localBestCostRating = 0.0
         bestDesignID = -1
         bestDesign = None
         if pid == None: #TODO: is this check still necessary?
             continue
+        species_name = ColonisationAI.empireSpeciesByPlanet.get(pid,  '')
+        try_counter = 0 #tracks how many design tries since last improved design found here
         for _ , shipDesignID in theseDesignIDs:
             designStats = foAI.foAIstate.get_weighted_design_stats(shipDesignID,  ColonisationAI.empireSpeciesByPlanet.get(pid,  ''))
             shipDesign = fo.getShipDesign(shipDesignID)
@@ -150,18 +153,29 @@ def getBestShipRatings(loc=None):
                 continue
             cost = get_design_cost(cur_turn,  shipDesign,  pid)
             nattacks = sum( designStats.get('attacks', {1:1}).keys() )
-            costRating = (designStats['attack'] * (designStats['structure'] + nattacks*designStats['shields']))/(max( 0.1,  cost))  # TODO: improve shield treatment here
-            if costRating < 0.1* bestCostRating:
+            old_design_rating = (designStats['attack'] * (designStats['structure'] + nattacks*designStats['shields']))
+            new_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1,  shipDesignID,  species_name)] ).get('overall',  0)
+            design_rating = [old_design_rating,  new_design_rating][ style_index]
+            costRating = design_rating/(max( 0.1,  cost)) 
+            if verbose and ( int(old_design_rating/10) != int(new_design_rating/10) ):
+                print "design %s (for species %s) has cost %.1f,  old rating %.1f and new rating %.1f"%(
+                                    shipDesign.name(False), species_name,  cost,  old_design_rating,  new_design_rating)
+            if (try_counter > 30) and (costRating < 0.1* bestCostRating): # disabled until find better way to organize
                 break
             if costRating > localBestCostRating:
+                try_counter = 0
                 localBestCostRating = costRating
                 bestDesignID = shipDesignID
                 bestDesign = shipDesign
+                if verbose:
+                    print "at planet %s,  new local best design %s with rating %.1f,  costRating %.1f, hull %s  and partslist %s"%(
+                                PlanetUtilsAI.planetNameIDs([pid]),  shipDesign.name(False), design_rating,  costRating, shipDesign.hull,   list(shipDesign.parts))
                 if costRating > bestCostRating:
                     bestCostRating = costRating
         if localBestCostRating > 0.0:
             if verbose:
-                print "\t\t adding design id %d (%s) with costRating %.4f at pid %d" % (bestDesignID,  bestDesign.name,  costRating,  pid)
+                print "\t\t adding design id %d (%s) (species %s) with costRating %.4f at pid %d" % (
+                                                                                                     bestDesignID,  bestDesign.name(False), species_name,  localBestCostRating,  pid)
             locDetail.append( [localBestCostRating,  pid,  bestDesignID,  bestDesign] )
     if locDetail == []:
         return []
@@ -325,9 +339,15 @@ def addMarkDesigns():
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC" #11 = "Comet":"BA"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  ar1, srb%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  ar1, srb2%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    nb,  hull =  designNameBases[2]+"-1z-%1d",   "SH_ORGANIC" 
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar2,  ar2, srb%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar2,  ar2, srb2%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
     nb,  hull =  designNameBases[2]+"-1G-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is1],  "",  model)    for iw in [1, 2, 3, 4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    nb,  hull =  designNameBases[2]+"-1Gz-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar2,  srb%iw, srb%iw,  is1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar2,  srb2%iw, srb2%iw,  is1],  "",  model)    for iw in [1, 2, 3, 4] ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is2],  "",  model)    for iw in [1, 2, 3, 4] ]
@@ -1593,6 +1613,8 @@ def generateProductionOrders():
     for pSet in allocatedPP:
         print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  allocatedPP[pSet])
 
+    if True: #log ship design assessment
+        getBestShipRatings( list(AIstate.popCtrIDs),  verbose = True)
     print "\n\nBuilding Ships in system groups  with remaining  PP:"
     for pSet in planetsWithWastedPP:
         totalPP = availablePP.get(pSet,  0)
@@ -1615,7 +1637,7 @@ def generateProductionOrders():
         localPriorities = {}
         localPriorities.update( filteredPriorities )
         bestShips={}
-        milBuildChoices = getBestShipRatings(list(pSet))
+        milBuildChoices = getBestShipRatings(list(pSet),  verbose = False)
         for priority in list(localPriorities):
             if priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 if milBuildChoices == []:

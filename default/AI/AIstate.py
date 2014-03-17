@@ -555,34 +555,43 @@ class AIstate(object):
                 return True
         return False
         
-    def rateFleet(self, fleetID,  enemy_stats=None):
+    def rate_psuedo_fleet(self,  ship_info):
+        return self.rateFleet(-1, enemy_stats=self.fleet_summary_to_estats([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
+        
+    def rateFleet(self, fleetID,  enemy_stats=None,  ship_info = None):
         """ for enemy stats format see adjust_stats_vs_enemy() 
-            summary is (attacks, attack, shields, max_structure) """
+            summary is (attacks, attack, shields, max_structure) 
+            ship_info is an optional (used iff fleetID==-1)  list of ( id, design_id, species_name) tuples where id can be -1 for a design-only analysis"""
         if enemy_stats is None:
             enemy_stats=[ (1, {}) ]
         universe=fo.getUniverse()
-        fleet=universe.getFleet(fleetID)
-        if fleet and (not fleet.aggressive) and fleet.ownedBy(self.empireID):
-            pass
-            #fleet.setAggressive(True)
-        if not fleet:
+        
+        if fleetID != -1:
+            fleet=universe.getFleet(fleetID)
+            if fleet and (not fleet.aggressive) and fleet.ownedBy(self.empireID):
+                pass
+                #fleet.setAggressive(True)
+            if not fleet:
+                return {}
+            ship_info = [ (shipID,  ship.designID, ship.speciesName) for shipID,  ship in [(shipID,  universe.getShip(shipID)) for shipID in fleet.shipIDs] if ship]
+        elif not ship_info:
             return {}
+                
         rating=0
         attack=0
         health=0
         nships=0
         summary={}
-        for shipID in fleet.shipIDs:
+        for shipID,  designID,  species_name in ship_info:
             #could approximate by design, but checking  meters has better current accuracy
             ship = universe.getShip(shipID)
-            if not ship:
-                continue
-            stats = dict(self.get_weighted_design_stats(ship.designID,  ship.speciesName))
+            stats = dict(self.get_weighted_design_stats(designID,  species_name))
             max_struct = stats['structure']
-            structure = ship.currentMeterValue(fo.meterType.structure)
-            shields = ship.currentMeterValue(fo.meterType.shield)
-            stats['structure'] = structure
-            stats['shields'] = shields
+            if ship:
+                structure = ship.currentMeterValue(fo.meterType.structure)
+                shields = ship.currentMeterValue(fo.meterType.shield)
+                stats['structure'] = structure
+                stats['shields'] = shields
             self.adjust_stats_vs_enemy(stats,  enemy_stats)
             rating += stats['attack'] * stats['structure']
             attack += stats['attack']

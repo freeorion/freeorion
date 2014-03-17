@@ -721,7 +721,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
             else:
                 theseFleets = foundFleets
                 #rating = sum( map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) )
-                ratings = map(foAI.foAIstate.rateFleet,  foundFleets )
+                ratings = map(foAI.foAIstate.getRating,  foundFleets )
                 rating = sum([fr.get('attack', 0) for fr in ratings]) * sum([fr.get('health', 0) for fr in ratings])
                 if doingMain  and verboseMilReporting:
                     if rating < minMilAllocations.get(sysID,  0):
