@@ -1244,6 +1244,8 @@ Test 3D combat resolution.
 OPTIONS_DB_LOAD
 Loads the specified single-player save game.
 
+OPTIONS_DB_EFFECTS_THREADS_DESC
+Specifies number of threads to use in effects processing. More than one thread may lead to unpredictable crashes of the client or server.
 
 
 #################
@@ -1974,6 +1976,9 @@ Combat
 OPTIONS_PAGE_DIRECTORIES
 Directories
 
+OPTIONS_PAGE_MISC
+Other
+
 OPTIONS_TECH_COLORS
 Techs
 
@@ -2039,6 +2044,10 @@ Verbose logging for debugging
 
 OPTIONS_VERBOSE_SITREP_DESC
 Situation reports with errors
+
+OPTIONS_EFFECTS_THREADS
+Effects processing threads
+
 
 ##################
 # CombatSetupWnd #

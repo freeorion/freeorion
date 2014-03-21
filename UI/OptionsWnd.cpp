@@ -1005,6 +1005,11 @@ void OptionsWnd::Init() {
     DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetUserDir());
     EndPage();
 
+    // Misc
+    BeginPage(UserString("OPTIONS_PAGE_MISC"));
+    IntOption("effects-threads",                    UserString("OPTIONS_EFFECTS_THREADS"));
+    EndPage();
+
     // Connect the done and cancel button
     GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
 }

@@ -52,7 +52,8 @@ namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
-        db.Add("verbose-logging", UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),  false,  Validator<bool>());
+        db.Add("verbose-logging",   UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),   false,  Validator<bool>());
+        db.Add("effects-threads",   UserStringNop("OPTIONS_DB_EFFECTS_THREADS_DESC"),   8,      RangedValidator<int>(1, 32));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1646,7 +1647,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     boost::timer eval_timer;
 
     std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
-    RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(16U);
+    unsigned int num_threads = static_cast<unsigned int>(std::max(1, GetOptionsDB().Get<int>("effects-threads")));
+    RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(num_threads);
     boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue
 
