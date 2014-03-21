@@ -210,6 +210,7 @@ void GalaxySetupPanel::RandomClicked() {
         s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
     m_seed_edit->SetText(s);
     //std::cout << "GalaxySetupPanel::RandomClicked() new seed: " << s << std::endl;
+    SettingChanged_(0);
 }
 
 const std::string& GalaxySetupPanel::GetSeed() const
@@ -291,6 +292,7 @@ void GalaxySetupPanel::Init() {
     AttachChild(m_ai_aggression_list);
 
     GG::Connect(m_random->LeftClickedSignal,                &GalaxySetupPanel::RandomClicked,   this);
+    GG::Connect(m_seed_edit->FocusUpdateSignal,             &GalaxySetupPanel::SeedChanged,     this);
     GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
@@ -384,6 +386,9 @@ void GalaxySetupPanel::SettingChanged_(int) {
 }
 
 void GalaxySetupPanel::SettingChanged(GG::DropDownList::iterator)
+{ SettingChanged_(0); }
+
+void GalaxySetupPanel::SeedChanged(const std::string& newseed)
 { SettingChanged_(0); }
 
 void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)

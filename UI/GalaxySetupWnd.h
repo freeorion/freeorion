@@ -61,6 +61,7 @@ private:
     void RandomClicked();
     void SettingChanged_(int);
     void SettingChanged(GG::ListBox::iterator);
+    void SeedChanged(const std::string& newseed);
     void ShapeChanged(GG::ListBox::iterator it);
 
     CUIEdit*            m_seed_edit;            //!< The seed used in the generation of the galaxy
