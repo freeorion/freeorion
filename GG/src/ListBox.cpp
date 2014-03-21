@@ -307,7 +307,10 @@ void ListBox::Row::resize(std::size_t n)
 
 void ListBox::Row::SetCell(std::size_t n, Control* c)
 {
-    assert(c != m_cells[n]);
+    //assert(c != m_cells[n]);  // replaced with following test and return to avoid crashes
+    if (c == m_cells[n])
+        return;
+
     delete m_cells[n];
     m_cells[n] = c;
     AdjustLayout();
@@ -658,15 +661,24 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 {
     if (m_selections.empty())
         return;
+    if (m_rows.empty())
+        return;
+
+    iterator wnd_it = std::find(m_rows.begin(), m_rows.end(), wnd);
+    //assert(wnd_it != m_rows.end());   // replaced with following test and return to avoid crashes
+    if (wnd_it == m_rows.end())
+        return;
+
+    SelectionSet::iterator wnd_sel_it = m_selections.find(wnd_it);
+    //assert(wnd_sel_it != m_selections.end()); // replaced with following test and return to avoid crashes
+    if (wnd_sel_it == m_selections.end())
+        return;
 
     Y vertical_offset = offset.y;
-    iterator wnd_it = std::find(m_rows.begin(), m_rows.end(), wnd);
-    assert(wnd_it != m_rows.end());
-    SelectionSet::iterator wnd_sel_it = m_selections.find(wnd_it);
-    assert(wnd_sel_it != m_selections.end());
+
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != wnd_sel_it; ++sel_it) {
         vertical_offset += (**sel_it)->Height();
-    }    
+    }
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
         Wnd* row_wnd = **sel_it;
         if (row_wnd != wnd) {
@@ -694,7 +706,10 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
         for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             Row* row = boost::polymorphic_downcast<Row*>(*it);
             iterator row_it = std::find(m_rows.begin(), m_rows.end(), row);
-            assert(row_it != m_rows.end());
+            //assert(row_it != m_rows.end());   // replaced with following test and continue to avoid crashes
+            if (row_it == m_rows.end())
+                continue;
+
             Erase(row_it, false, true);
         }
     }
@@ -1964,8 +1979,12 @@ void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
 
 void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
 {
-    assert(it != m_rows.end());
-    assert(!m_rows.empty());
+    //assert(it != m_rows.end());   // replaced with following test and return to avoid crashes
+    if (it == m_rows.end())
+        return;
+    //assert(!m_rows.empty());      // replaced with following test and return to avoid crashes
+    if (m_rows.empty())
+        return;
 
     SelectionSet previous_selections = m_selections;
     if (m_style & LIST_SINGLESEL) {
