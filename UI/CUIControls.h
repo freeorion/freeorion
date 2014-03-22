@@ -211,8 +211,8 @@ public:
 class CUISortListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
-    CUISortListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr interior = GG::CLR_ZERO,
-                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
+    CUISortListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color = ClientUI::CtrlBorderColor(),
+                   GG::Clr interior = GG::CLR_ZERO, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
     //@}
 
     /** \name Mutators */ //@{
@@ -355,10 +355,15 @@ public:
 
     virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void            SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
     //@}
+
+    mutable boost::signals2::signal<void ()>    LeftClickedSignal;
+    mutable boost::signals2::signal<void ()>    RightClickedSignal;
 
 private:
     void            Refresh();
