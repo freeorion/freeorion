@@ -58,8 +58,12 @@ class GG_API StaticGraphic : public Control
 {
 public:
     /** \name Structors */ ///@{
-    StaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture, Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = Flags<WndFlag>()); ///< creates a StaticGraphic from a pre-existing Texture.
-    StaticGraphic(X x, Y y, X w, Y h, const SubTexture& subtexture, Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = Flags<WndFlag>()); ///< creates a StaticGraphic from a pre-existing SubTexture.
+     ///< creates a StaticGraphic from a pre-existing Texture.
+    StaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture,
+                  Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = Flags<WndFlag>());
+    ///< creates a StaticGraphic from a pre-existing SubTexture.
+    StaticGraphic(X x, Y y, X w, Y h, const SubTexture& subtexture,
+                  Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = Flags<WndFlag>());
     //@}
 
     /** \name Accessors */ ///@{
