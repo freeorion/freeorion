@@ -221,13 +221,12 @@ MPLobby::MPLobby(my_context ctx) :
 
 MPLobby::~MPLobby() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
-
-    Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Disconnection";
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
     return transit<IntroMenu>();
 }
 
@@ -268,6 +267,7 @@ boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
     HumanClientApp::GetApp()->Networking().DisconnectFromServer();
+    Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
     return transit<IntroMenu>();
 }
 
@@ -290,7 +290,7 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     post_event(msg);
 
     Client().GetClientUI()->GetMapWnd()->Sanitize();
-
+    Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
     return transit<WaitingForGameStart>();
 }
 
@@ -304,6 +304,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     ClientUI::MessageBox(UserString(problem), true);
 
     if (fatal) {
+        Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
         return transit<IntroMenu>();
     } else {
         return discard_event();
@@ -325,9 +326,6 @@ PlayingGame::PlayingGame(my_context ctx) :
 
 PlayingGame::~PlayingGame() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingGame";
-    Client().Remove(Client().GetClientUI()->GetMapWnd());
-    Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
-    Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
 }
 
 boost::statechart::result PlayingGame::react(const HostID& msg) {
@@ -366,6 +364,9 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Disconnection";
     Client().EndGame(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
 }
 
@@ -453,6 +454,9 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
         break;
     }
     ClientUI::MessageBox(reason_message, error);
+    Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
 }
 
@@ -460,7 +464,9 @@ boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
 
     Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
-
+    Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
 }
 
@@ -475,6 +481,9 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 
     if (fatal) {
         Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        Client().Remove(Client().GetClientUI()->GetMapWnd());
+        Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+        Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
         return transit<IntroMenu>();
     } else {
         return discard_event();
@@ -748,7 +757,6 @@ ResolvingCombat::ResolvingCombat(my_context ctx) :
 
 ResolvingCombat::~ResolvingCombat() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
-    Client().GetClientUI()->GetMapWnd()->Show();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
@@ -777,5 +785,6 @@ boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg) {
 
 boost::statechart::result ResolvingCombat::react(const CombatEnd& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
+    Client().GetClientUI()->GetMapWnd()->Show();
     return transit<WaitingForTurnData>();
 }
