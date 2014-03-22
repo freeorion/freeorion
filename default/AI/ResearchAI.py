@@ -7,7 +7,6 @@ import AIstate
 import traceback
 import sys
 import ColonisationAI
-import random
 
 inProgressTechs={}
 
@@ -116,12 +115,6 @@ def generateResearchOrders():
                 if   ccTech not in researchQueueList[:insertIdx+1]  and  empire.getTechStatus(ccTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(ccTech, insertIdx)
                     print "Empire is very aggressive,  so attempted to fast-track %s,  got result %d"%(ccTech, res)
-
-        if (fo.currentTurn()==5) and (random.random() <= 0.25) and ( "SHP_WEAPON_2_1" in researchQueueList) : # somewhat prioritize a couple defensive techs
-            idx = researchQueueList.index( "SHP_WEAPON_2_1")
-            for def_tech in ["DEF_PLAN_BARRIER_SHLD_1", "DEF_DEFENSE_NET_2" ]:
-                res=fo.issueEnqueueTechOrder(def_tech, idx)
-                print "Empire feeling defensive today,  so attempted to fast-track %s,  got result %d"%(def_tech, res)
 
         print""
 

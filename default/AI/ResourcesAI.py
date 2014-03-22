@@ -3,7 +3,7 @@ import FreeOrionAI as foAI
 import AIstate
 from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
 import PlanetUtilsAI
-from random import shuffle,  random
+import random
 from time import time
 import ColonisationAI
 import AIDependencies
@@ -156,8 +156,13 @@ def setPlanetResourceFoci(): #+
     empire = fo.getEmpire()
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
+    # set the random seed (based on galaxy seed, empire ID and current turn)
+    # for game-reload consistency 
+    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn()) + "Resources"
+    random.seed(random_seed)
+
     freq = min(3,  ( max(5,  currentTurn-80)   )/4.0)**(1.0/3)
-    if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
+    if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random.random() < 1.0/freq ) :
         timer = 6*[time()]
     else:
         lastFociCheck[0]=currentTurn
@@ -277,7 +282,7 @@ def setPlanetResourceFoci(): #+
         id_set = set(empirePlanetIDs)
         for adj_round in [1, 2, 3, 4]:
             maxi_ratio = ctRP0 / max ( 0.01,  ctPP0 ) #should only change between rounds 1 and 2
-            for pid in list(id_set):
+            for adj_round in list(id_set):
                 if round == 1: #tally max Industry
                     iPP,  iRP  = newTargets.get(pid, {}).get( IFocus,  [0, 0] )
                     ctPP0 += iPP
@@ -290,14 +295,14 @@ def setPlanetResourceFoci(): #+
                 #calculate factor F at  which     II + F * IR  ==  RI + F * RR   =====>  F = ( II-RI ) / (RR-IR)
                 thisFactor = ( II-RI ) / max( 0.01,  RR-IR)  # don't let denominator be zero for planets where focus doesn't change RP
                 planet = planetMap[pid]
-                if round == 2: #take research at planets with very cheap research
+                if adj_round == 2: #take research at planets with very cheap research
                     if  (maxi_ratio < priorityRatio) and (curTargetRP < priorityRatio * ctPP0) and (thisFactor <=1.0):
                         curTargetPP += RI #
                         curTargetRP += RR
                         newFoci[pid] = RFocus
                         id_set.discard(pid)
                     continue
-                if (round == 3): #take research at planets where can do reasonable balance
+                if (adj_round == 3): #take research at planets where can do reasonable balance
                     if (has_force) or (foAI.foAIstate.aggression < fo.aggression.aggressive) or (curTargetRP >= priorityRatio * ctPP0):
                         continue
                     pop = planet.currentMeterValue(fo.meterType.population)
@@ -311,7 +316,7 @@ def setPlanetResourceFoci(): #+
                         newFoci[pid] = RFocus
                         id_set.discard(pid)
                     continue
-                #round == 4 assume default IFocus
+                #adj_round == 4 assume default IFocus
                 curTargetPP += II  #icurTargets initially calculated by Industry focus, which will be our default focus
                 curTargetRP += IR
                 newFoci[pid] = IFocus

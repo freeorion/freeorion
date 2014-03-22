@@ -162,40 +162,40 @@ def calculateResearchPriority():
     if foAI.foAIstate.aggression >=fo.aggression.maniacal:
         styleIndex+= 1
 
-    cutoffSets =  [ [25, 45, 70,  110  ],  [35,  50,  70,  150  ],  [25,  50,  120,  180  ]    ]
+    cutoffSets =  [ [25, 45, 70,  110  ],  [35,  50,  70,  150  ],  [25,  50,  80,  160  ]    ]
     cutoffs = cutoffSets[styleIndex  ]
-    settings = [ [1.4, .7, .5,  .4, .35  ],  [1.6,  1.0,  .8,  .6, .35   ],  [2.0,  1.4,  1.0,  .7, .35   ]    ][styleIndex  ]
+    settings = [ [1.4, .7, .5,  .4, .35  ],  [1.6,  1.0,  .8,  .6, .35   ],  [1.8,  1.4,  1.0,  .7, .35   ]    ][styleIndex  ]
 
-    if industrySurge and True:
-        researchPriority =  0.2 * industryPriority
+    if  (fo.currentTurn() < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
+        researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
+    elif (not got_orb_gen) or (fo.currentTurn() < cutoffs[1]) :
+        researchPriority = settings[1] * industryPriority# med-high research
+    elif (fo.currentTurn() < cutoffs[2]):
+        researchPriority = settings[2] * industryPriority # med-high  industry
+    elif (fo.currentTurn() < cutoffs[3]):
+        researchPriority = settings[3] * industryPriority # med-high  industry
     else:
-        if  (fo.currentTurn() < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
-            researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
-        elif (not got_orb_gen) or (fo.currentTurn() < cutoffs[1]) :
-            researchPriority = settings[1] * industryPriority# med-high research
-        elif (fo.currentTurn() < cutoffs[2]):
-            researchPriority = settings[2] * industryPriority # med-high  industry
-        elif (fo.currentTurn() < cutoffs[3]):
-            researchPriority = settings[3] * industryPriority # med-high  industry
-        else:
-            researchQueue = list(empire.researchQueue)
-            researchPriority = settings[4] * industryPriority # high  industry , low research
-            if len(researchQueue) == 0 :
-                researchPriority = 0 # done with research
-            elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
-                researchPriority =  len(researchQueue) # barely not done with research
-            elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
-                researchPriority = 4+ len(researchQueue) # almost done with research
-            elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
-                researchPriority = 0.5 * researchPriority # closing in on end of research
-            elif len(researchQueue) <20:
-                researchPriority = 0.7*researchPriority # high  industry , low research
+        researchQueue = list(empire.researchQueue)
+        researchPriority = settings[4] * industryPriority # high  industry , low research
+        if len(researchQueue) == 0 :
+            researchPriority = 0 # done with research
+        elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
+            researchPriority =  len(researchQueue) # barely not done with research
+        elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
+            researchPriority = 4+ len(researchQueue) # almost done with research
+        elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
+            researchPriority = 0.5 * researchPriority # closing in on end of research
+        elif len(researchQueue) <20:
+            researchPriority = 0.7*researchPriority # high  industry , low research
+    if industrySurge:
+        researchPriority *= 0.5
                 
     if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
             (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
             (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
-        industry_factor = [ [0.25,  0.2],  [0.3,  0.25],  [0.3,  0.25] ][styleIndex ]
-        researchPriority = min(researchPriority,  industry_factor[got_solar_gen]*industryPriority) 
+        #industry_factor = [ [0.25,  0.2],  [0.3,  0.25],  [0.3,  0.25] ][styleIndex ]
+        #researchPriority = min(researchPriority,  industry_factor[got_solar_gen]*industryPriority) 
+        researchPriority *= 0.6
     if got_quant:
         researchPriority = min(researchPriority + 0.1*industryPriority,  researchPriority * 1.3) 
     researchPriority = int(researchPriority)
@@ -413,8 +413,10 @@ def calculateMilitaryPriority():
             threatRoot = status.get('fleetThreat', 0)**0.5  + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
         shipsNeeded += math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
 
+    scale = (75 + ProductionAI.curBestMilShipCost()) / 2.0
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
     militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(75*shipsNeeded) )
+    #militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(scale*shipsNeeded) )
     if not have_mod_weaps:
         militaryPriority /= 2
     #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)

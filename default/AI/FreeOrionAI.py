@@ -208,6 +208,10 @@ def generateOrders(): # pylint: disable=invalid-name
     turnStartTime = time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
+    # set the random seed (based on galaxy seed, empire ID and current turn)
+    # for game-reload consistency 
+    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn())
+    random.seed(random_seed)
     planet = None
     if planetID is not None:
         planet = universe.getPlanet(planetID)

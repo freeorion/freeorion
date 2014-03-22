@@ -243,13 +243,13 @@ def primary_meta_techs(index = 0):
         result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 1:
-        result =   tech_group_1b()  # early _lrn_artif_minds
+        result =   tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
         result += tech_group_3a()  # without SHP_ASTEROID_REFORM
         result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 2:
-        result =   tech_group_1b()  # early _lrn_artif_minds
+        result =   tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
         result += tech_group_3a()  # without SHP_ASTEROID_REFORM
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
@@ -261,7 +261,7 @@ def primary_meta_techs(index = 0):
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 4:
-        result =   tech_group_1b()  # early _lrn_artif_minds
+        result =   tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
         result += tech_group_3b()  # 3a plus SHP_ASTEROID_REFORM
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN

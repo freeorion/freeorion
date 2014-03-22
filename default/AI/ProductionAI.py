@@ -14,7 +14,7 @@ import ColonisationAI
 import EnumsAI
 import MilitaryAI
 
-bestMilRatingsHistory={}
+bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
 design_cost_cache = { 0: { (-1, -1):0 } } #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   EnumsAI.AIShipDesignTypes.explorationShip,
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostShip,
@@ -57,18 +57,28 @@ def curBestMilShipRating():
     if fo.currentTurn() not in bestMilRatingsHistory:
         milBuildChoices = getBestShipRatings()
         if milBuildChoices == []:
+            bestMilRatingsHistory[ fo.currentTurn() ] = (0.00001,  1)
             return 0.00001
         top = milBuildChoices[0]
-        bestDesignID,  bestDesign,  buildChoices = top[2],  top[3],  [top[0]]
+        bestDesignID,  bestDesign,  buildChoices = top[2],  top[3],  [top[1]]
         #bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
         if bestDesign is None:
+            bestMilRatingsHistory[ fo.currentTurn() ] = (0.00001,  1)
             return 0.00001  #  empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
         #stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
         stats = foAI.foAIstate.get_weighted_design_stats(bestDesignID,  ColonisationAI.empireSpeciesByPlanet.get(buildChoices[0],  ''))
         foAI.foAIstate.adjust_stats_vs_enemy(stats)
-        bestMilRatingsHistory[ fo.currentTurn() ] = stats['attack'] * stats['structure']
-    return bestMilRatingsHistory[ fo.currentTurn() ]
-
+        cost = bestDesign.productionCost(fo.empireID(),  buildChoices[0])
+        bestMilRatingsHistory[ fo.currentTurn() ] = ( stats['attack'] * stats['structure'],  cost )
+    return bestMilRatingsHistory[ fo.currentTurn() ][0]
+    
+def curBestMilShipCost():
+    if (fo.currentTurn()+1) in bestMilRatingsHistory:
+        bestMilRatingsHistory.clear()
+    if fo.currentTurn() not in bestMilRatingsHistory:
+        _ = curBestMilShipRating()
+    return bestMilRatingsHistory[ fo.currentTurn() ][1]
+    
 def getBestShipInfo(priority,  loc=None):
     "returns designID,  design,  buildLocList"
     empire = fo.getEmpire()
@@ -571,6 +581,12 @@ def generateProductionOrders():
     #availablePP = dictFromMap( productionQueue.availablePP(prodResPool))
     #allocatedPP = dictFromMap(productionQueue.allocatedPP)
     #objectsWithWastedPP = productionQueue.objectsWithWastedPP(prodResPool)
+    
+    # set the random seed (based on galaxy seed, empire ID and current turn)
+    # for game-reload consistency 
+    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn()) + "Production"
+    random.seed(random_seed)
+
 
     currentTurn = fo.currentTurn()
     print ""
@@ -1644,7 +1660,7 @@ def generateProductionOrders():
                     del localPriorities[priority]
                     continue
                 top = milBuildChoices[0]
-                bestDesignID,  bestDesign,  buildChoices = top[2],  top[3],  [top[0]]
+                bestDesignID,  bestDesign,  buildChoices = top[2],  top[3],  [top[1]]
                 #score = ColonisationAI.pilotRatings.get(pid, 0)
                 #if bestScore < ColonisationAI.curMidPilotRating:
             else:
