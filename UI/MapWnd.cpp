@@ -820,13 +820,13 @@ MapWnd::MapWnd() :
                                      0, 3, false);
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_btn_turn->Height(),
+    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0, 3, false);
     m_industry->SetName("Industry StatisticIcon");
     GG::Connect(m_industry->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_btn_turn->Height(),
+    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
                                    0, 3, false);
     m_research->SetName("Research StatisticIcon");
@@ -847,9 +847,11 @@ MapWnd::MapWnd() :
                                     0, 3, false);
     m_detection->SetName("Detection StatisticIcon");
 
-    m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
+                                       "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
+                                       "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
