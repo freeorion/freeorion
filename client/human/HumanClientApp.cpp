@@ -1007,20 +1007,28 @@ void HumanClientApp::Autosave() {
     const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
 
     // get empire name, filtered for filename acceptability
-    std::string empire_name = Empires().Lookup(EmpireID())->Name();
+    int client_empire_id = EmpireID();
+    const Empire* empire = Empires().Lookup(client_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+    else
+        empire_name = UserString("OBSERVER");
     std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
     if (first_good_empire_char == std::string::npos) {
-        empire_name = "";
+        empire_name.clear();
     } else {
         std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
         empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
     }
 
     // get player name, also filtered
-    std::string player_name = Empires().Lookup(EmpireID())->PlayerName();
+    std::string player_name;
+    if (empire)
+        player_name = empire->PlayerName();
     std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
     if (first_good_player_char == std::string::npos) {
-        player_name = "";
+        player_name.clear();
     } else {
         std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
         player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
