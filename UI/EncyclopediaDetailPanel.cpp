@@ -1155,7 +1155,26 @@ namespace {
             detailed_description += "\n" + target_empire_name + " : " + num_str;
         }
 
+        // ship designs destroyed
         const std::map<int, int>&           empire_designs_destroyed = empire->ShipDesignsDestroyed();
+        if (!empire_ships_destroyed.empty())
+            detailed_description += "\n\n" + UserString("SHIP_DESIGNS_DESTROYED");
+        for (std::map<int, int>::const_iterator it = empire_designs_destroyed.begin();
+             it != empire_designs_destroyed.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+
+            int design_id = it->first;
+            const ShipDesign* design = GetShipDesign(design_id);
+            std::string design_name;
+            if (design)
+                design_name = design->Name();
+            else
+                design_name = UserString("UNKNOWN");
+
+            detailed_description += "\n" + design_name + " : " + num_str;
+        }
+
         const std::map<std::string, int>&   species_ships_destroyed = empire->SpeciesShipsDestroyed();
 
         const std::map<std::string, int>&   species_planes_invaded = empire->SpeciesPlanetsInvaded();

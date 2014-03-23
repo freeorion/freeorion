@@ -2989,6 +2989,9 @@ No Owned Fleets Known
 EMPIRE_SHIPS_DESTROYED
 Empire Ships Destroyed
 
+SHIP_DESIGNS_DESTROYED
+Ship Designs Destroyed
+
 SPECIES_SHIPS_DESTROYED
 Species Ships Destroyed
 
