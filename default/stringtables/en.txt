@@ -2986,6 +2986,33 @@ OWNED_FLEET_AT_SYSTEM
 NO_OWNED_FLEETS_KNOWN
 No Owned Fleets Known
 
+EMPIRE_SHIPS_DESTROYED
+Empire Ships Destroyed
+
+SPECIES_SHIPS_DESTROYED
+Species Ships Destroyed
+
+SPECIES_PLANETS_INVADED
+Species Planets Invaded
+
+SPECIES_SHIPS_PRODUCED
+Species Ships Produced
+
+SHIP_DESIGNS_PRODUCED
+Ship Designs Produced
+
+SPECIES_SHIPS_LOST
+Species Ships Lost
+
+SHIP_DESIGNS_LOST
+Ship Designs Lost
+
+SPECIES_PLANETS_DEPOPED
+Species Planets Depopulated
+
+SPECIES_PLANETS_BOMBED
+Species Planets Bombed
+
 ENC_SHIP
 Ship
 

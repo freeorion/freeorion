@@ -367,6 +367,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
 
     m_graph = new GraphControl(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_graph->ShowPoints(false);
     AttachChild(m_graph);
 
     AttachChild(m_name_text);
@@ -1069,7 +1070,7 @@ namespace {
             empire_id = boost::lexical_cast<int>(item_name);
         } catch(...)
         {}
-        const Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
             Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
@@ -1131,6 +1132,43 @@ namespace {
         } else {
             detailed_description += "\n\n" + UserString("NO_OWNED_FLEETS_KNOWN");
         }
+
+        // Misc. Statistics
+
+        // empire destroyed ships...
+        const std::map<int, int>&           empire_ships_destroyed = empire->EmpireShipsDestroyed();
+        if (!empire_ships_destroyed.empty())
+            detailed_description += "\n\n" + UserString("EMPIRE_SHIPS_DESTROYED");
+        for (std::map<int, int>::const_iterator it = empire_ships_destroyed.begin();
+             it != empire_ships_destroyed.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+
+            int target_empire_id = it->first;
+            const Empire* target_empire = Empires().Lookup(target_empire_id);
+            std::string target_empire_name;
+            if (target_empire)
+                target_empire_name = target_empire->Name();
+            else
+                target_empire_name = UserString("UNOWNED");
+
+            detailed_description += "\n" + target_empire_name + " : " + num_str;
+        }
+
+        const std::map<int, int>&           empire_designs_destroyed = empire->ShipDesignsDestroyed();
+        const std::map<std::string, int>&   species_ships_destroyed = empire->SpeciesShipsDestroyed();
+
+        const std::map<std::string, int>&   species_planes_invaded = empire->SpeciesPlanetsInvaded();
+
+        const std::map<std::string, int>&   species_ships_produced = empire->SpeciesShipsProduced();
+        const std::map<int, int>&           species_designs_produced = empire->ShipDesignsProduced();
+
+        const std::map<std::string, int>&   species_ships_lost = empire->SpeciesShipsLost();
+        const std::map<int, int>&           ship_designs_lost = empire->ShipDesignsLost();
+
+        const std::map<std::string, int>&   species_planets_depoped = empire->SpeciesPlanetsDepoped();
+        const std::map<std::string, int>&   species_planets_bombed = empire->SpeciesPlanetsBombed();
+
     }
 
     void RefreshDetailPanelSpeciesTag(      const std::string& item_type, const std::string& item_name,
@@ -1666,12 +1704,12 @@ namespace {
         }
     }
 
-    void GetRefreshDetailPanelInfo(             const std::string& item_type, const std::string& item_name,
-                                                std::string& name, boost::shared_ptr<GG::Texture>& texture,
-                                                boost::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                                float& cost, std::string& cost_units, std::string& general_type,
-                                                std::string& specific_type, std::string& detailed_description,
-                                                GG::Clr& color, boost::weak_ptr<const ShipDesign>& incomplete_design)
+    void GetRefreshDetailPanelInfo(         const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color, boost::weak_ptr<const ShipDesign>& incomplete_design)
     {
         if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
             RefreshDetailPanelPediaTag(         item_type, item_name,
@@ -1733,7 +1771,6 @@ namespace {
         } else if (item_type == TextLinker::GRAPH_TAG) {
             // should be handled externally...
         }
-
     }
 }
 
