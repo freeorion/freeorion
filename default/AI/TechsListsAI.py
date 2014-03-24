@@ -129,21 +129,21 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SHP_HEAVY_AST_HULL",
             "SHP_ADV_DAM_CONT",
             "LRN_QUANT_NET",
+            "DEF_PLAN_BARRIER_SHLD_1",
+            "DEF_DEFENSE_NET_3",
             "CON_ORBITAL_HAB",
             "CON_FRC_ENRG_STRC", 
+            "DEF_PLAN_BARRIER_SHLD_2",
+            "DEF_DEFENSE_NET_REGEN_2",
+            "DEF_SYST_DEF_MINE_1",
+            "DEF_GARRISON_3",
+            "DEF_PLAN_BARRIER_SHLD_3",
             "GRO_LIFECYCLE_MAN",
             "SHP_MULTICELL_CAST",
             "SHP_ENDOCRINE_SYSTEMS",
             "SHP_CONT_BIOADAPT",
             "SHP_DEFLECTOR_SHIELD",
             "SPY_STEALTH_1",
-            "DEF_PLAN_BARRIER_SHLD_1",
-            "DEF_DEFENSE_NET_3",
-            "SPY_DETECT_4",
-            "LRN_GRAVITONICS",
-            "LRN_ENCLAVE_VOID",
-            "LRN_STELLAR_TOMOGRAPHY",
-            "LRN_TIME_MECH",
     ]
     return result
     
@@ -160,11 +160,6 @@ def tech_group_4a():  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
             "SHP_WEAPON_3_2",
             "SHP_WEAPON_3_3",
             "SHP_WEAPON_3_4",
-            "DEF_PLAN_BARRIER_SHLD_2",
-            "CON_CONTGRAV_ARCH",
-            "LRN_XENOARCH",
-            "DEF_SYST_DEF_MINE_1",
-            "DEF_PLAN_BARRIER_SHLD_3",
     ]
     return result
     
@@ -178,17 +173,19 @@ def tech_group_4b():  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
             "CON_NDIM_STRC", 
             "SHP_FRC_ENRG_COMP",
             "SHP_ENRG_BOUND_MAN",
-            "DEF_PLAN_BARRIER_SHLD_2",
-            "CON_CONTGRAV_ARCH",
-            "LRN_XENOARCH",
-            "DEF_SYST_DEF_MINE_1",
-            "DEF_PLAN_BARRIER_SHLD_3",
     ]
     return result
 
 def tech_group_5():
     result = [
-            "DEF_GARRISON_3",
+            "CON_CONTGRAV_ARCH",
+            "LRN_XENOARCH",
+            "LRN_GRAVITONICS",
+            "LRN_ENCLAVE_VOID",
+            "LRN_STELLAR_TOMOGRAPHY",
+            "LRN_TIME_MECH",
+            "DEF_PLAN_BARRIER_SHLD_4",
+            "SPY_DETECT_4",
             "SHP_CONT_SYMB",
             "SHP_MONOCELL_EXP",
             "SHP_BIOADAPTIVE_SPEC",
@@ -215,9 +212,7 @@ def tech_group_5():
             "SHP_WEAPON_4_4",
             "LRN_ART_BLACK_HOLE",
             "SHP_BLACKSHIELD",
-            "DEF_DEFENSE_NET_REGEN_2",
             "SPY_STEALTH_4",
-            "DEF_PLAN_BARRIER_SHLD_4",
             "DEF_PLAN_BARRIER_SHLD_5",
             "SPY_DETECT_5",
             "GRO_GAIA_TRANS",
