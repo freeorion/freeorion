@@ -26,7 +26,7 @@ def show_only_some(x, pos):
   else:
     return ''
 
-doPlotTypes = ["PP"]+ [ "RP"] #+[ "ShipCount"]
+doPlotTypes = ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
 
 def parseFile(fileName, AI =True):
         print "processing file ",  fileName
@@ -34,7 +34,7 @@ def parseFile(fileName, AI =True):
         gotColors=False
         gotSpecies=False
         gotName=False
-        data={"PP":[],  "RP":[],  "ShipCount":[],  "turnsP":[],  "turnPP":[]}
+        data={"PP":[],  "RP":[], "RP_Ratio":[], "ShipCount":[],  "turnsP":[],  "turnPP":[]}
         details={'color':{1, 1, 1, 1},  'name':"",  'species':""}
         with open(fileName, 'r') as lf:
             while True:
@@ -63,6 +63,7 @@ def parseFile(fileName, AI =True):
                     RPPP = parts[1].split('(')[-1].split('/')
                     data['PP'].append( float( RPPP[1]) )
                     data['RP'].append( float( RPPP[0]) )
+                    data['RP_Ratio'].append( float( RPPP[0])/float( RPPP[1]) )
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append( int(line.split("Empire Ship Count:")[1]))
         return data,  details
@@ -115,6 +116,8 @@ for plotType in doPlotTypes:
         caption="Production"
     elif plotType=="RP":
         caption="Research"
+    elif plotType=="RP_Ratio":
+        caption="Res:Prod Ratio"
     else:
         caption="Ships"
     figure(figsize=(10, 6))
@@ -151,7 +154,8 @@ for plotType in doPlotTypes:
     xlabel('Turn')
     ylabel(plotType)
     title(caption+' Progression')
-    ax.set_yscale('log',basey=10)
+    if ymax >= 100:
+        ax.set_yscale('log',basey=10)
       
     if playerName not in allData:
         print "\t\t\tcan't find playerData in allData\n"
@@ -180,12 +184,13 @@ for plotType in doPlotTypes:
     title(caption+' Progression ')
     x1,x2,y1,y2 = axis()
     newY2=y2
-    for yi in range(1, 10):
-        if 1.05*ymax < yi*y2/10:
-            newY2= yi*y2/10
-            break
-    print "y1: %.1f ; ymin: %.1f ; newY2/100: %.1f"%(y1, ymin, newY2/100)
-    y1 = max(y1, 4, ymin, newY2/100)
+    if plotType in ["PP",  "RP",  "ShipCount"]:
+        for yi in range(1, 10):
+            if 1.05*ymax < yi*y2/10:
+                newY2= yi*y2/10
+                break
+        print "y1: %.1f ; ymin: %.1f ; newY2/100: %.1f"%(y1, ymin, newY2/100)
+        y1 = max(y1, 4, ymin, newY2/100)
     axis( (x1,x2,y1,newY2))
     grid(b=True, which='major', color='0.25',linestyle='-')
     grid(b=True, which='minor', color='0.1', linestyle='--')

@@ -15,6 +15,7 @@ import EnumsAI
 import ProductionAI
 import ResearchAI
 from time import time
+import AIDependencies
 
 
 allottedInvasionTargets=0
@@ -152,7 +153,11 @@ def calculateResearchPriority():
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
-    industrySurge=   (foAI.foAIstate.aggression > fo.aggression.cautious) and  ( totalPP <(30*(foAI.foAIstate.aggression))  )  and (orbGenTech  in researchQueueList[:3]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete)
+    industrySurge =  ((foAI.foAIstate.aggression > fo.aggression.cautious) and  
+                              ( totalPP <(30*(foAI.foAIstate.aggression))  )  and 
+                              (orbGenTech  in researchQueueList[:3]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete) and
+                              ( not     (
+                                            (len(AIstate.popCtrIDs) >= 5 )))) # previously (empire.getTechStatus(AIDependencies.prod_auto_name) == fo.techStatus.complete) and   
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     planets = map(universe.getPlanet,  ownedPlanetIDs)
@@ -346,8 +351,8 @@ def calculateInvasionPriority():
 
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
     invasionPriority = multiplier * (30+ 150*max(0,  troopShipsNeeded ))
-    if ColonisationAI.colony_status['colonies_under_attack'] ==[]:
-        if ColonisationAI.colony_status['colonies_under_threat'] ==[]:
+    if ColonisationAI.colony_status.get('colonies_under_attack',  []) ==[]:
+        if ColonisationAI.colony_status.get('colonies_under_threat',  []) ==[]:
             invasionPriority *= 2.0
         else:
             invasionPriority *= 1.5
