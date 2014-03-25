@@ -4957,7 +4957,7 @@ GAIA_SPECIAL_DESC
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
-Ancient Ruins
+Ancient Ruins (Excavated)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
 '''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.

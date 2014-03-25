@@ -988,6 +988,7 @@ Special
 Special
     name = "DERELICT_SPECIAL2"               //  MAP / DETECTION
     description = "DERELICT_SPECIAL_DESC"
+    stealth = 40
     spawnrate = 0.5
     spawnlimit = 100
     location = And [
@@ -1066,6 +1067,7 @@ Special
 Special
     name = "DERELICT_SPECIAL3"               //  FUEL
     description = "DERELICT_SPECIAL_DESC"
+    stealth = 40
     spawnrate = 0.5
     spawnlimit = 100
     location = And [
