@@ -1375,6 +1375,52 @@ namespace {
         }
     }
 
+    namespace {
+        std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design) {
+            GetUniverse().UpdateMeterEstimates(ship->ID());
+
+            std::string hull_link;
+            if (!design->Hull().empty())
+                 hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
+
+            std::string parts_list;
+            const std::vector<std::string>& parts = design->Parts();
+            std::vector<std::string> non_empty_parts;
+            for (std::vector<std::string>::const_iterator part_it = parts.begin();
+                 part_it != parts.end(); ++part_it)
+            {
+                if (!part_it->empty())
+                    non_empty_parts.push_back(*part_it);
+            }
+            for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
+                    part_it != non_empty_parts.end(); ++part_it)
+            {
+                if (part_it != non_empty_parts.begin())
+                    parts_list += ", ";
+                parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
+            }
+
+            return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+            % design->Description()
+            % hull_link
+            % parts_list
+            % static_cast<int>(design->SRWeapons().size())
+            % static_cast<int>(design->LRWeapons().size())
+            % static_cast<int>(design->FWeapons().size())
+            % static_cast<int>(design->PDWeapons().size())
+            % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+            % ship->CurrentMeterValue(METER_MAX_SHIELD)
+            % ship->CurrentMeterValue(METER_DETECTION)
+            % ship->CurrentMeterValue(METER_STEALTH)
+            % ship->CurrentMeterValue(METER_BATTLE_SPEED)
+            % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+            % ship->CurrentMeterValue(METER_MAX_FUEL)
+            % design->ColonyCapacity()
+            % design->TroopCapacity()
+            % design->Attack());
+        }
+    }
+
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
                                             std::string& name, boost::shared_ptr<GG::Texture>& texture,
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -1399,51 +1445,10 @@ namespace {
         cost_units = UserString("ENC_PP");
         general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
 
-        std::string hull_link;
-        if (!design->Hull().empty())
-             hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
-
-        std::string parts_list;
-        const std::vector<std::string>& parts = design->Parts();
-        std::vector<std::string> non_empty_parts;
-        for (std::vector<std::string>::const_iterator part_it = parts.begin();
-             part_it != parts.end(); ++part_it)
-        {
-            if (!part_it->empty())
-                non_empty_parts.push_back(*part_it);
-        }
-        if (!non_empty_parts.empty()) {
-            for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
-                 part_it != non_empty_parts.end(); ++part_it)
-            {
-                if (part_it != non_empty_parts.begin())
-                    parts_list += ", ";
-                parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
-            }
-        }
-
         TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "",
                                                            client_empire_id, TEMPORARY_OBJECT_ID);
-        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
-        detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-            % design->Description()
-            % hull_link
-            % parts_list
-            % static_cast<int>(design->SRWeapons().size())
-            % static_cast<int>(design->LRWeapons().size())
-            % static_cast<int>(design->FWeapons().size())
-            % static_cast<int>(design->PDWeapons().size())
-            % temp->CurrentMeterValue(METER_MAX_STRUCTURE)
-            % temp->CurrentMeterValue(METER_MAX_SHIELD)
-            % temp->CurrentMeterValue(METER_DETECTION)
-            % temp->CurrentMeterValue(METER_STEALTH)
-            % temp->CurrentMeterValue(METER_BATTLE_SPEED)
-            % temp->CurrentMeterValue(METER_STARLANE_SPEED)
-            % temp->CurrentMeterValue(METER_MAX_FUEL)
-            % design->ColonyCapacity()
-            % design->TroopCapacity()
-            % design->Attack());
+        detailed_description = GetDetailedDescription(temp, design);
 
         GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
@@ -1495,53 +1500,13 @@ namespace {
             cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
             cost_units = UserString("ENC_PP");
 
-            std::string hull_link;
-            if (!incomplete_design->Hull().empty())
-                 hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, incomplete_design->Hull());
-
-            std::string parts_list;
-            const std::vector<std::string>& parts = incomplete_design->Parts();
-            std::vector<std::string> non_empty_parts;
-            for (std::vector<std::string>::const_iterator part_it = parts.begin();
-                 part_it != parts.end(); ++part_it)
-            {
-                if (!part_it->empty())
-                    non_empty_parts.push_back(*part_it);
-            }
-            if (!non_empty_parts.empty()) {
-                for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
-                     part_it != non_empty_parts.end(); ++part_it)
-                {
-                    if (part_it != non_empty_parts.begin())
-                        parts_list += ", ";
-                    parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
-                }
-            }
-
             GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
 
             TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
                                                                client_empire_id, TEMPORARY_OBJECT_ID);
             GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
-            detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-                % incomplete_design->Description()
-                % hull_link
-                % parts_list
-                % static_cast<int>(incomplete_design->SRWeapons().size())
-                % static_cast<int>(incomplete_design->LRWeapons().size())
-                % static_cast<int>(incomplete_design->FWeapons().size())
-                % static_cast<int>(incomplete_design->PDWeapons().size())
-                % temp->CurrentMeterValue(METER_MAX_STRUCTURE)
-                % temp->CurrentMeterValue(METER_MAX_SHIELD)
-                % temp->CurrentMeterValue(METER_DETECTION)
-                % temp->CurrentMeterValue(METER_STEALTH)
-                % temp->CurrentMeterValue(METER_BATTLE_SPEED)
-                % temp->CurrentMeterValue(METER_STARLANE_SPEED)
-                % temp->CurrentMeterValue(METER_MAX_FUEL)
-                % incomplete_design->ColonyCapacity()
-                % incomplete_design->TroopCapacity()
-                % incomplete_design->Attack());
+            detailed_description = GetDetailedDescription(temp, incomplete_design.get());
 
             GetUniverse().Delete(TEMPORARY_OBJECT_ID);
             GetUniverse().DeleteShipDesign(TEMPORARY_OBJECT_ID);
