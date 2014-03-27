@@ -1223,11 +1223,13 @@ void GUI::Render()
     Enter2DMode();
     // render normal windows back-to-front
     for (ZList::reverse_iterator it = s_impl->m_zlist.rbegin(); it != s_impl->m_zlist.rend(); ++it) {
-        RenderWindow(*it);
+        if (*it)
+            RenderWindow(*it);
     }
     // render modal windows back-to-front
     for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin(); it != s_impl->m_modal_wnds.end(); ++it) {
-        RenderWindow(it->first);
+        if (it->first)
+            RenderWindow(it->first);
     }
     // render the active browse info window, if any
     if (s_impl->m_browse_info_wnd) {
