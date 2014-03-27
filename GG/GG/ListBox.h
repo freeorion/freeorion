@@ -204,7 +204,7 @@ public:
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         //@}
 
-    private:
+    protected:
         void AdjustLayout(bool adjust_for_push_back = false);
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)

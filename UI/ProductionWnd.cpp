@@ -34,21 +34,9 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-
-    //////////////////////////////////////////////////
-    // QueueRow
-    //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
-
-        const int                                           queue_index;
-        const ProductionQueue::Element                      m_build;
-        mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
-
-        void RowQuantChanged(int quantity, int blocksize)
-        { RowQuantChangedSignal(queue_index, quantity, blocksize); }
-    };
-
+    ////////////////
+    // QuantLabel //
+    ////////////////
     class QuantLabel : public GG::Control {
     public:
         QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth,
@@ -71,6 +59,9 @@ namespace {
         void Render() {}
     };
 
+    //////////////
+    // QuantRow //
+    //////////////
     class QuantRow : public GG::ListBox::Row {
     public:
         QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h,
@@ -96,6 +87,9 @@ namespace {
         int m_quant;
     };
 
+    //////////////////////
+    // QuantitySelector //
+    //////////////////////
     class QuantitySelector : public CUIDropDownList {
     public:
         mutable boost::signals2::signal<void (int,int)> QuantChangedSignal;
@@ -200,7 +194,7 @@ namespace {
         void SelectionChanged(GG::DropDownList::iterator it) {
             int quant;
             //SetInteriorColor(GG::Clr(0, 0, 0, 0));
-            amOn=false;
+            amOn = false;
             //Hide();
             //Render();
             Logger().debugStream() << "QuantSelector:  selection made ";
@@ -208,58 +202,37 @@ namespace {
                 quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
                 if (amBlockType) {
                     Logger().debugStream() << "Blocksize Selector:  selection changed to " << quant;
-                    blocksize=quant;
+                    blocksize = quant;
                 } else {
                     Logger().debugStream() << "Quantity Selector:  selection changed to " << quant;
-                    quantity=quant;
+                    quantity = quant;
                 }
             }
         }
 
     private:
         const ProductionQueue::Element m_build;
-        int quantity;
-        int prevQuant;
-        int blocksize;
-        int prevBlocksize;
-        bool amBlockType;
-        bool amOn;
-        GG::Y h;
-
-        void GainingFocus() {
-            //amOn = !amOn;
-            //if (amOn)
-            //Logger().debugStream() << "QuantSelector:  gained focus";
-            DropDownList::GainingFocus();
-        }
+        int     quantity;
+        int     prevQuant;
+        int     blocksize;
+        int     prevBlocksize;
+        bool    amBlockType;
+        bool    amOn;
+        GG::Y   h;
 
         void LosingFocus() {
-            //amOn = !amOn;
-            //if (amOn)
-            //Logger().debugStream() << "QuantSelector:  lost focus";
-            //SetInteriorColor(GG::Clr(0, 0, 0, 0));
-            amOn=false;
+            amOn = false;
             DropDownList::LosingFocus();
         }
 
-        void LButtonDown ( const GG::Pt&  pt, GG::Flags< GG::ModKey >  mod_keys  )   {
-            //Logger().debugStream() << "QuantSelector:  got a left button down msg";
-            if (!amOn ) {
-                //SetInteriorColor(ClientUI::KnownTechFillColor());
-                amOn=true;
-                //Logger().debugStream() << "QuantSelector:  just came on";
-                Render();
-            } else {
-                //SetInteriorColor(GG::Clr(0, 0, 0, 0));
-                amOn=false;
-                //Logger().debugStream() << "QuantSelector:  just went off";
-                Render();
-            }
+        void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) {
+            amOn = !amOn;
             DropDownList::LButtonDown(pt, mod_keys);
         }
 
         void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-            Logger().debugStream() << "QuantSelector:  got a left click";
+            if (this->Disabled())
+                return;
 
             DropDownList::LClick(pt, mod_keys);
             if ( (quantity != prevQuant) || (blocksize != prevBlocksize) )
@@ -277,8 +250,8 @@ namespace {
 
         virtual void    Render();
         void            UpdateQueue();
-        void            ItemQuantityChanged(int quant, int blocksize) ;
-        void            ItemBlocksizeChanged(int quant, int blocksize) ;
+        void            ItemQuantityChanged(int quant, int blocksize);
+        void            ItemBlocksizeChanged(int quant, int blocksize);
 
         mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
@@ -298,6 +271,7 @@ namespace {
         int                             m_total_turns;
         int                             m_turns_completed;
         double                          m_partially_complete_turn;
+        bool                            m_order_issuing_enabled;
     };
 
     /////////////////////////////
@@ -383,38 +357,62 @@ namespace {
     }
 
     //////////////////////////////////////////////////
-    // QueueRow implementation
+    // QueueRow
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
-        GG::ListBox::Row(GG::X1, GG::Y1, "PRODUCTION_QUEUE_ROW"),
-        queue_index(queue_index_),
-        m_build(elem)
-    {
-        const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-        double total_cost(1.0);
-        int minimum_turns(1.0);
-        if (empire)
-            boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
-        total_cost *= elem.blocksize;
-        double per_turn_cost = total_cost / std::max(1, minimum_turns);
-        double progress = empire->ProductionStatus(queue_index);
-        if (progress == -1.0)
-            progress = 0.0;
+    struct QueueRow : GG::ListBox::Row {
+        QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
+            GG::ListBox::Row(GG::X1, GG::Y1, "PRODUCTION_QUEUE_ROW"),
+            queue_index(queue_index_),
+            m_build(elem)
+        {
+            const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+            double total_cost(1.0);
+            int minimum_turns(1.0);
+            if (empire)
+                boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
+            total_cost *= elem.blocksize;
+            double per_turn_cost = total_cost / std::max(1, minimum_turns);
+            double progress = empire->ProductionStatus(queue_index);
+            if (progress == -1.0)
+                progress = 0.0;
 
-        QueueProductionItemPanel* panel =
-            new QueueProductionItemPanel(w, elem, elem.allocated_pp, minimum_turns, elem.remaining,
-                                         static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
-                                         std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
-        Resize(panel->Size());
-        push_back(panel);
+            QueueProductionItemPanel* panel =
+                new QueueProductionItemPanel(w, elem, elem.allocated_pp, minimum_turns, elem.remaining,
+                                             static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
+                                             std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
+            Resize(panel->Size());
+            push_back(panel);
 
-        SetDragDropDataType("PRODUCTION_QUEUE_ROW");
+            SetDragDropDataType("PRODUCTION_QUEUE_ROW");
 
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
-        GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
-    }
+            GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
+        }
+
+        virtual void Disable(bool b) {
+            GG::ListBox::Row::Disable(b);
+
+            for (std::vector<GG::Control*>::iterator it = this->m_cells.begin();
+                 it != this->m_cells.end(); ++it)
+            {
+                GG::Control* ctrl = *it;
+                if (ctrl)
+                    ctrl->Disable(this->Disabled());
+            }
+        }
+
+        void RowQuantChanged(int quantity, int blocksize) {
+            if (this->Disabled())
+                return;
+            RowQuantChangedSignal(queue_index, quantity, blocksize);
+        }
+
+        const int                                           queue_index;
+        const ProductionQueue::Element                      m_build;
+        mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
+    };
 
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
@@ -596,66 +594,6 @@ namespace {
     }
 }
 
-//////////////////////////////////////////////////
-// ProdQueueListBox                             //
-//////////////////////////////////////////////////
-/** List of starting points for designs, such as empty hulls, existing designs
-  * kept by this empire or seen elsewhere in the universe, design template
-  * scripts or saved (on disk) designs from previous games. */
-class ProdQueueListBox : public QueueListBox {
-public:
-    ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str,
-                     const std::string& prompt_str);
-
-private:
-    void ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-};
-
-ProdQueueListBox::ProdQueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str,
-                                   const std::string& prompt_str) :
-    QueueListBox(x, y, w, h, drop_type_str, prompt_str)
-{
-    GG::Connect(GG::ListBox::RightClickedSignal,     &ProdQueueListBox::ItemRightClicked,    this);
-}
-
-/** Create popup menu with a Delete Item command to provide same functionality as
-  * DoubleClick since under laggy conditions it DoubleClick can have trouble
-  * being interpreted correctly (can instead be treated as simply two unrelated left clicks) */
-void ProdQueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"), 1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"), 3, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: { // move item to top
-            // emit a signal so that the ProductionWnd can take necessary steps
-            if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
-                QueueItemMoved(queue_row, 0);
-            }
-            break;
-        }
-        case 2: { // moe item to bottom
-            // emit a signal so that the ProductionWnd can take necessary steps
-            if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
-                QueueItemMoved(queue_row, NumRows());
-            }
-            break;
-        }
-        case 3: { // delete item
-            // emit a signal so that the ProductionWnd can take necessary steps
-            DoubleClickedSignal(it);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
-}
-
 
 //////////////////////////////////////////////////
 // ProductionWnd                                //
@@ -665,7 +603,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_production_info_panel(0),
     m_queue_lb(0),
     m_build_designator_wnd(0),
-    m_enabled(false)
+    m_order_issuing_enabled(false)
 {
     Logger().debugStream() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
                            << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
@@ -677,10 +615,10 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
                                                       ClientUI::KnownTechFillColor(),
                                                       ClientUI::KnownTechTextAndBorderColor());
 
-    m_queue_lb = new ProdQueueListBox(GG::X(2), m_production_info_panel->LowerRight().y,
-                                      m_production_info_panel->Width() - 4,
-                                      ClientSize().y - 4 - m_production_info_panel->Height(),
-                                      "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
+    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y,
+                                  m_production_info_panel->Width() - 4,
+                                  ClientSize().y - 4 - m_production_info_panel->Height(),
+                                  "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     m_queue_lb->SetName("ProductionQueue ListBox");
 
@@ -694,7 +632,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      static_cast<void (ProductionWnd::*)(BuildType, int, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
-    GG::Connect(m_queue_lb->QueueItemMoved,                             &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_lb->QueueItemMovedSignal,                       &ProductionWnd::QueueItemMoved, this);
     GG::Connect(m_queue_lb->LeftClickedSignal,                          &ProductionWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_lb->DoubleClickedSignal,                        &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
@@ -788,13 +726,19 @@ void ProductionWnd::SelectSystem(int system_id) {
 }
 
 void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
+        OrderPtr(new ProductionQueueOrder(client_empire_id,
                                           boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
                                           position)));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+
+    empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::Sanitize()
@@ -843,42 +787,75 @@ void ProductionWnd::UpdateInfoPanel() {
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location)));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+        new ProductionQueueOrder(client_empire_id, build_type, name, number, location)));
+
+    empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location) {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location)));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+        new ProductionQueueOrder(client_empire_id, build_type, design_id, number, location)));
+
+    empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true)));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+        new ProductionQueueOrder(client_empire_id, queue_idx, quantity, true)));
+
+    empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, blocksize)));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+        new ProductionQueueOrder(client_empire_id, queue_idx, quantity, blocksize)));
+
+    empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = Empires().Lookup(client_empire_id);
+    if (!empire)
+        return;
+
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
-                                          std::distance(m_queue_lb->begin(), it))));
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire)
-        empire->UpdateProductionQueue();
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_lb->begin(), it))));
+
+    empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
@@ -894,6 +871,6 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
 }
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {
-    m_enabled = enable;
-    m_queue_lb->EnableOrderIssuing(m_enabled);
+    m_order_issuing_enabled = enable;
+    m_queue_lb->EnableOrderIssuing(m_order_issuing_enabled);
 }

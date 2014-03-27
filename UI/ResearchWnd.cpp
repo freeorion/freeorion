@@ -29,14 +29,6 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     //////////////////////////////////////////////////
-    // QueueRow
-    //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const ResearchQueue::Element& queue_element);
-        std::string tech_name;
-    };
-
-    //////////////////////////////////////////////////
     // QueueTechPanel
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
@@ -60,33 +52,37 @@ namespace {
     };
 
     //////////////////////////////////////////////////
-    // QueueRow implementation
+    // QueueRow
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
-        GG::ListBox::Row(),
-        tech_name(queue_element.name)
-    {
-        const Empire* empire = Empires().Lookup(queue_element.empire_id);
+    struct QueueRow : GG::ListBox::Row {
+        QueueRow::QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
+            GG::ListBox::Row(),
+            tech_name(queue_element.name)
+        {
+            const Empire* empire = Empires().Lookup(queue_element.empire_id);
 
-        const Tech* tech = GetTech(tech_name);
-        double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
-        double progress = 0.0;
-        if (empire && empire->TechResearched(tech_name))
-            progress = tech->ResearchCost(queue_element.empire_id);
-        else if (empire)
-            progress = empire->ResearchProgress(tech_name);
+            const Tech* tech = GetTech(tech_name);
+            double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
+            double progress = 0.0;
+            if (empire && empire->TechResearched(tech_name))
+                progress = tech->ResearchCost(queue_element.empire_id);
+            else if (empire)
+                progress = empire->ResearchProgress(tech_name);
 
-        GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
-                                                queue_element.turns_left, progress / per_turn_cost,
-                                                queue_element.empire_id);
-        Resize(panel->Size());
-        push_back(panel);
+            GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
+                                                    queue_element.turns_left, progress / per_turn_cost,
+                                                    queue_element.empire_id);
+            Resize(panel->Size());
+            push_back(panel);
 
-        SetDragDropDataType("RESEARCH_QUEUE_ROW");
+            SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(TechPanelRowBrowseWnd(queue_element.name, queue_element.empire_id));
-    }
+            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(TechPanelRowBrowseWnd(queue_element.name, queue_element.empire_id));
+        }
+
+        std::string tech_name;
+    };
 
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
@@ -213,15 +209,18 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
                                   ClientSize().y - 4 - m_research_info_panel->Height(),
                                   "RESEARCH_QUEUE_ROW",
                                   UserString("RESEARCH_QUEUE_PROMPT"));
-    GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+
+    GG::Connect(m_queue_lb->QueueItemMovedSignal,       &ResearchWnd::QueueItemMoved,               this);
+    GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
+
 
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
 
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
-    GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
+
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);

@@ -1,5 +1,7 @@
 #include "QueueListBox.h"
 
+#include "../util/i18n.h"
+
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 
@@ -12,8 +14,8 @@ struct PromptRow : GG::ListBox::Row {
     PromptRow(GG::X w, std::string prompt_str) {
         Resize(GG::Pt(w, GG::Y(3*ClientUI::Pts() + 15)));
 
-        GG::TextControl* prompt = new GG::TextControl(GG::X(2), GG::Y(2), Width() - 10, Height(), prompt_str, ClientUI::GetFont(),
-                                                      GG::LightColor(ClientUI::TextColor()),
+        GG::TextControl* prompt = new GG::TextControl(GG::X(2), GG::Y(2), Width() - 10, Height(), prompt_str,
+                                                      ClientUI::GetFont(), GG::LightColor(ClientUI::TextColor()),
                                                       GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
         prompt->ClipText(true);
         Resize(prompt->Size());
@@ -29,15 +31,16 @@ QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string
     CUIListBox(x, y, w, h),
     m_drop_point(end()),
     m_show_drop_point(false),
-    m_enabled(true),
+    m_order_issuing_enabled(true),
     m_showing_prompt(true),
     m_prompt_str(prompt_str)
 {
     AllowDropType(drop_type_str);
-    
-    GG::Connect(BeforeInsertSignal, &QueueListBox::EnsurePromptHiddenSlot, this);
-    GG::Connect(AfterEraseSignal, &QueueListBox::ShowPromptConditionallySlot, this);
-    GG::Connect(ClearedSignal, &QueueListBox::ShowPromptSlot, this);
+
+    GG::Connect(BeforeInsertSignal,                 &QueueListBox::EnsurePromptHiddenSlot,      this);
+    GG::Connect(AfterEraseSignal,                   &QueueListBox::ShowPromptConditionallySlot, this);
+    GG::Connect(ClearedSignal,                      &QueueListBox::ShowPromptSlot,              this);
+    GG::Connect(GG::ListBox::RightClickedSignal,    &QueueListBox::ItemRightClicked,            this);
 
     Insert(new PromptRow(w, m_prompt_str));
 }
@@ -48,24 +51,31 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
 {
     assert(std::distance(first, last) == 1);
     for (DropsAcceptableIter it = first; it != last; ++it) {
-        it->second = m_enabled &&
+        it->second = m_order_issuing_enabled &&
             AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
     }
 }
 
 void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    assert(wnds.size() == 1);
-    assert(AllowedDropTypes().find((*wnds.begin())->DragDropDataType()) != AllowedDropTypes().end());
-    GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
-    assert(std::find(begin(), end(), row) != end());
+    if (wnds.size() != 1)
+        return;
+    GG::Wnd* wnd = *wnds.begin();
+    const std::string& drop_type = wnd->DragDropDataType();
+    if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end())
+        return;
+    GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
+    if (!row)
+        return;
+    if (std::find(begin(), end(), row) == end())
+        return;
     iterator it = RowUnderPt(pt);
-    QueueItemMoved(row, std::distance(begin(), it));
+    QueueItemMovedSignal(row, std::distance(begin(), it));
 }
 
 void QueueListBox::Render() {
     ListBox::Render();
     // render drop point line
-    if (m_show_drop_point && m_enabled) {
+    if (m_show_drop_point && m_order_issuing_enabled) {
         GG::ListBox::Row* row = *(m_drop_point == end() ? --end() : m_drop_point);
         if (!row)
             return;
@@ -105,12 +115,54 @@ void QueueListBox::DragDropLeave() {
     m_show_drop_point = false;
 }
 
-void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
-{ m_enabled = enable; }
+void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
+    m_order_issuing_enabled = enable;
+    for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+        (*it)->Disable(!enable);
+}
+
+bool QueueListBox::DisplayingValidQueueItems()
+{ return !m_showing_prompt; }
 
 void QueueListBox::Clear() {
     CUIListBox::Clear();
     DragDropLeave();
+}
+
+void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    // Create popup menu with a Delete Item command to provide same functionality as
+    // DoubleClick since under laggy conditions it DoubleClick can have trouble
+    // being interpreted correctly (can instead be treated as simply two unrelated left clicks)
+
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // move item to top
+            if (GG::ListBox::Row* row = *it)
+                QueueItemMovedSignal(row, 0);
+            break;
+        }
+        case 2: { // move item to bottom
+            if (GG::ListBox::Row* row = *it)
+                QueueItemMovedSignal(row, NumRows());
+            break;
+        }
+        case 3: { // delete item
+            DoubleClickedSignal(it);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
 }
 
 void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
@@ -132,6 +184,3 @@ void QueueListBox::ShowPromptConditionallySlot(iterator it) {
     }
 }
 
-bool QueueListBox::DisplayingValidQueueItems() {
-    return !m_showing_prompt;
-}
