@@ -55,7 +55,7 @@ namespace {
     // QueueRow
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
-        QueueRow::QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
+        QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
             GG::ListBox::Row(),
             tech_name(queue_element.name)
         {

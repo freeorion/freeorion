@@ -360,7 +360,7 @@ namespace {
     // QueueRow
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
-        QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
+        QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
             GG::ListBox::Row(GG::X1, GG::Y1, "PRODUCTION_QUEUE_ROW"),
             queue_index(queue_index_),
             m_build(elem)
