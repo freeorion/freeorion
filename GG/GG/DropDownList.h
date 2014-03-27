@@ -33,6 +33,9 @@
 
 #include <GG/ListBox.h>
 
+namespace {
+    class ModalListPicker;
+}
 
 namespace GG {
 
@@ -195,8 +198,9 @@ protected:
 private:
     void           SelectImpl(iterator it, bool signal);
 
-    iterator       m_current_item;  ///< the currently-selected list item (end() if none is selected)
-    ListBox*       m_LB;            ///< the ListBox used to render the selected row and the popup list
+    iterator        m_current_item;  ///< the currently-selected list item (end() if none is selected)
+    ListBox*        m_LB;            ///< the ListBox used to render the selected row and the popup list
+    ModalListPicker*m_modal_picker;
 };
 
 } // namespace GG

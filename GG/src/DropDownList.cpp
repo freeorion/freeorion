@@ -110,14 +110,16 @@ namespace {
 DropDownList::DropDownList() :
     Control(),
     m_current_item(),
-    m_LB(0)
+    m_LB(0),
+    m_modal_picker(0)
 {}
 
 DropDownList::DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color,
                            Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(x, y, w, h, flags),
     m_current_item(),
-    m_LB(GetStyleFactory()->NewDropDownListListBox(x, y, w, drop_ht, color, color, flags))
+    m_LB(GetStyleFactory()->NewDropDownListListBox(x, y, w, drop_ht, color, color, flags)),
+    m_modal_picker(0)
 {
     SetStyle(LIST_SINGLESEL);
     // adjust size to keep correct height based on row height, etc.
@@ -129,8 +131,12 @@ DropDownList::DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color,
         Connect(SelChangedSignal, SelChangedEcho(*this));
 }
 
-DropDownList::~DropDownList()
-{ delete m_LB; }
+DropDownList::~DropDownList() {
+    if (m_modal_picker)
+        m_modal_picker->EndRun();
+    m_modal_picker = 0;
+    delete m_LB;
+}
 
 DropDownList::iterator DropDownList::CurrentItem() const
 { return m_current_item; }
@@ -275,6 +281,9 @@ DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
 void DropDownList::Clear()
 {
     m_current_item = m_LB->end();
+    if (m_modal_picker)
+        m_modal_picker->EndRun();
+    m_modal_picker = 0;
     m_LB->Clear();
 }
 
@@ -339,18 +348,22 @@ void DropDownList::SetRowAlignment(iterator it, Alignment align)
 
 void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        ModalListPicker picker(this, m_LB);
-        const ListBox::SelectionSet& LB_sels = m_LB->Selections();
-        if (!LB_sels.empty()) {
-            if (m_LB->m_vscroll) {
-                m_LB->m_vscroll->ScrollTo(0);
-                SignalScroll(*m_LB->m_vscroll, true);
-            }
+    if (Disabled())
+        return;
+
+    ModalListPicker picker(this, m_LB);
+    m_modal_picker = &picker;
+
+    const ListBox::SelectionSet& LB_sels = m_LB->Selections();
+    if (!LB_sels.empty()) {
+        if (m_LB->m_vscroll) {
+            m_LB->m_vscroll->ScrollTo(0);
+            SignalScroll(*m_LB->m_vscroll, true);
         }
-        m_LB->m_first_col_shown = 0;
-        picker.Run();
     }
+    m_LB->m_first_col_shown = 0;
+    picker.Run();
+    m_modal_picker = 0;
 }
 
 void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
