@@ -235,10 +235,20 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
             GG::Pt final_move = new_ul - ul;
             GG::Wnd::LDrag(pt, final_move, mod_keys);
         } else {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                              std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-            GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
+            GG::Pt ul = UpperLeft();
+            GG::Pt requested_ul = ul + move;
+
+            GG::Pt min_ul = GG::Pt(GG::X1, GG::Y1);
+            GG::Pt max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
+                                   GG::GUI::GetGUI()->AppHeight() - this->Height());
+
+            GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
+            GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
+            GG::Pt new_ul(new_x, new_y);
+
+            GG::Pt final_move = new_ul - ul;
+
+            GG::Wnd::LDrag(pt, final_move, mod_keys);
         }
     }
 }

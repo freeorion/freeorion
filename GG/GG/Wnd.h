@@ -82,7 +82,7 @@ extern GG_API const WndFlag MODAL;
     <br>The coordinates of Wnd boundaries are STL-style (as are most
     range-values throughout GG), meaning that LowerRight() denotes the "last +
     1" pixel of a Wnd.  The on-screen representation of a rectangular Wnd
-    covers the pixels from UpperLeft() to LowerRight() - Pt(X1,Y 1), \a not
+    covers the pixels from UpperLeft() to LowerRight() - Pt(X1, Y1), \a not
     UpperLeft() to LowerRight().  Each Wnd has a client area from
     ClientUpperLeft() to ClientLowerRight().  These two methods are virtual,
     and may return anything the user likes; the default implementation is to
