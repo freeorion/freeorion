@@ -140,7 +140,7 @@ unsigned int Scroll::LineSize() const
 
 unsigned int Scroll::PageSize() const
 { return m_page_sz; }
-    
+
 Clr Scroll::InteriorColor() const
 { return m_int_color; }
 
