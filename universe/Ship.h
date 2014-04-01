@@ -51,9 +51,7 @@ public:
     const ConsumablesMap&       Missiles() const            { return m_missiles; }
 
     virtual TemporaryPtr<UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor);
-    virtual TemporaryPtr<const UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor) const;
+                                Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 

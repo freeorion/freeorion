@@ -3,8 +3,8 @@
 #define _Condition_h_
 
 #include "Enums.h"
-#include "TemporaryPtr.h"
 #include "ValueRefFwd.h"
+#include "TemporaryPtr.h"
 
 #include "../util/Export.h"
 
@@ -2287,9 +2287,5 @@ void Condition::Not::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operand);
 }
-
-// TemporaryPtr<UniverseObject> doesn't allow incomplete "UniverseObject" type in the final .cpp
-// in order to avoid cyclic inclusion problems, we #include this as late as possible
-#include "UniverseObject.h"
 
 #endif // _Condition_h_

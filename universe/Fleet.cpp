@@ -651,11 +651,8 @@ bool Fleet::UnknownRoute() const {
     return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID;
 }
 
-TemporaryPtr<const UniverseObject> Fleet::Accept(UniverseObjectVisitor* visitor) const
-{ return UniverseObject::Accept(this, visitor); }
-
-TemporaryPtr<UniverseObject> Fleet::Accept(UniverseObjectVisitor* visitor)
-{ return UniverseObject::Accept(this, visitor); }
+TemporaryPtr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Fleet>(boost::static_pointer_cast<const Fleet>(TemporaryFromThis()))); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
     //Logger().debugStream() << "Fleet::SetRoute() ";

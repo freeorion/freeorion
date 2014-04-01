@@ -120,11 +120,8 @@ const std::string& Field::PublicName(int empire_id) const {
     return UserString(m_type_name);
 }
 
-TemporaryPtr<const UniverseObject> Field::Accept(UniverseObjectVisitor* visitor) const
-{ return UniverseObject::Accept(this, visitor); }
-
-TemporaryPtr<UniverseObject> Field::Accept(UniverseObjectVisitor* visitor)
-{ return UniverseObject::Accept(this, visitor); }
+TemporaryPtr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Field>(boost::static_pointer_cast<const Field>(TemporaryFromThis()))); }
 
 int Field::ContainerObjectID() const
 { return this->SystemID(); }

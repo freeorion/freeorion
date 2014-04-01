@@ -421,11 +421,8 @@ Day Planet::RotationalPeriod() const
 Degree Planet::AxialTilt() const
 { return m_axial_tilt; }
 
-TemporaryPtr<const UniverseObject> Planet::Accept(UniverseObjectVisitor* visitor) const
-{ return UniverseObject::Accept(this, visitor); }
-
-TemporaryPtr<UniverseObject> Planet::Accept(UniverseObjectVisitor* visitor)
-{ return UniverseObject::Accept(this, visitor); }
+TemporaryPtr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Planet>(boost::static_pointer_cast<const Planet>(TemporaryFromThis()))); }
 
 Meter* Planet::GetMeter(MeterType type)
 { return UniverseObject::GetMeter(type); }

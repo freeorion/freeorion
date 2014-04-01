@@ -35,9 +35,7 @@ public:
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
 
     virtual TemporaryPtr<UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor);
-    virtual TemporaryPtr<const UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor) const;
+                            Accept(const UniverseObjectVisitor& visitor) const;
 
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}

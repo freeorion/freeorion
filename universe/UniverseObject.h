@@ -4,9 +4,8 @@
 
 
 #include "Enums.h"
-#include "EnableTemporaryFromThis.h"
-#include "Predicates.h"
 #include "TemporaryPtr.h"
+#include "EnableTemporaryFromThis.h"
 #include "../util/Export.h"
 #include "../util/blocking_combiner.h"
 
@@ -88,24 +87,7 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
-    template <class T> 
-    static TemporaryPtr<UniverseObject>
-                                Accept(T* this_, UniverseObjectVisitor* visitor)
-                                { return visitor->Visit(TemporaryPtr<T>(this_)); }
-    template <class T> 
-    static TemporaryPtr<const UniverseObject>
-                                Accept(const T* this_, UniverseObjectVisitor* visitor) 
-                                { return visitor->Visit(TemporaryPtr<const T>(this_)); }
-    virtual TemporaryPtr<UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor);
-    virtual TemporaryPtr<const UniverseObject>
-                                Accept(UniverseObjectVisitor* visitor) const;
-    TemporaryPtr<UniverseObject>
-                                Accept(UniverseObjectVisitorRR& visitor)        
-                                { return Accept(&visitor); }
-    TemporaryPtr<const UniverseObject>
-                                Accept(UniverseObjectVisitorRR& visitor) const  
-                                { return Accept(&visitor); }
+    virtual TemporaryPtr<UniverseObject>    Accept(const UniverseObjectVisitor& visitor) const;
 
     int                         CreationTurn() const;               ///< returns game turn on which object was created
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn

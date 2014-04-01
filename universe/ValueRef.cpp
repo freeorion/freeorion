@@ -132,20 +132,20 @@ namespace {
     struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const Building> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Building> obj) const
         { m_type = OBJ_BUILDING; return obj; }
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const Fleet> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const
         { m_type = OBJ_FLEET; return obj; }
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const Planet> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Planet> obj) const
         { m_type = OBJ_PLANET; return obj; }
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const Ship> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const
         { m_type = OBJ_SHIP; return obj; }
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const System> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const
         { m_type = OBJ_SYSTEM; return obj; }
-        virtual TemporaryPtr<const UniverseObject> Visit(TemporaryPtr<const Field> obj)
+        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const
         { m_type = OBJ_FIELD; return obj; }
 
-        UniverseObjectType m_type;
+        mutable UniverseObjectType m_type;
     };
 
     MeterType NameToMeter(std::string name) {
@@ -476,7 +476,7 @@ namespace ValueRef {
                 return INVALID_UNIVERSE_OBJECT_TYPE;
             }
             ObjectTypeVisitor v;
-            if (object->Accept(&v))
+            if (object->Accept(v))
                 return v.m_type;
             else if (boost::dynamic_pointer_cast<const PopCenter>(object))
                 return OBJ_POP_CENTER;

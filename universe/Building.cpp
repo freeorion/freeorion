@@ -113,11 +113,8 @@ std::string Building::Dump() const {
     return os.str();
 }
 
-TemporaryPtr<const UniverseObject> Building::Accept(UniverseObjectVisitor* visitor) const
-{ return UniverseObject::Accept(this, visitor); }
-
-TemporaryPtr<UniverseObject> Building::Accept(UniverseObjectVisitor* visitor)
-{ return UniverseObject::Accept(this, visitor); }
+TemporaryPtr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Building>(boost::static_pointer_cast<const Building>(TemporaryFromThis()))); }
 
 void Building::SetPlanetID(int planet_id) {
     if (planet_id != m_planet_id) {

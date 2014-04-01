@@ -12,11 +12,9 @@
 #include <boost/type_traits/remove_const.hpp>
 
 #include "../util/Export.h"
-#include "Predicates.h"
 #include "TemporaryPtr.h"
 
 struct UniverseObjectVisitor;
-struct UniverseObjectVisitorRR;
 
 class UniverseObject;
 class ResourceCenter;
@@ -37,9 +35,9 @@ class FO_COMMON_API ObjectMap {
 public:
 
     template <class T = UniverseObject>
-    struct iterator : private std::map<int, TemporaryPtr<T> >::iterator {
-        iterator(const typename std::map<int, TemporaryPtr<T> >::iterator& base, ObjectMap& owner) :
-            std::map<int, TemporaryPtr<T> >::iterator(base),
+    struct iterator : private std::map<int, boost::shared_ptr<T> >::iterator {
+        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base, ObjectMap& owner) :
+            std::map<int, boost::shared_ptr<T> >::iterator(base),
             m_owner(owner)
         { Refresh(); }
 
@@ -52,34 +50,34 @@ public:
         { return m_current_ptr; }
 
         iterator& operator ++() {
-            std::map<int, TemporaryPtr<T> >::iterator::operator++();
+            std::map<int, boost::shared_ptr<T> >::iterator::operator++();
             Refresh();
             return *this;
         }
 
         iterator operator ++(int) {
-            iterator result = iterator(std::map<int, TemporaryPtr<T> >::iterator::operator++(0), m_owner);
+            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator++(0), m_owner);
             Refresh();
             return result;
         }
 
         iterator& operator --() {
-            std::map<int, TemporaryPtr<T> >::iterator::operator--();
+            std::map<int, boost::shared_ptr<T> >::iterator::operator--();
             Refresh();
             return *this;
         }
 
         iterator operator --(int) {
-            iterator result = iterator(std::map<int, TemporaryPtr<T> >::iterator::operator--(0), m_owner);
+            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator--(0), m_owner);
             Refresh();
             return result;
         }
 
         bool operator ==(const iterator& other) const
-        { return std::map<int, TemporaryPtr<T> >::iterator::operator ==(other); }
+        { return std::map<int, boost::shared_ptr<T> >::iterator::operator ==(other); }
 
         bool operator !=(const iterator& other) const
-        { return std::map<int, TemporaryPtr<T> >::iterator::operator !=(other); }
+        { return std::map<int, boost::shared_ptr<T> >::iterator::operator !=(other); }
 
     private:
         // 
@@ -91,18 +89,18 @@ public:
         // return a "null" pointer.  We assume that we are dealing with valid
         // iterators in the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, TemporaryPtr<T> >::iterator::operator ==(m_owner.Map<T>().end())) {
+            if (std::map<int, boost::shared_ptr<T> >::iterator::operator ==(m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
-                m_current_ptr = TemporaryPtr<T>(std::map<int, TemporaryPtr<T> >::iterator::operator*().second);
+                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
             }
         }
     };
 
     template <class T = UniverseObject>
-    struct const_iterator : private std::map<int, TemporaryPtr<T> >::const_iterator {
-        const_iterator(const typename std::map<int, TemporaryPtr<T> >::const_iterator& base, const ObjectMap& owner) :
-            std::map<int, TemporaryPtr<T> >::const_iterator(base),
+    struct const_iterator : private std::map<int, boost::shared_ptr<T> >::const_iterator {
+        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base, const ObjectMap& owner) :
+            std::map<int, boost::shared_ptr<T> >::const_iterator(base),
             m_owner(owner)
         { Refresh(); }
 
@@ -115,34 +113,34 @@ public:
         { return m_current_ptr; }
 
         const_iterator& operator ++() {
-            std::map<int, TemporaryPtr<T> >::const_iterator::operator++();
+            std::map<int, boost::shared_ptr<T> >::const_iterator::operator++();
             Refresh();
             return *this;
         }
 
         const_iterator operator ++(int) {
-            const_iterator result = std::map<int, TemporaryPtr<T> >::const_iterator::operator++(0);
+            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
             Refresh();
             return result;
         }
 
         const_iterator& operator --() {
-            std::map<int, TemporaryPtr<T> >::const_iterator::operator--();
+            std::map<int, boost::shared_ptr<T> >::const_iterator::operator--();
             Refresh();
             return *this;
         }
 
         const_iterator operator --(int) {
-            const_iterator result = std::map<int, TemporaryPtr<T> >::const_iterator::operator--(0);
+            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
             Refresh();
             return result;
         }
 
         bool operator ==(const const_iterator& other) const
-        { return std::map<int, TemporaryPtr<T> >::const_iterator::operator ==(other); }
+        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator ==(other); }
 
         bool operator !=(const const_iterator& other) const
-        { return std::map<int, TemporaryPtr<T> >::const_iterator::operator !=(other); }
+        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator !=(other); }
 
     private:
         // See iterator for comments.
@@ -153,10 +151,10 @@ public:
         // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
         // the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, TemporaryPtr<T> >::const_iterator::operator ==(m_owner.Map<T>().end())) {
+            if (std::map<int, boost::shared_ptr<T> >::const_iterator::operator ==(m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
-                m_current_ptr = std::map<int, TemporaryPtr<T> >::const_iterator::operator*().second;
+                m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);
             }
         }
     };
@@ -225,10 +223,10 @@ public:
     std::vector<TemporaryPtr<T> >          FindObjects(const std::set<int>& object_ids);
 
     /** Returns all the objects that match \a visitor */
-    std::vector<TemporaryPtr<const UniverseObject> >    FindObjects(UniverseObjectVisitorRR& visitor) const;
+    std::vector<TemporaryPtr<const UniverseObject> >    FindObjects(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    std::vector<TemporaryPtr<UniverseObject> >          FindObjects(UniverseObjectVisitorRR& visitor);
+    std::vector<TemporaryPtr<UniverseObject> >          FindObjects(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
     template <class T>
@@ -239,7 +237,7 @@ public:
     std::vector<TemporaryPtr<T> >           FindObjects();
 
     /** Returns the IDs of all the objects that match \a visitor */
-    std::vector<int>        FindObjectIDs(UniverseObjectVisitorRR& visitor) const;
+    std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;
 
     /** Returns the IDs of all the objects of type T */
     template <class T>
@@ -380,10 +378,10 @@ public:
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
-      * existed in the map, a null TemporaryPtr is returned and nothing is
+      * existed in the map, a null shared_ptr is returned and nothing is
       * removed. The ObjectMap will no longer share ownership of the
       * returned object. */
-    TemporaryPtr<UniverseObject>     Remove(int id);
+    boost::shared_ptr<UniverseObject>     Remove(int id);
 
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
@@ -404,31 +402,31 @@ public:
     //@}
 
 private:
-    void                Insert(TemporaryPtr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+    void                Insert(boost::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
     void                CopyObjectsToSpecializedMaps();
     template <class T>
-    const std::map<int, TemporaryPtr<T> >& Map() const;
+    const std::map<int, boost::shared_ptr<T> >& Map() const;
     template <class T>
-    std::map<int, TemporaryPtr<T> >& Map();
+    std::map<int, boost::shared_ptr<T> >& Map();
 
     template<class T>
-    static void         ClearMap(std::map<int, TemporaryPtr<T> >& map);
+    static void         ClearMap(std::map<int, boost::shared_ptr<T> >& map);
     template <class T>
-    static void         TryInsertIntoMap(std::map<int, TemporaryPtr<T> >& map, TemporaryPtr<UniverseObject> item);
+    static void         TryInsertIntoMap(std::map<int, boost::shared_ptr<T> >& map, boost::shared_ptr<UniverseObject> item);
     template <class T>
-    static void         EraseFromMap(std::map<int, TemporaryPtr<T> >& map, int id);
+    static void         EraseFromMap(std::map<int, boost::shared_ptr<T> >& map, int id);
     template <class T>
-    static void         SwapMap(std::map<int, TemporaryPtr<T> >& map, ObjectMap& rhs);
+    static void         SwapMap(std::map<int, boost::shared_ptr<T> >& map, ObjectMap& rhs);
 
-    std::map<int, TemporaryPtr<UniverseObject> >           m_objects;
-    std::map<int, TemporaryPtr<ResourceCenter> >           m_resource_centers;
-    std::map<int, TemporaryPtr<PopCenter> >                m_pop_centers;
-    std::map<int, TemporaryPtr<Ship> >                     m_ships;
-    std::map<int, TemporaryPtr<Fleet> >                    m_fleets;
-    std::map<int, TemporaryPtr<Planet> >                   m_planets;
-    std::map<int, TemporaryPtr<System> >                   m_systems;
-    std::map<int, TemporaryPtr<Building> >                 m_buildings;
-    std::map<int, TemporaryPtr<Field> >                    m_fields;
+    std::map<int, boost::shared_ptr<UniverseObject> >           m_objects;
+    std::map<int, boost::shared_ptr<ResourceCenter> >           m_resource_centers;
+    std::map<int, boost::shared_ptr<PopCenter> >                m_pop_centers;
+    std::map<int, boost::shared_ptr<Ship> >                     m_ships;
+    std::map<int, boost::shared_ptr<Fleet> >                    m_fleets;
+    std::map<int, boost::shared_ptr<Planet> >                   m_planets;
+    std::map<int, boost::shared_ptr<System> >                   m_systems;
+    std::map<int, boost::shared_ptr<Building> >                 m_buildings;
+    std::map<int, boost::shared_ptr<Field> >                    m_fields;
     std::map<int, TemporaryPtr<UniverseObject> >                m_existing_objects;
     std::map<int, TemporaryPtr<UniverseObject> >                m_existing_resource_centers;
     std::map<int, TemporaryPtr<UniverseObject> >                m_existing_pop_centers;
@@ -462,20 +460,23 @@ ObjectMap::const_iterator<T> ObjectMap::const_end() const
 
 template <class T>
 TemporaryPtr<const T> ObjectMap::Object(int id) const {
-    typename std::map<int, TemporaryPtr<typename boost::remove_const<T>::type> >::const_iterator it =
+    typename std::map<int, boost::shared_ptr<typename boost::remove_const<T>::type> >::const_iterator it =
         Map<typename boost::remove_const<T>::type>().find(id);
-    return it != Map<typename boost::remove_const<T>::type>().end()
-            ? boost::const_pointer_cast<const T>(it->second)
-            : TemporaryPtr<const T>();
+    return TemporaryPtr<const T>(
+        it != Map<typename boost::remove_const<T>::type>().end()
+            ? it->second
+            : boost::shared_ptr<const T>());
 }
 
 template <class T>
 TemporaryPtr<T> ObjectMap::Object(int id) {
-    typename std::map<int, TemporaryPtr<typename boost::remove_const<T>::type> >::iterator it =
+    typename std::map<int, boost::shared_ptr<typename boost::remove_const<T>::type> >::iterator it =
         Map<typename boost::remove_const<T>::type>().find(id);
-    return it != Map<typename boost::remove_const<T>::type>().end()
+    return TemporaryPtr<T>(
+        it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
-            : TemporaryPtr<T>();
+            : boost::shared_ptr<typename boost::remove_const<T>::type>()
+        );
 }
 
 template <class T>
@@ -497,7 +498,7 @@ std::vector<TemporaryPtr<T> > ObjectMap::FindObjects() {
 template <class T>
 std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> result;
-    for (typename std::map<int, TemporaryPtr<T> >::const_iterator
+    for (typename std::map<int, boost::shared_ptr<T> >::const_iterator
          it = Map<typename boost::remove_const<T>::type>().begin();
          it != Map<typename boost::remove_const<T>::type>().end(); ++it)
     { result.push_back(it->first); }
@@ -509,9 +510,9 @@ std::vector<TemporaryPtr<const T> > ObjectMap::FindObjects(const std::vector<int
     std::vector<TemporaryPtr<const T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, TemporaryPtr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(map_it->second);
+            retval.push_back(TemporaryPtr<const T>(map_it->second));
     }
     return retval;
 }
@@ -521,9 +522,9 @@ std::vector<TemporaryPtr<const T> > ObjectMap::FindObjects(const std::set<int>& 
     std::vector<TemporaryPtr<const T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, TemporaryPtr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(map_it->second);
+            retval.push_back(TemporaryPtr<const T>(map_it->second));
     }
     return retval;
 }
@@ -533,9 +534,9 @@ std::vector<TemporaryPtr<T> > ObjectMap::FindObjects(const std::vector<int>& obj
     std::vector<TemporaryPtr<T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, TemporaryPtr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(map_it->second);
+            retval.push_back(TemporaryPtr<T>(map_it->second));
     }
     return retval;
 }
@@ -545,9 +546,9 @@ std::vector<TemporaryPtr<T> > ObjectMap::FindObjects(const std::set<int>& object
     std::vector<TemporaryPtr<T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, TemporaryPtr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(map_it->second);
+            retval.push_back(TemporaryPtr<T>(map_it->second));
     }
     return retval;
 }
@@ -561,72 +562,72 @@ TemporaryPtr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return TemporaryPtr<T>();
 
-    TemporaryPtr<T> shared_item(item);
+    boost::shared_ptr<T> shared_item(item);
     Insert(shared_item, empire_id);
-    return shared_item;
+    return TemporaryPtr<T>(shared_item);
 }
 
 template <class T>
 void ObjectMap::Insert(TemporaryPtr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
-    Insert(boost::static_pointer_cast<UniverseObject>(item), empire_id);
+    Insert(boost::dynamic_pointer_cast<UniverseObject>(item.m_ptr), empire_id);
 }
 
 // template specializations
 
 template <>
-const std::map<int, TemporaryPtr<UniverseObject> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<UniverseObject> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<ResourceCenter> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<ResourceCenter> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<PopCenter> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<PopCenter> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<Ship> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<Ship> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<Fleet> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<Fleet> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<Planet> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<Planet> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<System> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<System> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<Building> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<Building> >&  ObjectMap::Map() const;
 
 template <>
-const std::map<int, TemporaryPtr<Field> >&  ObjectMap::Map() const;
+const std::map<int, boost::shared_ptr<Field> >&  ObjectMap::Map() const;
 
 template <>
-std::map<int, TemporaryPtr<UniverseObject> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<UniverseObject> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<ResourceCenter> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<ResourceCenter> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<PopCenter> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<PopCenter> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<Ship> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<Ship> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<Fleet> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<Fleet> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<Planet> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<Planet> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<System> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<System> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<Building> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<Building> >&  ObjectMap::Map();
 
 template <>
-std::map<int, TemporaryPtr<Field> >&  ObjectMap::Map();
+std::map<int, boost::shared_ptr<Field> >&  ObjectMap::Map();
 
 #endif
