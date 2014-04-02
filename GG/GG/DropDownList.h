@@ -33,9 +33,7 @@
 
 #include <GG/ListBox.h>
 
-namespace {
-    class ModalListPicker;
-}
+class ModalListPicker;
 
 namespace GG {
 

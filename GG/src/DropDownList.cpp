@@ -49,60 +49,60 @@ namespace {
     };
 
     const int BORDER_THICK = 2; // should be the same as the BORDER_THICK value in GGListBox.h
-
-    class ModalListPicker : public Wnd
-    {
-    public:
-        ModalListPicker(DropDownList* drop_wnd, ListBox* lb_wnd) :
-            Wnd(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(),
-                INTERACTIVE | MODAL),
-            m_drop_wnd(drop_wnd),
-            m_lb_wnd(lb_wnd),
-            m_old_lb_ul(m_lb_wnd->UpperLeft())
-        {
-            m_connection_1 =
-                Connect(m_lb_wnd->SelChangedSignal, &ModalListPicker::LBSelChangedSlot, this);
-            m_connection_2 =
-                Connect(m_lb_wnd->LeftClickedSignal, &ModalListPicker::LBLeftClickSlot, this);
-            m_lb_ul = m_old_lb_ul + m_drop_wnd->UpperLeft();
-            AttachChild(m_lb_wnd);
-        }
-
-        virtual void Render()
-        { m_lb_wnd->MoveTo(m_lb_ul); }
-
-        ~ModalListPicker()
-        {
-            m_lb_wnd->MoveTo(m_old_lb_ul);
-            DetachChild(m_lb_wnd);
-        }
-
-    protected:
-        virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys)
-        { m_done = true; }
-
-    private:
-        void LBSelChangedSlot(const ListBox::SelectionSet& rows)
-        {
-            if (!rows.empty()) {
-                m_drop_wnd->Select(*rows.begin());
-                m_drop_wnd->SelChangedSignal(m_drop_wnd->CurrentItem());
-                m_done = true;
-            }
-        }
-
-        void LBLeftClickSlot(ListBox::iterator it, const Pt&)
-        { m_done = true; }
-
-        DropDownList*  m_drop_wnd;
-        ListBox*       m_lb_wnd;
-        Pt             m_old_lb_ul;
-        Pt             m_lb_ul;
-
-        boost::signals2::scoped_connection m_connection_1;
-        boost::signals2::scoped_connection m_connection_2;
-    };
 }
+
+class ModalListPicker : public Wnd
+{
+public:
+    ModalListPicker(DropDownList* drop_wnd, ListBox* lb_wnd) :
+        Wnd(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(),
+            INTERACTIVE | MODAL),
+        m_drop_wnd(drop_wnd),
+        m_lb_wnd(lb_wnd),
+        m_old_lb_ul(m_lb_wnd->UpperLeft())
+    {
+        m_connection_1 =
+            Connect(m_lb_wnd->SelChangedSignal, &ModalListPicker::LBSelChangedSlot, this);
+        m_connection_2 =
+            Connect(m_lb_wnd->LeftClickedSignal, &ModalListPicker::LBLeftClickSlot, this);
+        m_lb_ul = m_old_lb_ul + m_drop_wnd->UpperLeft();
+        AttachChild(m_lb_wnd);
+    }
+
+    virtual void Render()
+    { m_lb_wnd->MoveTo(m_lb_ul); }
+
+    ~ModalListPicker()
+    {
+        m_lb_wnd->MoveTo(m_old_lb_ul);
+        DetachChild(m_lb_wnd);
+    }
+
+protected:
+    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys)
+    { m_done = true; }
+
+private:
+    void LBSelChangedSlot(const ListBox::SelectionSet& rows)
+    {
+        if (!rows.empty()) {
+            m_drop_wnd->Select(*rows.begin());
+            m_drop_wnd->SelChangedSignal(m_drop_wnd->CurrentItem());
+            m_done = true;
+        }
+    }
+
+    void LBLeftClickSlot(ListBox::iterator it, const Pt&)
+    { m_done = true; }
+
+    DropDownList*  m_drop_wnd;
+    ListBox*       m_lb_wnd;
+    Pt             m_old_lb_ul;
+    Pt             m_lb_ul;
+
+    boost::signals2::scoped_connection m_connection_1;
+    boost::signals2::scoped_connection m_connection_2;
+};
 
 ////////////////////////////////////////////////
 // GG::DropDownList
