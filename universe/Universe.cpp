@@ -3196,7 +3196,18 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             Destroy(*it);
             retval.insert(*it);
         }
-        // then system itself
+
+        // remove any starlane connections to this system
+        int this_sys_id = obj_system->ID();
+        std::vector<TemporaryPtr<System> > all_systems = m_objects.FindObjects<System>();
+        for (std::vector<TemporaryPtr<System> >::iterator sys_it = all_systems.begin();
+             sys_it != all_systems.end(); ++sys_it)
+        {
+            TemporaryPtr<System> sys = *sys_it;
+            sys->RemoveStarlane(this_sys_id);
+        }
+
+        // then destroy system itself
         Destroy(object_id);
         retval.insert(object_id);
         // don't need to bother with removing things from system, fleets, or
