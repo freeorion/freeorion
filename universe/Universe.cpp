@@ -3207,6 +3207,17 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             sys->RemoveStarlane(this_sys_id);
         }
 
+        // remove fleets / ships moving along destroyed starlane
+        std::vector<TemporaryPtr<Fleet> > all_fleets = m_objects.FindObjects<Fleet>();
+        for (std::vector<TemporaryPtr<Fleet> >::iterator flt_it = all_fleets.begin();
+             flt_it != all_fleets.end(); ++flt_it)
+        {
+            TemporaryPtr<Fleet> fleet = *flt_it;
+            if (fleet->NextSystemID() == this_sys_id ||
+                fleet->PreviousSystemID() == this_sys_id)
+            { RecursiveDestroy(fleet->ID()); }
+        }
+
         // then destroy system itself
         Destroy(object_id);
         retval.insert(object_id);
