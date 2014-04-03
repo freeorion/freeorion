@@ -3213,8 +3213,9 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
              flt_it != all_fleets.end(); ++flt_it)
         {
             TemporaryPtr<Fleet> fleet = *flt_it;
-            if (fleet->NextSystemID() == this_sys_id ||
-                fleet->PreviousSystemID() == this_sys_id)
+            if (fleet->SystemID() == INVALID_OBJECT_ID && (
+                fleet->NextSystemID() == this_sys_id ||
+                fleet->PreviousSystemID() == this_sys_id))
             { RecursiveDestroy(fleet->ID()); }
         }
 
