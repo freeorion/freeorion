@@ -1348,120 +1348,122 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 {
     assert(w == this || dynamic_cast<Row*>(w));
 
-    if (!Disabled()) {
-        Pt pt = event.Point();
-        Flags<ModKey> mod_keys = event.ModKeys();
+    if (Disabled())
+        return true;
 
-        switch (event.Type()) {
-        case WndEvent::LButtonDown: {
-            m_old_sel_row = RowUnderPt(pt);
-            if (!InClient(pt)) {
-                m_old_sel_row = m_rows.end();
-            } else if (m_old_sel_row != m_rows.end()) {
-                m_old_sel_row_selected = m_selections.find(m_old_sel_row) != m_selections.end();
-                if (!(m_style & LIST_NOSEL) && !m_old_sel_row_selected)
-                    ClickAtRow(m_old_sel_row, mod_keys);
-            }
-            break;
-        }
+    Pt pt = event.Point();
+    Flags<ModKey> mod_keys = event.ModKeys();
 
-        case WndEvent::LButtonUp: {
+    switch (event.Type()) {
+    case WndEvent::LButtonDown: {
+        m_old_sel_row = RowUnderPt(pt);
+        if (!InClient(pt)) {
             m_old_sel_row = m_rows.end();
-            break;
+        } else if (m_old_sel_row != m_rows.end()) {
+            m_old_sel_row_selected = m_selections.find(m_old_sel_row) != m_selections.end();
+            if (!(m_style & LIST_NOSEL) && !m_old_sel_row_selected)
+                ClickAtRow(m_old_sel_row, mod_keys);
         }
-
-        case WndEvent::LClick: {
-            if (m_old_sel_row != m_rows.end() && InClient(pt)) {
-                iterator sel_row = RowUnderPt(pt);
-                if (sel_row == m_old_sel_row) {
-                    if (m_style & LIST_NOSEL)
-                        m_caret = sel_row;
-                    else
-                        ClickAtRow(sel_row, mod_keys);
-                    m_lclick_row = sel_row;
-                    LeftClickedSignal(sel_row, pt);
-                }
-            }
-            break;
-        }
-
-        case WndEvent::LDoubleClick: {
-            iterator row = RowUnderPt(pt);
-            if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
-                DoubleClickedSignal(row);
-                m_old_sel_row = m_rows.end();
-            } else {
-                LClick(pt, mod_keys);
-            }
-            break;
-        }
-
-        case WndEvent::RButtonDown: {
-            iterator row = RowUnderPt(pt);
-            if (row != m_rows.end() && InClient(pt))
-                m_old_rdown_row = row;
-            else
-                m_old_rdown_row = m_rows.end();
-            break;
-        }
-
-        case WndEvent::RClick: {
-            iterator row = RowUnderPt(pt);
-            if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
-                m_rclick_row = row;
-                RightClickedSignal(row, pt);
-            }
-            m_old_rdown_row = m_rows.end();
-            break;
-        }
-
-        case WndEvent::MouseEnter: {
-            if (m_style & LIST_BROWSEUPDATES) {
-                iterator sel_row = RowUnderPt(pt);
-                if (m_last_row_browsed != sel_row)
-                    BrowsedSignal(m_last_row_browsed = sel_row);
-            }
-            break;
-        }
-
-        case WndEvent::MouseHere:
-            break;
-
-        case WndEvent::MouseLeave: {
-            if (m_style & LIST_BROWSEUPDATES) {
-                if (m_last_row_browsed != m_rows.end())
-                    BrowsedSignal(m_last_row_browsed = m_rows.end());
-            }
-            break;
-        }
-
-        case WndEvent::GainingFocus: {
-            if (w == this)
-                return false;
-            GUI::GetGUI()->SetFocusWnd(this);
-            break;
-        }
-
-        case WndEvent::MouseWheel:
-            return false;
-
-        case WndEvent::DragDropEnter:
-        case WndEvent::DragDropHere:
-        case WndEvent::DragDropLeave:
-            if (w == this)
-                return false;
-            HandleEvent(event);
-            break;
-
-        case WndEvent::KeyPress:
-        case WndEvent::KeyRelease:
-        case WndEvent::TimerFiring:
-            return false;
-
-        default:
-            break;
-        }
+        break;
     }
+
+    case WndEvent::LButtonUp: {
+        m_old_sel_row = m_rows.end();
+        break;
+    }
+
+    case WndEvent::LClick: {
+        if (m_old_sel_row != m_rows.end() && InClient(pt)) {
+            iterator sel_row = RowUnderPt(pt);
+            if (sel_row == m_old_sel_row) {
+                if (m_style & LIST_NOSEL)
+                    m_caret = sel_row;
+                else
+                    ClickAtRow(sel_row, mod_keys);
+                m_lclick_row = sel_row;
+                LeftClickedSignal(sel_row, pt);
+            }
+        }
+        break;
+    }
+
+    case WndEvent::LDoubleClick: {
+        iterator row = RowUnderPt(pt);
+        if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
+            DoubleClickedSignal(row);
+            m_old_sel_row = m_rows.end();
+        } else {
+            LClick(pt, mod_keys);
+        }
+        break;
+    }
+
+    case WndEvent::RButtonDown: {
+        iterator row = RowUnderPt(pt);
+        if (row != m_rows.end() && InClient(pt))
+            m_old_rdown_row = row;
+        else
+            m_old_rdown_row = m_rows.end();
+        break;
+    }
+
+    case WndEvent::RClick: {
+        iterator row = RowUnderPt(pt);
+        if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
+            m_rclick_row = row;
+            RightClickedSignal(row, pt);
+        }
+        m_old_rdown_row = m_rows.end();
+        break;
+    }
+
+    case WndEvent::MouseEnter: {
+        if (m_style & LIST_BROWSEUPDATES) {
+            iterator sel_row = RowUnderPt(pt);
+            if (m_last_row_browsed != sel_row)
+                BrowsedSignal(m_last_row_browsed = sel_row);
+        }
+        break;
+    }
+
+    case WndEvent::MouseHere:
+        break;
+
+    case WndEvent::MouseLeave: {
+        if (m_style & LIST_BROWSEUPDATES) {
+            if (m_last_row_browsed != m_rows.end())
+                BrowsedSignal(m_last_row_browsed = m_rows.end());
+        }
+        break;
+    }
+
+    case WndEvent::GainingFocus: {
+        if (w == this)
+            return false;
+        GUI::GetGUI()->SetFocusWnd(this);
+        break;
+    }
+
+    case WndEvent::MouseWheel:
+        return false;
+
+    case WndEvent::DragDropEnter:
+    case WndEvent::DragDropHere:
+    case WndEvent::DragDropLeave:
+        if (w == this)
+            return false;
+        HandleEvent(event);
+        break;
+
+    case WndEvent::KeyPress:
+    case WndEvent::KeyRelease:
+    case WndEvent::TimerFiring:
+        return false;
+
+    default:
+        break;
+    }
+
     return true;
 }
 
@@ -1616,11 +1618,18 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         Row* row = *row_it;
         row->InstallEventFilter(this);
         NormalizeRow(row);
-        AttachChild(row);
     }
 
     // add row at requested location (or default end position)
     m_rows.insert(it, rows.begin(), rows.end());
+
+    // more housekeeping of rows...
+    for (std::vector<Row*>::const_iterator row_it = rows.begin();
+         row_it != rows.end(); ++row_it)
+    {
+        Row* row = *row_it;
+        AttachChild(row);
+    }
 
     // sort?
     if (!(m_style & LIST_NOSORT)) {
@@ -1636,6 +1645,8 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
     }
 
     AdjustScrolls(false);
+
+    SelectRow(begin());
 }
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
