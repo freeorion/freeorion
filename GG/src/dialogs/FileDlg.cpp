@@ -446,12 +446,12 @@ void FileDlg::Init(const std::string& directory)
 
 void FileDlg::ConnectSignals()
 {
-    Connect(m_ok_button->LeftClickedSignal, &FileDlg::OkClicked, this);
-    Connect(m_cancel_button->LeftClickedSignal, &FileDlg::CancelClicked, this);
-    Connect(m_files_list->SelChangedSignal, &FileDlg::FileSetChanged, this);
-    Connect(m_files_list->DoubleClickedSignal, &FileDlg::FileDoubleClicked, this);
-    Connect(m_files_edit->EditedSignal, &FileDlg::FilesEditChanged, this);
-    Connect(m_filter_list->SelChangedSignal, &FileDlg::FilterChanged, this);
+    Connect(m_ok_button->LeftClickedSignal,     &FileDlg::OkClicked,        this);
+    Connect(m_cancel_button->LeftClickedSignal, &FileDlg::CancelClicked,    this);
+    Connect(m_files_list->SelChangedSignal,     &FileDlg::FileSetChanged,   this);
+    Connect(m_files_list->DoubleClickedSignal,  &FileDlg::FileDoubleClicked,this);
+    Connect(m_files_edit->EditedSignal,         &FileDlg::FilesEditChanged, this);
+    Connect(m_filter_list->SelChangedSignal,    &FileDlg::FilterChanged,    this);
 }
 
 void FileDlg::OkClicked()

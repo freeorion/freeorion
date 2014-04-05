@@ -99,7 +99,7 @@ DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y f
 
     if (INSTRUMENT_ALL_SIGNALS) {
         Connect(StoppedSignal, SignalEcho("DynamicGraphic::StoppedSignal"));
-        Connect(EndFrameSignal, SignalEcho("DynamicGraphic::EndFrameSignal"));
+        //Connect(EndFrameSignal, SignalEcho("DynamicGraphic::EndFrameSignal"));
     }
 }
 
