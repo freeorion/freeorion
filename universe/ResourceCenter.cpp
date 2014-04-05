@@ -18,7 +18,9 @@ namespace {
 
 ResourceCenter::ResourceCenter() :
     m_focus(),
-    m_last_turn_focus_changed(BEFORE_FIRST_TURN)
+    m_last_turn_focus_changed(BEFORE_FIRST_TURN),
+    m_focus_turn_initial(),
+    m_last_turn_focus_changed_turn_initial(BEFORE_FIRST_TURN)
 {}
 
 ResourceCenter::~ResourceCenter()
@@ -26,7 +28,9 @@ ResourceCenter::~ResourceCenter()
 
 ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_focus(rhs.m_focus),
-    m_last_turn_focus_changed(rhs.m_last_turn_focus_changed)
+    m_last_turn_focus_changed(rhs.m_last_turn_focus_changed),
+    m_focus_turn_initial(rhs.m_focus_turn_initial),
+    m_last_turn_focus_changed_turn_initial(rhs.m_last_turn_focus_changed_turn_initial)
 {}
 
 void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis) {
@@ -40,6 +44,8 @@ void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visi
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         this->m_focus = copied_object->m_focus;
         this->m_last_turn_focus_changed = copied_object->m_last_turn_focus_changed;
+        this->m_focus_turn_initial = copied_object->m_focus_turn_initial;
+        this->m_last_turn_focus_changed_turn_initial = copied_object->m_last_turn_focus_changed_turn_initial;
     }
 }
 
@@ -55,6 +61,8 @@ void ResourceCenter::Init() {
     AddMeter(METER_TARGET_CONSTRUCTION);
     m_focus.clear();
     m_last_turn_focus_changed = INVALID_GAME_TURN;
+    m_focus_turn_initial.clear();
+    m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
 }
 
 const std::string& ResourceCenter::Focus() const
@@ -121,6 +129,8 @@ float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
 }
 
 void ResourceCenter::SetFocus(const std::string& focus) {
+    if (focus == m_focus)
+        return;
     if (focus.empty()) {
         ClearFocus();
         return;
@@ -128,7 +138,10 @@ void ResourceCenter::SetFocus(const std::string& focus) {
     std::vector<std::string> avail_foci = AvailableFoci();
     if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
         m_focus = focus;
-        m_last_turn_focus_changed = CurrentTurn();
+        if (m_focus == m_focus_turn_initial)
+            m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
+        else
+            m_last_turn_focus_changed = CurrentTurn();
         ResourceCenterChangedSignal();
         return;
     }
@@ -139,6 +152,13 @@ void ResourceCenter::ClearFocus() {
     m_focus.clear();
     m_last_turn_focus_changed = CurrentTurn();
     ResourceCenterChangedSignal();
+}
+
+void ResourceCenter::UpdateFocusHistory() {
+    if (m_focus != m_focus_turn_initial) {
+        m_focus_turn_initial = m_focus;
+        m_last_turn_focus_changed_turn_initial = m_last_turn_focus_changed;
+    }
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {

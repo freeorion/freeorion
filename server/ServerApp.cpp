@@ -2419,6 +2419,15 @@ namespace {
         }
     }
 
+    /** Causes ResourceCenters (Planets) to update their focus records */
+    void UpdateResourceCenterFocusHistoryInfo() {
+        for (ObjectMap::iterator<Planet> it = GetUniverse().Objects().begin<Planet>();
+             it != GetUniverse().Objects().end<Planet>(); ++it)
+        {
+            it->UpdateFocusHistory();
+        }
+    }
+
     /** Deletes empty fleets. */
     void CleanEmptyFleets() {
         std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
@@ -2467,6 +2476,9 @@ void ServerApp::PreCombatProcessTurns() {
 
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
+
+    // update ResourceCenter focus history info
+    UpdateResourceCenterFocusHistoryInfo();
 
     // clean up empty fleets that empires didn't order deleted
     CleanEmptyFleets();
