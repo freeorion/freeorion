@@ -1644,9 +1644,10 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         }
     }
 
-    AdjustScrolls(false);
+    if (m_first_row_shown == m_rows.end())
+        m_first_row_shown = m_rows.begin();
 
-    SelectRow(begin());
+    AdjustScrolls(false);
 }
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
