@@ -1609,7 +1609,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!planet->SpeciesName().empty()) {
         AttachChild(m_focus_drop);
 
-        const std::vector<std::string>& available_foci = planet->AvailableFoci();
+        std::vector<std::string> available_foci = planet->AvailableFoci();
 
         // refresh items in list
         m_focus_drop->Clear();
