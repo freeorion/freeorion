@@ -72,25 +72,25 @@ namespace {
         bool operator()(const Pt& pt, Y y) const       {return y < pt.y;}
     };
     struct Pointer {};
-    struct Left {};
-    struct Top {};
-    struct Right {};
-    struct Bottom {};
+    struct LayoutLeft {};
+    struct LayoutTop {};
+    struct LayoutRight {};
+    struct LayoutBottom {};
     typedef multi_index_container<
         GridLayoutWnd,
         indexed_by<
-            ordered_unique<tag<Pointer>, member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd> >,
-            ordered_non_unique<tag<Left>, member<GridLayoutWnd, Pt, &GridLayoutWnd::ul>, IsLeft>,
-            ordered_non_unique<tag<Top>, member<GridLayoutWnd, Pt, &GridLayoutWnd::ul>, IsTop>,
-            ordered_non_unique<tag<Right>, member<GridLayoutWnd, Pt, &GridLayoutWnd::lr>, IsRight>,
-            ordered_non_unique<tag<Bottom>, member<GridLayoutWnd, Pt, &GridLayoutWnd::lr>, IsBottom>
+            ordered_unique<tag<Pointer>,            member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd> >,
+            ordered_non_unique<tag<LayoutLeft>,     member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
+            ordered_non_unique<tag<LayoutTop>,      member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
+            ordered_non_unique<tag<LayoutRight>,    member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,
+            ordered_non_unique<tag<LayoutBottom>,   member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsBottom>
         >
     > GridLayoutWndContainer;
-    typedef GridLayoutWndContainer::index<Pointer>::type::iterator PointerIter;
-    typedef GridLayoutWndContainer::index<Left>::type::iterator    LeftIter;
-    typedef GridLayoutWndContainer::index<Top>::type::iterator     TopIter;
-    typedef GridLayoutWndContainer::index<Right>::type::iterator   RightIter;
-    typedef GridLayoutWndContainer::index<Bottom>::type::iterator  BottomIter;
+    typedef GridLayoutWndContainer::index<Pointer>::type::iterator      PointerIter;
+    typedef GridLayoutWndContainer::index<LayoutLeft>::type::iterator   LeftIter;
+    typedef GridLayoutWndContainer::index<LayoutTop>::type::iterator    TopIter;
+    typedef GridLayoutWndContainer::index<LayoutRight>::type::iterator  RightIter;
+    typedef GridLayoutWndContainer::index<LayoutBottom>::type::iterator BottomIter;
 
     struct WndHorizontalLess
     {
@@ -278,6 +278,12 @@ Pt Wnd::UpperLeft() const
     return retval;
 }
 
+X Wnd::Left() const
+{ return UpperLeft().x; }
+
+Y Wnd::Top() const
+{ return UpperLeft().y; }
+
 Pt Wnd::LowerRight() const
 {
     Pt retval = m_lowerright;
@@ -285,6 +291,12 @@ Pt Wnd::LowerRight() const
         retval += m_parent->ClientUpperLeft();
     return retval;
 }
+
+X Wnd::Right() const
+{ return LowerRight().x; }
+
+Y Wnd::Bottom() const
+{ return LowerRight().y; }
 
 Pt Wnd::RelativeUpperLeft() const
 { return m_upperleft; }
@@ -688,60 +700,62 @@ void Wnd::GridLayout()
 
 
     // align left sides of windows
-    for (LeftIter it = grid_layout.get<Left>().begin(); it != grid_layout.get<Left>().end(); ++it) {
+    for (LeftIter it = grid_layout.get<LayoutLeft>().begin();
+         it != grid_layout.get<LayoutLeft>().end(); ++it)
+    {
         Pt ul = it->ul;
         for (X x = ul.x - 1; x >= 0; --x) {
-            if (grid_layout.get<Right>().find(x + 1, IsRight()) != grid_layout.get<Right>().end()) {
+            if (grid_layout.get<LayoutRight>().find(x + 1, IsRight()) != grid_layout.get<LayoutRight>().end()) {
                 break;
-            } else if (grid_layout.get<Left>().find(x, IsLeft()) != grid_layout.get<Left>().end()) {
+            } else if (grid_layout.get<LayoutLeft>().find(x, IsLeft()) != grid_layout.get<LayoutLeft>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.ul.x = x;
-                grid_layout.get<Left>().replace(it, grid_wnd);
+                grid_layout.get<LayoutLeft>().replace(it, grid_wnd);
                 break;
             }
         }
     }
 
     // align right sides of windows
-    for (RightIter it = grid_layout.get<Right>().begin(); it != grid_layout.get<Right>().end(); ++it) {
+    for (RightIter it = grid_layout.get<LayoutRight>().begin(); it != grid_layout.get<LayoutRight>().end(); ++it) {
         Pt lr = it->lr;
         for (X x = lr.x + 1; x < client_sz.x; ++x) {
-            if (grid_layout.get<Left>().find(x - 1, IsLeft()) != grid_layout.get<Left>().end()) {
+            if (grid_layout.get<LayoutLeft>().find(x - 1, IsLeft()) != grid_layout.get<LayoutLeft>().end()) {
                 break;
-            } else if (grid_layout.get<Right>().find(x, IsRight()) != grid_layout.get<Right>().end()) {
+            } else if (grid_layout.get<LayoutRight>().find(x, IsRight()) != grid_layout.get<LayoutRight>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.lr.x = x;
-                grid_layout.get<Right>().replace(it, grid_wnd);
+                grid_layout.get<LayoutRight>().replace(it, grid_wnd);
                 break;
             }
         }
     }
 
     // align tops of windows
-    for (TopIter it = grid_layout.get<Top>().begin(); it != grid_layout.get<Top>().end(); ++it) {
+    for (TopIter it = grid_layout.get<LayoutTop>().begin(); it != grid_layout.get<LayoutTop>().end(); ++it) {
         Pt ul = it->ul;
         for (Y y = ul.y - 1; y >= 0; --y) {
-            if (grid_layout.get<Bottom>().find(y + 1, IsBottom()) != grid_layout.get<Bottom>().end()) {
+            if (grid_layout.get<LayoutBottom>().find(y + 1, IsBottom()) != grid_layout.get<LayoutBottom>().end()) {
                 break;
-            } else if (grid_layout.get<Top>().find(y, IsTop()) != grid_layout.get<Top>().end()) {
+            } else if (grid_layout.get<LayoutTop>().find(y, IsTop()) != grid_layout.get<LayoutTop>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.ul.y = y;
-                grid_layout.get<Top>().replace(it, grid_wnd);
+                grid_layout.get<LayoutTop>().replace(it, grid_wnd);
                 break;
             }
         }
     }
 
     // align bottoms of windows
-    for (BottomIter it = grid_layout.get<Bottom>().begin(); it != grid_layout.get<Bottom>().end(); ++it) {
+    for (BottomIter it = grid_layout.get<LayoutBottom>().begin(); it != grid_layout.get<LayoutBottom>().end(); ++it) {
         Pt lr = it->lr;
         for (Y y = lr.y + 1; y < client_sz.y; ++y) {
-            if (grid_layout.get<Top>().find(y - 1, IsTop()) != grid_layout.get<Top>().end()) {
+            if (grid_layout.get<LayoutTop>().find(y - 1, IsTop()) != grid_layout.get<LayoutTop>().end()) {
                 break;
-            } else if (grid_layout.get<Bottom>().find(y, IsBottom()) != grid_layout.get<Bottom>().end()) {
+            } else if (grid_layout.get<LayoutBottom>().find(y, IsBottom()) != grid_layout.get<LayoutBottom>().end()) {
                 GridLayoutWnd grid_wnd = *it;
                 grid_wnd.lr.y = y;
-                grid_layout.get<Bottom>().replace(it, grid_wnd);
+                grid_layout.get<LayoutBottom>().replace(it, grid_wnd);
                 break;
             }
         }
@@ -750,10 +764,10 @@ void Wnd::GridLayout()
     // create an actual layout with a more reasonable number of cells from the pixel-grid layout
     std::set<X> unique_lefts;
     std::set<Y> unique_tops;
-    for (LeftIter it = grid_layout.get<Left>().begin(); it != grid_layout.get<Left>().end(); ++it) {
+    for (LeftIter it = grid_layout.get<LayoutLeft>().begin(); it != grid_layout.get<LayoutLeft>().end(); ++it) {
         unique_lefts.insert(it->ul.x);
     }
-    for (TopIter it = grid_layout.get<Top>().begin(); it != grid_layout.get<Top>().end(); ++it) {
+    for (TopIter it = grid_layout.get<LayoutTop>().begin(); it != grid_layout.get<LayoutTop>().end(); ++it) {
         unique_tops.insert(it->ul.y);
     }
 

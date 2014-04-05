@@ -319,11 +319,15 @@ public:
     /** Returns the upper-left corner of window in \a screen \a coordinates
         (taking into account parent's screen position, if any) */
     Pt UpperLeft() const;
+    X Left() const;
+    Y Top() const;
 
     /** Returns (one pixel past) the lower-right corner of window in \a screen
         \a coordinates (taking into account parent's screen position, if
         any) */
     Pt LowerRight() const;
+    X Right() const;
+    Y Bottom() const;
 
     /** Returns the upper-left corner of window, relative to its parent's
         client area, or in screen coordinates if no parent exists. */
