@@ -1042,12 +1042,53 @@ SetSpecies::~SetSpecies()
 { delete m_species_name; }
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
-    if (TemporaryPtr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
-        std::string species_name = m_species_name->Eval(ScriptingContext(context, p->SpeciesName()));
-        p->SetSpecies(species_name);
-    } else if (TemporaryPtr<Ship> s = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
-        std::string species_name = m_species_name->Eval(ScriptingContext(context, s->SpeciesName()));
-        s->SetSpecies(species_name);
+    if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
+        std::string species_name = m_species_name->Eval(ScriptingContext(context, planet->SpeciesName()));
+        planet->SetSpecies(species_name);
+
+        // ensure non-empty and permissible focus setting for new species
+        std::string initial_focus = planet->Focus();
+        std::vector<std::string> available_foci = planet->AvailableFoci();
+
+        // leave current focus unchanged if available.
+        for (std::vector<std::string>::const_iterator it = available_foci.begin();
+             it != available_foci.end(); ++it)
+        {
+            if (*it == initial_focus) {
+                return;
+            }
+        }
+
+        // need to set new focus
+        std::string new_focus;
+
+        const Species* species = GetSpecies(species_name);
+        std::string preferred_focus;
+        if (species)
+            preferred_focus = species->PreferredFocus();
+
+        // chose preferred focus if available. otherwise use any available focus
+        bool preferred_available = false;
+        for (std::vector<std::string>::const_iterator it = available_foci.begin();
+                it != available_foci.end(); ++it)
+        {
+            if (*it == preferred_focus) {
+                preferred_available = true;
+                break;
+            }
+        }
+
+        if (preferred_available) {
+            new_focus = preferred_focus;
+        } else if (!available_foci.empty()) {
+            new_focus = *available_foci.begin();
+        }
+
+        planet->SetFocus(new_focus);
+
+    } else if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
+        std::string species_name = m_species_name->Eval(ScriptingContext(context, ship->SpeciesName()));
+        ship->SetSpecies(species_name);
     }
 }
 

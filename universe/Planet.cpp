@@ -712,6 +712,8 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
 
         if (!found_preference)
             SetFocus(*available_foci.begin());
+    } else {
+        Logger().debugStream() << "Planet::Colonize unable to find a focus to set for species " << species_name;
     }
 
     // set colony population
