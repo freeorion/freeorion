@@ -38,13 +38,13 @@ namespace {
     {
         SelChangedEcho(const DropDownList& drop_list) :
             m_drop_list(drop_list)
-            {}
+        {}
         void operator()(const DropDownList::iterator& it)
-            {
-                std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
-                          << m_drop_list.IteratorToIndex(it)
-                          << ")\n";
-            }
+        {
+            std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
+                        << m_drop_list.IteratorToIndex(it)
+                        << ")\n";
+        }
         const DropDownList& m_drop_list;
     };
 
