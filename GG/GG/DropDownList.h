@@ -75,65 +75,65 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    iterator       CurrentItem() const;      ///< returns the currently selected list item (returns end() if none is selected)
-    std::size_t    CurrentItemIndex() const; ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
+    iterator        CurrentItem() const;        ///< returns the currently selected list item (returns end() if none is selected)
+    std::size_t     CurrentItemIndex() const;   ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
 
-    std::size_t    IteratorToIndex(iterator it) const; ///< returns the position of \a it within the list (returns -1 if \a it == end())
-    iterator       IndexToIterator(std::size_t n) const; ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
+    std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
+    iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
 
-    bool           Empty() const;            ///< returns true when the list is empty
-    const_iterator begin() const;            ///< returns an iterator to the first list row
-    const_iterator end() const;              ///< returns an iterator to the imaginary row one past the last
-    const_reverse_iterator
-                   rbegin() const;           ///< returns an iterator to the last list row
-    const_reverse_iterator
-                   rend() const;             ///< returns an iterator to the imaginary row one past the first
-    const Row&     GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    bool           Selected(iterator it) const; ///< returns true if row \a it is selected
-    bool           Selected(std::size_t n) const; ///< returns true if row at position \a n is selected
-    Clr            InteriorColor() const;    ///< returns the color painted into the client area of the control
+    bool            Empty() const;                  ///< returns true when the list is empty
 
-    Y         DropHeight() const; ///< returns the height of the drop-down list
+    const_iterator          begin() const;          ///< returns an iterator to the first list row
+    const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
+    const_reverse_iterator  rbegin() const;         ///< returns an iterator to the last list row
+    const_reverse_iterator  rend() const;           ///< returns an iterator to the imaginary row one past the first
+
+    const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
+    bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
+    Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
+
+    Y               DropHeight() const; ///< returns the height of the drop-down list
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;
 
-    std::size_t    NumRows() const;          ///< returns the total number of items in the list
-    std::size_t    NumCols() const;          ///< returns the total number of columns in each list item
+    std::size_t     NumRows() const;          ///< returns the total number of items in the list
+    std::size_t     NumCols() const;          ///< returns the total number of columns in each list item
 
     /** Returns the index of the column used to sort items, when sorting is
         enabled.  \note The sort column is not range checked when it is set by
         the user; it may be >= NumCols(). */
-    std::size_t    SortCol() const;
+    std::size_t     SortCol() const;
 
-    X              ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
-    Alignment      ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
-    Alignment      RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
+    X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
+    Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
+    Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
 
-    virtual Pt     ClientUpperLeft() const;
-    virtual Pt     ClientLowerRight() const;
+    virtual Pt      ClientUpperLeft() const;
+    virtual Pt      ClientLowerRight() const;
 
     mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
+    virtual void    Render();
 
-    virtual void   SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
+    virtual void    SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
 
-    virtual void   SetColor(Clr c);
+    virtual void    SetColor(Clr c);
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list before \a it; returns index of insertion point.  This Row becomes
         the property of the DropDownList and should not be deleted or inserted
         into any other DropDownLists */
-    iterator       Insert(Row* row, iterator it, bool signal = true);
+    iterator        Insert(Row* row, iterator it, bool signal = true);
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list at the end of the list; returns index of insertion point.  This
         Row becomes the property of the DropDownList and should not be deleted
         or inserted into any other DropDownLists */
-    iterator       Insert(Row* row, bool signal = true);
+    iterator        Insert(Row* row, bool signal = true);
 
     /** Insertion sorts \a rows into a sorted list, or inserts into an unsorted
         list before \a it. The Rows become the property of this DropDownList. */
@@ -144,41 +144,42 @@ public:
         DropDownList. */
     void            Insert(const std::vector<Row*>& rows, bool signal = true);
 
-    Row*           Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
-    void           Clear();                       ///< empties the list
-    iterator       begin();                       ///< returns an iterator to the first list row
-    iterator       end();                         ///< returns an iterator to the imaginary row one past the last one
-    reverse_iterator
-                   rbegin();                      ///< returns an iterator to the last list row
-    reverse_iterator
-                   rend();                        ///< returns an iterator to the imaginary row one past the first
-    Row&           GetRow(std::size_t n);         ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
+    Row*            Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
+    void            Clear();                        ///< empties the list
 
-    void           Select(iterator it);           ///< selects row-item \a it in the list
-    void           Select(std::size_t n);         ///< selects row-item \a it in the list
+    iterator            begin();                    ///< returns an iterator to the first list row
+    iterator            end();                      ///< returns an iterator to the imaginary row one past the last one
+    reverse_iterator    rbegin();                   ///< returns an iterator to the last list row
+    reverse_iterator    rend();                     ///< returns an iterator to the imaginary row one past the first
 
-    void           SetInteriorColor(Clr c);       ///< sets the color painted into the client area of the control
-    void           SetDropHeight(Y h);            ///< sets the height of the drop-down list
+    Row&            GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
-    /** sets the style flags for the list to \a s (invalidates currently selected item). \see GG::ListBoxStyle */
-    void           SetStyle(Flags<ListBoxStyle> s);
+    void            Select(iterator it);            ///< selects row-item \a it in the list
+    void            Select(std::size_t n);          ///< selects row-item \a it in the list
 
-    void           SetNumCols(std::size_t n);            ///< sets the number of columns in each list item to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
-    void           SetSortCol(std::size_t n);            ///< sets the index of the column used to sort rows when sorting is enabled (invalidates currently selected item); not range-checked
-    void           SetColWidth(std::size_t n, X w); ///< sets the width of column \n to \a w; not range-checked
+    void            SetInteriorColor(Clr c);        ///< sets the color painted into the client area of the control
+    void            SetDropHeight(Y h);             ///< sets the height of the drop-down list
+
+    /** sets the style flags for the list to \a s (invalidates currently
+        selected item). \see GG::ListBoxStyle */
+    void            SetStyle(Flags<ListBoxStyle> s);
+
+    void            SetNumCols(std::size_t n);      ///< sets the number of columns in each list item to \a n; if no column widths exist before this call, proportional widths are calulated and set, otherwise no column widths are set
+    void            SetSortCol(std::size_t n);      ///< sets the index of the column used to sort rows when sorting is enabled (invalidates currently selected item); not range-checked
+    void            SetColWidth(std::size_t n, X w);///< sets the width of column \n to \a w; not range-checked
 
     /** Fixes the column widths; by default, an empty list will take on the
         number of columns of its first added row. \note The number of columns
         and their widths may still be set via SetNumCols() and SetColWidth()
         after this function has been called. */
-    void           LockColWidths();
+    void            LockColWidths();
 
     /** Allows the number of columns to be determined by the first row added
         to an empty ListBox */
-    void           UnLockColWidths();
+    void            UnLockColWidths();
 
-    void           SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
-    void           SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
+    void            SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
+    void            SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
     //@}
 
 protected:
@@ -187,18 +188,18 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void    LClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
-    ListBox*       LB();                ///< returns the ListBox used to render the selected row and the popup list
+    ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
     //@}
 
 private:
-    void           SelectImpl(iterator it, bool signal);
+    void            SelectImpl(iterator it, bool signal);
+    const ListBox*  LB() const;
 
-    iterator        m_current_item;  ///< the currently-selected list item (end() if none is selected)
-    ListBox*        m_LB;            ///< the ListBox used to render the selected row and the popup list
-    ModalListPicker*m_modal_picker;
+    iterator            m_current_item;  ///< the currently-selected list item (end() if none is selected)
+    ModalListPicker*    m_modal_picker;
 };
 
 } // namespace GG
