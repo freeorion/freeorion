@@ -338,7 +338,7 @@ void SitRepPanel::FilterClicked() {
     menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                                        ALL_INDEX, false, false));
 
-    GG::PopupMenu popup(m_filter_button->UpperLeft().x, m_filter_button->LowerRight().y,
+    GG::PopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(),
                         ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (!popup.Run())

@@ -780,8 +780,8 @@ void ListBox::Render()
     // HACK! This gets around the issue of how to render headers and scrolls,
     // which do not fall within the client area.
     if (!m_header_row->empty()) {
-        Rect header_area(Pt(ul.x + static_cast<int>(BORDER_THICK), m_header_row->UpperLeft().y),
-                         Pt(lr.x - static_cast<int>(BORDER_THICK), m_header_row->LowerRight().y));
+        Rect header_area(Pt(ul.x + static_cast<int>(BORDER_THICK), m_header_row->Top()),
+                         Pt(lr.x - static_cast<int>(BORDER_THICK), m_header_row->Bottom()));
         BeginScissorClipping(header_area.ul, header_area.lr);
         GUI::GetGUI()->RenderWindow(m_header_row);
         EndScissorClipping();
@@ -1317,7 +1317,7 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
                 iterator last_visible_row = LastVisibleRow();
                 if (last_visible_row != m_rows.end() &&
                     (last_visible_row != --m_rows.end() ||
-                     ClientLowerRight().y < (*last_visible_row)->LowerRight().y))
+                     ClientLowerRight().y < (*last_visible_row)->Bottom()))
                 {
                     m_vscroll->ScrollTo(m_vscroll->PosnRange().first +
                                         Value((*m_first_row_shown)->Height()));
@@ -1334,7 +1334,7 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
             if (m_auto_scrolling_right) {
                 std::size_t last_visible_col = LastVisibleCol();
                 if (last_visible_col < m_col_widths.size() - 1 ||
-                    ClientLowerRight().x < m_rows.front()->LowerRight().x) {
+                    ClientLowerRight().x < m_rows.front()->Right()) {
                     m_hscroll->ScrollTo(m_hscroll->PosnRange().first +
                                         Value(m_col_widths[m_first_col_shown]));
                     SignalScroll(*m_hscroll, true);
@@ -1828,7 +1828,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
     Y total_y_extent(0);
     if (!m_rows.empty())
-        total_y_extent = m_rows.back()->LowerRight().y - m_rows.front()->UpperLeft().y;
+        total_y_extent = m_rows.back()->Bottom() - m_rows.front()->Top();
 
     bool vertical_needed =
         m_first_row_shown != m_rows.begin() ||

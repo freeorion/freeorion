@@ -466,7 +466,7 @@ GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
 void EncyclopediaDetailPanel::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    const GG::Y ICON_SIZE = m_summary_text->LowerRight().y - m_name_text->UpperLeft().y;
+    const GG::Y ICON_SIZE = m_summary_text->Bottom() - m_name_text->Top();
     GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 

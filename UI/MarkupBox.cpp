@@ -393,7 +393,7 @@ void MarkupBox::MarkupSurface::Refresh() {
         control->MoveTo(GG::Pt(left, top));
         top += control->Height() + EDGE_PAD;
 
-        std::cout << "MarkupSurface::Refresh control (x,y): " << control->UpperLeft().x << ", " << control->UpperLeft().y <<
+        std::cout << "MarkupSurface::Refresh control (x,y): " << control->Left() << ", " << control->Top() <<
                                                    " (w,h): " << control->Width() << ", " << control->Height() << std::endl;
     }
 

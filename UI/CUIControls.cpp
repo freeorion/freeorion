@@ -1283,21 +1283,21 @@ ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& ti
     m_center_gap = std::make_pair(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
     m_title = new GG::TextControl(GG::X(2), GG::Y(4), Width() - 4, GG::Y(RESEARCH_TITLE_PTS + 4), title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->Bottom(), P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->Bottom(), P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
 
-    Resize(GG::Pt(Width(), m_projects_in_queue_label->LowerRight().y + 5));
+    Resize(GG::Pt(Width(), m_projects_in_queue_label->Bottom() + 5));
 
     AttachChild(m_title);
     AttachChild(m_total_points_label);
@@ -1342,16 +1342,16 @@ void ProductionInfoPanel::Draw(GG::Clr clr, bool fill) {
     GG::Pt square_3(GG::X(3), GG::Y(3));
     GG::Pt ul = UpperLeft() + square_3, lr = LowerRight() - square_3;
     glColor(clr);
-    PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->LowerRight().y + 2),
+    PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->Bottom() + 2),
                       CORNER_RADIUS, true, true, false, false, fill);
     std::pair<GG::X, GG::X> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
-    PartlyRoundedRect(GG::Pt(ul.x, m_total_points_label->UpperLeft().y - 2), GG::Pt(gap_to_use.first, m_wasted_points_label->LowerRight().y + 2),
+    PartlyRoundedRect(GG::Pt(ul.x, m_total_points_label->Top() - 2), GG::Pt(gap_to_use.first, m_wasted_points_label->Bottom() + 2),
                       CORNER_RADIUS, false, false, false, false, fill);
-    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_total_points_label->UpperLeft().y - 2), GG::Pt(lr.x, m_wasted_points_label->LowerRight().y + 2),
+    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_total_points_label->Top() - 2), GG::Pt(lr.x, m_wasted_points_label->Bottom() + 2),
                       CORNER_RADIUS, false, false, false, false, fill);
-    PartlyRoundedRect(GG::Pt(ul.x, m_projects_in_progress_label->UpperLeft().y - 2), GG::Pt(gap_to_use.first, m_projects_in_queue_label->LowerRight().y + 2),
+    PartlyRoundedRect(GG::Pt(ul.x, m_projects_in_progress_label->Top() - 2), GG::Pt(gap_to_use.first, m_projects_in_queue_label->Bottom() + 2),
                       CORNER_RADIUS, false, false, true, false, fill);
-    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_projects_in_progress_label->UpperLeft().y - 2), GG::Pt(lr.x, m_projects_in_queue_label->LowerRight().y + 2),
+    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_projects_in_progress_label->Top() - 2), GG::Pt(lr.x, m_projects_in_queue_label->Bottom() + 2),
                       CORNER_RADIUS, false, false, false, true, fill);
 }
 

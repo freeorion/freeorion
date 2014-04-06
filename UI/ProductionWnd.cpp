@@ -615,7 +615,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
                                                       ClientUI::KnownTechFillColor(),
                                                       ClientUI::KnownTechTextAndBorderColor());
 
-    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y,
+    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->Bottom(),
                                   m_production_info_panel->Width() - 4,
                                   ClientSize().y - 4 - m_production_info_panel->Height(),
                                   "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));

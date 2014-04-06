@@ -604,7 +604,7 @@ bool GG::ListBox::RowPtrIteratorLess<Cont>::LessThan(Iter lhs, Iter rhs, Iter en
     return lhs == end ?
         false :
         (rhs == end ?
-         true : (*lhs)->UpperLeft().y < (*rhs)->UpperLeft().y);
+         true : (*lhs)->Top() < (*rhs)->Top());
 }
 
 template <class RowType>

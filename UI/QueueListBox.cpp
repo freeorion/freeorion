@@ -84,8 +84,8 @@ void QueueListBox::Render() {
             ul.y = lr.y;
         if (!row->empty()) {
             GG::Control* panel = (*row)[0];
-            ul.x = panel->UpperLeft().x;
-            lr.x = panel->LowerRight().x;
+            ul.x = panel->Left();
+            lr.x = panel->Right();
         }
         GG::FlatRectangle(GG::Pt(ul.x, ul.y - 1), GG::Pt(lr.x, ul.y), GG::CLR_ZERO, GG::CLR_WHITE, 1);
     }

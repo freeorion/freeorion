@@ -125,7 +125,7 @@ namespace {
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
         glReadPixels(Value(ul.x),
-                     Value(GUI::GetGUI()->AppHeight() - wnd->LowerRight().y),
+                     Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
                      Value(size.x),
                      Value(size.y),
                      GL_RGBA,
@@ -302,13 +302,13 @@ void GUIImpl::HandlePress(unsigned int mouse_button, const Pt& pos, int curr_tic
     if (m_drag_wnds[mouse_button]) {
         m_wnd_region = m_drag_wnds[mouse_button]->WindowRegion(pos); // and determine whether a resize-region of it is being dragged
         if (m_wnd_region % 3 == 0) // left regions
-            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->UpperLeft().x - pos.x;
+            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->Left() - pos.x;
         else
-            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->LowerRight().x - pos.x;
+            m_wnd_resize_offset.x = m_drag_wnds[mouse_button]->Right() - pos.x;
         if (m_wnd_region < 3) // top regions
-            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->UpperLeft().y - pos.y;
+            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Top() - pos.y;
         else
-            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->LowerRight().y - pos.y;
+            m_wnd_resize_offset.y = m_drag_wnds[mouse_button]->Bottom() - pos.y;
         Wnd* drag_wnds_root_parent = m_drag_wnds[mouse_button]->RootParent();
         GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : m_drag_wnds[mouse_button]);
         m_drag_wnds[mouse_button]->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonDown, mouse_button), pos, m_mod_keys));

@@ -1918,7 +1918,7 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG
 void SidePanel::PlanetPanel::Render() {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
-    GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->LowerRight().y);
+    GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Bottom());
     GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y(MaxPlanetDiameter()));
     bool show_planet_box = true;
 
@@ -2290,7 +2290,7 @@ SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
     // ensure pt is below top of container
-    if (pt.y < UpperLeft().y)
+    if (pt.y < Top())
         return false;
 
     // allow point to be within any planet panel that is below top of container

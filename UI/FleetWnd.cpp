@@ -2510,9 +2510,9 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     // ensure position is not off screen
     GG::Pt window_pos = UpperLeft();
-    if (GG::GUI::GetGUI()->AppWidth() < LowerRight().x)
+    if (GG::GUI::GetGUI()->AppWidth() < Right())
         window_pos.x = GG::GUI::GetGUI()->AppWidth() - Width();
-    if (GG::GUI::GetGUI()->AppHeight() < LowerRight().y)
+    if (GG::GUI::GetGUI()->AppHeight() < Bottom())
         window_pos.y = GG::GUI::GetGUI()->AppHeight() - Height();
     MoveTo(window_pos);
 

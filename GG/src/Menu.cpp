@@ -258,7 +258,7 @@ void MenuBar::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
                     (*m_menu_data.next_level[i].SelectedSignal)();
                 } else {
                     MenuItem popup_data;
-                    PopupMenu menu(m_menu_labels[i]->UpperLeft().x, m_menu_labels[i]->LowerRight().y, m_font, m_menu_data.next_level[i], m_text_color, m_border_color, m_int_color);
+                    PopupMenu menu(m_menu_labels[i]->Left(), m_menu_labels[i]->Bottom(), m_font, m_menu_data.next_level[i], m_text_color, m_border_color, m_int_color);
                     menu.SetHiliteColor(m_hilite_color);
                     menu.SetSelectedTextColor(m_sel_text_color);
                     Connect(menu.BrowsedSignal, boost::ref(BrowsedSignal));

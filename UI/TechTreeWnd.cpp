@@ -380,7 +380,7 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
-        new_lr.y = LowerRight().y;    // ignore y-resizes
+        new_lr.y = Bottom();    // ignore y-resizes
 
         // constrain to within parent
         if (GG::Wnd* parent = Parent()) {

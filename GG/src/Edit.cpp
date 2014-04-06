@@ -286,7 +286,7 @@ X Edit::FirstCharOffset() const
 X Edit::ScreenPosOfChar(CPSize idx) const
 {
     X first_char_offset = FirstCharOffset();
-    return UpperLeft().x + PIXEL_MARGIN + ((idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
+    return Left() + PIXEL_MARGIN + ((idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
 }
 
 CPSize Edit::LastVisibleChar() const

@@ -374,9 +374,9 @@ void TabBar::InsertTab(std::size_t index, const std::string& name)
         m_left_right_button_layout->Show();
         m_left_button->Disable(m_first_tab_shown == 0);
         X right_side = m_left_right_button_layout->Visible() ?
-            m_left_button->UpperLeft().x :
-            LowerRight().x;
-        m_right_button->Disable(m_tab_buttons.back()->LowerRight().x <= right_side);
+            m_left_button->Left() :
+            Right();
+        m_right_button->Disable(m_tab_buttons.back()->Right() <= right_side);
     }
     if (m_tabs->CheckedButton() == RadioButtonGroup::NO_BUTTON)
         SetCurrentTab(0);
@@ -431,7 +431,7 @@ void TabBar::TabChanged(std::size_t index, bool signal)
 void TabBar::LeftClicked()
 {
     assert(0 < m_first_tab_shown);
-    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->UpperLeft().x - m_tab_buttons[m_first_tab_shown - 1]->UpperLeft().x, Y0));
+    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() - m_tab_buttons[m_first_tab_shown - 1]->Left(), Y0));
     --m_first_tab_shown;
     m_left_button->Disable(m_first_tab_shown == 0);
     m_right_button->Disable(false);
@@ -440,30 +440,30 @@ void TabBar::LeftClicked()
 void TabBar::RightClicked()
 {
     assert(m_first_tab_shown < m_tab_buttons.size() - 1);
-    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->UpperLeft().x - m_tab_buttons[m_first_tab_shown + 1]->UpperLeft().x, Y0));
+    m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() - m_tab_buttons[m_first_tab_shown + 1]->Left(), Y0));
     ++m_first_tab_shown;
     X right_side = m_left_right_button_layout->Visible() ?
-        m_left_button->UpperLeft().x :
-        LowerRight().x;
-    m_right_button->Disable(m_tab_buttons.back()->LowerRight().x <= right_side);
+        m_left_button->Left() :
+        Right();
+    m_right_button->Disable(m_tab_buttons.back()->Right() <= right_side);
     m_left_button->Disable(false);
 }
 
 void TabBar::BringTabIntoView(std::size_t index)
 {
-    while (m_tab_buttons[index]->UpperLeft().x < UpperLeft().x) {
+    while (m_tab_buttons[index]->Left() < Left()) {
         LeftClicked();
     }
     X right_side = m_left_right_button_layout->Visible() ?
-        m_left_button->UpperLeft().x :
-        LowerRight().x;
+        m_left_button->Left() :
+        Right();
     if (m_tab_buttons[index]->Width() < Width()) {
-        while (right_side < m_tab_buttons[index]->LowerRight().x && index != m_first_tab_shown) {
+        while (right_side < m_tab_buttons[index]->Right() && index != m_first_tab_shown) {
             RightClicked();
         }
     } else {
-        m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->UpperLeft().x - m_tab_buttons[index]->UpperLeft().x, Y0));
-        m_right_button->Disable(m_tab_buttons.back()->LowerRight().x <= right_side);
+        m_tabs->OffsetMove(Pt(m_tab_buttons[m_first_tab_shown]->Left() - m_tab_buttons[index]->Left(), Y0));
+        m_right_button->Disable(m_tab_buttons.back()->Right() <= right_side);
         m_left_button->Disable(false);
     }
 }

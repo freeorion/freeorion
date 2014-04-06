@@ -661,7 +661,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
-    m_color_squares_layout = new Layout(X0, m_pickers_layout->LowerRight().y + 5, m_pickers_layout->Width(), Y(40),
+    m_color_squares_layout = new Layout(X0, m_pickers_layout->Bottom() + 5, m_pickers_layout->Width(), Y(40),
                                         1, 1, 0, 4);
     m_new_color_square = new ColorDisplay(color);
     if (m_original_color_specified) {
@@ -678,7 +678,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
         m_color_squares_layout->Add(m_new_color_square, 0, 0);
     }
 
-    m_color_buttons_layout = new Layout(X0, m_color_squares_layout->LowerRight().y + 5, m_pickers_layout->Width(), Y(80),
+    m_color_buttons_layout = new Layout(X0, m_color_squares_layout->Bottom() + 5, m_pickers_layout->Width(), Y(80),
                                         COLOR_BUTTON_ROWS, COLOR_BUTTON_COLS, 0, 4);
     for (int i = 0; i < COLOR_BUTTON_ROWS; ++i) {
         for (int j = 0; j < COLOR_BUTTON_COLS; ++j) {
@@ -689,7 +689,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     }
 
     using boost::lexical_cast;
-    m_sliders_ok_cancel_layout = new Layout(m_pickers_layout->LowerRight().x + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
+    m_sliders_ok_cancel_layout = new Layout(m_pickers_layout->Right() + 5, Y0, X(150), Y((25 + 5) * 8 - 5),
                                             9, 3, 0, 5);
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(0, X(15));
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(1, X(30));

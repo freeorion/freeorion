@@ -425,7 +425,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
 
-    GG::Y ypos = m_galaxy_setup_panel->LowerRight().y;
+    GG::Y ypos = m_galaxy_setup_panel->Bottom();
 
     // player name
     m_player_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLAYER_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);

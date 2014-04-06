@@ -95,13 +95,13 @@ namespace {
     struct WndHorizontalLess
     {
         bool operator()(const Wnd* lhs, const Wnd* rhs) const
-            {return lhs->UpperLeft().x < rhs->UpperLeft().x;}
+            {return lhs->Left() < rhs->Left();}
     };
 
     struct WndVerticalLess
     {
         bool operator()(const Wnd* lhs, const Wnd* rhs) const
-            {return lhs->UpperLeft().y < rhs->UpperLeft().y;}
+            {return lhs->Top() < rhs->Top();}
     };
 
     const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;

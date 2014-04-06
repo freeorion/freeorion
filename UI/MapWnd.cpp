@@ -231,10 +231,10 @@ namespace {
      * show fleet move lines. */
     double move_line_animation_shift = 0.0;   // in pixels
 
-    GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().x : GG::X0; }
-    GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().x : GG::X0; }
-    GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().y : GG::Y0; }
-    GG::Y WndBottom(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().y : GG::Y0; }
+    GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->Left() : GG::X0; }
+    GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->Right() : GG::X0; }
+    GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->Top() : GG::Y0; }
+    GG::Y WndBottom(const GG::Wnd* wnd) { return wnd ? wnd->Bottom() : GG::Y0; }
     bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt)
     { return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom; } //pt >= ul && pt < lr;
 
@@ -994,7 +994,7 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // system-view side panel
-    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
+    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->Bottom(), AppHeight() - m_toolbar->Height());
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
@@ -1078,7 +1078,7 @@ MapWnd::MapWnd() :
     // Zoom slider
     const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
               ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = new CUISlider<double>(m_btn_turn->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+    m_zoom_slider = new CUISlider<double>(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->SlideTo(m_zoom_steps_in);
@@ -1161,8 +1161,8 @@ std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen
 }
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
-    data.map_left = Value(UpperLeft().x);
-    data.map_top = Value(UpperLeft().y);
+    data.map_left = Value(Left());
+    data.map_top = Value(Top());
     data.map_zoom_steps_in = m_zoom_steps_in;
     data.fleets_exploring = m_fleets_exploring;
 }
@@ -3121,10 +3121,10 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
 
 
         // safety check to ensure window is on screen... may be redundant
-        if (AppWidth() - 5 < fleet_wnd->LowerRight().x)
-            fleet_wnd->OffsetMove(GG::Pt(AppWidth() - 5 - fleet_wnd->LowerRight().x, GG::Y0));
-        if (AppHeight() - 5 < fleet_wnd->LowerRight().y)
-            fleet_wnd->OffsetMove(GG::Pt(GG::X0, AppHeight() - 5 - fleet_wnd->LowerRight().y));
+        if (AppWidth() - 5 < fleet_wnd->Right())
+            fleet_wnd->OffsetMove(GG::Pt(AppWidth() - 5 - fleet_wnd->Right(), GG::Y0));
+        if (AppHeight() - 5 < fleet_wnd->Bottom())
+            fleet_wnd->OffsetMove(GG::Pt(GG::X0, AppHeight() - 5 - fleet_wnd->Bottom()));
     }
 
 
@@ -4409,16 +4409,16 @@ void MapWnd::Sanitize() {
             plr_wnd->Clear();
     }
 
-    GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y);
+    GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->Bottom());
     GG::Pt sp_lr = sp_ul + GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height());
     m_side_panel->SizeMove(sp_ul, sp_lr);
 
-    m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->LowerRight().y));
+    m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom()));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
 
-    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
-    m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
-    m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
+    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
+    m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
+    m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->Left(), m_sitrep_panel->Bottom()));
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 0.0;

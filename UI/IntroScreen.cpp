@@ -325,7 +325,7 @@ void IntroScreen::OnCredits() {
 
     m_credits_wnd = new CreditsWnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
                                    credits,
-                                   credit_side_pad, 0, Value(m_menu->UpperLeft().x) - credit_side_pad,
+                                   credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
                                    Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
     m_splash->AttachChild(m_credits_wnd);

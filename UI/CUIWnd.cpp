@@ -373,12 +373,12 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     CUIWnd(prompt_text, GG::X0, GG::Y0, w, GG::Y1, flags)
 {
     m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, ClientWidth() - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);
-    m_ok_bn = new CUIButton(UserString("OK"), m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH);
-    m_cancel_bn = new CUIButton(UserString("CANCEL"), m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH);
+    m_ok_bn = new CUIButton(UserString("OK"), m_edit->Right() + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH);
+    m_cancel_bn = new CUIButton(UserString("CANCEL"), m_ok_bn->Right() + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH);
     m_ok_bn->OffsetMove(GG::Pt(GG::X0, (m_edit->Height() - m_ok_bn->Height()) / 2));
     m_cancel_bn->OffsetMove(GG::Pt(GG::X0, (m_edit->Height() - m_ok_bn->Height()) / 2));
 
-    Resize(GG::Pt(w, std::max(m_edit->LowerRight().y, m_cancel_bn->LowerRight().y) + BottomBorder() + 3));
+    Resize(GG::Pt(w, std::max(m_edit->Bottom(), m_cancel_bn->Bottom()) + BottomBorder() + 3));
     MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - w) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));
 
     AttachChild(m_edit);
