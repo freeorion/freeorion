@@ -198,7 +198,6 @@ private:
     void            SelectImpl(iterator it, bool signal);
     const ListBox*  LB() const;
 
-    iterator            m_current_item;  ///< the currently-selected list item (end() if none is selected)
     ModalListPicker*    m_modal_picker;
 };
 

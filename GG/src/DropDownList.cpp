@@ -143,13 +143,11 @@ void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const Pt&)
 ////////////////////////////////////////////////
 DropDownList::DropDownList() :
     Control(),
-    m_current_item(),
     m_modal_picker(0)
 {}
 
 DropDownList::DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(x, y, w, h, flags),
-    m_current_item(),
     m_modal_picker(new ModalListPicker(w, drop_ht, color, this))
 {
     SetStyle(LIST_SINGLESEL);
@@ -158,7 +156,6 @@ DropDownList::DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color, Flags<WndFl
     Wnd::SizeMove(Pt(x, y),
                   Pt(x + Size().x,
                      y + h + 2 * static_cast<int>(LB()->CellMargin()) + 2 * BORDER_THICK));
-    m_current_item = LB()->end();
 
     Connect(m_modal_picker->SelChangedSignal, SelChangedSignal);
 
@@ -174,10 +171,15 @@ DropDownList::~DropDownList() {
 }
 
 DropDownList::iterator DropDownList::CurrentItem() const
-{ return m_current_item; }
+{
+    if (m_modal_picker->LB()->Selections().empty())
+        return m_modal_picker->LB()->end();
+    else
+        return *m_modal_picker->LB()->Selections().begin();
+}
 
 std::size_t DropDownList::CurrentItemIndex() const
-{ return IteratorToIndex(m_current_item); }
+{ return IteratorToIndex(CurrentItem()); }
 
 std::size_t DropDownList::IteratorToIndex(iterator it) const
 { return it == m_modal_picker->LB()->end() ? -1 : std::distance(m_modal_picker->LB()->begin(), it); }
@@ -252,8 +254,8 @@ void DropDownList::Render()
     BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
 
     // Draw the ListBox::Row of currently displayed item, if any.
-    if (m_current_item != LB()->end()) {
-        Row* current_item = *m_current_item;
+    if (CurrentItem() != LB()->end()) {
+        Row* current_item = *CurrentItem();
         Pt offset = ClientUpperLeft() - current_item->UpperLeft();
         bool visible = current_item->Visible();
         current_item->OffsetMove(offset);
@@ -307,15 +309,10 @@ void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
 }
 
 DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
-{
-    if (it == m_current_item)
-        m_current_item = LB()->end();
-    return LB()->Erase(it, signal);
-}
+{ return LB()->Erase(it, signal); }
 
 void DropDownList::Clear()
 {
-    m_current_item = LB()->end();
     m_modal_picker->EndRun();
     LB()->Clear();
 }
@@ -352,17 +349,13 @@ void DropDownList::SetStyle(Flags<ListBoxStyle> s)
     s &= ~(LIST_NOSEL | LIST_QUICKSEL | LIST_USERDELETE | LIST_BROWSEUPDATES);
     s |= LIST_SINGLESEL;
     LB()->SetStyle(s);
-    m_current_item = LB()->end();
 }
 
 void DropDownList::SetNumCols(std::size_t n)
 { LB()->SetNumCols(n); }
 
 void DropDownList::SetSortCol(std::size_t n)
-{
-    LB()->SetSortCol(n);
-    m_current_item = LB()->end();
-}
+{ LB()->SetSortCol(n); }
 
 void DropDownList::SetColWidth(std::size_t n, X w)
 { LB()->SetColWidth(n, w); }
@@ -401,17 +394,17 @@ void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKe
     if (!Disabled()) {
         switch (key) {
         case GGK_UP: // arrow-up (not numpad arrow)
-            if (m_current_item != LB()->end() && m_current_item != LB()->begin())
-                SelectImpl(boost::prior(m_current_item), true);
+            if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin())
+                SelectImpl(boost::prior(CurrentItem()), true);
             break;
         case GGK_DOWN: // arrow-down (not numpad arrow)
-            if (m_current_item != LB()->end() && m_current_item != --LB()->end())
-                SelectImpl(boost::next(m_current_item), true);
+            if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end())
+                SelectImpl(boost::next(CurrentItem()), true);
             break;
         case GGK_PAGEUP: // page up key (not numpad key)
-            if (LB()->NumRows() && m_current_item != LB()->end()) {
+            if (LB()->NumRows() && CurrentItem() != LB()->end()) {
                 std::size_t i = 10;
-                iterator it = m_current_item;
+                iterator it = CurrentItem();
                 while (i && it != LB()->begin()) {
                     --it;
                     --i;
@@ -422,7 +415,7 @@ void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKe
         case GGK_PAGEDOWN: // page down key (not numpad key)
             if (LB()->NumRows()) {
                 std::size_t i = 10;
-                iterator it = m_current_item;
+                iterator it = CurrentItem();
                 while (i && it != --LB()->end()) {
                     ++it;
                     ++i;
@@ -454,15 +447,13 @@ const ListBox* DropDownList::LB() const
 
 void DropDownList::SelectImpl(iterator it, bool signal)
 {
-    iterator old_m_current_item = m_current_item;
+    iterator old_m_current_item = CurrentItem();
     if (it == LB()->end()) {
-        m_current_item = LB()->end();
         LB()->DeselectAll();
     } else {
-        m_current_item = it;
-        LB()->SelectRow(m_current_item);
+        LB()->SelectRow(it);
     }
 
-    if (signal && m_current_item != old_m_current_item)
-        SelChangedSignal(m_current_item);
+    if (signal && CurrentItem() != old_m_current_item)
+        SelChangedSignal(CurrentItem());
 }
