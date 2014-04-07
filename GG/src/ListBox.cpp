@@ -163,20 +163,20 @@ namespace {
     bool RegisterListBoxStyles()
     {
         FlagSpec<ListBoxStyle>& spec = FlagSpec<ListBoxStyle>::instance();
-        spec.insert(LIST_NONE, "LIST_NONE", true);
-        spec.insert(LIST_VCENTER, "LIST_VCENTER", true);
-        spec.insert(LIST_TOP, "LIST_TOP", true);
-        spec.insert(LIST_BOTTOM, "LIST_BOTTOM", true);
-        spec.insert(LIST_CENTER, "LIST_CENTER", true);
-        spec.insert(LIST_LEFT, "LIST_LEFT", true);
-        spec.insert(LIST_RIGHT, "LIST_RIGHT", true);
-        spec.insert(LIST_NOSORT, "LIST_NOSORT", true);
-        spec.insert(LIST_SORTDESCENDING, "LIST_SORTDESCENDING", true);
-        spec.insert(LIST_NOSEL, "LIST_NOSEL", true);
-        spec.insert(LIST_SINGLESEL, "LIST_SINGLESEL", true);
-        spec.insert(LIST_QUICKSEL, "LIST_QUICKSEL", true);
-        spec.insert(LIST_USERDELETE, "LIST_USERDELETE", true);
-        spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES", true);
+        spec.insert(LIST_NONE,          "LIST_NONE",            true);
+        spec.insert(LIST_VCENTER,       "LIST_VCENTER",         true);
+        spec.insert(LIST_TOP,           "LIST_TOP",             true);
+        spec.insert(LIST_BOTTOM,        "LIST_BOTTOM",          true);
+        spec.insert(LIST_CENTER,        "LIST_CENTER",          true);
+        spec.insert(LIST_LEFT,          "LIST_LEFT",            true);
+        spec.insert(LIST_RIGHT,         "LIST_RIGHT",           true);
+        spec.insert(LIST_NOSORT,        "LIST_NOSORT",          true);
+        spec.insert(LIST_SORTDESCENDING,"LIST_SORTDESCENDING",  true);
+        spec.insert(LIST_NOSEL,         "LIST_NOSEL",           true);
+        spec.insert(LIST_SINGLESEL,     "LIST_SINGLESEL",       true);
+        spec.insert(LIST_QUICKSEL,      "LIST_QUICKSEL",        true);
+        spec.insert(LIST_USERDELETE,    "LIST_USERDELETE",      true);
+        spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES",   true);
         return true;
     }
     bool dummy = RegisterListBoxStyles();
