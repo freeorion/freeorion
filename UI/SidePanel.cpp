@@ -2660,36 +2660,43 @@ GG::Pt SidePanel::ClientUpperLeft() const
 void SidePanel::Render() {
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
-
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
     AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, false);
 
-   // use GL to draw the lines
+    // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
 
-    // draw inner border
+    // draw inner border, including extra resize-tab lines
     if (cl_ul.y < cl_lr.y) {
         glBegin(GL_LINE_STRIP);
             glColor(ClientUI::WndInnerBorderColor());
             glVertex(cl_ul.x, cl_ul.y);
             glVertex(cl_lr.x, cl_ul.y);
-            glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-            glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+            if (m_resizable) {
+                glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
+                glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+            } else {
+                glVertex(cl_lr.x, cl_lr.y);
+            }
             glVertex(cl_ul.x, cl_lr.y);
             glVertex(cl_ul.x, cl_ul.y);
         glEnd();
     }
-    // resize hash lines
-    glBegin(GL_LINES);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+    if (m_resizable) {
+        glBegin(GL_LINES);
+            // draw the extra lines of the resize tab
+            GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
+            glColor(tab_lines_colour);
 
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-    glEnd();
+            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
+            glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+
+            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
+            glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
+        glEnd();
+    }
     glEnable(GL_TEXTURE_2D);
 }
 
