@@ -4389,6 +4389,8 @@ void MapWnd::Cleanup() {
     m_scale_line->Hide();
     m_zoom_slider->Hide();
     m_sitrep_panel->ShowSitRepsForTurn(INVALID_GAME_TURN);
+    if (m_auto_end_turn)
+        ToggleAutoEndTurn();
 }
 
 void MapWnd::Sanitize() {
