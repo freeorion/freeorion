@@ -41,6 +41,17 @@ namespace fs = boost::filesystem;
 
 void Seed(unsigned int seed);
 
+namespace {
+    //If there's only one other empire, return their ID:
+    int EnemyId(int empire_id, const std::set<int> &empire_ids) {
+        if (empire_ids.size() == 2)
+            for (std::set<int>::const_iterator enemy_it = empire_ids.begin();
+                 enemy_it != empire_ids.end(); ++enemy_it)
+                if (*enemy_it != empire_id)
+                    return *enemy_it;
+        return ALL_EMPIRES;
+    }
+};
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
@@ -1671,7 +1682,7 @@ namespace {
                  empire_it != empire_ids.end(); ++empire_it)
             {
                 if (Empire* empire = Empires().Lookup(*empire_it))
-                    empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id, log_id));
+                    empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id, log_id, EnemyId(*empire_it, empire_ids)));
             }
 
             // sitreps about destroyed objects
@@ -2167,7 +2178,7 @@ namespace {
                  empire_it != all_involved_empires.end(); ++empire_it)
             {
                 if (Empire* empire = Empires().Lookup(*empire_it))
-                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id, EnemyId(*empire_it, all_involved_empires)));
             }
 
             // who won?

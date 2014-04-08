@@ -3649,8 +3649,11 @@ SITREP_SHIP_BATCH_BUILT
 EFFECT_EVACUEES
 EFFECT_PSY_DOM
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
+SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
+SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
+SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
 SITREP_FLEET_ARRIVED_AT_DESTINATION'''
 ## END OF SITREP_PRIORITY_ORDER
 
@@ -3699,6 +3702,10 @@ SITREP_COMBAT_SYSTEM
 At %system%: there was %combat%!
 SITREP_COMBAT_SYSTEM_LABEL
 Combat at System
+SITREP_COMBAT_SYSTEM_ENEMY
+At %system%: there was %combat% with %empire%.
+SITREP_COMBAT_SYSTEM_ENEMY_LABEL
+Combat at System
 COMBAT
 Combat
 
@@ -3706,6 +3713,11 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM
 At %system%: an unidentified object was destroyed!
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Object Destroyed
+
+SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
+At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed!
+SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
+Own Ship Destroyed
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed!
@@ -3776,6 +3788,10 @@ SITREP_GROUND_BATTLE
 On %planet%: there was a ground battle.
 SITREP_GROUND_BATTLE_LABEL
 Ground Battle
+SITREP_GROUND_BATTLE_ENEMY
+On %planet%: there was a ground battle with %empire%.
+SITREP_GROUND_BATTLE_ENEMY_LABEL
+Ground Battle
 
 SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%!
@@ -3793,22 +3809,42 @@ SITREP_PLANET_COLONIZED_LABEL
 Planet Colonized
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-At %system%: %fleet% has arrived.
+At %system%: %fleet% (%rawtext% ships) has arrived.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Misc. Fleet Arrived
 
+SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
+At %system%: a %shipdesign% arrived.
+SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
+Monster Arrived
+
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-At %system%: a %fleet% fleet has arrived.
+At %system%: a %fleet% fleet (%rawtext% ships) has arrived.
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monsters Fleet Arrived
 
+SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
+At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
+Own Ship Arrived
+
+SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
+At %system%: the %empire% fleet '%fleet%' (%rawtext%x %shipdesign) has arrived.
+SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
+Own Fleet Arrived
+
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-At %system%: the %empire% fleet '%fleet%' has arrived.
+At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Own Fleet Arrived
 
+SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
+At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
+Foreign Ship Arrived
+
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-At %system%: the %empire% fleet '%fleet%' has arrived.
+At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 

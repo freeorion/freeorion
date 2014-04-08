@@ -46,8 +46,8 @@ SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_na
 SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name);
 SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name);
 
-FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id);
-FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id);
+FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id, int empire_id);
+FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id, int empire_id);
 FO_COMMON_API SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 FO_COMMON_API SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id);
 FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
