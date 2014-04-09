@@ -1015,7 +1015,7 @@ public:
 
         if (m_has_contents) {
             m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                                "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+                                                "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
             AttachChild(m_expand_button);
             GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 
