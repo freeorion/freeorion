@@ -27,10 +27,7 @@ About::About():
     m_license = new CUIButton(UserString("LICENSE"), GG::X(310), GG::Y(440), GG::X(75));
     m_vision = new CUIButton(UserString("VISION"), GG::X(220), GG::Y(440), GG::X(75));
     m_info = new CUIMultiEdit(GG::X(20), GG::Y(20), GG::X(550), GG::Y(400), UserString("FREEORION_VISION"), 
-                              GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
-                              ClientUI::GetFont(),
-                              ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
-                              ClientUI::CtrlColor(), GG::INTERACTIVE);
+                              GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);

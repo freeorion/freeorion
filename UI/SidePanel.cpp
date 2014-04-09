@@ -917,24 +917,15 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 
     m_colonize_button = new CUIButton(UserString("PL_COLONIZE"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      ClientUI::GetFont(),
-                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
-                                      ClientUI::TextColor(), GG::INTERACTIVE);
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
     GG::Connect(m_colonize_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_invade_button =   new CUIButton(UserString("PL_INVADE"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      ClientUI::GetFont(),
-                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
-                                      ClientUI::TextColor(), GG::INTERACTIVE);
+    m_invade_button   = new CUIButton(UserString("PL_INVADE"),
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
     GG::Connect(m_invade_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
-    m_bombard_button =  new CUIButton(UserString("PL_BOMBARD"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
-                                      ClientUI::GetFont(),
-                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
-                                      ClientUI::TextColor(), GG::INTERACTIVE);
+    m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"),
+                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
     GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);
 
     if (m_planet_graphic)

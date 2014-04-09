@@ -169,7 +169,7 @@ SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str, GG:
                                                      const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                                      GG::Clr color/* = ClientUI::CtrlColor()*/,
                                                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/,
-                                                     int thick/* = 2*/, 
+                                                     int thick/* = 1*/,
                                                      GG::Clr text_color/* = ClientUI::TextColor()*/,
                                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     CUIButton(str, x, y, w, font, color, border, thick, text_color, flags)

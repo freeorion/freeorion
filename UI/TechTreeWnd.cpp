@@ -830,15 +830,10 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_vscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_hscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
 
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
 
-    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, font, ClientUI::WndColor(),
-                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
-                                     GG::INTERACTIVE | GG::ONTOP);
-    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, font, ClientUI::WndColor(),
-                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(),
-                                      GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, ClientUI::GetFont(), ClientUI::WndColor());
+    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, ClientUI::GetFont(), ClientUI::WndColor());
 
     DoLayout();
 

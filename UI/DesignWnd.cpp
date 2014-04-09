@@ -1878,35 +1878,29 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 {
     SetChildClippingMode(ClipToClient);
 
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-
-    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), font,
+    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), ClientUI::GetFont(),
                                               ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                               GG::INTERACTIVE);
     AttachChild(m_design_name_label);
 
-    m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE);
+    m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"));
     AttachChild(m_design_name);
     GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::EditedSignal, this);
 
-    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font,
+    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), ClientUI::GetFont(),
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                                      GG::INTERACTIVE);
     AttachChild(m_design_description_label);
 
-    m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                       ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE);
+    m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"));
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"), GG::X0, GG::Y0, GG::X(10), font, ClientUI::CtrlColor(),
-                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE);
+    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"), GG::X0, GG::Y0, GG::X(10));
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"), GG::X0, GG::Y0, GG::X(10), font, ClientUI::CtrlColor(),
-                                   ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE);
+    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"), GG::X0, GG::Y0, GG::X(10));
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
 
