@@ -31,6 +31,7 @@
 #include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/Edit.h>
+#include <GG/ListBox.h>
 #include <GG/Timer.h>
 #include <GG/ZList.h>
 #include <GG/utf8/checked.h>
@@ -600,6 +601,12 @@ const std::string& GUI::AppName() const
 Wnd* GUI::FocusWnd() const
 { return s_impl->m_modal_wnds.empty() ? s_impl->m_focus_wnd : s_impl->m_modal_wnds.back().second; }
 
+Wnd* GUI::PrevFocusInteractiveWnd() const
+{ return FocusWnd(); }  // TODO: implement by crawing the parent-child graph
+
+Wnd* GUI::NextFocusInteractiveWnd() const
+{ return FocusWnd(); }
+
 Wnd* GUI::GetWindowUnder(const Pt& pt) const
 {
     if (INSTRUMENT_GET_WINDOW_UNDER) {
@@ -840,6 +847,9 @@ void GUI::ClearEventState()
 
 void GUI::SetFocusWnd(Wnd* wnd)
 {
+    if (FocusWnd() == wnd)
+        return;
+
     // inform old focus wnd that it is losing focus
     if (FocusWnd())
         FocusWnd()->HandleEvent(WndEvent(WndEvent::LosingFocus));
@@ -849,6 +859,22 @@ void GUI::SetFocusWnd(Wnd* wnd)
     // inform new focus wnd that it is gaining focus
     if (FocusWnd())
         FocusWnd()->HandleEvent(WndEvent(WndEvent::GainingFocus));
+}
+
+bool GUI::SetPrevFocusWndInCycle()
+{
+    Wnd* prev_wnd = PrevFocusInteractiveWnd();
+    if (prev_wnd)
+        SetFocusWnd(prev_wnd);
+    return true;
+}
+
+bool GUI::SetNextFocusWndInCycle()
+{
+    Wnd* next_wnd = NextFocusInteractiveWnd();
+    if (next_wnd)
+        SetFocusWnd(next_wnd);
+    return true;
 }
 
 void GUI::Wait(unsigned int ms)
@@ -879,47 +905,48 @@ void GUI::Remove(Wnd* wnd)
 
 void GUI::WndDying(Wnd* wnd)
 {
-    if (wnd) {
-        Remove(wnd);
-        if (MatchesOrContains(wnd, s_impl->m_focus_wnd))
-            s_impl->m_focus_wnd = 0;
-        for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin(); it != s_impl->m_modal_wnds.end(); ++it) {
-            if (MatchesOrContains(wnd, it->second)) {
-                if (MatchesOrContains(wnd, it->first)) {
-                    it->second = 0;
-                } else { // if the modal window for the removed window's focus level is available, revert focus to the modal window
-                    if ((it->second = it->first))
-                        it->first->HandleEvent(WndEvent(WndEvent::GainingFocus));
-                }
+    if (!wnd)
+        return;
+
+    Remove(wnd);
+    if (MatchesOrContains(wnd, s_impl->m_focus_wnd))
+        s_impl->m_focus_wnd = 0;
+    for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin(); it != s_impl->m_modal_wnds.end(); ++it) {
+        if (MatchesOrContains(wnd, it->second)) {
+            if (MatchesOrContains(wnd, it->first)) {
+                it->second = 0;
+            } else { // if the modal window for the removed window's focus level is available, revert focus to the modal window
+                if ((it->second = it->first))
+                    it->first->HandleEvent(WndEvent(WndEvent::GainingFocus));
             }
         }
-        if (MatchesOrContains(wnd, s_impl->m_prev_wnd_under_cursor))
-            s_impl->m_prev_wnd_under_cursor = 0;
-        if (MatchesOrContains(wnd, s_impl->m_curr_wnd_under_cursor))
-            s_impl->m_curr_wnd_under_cursor = 0;
-        if (MatchesOrContains(wnd, s_impl->m_drag_wnds[0])) {
-            s_impl->m_drag_wnds[0] = 0;
-            s_impl->m_wnd_region = WR_NONE;
-        }
-        if (MatchesOrContains(wnd, s_impl->m_drag_wnds[1])) {
-            s_impl->m_drag_wnds[1] = 0;
-            s_impl->m_wnd_region = WR_NONE;
-        }
-        if (MatchesOrContains(wnd, s_impl->m_drag_wnds[2])) {
-            s_impl->m_drag_wnds[2] = 0;
-            s_impl->m_wnd_region = WR_NONE;
-        }
-        if (MatchesOrContains(wnd, s_impl->m_curr_drag_drop_here_wnd))
-            s_impl->m_curr_drag_drop_here_wnd = 0;
-        if (MatchesOrContains(wnd, s_impl->m_drag_drop_originating_wnd))
-            s_impl->m_drag_drop_originating_wnd = 0;
-        s_impl->m_drag_drop_wnds.erase(wnd);
-        s_impl->m_drag_drop_wnds_acceptable.erase(wnd);
-        if (MatchesOrContains(wnd, s_impl->m_double_click_wnd)) {
-            s_impl->m_double_click_wnd = 0;
-            s_impl->m_double_click_start_time = -1;
-            s_impl->m_double_click_time = -1;
-        }
+    }
+    if (MatchesOrContains(wnd, s_impl->m_prev_wnd_under_cursor))
+        s_impl->m_prev_wnd_under_cursor = 0;
+    if (MatchesOrContains(wnd, s_impl->m_curr_wnd_under_cursor))
+        s_impl->m_curr_wnd_under_cursor = 0;
+    if (MatchesOrContains(wnd, s_impl->m_drag_wnds[0])) {
+        s_impl->m_drag_wnds[0] = 0;
+        s_impl->m_wnd_region = WR_NONE;
+    }
+    if (MatchesOrContains(wnd, s_impl->m_drag_wnds[1])) {
+        s_impl->m_drag_wnds[1] = 0;
+        s_impl->m_wnd_region = WR_NONE;
+    }
+    if (MatchesOrContains(wnd, s_impl->m_drag_wnds[2])) {
+        s_impl->m_drag_wnds[2] = 0;
+        s_impl->m_wnd_region = WR_NONE;
+    }
+    if (MatchesOrContains(wnd, s_impl->m_curr_drag_drop_here_wnd))
+        s_impl->m_curr_drag_drop_here_wnd = 0;
+    if (MatchesOrContains(wnd, s_impl->m_drag_drop_originating_wnd))
+        s_impl->m_drag_drop_originating_wnd = 0;
+    s_impl->m_drag_drop_wnds.erase(wnd);
+    s_impl->m_drag_drop_wnds_acceptable.erase(wnd);
+    if (MatchesOrContains(wnd, s_impl->m_double_click_wnd)) {
+        s_impl->m_double_click_wnd = 0;
+        s_impl->m_double_click_start_time = -1;
+        s_impl->m_double_click_time = -1;
     }
 }
 
@@ -1145,6 +1172,38 @@ bool GUI::CutFocusWndText()
 bool GUI::CutWndText(Wnd* wnd)
 {
     return CopyWndText(wnd) && PasteWndText(wnd, "");
+}
+
+bool GUI::SelectAll()
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+
+    if (Edit* edit_control = dynamic_cast<Edit*>(focus_wnd)) {
+        edit_control->SelectAll();
+        return true;
+    } else if (ListBox* list_control = dynamic_cast<ListBox*>(focus_wnd)) {
+        list_control->SelectAll();
+        return true;
+    }
+    return false;
+}
+
+bool GUI::Deselect()
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+
+    if (Edit* edit_control = dynamic_cast<Edit*>(focus_wnd)) {
+        edit_control->DeselectAll();
+        return true;
+    } else if (ListBox* list_control = dynamic_cast<ListBox*>(focus_wnd)) {
+        list_control->DeselectAll();
+        return true;
+    }
+    return false;
 }
 
 GUI* GUI::GetGUI()

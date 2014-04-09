@@ -129,6 +129,9 @@ public:
         beginning of the text in view; see SelectRange(). */
     virtual void SelectAll();
 
+    /** Deselects text */
+    virtual void DeselectAll();
+
     virtual void SetText(const std::string& str);
 
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */

@@ -150,6 +150,12 @@ namespace {
         Hotkey::AddHotkey("cut",                        GG::GGK_x,  GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("copy",                       GG::GGK_c,  GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("paste",                      GG::GGK_v,  GG::MOD_KEY_CTRL);
+
+        Hotkey::AddHotkey("select_all",                 GG::GGK_a,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("deselect",                   GG::GGK_d,  GG::MOD_KEY_CTRL);
+
+        Hotkey::AddHotkey("focus_prev_wnd",             GG::GGK_TAB,GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("focus_next_wnd",             GG::GGK_TAB);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -5315,6 +5321,12 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText,              "cut");
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText,             "copy");
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText,   "paste");
+
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SelectAll,                    "select_all");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::Deselect,                     "deselect");
+
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetPrevFocusWndInCycle,       "focus_prev_wnd");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetNextFocusWndInCycle,       "focus_next_wnd");
 
     hkm->RebuildShortcuts();
 }

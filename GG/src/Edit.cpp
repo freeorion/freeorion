@@ -203,6 +203,13 @@ void Edit::SelectAll()
     AdjustView();
 }
 
+void Edit::DeselectAll()
+{
+    m_cursor_pos.first = CP0;
+    m_cursor_pos.second = CP0;
+    AdjustView();
+}
+
 void Edit::SelectRange(CPSize from, CPSize to)
 {
     if (from < to) {

@@ -158,36 +158,34 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    const std::string&
-                   AppName() const;                    ///< returns the user-defined name of the application
-    Wnd*           FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
-    Wnd*           GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
-    unsigned int   DeltaT() const;                     ///< returns ms since last frame was rendered
-    virtual unsigned int
-                   Ticks() const = 0;                  ///< returns milliseconds since the app started running
-    bool           RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
-    bool           FPSEnabled() const;                 ///< returns true iff FPS calulations are turned on
-    double         FPS() const;                        ///< returns the frames per second at which the GUI is rendering
-    std::string    FPSString() const;                  ///< returns a string of the form "[m_FPS] frames per second"
-    double         MaxFPS() const;                     ///< returns the maximum allowed frames per second of rendering speed.  0 indicates no limit.
-    virtual X      AppWidth() const = 0;               ///< returns the width of the application window/screen
-    virtual Y      AppHeight() const = 0;              ///< returns the height of the application window/screen
-    unsigned int   ButtonDownRepeatDelay() const;      ///< returns the \a delay value set by EnableMouseButtonDownRepeat()
-    unsigned int   ButtonDownRepeatInterval() const;   ///< returns the \a interval value set by EnableMouseButtonDownRepeat()
-    unsigned int   DoubleClickInterval() const;        ///< returns the maximum interval allowed between clicks that is still considered a double-click, in ms
-    unsigned int   MinDragTime() const;                ///< returns the minimum time (in ms) an item must be dragged before it is a valid drag
-    unsigned int   MinDragDistance() const;            ///< returns the minimum distance an item must be dragged before it is a valid drag
-    bool           DragDropWnd(const Wnd* wnd) const;  ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation
-    bool           AcceptedDragDropWnd(const Wnd* wnd) const; ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation, and it is over a drop target that will accept it
-    bool           MouseButtonDown(unsigned int bn) const; ///< returns the up/down states of the mouse buttons
-    Pt             MousePosition() const;              ///< returns the absolute position of mouse, based on the last mouse motion event
-    Pt             MouseMovement() const;              ///< returns the relative position of mouse, based on the last mouse motion event
-    Flags<ModKey>  ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
-    bool           MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
-    const std::map<Key, Key>&
-                   KeyMap() const;                     ///< returns the the key remappings set, which causes the GUI to respond to one Key press as though a different Key were pressed.
-    virtual const std::string&
-                   ClipboardText() const;              ///< returns text stored in a clipboard
+    const std::string&          AppName() const;                    ///< returns the user-defined name of the application
+    Wnd*                        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
+    Wnd*                        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
+    Wnd*                        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
+    Wnd*                        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
+    unsigned int                DeltaT() const;                     ///< returns ms since last frame was rendered
+    virtual unsigned int        Ticks() const = 0;                  ///< returns milliseconds since the app started running
+    bool                        RenderingDragDropWnds() const;      ///< returns true iff drag-and-drop Wnds are currently being rendered
+    bool                        FPSEnabled() const;                 ///< returns true iff FPS calulations are turned on
+    double                      FPS() const;                        ///< returns the frames per second at which the GUI is rendering
+    std::string                 FPSString() const;                  ///< returns a string of the form "[m_FPS] frames per second"
+    double                      MaxFPS() const;                     ///< returns the maximum allowed frames per second of rendering speed.  0 indicates no limit.
+    virtual X                   AppWidth() const = 0;               ///< returns the width of the application window/screen
+    virtual Y                   AppHeight() const = 0;              ///< returns the height of the application window/screen
+    unsigned int                ButtonDownRepeatDelay() const;      ///< returns the \a delay value set by EnableMouseButtonDownRepeat()
+    unsigned int                ButtonDownRepeatInterval() const;   ///< returns the \a interval value set by EnableMouseButtonDownRepeat()
+    unsigned int                DoubleClickInterval() const;        ///< returns the maximum interval allowed between clicks that is still considered a double-click, in ms
+    unsigned int                MinDragTime() const;                ///< returns the minimum time (in ms) an item must be dragged before it is a valid drag
+    unsigned int                MinDragDistance() const;            ///< returns the minimum distance an item must be dragged before it is a valid drag
+    bool                        DragDropWnd(const Wnd* wnd) const;  ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation
+    bool                        AcceptedDragDropWnd(const Wnd* wnd) const;  ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation, and it is over a drop target that will accept it
+    bool                        MouseButtonDown(unsigned int bn) const;     ///< returns the up/down states of the mouse buttons
+    Pt                          MousePosition() const;              ///< returns the absolute position of mouse, based on the last mouse motion event
+    Pt                          MouseMovement() const;              ///< returns the relative position of mouse, based on the last mouse motion event
+    Flags<ModKey>               ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
+    bool                        MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
+    const std::map<Key, Key>&   KeyMap() const;                     ///< returns the the key remappings set, which causes the GUI to respond to one Key press as though a different Key were pressed.
+    virtual const std::string&  ClipboardText() const;              ///< returns text stored in a clipboard
 
     /** Returns the (begin, end) indices of the code points of all the
         word-tokens in the given string.  This is perhaps an odd place for
@@ -217,24 +215,24 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    void           operator()();                 ///< external interface to Run()
-    virtual void   Exit(int code) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
+    void            operator()();                 ///< external interface to Run()
+    virtual void    Exit(int code) = 0;           ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetGUI()
 
     /** Handles all waiting system events (from SDL, DirectInput, etc.).  This
         function should only be called from custom EventPump event
         handlers. */
-    virtual void   HandleSystemEvents() = 0;
-    void           HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel); ///< event handler for GG events
-    void           ClearEventState();
+    virtual void    HandleSystemEvents() = 0;
+    void            HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel); ///< event handler for GG events
+    void            ClearEventState();
 
-    void           SetFocusWnd(Wnd* wnd);        ///< sets the input focus window to \a wnd
-    virtual void   Wait(unsigned int ms);        ///< suspends the GUI thread for \a ms milliseconds.  Singlethreaded GUI subclasses may do nothing here, or may pause for \a ms milliseconds.
-    void           Register(Wnd* wnd);           ///< adds \a wnd into the z-list.  Registering a null pointer or registering the same window multiple times is a no-op.
-    void           RegisterModal(Wnd* wnd);      ///< adds \a wnd onto the modal windows "stack"
-    void           Remove(Wnd* wnd);             ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
-    void           WndDying(Wnd* wnd);           ///< removes \a wnd from all GUI state variables, so that none of them point to a deleted object
-    void           MoveUp(Wnd* wnd);             ///< moves \a wnd to the top of the z-list
-    void           MoveDown(Wnd* wnd);           ///< moves \a wnd to the bottom of the z-list
+    void            SetFocusWnd(Wnd* wnd);          ///< sets the input focus window to \a wnd
+    virtual void    Wait(unsigned int ms);          ///< suspends the GUI thread for \a ms milliseconds.  Singlethreaded GUI subclasses may do nothing here, or may pause for \a ms milliseconds.
+    void            Register(Wnd* wnd);             ///< adds \a wnd into the z-list.  Registering a null pointer or registering the same window multiple times is a no-op.
+    void            RegisterModal(Wnd* wnd);        ///< adds \a wnd onto the modal windows "stack"
+    void            Remove(Wnd* wnd);               ///< removes \a wnd from the z-list.  Removing a null pointer or removing the same window multiple times is a no-op.
+    void            WndDying(Wnd* wnd);             ///< removes \a wnd from all GUI state variables, so that none of them point to a deleted object
+    void            MoveUp(Wnd* wnd);               ///< moves \a wnd to the top of the z-list
+    void            MoveDown(Wnd* wnd);             ///< moves \a wnd to the bottom of the z-list
 
     virtual boost::shared_ptr<ModalEventPump>
                    CreateModalEventPump(bool& done); ///< creates a new ModalEventPump that will terminate when \a done is set to true
@@ -327,14 +325,19 @@ public:
     void RenderCursor(bool render); ///< set this to true iff the GUI should render the cursor
     void SetCursor(const boost::shared_ptr<Cursor>& cursor); ///< sets the currently-installed cursor
 
-    virtual bool SetClipboardText(const std::string& text);         ///< sets text stored in clipboard
-    virtual bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
-    virtual bool CopyWndText(const Wnd* wnd);                       ///< copies \a wnd as text to clipboard
-    virtual bool PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd
-    virtual bool PasteWndText(Wnd* wnd, const std::string& text);   ///< attempts to paste \a text into the Wnd \a wnd
-    bool         PasteFocusWndClipboardText();                      ///< attempts to paste clipboard contents into the current focus Wnd
-    virtual bool CutFocusWndText();                                 ///< copies current focus Wnd as text to clipboard, then pastes an empty string into that Wnd
-    virtual bool CutWndText(Wnd* wnd);                              ///< copies \a wnd as text to clipboard, then pastes an empty string to that Wnd
+    bool SetClipboardText(const std::string& text);         ///< sets text stored in clipboard
+    bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
+    bool CopyWndText(const Wnd* wnd);                       ///< copies \a wnd as text to clipboard
+    bool PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd
+    bool PasteWndText(Wnd* wnd, const std::string& text);   ///< attempts to paste \a text into the Wnd \a wnd
+    bool PasteFocusWndClipboardText();                      ///< attempts to paste clipboard contents into the current focus Wnd
+    bool CutFocusWndText();                                 ///< copies current focus Wnd as text to clipboard, then pastes an empty string into that Wnd
+    bool CutWndText(Wnd* wnd);                              ///< copies \a wnd as text to clipboard, then pastes an empty string to that Wnd
+    bool SelectAll();                                       ///< selects all of anything selectable in the current focus Wnd
+    bool Deselect();                                        ///< deselects anything selected in the current focus Wnd
+
+    bool SetPrevFocusWndInCycle();                          ///< sets the focus Wnd to the next INTERACTIVE Wnd in a cycle determined by Wnd parent-child relationships
+    bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.
     //@}
 
     static GUI*  GetGUI();                ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
