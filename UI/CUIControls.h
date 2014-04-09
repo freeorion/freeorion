@@ -207,27 +207,6 @@ public:
     //@}
 };
 
-/** a ListBox with user-sortable columns */
-class CUISortListBox : public GG::ListBox {
-public:
-    /** \name Structors */ //@{
-    CUISortListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color = ClientUI::CtrlBorderColor(),
-                   GG::Clr interior = GG::CLR_ZERO, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void Render();
-
-    void SetSortCol(int n);                 ///< sets column used to sort rows, updates sort-button appearance
-    void SetSortDirecion(bool ascending);   ///< sets whether to sort ascending (true) or descending (false), updates sort-button appearance
-    void SetColHeaders(std::map<int, boost::shared_ptr<GG::Texture> > textures_map);    ///< indexed by column number, provides texture with which to label column
-    void SetColHeaders(std::map<int, std::string> label_text_map);    ///< indexed by column number, provides text with which to label column
-    //@}
-
-private:
-    Row* m_header_row;  ///< need to keep own pointer to header row, since ListBox doesn't provide non-const access to its header row pointer
-};
-
 /** a FreeOrion DropDownList control */
 class CUIDropDownList : public GG::DropDownList {
 public:
