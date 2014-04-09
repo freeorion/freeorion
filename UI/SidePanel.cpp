@@ -2654,7 +2654,8 @@ void SidePanel::Render() {
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
-    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), OUTER_EDGE_ANGLE_OFFSET, 1, false);
+    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
+                            OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
