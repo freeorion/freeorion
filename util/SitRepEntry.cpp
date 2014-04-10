@@ -318,7 +318,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         }
     } else {
         if (fleet->NumShips() == 1) {
-            SitRepEntry sitrep(UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(fleet->Owner()));
