@@ -25,8 +25,10 @@ namespace {
 
 
 InGameMenu::InGameMenu():
-    CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::INTERACTIVE | GG::MODAL)
+    CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
+           (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2,
+           IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::INTERACTIVE | GG::MODAL)
 {
     m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"));
     m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"));
