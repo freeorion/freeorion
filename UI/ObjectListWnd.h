@@ -22,6 +22,7 @@ public:
     void            Refresh();
     //!@}
 
+    mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDumpSignal;
     mutable boost::signals2::signal<void ()>    ClosingSignal;
@@ -29,6 +30,7 @@ public:
 private:
     void            DoLayout();
 
+    void            ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ObjectDoubleClicked(GG::ListBox::iterator it);
     void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     int             ObjectInRow(GG::ListBox::iterator it) const;

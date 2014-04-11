@@ -27,6 +27,8 @@
 std::vector<std::string> SpecialNames();
 
 namespace {
+    const int DATA_PANEL_BORDER = 1;
+
     enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
     const std::string EMPTY_STRING;
@@ -968,7 +970,8 @@ namespace {
 ////////////////////////////////////////////////
 class ObjectPanel : public GG::Control {
 public:
-    ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded, bool has_contents, int indent = 0) :
+    ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj,
+                bool expanded, bool has_contents, int indent = 0) :
         Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
         m_initialized(false),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
@@ -979,7 +982,8 @@ public:
         m_dot(0),
         m_icon(0),
         m_name_label(0),
-        m_empire_label(0)
+        m_empire_label(0),
+        m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
     }
@@ -989,9 +993,19 @@ public:
     virtual void        Render() {
         if (!m_initialized)
             Init();
-        GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
-        GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
+
+        const GG::Clr& background_colour = ClientUI::WndColor();
+        const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
+        const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+        GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+        if (Disabled())
+            border_colour = DisabledColor(border_colour);
+
+        GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour, border_colour, DATA_PANEL_BORDER);
     }
+
+    void            Select(bool b)
+    { m_selected = b; }
 
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
@@ -1114,6 +1128,8 @@ private:
     MultiTextureStaticGraphic*  m_icon;
     GG::TextControl*            m_name_label;
     GG::TextControl*            m_empire_label;
+
+    bool                        m_selected;
 };
 
 ////////////////////////////////////////////////
@@ -1146,7 +1162,7 @@ public:
     int                     ContainedByPanel() const
     { return m_container_object_panel; }
 
-    const std::set<int>& ContainedPanels() const
+    const std::set<int>&    ContainedPanels() const
     { return m_contained_object_panels; }
 
     void                    SetContainedPanels(const std::set<int>& contained_object_panels) {
@@ -1675,7 +1691,8 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
 {
     m_list_box = new ObjectListBox();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
-    m_list_box->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
+    m_list_box->SetStyle(GG::LIST_NOSORT);
+    GG::Connect(m_list_box->SelChangedSignal,           &ObjectListWnd::ObjectSelectionChanged, this);
     GG::Connect(m_list_box->DoubleClickedSignal,        &ObjectListWnd::ObjectDoubleClicked,    this);
     GG::Connect(m_list_box->RightClickedSignal,         &ObjectListWnd::ObjectRightClicked,     this);
     GG::Connect(m_list_box->ExpandCollapseSignal,       &ObjectListWnd::DoLayout,               this);
@@ -1739,6 +1756,38 @@ void ObjectListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ObjectListWnd::Refresh()
 { m_list_box->Refresh(); }
+
+void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows) {
+    // mark as selected all ObjectPanel that are in \a rows and mark as not
+    // selected all ObjectPanel that aren't in \a rows
+    for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
+        bool select_this_row = (rows.find(it) != rows.end());
+
+        GG::ListBox::Row* row = *it;
+        if (!row) {
+            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get row";
+            continue;
+        }
+        if (row->empty()) {
+            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged got empty row";
+            continue;
+        }
+        GG::Control* control = (*row)[0];
+        if (!control) {
+            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get control from row";
+            continue;
+        }
+        ObjectPanel* data_panel = dynamic_cast<ObjectPanel*>(control);
+        if (!data_panel) {
+            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get ObjectPanel from control";
+            continue;
+        }
+        data_panel->Select(select_this_row);
+    }
+
+    SelectedObjectsChangedSignal();
+}
+
 
 void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
     int object_id = ObjectInRow(it);
