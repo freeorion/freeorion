@@ -5322,8 +5322,8 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText,             "copy");
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText,   "paste");
 
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SelectAll,                    "select_all");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::Deselect,                     "deselect");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::FocusWndSelectAll,            "select_all");
+    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::FocusWndDeselect,             "deselect");
 
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetPrevFocusWndInCycle,       "focus_prev_wnd");
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetNextFocusWndInCycle,       "focus_next_wnd");

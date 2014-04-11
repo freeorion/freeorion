@@ -333,8 +333,10 @@ public:
     bool PasteFocusWndClipboardText();                      ///< attempts to paste clipboard contents into the current focus Wnd
     bool CutFocusWndText();                                 ///< copies current focus Wnd as text to clipboard, then pastes an empty string into that Wnd
     bool CutWndText(Wnd* wnd);                              ///< copies \a wnd as text to clipboard, then pastes an empty string to that Wnd
-    bool SelectAll();                                       ///< selects all of anything selectable in the current focus Wnd
-    bool Deselect();                                        ///< deselects anything selected in the current focus Wnd
+    bool FocusWndSelectAll();                               ///< selects all of anything selectable in the current focus Wnd
+    bool WndSelectAll(Wnd* wnd);                            ///< selects all of anything selectable in the Wnd \a wnd
+    bool FocusWndDeselect();                                ///< deselects anything selected in the current focus Wnd
+    bool WndDeselect(Wnd* wnd);                             ///< deselects all of anything selectable in the Wnd \a wnd
 
     bool SetPrevFocusWndInCycle();                          ///< sets the focus Wnd to the next INTERACTIVE Wnd in a cycle determined by Wnd parent-child relationships
     bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.

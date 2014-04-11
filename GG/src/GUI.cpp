@@ -1174,36 +1174,48 @@ bool GUI::CutWndText(Wnd* wnd)
     return CopyWndText(wnd) && PasteWndText(wnd, "");
 }
 
-bool GUI::SelectAll()
+bool GUI::WndSelectAll(Wnd* wnd)
 {
-    Wnd* focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (!wnd)
         return false;
-
-    if (Edit* edit_control = dynamic_cast<Edit*>(focus_wnd)) {
+    if (Edit* edit_control = dynamic_cast<Edit*>(wnd)) {
         edit_control->SelectAll();
         return true;
-    } else if (ListBox* list_control = dynamic_cast<ListBox*>(focus_wnd)) {
+    } else if (ListBox* list_control = dynamic_cast<ListBox*>(wnd)) {
         list_control->SelectAll();
         return true;
     }
     return false;
 }
 
-bool GUI::Deselect()
+bool GUI::WndDeselect(Wnd* wnd)
 {
-    Wnd* focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (!wnd)
         return false;
-
-    if (Edit* edit_control = dynamic_cast<Edit*>(focus_wnd)) {
+    if (Edit* edit_control = dynamic_cast<Edit*>(wnd)) {
         edit_control->DeselectAll();
         return true;
-    } else if (ListBox* list_control = dynamic_cast<ListBox*>(focus_wnd)) {
+    } else if (ListBox* list_control = dynamic_cast<ListBox*>(wnd)) {
         list_control->DeselectAll();
         return true;
     }
     return false;
+}
+
+bool GUI::FocusWndSelectAll()
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+    return WndSelectAll(focus_wnd);
+}
+
+bool GUI::FocusWndDeselect()
+{
+    Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+    return WndDeselect(focus_wnd);
 }
 
 GUI* GUI::GetGUI()
