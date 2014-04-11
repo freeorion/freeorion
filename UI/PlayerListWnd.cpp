@@ -110,7 +110,7 @@ namespace {
             if (Disabled())
                 border_colour = DisabledColor(border_colour);
 
-            GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour,  border_colour, DATA_PANEL_BORDER);
+            GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour, border_colour, DATA_PANEL_BORDER);
 
             glColor(GG::CLR_WHITE);
 
@@ -162,10 +162,8 @@ namespace {
                 HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
         }
 
-        void            Select(bool b) {
-            if (m_selected != b)
-                m_selected = b;
-        }
+        void            Select(bool b)
+        { m_selected = b; }
 
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();

@@ -198,7 +198,8 @@ protected:
 class CUIListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
-    CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr interior_color = ClientUI::CtrlColor(),
+    CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr border_color = ClientUI::CtrlBorderColor(),
+               GG::Clr interior_color = ClientUI::CtrlColor(),
                GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
