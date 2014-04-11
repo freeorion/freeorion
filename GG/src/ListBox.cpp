@@ -893,19 +893,29 @@ void ListBox::DeselectRow(iterator it)
 
 void ListBox::SelectAll()
 {
+    SelectionSet previous_selections = m_selections;
+
     if (m_selections.size() < m_rows.size()) {
         for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
             m_selections.insert(it);
         }
     }
+
+    if (previous_selections != m_selections)
+        SelChangedSignal(m_selections);
 }
 
 void ListBox::DeselectAll()
 {
+    SelectionSet previous_selections = m_selections;
+
     if (!m_selections.empty()) {
         m_selections.clear();
         m_caret = m_rows.end();
     }
+
+    if (previous_selections != m_selections)
+        SelChangedSignal(m_selections);
 }
 
 ListBox::iterator ListBox::begin()
