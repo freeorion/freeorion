@@ -2202,13 +2202,6 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
 
     m_ships_lb->DeselectAll();
 
-    // early exit if nothing to select, since everything has already been deselected above.
-    if (ship_ids.empty()) {
-        if (!initial_selections.empty())
-            ShipSelectionChanged(m_ships_lb->Selections());
-        return;
-    }
-
     // loop through ships, selecting any indicated
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         ShipRow* row = dynamic_cast<ShipRow*>(*it);
@@ -2223,8 +2216,6 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
             m_ships_lb->BringRowIntoView(it);   // may cause earlier rows brought into view to be brought out of view... oh well
         }
     }
-
-    ShipSelectionChanged(m_ships_lb->Selections());
 
     if (initial_selections != m_ships_lb->Selections())
         ShipSelectionChanged(m_ships_lb->Selections());
@@ -2313,6 +2304,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
             continue;
         }
     }
+
     SelectedShipsChangedSignal(rows);
 }
 
@@ -2879,8 +2871,6 @@ void FleetWnd::SelectFleet(int fleet_id) {
         return;
     }
 
-    //std::cout << "FleetWnd::SelectFleet " << fleet->Name() << " (" << fleet->ID() << ")" << std::endl;
-
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         FleetRow* row = dynamic_cast<FleetRow*>(*it);
         if (row && row->FleetID() == fleet_id) {
@@ -2898,13 +2888,6 @@ void FleetWnd::SelectFleet(int fleet_id) {
 void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
     const GG::ListBox::SelectionSet initial_selections = m_fleets_lb->Selections();
     m_fleets_lb->DeselectAll();
-
-    // early exit if nothing to select
-    if (fleet_ids.empty()) {
-        const GG::ListBox::SelectionSet sels = m_fleets_lb->Selections();
-        FleetSelectionChanged(sels);
-        return;
-    }
 
     // loop through fleets, selecting any indicated
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
@@ -2999,32 +2982,17 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
         m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
     }
 
-    if (!rows.empty()) {
-        // mark as selected all FleetDataPanel that are in \a rows and mark as not
-        // selected all FleetDataPanel that aren't in \a rows
-        for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-            bool select_this_row = (rows.find(it) != rows.end());
 
-            GG::ListBox::Row* row = *it;
-            if (!row) {
-                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get row";
-                continue;
-            }
-            GG::Control* control = (*row)[0];
-            if (!control) {
-                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get control from row";
-                continue;
-            }
-            FleetDataPanel* data_panel = dynamic_cast<FleetDataPanel*>(control);
-            if (!data_panel) {
-                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get FleetDataPanel from control";
-                continue;
-            }
-            data_panel->Select(select_this_row);
+    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+        try {
+            FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>((**it)[0]);
+            fleet_panel->Select(rows.find(it) != rows.end());
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
+            continue;
         }
     }
 
-    //ClickedSignal(this);
     SelectedFleetsChangedSignal();
 }
 
