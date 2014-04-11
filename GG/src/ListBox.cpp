@@ -878,26 +878,51 @@ void ListBox::Clear()
 
 void ListBox::SelectRow(iterator it)
 {
-    if (it != m_rows.end() && !(m_style & LIST_NOSEL) && m_selections.find(it) == m_selections.end()) {
-        if (m_style & LIST_SINGLESEL)
-            m_selections.clear();
-        m_selections.insert(it);
-    }
+    if (m_style & LIST_NOSEL)
+        return;
+    if (it == m_rows.end())
+        return;
+    if (m_selections.find(it) != m_selections.end())
+        return;
+
+    SelectionSet previous_selections = m_selections;
+
+    if (m_style & LIST_SINGLESEL)
+        m_selections.clear();
+
+    m_selections.insert(it);
+
+    if (previous_selections != m_selections)
+        SelChangedSignal(m_selections);
 }
 
 void ListBox::DeselectRow(iterator it)
 {
+    SelectionSet previous_selections = m_selections;
+
     if (m_selections.find(it) != m_selections.end())
         m_selections.erase(it);
+
+    if (previous_selections != m_selections)
+        SelChangedSignal(m_selections);
 }
 
 void ListBox::SelectAll()
 {
+    if (m_style & LIST_NOSEL)
+        return;
+
     SelectionSet previous_selections = m_selections;
 
-    if (m_selections.size() < m_rows.size()) {
-        for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-            m_selections.insert(it);
+    if (m_style & LIST_SINGLESEL) {
+        if (m_selections.empty() && !m_rows.empty()) {
+            m_selections.insert(m_rows.begin());
+        }
+    } else {
+        if (m_selections.size() != m_rows.size()) {
+            m_selections.clear();
+            for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
+                m_selections.insert(it);
         }
     }
 
@@ -937,7 +962,17 @@ ListBox::Row& ListBox::GetRow(std::size_t n)
 }
 
 void ListBox::SetSelections(const SelectionSet& s)
-{ m_selections = s; }
+{
+    if (m_style & LIST_NOSEL)
+        return;
+
+    SelectionSet previous_selections = m_selections;
+
+    m_selections = s;
+
+    if (previous_selections != m_selections)
+        SelChangedSignal(m_selections);
+}
 
 void ListBox::SetCaret(iterator it)
 { m_caret = it; }
@@ -1262,7 +1297,7 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
         }
     } else {
         Control::KeyPress(key, key_code_point, mod_keys);
-   }
+    }
 }
 
 void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
@@ -2009,6 +2044,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
         return;
 
     SelectionSet previous_selections = m_selections;
+
     if (m_style & LIST_SINGLESEL) {
         // No special keys are being used; just clear all previous selections,
         // select this row, set the caret here.
