@@ -3716,7 +3716,7 @@ Object Destroyed
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
 At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed!
-SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
+SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Own Ship Destroyed
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
