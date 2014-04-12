@@ -78,17 +78,35 @@ namespace {
         return sitrep_order;
     }
 
-    std::vector<std::string> AllSitRepTemplateStrings() {
+    std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
         std::set<std::string> template_set;
-        std::vector<std::string> retval;
-        Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+
+        Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
         if (!empire)
-            return retval;
+            return template_set;
+
         for (Empire::SitRepItr sitrep_it = empire->SitRepBegin();
              sitrep_it != empire->SitRepEnd(); ++sitrep_it)
         { template_set.insert(sitrep_it->GetTemplateString()); }
-        std::vector<std::string> ordered_templates = OrderedSitrepTemplateStrings();
+
+        return template_set;
+    }
+
+    std::vector<std::string> AllSitRepTemplateStrings() {
+        std::set<std::string> template_set;
+
+        // get templates for each empire
+        for (EmpireManager::iterator it = Empires().begin();
+             it != Empires().end(); ++it)
+        {
+            std::set<std::string> empire_strings = EmpireSitRepTemplateStrings(it->first);
+            template_set.insert(empire_strings.begin(), empire_strings.end());
+        }
+
+        std::vector<std::string> retval;
+
         // only use those ordered templates actually in the current set of sitrep templates
+        std::vector<std::string> ordered_templates = OrderedSitrepTemplateStrings();
         for (std::vector<std::string>::iterator it = ordered_templates.begin(); 
              it!=ordered_templates.end(); it++) 
         {
@@ -96,10 +114,12 @@ namespace {
                  (std::find(retval.begin(), retval.end(), *it) == retval.end()) )
             { retval.push_back(*it); }
         }
+
         //now add the current templates that did not have a specified order
         for (std::set<std::string>::iterator it = template_set.begin(); it!= template_set.end(); it++)
             if (std::find(retval.begin(), retval.end(), *it) == retval.end())
                 retval.push_back(*it);
+
         return retval;
     }
 
@@ -340,7 +360,8 @@ void SitRepPanel::FilterClicked() {
 
     GG::PopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(),
                         ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
+                        ClientUI::EditHiliteColor());
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();
