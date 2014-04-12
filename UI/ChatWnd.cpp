@@ -43,14 +43,19 @@ public:
 private:
     void            FindGameWords();                    //!< Finds all game words for autocomplete
     void            AutoComplete();                     //!< Autocomplete current word
-    bool            CompleteWord(const std::set<std::string>& names, const std::string& partial_word,         //!< AutoComplete helper function
-                                const std::pair<GG::CPSize, const GG::CPSize>& cursor_pos, std::string& text);
+
+    /** AutoComplete helper function */
+    bool            CompleteWord(const std::set<std::string>& names,
+                                 const std::string& partial_word,
+                                 const std::pair<GG::CPSize,
+                                 const GG::CPSize>& cursor_pos,
+                                 std::string& text);
 
     // Set for autocomplete game words
-    std::set<std::string>       m_gameWords;
+    std::set<std::string>       m_game_words;
 
     // Repeated tabs variables
-     std::vector<std::string>   autoCompleteChoices;
+     std::vector<std::string>   m_auto_complete_choices;
      unsigned int               m_repeatedTabCount;
      std::string                m_lastLineRead;
      std::string                m_lastGameWord;
@@ -61,7 +66,7 @@ private:
 ////////////////////
 MessageWndEdit::MessageWndEdit(GG::X x, GG::Y y, GG::X w) :
     CUIEdit(x, y, w, ""),
-    autoCompleteChoices(),
+    m_auto_complete_choices(),
     m_repeatedTabCount(0),
     m_lastLineRead(),
     m_lastGameWord()
@@ -81,9 +86,6 @@ void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
                               GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
-    case GG::GGK_TAB: 
-        AutoComplete();
-        break;
     case GG::GGK_RETURN:
     case GG::GGK_KP_ENTER:
         TextEnteredSignal();
@@ -103,60 +105,60 @@ void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        m_gameWords.insert(it->second->Name());
-        m_gameWords.insert(it->second->PlayerName());
+        m_game_words.insert(it->second->Name());
+        m_game_words.insert(it->second->PlayerName());
     }
     // add system names
     std::vector<TemporaryPtr<System> > systems = GetUniverse().Objects().FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         if (systems[i]->Name() != "")
-            m_gameWords.insert(systems[i]->Name());
+            m_game_words.insert(systems[i]->Name());
     }
      // add ship names
     std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
     for (unsigned int i = 0; i < ships.size(); ++i) {
         if (ships[i]->Name() != "")
-            m_gameWords.insert(ships[i]->Name());
+            m_game_words.insert(ships[i]->Name());
     }
      // add ship design names
     for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
          it != GetPredefinedShipDesignManager().end(); ++it)
     {
         if (it->second->Name() != "")
-            m_gameWords.insert(UserString(it->second->Name()));
+            m_game_words.insert(UserString(it->second->Name()));
     }
      // add specials names
     std::vector<std::string> specials =  SpecialNames();
     for (unsigned int i = 0; i < specials.size(); ++i) {
         if (specials[i] != "")
-            m_gameWords.insert(UserString(specials[i]));
+            m_game_words.insert(UserString(specials[i]));
     }
      // add species names
     for (SpeciesManager::iterator it = GetSpeciesManager().begin();
          it != GetSpeciesManager().end(); ++it)
     {
         if (it->second->Name() != "")
-            m_gameWords.insert(UserString(it->second->Name()));
+            m_game_words.insert(UserString(it->second->Name()));
     }
      // add techs names
     std::vector<std::string> techs = GetTechManager().TechNames();
     for (unsigned int i = 0; i < techs.size(); ++i) {
         if (techs[i] != "")
-            m_gameWords.insert(UserString(techs[i]));
+            m_game_words.insert(UserString(techs[i]));
     }
     // add building type names
     for (BuildingTypeManager::iterator it = GetBuildingTypeManager().begin();
          it != GetBuildingTypeManager().end(); ++it)
     {
         if (it->second->Name() != "")
-            m_gameWords.insert(UserString(it->second->Name()));
+            m_game_words.insert(UserString(it->second->Name()));
     }
     // add ship hulls
     for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
          it != GetPredefinedShipDesignManager().end(); ++it)
     {
         if (it->second->Hull() != "")
-            m_gameWords.insert(UserString(it->second->Hull()));
+            m_game_words.insert(UserString(it->second->Hull()));
     }
     // add ship parts
     for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
@@ -165,7 +167,7 @@ void MessageWndEdit::FindGameWords() {
         const std::vector<std::string>& parts = it->second->Parts();
         for (std::vector<std::string>::const_iterator it1 = parts.begin(); it1 != parts.end(); ++it1) {
             if (*it1 != "")
-                m_gameWords.insert(UserString(*it1));
+                m_game_words.insert(UserString(*it1));
         }
     }
  }
@@ -176,10 +178,10 @@ void MessageWndEdit::AutoComplete() {
     // Check for repeated tab
     // if current line is same as the last read line
     if (m_lastLineRead != "" && boost::equals(fullLine, m_lastLineRead)){
-        if (m_repeatedTabCount >= autoCompleteChoices.size())
+        if (m_repeatedTabCount >= m_auto_complete_choices.size())
             m_repeatedTabCount = 0;
 
-        std::string nextWord = autoCompleteChoices.at(m_repeatedTabCount);
+        std::string nextWord = m_auto_complete_choices.at(m_repeatedTabCount);
 
         if (nextWord != "") {
              // Remove the old choice from the line
@@ -212,7 +214,7 @@ void MessageWndEdit::AutoComplete() {
             FindGameWords();
 
             // See if word is an exact match with a game word
-            for (std::set<std::string>::const_iterator it = m_gameWords.begin(); it != m_gameWords.end(); ++it) {
+            for (std::set<std::string>::const_iterator it = m_game_words.begin(); it != m_game_words.end(); ++it) {
                 if (boost::iequals(*it, partial_word)) { // if there's an exact match, just add a space
                     fullLine.insert(Value(cursor_pos.first), " ");
                     this->SetText(fullLine);
@@ -223,7 +225,7 @@ void MessageWndEdit::AutoComplete() {
             }
             // If not an exact match try to complete the word
             if (!exactMatch) 
-                CompleteWord(m_gameWords, partial_word, cursor_pos, fullLine);
+                CompleteWord(m_game_words, partial_word, cursor_pos, fullLine);
         }
     }
 }
@@ -235,7 +237,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
                                   std::string& fullLine)
 {
     // clear repeated tab variables
-    autoCompleteChoices.clear();
+    m_auto_complete_choices.clear();
     m_repeatedTabCount = 0;
 
     bool partialWordMatch = false;
@@ -251,7 +253,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
             if (boost::iequals(gameWordPartial, partial_word)) {
                 if (gameWordPartial != "") {
                     // Add all possible word choices for repeated tab
-                    autoCompleteChoices.push_back(tempGameWord);
+                    m_auto_complete_choices.push_back(tempGameWord);
                     partialWordMatch = true;
                 }
             }
@@ -262,7 +264,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
         return false;
 
     // Grab first autocomplete choice
-    gameWord = autoCompleteChoices.at(m_repeatedTabCount++);
+    gameWord = m_auto_complete_choices.at(m_repeatedTabCount++);
     m_lastGameWord = gameWord;
 
     // Remove the partial_word from the line

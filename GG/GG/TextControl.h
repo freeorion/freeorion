@@ -207,7 +207,7 @@ public:
 
     /** Inserts \a s at position \a pos within the text. */
     void  Insert(CPSize pos, const std::string& s);
-    
+
     /** Erases \a num code points from the text starting at position \a
         pos. */
     void  Erase(CPSize pos, CPSize num = CP1);
