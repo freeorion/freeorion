@@ -100,10 +100,7 @@ const std::pair<CPSize, CPSize>& Edit::CursorPosn() const
 { return m_cursor_pos; }
 
 std::string Edit::SelectedText() const
-{
-    //std::cout << Text(m_cursor_pos.first, m_cursor_pos.second) << std::endl;
-    return Text(m_cursor_pos.first, m_cursor_pos.second);
-}
+{ return Text(m_cursor_pos.first, m_cursor_pos.second); }
 
 Clr Edit::InteriorColor() const
 { return m_int_color; }

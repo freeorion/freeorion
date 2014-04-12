@@ -216,14 +216,14 @@ protected:
         frame. */
     static const int PIXEL_MARGIN;
 
-private:
-    void ClearSelected(); ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
-    void AdjustView();    ///< Makes sure the caret ends up in view after an arbitrary move
-
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
         selected, caret is considered at .second) */
     std::pair<CPSize, CPSize> m_cursor_pos;
+
+private:
+    void ClearSelected(); ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
+    void AdjustView();    ///< Makes sure the caret ends up in view after an arbitrary move
 
     CPSize       m_first_char_shown; ///< Index of the first character on the left end of the control's viewable area
     Clr          m_int_color;        ///< Color of background inside text box

@@ -275,12 +275,19 @@ void MultiEdit::SelectAll()
     m_cursor_end = std::pair<std::size_t, CPSize>(
         GetLineData().size() - 1,
         CPSize(GetLineData()[GetLineData().size() - 1].char_data.size()));
+
+    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
 }
 
 void MultiEdit::DeselectAll()
 {
     m_cursor_begin = std::pair<std::size_t, CPSize>(0, CP0);
     m_cursor_end = m_cursor_begin;
+
+    CPSize cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
 }
 
 void MultiEdit::SetText(const std::string& str)
@@ -349,6 +356,9 @@ void MultiEdit::SetText(const std::string& str)
         }
         m_cursor_begin = m_cursor_end; // eliminate any hiliting
 
+        CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+        this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
+
         m_contents_sz = GetFont()->TextExtent(Text(), GetLineData());
 
         AdjustScrolls();
@@ -358,6 +368,7 @@ void MultiEdit::SetText(const std::string& str)
             SignalScroll(*m_vscroll, true);
         }
     }
+
     m_preserve_text_position_on_next_set_text = false;
 }
 
@@ -474,7 +485,8 @@ Pt MultiEdit::ScrollPosition() const
     return retval;
 }
 
-CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>* line_data) const
+CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
+                              const std::vector<Font::LineData>* line_data) const
 {
     CPSize retval = CP0;
     const std::vector<Font::LineData>& lines = line_data ? *line_data : GetLineData();
@@ -486,7 +498,8 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx, const std::vecto
     }
     if (char_idx != lines[row].char_data.size()) {
         retval = lines[row].char_data[Value(char_idx)].code_point_index;
-        // "rewind" the first position to encompass all tag text that is associated with that position
+        // "rewind" the first position to encompass all tag text that is
+        // associated with that position
         for (std::size_t i = 0; i < lines[row].char_data[Value(char_idx)].tags.size(); ++i) {
             retval -= lines[row].char_data[Value(char_idx)].tags[i]->CodePointSize();
         }
@@ -591,20 +604,26 @@ CPSize MultiEdit::LastVisibleChar(std::size_t row) const
 
 std::pair<std::size_t, CPSize> MultiEdit::HighCursorPos() const
 {
-    if (m_cursor_begin.first < m_cursor_end.first || 
-        (m_cursor_begin.first == m_cursor_end.first && m_cursor_begin.second < m_cursor_end.second))
+    if (m_cursor_begin.first < m_cursor_end.first ||
+        (m_cursor_begin.first == m_cursor_end.first &&
+         m_cursor_begin.second < m_cursor_end.second))
+    {
         return m_cursor_end;
-    else
+    } else {
         return m_cursor_begin;
+    }
 }
 
 std::pair<std::size_t, CPSize> MultiEdit::LowCursorPos() const
 {
-    if (m_cursor_begin.first < m_cursor_end.first || 
-        (m_cursor_begin.first == m_cursor_end.first && m_cursor_begin.second < m_cursor_end.second))
+    if (m_cursor_begin.first < m_cursor_end.first ||
+        (m_cursor_begin.first == m_cursor_end.first &&
+         m_cursor_begin.second < m_cursor_end.second))
+    {
         return m_cursor_begin;
-    else
+    } else {
         return m_cursor_end;
+    }
 }
 
 void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
@@ -616,6 +635,7 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     // cursor, and remove any previous selection range
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
+
     std::pair<CPSize, CPSize> word_indices =
         GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first, m_cursor_begin.second,
                                                         GetLineData()));
@@ -623,6 +643,11 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         m_cursor_begin = CharAt(word_indices.first);
         m_cursor_end = CharAt(word_indices.second);
     }
+
+    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+
     AdjustView();
 }
 
@@ -662,10 +687,15 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
         m_cursor_begin = CharAt(final_indices.first);
         m_cursor_end = CharAt(final_indices.second);
     }
+
+    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+
     // if we're dragging past the currently visible text, adjust the view so more text can be selected
-    if (click_pos.x < 0 || click_pos.x > ClientSize().x || 
-        click_pos.y < 0 || click_pos.y > ClientSize().y) 
-        AdjustView();
+    if (click_pos.x < 0 || click_pos.x > ClientSize().x ||
+        click_pos.y < 0 || click_pos.y > ClientSize().y)
+    { AdjustView(); }
 }
 
 void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
@@ -678,202 +708,210 @@ void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 
 void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        if (!(m_style & MULTI_READ_ONLY)) {
-            bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
-            bool emit_signal = false;
-            switch (key) {
-            case GGK_RETURN:
-            case GGK_KP_ENTER: {
-                if (MultiSelected())
-                    ClearSelected();
-                Insert(m_cursor_end.first, m_cursor_end.second, '\n');
-                ++m_cursor_end.first;
-                m_cursor_end.second = CP0;
-                // the cursor might be off the bottom if the bottom row was just chopped off to satisfy m_max_lines_history
-                if (GetLineData().size() <= m_cursor_end.first) {
-                    m_cursor_end.first = GetLineData().size() - 1;
-                    m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-                    if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
-                        --m_cursor_end.second;
-                }
-                m_cursor_begin = m_cursor_end;
-                emit_signal = true;
-                break;
-            }
-
-            case GGK_LEFT: {
-                if (MultiSelected() && !shift_down) {
-                    m_cursor_begin = m_cursor_end = LowCursorPos();
-                } else if (0 < m_cursor_end.second) {
-                    --m_cursor_end.second;
-                } else if (0 < m_cursor_end.first) {
-                    --m_cursor_end.first;
-                    m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-                    if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
-                        --m_cursor_end.second;
-                }
-                if (!shift_down)
-                    m_cursor_begin = m_cursor_end;
-                break;
-            }
-
-            case GGK_RIGHT: {
-                if (MultiSelected() && !shift_down) {
-                    m_cursor_begin = m_cursor_end = HighCursorPos();
-                } else if (m_cursor_end.second <
-                           GetLineData()[m_cursor_end.first].char_data.size() -
-                           (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()) ? 1 : 0)) {
-                    ++m_cursor_end.second;
-                } else if (m_cursor_end.first < GetLineData().size() - 1) {
-                    ++m_cursor_end.first;
-                    m_cursor_end.second = CP0;
-                }
-                if (!shift_down)
-                    m_cursor_begin = m_cursor_end;
-                break;
-            }
-
-            case GGK_UP: {
-                if (MultiSelected() && !shift_down) {
-                    m_cursor_begin = m_cursor_end = LowCursorPos();
-                } else if (0 < m_cursor_end.first) {
-                    X row_start = RowStartX(m_cursor_end.first);
-                    X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
-                    --m_cursor_end.first;
-                    m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
-                    if (!shift_down)
-                        m_cursor_begin = m_cursor_end;
-                }
-                break;
-            }
-
-            case GGK_DOWN: {
-                if (MultiSelected() && !shift_down) {
-                    m_cursor_begin = m_cursor_end = HighCursorPos();
-                } else if (m_cursor_end.first < GetLineData().size() - 1) {
-                    X row_start = RowStartX(m_cursor_end.first);
-                    X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
-                    ++m_cursor_end.first;
-                    m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
-                    if (!shift_down)
-                        m_cursor_begin = m_cursor_end;
-                }
-                break;
-            }
-
-            case GGK_HOME: {
-                m_cursor_end.second = CP0;
-                if (!shift_down)
-                    m_cursor_begin = m_cursor_end;
-                break;
-            }
-
-            case GGK_END: {
-                m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-                if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
-                    --m_cursor_end.second;
-                if (!shift_down)
-                    m_cursor_begin = m_cursor_end;
-                break;
-            }
-
-            case GGK_PAGEUP: {
-                if (m_vscroll) {
-                    m_vscroll->ScrollPageDecr();
-                    SignalScroll(*m_vscroll, true);
-                    std::size_t rows_moved = m_vscroll->PageSize() / Value(GetFont()->Lineskip());
-                    m_cursor_end.first = m_cursor_end.first < rows_moved ? 0 : m_cursor_end.first - rows_moved;
-                    if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
-                        m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-                    m_cursor_begin = m_cursor_end;
-                }
-                break;
-            }
-
-            case GGK_PAGEDOWN: {
-                if (m_vscroll) {
-                    m_vscroll->ScrollPageIncr();
-                    SignalScroll(*m_vscroll, true);
-                    std::size_t rows_moved = m_vscroll->PageSize() / Value(GetFont()->Lineskip());
-                    m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, GetLineData().size() - 1);
-                    if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
-                        m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-                    m_cursor_begin = m_cursor_end;
-                }
-                break;
-            }
-
-            case GGK_BACKSPACE: {
-                if (MultiSelected()) {
-                    ClearSelected();
-                    emit_signal = true;
-                } else if (0 < m_cursor_begin.second) {
-                    m_cursor_end.second = --m_cursor_begin.second;
-                    Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
-                    emit_signal = true;
-                } else if (0 < m_cursor_begin.first) {
-                    m_cursor_end.first = --m_cursor_begin.first;
-                    m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
-                    if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_begin.first, Text()))
-                        --m_cursor_begin.second;
-                    m_cursor_end.second = m_cursor_begin.second;
-                    Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
-                    emit_signal = true;
-                }
-                break;
-            }
-
-            case GGK_DELETE: {
-                if (MultiSelected()) {
-                    ClearSelected();
-                    emit_signal = true;
-                } else if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
-                    Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
-                    emit_signal = true;
-                } else if (m_cursor_begin.first < GetLineData().size() - 1) {
-                    Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
-                    emit_signal = true;
-                }
-                break;
-            }
-
-            default: {
-                std::string translated_code_point;
-                GetTranslatedCodePoint(key, key_code_point, mod_keys, translated_code_point);
-                if (!translated_code_point.empty() &&
-                    !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META))) {
-                    if (MultiSelected())
-                        ClearSelected();
-                    // insert the character to the right of the caret
-                    Insert(m_cursor_begin.first, m_cursor_begin.second, translated_code_point);
-                    // then move the caret fwd one.
-                    if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
-                        ++m_cursor_begin.second;
-                    } else {
-                        ++m_cursor_begin.first;
-                        m_cursor_begin.second = CP1;
-                    }
-                    // the cursor might be off the bottom if the bottom row was just chopped off to satisfy m_max_lines_history
-                    if (GetLineData().size() - 1 < m_cursor_begin.first) {
-                        m_cursor_begin.first = GetLineData().size() - 1;
-                        m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
-                    }
-                    m_cursor_end = m_cursor_begin;
-                    emit_signal = true;
-                } else {
-                    TextControl::KeyPress(key, key_code_point, mod_keys);
-                }
-                break;
-            }
-            }
-            AdjustView();
-            if (emit_signal)
-                EditedSignal(Text());
-        }
-    } else {
+    if (Disabled()) {
         TextControl::KeyPress(key, key_code_point, mod_keys);
+        return;
     }
+
+    if (m_style & MULTI_READ_ONLY)
+        return;
+
+    bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+    bool emit_signal = false;
+    switch (key) {
+    case GGK_RETURN:
+    case GGK_KP_ENTER: {
+        if (MultiSelected())
+            ClearSelected();
+        Insert(m_cursor_end.first, m_cursor_end.second, '\n');
+        ++m_cursor_end.first;
+        m_cursor_end.second = CP0;
+        // the cursor might be off the bottom if the bottom row was just chopped off to satisfy m_max_lines_history
+        if (GetLineData().size() <= m_cursor_end.first) {
+            m_cursor_end.first = GetLineData().size() - 1;
+            m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
+                --m_cursor_end.second;
+        }
+        m_cursor_begin = m_cursor_end;
+        emit_signal = true;
+        break;
+    }
+
+    case GGK_LEFT: {
+        if (MultiSelected() && !shift_down) {
+            m_cursor_begin = m_cursor_end = LowCursorPos();
+        } else if (0 < m_cursor_end.second) {
+            --m_cursor_end.second;
+        } else if (0 < m_cursor_end.first) {
+            --m_cursor_end.first;
+            m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
+                --m_cursor_end.second;
+        }
+        if (!shift_down)
+            m_cursor_begin = m_cursor_end;
+        break;
+    }
+
+    case GGK_RIGHT: {
+        if (MultiSelected() && !shift_down) {
+            m_cursor_begin = m_cursor_end = HighCursorPos();
+        } else if (m_cursor_end.second <
+                    GetLineData()[m_cursor_end.first].char_data.size() -
+                    (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()) ? 1 : 0)) {
+            ++m_cursor_end.second;
+        } else if (m_cursor_end.first < GetLineData().size() - 1) {
+            ++m_cursor_end.first;
+            m_cursor_end.second = CP0;
+        }
+        if (!shift_down)
+            m_cursor_begin = m_cursor_end;
+        break;
+    }
+
+    case GGK_UP: {
+        if (MultiSelected() && !shift_down) {
+            m_cursor_begin = m_cursor_end = LowCursorPos();
+        } else if (0 < m_cursor_end.first) {
+            X row_start = RowStartX(m_cursor_end.first);
+            X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
+            --m_cursor_end.first;
+            m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
+            if (!shift_down)
+                m_cursor_begin = m_cursor_end;
+        }
+        break;
+    }
+
+    case GGK_DOWN: {
+        if (MultiSelected() && !shift_down) {
+            m_cursor_begin = m_cursor_end = HighCursorPos();
+        } else if (m_cursor_end.first < GetLineData().size() - 1) {
+            X row_start = RowStartX(m_cursor_end.first);
+            X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
+            ++m_cursor_end.first;
+            m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
+            if (!shift_down)
+                m_cursor_begin = m_cursor_end;
+        }
+        break;
+    }
+
+    case GGK_HOME: {
+        m_cursor_end.second = CP0;
+        if (!shift_down)
+            m_cursor_begin = m_cursor_end;
+        break;
+    }
+
+    case GGK_END: {
+        m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+        if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
+            --m_cursor_end.second;
+        if (!shift_down)
+            m_cursor_begin = m_cursor_end;
+        break;
+    }
+
+    case GGK_PAGEUP: {
+        if (m_vscroll) {
+            m_vscroll->ScrollPageDecr();
+            SignalScroll(*m_vscroll, true);
+            std::size_t rows_moved = m_vscroll->PageSize() / Value(GetFont()->Lineskip());
+            m_cursor_end.first = m_cursor_end.first < rows_moved ? 0 : m_cursor_end.first - rows_moved;
+            if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
+                m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            m_cursor_begin = m_cursor_end;
+        }
+        break;
+    }
+
+    case GGK_PAGEDOWN: {
+        if (m_vscroll) {
+            m_vscroll->ScrollPageIncr();
+            SignalScroll(*m_vscroll, true);
+            std::size_t rows_moved = m_vscroll->PageSize() / Value(GetFont()->Lineskip());
+            m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, GetLineData().size() - 1);
+            if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
+                m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            m_cursor_begin = m_cursor_end;
+        }
+        break;
+    }
+
+    case GGK_BACKSPACE: {
+        if (MultiSelected()) {
+            ClearSelected();
+            emit_signal = true;
+        } else if (0 < m_cursor_begin.second) {
+            m_cursor_end.second = --m_cursor_begin.second;
+            Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
+            emit_signal = true;
+        } else if (0 < m_cursor_begin.first) {
+            m_cursor_end.first = --m_cursor_begin.first;
+            m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
+            if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_begin.first, Text()))
+                --m_cursor_begin.second;
+            m_cursor_end.second = m_cursor_begin.second;
+            Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
+            emit_signal = true;
+        }
+        break;
+    }
+
+    case GGK_DELETE: {
+        if (MultiSelected()) {
+            ClearSelected();
+            emit_signal = true;
+        } else if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
+            Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
+            emit_signal = true;
+        } else if (m_cursor_begin.first < GetLineData().size() - 1) {
+            Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
+            emit_signal = true;
+        }
+        break;
+    }
+
+    default: {
+        std::string translated_code_point;
+        GetTranslatedCodePoint(key, key_code_point, mod_keys, translated_code_point);
+        if (!translated_code_point.empty() &&
+            !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META))) {
+            if (MultiSelected())
+                ClearSelected();
+            // insert the character to the right of the caret
+            Insert(m_cursor_begin.first, m_cursor_begin.second, translated_code_point);
+            // then move the caret fwd one.
+            if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
+                ++m_cursor_begin.second;
+            } else {
+                ++m_cursor_begin.first;
+                m_cursor_begin.second = CP1;
+            }
+            // the cursor might be off the bottom if the bottom row was just
+            // chopped off to satisfy m_max_lines_history
+            if (GetLineData().size() - 1 < m_cursor_begin.first) {
+                m_cursor_begin.first = GetLineData().size() - 1;
+                m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
+            }
+            m_cursor_end = m_cursor_begin;
+            emit_signal = true;
+        } else {
+            TextControl::KeyPress(key, key_code_point, mod_keys);
+        }
+        break;
+    }
+    }
+
+    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+
+    AdjustView();
+    if (emit_signal)
+        EditedSignal(Text());
 }
 
 void MultiEdit::RecreateScrolls()
@@ -916,7 +954,13 @@ void MultiEdit::ClearSelected()
     CPSize idx_1 = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize idx_2 = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     m_cursor_begin = m_cursor_end = LowCursorPos();
-    Erase(m_cursor_begin.first, m_cursor_begin.second, idx_1 < idx_2 ? idx_2 - idx_1 : idx_1 - idx_2);
+    Erase(m_cursor_begin.first, m_cursor_begin.second,
+          idx_1 < idx_2 ?
+              idx_2 - idx_1 :
+              idx_1 - idx_2);
+
+    CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
 }
 
 void MultiEdit::AdjustView()
