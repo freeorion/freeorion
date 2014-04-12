@@ -155,6 +155,12 @@ struct GG::GUIImpl
     void HandleMouseButtonPress(  unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleMouseDrag(         unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
+    void HandleIdle(             Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
+    void HandleKeyPress(         Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleKeyRelease(       Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
+    void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
+
     void ClearState();
 
     std::string  m_app_name;              // the user-defined name of the apllication
@@ -544,6 +550,106 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_curr_drag_wnd = 0;
 }
 
+void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
+{
+    if (m_curr_wnd_under_cursor != GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys))
+        return;
+
+    if (m_mouse_button_down_repeat_delay &&
+        m_curr_wnd_under_cursor->RepeatButtonDown() &&
+        m_drag_wnds[0] == m_curr_wnd_under_cursor)
+    {
+        // convert to a button-down message
+        // ensure that the timing requirements are met
+        if (curr_ticks - m_prev_mouse_button_press_time > m_mouse_button_down_repeat_delay) {
+            if (!m_last_mouse_button_down_repeat_time ||
+                curr_ticks - m_last_mouse_button_down_repeat_time > m_mouse_button_down_repeat_interval)
+            {
+                m_last_mouse_button_down_repeat_time = curr_ticks;
+                m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::LButtonDown, pos, mod_keys));
+            }
+        }
+    } else {
+        GUI::s_gui->ProcessBrowseInfo();
+    }
+}
+
+void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+{
+    key = KeyMappedKey(key, m_key_map);
+    m_browse_info_wnd.reset();
+    m_browse_info_mode = -1;
+    m_browse_target = 0;
+    bool processed = false;
+    // only process accelerators when there are no modal windows active;
+    // otherwise, accelerators would be an end-run around modality
+    if (m_modal_wnds.empty()) {
+        // the focus_wnd may care about the state of the numlock and
+        // capslock, or which side of the keyboard's CTRL, SHIFT, etc.
+        // was pressed, but the accelerators don't
+        Flags<ModKey> massaged_mods = MassagedAccelModKeys(mod_keys);
+        if (m_accelerators.find(std::make_pair(key, massaged_mods))
+            != m_accelerators.end())
+        {
+            processed = GUI::s_gui->AcceleratorSignal(key, massaged_mods)();
+        }
+    }
+    if (!processed && GUI::s_gui->FocusWnd())
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyPress, key, key_code_point, mod_keys));
+}
+
+void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+{
+    key = KeyMappedKey(key, m_key_map);
+    m_browse_info_wnd.reset();
+    m_browse_info_mode = -1;
+    m_browse_target = 0;
+    if (GUI::s_gui->FocusWnd())
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyRelease, key, key_code_point, mod_keys));
+}
+
+void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
+{
+    m_curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys);
+
+    m_mouse_pos = pos; // record mouse position
+    m_mouse_rel = rel; // record mouse movement
+
+    if (m_drag_wnds[0] || m_drag_wnds[1] || m_drag_wnds[2]) {
+        if (m_drag_wnds[0])
+            HandleMouseDrag(0, pos, curr_ticks);
+        if (m_drag_wnds[1])
+            HandleMouseDrag(1, pos, curr_ticks);
+        if (m_drag_wnds[2])
+            HandleMouseDrag(2, pos, curr_ticks);
+    } else if (m_curr_wnd_under_cursor &&
+               m_prev_wnd_under_cursor == m_curr_wnd_under_cursor)
+    {
+        // if !m_drag_wnds[0] and we're moving over the same
+        // (valid) object we were during the last iteration
+        m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseHere, pos, mod_keys));
+        GUI::s_gui->ProcessBrowseInfo();
+    }
+    if (m_prev_wnd_under_cursor != m_curr_wnd_under_cursor) {
+        m_browse_info_wnd.reset();
+        m_browse_target = 0;
+        m_prev_wnd_under_cursor_time = curr_ticks;
+    }
+    m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
+}
+
+void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
+{
+    m_curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys);
+    m_browse_info_wnd.reset();
+    m_browse_target = 0;
+    m_prev_wnd_under_cursor_time = curr_ticks;
+    // don't send out 0-movement wheel messages
+    if (m_curr_wnd_under_cursor && rel.y)
+        m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
+    m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
+}
+
 void GUIImpl::ClearState()
 {
     m_focus_wnd = 0;
@@ -827,88 +933,21 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
 
     switch (event) {
 
-    case IDLE: {
-        if ((s_impl->m_curr_wnd_under_cursor = CheckedGetWindowUnder(pos, mod_keys))) {
-            if (s_impl->m_mouse_button_down_repeat_delay &&
-                s_impl->m_curr_wnd_under_cursor->RepeatButtonDown() &&
-                s_impl->m_drag_wnds[0] == s_impl->m_curr_wnd_under_cursor)
-            {
-                // convert to a button-down message
-                // ensure that the timing requirements are met
-                if (curr_ticks - s_impl->m_prev_mouse_button_press_time > s_impl->m_mouse_button_down_repeat_delay) {
-                    if (!s_impl->m_last_mouse_button_down_repeat_time ||
-                        curr_ticks - s_impl->m_last_mouse_button_down_repeat_time > s_impl->m_mouse_button_down_repeat_interval)
-                    {
-                        s_impl->m_last_mouse_button_down_repeat_time = curr_ticks;
-                        s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::LButtonDown, pos, mod_keys));
-                    }
-                }
-            } else {
-                ProcessBrowseInfo();
-            }
-        }
-        break; }
+    case IDLE:
+        s_impl->HandleIdle(mod_keys, pos, curr_ticks);
+        break;
 
-    case KEYPRESS: {
-        key = KeyMappedKey(key, s_impl->m_key_map);
-        s_impl->m_browse_info_wnd.reset();
-        s_impl->m_browse_info_mode = -1;
-        s_impl->m_browse_target = 0;
-        bool processed = false;
-        // only process accelerators when there are no modal windows active;
-        // otherwise, accelerators would be an end-run around modality
-        if (s_impl->m_modal_wnds.empty()) {
-            // the focus_wnd may care about the state of the numlock and
-            // capslock, or which side of the keyboard's CTRL, SHIFT, etc.
-            // was pressed, but the accelerators don't
-            Flags<ModKey> massaged_mods = MassagedAccelModKeys(mod_keys);
-            if (s_impl->m_accelerators.find(std::make_pair(key, massaged_mods))
-                != s_impl->m_accelerators.end())
-            {
-                processed = AcceleratorSignal(key, massaged_mods)();
-            }
-        }
-        if (!processed && FocusWnd())
-            FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyPress, key, key_code_point, mod_keys));
-        break; }
+    case KEYPRESS:
+        s_impl->HandleKeyPress(key, key_code_point, mod_keys, curr_ticks);
+        break;
 
-    case KEYRELEASE: {
-        key = KeyMappedKey(key, s_impl->m_key_map);
-        s_impl->m_browse_info_wnd.reset();
-        s_impl->m_browse_info_mode = -1;
-        s_impl->m_browse_target = 0;
-        if (FocusWnd())
-            FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyRelease, key, key_code_point, mod_keys));
-        break; }
+    case KEYRELEASE:
+        s_impl->HandleKeyRelease(key, key_code_point, mod_keys, curr_ticks);
+        break;
 
-    case MOUSEMOVE: {
-        s_impl->m_curr_wnd_under_cursor = CheckedGetWindowUnder(pos, mod_keys);
-
-        s_impl->m_mouse_pos = pos; // record mouse position
-        s_impl->m_mouse_rel = rel; // record mouse movement
-
-        if (s_impl->m_drag_wnds[0] || s_impl->m_drag_wnds[1] || s_impl->m_drag_wnds[2]) {
-            if (s_impl->m_drag_wnds[0])
-                s_impl->HandleMouseDrag(0, pos, curr_ticks);
-            if (s_impl->m_drag_wnds[1])
-                s_impl->HandleMouseDrag(1, pos, curr_ticks);
-            if (s_impl->m_drag_wnds[2])
-                s_impl->HandleMouseDrag(2, pos, curr_ticks);
-        } else if (s_impl->m_curr_wnd_under_cursor &&
-                   s_impl->m_prev_wnd_under_cursor == s_impl->m_curr_wnd_under_cursor)
-        {
-            // if !s_impl->m_drag_wnds[0] and we're moving over the same
-            // (valid) object we were during the last iteration
-            s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseHere, pos, mod_keys));
-            ProcessBrowseInfo();
-        }
-        if (s_impl->m_prev_wnd_under_cursor != s_impl->m_curr_wnd_under_cursor) {
-            s_impl->m_browse_info_wnd.reset();
-            s_impl->m_browse_target = 0;
-            s_impl->m_prev_wnd_under_cursor_time = curr_ticks;
-        }
-        s_impl->m_prev_wnd_under_cursor = s_impl->m_curr_wnd_under_cursor; // update this for the next time around
-        break; }
+    case MOUSEMOVE:
+        s_impl->HandleMouseMove(mod_keys, pos, rel, curr_ticks);
+        break;
 
     case LPRESS:
         s_impl->HandleMouseButtonPress((s_impl->m_mouse_lr_swap ? RPRESS : LPRESS) - LPRESS, pos, curr_ticks);
@@ -934,16 +973,9 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         s_impl->HandleMouseButtonRelease((s_impl->m_mouse_lr_swap ? LRELEASE : RRELEASE) - LRELEASE, pos, curr_ticks);
         break;
 
-    case MOUSEWHEEL: {
-        s_impl->m_curr_wnd_under_cursor = CheckedGetWindowUnder(pos, mod_keys);
-        s_impl->m_browse_info_wnd.reset();
-        s_impl->m_browse_target = 0;
-        s_impl->m_prev_wnd_under_cursor_time = curr_ticks;
-        // don't send out 0-movement wheel messages
-        if (s_impl->m_curr_wnd_under_cursor && rel.y)
-            s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
-        s_impl->m_prev_wnd_under_cursor = s_impl->m_curr_wnd_under_cursor; // update this for the next time around
-        break; }
+    case MOUSEWHEEL:
+        s_impl->HandleMouseWheel(mod_keys, pos, rel, curr_ticks);
+        break;
 
     default:
         break;
@@ -986,9 +1018,7 @@ bool GUI::SetNextFocusWndInCycle()
 }
 
 void GUI::Wait(unsigned int ms)
-{
-    boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
-}
+{ boost::this_thread::sleep(boost::posix_time::milliseconds(ms)); }
 
 void GUI::Register(Wnd* wnd)
 { if (wnd) s_impl->m_zlist.Add(wnd); }
