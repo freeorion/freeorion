@@ -512,6 +512,7 @@ protected:
     void            RecreateScrolls();              ///< recreates the vertical and horizontal scrolls as needed.
     void            ResetAutoScrollVars();          ///< resets all variables related to auto-scroll to their initial values
     void            Resort();                       ///< performs a full resort of all rows, using the current sort functor.
+    Row&            ColHeaders();                   ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers
     //@}
 
 private:

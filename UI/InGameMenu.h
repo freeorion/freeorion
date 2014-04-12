@@ -33,11 +33,11 @@ private:
     void Exit();        //!< when m_quit_btn button is pressed
     void Done();        //!< when m_done_btn is pressed
 
-    CUIButton*  m_save_btn;   //!< Save game button
-    CUIButton*  m_load_btn;   //!< Load game button
-    CUIButton*  m_options_btn;//!< Options button
-    CUIButton*  m_done_btn;   //!< Done button
-    CUIButton*  m_exit_btn;   //!< Quit game button
+    CUIButton*  m_save_btn;         //!< Save game button
+    CUIButton*  m_load_btn;         //!< Load game button
+    CUIButton*  m_options_btn;      //!< Options button
+    CUIButton*  m_done_btn;         //!< Done button
+    CUIButton*  m_exit_btn;         //!< Quit game button
 };
 
 #endif // _InGameMenu_h_

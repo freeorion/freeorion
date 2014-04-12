@@ -50,6 +50,9 @@ FO_COMMON_API const boost::filesystem::path GetSaveDir();
 /** Returns a canonical utf-8 string from the given filesystem path. */
 FO_COMMON_API std::string PathString(const boost::filesystem::path& path);
 
+/** Returns current timestamp in a form that can be used in file names */
+FO_COMMON_API std::string FilenameTimestamp();
+
 #ifdef FREEORION_MACOSX
 /** This function returns the Python home directory from where it is embedded
   * within the Mac OS X application bundle */

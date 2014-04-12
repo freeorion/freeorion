@@ -14,6 +14,7 @@
 #include "../../UI/IntroScreen.h"
 #include "../../UI/GalaxySetupWnd.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
+#include "../../UI/SaveFileDialog.h"
 #include "../../UI/ServerConnectWnd.h"
 #include "../../UI/Sound.h"
 #include "../../network/Message.h"
@@ -42,7 +43,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <sstream>
 
@@ -552,13 +552,10 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         }
     } else {
         try {
-            std::vector<std::pair<std::string, std::string> > save_file_types;
-            save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
-            std::string path_string = PathString(GetSaveDir());
-            FileDlg dlg(path_string, "", false, false, save_file_types);
-            dlg.Run();
-            if (!dlg.Result().empty())
-                filename = *dlg.Result().begin();
+            SaveFileDialog sfd(SP_SAVE_FILE_EXTENSION, true);
+            sfd.Run();
+            if (!sfd.Result().empty())
+                filename = sfd.Result();
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
         }
@@ -1042,11 +1039,7 @@ void HumanClientApp::Autosave() {
         extension = MP_SAVE_FILE_EXTENSION;
 
     // Add timestamp to autosave generated files
-    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
-    std::stringstream date_stream;
-    date_stream.imbue(std::locale(date_stream.getloc(), facet));
-    date_stream << boost::posix_time::microsec_clock::local_time();
-    std::string datetime_str=date_stream.str();
+    std::string datetime_str = FilenameTimestamp();
 
     boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
 

@@ -6,6 +6,7 @@
 
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <cstdlib>
 
@@ -365,5 +366,13 @@ std::string PathString(const fs::path& path) {
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
 #endif
+}
+
+std::string FilenameTimestamp() {
+    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
+    std::stringstream date_stream;
+    date_stream.imbue(std::locale(date_stream.getloc(), facet));
+    date_stream << boost::posix_time::microsec_clock::local_time();
+    return date_stream.str();
 }
 

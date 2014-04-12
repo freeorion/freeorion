@@ -27,6 +27,7 @@
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <fstream>
 
@@ -41,6 +42,32 @@ namespace {
             retval[it->first] = SaveGameEmpireData(it->first, it->second->Name(), it->second->PlayerName(), it->second->Color());
         return retval;
     }
+    
+    void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
+                                    const std::vector<PlayerSaveGameData>& player_save_game_data,
+                                    const std::map<int, SaveGameEmpireData>& empire_save_game_data,
+                                    SaveGamePreviewData& preview){
+        
+        typedef std::vector<PlayerSaveGameData>::const_iterator player_iterator;
+        
+        // Find the human player
+        const PlayerSaveGameData* the_player;
+        for(player_iterator it = player_save_game_data.begin(); it != player_save_game_data.end(); ++it){
+            if(it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER){
+                the_player = &(*it);
+            }
+        }
+               
+        // Find the empire of the player
+        std::map<int, SaveGameEmpireData>::const_iterator the_empire = empire_save_game_data.find(the_player->m_empire_id);
+        
+        preview.current_turn = server_save_game_data.m_current_turn;
+        preview.main_player_name = the_player->m_name;
+        preview.main_player_empire_name = the_empire->second.m_empire_name;
+        preview.main_player_empire_colour = the_empire->second.m_color;
+        preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
+    }
+    
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 }
 
@@ -53,6 +80,8 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
+    SaveGamePreviewData save_preview_data;
+    CompileSaveGamePreviewData(server_save_game_data, player_save_game_data, empire_save_game_data, save_preview_data);
 
     try {
 #ifdef FREEORION_WIN32
@@ -69,6 +98,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         freeorion_oarchive oa(ofs);
+        oa << BOOST_SERIALIZATION_NVP(save_preview_data);
         oa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -98,6 +128,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> ignored_save_game_empire_data;
+    SaveGamePreviewData ignored_save_preview_data;
 
     empire_manager.Clear();
     universe.Clear();
@@ -116,6 +147,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
+        Logger().debugStream() << "LoadGame : Passing Preview Data";
+        ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
         Logger().debugStream() << "LoadGame : Reading Galaxy Setup Data";
         ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -143,6 +176,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 }
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
+    
+    SaveGamePreviewData ignored_save_preview_data;
 
     try {
 #ifdef FREEORION_WIN32
@@ -158,7 +193,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
-
+        ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
         ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         // skipping additional deserialization which is not needed for this function
     } catch (const std::exception& e) {
@@ -169,6 +204,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
 
 
 void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data) {
+    SaveGamePreviewData ignored_save_preview_data;
     ServerSaveGameData  ignored_server_save_game_data;
     GalaxySetupData     ignored_galaxy_setup_data;
 
@@ -186,7 +222,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
-
+        ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -198,6 +234,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 }
 
 void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data) {
+    SaveGamePreviewData             ignored_save_preview_data;
     ServerSaveGameData              ignored_server_save_game_data;
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
     GalaxySetupData                 ignored_galaxy_setup_data;
@@ -216,6 +253,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         freeorion_iarchive ia(ifs);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);

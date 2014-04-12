@@ -263,6 +263,7 @@
     <ClCompile Include="..\..\UI\ProductionWnd.cpp" />
     <ClCompile Include="..\..\UI\QueueListBox.cpp" />
     <ClCompile Include="..\..\UI\ResearchWnd.cpp" />
+    <ClCompile Include="..\..\UI\SaveFileDialog.cpp" />
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />
     <ClCompile Include="..\..\UI\ShaderProgram.cpp" />
     <ClCompile Include="..\..\UI\SidePanel.cpp" />

@@ -554,3 +554,15 @@ bool PointInRegion(double point[2], const CombatSetupRegion& region)
     }
     return retval;
 }
+
+
+SaveGamePreviewData::SaveGamePreviewData():
+magic_number(PREVIEW_PRESENT_MARKER),
+main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
+main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
+current_turn(-1) {}
+
+bool SaveGamePreviewData::Valid() const {
+    return magic_number == SaveGamePreviewData::PREVIEW_PRESENT_MARKER && current_turn >= -1 ;
+}
+

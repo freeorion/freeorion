@@ -90,6 +90,7 @@ set(freeorion_HEADER
     ../../UI/ProductionWnd.h
     ../../UI/QueueListBox.h
     ../../UI/ResearchWnd.h
+    ../../UI/SaveFileDialog.h
     ../../UI/ServerConnectWnd.h
     ../../UI/ShaderProgram.h
     ../../UI/SidePanel.h
@@ -144,6 +145,7 @@ set(freeorion_SOURCES
     ../../UI/ProductionWnd.cpp
     ../../UI/QueueListBox.cpp
     ../../UI/ResearchWnd.cpp
+    ../../UI/SaveFileDialog.cpp
     ../../UI/ServerConnectWnd.cpp
     ../../UI/ShaderProgram.cpp
     ../../UI/SidePanel.cpp

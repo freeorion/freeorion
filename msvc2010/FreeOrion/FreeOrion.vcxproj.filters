@@ -553,6 +553,9 @@
     <ClCompile Include="..\..\UI\Hotkeys.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\UI\SaveFileDialog.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FreeOrion.rc">

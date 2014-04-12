@@ -1583,6 +1583,31 @@ GAME_MENU_SAVE_FILES
 Save Game Files
 
 ###########################
+# Save Game Dialog        #
+###########################
+
+SAVE_TIME_TITLE
+<u>Time</u>
+
+SAVE_TURN_TITLE
+<u>Turn</u>
+
+SAVE_PLAYER_TITLE
+<u>Player</u>
+
+SAVE_EMPIRE_TITLE
+<u>Empire</u>
+
+SAVE_FILE_TITLE
+<u>File</u>
+
+SAVE_FILENAME
+File:
+
+SAVE_DIRECTORY
+Path:
+
+###########################
 # Game Options            #
 ###########################
 

@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "OptionsWnd.h"
+#include "SaveFileDialog.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Networking.h"
 #include "../util/i18n.h"
@@ -152,20 +153,16 @@ void InGameMenu::Save() {
     save_file_types.push_back(std::make_pair(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-        Logger().debugStream() << "... getting save path string";
-        std::string path_string = PathString(GetSaveDir());
-        Logger().debugStream() << "... got save path string: " << path_string;
-
-        Logger().debugStream() << "... running file dialog";
-        FileDlg dlg(path_string, "", true, false, save_file_types);
+        Logger().debugStream() << "... running save file dialog";
+        SaveFileDialog dlg(SAVE_GAME_EXTENSION);
         dlg.Run();
         if (!dlg.Result().empty()) {
             if (!app->CanSaveNow()) {
                 Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
                 throw std::runtime_error(UserString("UNABLE_TO_SAVE_NOW_TRY_AGAIN"));
             }
-            Logger().debugStream() << "... initiating save";
-            app->SaveGame(*dlg.Result().begin());
+            Logger().debugStream() << "... initiating save to " << dlg.Result() ;
+            app->SaveGame(dlg.Result());
             CloseClicked();
             Logger().debugStream() << "... save done";
         }

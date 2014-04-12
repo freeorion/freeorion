@@ -1827,6 +1827,9 @@ void ListBox::Resort()
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
 }
 
+ListBox::Row& ListBox::ColHeaders()
+{ return *m_header_row; }
+
 void ListBox::ConnectSignals()
 {
     if (m_vscroll)
