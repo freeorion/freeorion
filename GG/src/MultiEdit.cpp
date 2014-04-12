@@ -272,7 +272,15 @@ void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
 void MultiEdit::SelectAll()
 {
     m_cursor_begin = std::pair<std::size_t, CPSize>(0, CP0);
-    m_cursor_end = std::pair<std::size_t, CPSize>(GetLineData().size() - 1, CPSize(GetLineData()[GetLineData().size() - 1].char_data.size()));
+    m_cursor_end = std::pair<std::size_t, CPSize>(
+        GetLineData().size() - 1,
+        CPSize(GetLineData()[GetLineData().size() - 1].char_data.size()));
+}
+
+void MultiEdit::DeselectAll()
+{
+    m_cursor_begin = std::pair<std::size_t, CPSize>(0, CP0);
+    m_cursor_end = m_cursor_begin;
 }
 
 void MultiEdit::SetText(const std::string& str)
@@ -601,60 +609,63 @@ std::pair<std::size_t, CPSize> MultiEdit::LowCursorPos() const
 
 void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
+    if (Disabled())
+        return;
+
     // when a button press occurs, record the character position under the
     // cursor, and remove any previous selection range
-    if (!Disabled() && !(m_style & MULTI_READ_ONLY)) {
-        std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
-        m_cursor_begin = m_cursor_end = click_pos;
-        std::pair<CPSize, CPSize> word_indices =
-            GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first, m_cursor_begin.second,
-                                                            GetLineData()));
-        if (word_indices.first != word_indices.second) {
-            m_cursor_begin = CharAt(word_indices.first);
-            m_cursor_end = CharAt(word_indices.second);
-        }
-        AdjustView();
+    std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
+    m_cursor_begin = m_cursor_end = click_pos;
+    std::pair<CPSize, CPSize> word_indices =
+        GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first, m_cursor_begin.second,
+                                                        GetLineData()));
+    if (word_indices.first != word_indices.second) {
+        m_cursor_begin = CharAt(word_indices.first);
+        m_cursor_end = CharAt(word_indices.second);
     }
+    AdjustView();
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
-    if (!Disabled() && !(m_style & MULTI_READ_ONLY)) {
-        // when a drag occurs, move m_cursor_end to where the mouse is, which selects a range of characters
-        Pt click_pos = ScreenToClient(pt);
-        m_cursor_end = CharAt(click_pos);
-        if (InDoubleButtonDownMode()) {
-            std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
-            CPSize idx = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-            std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
-            std::pair<CPSize, CPSize> final_indices;
-            if (word_indices.first == word_indices.second) {
-                if (idx < initial_indices.first) {
-                    final_indices.second = idx;
-                    final_indices.first = initial_indices.second;
-                } else if (initial_indices.second < idx) {
-                    final_indices.second = idx;
-                    final_indices.first = initial_indices.first;
-                } else {
-                    final_indices = initial_indices;
-                }
+    if (Disabled())
+        return;
+
+    // when a drag occurs, move m_cursor_end to where the mouse is, which
+    // selects a range of characters
+    Pt click_pos = ScreenToClient(pt);
+    m_cursor_end = CharAt(click_pos);
+    if (InDoubleButtonDownMode()) {
+        std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
+        CPSize idx = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
+        std::pair<CPSize, CPSize> final_indices;
+        if (word_indices.first == word_indices.second) {
+            if (idx < initial_indices.first) {
+                final_indices.second = idx;
+                final_indices.first = initial_indices.second;
+            } else if (initial_indices.second < idx) {
+                final_indices.second = idx;
+                final_indices.first = initial_indices.first;
             } else {
-                if (word_indices.first <= initial_indices.first) {
-                    final_indices.second = word_indices.first;
-                    final_indices.first = initial_indices.second;
-                } else {
-                    final_indices.second = word_indices.second;
-                    final_indices.first = initial_indices.first;
-                }
+                final_indices = initial_indices;
             }
-            m_cursor_begin = CharAt(final_indices.first);
-            m_cursor_end = CharAt(final_indices.second);
+        } else {
+            if (word_indices.first <= initial_indices.first) {
+                final_indices.second = word_indices.first;
+                final_indices.first = initial_indices.second;
+            } else {
+                final_indices.second = word_indices.second;
+                final_indices.first = initial_indices.first;
+            }
         }
-        // if we're dragging past the currently visible text, adjust the view so more text can be selected
-        if (click_pos.x < 0 || click_pos.x > ClientSize().x || 
-            click_pos.y < 0 || click_pos.y > ClientSize().y) 
-            AdjustView();
+        m_cursor_begin = CharAt(final_indices.first);
+        m_cursor_end = CharAt(final_indices.second);
     }
+    // if we're dragging past the currently visible text, adjust the view so more text can be selected
+    if (click_pos.x < 0 || click_pos.x > ClientSize().x || 
+        click_pos.y < 0 || click_pos.y > ClientSize().y) 
+        AdjustView();
 }
 
 void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)

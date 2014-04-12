@@ -92,6 +92,7 @@ public:
     virtual void   SizeMove(const Pt& ul, const Pt& lr);
 
     virtual void   SelectAll();
+    virtual void   DeselectAll();
     virtual void   SetText(const std::string& str);
 
     /** Sets the style flags for this MultiEdit to \a style. */
