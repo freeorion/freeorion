@@ -455,16 +455,23 @@ Y MultiEdit::BottomMargin() const
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 {
     std::pair<std::size_t, CPSize> retval;
-    retval.first = std::min(RowAt(pt.y), GetLineData().size() - 1);
-    retval.second = std::min(CharAt(retval.first, pt.x), CPSize(GetLineData()[retval.first].char_data.size()));
+
+    size_t row = RowAt(pt.y);
+    retval.first = std::min(row, GetLineData().size() - 1);
+
+    if (row > retval.first)
+        retval.second = CPSize(GetLineData()[retval.first].char_data.size());
+    else
+        retval.second = std::min(CharAt(row, pt.x),
+                                 CPSize(GetLineData()[retval.first].char_data.size()));
+
     return retval;
 }
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 {
     std::pair<std::size_t, CPSize> retval(0, CP0);
-    if (idx <= Text().size())
-    {
+    if (idx <= Text().size()) {
         const std::vector<Font::LineData>& lines = GetLineData();
         retval = LinePositionOf(idx, lines);
         if (retval.second == INVALID_CP_SIZE) {
@@ -488,22 +495,34 @@ Pt MultiEdit::ScrollPosition() const
 CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
                               const std::vector<Font::LineData>* line_data) const
 {
-    CPSize retval = CP0;
     const std::vector<Font::LineData>& lines = line_data ? *line_data : GetLineData();
-    if (lines[row].Empty()) {
-        if (!row)
-            return CP0;
-        --row;
-        char_idx = CPSize(lines[row].char_data.size());
+
+    if (lines.empty())
+        return CP0; // no text
+    if (lines[row].Empty() && row == 0)
+        return CP0; // empty first line
+
+    // if selecting into an empty line, revert to the end of the previous line
+    if (lines[row].Empty())
+        return CPSize(lines[row-1].char_data.back().code_point_index);
+
+    // if at start of line, just go with that
+    if (char_idx == CP0)
+        return CP0;
+
+    const Font::LineData& line = lines[row];
+
+    // if at end of line, just go with that
+    if (char_idx >= line.char_data.size()) {
+        return line.char_data.back().code_point_index;
     }
-    if (char_idx != lines[row].char_data.size()) {
-        retval = lines[row].char_data[Value(char_idx)].code_point_index;
-        // "rewind" the first position to encompass all tag text that is
-        // associated with that position
-        for (std::size_t i = 0; i < lines[row].char_data[Value(char_idx)].tags.size(); ++i) {
-            retval -= lines[row].char_data[Value(char_idx)].tags[i]->CodePointSize();
-        }
-    }
+
+    // "rewind" the first position to encompass all tag text that is
+    // associated with that position
+    CPSize retval = line.char_data[Value(char_idx)].code_point_index;
+    for (std::size_t i = 0; i < line.char_data[Value(char_idx)].tags.size(); ++i)
+        retval -= line.char_data[Value(char_idx)].tags[i]->CodePointSize();
+
     return retval;
 }
 
@@ -551,16 +570,36 @@ std::size_t MultiEdit::RowAt(Y y) const
 
 CPSize MultiEdit::CharAt(std::size_t row, X x) const
 {
-    CPSize retval(0);
+    // out of range of rows?
+    if (row >= GetLineData().size()) {
+        return CPSize(GetLineData().back().char_data.size());
+    }
+
+    const Font::LineData& line = GetLineData()[row];
+    // empty line?
+    if (line.char_data.empty())
+        return CP0;
+
     x -= RowStartX(row);
-    while (retval < GetLineData()[row].char_data.size() && GetLineData()[row].char_data[Value(retval)].extent < x)
-        ++retval;
-    if (retval < GetLineData()[row].char_data.size()) {
-        X prev_extent = retval ? GetLineData()[row].char_data[Value(retval - 1)].extent : X0;
-        X half_way = (prev_extent + GetLineData()[row].char_data[Value(retval)].extent) / 2;
+
+    // past end of line?
+    if (x > line.char_data.back().extent)
+        return CPSize(line.char_data.size());
+
+    // in middle of line. advance characters until within or left of position x
+    CPSize retval(0);
+    while (retval < line.char_data.size() &&
+           line.char_data[Value(retval)].extent < x)
+    { ++retval; }
+
+    // pick between previous and partially-past character
+    if (retval < line.char_data.size()) {
+        X prev_extent = retval ? line.char_data[Value(retval - 1)].extent : X0;
+        X half_way = (prev_extent + line.char_data[Value(retval)].extent) / 2;
         if (half_way < x) // if the point is more than halfway across the character, put the cursor *after* the character
             ++retval;
     }
+
     return retval;
 }
 
@@ -660,6 +699,7 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     // selects a range of characters
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = CharAt(click_pos);
+
     if (InDoubleButtonDownMode()) {
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
         CPSize idx = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
