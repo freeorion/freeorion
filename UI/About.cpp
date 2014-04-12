@@ -20,8 +20,7 @@
 ////////////////////////////////////////////
 About::About():
     CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
-    m_end_with_done(false)
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL)
 {
     m_done_btn = new CUIButton(UserString("DONE"), GG::X(400), GG::Y(440), GG::X(75));
     m_license = new CUIButton(UserString("LICENSE"), GG::X(310), GG::Y(440), GG::X(75));
@@ -48,11 +47,6 @@ About::About():
     }
     fin.close();
 
-    Init();
-}
-
-void About::Init()
-{
     GG::Connect(m_done_btn->LeftClickedSignal, &About::OnDone, this);
     GG::Connect(m_license->LeftClickedSignal, &About::OnLicense, this);
     GG::Connect(m_vision->LeftClickedSignal, &About::OnVision, this);
@@ -60,11 +54,6 @@ void About::Init()
 
 About::~About()
 {}
-
-void About::Render()
-{
-    CUIWnd::Render();
-}
 
 void About::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
