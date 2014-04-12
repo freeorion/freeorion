@@ -83,7 +83,7 @@ namespace {
         bool operator()() const {return Index::value <  m_value;}
         int m_value;
     };
-    struct IndexIncr  
+    struct IndexIncr
     {
         void operator()() const {++Index::value;}
     };
@@ -688,6 +688,7 @@ void FileDlg::UpdateList()
     }
 
     if (!m_in_win32_drive_selection) {
+        // parent directory selector
         if ((s_working_dir.string() != s_working_dir.root_path().string() &&
              s_working_dir.branch_path().string() != "") ||
             Win32Paths())
@@ -696,14 +697,23 @@ void FileDlg::UpdateList()
             row->push_back("[..]", m_font, m_text_color);
             m_files_list->Insert(row);
         }
+        // current directory selector
+        {
+            ListBox::Row* row = new ListBox::Row();
+            row->push_back("[.]", m_font, m_text_color);
+            m_files_list->Insert(row);
+        }
         try {
             fs::directory_iterator test(s_working_dir);
         } catch (const fs::filesystem_error&) {
-            // This ctor has been found to throw on Win32 when we attempt to iterate over a path into a drive that has
-            // just been disconnected (e.g. a USB thumb drive).  In this case, we will just cancel the dialog.
+            // This ctor has been found to throw on Win32 when we attempt to
+            // iterate over a path into a drive that has just been disconnected
+            // (e.g. a USB thumb drive).  In this case, we will just cancel the
+            // dialog.
             CancelClicked();
             return;
         }
+        // contained directories
         std::multimap<std::string, ListBox::Row*> sorted_rows;
         for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
             try {
@@ -830,60 +840,80 @@ void FileDlg::UpdateDirectoryText()
 
 void FileDlg::OpenDirectory()
 {
-    // see if there is a directory selected; if so open the directory.  if more than one is selected, take the first one
+    // see if there is a directory selected; if so open the directory.
+    // if more than one is selected, take the first one
     const ListBox::SelectionSet& sels = m_files_list->Selections();
+    if (sels.empty())
+        return;
+
     std::string directory;
-    if (!sels.empty()) {
-        directory = boost::polymorphic_downcast<TextControl*>((***sels.begin())[0])->Text();
-        if (directory.size() < 2 || directory[0] != '[')
-            return;
-        directory = directory.substr(1, directory.size() - 2); // strip off '[' and ']'
-        if (directory == "..") {
-            if (s_working_dir.string() != s_working_dir.root_path().string() &&
-                s_working_dir.branch_path().string() != "") {
-                SetWorkingDirectory(s_working_dir.branch_path());
-            } else {
-                m_in_win32_drive_selection = true;
-                m_files_edit->Clear();
-                FilesEditChanged(m_files_edit->Text());
-                m_curr_dir_text->SetText("");
-                PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
-                UpdateList();
-            }
+    directory = boost::polymorphic_downcast<TextControl*>((***sels.begin())[0])->Text();
+
+    if (directory.size() < 2 || directory[0] != '[')
+        return;
+
+    directory = directory.substr(1, directory.size() - 2); // strip off '[' and ']'
+
+    if (directory == ".") {
+        // remain in current directory
+        UpdateList();
+
+    } else if (directory == "..") {
+        // move to parent directory of current directory
+        if (s_working_dir.string() != s_working_dir.root_path().string() &&
+            s_working_dir.branch_path().string() != "")
+        {
+            // move to new directory
+            SetWorkingDirectory(s_working_dir.branch_path());
+
         } else {
-            if (!m_in_win32_drive_selection) {
+            // switch to drive selection mode
+            m_in_win32_drive_selection = true;
+            m_files_edit->Clear();
+            FilesEditChanged(m_files_edit->Text());
+            m_curr_dir_text->SetText("");
+            PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+            UpdateList();
+        }
+
+    } else {
+        // move to contained directory, which may be a drive selection...
+        if (!m_in_win32_drive_selection) {
 
 #if defined(_WIN32)
-                // convert UTF-8 file name to UTF-16
-                boost::filesystem::path::string_type directory_native;
-                utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
-                SetWorkingDirectory(s_working_dir / fs::path(directory_native));
+            // convert UTF-8 file name to UTF-16
+            boost::filesystem::path::string_type directory_native;
+            utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+            SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
-                SetWorkingDirectory(s_working_dir / fs::path(directory));
+            SetWorkingDirectory(s_working_dir / fs::path(directory));
 #endif
-            } else {
-                m_in_win32_drive_selection = false;
-                try {
-                    SetWorkingDirectory(fs::path(directory + "\\"));
-                } catch (const fs::filesystem_error& e) {
-                    if (e.code() == boost::system::posix_error::io_error) {
-                        m_in_win32_drive_selection = true;
-                        m_files_edit->Clear();
-                        FilesEditChanged(m_files_edit->Text());
-                        m_curr_dir_text->SetText("");
-                        PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
-                        UpdateList();
-                        boost::shared_ptr<ThreeButtonDlg> dlg(
-                            GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75), m_device_is_not_ready_str, m_font, m_color,
-                                                                 m_border_color, m_color, m_text_color, 1));
-                        dlg->Run();
-                    } else {
-                        throw;
-                    }
+        } else {
+            m_in_win32_drive_selection = false;
+            try {
+                SetWorkingDirectory(fs::path(directory + "\\"));
+            } catch (const fs::filesystem_error& e) {
+                if (e.code() == boost::system::posix_error::io_error) {
+                    m_in_win32_drive_selection = true;
+                    m_files_edit->Clear();
+                    FilesEditChanged(m_files_edit->Text());
+                    m_curr_dir_text->SetText("");
+                    PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+                    UpdateList();
+                    boost::shared_ptr<ThreeButtonDlg> dlg(
+                        GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
+                                                             m_device_is_not_ready_str,
+                                                             m_font, m_color,
+                                                             m_border_color, m_color,
+                                                             m_text_color, 1));
+                    dlg->Run();
+                } else {
+                    throw;
                 }
             }
         }
-        if (m_save && m_ok_button->Text() != m_save_str)
-            m_ok_button->SetText(m_save_str);
     }
+
+    if (m_save && m_ok_button->Text() != m_save_str)
+        m_ok_button->SetText(m_save_str);
 }
