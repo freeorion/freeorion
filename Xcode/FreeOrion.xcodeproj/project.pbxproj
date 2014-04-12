@@ -369,6 +369,7 @@
 		82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
+		8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */; };
@@ -1363,6 +1364,8 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
+		8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveFileDialog.cpp; sourceTree = "<group>"; };
+		8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveFileDialog.h; sourceTree = "<group>"; };
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
 		829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireStatsParser.cpp; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseGenerator.cpp; sourceTree = "<group>"; };
@@ -2189,6 +2192,8 @@
 				343EC6620F3F5C7C00782AD3 /* QueueListBox.h */,
 				471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */,
 				471D5CD30A98A3F900DA9C21 /* ResearchWnd.h */,
+				8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */,
+				8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */,
 				471D5CD40A98A3F900DA9C21 /* ServerConnectWnd.cpp */,
 				471D5CD50A98A3F900DA9C21 /* ServerConnectWnd.h */,
 				346D87ED0FC5F6080095593E /* ShaderProgram.cpp */,
@@ -3375,67 +3380,68 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				348D0F5F1194D9DE0034C679 /* EntityRenderer.cpp in Sources */,
-				34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */,
-				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
-				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */,
+				3402E24D0F5A30D600DF6FE7 /* BatchedGeometry.cpp in Sources */,
+				3402E24E0F5A30D600DF6FE7 /* BatchPage.cpp in Sources */,
 				471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */,
+				34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */,
+				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
+				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
+				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
+				34972BEB0F49CBE80015C864 /* CollisionMeshConverter.cpp in Sources */,
+				34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */,
+				3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */,
 				471D5E140A98A97A00DA9C21 /* CombatWnd.cpp in Sources */,
 				471D5E150A98A97D00DA9C21 /* CUIControls.cpp in Sources */,
 				471D5E160A98A98700DA9C21 /* CUIDrawUtil.cpp in Sources */,
 				471D5E180A98A98B00DA9C21 /* CUIStyle.cpp in Sources */,
 				471D5E1A0A98A99600DA9C21 /* CUIWnd.cpp in Sources */,
+				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
+				343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */,
+				348D0F5F1194D9DE0034C679 /* EntityRenderer.cpp in Sources */,
+				828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */,
 				471D5E1B0A98A99D00DA9C21 /* FleetButton.cpp in Sources */,
 				471D5E1C0A98A9A300DA9C21 /* FleetWnd.cpp in Sources */,
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
+				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
+				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
+				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
+				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
+				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
+				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
+				3402E2500F5A30D600DF6FE7 /* ImpostorPage.cpp in Sources */,
+				4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */,
 				471D5E1F0A98A9B000DA9C21 /* InGameMenu.cpp in Sources */,
 				471D5E200A98A9B200DA9C21 /* IntroScreen.cpp in Sources */,
 				471D5E210A98A9C000DA9C21 /* LinkText.cpp in Sources */,
 				471D5E220A98A9C500DA9C21 /* MapWnd.cpp in Sources */,
+				343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */,
+				827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */,
 				471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */,
+				82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */,
+				34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */,
 				471D5E240A98A9C900DA9C21 /* OptionsWnd.cpp in Sources */,
+				3402E2510F5A30D600DF6FE7 /* PagedGeometry.cpp in Sources */,
+				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
 				471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */,
+				3402E2520F5A30D600DF6FE7 /* PropertyMaps.cpp in Sources */,
+				343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */,
 				471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */,
+				8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */,
 				471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */,
+				346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */,
 				471D5E290A98A9D700DA9C21 /* SidePanel.cpp in Sources */,
 				471D5E2A0A98A9D900DA9C21 /* SitRepPanel.cpp in Sources */,
-				471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */,
-				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
-				471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */,
-				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
-				4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */,
-				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
-				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
-				343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */,
-				343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */,
-				343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */,
-				34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */,
-				34972BEB0F49CBE80015C864 /* CollisionMeshConverter.cpp in Sources */,
 				34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */,
-				3402E24D0F5A30D600DF6FE7 /* BatchedGeometry.cpp in Sources */,
-				3402E24E0F5A30D600DF6FE7 /* BatchPage.cpp in Sources */,
-				3402E2500F5A30D600DF6FE7 /* ImpostorPage.cpp in Sources */,
-				3402E2510F5A30D600DF6FE7 /* PagedGeometry.cpp in Sources */,
-				3402E2520F5A30D600DF6FE7 /* PropertyMaps.cpp in Sources */,
 				3402E2530F5A30D600DF6FE7 /* StaticBillboardSet.cpp in Sources */,
+				471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */,
+				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
+				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
 				3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */,
+				471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */,
 				3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */,
 				3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */,
-				346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */,
-				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
-				34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */,
-				3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */,
-				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
-				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
-				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
-				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
-				82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */,
-				828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */,
-				827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */,
-				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
-				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
