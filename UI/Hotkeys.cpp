@@ -251,8 +251,7 @@ bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod) {
     return ((key >= GG::GGK_a && key <= GG::GGK_z) ||
             (key >= GG::GGK_0 && key <= GG::GGK_9) ||
             key == GG::GGK_RETURN ||    // also disable keys used for typing and entering text
-            key == GG::GGK_KP_ENTER ||
-            key == GG::GGK_TAB);
+            key == GG::GGK_KP_ENTER);
 }
 
 bool Hotkey::IsAlnum() const
