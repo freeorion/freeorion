@@ -9831,6 +9831,18 @@ Copy
 HOTKEY_PASTE
 Paste
 
+HOTKEY_SELECT_ALL
+Select All
+
+HOTKEY_DESELECT
+Deselect
+
+HOTKEY_FOCUS_PREV_WND
+Previous Control
+
+HOTKEY_FOCUS_NEXT_WND
+Next Control
+
 
 ################
 ## Name Lists ##
