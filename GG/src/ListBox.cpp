@@ -876,7 +876,7 @@ void ListBox::Clear()
     ClearedSignal();
 }
 
-void ListBox::SelectRow(iterator it)
+void ListBox::SelectRow(iterator it, bool signal/* = false*/)
 {
     if (m_style & LIST_NOSEL)
         return;
@@ -892,22 +892,22 @@ void ListBox::SelectRow(iterator it)
 
     m_selections.insert(it);
 
-    if (previous_selections != m_selections)
+    if (signal && previous_selections != m_selections)
         SelChangedSignal(m_selections);
 }
 
-void ListBox::DeselectRow(iterator it)
+void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
 {
     SelectionSet previous_selections = m_selections;
 
     if (m_selections.find(it) != m_selections.end())
         m_selections.erase(it);
 
-    if (previous_selections != m_selections)
+    if (signal && previous_selections != m_selections)
         SelChangedSignal(m_selections);
 }
 
-void ListBox::SelectAll()
+void ListBox::SelectAll(bool signal/* = false*/)
 {
     if (m_style & LIST_NOSEL)
         return;
@@ -926,11 +926,11 @@ void ListBox::SelectAll()
         }
     }
 
-    if (previous_selections != m_selections)
+    if (signal && previous_selections != m_selections)
         SelChangedSignal(m_selections);
 }
 
-void ListBox::DeselectAll()
+void ListBox::DeselectAll(bool signal/* = false*/)
 {
     SelectionSet previous_selections = m_selections;
 
@@ -939,7 +939,7 @@ void ListBox::DeselectAll()
         m_caret = m_rows.end();
     }
 
-    if (previous_selections != m_selections)
+    if (signal && previous_selections != m_selections)
         SelChangedSignal(m_selections);
 }
 
@@ -961,7 +961,7 @@ ListBox::Row& ListBox::GetRow(std::size_t n)
     return **boost::next(m_rows.begin(), n);
 }
 
-void ListBox::SetSelections(const SelectionSet& s)
+void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
 {
     if (m_style & LIST_NOSEL)
         return;
@@ -970,7 +970,7 @@ void ListBox::SetSelections(const SelectionSet& s)
 
     m_selections = s;
 
-    if (previous_selections != m_selections)
+    if (signal && previous_selections != m_selections)
         SelChangedSignal(m_selections);
 }
 

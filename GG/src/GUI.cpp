@@ -1182,7 +1182,7 @@ bool GUI::WndSelectAll(Wnd* wnd)
         edit_control->SelectAll();
         return true;
     } else if (ListBox* list_control = dynamic_cast<ListBox*>(wnd)) {
-        list_control->SelectAll();
+        list_control->SelectAll(true);
         return true;
     }
     return false;
@@ -1196,7 +1196,7 @@ bool GUI::WndDeselect(Wnd* wnd)
         edit_control->DeselectAll();
         return true;
     } else if (ListBox* list_control = dynamic_cast<ListBox*>(wnd)) {
-        list_control->DeselectAll();
+        list_control->DeselectAll(true);
         return true;
     }
     return false;
