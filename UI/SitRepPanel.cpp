@@ -293,9 +293,8 @@ void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
     switch (key) {
     case GG::GGK_RETURN:
     case GG::GGK_KP_ENTER:
-    case GG::GGK_ESCAPE:
-    case GG::GGK_F2: {
-        Hide();
+    case GG::GGK_ESCAPE:{
+        CloseClicked();
         break;
     }
     default:

@@ -145,8 +145,8 @@ private:
     void    ConnectKeyboardAcceleratorSignals();
     void    SetAccelerators();
     void    RemoveAccelerators();
-    void    DisableAlphaNumAccels();
-    void    EnableAlphaNumAccels();
+    void    DisableTypingUnsafeAccels();
+    void    EnableTypingUnsafeAccels();
     void    ChatMessageSentSlot();
 
     Ogre::SceneManager* m_scene_manager;

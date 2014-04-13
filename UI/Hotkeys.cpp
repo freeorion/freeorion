@@ -158,6 +158,8 @@ std::string Hotkey::PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod) {
         return "SHIFT+" + ks;
     if (mod == GG::MOD_KEY_ALT)
         return "ALT+" + ks;
+    if (mod == GG::MOD_KEY_META)
+        return "META+" + ks;
 
     ReplaceInString(ret, "MOD_KEY_", "");
 
@@ -243,19 +245,18 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     return ret;
 }
 
-bool Hotkey::IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod) {
-    // If something else than shift is pressed, it is not alphanumeric
-    if (!(mod == 0 || mod == GG::MOD_KEY_LSHIFT || mod == GG::MOD_KEY_RSHIFT))
+bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
+    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)
         return false;
-
-    return ((key >= GG::GGK_a && key <= GG::GGK_z) ||
-            (key >= GG::GGK_0 && key <= GG::GGK_9) ||
-            key == GG::GGK_RETURN ||    // also disable keys used for typing and entering text
-            key == GG::GGK_KP_ENTER);
+    if (mod & (GG::MOD_KEY_CTRL | GG::MOD_KEY_ALT | GG::MOD_KEY_META))
+        return true;
+    if (key >= GG::GGK_F1 && key <= GG::GGK_F15)
+        return true;
+    return false;
 }
 
-bool Hotkey::IsAlnum() const
-{ return IsAlnum(m_key, m_mod_keys); }
+bool Hotkey::IsTypingSafe() const
+{ return IsTypingSafe(m_key, m_mod_keys); }
 
 bool Hotkey::IsDefault() const
 { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
@@ -303,7 +304,7 @@ InvisibleWindowCondition::InvisibleWindowCondition(const std::list<GG::Wnd*>& bl
 
 bool InvisibleWindowCondition::IsActive() const {
     for (std::list<GG::Wnd*>::const_iterator i = m_blacklist.begin();
-        i != m_blacklist.end(); i++)
+         i != m_blacklist.end(); i++)
     {
         if ((*i)->Visible())
             return false;
@@ -366,10 +367,13 @@ void HotkeyManager::RebuildShortcuts() {
     GG::GUI* gui = GG::GUI::GetGUI();
     for (Connections::iterator i = m_connections.begin(); i != m_connections.end(); i++) {
         const Hotkey& hk = Hotkey::NamedHotkey(i->first);
+
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
-        m_internal_connections.insert(GG::Connect(gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys),
-                                                  boost::bind(&HotkeyManager::ProcessNamedShortcut,
-                                                              this, hk.m_name)));
+
+        m_internal_connections.insert(GG::Connect(
+            gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys),
+            boost::bind(&HotkeyManager::ProcessNamedShortcut,
+            this, hk.m_name)));
     }
 }
 
@@ -399,11 +403,12 @@ GG::GUI::AcceleratorSignalType& HotkeyManager::NamedSignal(const std::string& na
 }
 
 bool HotkeyManager::ProcessNamedShortcut(const std::string& name) {
-    if (m_disabled_alnum  && Hotkey::NamedHotkey(name).IsAlnum())
+    //std::cout << "ProcessNamedShortcut:  unsafe disabled? " << m_disabled_typing_unsafe_hotkeys;
+    //std::cout << "  hotkey typing safe? " << Hotkey::NamedHotkey(name).IsTypingSafe() << std::endl;
+    if (m_disabled_typing_unsafe_hotkeys && !Hotkey::NamedHotkey(name).IsTypingSafe())
         return false;           // ignored
 
-    // First update the connection state according to the current
-    // status.
+    // First update the connection state according to the current status.
     ConditionalConnectionList& conds = m_connections[name];
     for (ConditionalConnectionList::iterator i = conds.begin();
          i != conds.end(); i++)
@@ -421,11 +426,12 @@ bool HotkeyManager::ProcessNamedShortcut(const std::string& name) {
 HotkeyManager::~HotkeyManager()
 {}
 
-HotkeyManager::HotkeyManager() : m_disabled_alnum(false)
+HotkeyManager::HotkeyManager() :
+    m_disabled_typing_unsafe_hotkeys(false)
 {}
 
-void HotkeyManager::DisableAlphaNumeric()
-{ m_disabled_alnum = true; }
+void HotkeyManager::DisableTypingUnsafeHotkeys()
+{ m_disabled_typing_unsafe_hotkeys = true; }
 
-void HotkeyManager::EnableAlphaNumeric()
-{ m_disabled_alnum = false; }
+void HotkeyManager::EnableTypingUnsafeHotkeys()
+{ m_disabled_typing_unsafe_hotkeys = false; }

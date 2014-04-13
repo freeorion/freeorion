@@ -121,11 +121,11 @@ public:
 
     std::string PrettyPrint() const;
 
-    /// Whether or not the given key combination is alphanumeric
-    static bool IsAlnum(GG::Key key, GG::Flags<GG::ModKey> mod);
+    /// Whether or not the given key combination is safe to recognize while typing text
+    static bool IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod);
 
-    /// Is the hotkey alphanumeric ?
-    bool IsAlnum() const;
+    /// Is the hotkey safe to recognize while typing text?
+    bool IsTypingSafe() const;
 
     /// Is the hotkey set to its default value ?
     bool IsDefault() const;
@@ -271,8 +271,8 @@ class HotkeyManager {
     /// The constructor for the singleton. Private.
     HotkeyManager();
 
-    /// Whether or not alnum shortcut are currently disabled
-    bool m_disabled_alnum;
+    /// Whether or not shortcuts that are unsafe while typing are currently disabled
+    bool m_disabled_typing_unsafe_hotkeys;
 
     /// Signals for each shortut name, created on demand.
     std::map<std::string, GG::GUI::AcceleratorSignalType*> m_signals;
@@ -307,10 +307,10 @@ public:
     ~HotkeyManager();
 
     /// Disables all alphanumeric accelerators
-    void DisableAlphaNumeric();
+    void DisableTypingUnsafeHotkeys();
 
     /// Reenables all alphanumeric accelerators
-    void EnableAlphaNumeric();
+    void EnableTypingUnsafeHotkeys();
 };
 
 #endif

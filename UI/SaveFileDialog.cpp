@@ -376,13 +376,13 @@ void SaveFileDialog::ModalInit() {
 
 void SaveFileDialog::KeyPress ( GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys ) {
     // Return without filename
-    if ( key == GG::GGK_ESCAPE || key == GG::GGK_F10 ) {
+    if ( key == GG::GGK_ESCAPE ) {
         Cancel();
         return;
     }
 
     // Update list on enter if directory changed by hand
-    if ( key == GG::GGK_RETURN ) {
+    if ( key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER ) {
         if ( m_loaded_dir != m_current_dir_edit->Text() ) {
             UpdatePreviewList();
         }else{

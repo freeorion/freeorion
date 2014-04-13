@@ -2046,7 +2046,6 @@ void CombatWnd::SetAccelerators() {
 }
 
 void CombatWnd::RemoveAccelerators() {
-
     // This is mostly pointless, now, isn't it ?
     GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
     while (i != GG::GUI::GetGUI()->accel_end()) {
@@ -2056,17 +2055,17 @@ void CombatWnd::RemoveAccelerators() {
     m_disabled_accels_list.clear();
 }
 
-void CombatWnd::DisableAlphaNumAccels() {
-    HotkeyManager::GetManager()->DisableAlphaNumeric();
+void CombatWnd::DisableTypingUnsafeAccels() {
+    HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys();
 }
 
-void CombatWnd::EnableAlphaNumAccels() {
-    HotkeyManager::GetManager()->DisableAlphaNumeric();
+void CombatWnd::EnableTypingUnsafeAccels() {
+    HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys();
 }
 
 void CombatWnd::ChatMessageSentSlot() {
     if (!m_disabled_accels_list.empty()) {
-        EnableAlphaNumAccels();
+        EnableTypingUnsafeAccels();
         GG::GUI::GetGUI()->SetFocusWnd(this);
     }
 }

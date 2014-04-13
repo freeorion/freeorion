@@ -512,7 +512,9 @@ void MultiPlayerLobbyWnd::Render() {
 }
 
 void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
+    if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) &&
+         GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
+    {
         int receiver = Networking::INVALID_PLAYER_ID; // all players by default
         std::string text = m_chat_input_edit->Text();
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
@@ -532,7 +534,9 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
         // put message just sent in chat box (local echo)
         *m_chat_box += player_name + ": " + text + "\n";
 
-    } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+    } else if (m_start_game_bn && !m_start_game_bn->Disabled() &&
+               (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER))
+    {
         m_start_game_bn->LeftClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
         m_cancel_bn->LeftClickedSignal();

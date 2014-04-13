@@ -1117,9 +1117,9 @@ MapWnd::MapWnd() :
             &MapWnd::ShipRightClicked,          this);
 
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->TypingSignal,
-            &MapWnd::DisableAlphaNumAccels,     this);
+            &MapWnd::DisableTypingUnsafeAccels,     this);
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->DoneTypingSignal,
-            &MapWnd::EnableAlphaNumAccels,     this);
+            &MapWnd::EnableTypingUnsafeAccels,     this);
 
     DoLayout();
 
@@ -2065,7 +2065,7 @@ void MapWnd::InitTurn() {
         m_object_list_wnd->Refresh();
 
 
-    EnableAlphaNumAccels();
+    EnableTypingUnsafeAccels();
 
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
@@ -4884,7 +4884,7 @@ void MapWnd::ShowDesign() {
     m_design_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_design_wnd);
     //GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
-    DisableAlphaNumAccels();
+    DisableTypingUnsafeAccels();
     m_design_wnd->Reset();
 
     // indicate selection on button
@@ -4897,7 +4897,7 @@ void MapWnd::HideDesign() {
     m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
     m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
 
-    EnableAlphaNumAccels();
+    EnableTypingUnsafeAccels();
     RestoreSidePanel();
 }
 
@@ -5331,11 +5331,11 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->RebuildShortcuts();
 }
 
-void MapWnd::DisableAlphaNumAccels()
-{ HotkeyManager::GetManager()->DisableAlphaNumeric(); }
+void MapWnd::DisableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
-void MapWnd::EnableAlphaNumAccels()
-{ HotkeyManager::GetManager()->EnableAlphaNumeric(); }
+void MapWnd::EnableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->EnableTypingUnsafeHotkeys(); }
 
 void MapWnd::ChatMessageSentSlot()
 {}

@@ -130,7 +130,7 @@ void InGameMenu::DoLayout() {
 
 void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     // Same behaviour as if "done" was pressed
-    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10)
+    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER || key == GG::GGK_ESCAPE )
         Done();
 }
 
