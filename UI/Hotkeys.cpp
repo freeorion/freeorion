@@ -141,24 +141,23 @@ static void ReplaceInString(std::string& str, const std::string& what,
 }
 
 std::string Hotkey::PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod) {
-    std::string ret = HotkeyToString(key, mod);
-    ReplaceInString(ret, "GGK_", "");
+    std::string retval;
+    if (mod & GG::MOD_KEY_CTRL)
+        retval += "CTRL+";
+    if (mod & GG::MOD_KEY_ALT)
+        retval += "ALT+";
+    if (mod & GG::MOD_KEY_SHIFT)
+        retval += "SHIFT+";
+    if (mod & GG::MOD_KEY_META)
+        retval += "META+";
 
-    std::string ks = HotkeyToString(key, GG::MOD_KEY_NONE);
-    ReplaceInString(ks, "GGK_", "");
+    std::ostringstream key_stream;
+    key_stream << key;
+    std::string key_string = key_stream.str();
+    ReplaceInString(key_string, "GGK_", "");
 
-    if (mod == GG::MOD_KEY_CTRL)
-        return "CTRL+" + ks;
-    if (mod == GG::MOD_KEY_SHIFT)
-        return "SHIFT+" + ks;
-    if (mod == GG::MOD_KEY_ALT)
-        return "ALT+" + ks;
-    if (mod == GG::MOD_KEY_META)
-        return "META+" + ks;
-
-    ReplaceInString(ret, "MOD_KEY_", "");
-
-    return ret;
+    retval += key_string;
+    return retval;
 }
 
 std::string Hotkey::PrettyPrint() const
@@ -186,8 +185,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
     }
 }
 
-Hotkey::Hotkey(const std::string& name, GG::Key key,
-               GG::Flags<GG::ModKey> mod) :
+Hotkey::Hotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) :
     m_name(name),
     m_key(key),
     m_key_default(key),
