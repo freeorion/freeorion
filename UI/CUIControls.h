@@ -237,7 +237,7 @@ public:
     /** \name Structors */ //@{
     CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
             GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(),
-            GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+            GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_KEY_PRESS); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -252,7 +252,7 @@ public:
     CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                  GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(),
-                 GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                 GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_KEY_PRESS); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -267,7 +267,7 @@ public:
     CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                          const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                          GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(),
-                         GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                         GG::Clr interior = ClientUI::CtrlColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_KEY_PRESS); ///< basic ctor
     //@}
     /** \name Accessors */ //@{
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;

@@ -71,7 +71,8 @@ public:
     /** \name Structors */ ///@{
     /** Ctor. Height is determined from the font and point size used. */
     Edit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
-         Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = INTERACTIVE);
+         Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
+         Flags<WndFlag> flags = INTERACTIVE | REPEAT_KEY_PRESS);
     //@}
 
     /** \name Accessors */ ///@{

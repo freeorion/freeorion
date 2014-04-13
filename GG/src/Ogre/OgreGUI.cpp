@@ -83,6 +83,7 @@ OgreGUI::OgreGUI(Ogre::RenderWindow* window, const boost::filesystem::path& conf
     m_window->addListener(this);
     Ogre::WindowEventUtilities::addWindowEventListener(m_window, this);
     EnableMouseButtonDownRepeat(250, 15);
+    EnableKeyPressRepeat(250, 15);
 
     if (boost::filesystem::exists(config_file_path)) {
         boost::filesystem::ifstream ifs(config_file_path);

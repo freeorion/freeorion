@@ -74,6 +74,10 @@ extern GG_API const WndFlag ONTOP;
     (Parent()-less) Wnds. */
 extern GG_API const WndFlag MODAL;
 
+/** When a keyboard key is held down while this window has input focus, it
+    expects to receive KeyPress messages. */
+extern GG_API const WndFlag REPEAT_KEY_PRESS;
+
 
 /** \brief This is the basic GG window class.
 
@@ -273,6 +277,10 @@ public:
         that this also determines whether a mouse-over will detect this window
         or the ones under it. */
     bool Interactive() const;
+
+    /** Returns true iff holding a keyboard key while this Wnd has the input
+        focus generates multiple key-press messages. */
+    bool RepeatKeyPress() const;
 
     /** Returns true iff holding a mouse button down over this Wnd generates
         multiple button-down messages. */

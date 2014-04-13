@@ -175,6 +175,14 @@ struct GG::GUIImpl
     Pt           m_mouse_rel;             // relative position of mouse, based on last MOUSEMOVE event
     Flags<ModKey>m_mod_keys;              // currently-depressed modifier keys, based on last KEYPRESS event
 
+    int          m_key_press_repeat_delay;          // see note above GUI class definition
+    int          m_key_press_repeat_interval;
+    int          m_last_key_press_repeat_time;      // last time of a simulated key press message
+    std::pair<Key, boost::uint32_t>
+                 m_last_pressed_key_code_point;
+    int          m_prev_key_press_time;             // the time of the most recent key press
+
+
     int          m_mouse_button_down_repeat_delay;      // see note above GUI class definition
     int          m_mouse_button_down_repeat_interval;
     int          m_last_mouse_button_down_repeat_time;  // last time of a simulated button-down message
@@ -246,6 +254,11 @@ GUIImpl::GUIImpl() :
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
     m_mod_keys(),
+    m_key_press_repeat_delay(250),
+    m_key_press_repeat_interval(66),
+    m_last_key_press_repeat_time(0),
+    m_last_pressed_key_code_point(std::make_pair(GGK_UNKNOWN, 0u)),
+    m_prev_key_press_time(-1),
     m_mouse_button_down_repeat_delay(250),
     m_mouse_button_down_repeat_interval(66),
     m_last_mouse_button_down_repeat_time(0),
@@ -552,24 +565,42 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
 
 void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
 {
-    if (m_curr_wnd_under_cursor != GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys))
-        return;
-
-    if (m_mouse_button_down_repeat_delay &&
+    if (m_mouse_button_down_repeat_delay != 0 &&
+        m_curr_wnd_under_cursor &&
+        m_curr_wnd_under_cursor == GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys) &&
         m_curr_wnd_under_cursor->RepeatButtonDown() &&
         m_drag_wnds[0] == m_curr_wnd_under_cursor)
     {
-        // convert to a button-down message
-        // ensure that the timing requirements are met
+        // convert to a key press message after ensuring that timing requirements are met
         if (curr_ticks - m_prev_mouse_button_press_time > m_mouse_button_down_repeat_delay) {
             if (!m_last_mouse_button_down_repeat_time ||
                 curr_ticks - m_last_mouse_button_down_repeat_time > m_mouse_button_down_repeat_interval)
             {
                 m_last_mouse_button_down_repeat_time = curr_ticks;
-                m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::LButtonDown, pos, mod_keys));
+                m_curr_wnd_under_cursor->HandleEvent(WndEvent(
+                    WndEvent::LButtonDown, pos, mod_keys));
             }
         }
-    } else {
+
+    } else if (
+        m_key_press_repeat_delay != 0 &&
+        m_last_pressed_key_code_point.first != GGK_UNKNOWN &&
+        GUI::s_gui->FocusWnd() &&
+        GUI::s_gui->FocusWnd()->RepeatKeyPress())
+    {
+        // convert to a key press message after ensuring that timing requirements are met
+        if (curr_ticks - m_prev_key_press_time > m_key_press_repeat_delay) {
+            if (!m_last_key_press_repeat_time ||
+                curr_ticks - m_last_key_press_repeat_time > m_key_press_repeat_interval)
+            {
+                m_last_key_press_repeat_time = curr_ticks;
+                GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+                    WndEvent::KeyPress, m_last_pressed_key_code_point.first,
+                    m_last_pressed_key_code_point.second, mod_keys));
+            }
+        }
+
+    } else if (m_curr_wnd_under_cursor) {
         GUI::s_gui->ProcessBrowseInfo();
     }
 }
@@ -580,6 +611,10 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = 0;
+    m_last_pressed_key_code_point = std::make_pair(key, key_code_point);
+    m_last_key_press_repeat_time = 0;
+    m_prev_key_press_time = curr_ticks;
+
     bool processed = false;
     // only process accelerators when there are no modal windows active;
     // otherwise, accelerators would be an end-run around modality
@@ -595,17 +630,21 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
         }
     }
     if (!processed && GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyPress, key, key_code_point, mod_keys));
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+            WndEvent::KeyPress, key, key_code_point, mod_keys));
 }
 
 void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
 {
     key = KeyMappedKey(key, m_key_map);
+    m_last_key_press_repeat_time = 0;
+    m_last_pressed_key_code_point.first = GGK_UNKNOWN;
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = 0;
     if (GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyRelease, key, key_code_point, mod_keys));
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+            WndEvent::KeyRelease, key, key_code_point, mod_keys));
 }
 
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
@@ -646,7 +685,8 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
     m_prev_wnd_under_cursor_time = curr_ticks;
     // don't send out 0-movement wheel messages
     if (m_curr_wnd_under_cursor && rel.y)
-        m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
+        m_curr_wnd_under_cursor->HandleEvent(WndEvent(
+            WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
@@ -657,6 +697,8 @@ void GUIImpl::ClearState()
     m_mouse_rel = GG::Pt(X(0), Y(0));
     m_mod_keys = Flags<ModKey>();
     m_last_mouse_button_down_repeat_time = 0;
+    m_last_key_press_repeat_time = 0;
+    m_last_pressed_key_code_point = std::make_pair(GGK_UNKNOWN, 0u);
 
     m_prev_wnd_drag_position = Pt();
     m_browse_info_wnd.reset();
@@ -821,6 +863,12 @@ std::string GUI::FPSString() const
 
 double GUI::MaxFPS() const
 { return s_impl->m_max_FPS; }
+
+unsigned int GUI::KeyPressRepeatDelay() const
+{ return s_impl->m_key_press_repeat_delay; }
+
+unsigned int GUI::KeyPressRepeatInterval() const
+{ return s_impl->m_key_press_repeat_interval; }
 
 unsigned int GUI::ButtonDownRepeatDelay() const
 { return s_impl->m_mouse_button_down_repeat_delay; }
@@ -1143,9 +1191,20 @@ void GUI::RegisterTimer(Timer& timer)
 void GUI::RemoveTimer(Timer& timer)
 { s_impl->m_timers.erase(&timer); }
 
+void GUI::EnableKeyPressRepeat(unsigned int delay, unsigned int interval)
+{
+    if (!delay) { // setting delay = 0 completely disables key press repeat
+        s_impl->m_key_press_repeat_delay = 0;
+        s_impl->m_key_press_repeat_interval = 0;
+    } else {
+        s_impl->m_key_press_repeat_delay = delay;
+        s_impl->m_key_press_repeat_interval = interval;
+    }
+}
+
 void GUI::EnableMouseButtonDownRepeat(unsigned int delay, unsigned int interval)
 {
-    if (!delay) { // setting delay = 0 completely disables mouse drag repeat
+    if (!delay) { // setting delay = 0 completely disables mouse button down repeat
         s_impl->m_mouse_button_down_repeat_delay = 0;
         s_impl->m_mouse_button_down_repeat_interval = 0;
     } else {

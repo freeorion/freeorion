@@ -172,6 +172,8 @@ public:
     double                      MaxFPS() const;                     ///< returns the maximum allowed frames per second of rendering speed.  0 indicates no limit.
     virtual X                   AppWidth() const = 0;               ///< returns the width of the application window/screen
     virtual Y                   AppHeight() const = 0;              ///< returns the height of the application window/screen
+    unsigned int                KeyPressRepeatDelay() const;        ///< returns the \a delay value set by EnableKeyPressRepeat()
+    unsigned int                KeyPressRepeatInterval() const;     ///< returns the \a interval value set by EnableKeyPressRepeat()
     unsigned int                ButtonDownRepeatDelay() const;      ///< returns the \a delay value set by EnableMouseButtonDownRepeat()
     unsigned int                ButtonDownRepeatInterval() const;   ///< returns the \a interval value set by EnableMouseButtonDownRepeat()
     unsigned int                DoubleClickInterval() const;        ///< returns the maximum interval allowed between clicks that is still considered a double-click, in ms
@@ -253,7 +255,8 @@ public:
     virtual void   Exit2DMode() = 0;             ///< restores GL to its condition prior to Enter2DMode() call
     void           EnableFPS(bool b = true);     ///< turns FPS calulations on or off
     void           SetMaxFPS(double max);        ///< sets the maximum allowed FPS, so the render loop does not act as a spinlock when it runs very quickly.  0 indicates no limit.
-    void           EnableMouseButtonDownRepeat(unsigned int delay, unsigned int interval); ///< delay and interval are in ms; Setting delay to 0 disables mouse button-down repeating completely.
+    void           EnableKeyPressRepeat(unsigned int delay, unsigned int interval);         ///< delay and interval are in ms; Setting delay to 0 disables key press repeating completely.
+    void           EnableMouseButtonDownRepeat(unsigned int delay, unsigned int interval);  ///< delay and interval are in ms; Setting delay to 0 disables mouse button-down repeating completely.
     void           SetDoubleClickInterval(unsigned int interval); ///< sets the maximum interval allowed between clicks that is still considered a double-click, in ms
     void           SetMinDragTime(unsigned int time);     ///< sets the minimum time (in ms) an item must be dragged before it is a valid drag
     void           SetMinDragDistance(unsigned int distance); ///< sets the minimum distance an item must be dragged before it is a valid drag

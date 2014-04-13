@@ -264,7 +264,7 @@ public:
     /** Returns a new Edit, to be used in an editable Spin. */
     virtual Edit*              NewSpinEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
                                            Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                           Flags<WndFlag> flags = INTERACTIVE) const;
+                                           Flags<WndFlag> flags = INTERACTIVE | REPEAT_KEY_PRESS) const;
 
     /** Returns a new StateButton, to be used in a TabBar. */
     virtual StateButton*       NewTabBarTab(X x, Y y, X w, Y h, const std::string& str,

@@ -143,6 +143,7 @@ const WndFlag GG::DRAGABLE           (1 << 2);
 const WndFlag GG::RESIZABLE          (1 << 3);
 const WndFlag GG::ONTOP              (1 << 4);
 const WndFlag GG::MODAL              (1 << 5);
+const WndFlag GG::REPEAT_KEY_PRESS   (1 << 6);
 
 GG_FLAGSPEC_IMPL(WndFlag);
 
@@ -150,12 +151,13 @@ namespace {
     bool RegisterWndFlags()
     {
         FlagSpec<WndFlag>& spec = FlagSpec<WndFlag>::instance();
-        spec.insert(INTERACTIVE, "INTERACTIVE", true);
+        spec.insert(INTERACTIVE,        "INTERACTIVE", true);
         spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN", true);
-        spec.insert(DRAGABLE, "DRAGABLE", true);
-        spec.insert(RESIZABLE, "RESIZABLE", true);
-        spec.insert(ONTOP, "ONTOP", true);
-        spec.insert(MODAL, "MODAL", true);
+        spec.insert(DRAGABLE,           "DRAGABLE", true);
+        spec.insert(RESIZABLE,          "RESIZABLE", true);
+        spec.insert(ONTOP,              "ONTOP", true);
+        spec.insert(MODAL,              "MODAL", true);
+        spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS", true);
         return true;
     }
     bool dummy = RegisterWndFlags();
@@ -230,6 +232,9 @@ Wnd::~Wnd()
 
 bool Wnd::Interactive() const
 { return m_flags & INTERACTIVE; }
+
+bool Wnd::RepeatKeyPress() const
+{ return m_flags & REPEAT_KEY_PRESS; }
 
 bool Wnd::RepeatButtonDown() const
 { return m_flags & REPEAT_BUTTON_DOWN; }
