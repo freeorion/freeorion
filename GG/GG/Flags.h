@@ -302,10 +302,10 @@ public:
         found in FlagSpec<FlagType>::instance(). */
     Flags(FlagType flag) :
         m_flags(flag.m_value)
-        {
-            if (!FlagSpec<FlagType>::instance().contains(flag))
-                throw UnknownFlag("Invalid flag with value " + boost::lexical_cast<std::string>(flag.m_value));
-        }
+    {
+        if (!FlagSpec<FlagType>::instance().contains(flag))
+            throw UnknownFlag("Invalid flag with value " + boost::lexical_cast<std::string>(flag.m_value));
+    }
     //@}
 
     /** \name Accessors */ ///@{
@@ -313,42 +313,42 @@ public:
         test.  It is convertible to true when it contains one or more flags,
         and convertible to false otherwise. */
     operator int ConvertibleToBoolDummy::* () const
-        { return m_flags ? &ConvertibleToBoolDummy::_ : 0; }
+    { return m_flags ? &ConvertibleToBoolDummy::_ : 0; }
     /** Returns true iff *this contains the same flags as \a rhs. */
     bool operator==(Flags<FlagType> rhs) const
-        { return m_flags == rhs.m_flags; }
+    { return m_flags == rhs.m_flags; }
     /** Returns true iff *this does not contain the same flags as \a rhs. */
     bool operator!=(Flags<FlagType> rhs) const
-        { return m_flags != rhs.m_flags; }
+    { return m_flags != rhs.m_flags; }
     /** Returns true iff the underlying storage of *this is less than the
         underlying storage of \a rhs.  Note that this is here for use in
         associative containers only; it is otherwise meaningless. */
     bool operator<(Flags<FlagType> rhs) const
-        { return m_flags < rhs.m_flags; }
+    { return m_flags < rhs.m_flags; }
     //@}
 
     /** \name Mutators */ ///@{
     /** Performs a bitwise-or of *this and \a rhs, placing the result in
         *this. */
     Flags<FlagType>& operator|=(Flags<FlagType> rhs)
-        {
-            m_flags |= rhs.m_flags;
-            return *this;
-        }
+    {
+        m_flags |= rhs.m_flags;
+        return *this;
+    }
     /** Performs a bitwise-and of *this and \a rhs, placing the result in
         *this. */
     Flags<FlagType>& operator&=(Flags<FlagType> rhs)
-        {
-            m_flags &= rhs.m_flags;
-            return *this;
-        }
+    {
+        m_flags &= rhs.m_flags;
+        return *this;
+    }
     /** Performs a bitwise-xor of *this and \a rhs, placing the result in
         *this. */
     Flags<FlagType>& operator^=(Flags<FlagType> rhs)
-        {
-            m_flags ^= rhs.m_flags;
-            return *this;
-        }
+    {
+        m_flags ^= rhs.m_flags;
+        return *this;
+    }
     //@}
 
 private:
