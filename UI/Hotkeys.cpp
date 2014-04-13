@@ -37,18 +37,13 @@
 
 std::map<std::string, Hotkey>* Hotkey::s_hotkeys = NULL;
 
-void Hotkey::AddHotkey(const std::string& name,
-                       GG::Key key,
-                       GG::Flags<GG::ModKey> mod)
-{
+void Hotkey::AddHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
     s_hotkeys->insert(std::make_pair(name, Hotkey(name, key, mod)));
 }
 
-std::string Hotkey::HotkeyToString(GG::Key key,
-                                   GG::Flags<GG::ModKey> mod)
-{
+std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     std::ostringstream s;
 
     if (mod != GG::MOD_KEY_NONE) {
@@ -261,15 +256,13 @@ bool Hotkey::IsTypingSafe() const
 bool Hotkey::IsDefault() const
 { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
 
-void Hotkey::SetHotkey(const std::string& name, GG::Key key,
-                       GG::Flags<GG::ModKey> mod)
-{
+void Hotkey::SetHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
     Hotkey& hk = PrivateNamedHotkey(name);
-    std::string n = "UI.hotkeys.";
-    n += hk.m_name;
+
     hk.m_key = key;
-    hk.m_mod_keys = mod;
-    GetOptionsDB().Set<std::string>(n, hk.ToString());
+    hk.m_mod_keys = GG::MassagedAccelModKeys(mod);
+
+    GetOptionsDB().Set<std::string>("UI.hotkeys." + hk.m_name, hk.ToString());
 }
 
 void Hotkey::ResetHotkey(const std::string& name) {
