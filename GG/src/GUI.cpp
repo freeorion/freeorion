@@ -72,24 +72,6 @@ namespace {
         std::string m_str;
     };
 
-    /* returns the storage value of mod_keys that should be used with keyboard
-       accelerators the accelerators don't care which side of the keyboard you
-       use for CTRL, SHIFT, etc., and whether or not the numlock or capslock are
-       engaged.*/
-    Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys)
-    {
-        mod_keys &= ~(MOD_KEY_NUM | MOD_KEY_CAPS);
-        if (mod_keys & MOD_KEY_CTRL)
-            mod_keys |= MOD_KEY_CTRL;
-        if (mod_keys & MOD_KEY_SHIFT)
-            mod_keys |= MOD_KEY_SHIFT;
-        if (mod_keys & MOD_KEY_ALT)
-            mod_keys |= MOD_KEY_ALT;
-        if (mod_keys & MOD_KEY_META)
-            mod_keys |= MOD_KEY_META;
-        return mod_keys;
-    }
-
     Key           KeyMappedKey(Key key, const std::map<Key, Key>& key_map) {
         std::map<Key, Key>::const_iterator it = key_map.find(key);
         if (it != key_map.end())
@@ -146,6 +128,7 @@ namespace {
 #endif
     }
 }
+
 
 // implementation data types
 struct GG::GUIImpl
@@ -1637,4 +1620,18 @@ bool GG::MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd)
         return true;
     }
     return false;
+}
+
+Flags<ModKey> GG::MassagedAccelModKeys(Flags<ModKey> mod_keys)
+{
+    mod_keys &= ~(MOD_KEY_NUM | MOD_KEY_CAPS);
+    if (mod_keys & MOD_KEY_CTRL)
+        mod_keys |= MOD_KEY_CTRL;
+    if (mod_keys & MOD_KEY_SHIFT)
+        mod_keys |= MOD_KEY_SHIFT;
+    if (mod_keys & MOD_KEY_ALT)
+        mod_keys |= MOD_KEY_ALT;
+    if (mod_keys & MOD_KEY_META)
+        mod_keys |= MOD_KEY_META;
+    return mod_keys;
 }

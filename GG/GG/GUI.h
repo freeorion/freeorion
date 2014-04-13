@@ -394,6 +394,12 @@ private:
 /** Returns true if lwnd == rwnd or if lwnd contains rwnd */
 GG_API bool MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd);
 
+/* returns the storage value of mod_keys that should be used with keyboard
+    accelerators the accelerators don't care which side of the keyboard you
+    use for CTRL, SHIFT, etc., and whether or not the numlock or capslock are
+    engaged.*/
+GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
+
 
 // template implementations
 template<class InIt> 
