@@ -1071,7 +1071,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
         // stat icon for fleet count
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 FleetCountIcon(), 0, 0, false);
+                                                FleetCountIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_SIZE));
@@ -1103,7 +1103,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
         // stat icon for fleet fuel
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
+                                 ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_FUEL));
