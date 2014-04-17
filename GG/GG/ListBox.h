@@ -168,17 +168,17 @@ public:
         //@}
 
         /** \name Accessors */ ///@{
-        SortKeyType  SortKey(std::size_t column) const; ///< returns the string by which this row may be sorted
-        std::size_t  size() const;               ///< returns the number of Controls in this Row
-        bool         empty() const;              ///< returns true iff there are 0 Controls in this Row
+        virtual SortKeyType SortKey(std::size_t column) const;  ///< returns the string by which this row may be sorted
+        std::size_t         size() const;                       ///< returns the number of Controls in this Row
+        bool                empty() const;                      ///< returns true iff there are 0 Controls in this Row
 
-        Control*     operator[](std::size_t n) const; ///< returns the Control in the \a nth cell of this Row; not range checked
-        Control*     at(std::size_t n) const;    ///< returns the Control in the \a nth cell of this Row \throw std::range_error throws when size() <= \a n
+        virtual Control*    operator[](std::size_t n) const;    ///< returns the Control in the \a nth cell of this Row; not range checked
+        virtual Control*    at(std::size_t n) const;            ///< returns the Control in the \a nth cell of this Row \throw std::range_error throws when size() <= \a n
 
-        Alignment    RowAlignment() const;       ///< returns the vertical alignment of this Row
+        Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
         Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
-        X            ColWidth(std::size_t n) const; ///< returns the width of the \a nth cell of this Row; not range checked
-        unsigned int Margin() const;             ///< returns the amount of space left between the contents of adjacent cells, in pixels
+        X            ColWidth(std::size_t n) const;     ///< returns the width of the \a nth cell of this Row; not range checked
+        unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
 
         Control*     CreateControl(const std::string& str, const boost::shared_ptr<Font>& font, Clr color) const; ///< creates a "shrink-fit" TextControl from text, font, and color parameters
         Control*     CreateControl(const SubTexture& st) const; ///< creates a "shrink-fit" StaticGraphic Control from a SubTexture parameter

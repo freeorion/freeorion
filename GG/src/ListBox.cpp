@@ -84,13 +84,16 @@ namespace {
     public:
         RowSorter(const boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)>& cmp,
                   std::size_t col, bool invert) :
-            m_cmp(cmp), m_sort_col(col), m_invert(invert) {}
+            m_cmp(cmp),
+            m_sort_col(col),
+            m_invert(invert)
+        {}
 
         bool operator()(const ListBox::Row* l, const ListBox::Row* r)
-            {
-                bool retval = m_cmp(*l, *r, m_sort_col);
-                return m_invert ? !retval : retval;
-            }
+        {
+            bool retval = m_cmp(*l, *r, m_sort_col);
+            return m_invert ? !retval : retval;
+        }
 
     private:
         boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
@@ -120,9 +123,11 @@ namespace {
     {
         ScopedSet(ListBox::iterator*& var, ListBox::iterator* value) :
             m_var(var = value)
-            {}
+        {}
+
         ~ScopedSet()
-            { m_var = 0; }
+        { m_var = 0; }
+
         ListBox::iterator*& m_var;
     };
 
@@ -262,9 +267,8 @@ void ListBox::Row::push_back(Control* c)
     m_cells.push_back(c);
     m_col_widths.push_back(X(5));
     m_col_alignments.push_back(ALIGN_NONE);
-    if (1 < m_cells.size()) {
+    if (1 < m_cells.size())
         m_col_widths.back() = m_col_widths[m_cells.size() - 1];
-    }
     AdjustLayout();
 }
 
@@ -401,9 +405,8 @@ void ListBox::Row::AdjustLayout(bool adjust_for_push_back/* = false*/)
     Layout* layout = GetLayout();
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
         layout->SetMinimumColumnWidth(i, m_col_widths[i]);
-        if (m_cells[i]) {
+        if (m_cells[i])
             layout->Add(m_cells[i], 0, i, m_row_alignment | m_col_alignments[i]);
-        }
     }
 }
 
@@ -1786,10 +1789,10 @@ void ListBox::Resort()
         selections.insert(**it);
     }
     m_selections.clear();
-    Row* old_sel_row = SafeDeref(m_old_sel_row, m_rows.end());
-    Row* old_rdown_row = SafeDeref(m_old_rdown_row, m_rows.end());
-    Row* lclick_row = SafeDeref(m_lclick_row, m_rows.end());
-    Row* rclick_row = SafeDeref(m_rclick_row, m_rows.end());
+    Row* old_sel_row =      SafeDeref(m_old_sel_row, m_rows.end());
+    Row* old_rdown_row =    SafeDeref(m_old_rdown_row, m_rows.end());
+    Row* lclick_row =       SafeDeref(m_lclick_row, m_rows.end());
+    Row* rclick_row =       SafeDeref(m_rclick_row, m_rows.end());
     Row* last_row_browsed = SafeDeref(m_last_row_browsed, m_rows.end());
 
     std::vector<Row*> rows_vec(m_rows.size());
