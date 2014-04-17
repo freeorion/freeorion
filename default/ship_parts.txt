@@ -1100,7 +1100,7 @@ Part
             ]
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/ship_parts/nova-bomb.png"
 
 Part
     name = "SP_KRILL_SPAWNER"

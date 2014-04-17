@@ -1558,7 +1558,7 @@ BuildingType
         EffectsGroup
             scope = Source
             effects = Destroy
-    icon = ""
+    icon = "icons/building/nova-bomb-activator.png"
 
 BuildingType
     name = "BLD_EVACUATION"

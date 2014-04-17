@@ -2446,6 +2446,7 @@ Tech
         Item type = ShipPart name = "SP_NOVA_BOMB"
         Item type = Building name = "BLD_NOVA_BOMB_ACTIVATOR"
     ]
+    graphic = "icons/ship_parts/nova-bomb.png"
 
 Tech
     name = "SHP_DEATH_SPORE"
