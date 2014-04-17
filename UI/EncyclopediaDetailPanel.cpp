@@ -1610,6 +1610,8 @@ namespace {
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
 
+        GetUniverse().InhibitUniverseObjectSignals(true);
+
         for (std::set<std::string>::const_iterator it = species_names.begin();
              it != species_names.end(); it++)
         {
@@ -1690,6 +1692,9 @@ namespace {
         planet->SetSpecies(original_planet_species);
         planet->SetOwner(original_owner_id);
         planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+
+        GetUniverse().InhibitUniverseObjectSignals(false);
+
         GetUniverse().UpdateMeterEstimates(planet_id);
     }
 
