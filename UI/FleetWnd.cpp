@@ -433,7 +433,7 @@ std::set<int> FleetUIManager::SelectedShipIDs() const {
 
 FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
                                       int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
+                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
         CloseAll();
@@ -452,7 +452,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
 
 FleetWnd* FleetUIManager::NewFleetWnd(int system_id, int empire_id,
                                       int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
+                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
         CloseAll();
@@ -2461,8 +2461,8 @@ GG::Pt FleetWnd::s_last_size =      GG::Pt(GG::X(360), GG::Y(400));
 
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE*/) :
-    MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags | GG::RESIZABLE),
+         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/) :
+    MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
@@ -2479,7 +2479,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
 FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE*/) :
+         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/) :
     MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags | GG::RESIZABLE),
     m_fleet_ids(),
     m_empire_id(empire_id),
