@@ -72,20 +72,20 @@ namespace {
     bool RegisterMultiEditStyles()
     {
         FlagSpec<MultiEditStyle>& spec = FlagSpec<MultiEditStyle>::instance();
-        spec.insert(MULTI_NONE, "MULTI_NONE", true);
-        spec.insert(MULTI_WORDBREAK, "MULTI_WORDBREAK", true);
-        spec.insert(MULTI_LINEWRAP, "MULTI_LINEWRAP", true);
-        spec.insert(MULTI_VCENTER, "MULTI_VCENTER", true);
-        spec.insert(MULTI_TOP, "MULTI_TOP", true);
-        spec.insert(MULTI_BOTTOM, "MULTI_BOTTOM", true);
-        spec.insert(MULTI_CENTER, "MULTI_CENTER", true);
-        spec.insert(MULTI_LEFT, "MULTI_LEFT", true);
-        spec.insert(MULTI_RIGHT, "MULTI_RIGHT", true);
-        spec.insert(MULTI_READ_ONLY, "MULTI_READ_ONLY", true);
-        spec.insert(MULTI_TERMINAL_STYLE, "MULTI_TERMINAL_STYLE", true);
-        spec.insert(MULTI_INTEGRAL_HEIGHT, "MULTI_INTEGRAL_HEIGHT", true);
-        spec.insert(MULTI_NO_VSCROLL, "MULTI_NO_VSCROLL", true);
-        spec.insert(MULTI_NO_HSCROLL, "MULTI_NO_HSCROLL", true);
+        spec.insert(MULTI_NONE,             "MULTI_NONE",           true);
+        spec.insert(MULTI_WORDBREAK,        "MULTI_WORDBREAK",      true);
+        spec.insert(MULTI_LINEWRAP,         "MULTI_LINEWRAP",       true);
+        spec.insert(MULTI_VCENTER,          "MULTI_VCENTER",        true);
+        spec.insert(MULTI_TOP,              "MULTI_TOP",            true);
+        spec.insert(MULTI_BOTTOM,           "MULTI_BOTTOM",         true);
+        spec.insert(MULTI_CENTER,           "MULTI_CENTER",         true);
+        spec.insert(MULTI_LEFT,             "MULTI_LEFT",           true);
+        spec.insert(MULTI_RIGHT,            "MULTI_RIGHT",          true);
+        spec.insert(MULTI_READ_ONLY,        "MULTI_READ_ONLY",      true);
+        spec.insert(MULTI_TERMINAL_STYLE,   "MULTI_TERMINAL_STYLE", true);
+        spec.insert(MULTI_INTEGRAL_HEIGHT,  "MULTI_INTEGRAL_HEIGHT",true);
+        spec.insert(MULTI_NO_VSCROLL,       "MULTI_NO_VSCROLL",     true);
+        spec.insert(MULTI_NO_HSCROLL,       "MULTI_NO_HSCROLL",     true);
         return true;
     }
     bool dummy = RegisterMultiEditStyles();

@@ -71,7 +71,7 @@ public:
     /** Ctor. */
     TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
-                Flags<WndFlag> flags = Flags<WndFlag>());
+                Flags<WndFlag> flags = NO_WND_FLAGS);
 
     /** Ctor that does not require window size.  Window size is determined
         from the string and font; the window will be large enough to fit the
@@ -79,7 +79,7 @@ public:
         also return true. \see TextControl::SetText() */
     TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
-                Flags<WndFlag> flags = Flags<WndFlag>());
+                Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
 
     /** \name Accessors */ ///@{

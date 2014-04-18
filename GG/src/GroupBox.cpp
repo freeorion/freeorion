@@ -51,7 +51,7 @@ GroupBox::GroupBox() :
 
 GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font,
                    Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                   Flags<WndFlag> flags/* = Flags<WndFlag>()*/) :
+                   Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     m_color(color),
     m_text_color(text_color),
     m_int_color(interior),

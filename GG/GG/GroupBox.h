@@ -45,7 +45,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor. Height is determined from the font and point size used. */
     GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font, Clr color,
-             Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = Flags<WndFlag>());
+             Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
 
     /** \name Accessors */ ///@{

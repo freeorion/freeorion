@@ -49,7 +49,7 @@ TextControl::TextControl() :
 {}
 
 TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) :
+                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
     m_format(format),
     m_text_color(color),
@@ -64,7 +64,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 }
 
 TextControl::TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) :
+                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, X0, Y0, flags),
     m_format(format),
     m_text_color(color),

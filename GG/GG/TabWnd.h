@@ -51,7 +51,7 @@ public:
 
     /** \name Structors */ ///@{
     /** Basic ctor. */
-    OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = Flags<WndFlag>());
+    OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
     ~OverlayWnd();
     //@}
 

@@ -137,6 +137,7 @@ namespace {
 ///////////////////////////////////////
 // WndFlags
 ///////////////////////////////////////
+const WndFlag GG::NO_WND_FLAGS       (0);
 const WndFlag GG::INTERACTIVE        (1 << 0);
 const WndFlag GG::REPEAT_BUTTON_DOWN (1 << 1);
 const WndFlag GG::DRAGABLE           (1 << 2);
@@ -151,13 +152,14 @@ namespace {
     bool RegisterWndFlags()
     {
         FlagSpec<WndFlag>& spec = FlagSpec<WndFlag>::instance();
-        spec.insert(INTERACTIVE,        "INTERACTIVE", true);
-        spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN", true);
-        spec.insert(DRAGABLE,           "DRAGABLE", true);
-        spec.insert(RESIZABLE,          "RESIZABLE", true);
-        spec.insert(ONTOP,              "ONTOP", true);
-        spec.insert(MODAL,              "MODAL", true);
-        spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS", true);
+        spec.insert(NO_WND_FLAGS,       "NO_WND_FLAGS",         true);
+        spec.insert(INTERACTIVE,        "INTERACTIVE",          true);
+        spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN",   true);
+        spec.insert(DRAGABLE,           "DRAGABLE",             true);
+        spec.insert(RESIZABLE,          "RESIZABLE",            true);
+        spec.insert(ONTOP,              "ONTOP",                true);
+        spec.insert(MODAL,              "MODAL",                true);
+        spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS",     true);
         return true;
     }
     bool dummy = RegisterWndFlags();

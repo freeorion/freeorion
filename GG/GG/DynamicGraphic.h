@@ -95,7 +95,7 @@ public:
     DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height, unsigned int margin,
                    const std::vector<boost::shared_ptr<Texture> >& textures,
                    Flags<GraphicStyle> style = GRAPHIC_NONE, std::size_t frames = ALL_FRAMES,
-                   Flags<WndFlag> flags = Flags<WndFlag>());
+                   Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
 
     /** \name Accessors */ ///@{

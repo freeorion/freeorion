@@ -361,7 +361,7 @@ ColorDlg::ColorDisplay::ColorDisplay() :
 {}
 
 ColorDlg::ColorDisplay::ColorDisplay(Clr color) :
-    Control(X0, Y0, X1, Y1, Flags<WndFlag>())
+    Control(X0, Y0, X1, Y1, NO_WND_FLAGS)
 { SetColor(color); }
 
 void ColorDlg::ColorDisplay::Render()

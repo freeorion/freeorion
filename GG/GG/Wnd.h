@@ -78,6 +78,9 @@ extern GG_API const WndFlag MODAL;
     expects to receive KeyPress messages. */
 extern GG_API const WndFlag REPEAT_KEY_PRESS;
 
+/** None of the above flags */
+extern GG_API const WndFlag NO_WND_FLAGS;
+
 
 /** \brief This is the basic GG window class.
 

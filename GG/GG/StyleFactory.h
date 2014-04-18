@@ -119,7 +119,7 @@ public:
     virtual DynamicGraphic*    NewDynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
                                                  int margin, const std::vector<boost::shared_ptr<Texture> >& textures,
                                                  Flags<GraphicStyle> style = GRAPHIC_NONE, int frames = DynamicGraphic::ALL_FRAMES,
-                                                 Flags<WndFlag> flags = Flags<WndFlag>()) const;
+                                                 Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG Edit. */
     virtual Edit*              NewEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
@@ -167,7 +167,7 @@ public:
 
     /** Returns a new GG StaticGraphic. */
     virtual StaticGraphic*     NewStaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture,
-                                                Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = Flags<WndFlag>()) const;
+                                                Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG TabBar. */
     virtual TabBar*            NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color,
@@ -177,17 +177,17 @@ public:
     /** Returns a new GG TextControl. */
     virtual TextControl*       NewTextControl(X x, Y y, X w, Y h, const std::string& str,
                                               const boost::shared_ptr<Font>& font, Clr color = CLR_BLACK,
-                                              Flags<TextFormat> format = FORMAT_NONE, Flags<WndFlag> flags = Flags<WndFlag>()) const;
+                                              Flags<TextFormat> format = FORMAT_NONE, Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG TextControl whose size is exactly that required to hold its text. */
     virtual TextControl*       NewTextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
                                               Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
-                                              Flags<WndFlag> flags = Flags<WndFlag>()) const;
+                                              Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG GroupBox. */
     virtual GroupBox*          NewGroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font,
                                            Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                           Flags<WndFlag> flags = Flags<WndFlag>()) const;
+                                           Flags<WndFlag> flags = NO_WND_FLAGS) const;
     //@}
 
     /** \name Subcontrols */ ///@{

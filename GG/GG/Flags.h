@@ -177,44 +177,44 @@ public:
     /** \name Accessors */ ///@{
     /** Returns true iff FlagSpec contains \a flag. */
     bool contains(FlagType flag) const
-        { return find(flag) != end(); }
+    { return find(flag) != end(); }
     /** Returns true iff \a flag is a "permanent" flag -- a flag used
         internally by the GG library, as opposed to a user-added flag. */
     bool permanent(FlagType flag) const
-        { return m_permanent.find(flag) != m_permanent.end(); }
+    { return m_permanent.find(flag) != m_permanent.end(); }
     /** Returns an iterator to \a flag, if flag is in the FlagSpec, or end()
         otherwise. */
     const_iterator find(FlagType flag) const
-        { return m_flags.find(flag); }
+    { return m_flags.find(flag); }
     /** Returns an iterator to the first flag in the FlagSpec. */
     const_iterator begin() const
-        { return m_flags.begin(); }
+    { return m_flags.begin(); }
     /** Returns an iterator to one past the last flag in the FlagSpec. */
     const_iterator end() const
-        { return m_flags.end(); }
+    { return m_flags.end(); }
     /** Returns the stringification of \a flag provided when \a flag was added
         to the FlagSpec.  \throw Throws GG::FlagSpec::UnknownFlag if an
         unknown flag's stringification is requested. */
     const std::string& ToString(FlagType flag) const
-        {
-            typename std::map<FlagType, std::string>::const_iterator it = m_strings.find(flag);
-            if (it == m_strings.end())
-                throw UnknownFlag("Could not find string corresponding to unknown flag");
-            return it->second;
-        }
+    {
+        typename std::map<FlagType, std::string>::const_iterator it = m_strings.find(flag);
+        if (it == m_strings.end())
+            throw UnknownFlag("Could not find string corresponding to unknown flag");
+        return it->second;
+    }
     /** Returns the flag whose stringification is \a str.  \throw Throws
         GG::FlagSpec::UnknownString if an unknown string is provided. */
     FlagType FromString(const std::string& str) const
-        {
-            for (typename std::map<FlagType, std::string>::const_iterator it = m_strings.begin();
-                 it != m_strings.end();
-                 ++it) {
-                if (it->second == str)
-                    return it->first;
-            }
-            throw UnknownString("Could not find flag corresponding to unknown string");
-            return FlagType(0);
+    {
+        for (typename std::map<FlagType, std::string>::const_iterator it = m_strings.begin();
+                it != m_strings.end();
+                ++it) {
+            if (it->second == str)
+                return it->first;
         }
+        throw UnknownString("Could not find flag corresponding to unknown string");
+        return FlagType(0);
+    }
     //@}
 
     /** \name Mutators */ ///@{
@@ -223,35 +223,35 @@ public:
         added by GG are added as permanent flags.  User-added flags should not
         be added as permanent. */
     void insert(FlagType flag, const std::string& name, bool permanent = false)
-        {
+    {
 #ifndef NDEBUG
-            std::pair<typename std::set<FlagType>::iterator, bool> result =
+        std::pair<typename std::set<FlagType>::iterator, bool> result =
 #endif
-            m_flags.insert(flag);
+        m_flags.insert(flag);
 #ifndef NDEBUG
-            assert(result.second);
+        assert(result.second);
 #endif
-            if (permanent)
-                m_permanent.insert(flag);
-            m_strings[flag] = name;
-        }
+        if (permanent)
+            m_permanent.insert(flag);
+        m_strings[flag] = name;
+    }
     /** Removes \a flag from the FlagSpec, returning whether the flag was
         actually removed or not.  Permanent flags are not removed.  The
         removal of flags will probably only be necessary in cases where flags
         were added for classes in a runtime-loaded DLL/shared library at
         DLL/shared library unload-time. */
     bool erase(FlagType flag)
-        {
-            bool retval = true;
-            if (permanent(flag)) {
-                retval = false;
-            } else {
-                m_flags.erase(flag);
-                m_permanent.erase(flag);
-                m_strings.erase(flag);
-            }
-            return retval;
+    {
+        bool retval = true;
+        if (permanent(flag)) {
+            retval = false;
+        } else {
+            m_flags.erase(flag);
+            m_permanent.erase(flag);
+            m_strings.erase(flag);
         }
+        return retval;
+    }
     //@}
 
 private:
@@ -328,22 +328,19 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    /** Performs a bitwise-or of *this and \a rhs, placing the result in
-        *this. */
+    /** Performs a bitwise-or of *this and \a rhs, placing the result in *this. */
     Flags<FlagType>& operator|=(Flags<FlagType> rhs)
     {
         m_flags |= rhs.m_flags;
         return *this;
     }
-    /** Performs a bitwise-and of *this and \a rhs, placing the result in
-        *this. */
+    /** Performs a bitwise-and of *this and \a rhs, placing the result in *this. */
     Flags<FlagType>& operator&=(Flags<FlagType> rhs)
     {
         m_flags &= rhs.m_flags;
         return *this;
     }
-    /** Performs a bitwise-xor of *this and \a rhs, placing the result in
-        *this. */
+    /** Performs a bitwise-xor of *this and \a rhs, placing the result in *this. */
     Flags<FlagType>& operator^=(Flags<FlagType> rhs)
     {
         m_flags ^= rhs.m_flags;

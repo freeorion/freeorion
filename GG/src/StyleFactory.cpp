@@ -97,7 +97,7 @@ DropDownList* StyleFactory::NewDropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr c
 DynamicGraphic* StyleFactory::NewDynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
                                                 int margin, const std::vector<boost::shared_ptr<Texture> >& textures,
                                                 Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
-                                                int frames/* = DynamicGraphic::ALL_FRAMES*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) const
+                                                int frames/* = DynamicGraphic::ALL_FRAMES*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
 { return new DynamicGraphic(x, y, w, h, loop, frame_width, frame_height, margin, textures, style, frames, flags); }
 
 Edit* StyleFactory::NewEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
@@ -143,21 +143,21 @@ Spin<double>* StyleFactory::NewDoubleSpin(X x, Y y, X w, double value, double st
 { return new Spin<double>(x, y, w, value, step, min, max, edits, font, color, text_color, interior, flags); }
 
 StaticGraphic* StyleFactory::NewStaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture,
-                                              Flags<GraphicStyle> style/* = GRAPHIC_NONE*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) const
+                                              Flags<GraphicStyle> style/* = GRAPHIC_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
 { return new StaticGraphic(x, y, w, h, texture, style, flags); }
 
 TextControl* StyleFactory::NewTextControl(X x, Y y, X w, Y h, const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                                          Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) const
+                                          Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
 { return new TextControl(x, y, w, h, str, font, color, format, flags); }
 
 TextControl* StyleFactory::NewTextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
-                                          Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = Flags<WndFlag>()*/) const
+                                          Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
 { return new TextControl(x, y, str, font, color, format, flags); }
 
 GroupBox* StyleFactory::NewGroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font,
                                     Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                    Flags<WndFlag> flags/* = Flags<WndFlag>()*/) const
+                                    Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
 { return new GroupBox(x, y, w, h, label, font, color, text_color, interior, flags); }
 
 TabBar* StyleFactory::NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
