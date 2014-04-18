@@ -64,12 +64,6 @@ InGameMenu::InGameMenu():
 InGameMenu::~InGameMenu()
 {}
 
-GG::X InGameMenu::MinimizedWidth() const
-{ return GG::X(135); }
-
-void InGameMenu::Render()
-{ CUIWnd::Render(); }
-
 void InGameMenu::DoLayout() {
     //size calculation consts and variables
     const GG::X MIN_BUTTON_WIDTH(160);
@@ -128,7 +122,9 @@ void InGameMenu::DoLayout() {
     this->SizeMove(ul, lr);
 }
 
-void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point,
+                           GG::Flags<GG::ModKey> mod_keys)
+{
     // Same behaviour as if "done" was pressed
     if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER || key == GG::GGK_ESCAPE )
         Done();

@@ -3,10 +3,7 @@
 #ifndef _InGameMenu_h_
 #define _InGameMenu_h_
 
-#ifndef _CUIWnd_h_
 #include "CUIWnd.h"
-#endif
-
 class CUIButton;
 
 class InGameMenu : public CUIWnd {
@@ -20,11 +17,7 @@ public:
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
     void         DoLayout();
-    virtual void Render();
     //@}
-
-protected:
-    virtual GG::X MinimizedWidth() const;//!< the width of a minimized InGameMenu wnd
 
 private:
     void Save();        //!< when m_save_btn button is pressed
