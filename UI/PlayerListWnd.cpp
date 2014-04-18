@@ -377,7 +377,6 @@ namespace {
         {
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
-            SetDragDropDataType("PLAYER_ROW");
             m_panel = new PlayerDataPanel(w, h, m_player_id);
             push_back(m_panel);
         }
