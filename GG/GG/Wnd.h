@@ -313,8 +313,8 @@ public:
      const std::string& Name() const;
 
     /** Returns the string key that defines the type of data that this Wnd
-        represents in drag-and-drop drags.  Returns the empty string when this
-        Wnd cannot be used in drag-and-drop. */
+        represents in drag-and-drop drags.  Returns an empty string when this
+        Wnd cannot be drag-and-dropped. */
     const std::string& DragDropDataType() const;
 
     /** Sets the \a second member of each iterator to true or false,
@@ -887,7 +887,7 @@ private:
     std::list<Wnd*>   m_children;      ///< List of ptrs to child windows kept in order of decreasing area
     int               m_zorder;        ///< Where this window is in the z-order (root (non-child) windows only)
     bool              m_visible;
-    std::string       m_drag_drop_data_type; ///< The type of drag-and-drop data this Wnd represents, if any
+    std::string       m_drag_drop_data_type; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
     ChildClippingMode m_child_clipping_mode;
     bool              m_non_client_child;
     Pt                m_upperleft;     ///< Upper left point of window
