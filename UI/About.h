@@ -28,6 +28,8 @@ public:
 //!@}
 
 private:
+    void DoLayout(void);
+
 //! \name Controls
 //!@{
     GG::Button*     m_done_btn;     //!< Done button
