@@ -526,11 +526,11 @@ class ShadowedTextControl : public GG::TextControl {
 public:
     ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
-                        GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+                        GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
     ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
-                        GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+                        GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
  
     virtual void Render();
 };
@@ -547,7 +547,7 @@ public:
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                               const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
-                              GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+                              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
       * order they are specified in \a subtextures with GraphicStyles specified in the same-indexed value of \a styles.
@@ -555,7 +555,7 @@ public:
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<GG::SubTexture>& subtextures,
                               const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
-                              GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+                              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
     //@}
 
     /** \name Mutators */ ///@{

@@ -89,7 +89,7 @@ namespace {
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
                                    int turns_left, double turns_completed, int empire_id) :
-        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
+        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),

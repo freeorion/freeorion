@@ -593,7 +593,7 @@ private:
 class RotatingPlanetControl : public GG::Control {
 public:
     RotatingPlanetControl(GG::X x, GG::Y y, int planet_id, StarType star_type) :
-        GG::Control(x, y, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
+        GG::Control(x, y, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
         m_planet_id(planet_id),
         m_initial_rotation(fmod(planet_id / 7.352535, 1.0)),    // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)

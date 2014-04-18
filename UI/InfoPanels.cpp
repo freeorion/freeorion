@@ -2000,7 +2000,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 //        ShipDesignPanel          //
 /////////////////////////////////////
 ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_design_id(design_id),
     m_graphic(0),
     m_name(0)
@@ -2116,7 +2116,7 @@ void TextBrowseWnd::Render() {
 class CensusRowPanel : public GG::Control {
 public:
     CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
-        Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+        Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_icon(0),
         m_name(0),
         m_census_val(0)

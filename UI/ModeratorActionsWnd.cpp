@@ -67,7 +67,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
         row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             disc_texture, style, GG::Flags<GG::WndFlag>()));
+                                             disc_texture, style, GG::NO_WND_FLAGS));
         m_star_type_drop->Insert(row);
     }
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
@@ -89,7 +89,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
         row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             texture, style, GG::Flags<GG::WndFlag>()));
+                                             texture, style, GG::NO_WND_FLAGS));
         m_planet_type_drop->Insert(row);
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
@@ -100,7 +100,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
         row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             texture, style, GG::Flags<GG::WndFlag>()));
+                                             texture, style, GG::NO_WND_FLAGS));
         m_planet_size_drop->Insert(row);
     }
     GG::DropDownList::iterator it = m_planet_size_drop->begin();

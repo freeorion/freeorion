@@ -34,7 +34,7 @@ namespace {
     public:
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                             int empire_id, int location_id) :
-            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_initialized(false),
             m_item(item),
             m_empire_id(empire_id),

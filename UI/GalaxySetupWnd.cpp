@@ -55,7 +55,7 @@ namespace {
 const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/) :
-    GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::Flags<GG::WndFlag>()),
+    GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::NO_WND_FLAGS),
     m_seed_edit(0),
     m_random(0),
     m_stars_spin(0),

@@ -47,7 +47,7 @@ namespace {
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
 OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none) :
-    Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>())
+    Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {
     // TODO: Have this make a single call per color.
     // Set up texture coord and vertex buffers (quads) for the glyphs.

@@ -41,7 +41,7 @@ namespace {
     public:
         QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth,
                    GG::Y h, bool inProgress, bool amBlockType) :
-            Control(GG::X0, GG::Y0, nwidth, h, GG::Flags<GG::WndFlag>())
+            Control(GG::X0, GG::Y0, nwidth, h, GG::NO_WND_FLAGS)
         {
             GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
             std::string nameText;
@@ -182,7 +182,7 @@ namespace {
 
         QuantitySelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/,
             GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5),GG::Flags<GG::WndFlag>()),
+            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5),GG::NO_WND_FLAGS),
             quantity(0),
             prevQuant(0),
             blocksize(1),
@@ -420,7 +420,7 @@ namespace {
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
-        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
+        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
         m_build(build),
         m_name_text(0),
         m_location_text(0),

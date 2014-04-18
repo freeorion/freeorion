@@ -83,7 +83,7 @@ namespace {
 
     class PlaceholderWnd : public GG::Wnd {
     public:
-        PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()) {}
+        PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS) {}
         virtual void Render() {}
     };
 

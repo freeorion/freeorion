@@ -968,7 +968,7 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_graphic(0),
     m_name(0),
     m_cost_and_build_time(0)

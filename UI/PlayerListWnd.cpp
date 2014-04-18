@@ -43,7 +43,7 @@ namespace {
     class PlayerDataPanel : public GG::Control {
     public:
         PlayerDataPanel(GG::X w, GG::Y h, int player_id) :
-            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
             //m_player_name_text(0),
             m_empire_name_text(0),

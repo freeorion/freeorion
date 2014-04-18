@@ -643,7 +643,7 @@ namespace {
 class ScanlineControl : public GG::Control {
 public:
     ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false) :
-        Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+        Control(x, y, w, h, GG::NO_WND_FLAGS),
         m_square(square)
     {
         if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
@@ -678,7 +678,7 @@ private:
 // ShipDataPanel
 ////////////////////////////////////////////////
 ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
-    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_initialized(false),
     m_ship_id(ship_id),
     m_ship_icon(0),
@@ -1044,7 +1044,7 @@ private:
 };
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
-    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
     m_new_fleet_drop_target(false),
@@ -2104,7 +2104,7 @@ private:
   * ships in a fleet, and some basic info about the fleet. */
 class FleetDetailPanel : public GG::Wnd {
 public:
-    FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>()); ///< ctor
+    FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS); ///< ctor
 
     int             FleetID() const;
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
@@ -2137,7 +2137,7 @@ private:
     ShipsListBox*               m_ships_lb;
 };
 
-FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
+FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
     m_fleet_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(order_issuing_enabled),

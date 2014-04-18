@@ -6,7 +6,7 @@
 #include <GG/ClrConstants.h>
 
 GraphControl::GraphControl(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+    GG::Control(x, y, w, h, GG::NO_WND_FLAGS),
     m_show_points(true),
     m_show_lines(true),
     m_show_scale(true),

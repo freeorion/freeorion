@@ -129,7 +129,7 @@ namespace {
     class SitRepDataPanel : public GG::Control {
     public:
         SitRepDataPanel(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
-            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_initialized(false),
             m_sitrep_entry(sitrep),
             m_icon(0),

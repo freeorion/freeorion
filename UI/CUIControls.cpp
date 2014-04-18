@@ -1010,7 +1010,7 @@ namespace {
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
         SpeciesRow(const Species* species, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, "SpeciesRow", GG::ALIGN_VCENTER, 0)
+            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
         {
             if (!species)
                 return;
@@ -1128,7 +1128,7 @@ namespace {
     struct ColorRow : public GG::ListBox::Row {
         struct ColorSquare : GG::Control {
             ColorSquare(const GG::Clr& color, GG::Y h) :
-                GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
+                GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::NO_WND_FLAGS)
             {
                 SetColor(color);
             }
@@ -1137,7 +1137,7 @@ namespace {
             }
         };
         ColorRow(const GG::Clr& color, GG::Y h) :
-            GG::ListBox::Row(GG::X(Value(h)), h, "ColorRow")
+            GG::ListBox::Row(GG::X(Value(h)), h, "")
         {
             push_back(new ColorSquare(color, h));
         }
@@ -1265,7 +1265,7 @@ const GG::Y ProductionInfoPanel::VERTICAL_SECTION_GAP(4);
 
 ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
                                          float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_border_thickness(border_thickness),
     m_color(color),
     m_text_and_border_color(text_and_border_color)
@@ -1361,7 +1361,7 @@ void ProductionInfoPanel::Draw(GG::Clr clr, bool fill) {
 MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, double turns_completed,
                                            const GG::Clr& bar_color, const GG::Clr& background,
                                            const GG::Clr& outline_color) :
-    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_total_turns(std::max(1, total_turns)),
     m_turns_completed(std::max(0.0, std::min<double>(turns_completed, m_total_turns))),
     m_bar_color(bar_color),
