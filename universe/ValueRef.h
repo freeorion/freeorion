@@ -272,7 +272,7 @@ private:
   * from the ctor \a value_ref parameter's FromType value, static_cast to
   * ToType. */
 template <class FromType, class ToType>
-struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
+struct FO_COMMON_API ValueRef::StaticCast : public ValueRef::Variable<ToType>
 {
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
     ~StaticCast();
@@ -298,7 +298,7 @@ private:
   * is taken from the ctor \a value_ref parameter's FromType value,
   * lexical_cast to std::string */
 template <class FromType>
-struct ValueRef::StringCast : public ValueRef::Variable<std::string>
+struct FO_COMMON_API ValueRef::StringCast : public ValueRef::Variable<std::string>
 {
     StringCast(const ValueRef::Variable<FromType>* value_ref);
     ~StringCast();
@@ -314,6 +314,27 @@ struct ValueRef::StringCast : public ValueRef::Variable<std::string>
 
 private:
     const ValueRefBase<FromType>* m_value_ref;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Looks up a string ValueRef and returns the UserString equivalent. */
+struct FO_COMMON_API ValueRef::UserStringLookup : public ValueRef::Variable<std::string> {
+    UserStringLookup(const ValueRef::Variable<std::string>* value_ref);
+    ~UserStringLookup();
+    virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
+    virtual std::string Eval(const ScriptingContext& context) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        LocalCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRefBase<std::string>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1209,6 +1230,16 @@ std::string ValueRef::StringCast<FromType>::Dump() const
 template <class FromType>
 template <class Archive>
 void ValueRef::StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_value_ref);
+}
+
+///////////////////////////////////////////////////////////
+// UserStringLookup                                      //
+///////////////////////////////////////////////////////////
+template <class Archive>
+void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_value_ref);

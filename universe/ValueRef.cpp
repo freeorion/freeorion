@@ -87,9 +87,9 @@ namespace {
             obj = context.condition_root_candidate;
             break;
         case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
-        default:                                                
+        default:
             retval += " | Local Candidate: ";
-            obj = context.condition_local_candidate;    
+            obj = context.condition_local_candidate;
             break;
         }
         if (obj) {
@@ -717,6 +717,15 @@ namespace ValueRef {
         if (property_name == "Name") {
             return object->Name();
 
+        } else if (property_name == "OwnerName") {
+            int owner_empire_id = object->Owner();
+            if (Empire* empire = Empires().Lookup(owner_empire_id))
+                return empire->Name();
+            return "";
+
+        } else if (property_name == "TypeName") {
+            return boost::lexical_cast<std::string>(object->ObjectType());
+
         } else if (property_name == "Species") {
             if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->SpeciesName();
@@ -957,6 +966,60 @@ namespace ValueRef {
 
 #undef IF_CURRENT_VALUE
 }
+
+///////////////////////////////////////////////////////////
+// UserStringLookup                                      //
+///////////////////////////////////////////////////////////
+ValueRef::UserStringLookup::UserStringLookup(const ValueRef::Variable<std::string>* value_ref) :
+    ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+ValueRef::UserStringLookup::~UserStringLookup()
+{ delete m_value_ref; }
+
+bool ValueRef::UserStringLookup::operator==(const ValueRef::ValueRefBase<std::string>& rhs) const {
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::UserStringLookup& rhs_ =
+        static_cast<const ValueRef::UserStringLookup&>(rhs);
+
+    if (m_value_ref == rhs_.m_value_ref) {
+        // check next member
+    } else if (!m_value_ref || !rhs_.m_value_ref) {
+        return false;
+    } else {
+        if (*m_value_ref != *(rhs_.m_value_ref))
+            return false;
+    }
+
+    return true;
+}
+
+std::string ValueRef::UserStringLookup::Eval(const ScriptingContext& context) const {
+    std::string ref_val = m_value_ref ? m_value_ref->Eval(context) : "";
+    return ref_val.empty() ? "" : UserString(ref_val);
+}
+
+bool ValueRef::UserStringLookup::RootCandidateInvariant() const
+{ return m_value_ref->RootCandidateInvariant(); }
+
+bool ValueRef::UserStringLookup::LocalCandidateInvariant() const
+{ return m_value_ref->LocalCandidateInvariant(); }
+
+bool ValueRef::UserStringLookup::TargetInvariant() const
+{ return m_value_ref->TargetInvariant(); }
+
+bool ValueRef::UserStringLookup::SourceInvariant() const
+{ return m_value_ref->SourceInvariant(); }
+
+std::string ValueRef::UserStringLookup::Description() const
+{ return m_value_ref->Description(); }
+
+std::string ValueRef::UserStringLookup::Dump() const
+{ return m_value_ref->Dump(); }
 
 ///////////////////////////////////////////////////////////
 // Operation                                             //
