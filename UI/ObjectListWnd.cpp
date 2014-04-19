@@ -255,7 +255,7 @@ private:
     class ConditionRow : public GG::ListBox::Row {
     public:
         ConditionRow(const std::string& key, GG::Y row_height) :
-            GG::ListBox::Row(GG::X1, row_height, "ConditionRow"),
+            GG::ListBox::Row(GG::X1, row_height, ""),
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
@@ -270,7 +270,7 @@ private:
     class StringRow : public GG::ListBox::Row  {
     public:
         StringRow(const std::string& text, GG::Y row_height, bool stringtable_lookup = true) :
-            GG::ListBox::Row(GG::X1, row_height, "StringRow"),
+            GG::ListBox::Row(GG::X1, row_height, ""),
             m_string(text)
         {
             SetChildClippingMode(ClipToClient);
@@ -963,6 +963,8 @@ namespace {
             return std::make_pair(empire->Name(), empire->Color());
         return std::make_pair("", ClientUI::TextColor());
     }
+
+    const GG::X PAD(3);
 }
 
 ////////////////////////////////////////////////
@@ -972,7 +974,7 @@ class ObjectPanel : public GG::Control {
 public:
     ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj,
                 bool expanded, bool has_contents, int indent = 0) :
-        Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+        Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_initialized(false),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
         m_indent(indent),
@@ -982,10 +984,16 @@ public:
         m_dot(0),
         m_icon(0),
         m_name_label(0),
-        m_empire_label(0),
+        m_controls(0),
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
+    }
+
+    std::string         SortKey(std::size_t column) const {
+        if (column >= m_controls.size())
+            return boost::lexical_cast<std::string>(m_object_id);
+        return boost::lexical_cast<std::string>(m_object_id);
     }
 
     int                 ObjectID() const { return m_object_id; }
@@ -1004,7 +1012,7 @@ public:
         GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour, border_colour, DATA_PANEL_BORDER);
     }
 
-    void            Select(bool b)
+    void                Select(bool b)
     { m_selected = b; }
 
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1019,17 +1027,17 @@ public:
             return;
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr clr = ClientUI::TextColor();
-        //int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
+                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
         delete m_dot;           m_dot = 0;
         delete m_expand_button; m_expand_button = 0;
         delete m_icon;          m_icon = 0;
-        delete m_name_label;    m_name_label = 0;
 
         if (m_has_contents) {
             m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                                "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
+                                             "", font, GG::CLR_WHITE, GG::CLR_ZERO,
+                                             GG::INTERACTIVE);
             AttachChild(m_expand_button);
             GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 
@@ -1045,23 +1053,30 @@ public:
         } else {
             m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
                                           ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true),
-                                          style, GG::Flags<GG::WndFlag>());
+                                          style, GG::NO_WND_FLAGS);
             AttachChild(m_dot);
         }
 
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
 
-        m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(),
-                                                textures, std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
+        m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
+                                               ClientHeight(), textures,
+                                               std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
         AttachChild(m_icon);
 
-        m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), ObjectName(obj), font, clr, GG::FORMAT_LEFT);
-        AttachChild(m_name_label);
+        for (std::vector<GG::Control*>::iterator it = m_controls.begin();
+             it != m_controls.end(); ++it)
+        { DeleteChild(*it); }
+        m_controls.clear();
 
-        std::pair<std::string, GG::Clr> empire_and_colour = ObjectEmpireNameAndColour(obj);
-        m_empire_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), empire_and_colour.first, font, empire_and_colour.second, GG::FORMAT_LEFT);
-        AttachChild(m_empire_label);
+        std::vector<GG::Control*> controls = GetControls();
+        for (std::vector<GG::Control*>::iterator it = controls.begin();
+             it != controls.end(); ++it)
+        {
+            m_controls.push_back(*it);
+            AttachChild(*it);
+        }
 
         DoLayout();
     }
@@ -1081,27 +1096,39 @@ private:
         GG::X left = indent;
         GG::Y top(GG::Y0);
         GG::Y bottom(ClientHeight());
-        GG::X PAD(3);
-
-        GG::X ctrl_width = ICON_WIDTH;
 
         if (m_expand_button) {
-            m_expand_button->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
+            m_expand_button->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
         } else if (m_dot) {
-            m_dot->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
+            m_dot->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
         }
-        left += ctrl_width + PAD;
+        left += ICON_WIDTH + PAD;
 
-        m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
-        left += ctrl_width + PAD;
+        if (m_icon) {
+            m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ICON_WIDTH, bottom));
+            left += ICON_WIDTH + PAD;
+        }
 
-        ctrl_width = GG::X(ClientUI::Pts()*14) - indent;    // so second column all line up
-        m_name_label->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
-        left += ctrl_width + PAD;
+        // loop through m_controls, positioning according to column widths.
+        // first column position dependent on indent (ie. left at start of loop)
+        // second column position fixed equal to first column width value.
+        // ie. reset left, not dependent on current left.
 
-        ctrl_width = GG::X(ClientUI::Pts()*8);
-        m_empire_label->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
-        left += ctrl_width + PAD;
+        std::vector<int> col_widths = GetColumnWidths();
+
+        for (std::size_t i = 0; i < m_controls.size(); ++i) {
+            GG::Control* ctrl = m_controls[i];
+            GG::X right(GG::X1);
+            if (i == 0)
+                right = GG::X(col_widths[0]);   // fix first column width, independent of icon / dot positions, so later columns all line up
+            else
+                right = left + col_widths[i];
+
+            if (ctrl)
+                ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
+
+            left = right + PAD;
+        }
     }
 
     void                ExpandCollapseButtonPressed() {
@@ -1116,20 +1143,52 @@ private:
         Refresh();
     }
 
-    bool                        m_initialized;
+    std::vector<GG::Control*>   GetControls() {
+        std::vector<GG::Control*> retval;
 
-    int                         m_object_id;
-    int                         m_indent;
-    bool                        m_expanded;
-    bool                        m_has_contents;
+        std::vector<int> column_widths = GetColumnWidths();
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr clr = ClientUI::TextColor();
+        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
+                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+
+        GG::Control* name =  new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
+                                                 ClientHeight(), ObjectName(obj), font, clr, GG::FORMAT_LEFT);
+        retval.push_back(name);
+
+        std::pair<std::string, GG::Clr> empire_and_colour = ObjectEmpireNameAndColour(obj);
+        GG::Control* empire_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
+                                                        ClientHeight(), empire_and_colour.first,
+                                                        font, empire_and_colour.second, GG::FORMAT_LEFT);
+        retval.push_back(empire_label);
+
+        return retval;
+    }
+
+    std::vector<int>    GetColumnWidths() {
+        std::vector<int> retval;
+        retval.push_back(ClientUI::Pts()*18);
+        retval.push_back(ClientUI::Pts()*8);
+
+        retval.resize(m_controls.size(), Value(PAD));
+        return retval;
+    }
+
+    bool    m_initialized;
+    int     m_object_id;
+    int     m_indent;
+    bool    m_expanded;
+    bool    m_has_contents;
 
     GG::Button*                 m_expand_button;
     GG::StaticGraphic*          m_dot;
     MultiTextureStaticGraphic*  m_icon;
     GG::TextControl*            m_name_label;
-    GG::TextControl*            m_empire_label;
+    std::vector<GG::Control*>   m_controls;
 
-    bool                        m_selected;
+    bool    m_selected;
 };
 
 ////////////////////////////////////////////////
@@ -1140,18 +1199,20 @@ public:
     ObjectRow(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded,
               int container_object_panel,
               const std::set<int>& contained_object_panels, int indent) :
-        GG::ListBox::Row(w, h, "ObjectRow", GG::ALIGN_CENTER, 1),
+        GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
         m_panel(0),
         m_container_object_panel(container_object_panel),
         m_contained_object_panels(contained_object_panels)
     {
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
-        SetDragDropDataType("ObjectRow");
         m_panel = new ObjectPanel(w, h, obj, expanded, !m_contained_object_panels.empty(), indent);
         push_back(m_panel);
         GG::Connect(m_panel->ExpandCollapseSignal,  &ObjectRow::ExpandCollapseClicked, this);
     }
+
+    virtual GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const
+    { return m_panel ? m_panel->SortKey(column) : ""; }
 
     int                     ObjectID() const {
         if (m_panel)
@@ -1175,7 +1236,7 @@ public:
     { m_panel->Refresh(); }
 
     /** This function overridden because otherwise, rows don't expand
-        * larger than their initial size when resizing the list. */
+      * larger than their initial size when resizing the list. */
     void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
@@ -1788,7 +1849,6 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-
 void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
@@ -1889,4 +1949,3 @@ void ObjectListWnd::CollapseExpandClicked() {
 
 void ObjectListWnd::CloseClicked()
 { ClosingSignal(); }
-
