@@ -188,8 +188,8 @@ struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
 
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
 
-    StatisticType                   GetStatisticType() const;
-    const Condition::ConditionBase* SamplingCondition() const;
+    StatisticType                   GetStatisticType() const     { return m_stat_type; }
+    const Condition::ConditionBase* GetSamplingCondition() const { return m_sampling_condition; }
 
     virtual T                       Eval(const ScriptingContext& context) const;
 
@@ -285,6 +285,7 @@ struct FO_COMMON_API ValueRef::StaticCast : public ValueRef::Variable<ToType>
     virtual bool        SourceInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+    const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
 
 private:
     const ValueRefBase<FromType>* m_value_ref;
@@ -311,6 +312,7 @@ struct FO_COMMON_API ValueRef::StringCast : public ValueRef::Variable<std::strin
     virtual bool        SourceInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+    const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
 
 private:
     const ValueRefBase<FromType>* m_value_ref;
@@ -332,6 +334,7 @@ struct FO_COMMON_API ValueRef::UserStringLookup : public ValueRef::Variable<std:
     virtual bool        SourceInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+    const ValueRefBase<std::string>*    GetValueRef() const { return m_value_ref; }
 
 private:
     const ValueRefBase<std::string>* m_value_ref;
@@ -375,8 +378,11 @@ private:
 };
 
 namespace ValueRef {
-    FO_COMMON_API std::string ReconstructName(const std::vector<std::string>& property_name,
-                                              ReferenceType ref_type);
+    FO_COMMON_API MeterType     NameToMeter(std::string name);
+    FO_COMMON_API std::string   MeterToName(MeterType meter);
+
+    FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,
+                                                ReferenceType ref_type);
 }
 
 // Template Implementations
@@ -603,14 +609,6 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
 
     return true;
 }
-
-template <class T>
-ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const
-{ return m_stat_type; }
-
-template <class T>
-const Condition::ConditionBase* ValueRef::Statistic<T>::SamplingCondition() const
-{ return m_sampling_condition; }
 
 template <class T>
 void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context,

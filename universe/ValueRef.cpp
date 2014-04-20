@@ -147,59 +147,72 @@ namespace {
 
         mutable UniverseObjectType m_type;
     };
+}
 
-    MeterType NameToMeter(std::string name) {
-        typedef std::map<std::string, MeterType> NameToMeterMap;
-        static NameToMeterMap map;
-        static bool once = true;
-        if (once) {
-            map["Population"] = METER_POPULATION;
-            map["TargetPopulation"] = METER_TARGET_POPULATION;
-            map["Industry"] = METER_INDUSTRY;
-            map["TargetIndustry"] = METER_TARGET_INDUSTRY;
-            map["Research"] = METER_RESEARCH;
-            map["TargetResearch"] = METER_TARGET_RESEARCH;
-            map["Trade"] = METER_TRADE;
-            map["TargetTrade"] = METER_TARGET_TRADE;
-            map["Construction"] = METER_CONSTRUCTION;
-            map["TargetConstruction"] = METER_TARGET_CONSTRUCTION;
-            map["Happiness"] = METER_HAPPINESS;
-            map["TargetHappiness"] = METER_TARGET_HAPPINESS;
-            map["MaxFuel"] = METER_MAX_FUEL;
-            map["Fuel"] = METER_FUEL;
-            map["MaxStructure"] = METER_MAX_STRUCTURE;
-            map["Structure"] = METER_STRUCTURE;
-            map["MaxShield"] = METER_MAX_SHIELD;
-            map["Shield"] = METER_SHIELD;
-            map["MaxDefense"] = METER_MAX_DEFENSE;
-            map["Defense"] = METER_DEFENSE;
-            map["MaxTroops"] = METER_MAX_TROOPS;
-            map["Troops"] = METER_TROOPS;
-            map["RebelTroops"] = METER_REBEL_TROOPS;
-            map["Supply"] = METER_SUPPLY;
-            map["MaxSupply"] = METER_MAX_SUPPLY;
-            map["Stealth"] = METER_STEALTH;
-            map["Detection"] = METER_DETECTION;
-            map["BattleSpeed"] = METER_BATTLE_SPEED;
-            map["StarlaneSpeed"] = METER_STARLANE_SPEED;
-            map["Damage"] = METER_DAMAGE;
-            map["ROF"] = METER_ROF;
-            map["Range"] = METER_RANGE;
-            map["Speed"] = METER_SPEED;
-            map["Capacity"] = METER_CAPACITY;
-            map["AntiShipDamage"] = METER_ANTI_SHIP_DAMAGE;
-            map["AntiFighterDamage"] = METER_ANTI_FIGHTER_DAMAGE;
-            map["LaunchRate"] = METER_LAUNCH_RATE;
-            map["FighterWeaponRange"] = METER_FIGHTER_WEAPON_RANGE;
-            map["Size"] = METER_SIZE;
-            once = false;
+namespace {
+    const std::map<std::string, MeterType>& GetMeterNameMap() {
+        static std::map<std::string, MeterType> meter_name_map;
+        if (meter_name_map.empty()) {
+            meter_name_map["Population"] =         METER_POPULATION;
+            meter_name_map["TargetPopulation"] =   METER_TARGET_POPULATION;
+            meter_name_map["Industry"] =           METER_INDUSTRY;
+            meter_name_map["TargetIndustry"] =     METER_TARGET_INDUSTRY;
+            meter_name_map["Research"] =           METER_RESEARCH;
+            meter_name_map["TargetResearch"] =     METER_TARGET_RESEARCH;
+            meter_name_map["Trade"] =              METER_TRADE;
+            meter_name_map["TargetTrade"] =        METER_TARGET_TRADE;
+            meter_name_map["Construction"] =       METER_CONSTRUCTION;
+            meter_name_map["TargetConstruction"] = METER_TARGET_CONSTRUCTION;
+            meter_name_map["Happiness"] =          METER_HAPPINESS;
+            meter_name_map["TargetHappiness"] =    METER_TARGET_HAPPINESS;
+            meter_name_map["MaxFuel"] =            METER_MAX_FUEL;
+            meter_name_map["Fuel"] =               METER_FUEL;
+            meter_name_map["MaxStructure"] =       METER_MAX_STRUCTURE;
+            meter_name_map["Structure"] =          METER_STRUCTURE;
+            meter_name_map["MaxShield"] =          METER_MAX_SHIELD;
+            meter_name_map["Shield"] =             METER_SHIELD;
+            meter_name_map["MaxDefense"] =         METER_MAX_DEFENSE;
+            meter_name_map["Defense"] =            METER_DEFENSE;
+            meter_name_map["MaxTroops"] =          METER_MAX_TROOPS;
+            meter_name_map["Troops"] =             METER_TROOPS;
+            meter_name_map["RebelTroops"] =        METER_REBEL_TROOPS;
+            meter_name_map["Supply"] =             METER_SUPPLY;
+            meter_name_map["MaxSupply"] =          METER_MAX_SUPPLY;
+            meter_name_map["Stealth"] =            METER_STEALTH;
+            meter_name_map["Detection"] =          METER_DETECTION;
+            meter_name_map["BattleSpeed"] =        METER_BATTLE_SPEED;
+            meter_name_map["StarlaneSpeed"] =      METER_STARLANE_SPEED;
+            meter_name_map["Damage"] =             METER_DAMAGE;
+            meter_name_map["ROF"] =                METER_ROF;
+            meter_name_map["Range"] =              METER_RANGE;
+            meter_name_map["Speed"] =              METER_SPEED;
+            meter_name_map["Capacity"] =           METER_CAPACITY;
+            meter_name_map["AntiShipDamage"] =     METER_ANTI_SHIP_DAMAGE;
+            meter_name_map["AntiFighterDamage"] =  METER_ANTI_FIGHTER_DAMAGE;
+            meter_name_map["LaunchRate"] =         METER_LAUNCH_RATE;
+            meter_name_map["FighterWeaponRange"] = METER_FIGHTER_WEAPON_RANGE;
+            meter_name_map["Size"] =               METER_SIZE;
         }
-        MeterType retval = INVALID_METER_TYPE;
-        NameToMeterMap::const_iterator it = map.find(name);
-        if (it != map.end())
-            retval = it->second;
-        return retval;
+        return meter_name_map;
     }
+}
+
+MeterType ValueRef::NameToMeter(std::string name) {
+    MeterType retval = INVALID_METER_TYPE;
+    std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().find(name);
+    if (it != GetMeterNameMap().end())
+        retval = it->second;
+    return retval;
+}
+
+std::string ValueRef::MeterToName(MeterType meter) {
+    for (std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().begin();
+         it != GetMeterNameMap().end(); ++it)
+    {
+        if (it->second == meter)
+            return it->first;
+    }
+    return "";
 }
 
 std::string ValueRef::ReconstructName(const std::vector<std::string>& property_name,
