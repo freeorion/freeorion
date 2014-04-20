@@ -1620,6 +1620,7 @@ public:
         SetColHeaders(m_header_row);
 
         GG::Connect(m_header_row->ColumnsChangedSignal,         &ObjectListBox::Refresh,                this);
+        GG::Connect(m_header_row->ColumnHeaderLeftClickSignal,  &ObjectListBox::SortingClicked,         this);
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
@@ -1948,6 +1949,38 @@ public:
         }
     }
 
+    void            SortingClicked(int clicked_column) {
+        int                         old_sort_col =  this->SortCol();
+        GG::Flags<GG::ListBoxStyle> old_style =     this->Style();
+
+        if (clicked_column < 0) {
+            this->SetStyle(GG::LIST_NOSORT);
+            //std::cout << "col -1 : set style to no sort" << std::endl;
+
+        } else {
+            this->SetSortCol(clicked_column);
+            std::cout << "old col: " << old_sort_col << "  clicked col " << clicked_column;
+
+            if (old_sort_col == clicked_column) {
+                // if previously no sorting, switch to normal sort
+                // if previously descending sorting, switch to normal sort
+                // if previously normal sort, switch to descending sort
+                if (old_style & (GG::LIST_NOSORT | GG::LIST_SORTDESCENDING)) {
+                    this->SetStyle(GG::LIST_NONE);
+                    //std::cout << "  style set to none" << std::endl;
+                } else {
+                    this->SetStyle(GG::LIST_SORTDESCENDING);
+                    //std::cout << "  style set to sort descend" << std::endl;
+                }
+            } else {
+                // no previously sorting on this column, so default to normal sorting
+                this->SetStyle(GG::LIST_NONE);
+                //std::cout << "  new column: " << clicked_column << "  style set to none" << std::endl;
+            }
+        }
+        Refresh();
+    }
+
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
@@ -2078,11 +2111,10 @@ private:
 // ObjectListWnd
 ////////////////////////////////////////////////
 ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
-    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
+    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1,
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
     m_list_box(0),
     m_filter_button(0),
-    m_sort_button(0),
-    m_columns_button(0),
     m_collapse_button(0)
 {
     m_list_box = new ObjectListBox();
@@ -2099,16 +2131,6 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     GG::Connect(m_filter_button->LeftClickedSignal,     &ObjectListWnd::FilterClicked,          this);
     AttachChild(m_filter_button);
 
-    m_sort_button = new CUIButton(UserString("SORT"), GG::X0, GG::Y0, GG::X(30));
-    GG::Connect(m_sort_button->LeftClickedSignal,       &ObjectListWnd::SortClicked,            this);
-    AttachChild(m_sort_button);
-    m_sort_button->Disable();
-
-    m_columns_button = new CUIButton(UserString("COLUMNS"), GG::X0, GG::Y0, GG::X(30));
-    GG::Connect(m_columns_button->LeftClickedSignal,    &ObjectListWnd::ColumnsClicked,         this);
-    AttachChild(m_columns_button);
-    m_columns_button->Disable();
-
     m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"), GG::X0, GG::Y0, GG::X(30));
     GG::Connect(m_collapse_button->LeftClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
     AttachChild(m_collapse_button);
@@ -2124,10 +2146,6 @@ void ObjectListWnd::DoLayout() {
     GG::Pt button_ul(GG::X0, ClientHeight() - BUTTON_HEIGHT);
 
     m_filter_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
-    m_sort_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
-    m_columns_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
     m_collapse_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     button_ul += GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
@@ -2267,12 +2285,6 @@ void ObjectListWnd::FilterClicked() {
         m_list_box->SetVisibilityFilters(dlg.GetVisibilityFilters());
         m_list_box->SetFilterCondition(dlg.GetConditionFilter());
     }
-}
-
-void ObjectListWnd::SortClicked() {
-}
-
-void ObjectListWnd::ColumnsClicked() {
 }
 
 void ObjectListWnd::CollapseExpandClicked() {

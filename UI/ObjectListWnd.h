@@ -36,15 +36,11 @@ private:
     int             ObjectInRow(GG::ListBox::iterator it) const;
 
     void            FilterClicked();
-    void            SortClicked();
-    void            ColumnsClicked();
     void            CollapseExpandClicked();
     virtual void    CloseClicked();
 
     ObjectListBox*              m_list_box;
     GG::Button*                 m_filter_button;
-    GG::Button*                 m_sort_button;
-    GG::Button*                 m_columns_button;
     GG::Button*                 m_collapse_button;
 };
 
