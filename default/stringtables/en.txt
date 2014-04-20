@@ -3555,21 +3555,59 @@ Expand All
 ## Objects Columns ##
 #####################
 
-COLUMN_ID
+METERS_SUBMENU
+Meters
+
+ID
 ID
 
-COLUMN_NAME
+NAME
 Name
 
-COLUMN_OWNER
+OWNER
 Owner
 
-COLUMN_SPECIES
+SPECIES
 Species
 
-COLUMN_OBJECT_TYPE
+OBJECT_TYPE
 Type
 
+CREATION_TURN
+Creation Turn
+
+AGE
+Age
+
+TURNS_SINCE_FOCUS_CHANGE
+Turns Since Focus Change
+
+PRODUCED_BY
+Produced By Empire ID
+
+DESIGN_ID
+Design ID
+
+FINAL_DEST
+Final Destination ID
+
+NEXT_SYSTEM
+Next System ID
+
+PREV_SYSTEM
+Previous System ID
+
+LAST_TURN_BATTLE_HERE
+Last Turn Battle Here
+
+SIZE_AS_DOUBLE
+Size As Number
+
+DISTANCE_FROM_ORIGINAL_TYPE
+Distance From Original Planet Type
+
+NEXT_TURN_POP_GROWTH
+Next Turn Population Growth
 
 
 ####################

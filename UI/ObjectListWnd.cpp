@@ -31,13 +31,13 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         std::vector<std::pair<std::string, int> > default_columns_widths;
-        default_columns_widths.push_back(std::make_pair("COLUMN_NAME",          12*12));
-        default_columns_widths.push_back(std::make_pair("COLUMN_ID",            4*12));
-        default_columns_widths.push_back(std::make_pair("COLUMN_OBJECT_TYPE",   5*12));
-        default_columns_widths.push_back(std::make_pair("COLUMN_OWNER",         10*12));
-        default_columns_widths.push_back(std::make_pair("COLUMN_SPECIES",       8*12));
+        default_columns_widths.push_back(std::make_pair("NAME",         12*12));
+        default_columns_widths.push_back(std::make_pair("ID",           4*12));
+        default_columns_widths.push_back(std::make_pair("OBJECT_TYPE",  5*12));
+        default_columns_widths.push_back(std::make_pair("OWNER",        10*12));
+        default_columns_widths.push_back(std::make_pair("SPECIES",      8*12));
         for (int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
-            default_columns_widths.push_back(std::make_pair("", 12));   // arbitrary default width
+            default_columns_widths.push_back(std::make_pair("", 8*12));   // arbitrary default width
 
         for (unsigned int i = 0; i < default_columns_widths.size(); ++i) {
             db.Add<std::string>("UI.objects-list-info-col-" + boost::lexical_cast<std::string>(i),
@@ -83,36 +83,30 @@ namespace {
     const std::map<std::string, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
         static std::map<std::string, ValueRef::ValueRefBase<std::string>*> col_types;
         if (col_types.empty()) {
-            col_types[UserStringNop("COLUMN_NAME")] =           StringValueRef("Name");
-            col_types[UserStringNop("COLUMN_OWNER")] =          StringValueRef("OwnerName");
-            col_types[UserStringNop("COLUMN_OBJECT_TYPE")] =    UserStringValueRef("TypeName");
-            col_types[UserStringNop("COLUMN_SPECIES")] =        UserStringValueRef("Species");
+            col_types[UserStringNop("NAME")] =                      StringValueRef("Name");
+            col_types[UserStringNop("OWNER")] =                     StringValueRef("OwnerName");
+            col_types[UserStringNop("OBJECT_TYPE")] =               UserStringValueRef("TypeName");
+            col_types[UserStringNop("SPECIES")] =                   UserStringValueRef("Species");
 
-            col_types[UserStringNop("COLUMN_ID")] =             StringCastedValueRef<int>("ID");
-            col_types[UserStringNop("COLUMN_CREATION_TURN")] =  StringCastedValueRef<int>("CreationTurn");
-            col_types[UserStringNop("COLUMN_AGE")] =            StringCastedValueRef<int>("Age");
-            col_types[UserStringNop("COLUMN_TURNS_SINCE_FOCUS_CHANGE")] =
-                                                                StringCastedValueRef<int>("TurnsSinceFocusChange");
-            col_types[UserStringNop("COLUMN_PRODUCED_BY")] =    StringCastedValueRef<int>("ProducedByEmpireID");
-            col_types[UserStringNop("COLUMN_DESIGN_ID")] =      StringCastedValueRef<int>("DesignID");
-            col_types[UserStringNop("COLUMN_FINAL_DEST")] =     StringCastedValueRef<int>("FinalDestinationID");
-            col_types[UserStringNop("COLUMN_NEXT_SYSTEM")] =    StringCastedValueRef<int>("NextSystemID");
-            col_types[UserStringNop("COLUMN_PREV_SYSTEM")] =    StringCastedValueRef<int>("PreviousSystemID");
-            col_types[UserStringNop("COLUMN_LAST_TURN_BATTLE_HERE")] =
-                                                                StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[UserStringNop("ID")] =                        StringCastedValueRef<int>("ID");
+            col_types[UserStringNop("CREATION_TURN")] =             StringCastedValueRef<int>("CreationTurn");
+            col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
+            col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
+            col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
+            col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
+            col_types[UserStringNop("FINAL_DEST")] =                StringCastedValueRef<int>("FinalDestinationID");
+            col_types[UserStringNop("NEXT_SYSTEM")] =               StringCastedValueRef<int>("NextSystemID");
+            col_types[UserStringNop("PREV_SYSTEM")] =               StringCastedValueRef<int>("PreviousSystemID");
+            col_types[UserStringNop("LAST_TURN_BATTLE_HERE")] =     StringCastedValueRef<int>("LastTurnBattleHere");
 
-
-            col_types[UserStringNop("COLUMN_SIZE_AS_DOUBLE")] = StringCastedValueRef<double>("SizeAsDouble");
-            col_types[UserStringNop("COLUMN_DISTANCE_FROM_ORIGINAL_TYPE")] =
-                                                                StringCastedValueRef<double>("DistanceFromOriginalType");
-            col_types[UserStringNop("COLUMN_NEXT_TURN_POP_GROWTH")] =
-                                                                StringCastedValueRef<double>("NextTurnPopGrowth");
+            col_types[UserStringNop("SIZE_AS_DOUBLE")] =            StringCastedValueRef<double>("SizeAsDouble");
+            col_types[UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE")]=StringCastedValueRef<double>("DistanceFromOriginalType");
+            col_types[UserStringNop("NEXT_TURN_POP_GROWTH")] =      StringCastedValueRef<double>("NextTurnPopGrowth");
 
             for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
                  meter = MeterType(meter + 1))
             {
-                col_types[boost::lexical_cast<std::string>(meter)] =
-                                                                StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+                col_types[boost::lexical_cast<std::string>(meter)] =StringCastedValueRef<double>(ValueRef::MeterToName(meter));
             }
         }
         return col_types;
@@ -137,6 +131,14 @@ namespace {
         return ClientUI::Pts()*10;
     }
 
+    void SetColumnWidth(int column, int width) {
+        if (column < 0)
+            return;
+        std::string option_name = "UI.objects-list-width-col-" + boost::lexical_cast<std::string>(column);
+        if (GetOptionsDB().OptionExists(option_name))
+            GetOptionsDB().Set(option_name, width);
+    }
+
     std::string GetColumnName(int column) {
         if (column < 0)
             return "";
@@ -144,6 +146,14 @@ namespace {
         if (GetOptionsDB().OptionExists(option_name))
             return GetOptionsDB().Get<std::string>(option_name);
         return "";
+    }
+
+    void SetColumnName(int column, const std::string& name) {
+        if (column < 0)
+            return;
+        std::string option_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(column);
+        if (GetOptionsDB().OptionExists(option_name))
+            GetOptionsDB().Set(option_name, name);
     }
 
     const ValueRef::ValueRefBase<std::string>* GetColumnValueRef(int column) {
@@ -1455,64 +1465,64 @@ private:
     { ColumnButtonLeftClickSignal(column_id); }
 
     void                        ButtonRightClicked(int column_id) {
-        //std::vector<std::string> all_templates = AllSitRepTemplateStrings();
+        if (column_id < 0 || column_id >= static_cast<int>(m_controls.size()))
+            return;
+        GG::Button* clicked_button = m_controls[column_id];
+        if (!clicked_button)
+            return;
 
-        //std::map<int, std::string> menu_index_templates;
-        //std::map<int, bool> menu_index_checked;
-        //int index = 1;
-        //bool all_checked = true;
-        //int ALL_INDEX = 9999;
+        std::string current_column_type = GetColumnName(column_id);
 
-        //GG::MenuItem menu_contents;
-        //for (std::vector<std::string>::const_iterator it = all_templates.begin();
-        //     it != all_templates.end(); ++it, ++index)
-        //{
-        //    menu_index_templates[index] = *it;
-        //    bool check = true;
-        //    if (m_hidden_sitrep_templates.find(*it) != m_hidden_sitrep_templates.end()) {
-        //        check = false;
-        //        all_checked = false;
-        //    }
-        //    menu_index_checked[index] = check;
-        //    const std::string& menu_label = UserString(*it + "_LABEL");
-        //    menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
-        //}
-        //menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
-        //                                   ALL_INDEX, false, false));
+        const std::map<std::string, ValueRef::ValueRefBase<std::string>*>&
+            available_column_types = AvailableColumnTypes();
 
-        //GG::PopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(),
-        //                    ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-        //                    ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
-        //                    ClientUI::EditHiliteColor());
-        //if (!popup.Run())
-        //    return;
-        //int selected_menu_item = popup.MenuID();
-        //if (selected_menu_item == 0)
-        //    return; // nothing was selected
+        std::map<int, std::string> menu_index_templates;
+        int index = 1;
 
-        //if (selected_menu_item == ALL_INDEX) {
-        //    // select / deselect all templates
-        //    if (all_checked) {
-        //        // deselect all
-        //        for (std::vector<std::string>::const_iterator it = all_templates.begin();
-        //             it != all_templates.end(); ++it, ++index)
-        //        { m_hidden_sitrep_templates.insert(*it); }
-        //    } else {
-        //        // select all
-        //        m_hidden_sitrep_templates.clear();
-        //    }
-        //} else {
-        //    // select / deselect the chosen template
-        //    const std::string& selected_template_string = menu_index_templates[selected_menu_item];
-        //    if (menu_index_checked[selected_menu_item]) {
-        //        // disable showing this template string
-        //        m_hidden_sitrep_templates.insert(selected_template_string);
-        //    } else {
-        //        // re-enabled showing this template string
-        //        m_hidden_sitrep_templates.erase(selected_template_string);
-        //    }
-        //}
-        //Update();
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem("", 0, false, current_column_type.empty()));
+
+        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"), -1, false, false);
+        for (std::map<std::string, ValueRef::ValueRefBase<std::string>*>::const_iterator it =
+             available_column_types.begin(); it != available_column_types.end(); ++it, ++index)
+        {
+            menu_index_templates[index] = it->first;
+            bool check = (current_column_type == it->first);
+            const std::string& menu_label = UserString(it->first);
+            // put meters in submenu.
+            if (it->first.find("METER_") == 0)
+                meters_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+        }
+        menu_contents.next_level.push_back(meters_submenu);
+
+        for (std::map<std::string, ValueRef::ValueRefBase<std::string>*>::const_iterator it =
+             available_column_types.begin(); it != available_column_types.end(); ++it, ++index)
+        {
+            menu_index_templates[index] = it->first;
+            bool check = (current_column_type == it->first);
+            const std::string& menu_label = UserString(it->first);
+            // put non-meter stuff in root menu
+            if (it->first.find("METER_") != 0)
+                menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+        }
+
+        GG::PopupMenu popup(clicked_button->Left(), clicked_button->Bottom(),
+                            ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
+                            ClientUI::EditHiliteColor());
+        if (!popup.Run())
+            return;
+        int selected_menu_item = popup.MenuID();
+        if (selected_menu_item < 0)
+            return;
+        if (selected_menu_item == 0)
+            SetColumnName(column_id, "");
+
+        // set clicked column to show the selected column type info
+        const std::string& selected_type = menu_index_templates[selected_menu_item];
+        SetColumnName(column_id, selected_type);
+
+        ColumnsChangedSignal();
     }
 
     std::vector<GG::Button*>    GetControls() {
@@ -1551,6 +1561,8 @@ public:
     {
         m_panel = new ObjectHeaderPanel(w, h);
         push_back(m_panel);
+        GG::Connect(m_panel->ColumnButtonLeftClickSignal,   ColumnHeaderLeftClickSignal);
+        GG::Connect(m_panel->ColumnsChangedSignal,          ColumnsChangedSignal);
     }
 
     void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1607,6 +1619,7 @@ public:
         m_header_row = new ObjectHeaderRow(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row);
 
+        GG::Connect(m_header_row->ColumnsChangedSignal,         &ObjectListBox::Refresh,                this);
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
