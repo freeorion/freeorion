@@ -515,14 +515,15 @@ protected:
     Row&            ColHeaders();                   ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers
     //@}
 
+    void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
+
 private:
     void            ConnectSignals();
-    void            ValidateStyle();                        ///< reconciles inconsistencies in the style flags
-    void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
+    void            ValidateStyle();                                        ///< reconciles inconsistencies in the style flags
     void            VScrolled(int tab_low, int tab_high, int low, int high);///< signals from the vertical scroll bar are caught here
     void            HScrolled(int tab_low, int tab_high, int low, int high);///< signals from the horizontal scroll bar are caught here
     void            ClickAtRow(iterator it, Flags<ModKey> mod_keys);        ///< handles to a mouse-click or spacebar-click on \a it, modified by \a keys
-    void            NormalizeRow(Row* row);                 ///< adjusts a Row so that it has the same number of cells as other rows, and that each cell has the correct width and alignment
+    void            NormalizeRow(Row* row);                                 ///< adjusts a Row so that it has the same number of cells as other rows, and that each cell has the correct width and alignment
     iterator        FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height); ///< Returns the first row shown when the last row shown is \a bottom_row
     std::size_t     FirstColShownWhenRightIs(std::size_t right_col, X client_width); ///< Returns the index of the first column shown when the last column shown is \a right_col
 
