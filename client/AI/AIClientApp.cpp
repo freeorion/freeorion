@@ -43,7 +43,6 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     }
 
     InitLogger(AICLIENT_LOG_FILENAME, "%d %p AI : %m%n");
-    Logger().setPriority(log4cpp::Priority::DEBUG);
     Logger().debug(PlayerName() + " logger initialized.");
 }
 

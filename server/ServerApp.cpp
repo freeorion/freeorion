@@ -106,7 +106,9 @@ ServerApp::ServerApp() :
     const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
     InitLogger(SERVER_LOG_FILENAME, "%d %p Server : %m%n");
-    Logger().setPriority(log4cpp::Priority::DEBUG);
+    int options_db_log_priority = PriorityValue(GetOptionsDB().Get<std::string>("log-level"));
+    if (options_db_log_priority)
+        Logger().setPriority(options_db_log_priority);
 
     m_fsm->initiate();
 

@@ -1,5 +1,7 @@
 #include "Logger.h"
 
+#include "../util/Version.h"
+
 #include <fstream>
 
 #include <log4cpp/Appender.hh>
@@ -26,6 +28,10 @@ void InitLogger(const std::string& logFile, const std::string& pattern)
     Logger().setAdditivity(false);  // make appender the only appender used...
     Logger().setAppender(appender);
     Logger().setAdditivity(true);   // ...but allow the addition of others later
+    Logger().setPriority(log4cpp::Priority::DEBUG);
+
+    Logger().debugStream() << "Logger initialized";
+    Logger().debugStream() << FreeOrionVersionString();
 }
 
 log4cpp::Category& Logger()
