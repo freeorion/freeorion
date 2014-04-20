@@ -1959,7 +1959,7 @@ public:
 
         } else {
             this->SetSortCol(clicked_column);
-            std::cout << "old col: " << old_sort_col << "  clicked col " << clicked_column;
+            //std::cout << "old col: " << old_sort_col << "  clicked col " << clicked_column;
 
             if (old_sort_col == clicked_column) {
                 // if previously no sorting, switch to normal sort
