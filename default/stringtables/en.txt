@@ -3551,6 +3551,27 @@ Collapse All
 EXPAND_ALL
 Expand All
 
+#####################
+## Objects Columns ##
+#####################
+
+COLUMN_ID
+ID
+
+COLUMN_NAME
+Name
+
+COLUMN_OWNER
+Owner
+
+COLUMN_SPECIES
+Species
+
+COLUMN_OBJECT_TYPE
+Type
+
+
+
 ####################
 ## Filters Dialog ##
 ####################

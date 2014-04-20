@@ -27,6 +27,135 @@
 std::vector<std::string> SpecialNames();
 
 namespace {
+    const unsigned int NUM_COLUMNS(12u);
+
+    void AddOptions(OptionsDB& db) {
+        std::vector<std::pair<std::string, int> > default_columns_widths;
+        default_columns_widths.push_back(std::make_pair("COLUMN_NAME",          12*12));
+        default_columns_widths.push_back(std::make_pair("COLUMN_ID",            4*12));
+        default_columns_widths.push_back(std::make_pair("COLUMN_OBJECT_TYPE",   5*12));
+        default_columns_widths.push_back(std::make_pair("COLUMN_OWNER",         10*12));
+        default_columns_widths.push_back(std::make_pair("COLUMN_SPECIES",       8*12));
+        for (int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
+            default_columns_widths.push_back(std::make_pair("", 12));   // arbitrary default width
+
+        for (unsigned int i = 0; i < default_columns_widths.size(); ++i) {
+            db.Add<std::string>("UI.objects-list-info-col-" + boost::lexical_cast<std::string>(i),
+                                UserStringNop("OPTIONS_DB_OBJECTS_LIST_COLUMN_INFO"),
+                                default_columns_widths[i].first);
+            db.Add<int>("UI.objects-list-width-col-" + boost::lexical_cast<std::string>(i),
+                        UserStringNop("OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH"),
+                        default_columns_widths[i].second,
+                        RangedValidator<int>(1, 200));
+        }
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
+    unsigned int NumColumns()
+    { return NUM_COLUMNS; }
+
+    ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
+        return new ValueRef::Variable<std::string>(
+            ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token));
+    }
+
+    ValueRef::Variable<std::string>* UserStringValueRef(const std::string& token) {
+        return new ValueRef::UserStringLookup(
+            new ValueRef::Variable<std::string>(
+                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+    }
+
+    template <typename T>
+    ValueRef::Variable<std::string>* StringCastedValueRef(const std::string& token) {
+        return new ValueRef::StringCast<T>(
+            new ValueRef::Variable<T>(
+                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+    }
+
+    template <typename T>
+    ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
+        return new ValueRef::UserStringLookup(
+            new ValueRef::StringCast<T>(
+                new ValueRef::Variable<T>(
+                    ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token))));
+    }
+
+    const std::map<std::string, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
+        static std::map<std::string, ValueRef::ValueRefBase<std::string>*> col_types;
+        if (col_types.empty()) {
+            col_types[UserStringNop("COLUMN_NAME")] =           StringValueRef("Name");
+            col_types[UserStringNop("COLUMN_OWNER")] =          StringValueRef("OwnerName");
+            col_types[UserStringNop("COLUMN_OBJECT_TYPE")] =    UserStringValueRef("TypeName");
+            col_types[UserStringNop("COLUMN_SPECIES")] =        UserStringValueRef("Species");
+
+            col_types[UserStringNop("COLUMN_ID")] =             StringCastedValueRef<int>("ID");
+            col_types[UserStringNop("COLUMN_CREATION_TURN")] =  StringCastedValueRef<int>("CreationTurn");
+            col_types[UserStringNop("COLUMN_AGE")] =            StringCastedValueRef<int>("Age");
+            col_types[UserStringNop("COLUMN_TURNS_SINCE_FOCUS_CHANGE")] =
+                                                                StringCastedValueRef<int>("TurnsSinceFocusChange");
+            col_types[UserStringNop("COLUMN_PRODUCED_BY")] =    StringCastedValueRef<int>("ProducedByEmpireID");
+            col_types[UserStringNop("COLUMN_DESIGN_ID")] =      StringCastedValueRef<int>("DesignID");
+            col_types[UserStringNop("COLUMN_FINAL_DEST")] =     StringCastedValueRef<int>("FinalDestinationID");
+            col_types[UserStringNop("COLUMN_NEXT_SYSTEM")] =    StringCastedValueRef<int>("NextSystemID");
+            col_types[UserStringNop("COLUMN_PREV_SYSTEM")] =    StringCastedValueRef<int>("PreviousSystemID");
+            col_types[UserStringNop("COLUMN_LAST_TURN_BATTLE_HERE")] =
+                                                                StringCastedValueRef<int>("LastTurnBattleHere");
+
+
+            col_types[UserStringNop("COLUMN_SIZE_AS_DOUBLE")] = StringCastedValueRef<double>("SizeAsDouble");
+            col_types[UserStringNop("COLUMN_DISTANCE_FROM_ORIGINAL_TYPE")] =
+                                                                StringCastedValueRef<double>("DistanceFromOriginalType");
+            col_types[UserStringNop("COLUMN_NEXT_TURN_POP_GROWTH")] =
+                                                                StringCastedValueRef<double>("NextTurnPopGrowth");
+
+            for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
+                 meter = MeterType(meter + 1))
+            {
+                col_types[boost::lexical_cast<std::string>(meter)] =
+                                                                StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+            }
+        }
+        return col_types;
+    }
+
+    const ValueRef::ValueRefBase<std::string>* GetValueRefByName(const std::string& name) {
+        const std::map<std::string, ValueRef::ValueRefBase<std::string>*>&
+            named_refs = AvailableColumnTypes();
+        std::map<std::string, ValueRef::ValueRefBase<std::string>*>::const_iterator
+            it = named_refs.find(name);
+        if (it == named_refs.end())
+            return 0;
+        return it->second;
+    }
+
+    int GetColumnWidth(int column) {
+        if (column < 0)
+            return ClientUI::Pts()*4;   // size for first (non-reference) column
+        std::string option_name = "UI.objects-list-width-col-" + boost::lexical_cast<std::string>(column);
+        if (GetOptionsDB().OptionExists(option_name))
+            return GetOptionsDB().Get<int>(option_name);
+        return ClientUI::Pts()*10;
+    }
+
+    std::string GetColumnName(int column) {
+        if (column < 0)
+            return "";
+        std::string option_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(column);
+        if (GetOptionsDB().OptionExists(option_name))
+            return GetOptionsDB().Get<std::string>(option_name);
+        return "";
+    }
+
+    const ValueRef::ValueRefBase<std::string>* GetColumnValueRef(int column) {
+        if (column < 0)
+            return 0;
+        std::string option_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(column);
+        if (!GetOptionsDB().OptionExists(option_name))
+            return 0;
+        std::string column_ref_name = GetOptionsDB().Get<std::string>(option_name);
+        return GetValueRefByName(column_ref_name);
+    }
+
     const int DATA_PANEL_BORDER = 1;
 
     enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
@@ -128,12 +257,7 @@ namespace {
             return METERVALUE_CONDITION;
         else return EMPTY_STRING;
     }
-}
 
-////////////////////////////////////////////////
-// ConditionWidget
-////////////////////////////////////////////////
-namespace {
     template <typename enumT>
     std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
@@ -143,6 +267,9 @@ namespace {
     }
 }
 
+////////////////////////////////////////////////
+// ConditionWidget
+////////////////////////////////////////////////
 class ConditionWidget : public GG::Control {
 public:
     ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
@@ -973,8 +1100,7 @@ namespace {
 class ObjectPanel : public GG::Control {
 public:
     ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj,
-                bool expanded, bool has_contents, int indent,
-                const std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >& column_refs) :
+                bool expanded, bool has_contents, int indent) :
         Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_initialized(false),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
@@ -986,23 +1112,18 @@ public:
         m_icon(0),
         m_name_label(0),
         m_controls(0),
-        m_column_refs(column_refs),
+        m_column_val_cache(),
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
     }
 
     std::string         SortKey(std::size_t column) const {
-        if (column >= m_controls.size())
+        if (column >= m_column_val_cache.size())
+            RefreshCache();
+        if (column >= m_column_val_cache.size())
             return "";
-        std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >::const_iterator it = m_column_refs.begin();
-        std::advance(it, column);
-        ValueRef::ValueRefBase<std::string>* ref = it->first;
-        if (!ref)
-            return "";
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
-        ScriptingContext context(obj);
-        return ref->Eval(context);
+        return m_column_val_cache[column];
     }
 
     int                 ObjectID() const { return m_object_id; }
@@ -1094,6 +1215,7 @@ public:
     { m_has_contents = has_contents; }
 
     mutable boost::signals2::signal<void ()>  ExpandCollapseSignal;
+
 private:
     void                DoLayout() {
         if (!m_initialized)
@@ -1122,20 +1244,16 @@ private:
         // first column position dependent on indent (ie. left at start of loop)
         // second column position fixed equal to first column width value.
         // ie. reset left, not dependent on current left.
+        GG::Control* ctrl = m_controls[0];
+        GG::X width(GetColumnWidth(static_cast<int>(-1)) + GetColumnWidth(static_cast<int>(0)));
+        GG::X right = width;
+        ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
+        left = right + 2*PAD;
 
-        std::vector<int> col_widths = GetColumnWidths();
-
-        for (std::size_t i = 0; i < m_controls.size(); ++i) {
-            GG::Control* ctrl = m_controls[i];
-            GG::X right(GG::X1);
-            if (i == 0)
-                right = GG::X(col_widths[0]);   // fix first column width, independent of icon / dot positions, so later columns all line up
-            else
-                right = left + col_widths[i];
-
-            if (ctrl)
+        for (std::size_t i = 1; i < m_controls.size(); ++i) {
+            right = left + GetColumnWidth(static_cast<int>(i));
+            if (ctrl = m_controls[i])
                 ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
-
             left = right + PAD;
         }
     }
@@ -1152,41 +1270,39 @@ private:
         Refresh();
     }
 
-    std::vector<GG::Control*>   GetControls() {
-        std::vector<GG::Control*> retval;
-
-        std::vector<int> column_widths = GetColumnWidths();
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr clr = ClientUI::TextColor();
+    void                RefreshCache() const {
+        m_column_val_cache.clear();
+        m_column_val_cache.reserve(NUM_COLUMNS);
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         ScriptingContext context(obj);
 
-        for (std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >::const_iterator
-             it = m_column_refs.begin(); it != m_column_refs.end(); ++it)
-        {
-            GG::Control* control = 0;
+        // get currently displayed column value refs, put values into this panel's cache
+        for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
+            const ValueRef::ValueRefBase<std::string>* ref = GetColumnValueRef(static_cast<int>(i));
+            if (ref)
+                m_column_val_cache.push_back(ref->Eval(context));
+            else
+                m_column_val_cache.push_back("");
+        }
+    }
 
-            ValueRef::ValueRefBase<std::string>* ref = it->first;
-            if (!ref) {
-                control = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
-                                              ClientHeight(), "", font, clr, GG::FORMAT_LEFT);
-            } else {
-                // evaluate ValueRef to find contents to put in column
-                std::string col_val = ref->Eval(context);
-                control = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
-                                              ClientHeight(), col_val, font, clr, GG::FORMAT_LEFT);
-            }
+    std::vector<GG::Control*>   GetControls() {
+        std::vector<GG::Control*> retval;
+
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr clr = ClientUI::TextColor();
+
+        RefreshCache();
+
+        for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
+            const ValueRef::ValueRefBase<std::string>* ref = GetColumnValueRef(static_cast<int>(i));
+            std::string col_val = m_column_val_cache[i];
+            GG::Control* control = new GG::TextControl(GG::X0, GG::Y0, GG::X(GetColumnWidth(i)),
+                                                       ClientHeight(), col_val, font,
+                                                       clr, GG::FORMAT_LEFT);
             retval.push_back(control);
         }
 
-        return retval;
-    }
-
-    std::vector<int>            GetColumnWidths() {
-        std::vector<int> retval;
-        for (std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >::const_iterator
-             it = m_column_refs.begin(); it != m_column_refs.end(); ++it)
-        { retval.push_back(it->second); }
         return retval;
     }
 
@@ -1196,16 +1312,15 @@ private:
     bool    m_expanded;
     bool    m_has_contents;
 
-    GG::Button*                 m_expand_button;
-    GG::StaticGraphic*          m_dot;
-    MultiTextureStaticGraphic*  m_icon;
-    GG::TextControl*            m_name_label;
-    std::vector<GG::Control*>   m_controls;
+    GG::Button*                     m_expand_button;
+    GG::StaticGraphic*              m_dot;
+    MultiTextureStaticGraphic*      m_icon;
+    GG::TextControl*                m_name_label;
+    std::vector<GG::Control*>       m_controls;
 
-    const std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >&
-                                m_column_refs;
+    mutable std::vector<std::string>m_column_val_cache;
 
-    bool                        m_selected;
+    bool                            m_selected;
 };
 
 ////////////////////////////////////////////////
@@ -1215,7 +1330,7 @@ class ObjectRow : public GG::ListBox::Row {
 public:
     ObjectRow(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded,
               int container_object_panel, const std::set<int>& contained_object_panels,
-              int indent, const std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >& column_refs) :
+              int indent) :
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
         m_panel(0),
         m_container_object_panel(container_object_panel),
@@ -1223,7 +1338,7 @@ public:
     {
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
-        m_panel = new ObjectPanel(w, h, obj, expanded, !m_contained_object_panels.empty(), indent, column_refs);
+        m_panel = new ObjectPanel(w, h, obj, expanded, !m_contained_object_panels.empty(), indent);
         push_back(m_panel);
         GG::Connect(m_panel->ExpandCollapseSignal,  &ObjectRow::ExpandCollapseClicked, this);
     }
@@ -1252,8 +1367,6 @@ public:
     void                    Update()
     { m_panel->Refresh(); }
 
-    /** This function overridden because otherwise, rows don't expand
-      * larger than their initial size when resizing the list. */
     void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
@@ -1272,34 +1385,191 @@ private:
     std::set<int>       m_contained_object_panels;
 };
 
-namespace {
-    /** Direcly */
-    ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
-        return new ValueRef::Variable<std::string>(
-            ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token));
+////////////////////////////////////////////////
+// ObjectHeaderPanel
+////////////////////////////////////////////////
+class ObjectHeaderPanel : public GG::Control {
+public:
+    ObjectHeaderPanel(GG::X w, GG::Y h) :
+        Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+        m_controls()
+    {
+        SetChildClippingMode(ClipToClient);
     }
 
-    ValueRef::Variable<std::string>* UserStringValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup(
-            new ValueRef::Variable<std::string>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        const GG::Pt old_size = Size();
+        GG::Control::SizeMove(ul, lr);
+        if (old_size != Size())
+            DoLayout();
     }
 
-    template <typename T>
-    ValueRef::Variable<std::string>* StringCastedValueRef(const std::string& token) {
-        return new ValueRef::StringCast<T>(
-            new ValueRef::Variable<T>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+    virtual void    Render()
+    {}
+
+    void            Refresh() {
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr clr = ClientUI::TextColor();
+
+        for (std::vector<GG::Button*>::iterator it = m_controls.begin();
+             it != m_controls.end(); ++it)
+        { DeleteChild(*it); }
+        m_controls.clear();
+
+        std::vector<GG::Button*> controls = GetControls();
+        for (int i = 0; i < static_cast<int>(controls.size()); ++i) {
+            m_controls.push_back(controls[i]);
+            AttachChild(controls[i]);
+            GG::Connect(controls[i]->LeftClickedSignal, boost::bind(&ObjectHeaderPanel::ButtonLeftClicked, this, i-1));
+            if (i > 0)
+                GG::Connect(controls[i]->RightClickedSignal, boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
+        }
+
+        DoLayout();
     }
 
-    template <typename T>
-    ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup(
-            new ValueRef::StringCast<T>(
-                new ValueRef::Variable<T>(
-                    ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token))));
+    mutable boost::signals2::signal<void (int)> ColumnButtonLeftClickSignal;// column clicked, indicating that sorting should be redone
+    mutable boost::signals2::signal<void ()>    ColumnsChangedSignal;       // column contents or widths changed, requiring refresh of list
+
+private:
+    void                        DoLayout() {
+        GG::X left(GG::X0);
+        GG::Y top(GG::Y0);
+        GG::Y bottom(ClientHeight());
+
+        // loop through m_controls, positioning according to column widths.
+        for (std::size_t i = 0; i < m_controls.size(); ++i) {
+            GG::Button* ctrl = m_controls[i];
+            GG::X width(GetColumnWidth(static_cast<int>(i)-1));
+
+            GG::X right = left + width;
+
+            if (ctrl)
+                ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
+
+            left = right + PAD;
+        }
     }
-}
+
+    void                        ButtonLeftClicked(int column_id)
+    { ColumnButtonLeftClickSignal(column_id); }
+
+    void                        ButtonRightClicked(int column_id) {
+        //std::vector<std::string> all_templates = AllSitRepTemplateStrings();
+
+        //std::map<int, std::string> menu_index_templates;
+        //std::map<int, bool> menu_index_checked;
+        //int index = 1;
+        //bool all_checked = true;
+        //int ALL_INDEX = 9999;
+
+        //GG::MenuItem menu_contents;
+        //for (std::vector<std::string>::const_iterator it = all_templates.begin();
+        //     it != all_templates.end(); ++it, ++index)
+        //{
+        //    menu_index_templates[index] = *it;
+        //    bool check = true;
+        //    if (m_hidden_sitrep_templates.find(*it) != m_hidden_sitrep_templates.end()) {
+        //        check = false;
+        //        all_checked = false;
+        //    }
+        //    menu_index_checked[index] = check;
+        //    const std::string& menu_label = UserString(*it + "_LABEL");
+        //    menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+        //}
+        //menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
+        //                                   ALL_INDEX, false, false));
+
+        //GG::PopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(),
+        //                    ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+        //                    ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
+        //                    ClientUI::EditHiliteColor());
+        //if (!popup.Run())
+        //    return;
+        //int selected_menu_item = popup.MenuID();
+        //if (selected_menu_item == 0)
+        //    return; // nothing was selected
+
+        //if (selected_menu_item == ALL_INDEX) {
+        //    // select / deselect all templates
+        //    if (all_checked) {
+        //        // deselect all
+        //        for (std::vector<std::string>::const_iterator it = all_templates.begin();
+        //             it != all_templates.end(); ++it, ++index)
+        //        { m_hidden_sitrep_templates.insert(*it); }
+        //    } else {
+        //        // select all
+        //        m_hidden_sitrep_templates.clear();
+        //    }
+        //} else {
+        //    // select / deselect the chosen template
+        //    const std::string& selected_template_string = menu_index_templates[selected_menu_item];
+        //    if (menu_index_checked[selected_menu_item]) {
+        //        // disable showing this template string
+        //        m_hidden_sitrep_templates.insert(selected_template_string);
+        //    } else {
+        //        // re-enabled showing this template string
+        //        m_hidden_sitrep_templates.erase(selected_template_string);
+        //    }
+        //}
+        //Update();
+    }
+
+    std::vector<GG::Button*>    GetControls() {
+        std::vector<GG::Button*> retval;
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+
+        GG::Button* control = new CUIButton("-", GG::X0, GG::Y0,
+                                            GG::X(GetColumnWidth(-1)), font);
+        retval.push_back(control);
+
+        for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
+            std::string text;
+            const std::string& header_name = GetColumnName(static_cast<int>(i));
+            if (!header_name.empty())
+                text = UserString(header_name);
+            control = new CUIButton(text, GG::X0, GG::Y0,
+                                    GG::X(GetColumnWidth(static_cast<int>(i))),
+                                    font);
+            retval.push_back(control);
+        }
+
+        return retval;
+    }
+
+    std::vector<GG::Button*>    m_controls;
+};
+
+////////////////////////////////////////////////
+// ObjectHeaderRow
+////////////////////////////////////////////////
+class ObjectHeaderRow : public GG::ListBox::Row {
+public:
+    ObjectHeaderRow(GG::X w, GG::Y h) :
+        GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
+        m_panel(0)
+    {
+        m_panel = new ObjectHeaderPanel(w, h);
+        push_back(m_panel);
+    }
+
+    void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        const GG::Pt old_size = Size();
+        GG::ListBox::Row::SizeMove(ul, lr);
+        //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+        if (!empty() && old_size != Size() && m_panel)
+            m_panel->Resize(Size());
+    }
+
+    void                    Update()
+    { m_panel->Refresh(); }
+
+    mutable boost::signals2::signal<void (int)> ColumnHeaderLeftClickSignal;// column clicked, indicating that sorting should be redone
+    mutable boost::signals2::signal<void ()>    ColumnsChangedSignal;       // column contents or widths changed, requiring refresh of list
+
+private:
+     ObjectHeaderPanel* m_panel;
+};
 
 ////////////////////////////////////////////////
 // ObjectListBox
@@ -1312,7 +1582,7 @@ public:
         m_collapsed_objects(),
         m_filter_condition(0),
         m_visibilities(),
-        m_column_value_refs()
+        m_header_row(0)
     {
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
@@ -1334,31 +1604,21 @@ public:
         //m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
         //m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
-        m_column_value_refs.push_back(std::make_pair(StringValueRef("Name"),            18 * ClientUI::Pts()));
-        m_column_value_refs.push_back(std::make_pair(StringCastedValueRef<int>("ID"),   4  * ClientUI::Pts()));
-        m_column_value_refs.push_back(std::make_pair(UserStringValueRef("TypeName"),    8  * ClientUI::Pts()));
-        m_column_value_refs.push_back(std::make_pair(StringValueRef("OwnerName"),       10 * ClientUI::Pts()));
-        m_column_value_refs.push_back(std::make_pair(UserStringValueRef("Species"),     10 * ClientUI::Pts()));
-
+        m_header_row = new ObjectHeaderRow(GG::X1, ListRowHeight());
+        SetColHeaders(m_header_row);
 
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
-    virtual ~ObjectListBox() {
-        for (std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >::iterator
-             it = m_column_value_refs.begin(); it != m_column_value_refs.end(); ++it)
-        { delete it->first; }
-    }
-
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
-        CUIListBox::SizeMove(ul, lr);
-        //std::cout << "ObjectListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+        Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            //std::cout << "ObjectListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
             for (GG::ListBox::iterator it = begin(); it != end(); ++it)
                 (*it)->Resize(row_size);
+            m_header_row->Resize(row_size);
+            ListBox::AdjustScrolls(true);
         }
     }
 
@@ -1447,6 +1707,8 @@ public:
     void            Refresh() {
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
+
+        m_header_row->Update();
 
         const ObjectMap& objects = GetUniverse().Objects();
 
@@ -1687,7 +1949,7 @@ private:
             return;
         const GG::Pt row_size = ListRowSize();
         ObjectRow* object_row = new ObjectRow(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
-                                              container, contents, indent, m_column_value_refs);
+                                              container, contents, indent);
         this->Insert(object_row, it);
         object_row->Resize(row_size);
         GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,
@@ -1796,8 +2058,7 @@ private:
     std::set<int>                                       m_collapsed_objects;
     Condition::ConditionBase*                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;
-    std::vector<std::pair<ValueRef::ValueRefBase<std::string>*, int> >
-                                                        m_column_value_refs;
+    ObjectHeaderRow*                                    m_header_row;
 };
 
 ////////////////////////////////////////////////
@@ -1814,6 +2075,7 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     m_list_box = new ObjectListBox();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
+
     GG::Connect(m_list_box->SelChangedSignal,           &ObjectListWnd::ObjectSelectionChanged, this);
     GG::Connect(m_list_box->DoubleClickedSignal,        &ObjectListWnd::ObjectDoubleClicked,    this);
     GG::Connect(m_list_box->RightClickedSignal,         &ObjectListWnd::ObjectRightClicked,     this);
