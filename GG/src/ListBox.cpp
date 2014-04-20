@@ -637,7 +637,7 @@ bool ListBox::KeepColWidths() const
 { return m_keep_col_widths; }
 
 std::size_t ListBox::SortCol() const
-{ return (m_sort_col < m_col_widths.size() ? m_sort_col : 0); }
+{ return m_sort_col; }
 
 X ListBox::ColWidth(std::size_t n) const
 { return m_col_widths[n]; }
