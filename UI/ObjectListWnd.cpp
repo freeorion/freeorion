@@ -1962,10 +1962,10 @@ public:
             //std::cout << "old col: " << old_sort_col << "  clicked col " << clicked_column;
 
             if (old_sort_col == clicked_column) {
-                // if previously no sorting, switch to normal sort
                 // if previously descending sorting, switch to normal sort
+                // if previously no sorting, switch to descending sort
                 // if previously normal sort, switch to descending sort
-                if (old_style & (GG::LIST_NOSORT | GG::LIST_SORTDESCENDING)) {
+                if (old_style & GG::LIST_SORTDESCENDING) {
                     this->SetStyle(GG::LIST_NONE);
                     //std::cout << "  style set to none" << std::endl;
                 } else {
@@ -1974,7 +1974,7 @@ public:
                 }
             } else {
                 // no previously sorting on this column, so default to normal sorting
-                this->SetStyle(GG::LIST_NONE);
+                this->SetStyle(GG::LIST_SORTDESCENDING);
                 //std::cout << "  new column: " << clicked_column << "  style set to none" << std::endl;
             }
         }
