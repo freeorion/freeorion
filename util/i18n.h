@@ -32,4 +32,14 @@ FO_COMMON_API boost::format FlexibleFormat(const std::string& string_to_format);
     symbol for 5000. */
 FO_COMMON_API std::string RomanNumber(unsigned int n);
 
+/** Converts double to string with \a digits digits.  Represents large numbers
+  * with SI prefixes. */
+FO_COMMON_API std::string DoubleToString(double val, int digits, bool always_show_sign);
+
+/** Returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for
+  * positive values and -1 for negative values if their absolute value is
+  * larger than SMALL VALUE, and returns 0 for zero values or values with
+  * absolute value less than SMALL_UI_DISPLAY_VALUE */
+FO_COMMON_API int EffectiveSign(double val);
+
 #endif // _I18N_h_

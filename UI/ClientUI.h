@@ -242,18 +242,4 @@ struct StreamableColor {
 std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
-extern const double SMALL_UI_DISPLAY_VALUE;
-extern const double LARGE_UI_DISPLAY_VALUE;
-extern const double UNKNOWN_UI_DISPLAY_VALUE;
-
-/** Returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for
-  * positive values and -1 for negative values if their absolute value is
-  * larger than SMALL VALUE, and returns 0 for zero values or values with
-  * absolute value less than SMALL_UI_DISPLAY_VALUE */
-int EffectiveSign(double val);
-
-/** Converts double to string with \a digits digits.  Represents large numbers
-  * with SI prefixes. */
-std::string DoubleToString(double val, int digits, bool always_show_sign);
-
 #endif // _ClientUI_h_
