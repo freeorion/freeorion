@@ -1000,10 +1000,7 @@ namespace ValueRef {
     template <>
     std::string StringCast<int>::Eval(const ScriptingContext& context) const
     {
-        int temp = m_value_ref->Eval(context);
-        if (std::abs(temp) < 1000)
-            return boost::lexical_cast<std::string>(temp);
-        return DoubleToString(temp, 3, false);
+        return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
     }
 }
 
