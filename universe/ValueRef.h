@@ -1197,6 +1197,14 @@ bool ValueRef::StringCast<FromType>::operator==(const ValueRef::ValueRefBase<std
     return true;
 }
 
+namespace ValueRef {
+    template <>
+    std::string StringCast<double>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    std::string StringCast<int>::Eval(const ScriptingContext& context) const;
+}
+
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
 { return boost::lexical_cast<std::string>(m_value_ref->Eval(context)); }

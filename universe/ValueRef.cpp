@@ -20,6 +20,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+std::string DoubleToString(double val, int digits, bool always_show_sign);
+
 namespace {
     TemporaryPtr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
                                                        std::vector<std::string>::const_iterator last,
@@ -243,11 +245,15 @@ std::string ValueRef::ReconstructName(const std::vector<std::string>& property_n
 namespace ValueRef {
     template <>
     std::string Constant<int>::Description() const
-    { return boost::lexical_cast<std::string>(m_value); }   // might be nicer to return "DoubleToString(m_value, 3, false);" but this would require building ClientUI.cpp on the Server and AI client ...
+    {
+        if (std::abs(m_value) < 1000)
+            return boost::lexical_cast<std::string>(m_value);
+        return DoubleToString(m_value, 3, false);
+    }
 
     template <>
     std::string Constant<double>::Description() const
-    { return boost::lexical_cast<std::string>(m_value); }
+    { return DoubleToString(m_value, 3, false); }
 
     template <>
     std::string Constant<std::string>::Description() const
@@ -978,6 +984,27 @@ namespace ValueRef {
     }
 
 #undef IF_CURRENT_VALUE
+}
+
+///////////////////////////////////////////////////////////
+// StringCast                                            //
+///////////////////////////////////////////////////////////
+namespace ValueRef {
+    template <>
+    std::string StringCast<double>::Eval(const ScriptingContext& context) const
+    {
+        double temp = m_value_ref->Eval(context);
+        return DoubleToString(temp, 3, false);
+    }
+
+    template <>
+    std::string StringCast<int>::Eval(const ScriptingContext& context) const
+    {
+        int temp = m_value_ref->Eval(context);
+        if (std::abs(temp) < 1000)
+            return boost::lexical_cast<std::string>(temp);
+        return DoubleToString(temp, 3, false);
+    }
 }
 
 ///////////////////////////////////////////////////////////
