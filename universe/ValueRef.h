@@ -1247,7 +1247,7 @@ void ValueRef::StringCast<FromType>::serialize(Archive& ar, const unsigned int v
 template <class Archive>
 void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
