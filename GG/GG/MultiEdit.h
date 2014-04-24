@@ -213,6 +213,8 @@ protected:
         may be guaranteed not to change the text layout.  Without a call to
         this function, the scroll positions will be reset. */
     void PreserveTextPositionOnNextSetText();
+
+    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index);
     //@}
 
     /** The width used to create the control's vertical and horizontal

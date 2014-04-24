@@ -37,7 +37,7 @@ namespace {
     {
         EditedEcho(const std::string& name) : m_name(name) {}
         void operator()(const std::string& str)
-            { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")\n"; }
         std::string m_name;
     };
 
@@ -45,7 +45,7 @@ namespace {
     {
         InRange(CPSize value) : m_value(value) {}
         bool operator()(const std::pair<CPSize, CPSize>& p) const
-            { return p.first < m_value && m_value < p.second; }
+        { return p.first < m_value && m_value < p.second; }
         const CPSize m_value;
     };
 
@@ -315,22 +315,27 @@ std::pair<CPSize, CPSize> Edit::DoubleButtonDownCursorPos() const
 
 void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        X click_xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord of click within text space
-        CPSize idx = CharIndexOf(click_xpos);
-        m_cursor_pos.first = m_cursor_pos.second = idx;
-        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
-        if (word_indices.first != word_indices.second)
-            m_cursor_pos = word_indices;
-    }
+    if (Disabled())
+        return;
+    std::cout << "Edit::LButtonDown start" << std::endl;
+    X click_xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord of click within text space
+    CPSize idx = CharIndexOf(click_xpos);
+    std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
+    m_cursor_pos.first = m_cursor_pos.second = idx;
+    std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
+    std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
+    if (word_indices.first != word_indices.second)
+        m_cursor_pos = word_indices;
 }
 
 void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        X xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord for mouse position within text space
-        CPSize idx = CharIndexOf(xpos);
-        if (m_in_double_click_mode) {
+    if (Disabled())
+        return;
+
+    X xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord for mouse position within text space
+    CPSize idx = CharIndexOf(xpos);
+    if (m_in_double_click_mode) {
             std::pair<CPSize, CPSize> word_indices =
                 GetDoubleButtonDownDragWordIndices(idx);
             if (word_indices.first == word_indices.second) {
@@ -358,7 +363,6 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
             if (xpos < 0 || Size().x - 2 * PIXEL_MARGIN < xpos) // if we're dragging past the currently visible text
                 AdjustView();
         }
-    }
 }
 
 void Edit::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)

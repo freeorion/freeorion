@@ -199,7 +199,7 @@ protected:
         exists, the returned range will be empty (its .first and .second
         members will be equal).  This function should be called in
         LButtonDown() overrides. */
-    std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index);
+    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index);
 
     /** Returns the code point indices that delimit the word around index \a
         char_index.  If no such word exists, the returned range will be empty
@@ -220,7 +220,11 @@ protected:
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
         selected, caret is considered at .second) */
-    std::pair<CPSize, CPSize> m_cursor_pos;
+    std::pair<CPSize, CPSize>   m_cursor_pos;
+
+    unsigned int                m_last_button_down_time;
+    bool                        m_in_double_click_mode;
+    std::pair<CPSize, CPSize>   m_double_click_cursor_pos;
 
 private:
     void ClearSelected(); ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
@@ -232,10 +236,6 @@ private:
     Clr          m_sel_text_color;   ///< Color of selected text
 
     bool         m_recently_edited;  ///< The contents when the focus was last gained
-
-    unsigned int m_last_button_down_time;
-    bool         m_in_double_click_mode;
-    std::pair<CPSize, CPSize> m_double_click_cursor_pos;
 };
 
 void GG_API GetTranslatedCodePoint(Key key,

@@ -665,29 +665,64 @@ std::pair<std::size_t, CPSize> MultiEdit::LowCursorPos() const
     }
 }
 
+namespace {
+    struct InRange
+    {
+        InRange(CPSize value) : m_value(value) {}
+        bool operator()(const std::pair<CPSize, CPSize>& p) const
+        { return p.first < m_value && m_value < p.second; }
+        const CPSize m_value;
+    };
+}
+
+std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_index)
+{
+    unsigned int ticks = GUI::GetGUI()->Ticks();
+    if (ticks - this->m_last_button_down_time <= GUI::GetGUI()->DoubleClickInterval())
+        m_in_double_click_mode = true;
+    this->m_last_button_down_time = ticks;
+    this->m_double_click_cursor_pos = std::pair<CPSize, CPSize>(CP0, CP0);
+    if (m_in_double_click_mode) {
+        std::set<std::pair<CPSize, CPSize> > words;// =
+            GUI::GetGUI()->FindWords(Text());
+        std::set<std::pair<CPSize, CPSize> >::const_iterator it =
+            std::find_if(words.begin(), words.end(), InRange(char_index));
+        if (it != words.end())
+            this->m_double_click_cursor_pos = *it;
+    }
+    return this->m_double_click_cursor_pos;
+}
+
 void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
-
+    std::cout << "MultiEdit::LButtonDown start" << std::endl;
     // when a button press occurs, record the character position under the
     // cursor, and remove any previous selection range
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
+    std::cout << "MultiEdit::LButtonDown set cursor_being: " << m_cursor_begin.first << ", " << m_cursor_begin.second << std::endl;
 
-    std::pair<CPSize, CPSize> word_indices =
-        GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first, m_cursor_begin.second,
-                                                        GetLineData()));
-    if (word_indices.first != word_indices.second) {
-        m_cursor_begin = CharAt(word_indices.first);
-        m_cursor_end = CharAt(word_indices.second);
-    }
+    //std::pair<CPSize, CPSize> word_indices =
+    //    MultiEdit::GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first,
+    //                                                               m_cursor_begin.second,
+    //                                                               GetLineData()));
+    //std::cout << "MultiEdit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
+
+
+    //if (word_indices.first != word_indices.second) {
+    //    m_cursor_begin = CharAt(word_indices.first);
+    //    m_cursor_end = CharAt(word_indices.second);
+    //}
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    std::cout << "MultiEdit::LButtonDown set cursor begin, end, and pos" << std::endl;
 
     AdjustView();
+    std::cout << "MultiEdit::LButtonDown Adjusted view" << std::endl;
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
@@ -1013,7 +1048,7 @@ void MultiEdit::AdjustView()
     X horz_max = excess_width;
     Y vert_min(0);
     Y vert_max = excess_height;
-    
+
     if (format & FORMAT_RIGHT) {
         horz_min = -excess_width;
         horz_max = horz_min + m_contents_sz.x;
