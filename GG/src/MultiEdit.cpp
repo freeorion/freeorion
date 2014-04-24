@@ -697,18 +697,16 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (Disabled())
         return;
-    std::cout << "MultiEdit::LButtonDown start" << std::endl;
+
     // when a button press occurs, record the character position under the
     // cursor, and remove any previous selection range
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
-    std::cout << "MultiEdit::LButtonDown set cursor_being: " << m_cursor_begin.first << ", " << m_cursor_begin.second << std::endl;
 
     //std::pair<CPSize, CPSize> word_indices =
     //    MultiEdit::GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first,
     //                                                               m_cursor_begin.second,
     //                                                               GetLineData()));
-    //std::cout << "MultiEdit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
 
 
     //if (word_indices.first != word_indices.second) {
@@ -719,10 +717,8 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
-    std::cout << "MultiEdit::LButtonDown set cursor begin, end, and pos" << std::endl;
 
     AdjustView();
-    std::cout << "MultiEdit::LButtonDown Adjusted view" << std::endl;
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
