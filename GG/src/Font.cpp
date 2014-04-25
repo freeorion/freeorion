@@ -394,10 +394,13 @@ std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vecto
 {
     std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE);
     for (std::size_t i = 0; i < line_data.size(); ++i) {
-        if (line_data[i].char_data.front().code_point_index <= index &&
-            index <= line_data[i].char_data.back().code_point_index) {
+        const std::vector<Font::LineData::CharData>& char_data = line_data[i].char_data;
+        if (!char_data.empty() &&
+            char_data.front().code_point_index <= index &&
+            index <= char_data.back().code_point_index)
+        {
             retval.first = i;
-            retval.second = index - line_data[i].char_data.front().code_point_index;
+            retval.second = index - char_data.front().code_point_index;
             break;
         }
     }
