@@ -684,21 +684,26 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
         Y y = y_origin + static_cast<int>(i - begin_line) * m_lineskip;
         X x = x_origin;
 
+        CPSize start = CP0;
+        if (i == begin_line)
+            start = std::max(CP0, std::min(begin_char, CPSize(line.char_data.size() - 1)));
+        CPSize end = CPSize(line.char_data.size());
+        if (i == end_line - 1)
+            end = std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
+
         std::string::const_iterator string_end_it = text.end();
-        for (CPSize j = ((i == begin_line) ? begin_char : CP0);
-             j < ((i == end_line - 1) ? end_char : CPSize(line.char_data.size()));
-             ++j)
-        {
-            for (std::size_t k = 0; k < line.char_data[Value(j)].tags.size(); ++k) {
-                HandleTag(line.char_data[Value(j)].tags[k], orig_color, render_state);
+        for (CPSize j = start; j < end; ++j) {
+            const LineData::CharData& char_data = line.char_data[Value(j)];
+            for (std::size_t k = 0; k < char_data.tags.size(); ++k) {
+                HandleTag(char_data.tags[k], orig_color, render_state);
             }
-            boost::uint32_t c = utf8::peek_next(text.begin() + Value(line.char_data[Value(j)].string_index), string_end_it);
-            assert((text[Value(line.char_data[Value(j)].string_index)] == '\n') == (c == WIDE_NEWLINE));
+            boost::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
+            assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
             GlyphMap::const_iterator it = m_glyphs.find(c);
             if (it == m_glyphs.end())
-                x = x_origin + line.char_data[Value(j)].extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
+                x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
             else
                 x += RenderGlyph(Pt(x, y), it->second, &render_state);
         }
