@@ -138,20 +138,24 @@ void TextControl::Render()
 
 void TextControl::SetText(const std::string& str)
 {
+    if (!utf8::is_valid(str.begin(), str.end()))
+        return;
     m_text = str;
-    if (m_font) {
-        m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
-        m_text_elements.clear();
-        Pt text_sz =
-            m_font->DetermineLines(m_text, m_format, ClientSize().x, m_line_data, m_text_elements);
-        m_text_ul = Pt();
-        m_text_lr = text_sz;
-        AdjustMinimumSize();
-        if (m_fit_to_text) {
-            Resize(text_sz);
-        } else {
-            RecomputeTextBounds();
-        }
+
+    if (!m_font)
+        return;
+
+    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
+    m_text_elements.clear();
+    Pt text_sz =
+        m_font->DetermineLines(m_text, m_format, ClientSize().x, m_line_data, m_text_elements);
+    m_text_ul = Pt();
+    m_text_lr = text_sz;
+    AdjustMinimumSize();
+    if (m_fit_to_text) {
+        Resize(text_sz);
+    } else {
+        RecomputeTextBounds();
     }
 }
 
@@ -245,13 +249,15 @@ void TextControl::Erase(CPSize pos, CPSize num/* = CP1*/)
 void TextControl::Insert(std::size_t line, CPSize pos, char c)
 {
     if (!detail::ValidUTFChar<char>()(c))
-        throw utf8::invalid_utf8(c);
+        return;
     m_text.insert(Value(StringIndexOf(line, pos, m_line_data)), 1, c);
     SetText(m_text);
 }
 
 void TextControl::Insert(std::size_t line, CPSize pos, const std::string& s)
 {
+    if (!utf8::is_valid(s.begin(), s.end()))
+        return;
     m_text.insert(Value(StringIndexOf(line, pos, m_line_data)), s);
     SetText(m_text);
 }

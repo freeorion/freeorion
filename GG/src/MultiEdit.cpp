@@ -292,6 +292,9 @@ void MultiEdit::DeselectAll()
 
 void MultiEdit::SetText(const std::string& str)
 {
+    if (!utf8::is_valid(str.begin(), str.end()))
+        return;
+
     if (m_preserve_text_position_on_next_set_text) {
         TextControl::SetText(str);
     } else {

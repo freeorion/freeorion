@@ -225,7 +225,7 @@ void Edit::SetText(const std::string& str)
     m_cursor_pos.second = m_cursor_pos.first; // eliminate any hiliting
 
     // make sure the change in text did not make the cursor or view position invalid
-    if (str.empty() || GetLineData().empty() || GetLineData()[0].char_data.size() < m_cursor_pos.first) {
+    if (Text().empty() || GetLineData().empty() || GetLineData()[0].char_data.size() < m_cursor_pos.first) {
         m_first_char_shown = CP0;
         m_cursor_pos = std::make_pair(CP0, CP0);
     }
@@ -236,6 +236,8 @@ void Edit::SetText(const std::string& str)
 void Edit::AcceptPastedText(const std::string& text)
 {
     if (!Interactive())
+        return;
+    if (!utf8::is_valid(text.begin(), text.end()))
         return;
 
     bool emit_signal = false;
@@ -502,25 +504,22 @@ std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownWordIndices(CPSize char_index
     if (ticks - m_last_button_down_time <= GUI::GetGUI()->DoubleClickInterval())
         m_in_double_click_mode = true;
     m_last_button_down_time = ticks;
-    m_double_click_cursor_pos = std::pair<CPSize, CPSize>(CP0, CP0);
-    if (m_in_double_click_mode) {
-        std::set<std::pair<CPSize, CPSize> > words =
-            GUI::GetGUI()->FindWords(Text());
-        std::set<std::pair<CPSize, CPSize> >::const_iterator it =
-            std::find_if(words.begin(), words.end(), InRange(char_index));
-        if (it != words.end())
-            m_double_click_cursor_pos = *it;
-    }
+
+    m_double_click_cursor_pos = std::pair<CPSize, CPSize>(char_index, char_index);
+    if (m_in_double_click_mode)
+        m_double_click_cursor_pos = GetDoubleButtonDownDragWordIndices(char_index);
+
     return m_double_click_cursor_pos;
 }
 
 std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordIndices(CPSize char_index)
 {
-    std::pair<CPSize, CPSize> retval(CP0, CP0);
-    std::set<std::pair<CPSize, CPSize> > words =
-        GUI::GetGUI()->FindWords(Text());
+    std::pair<CPSize, CPSize> retval(char_index, char_index);
+
+    std::set<std::pair<CPSize, CPSize> > words = GUI::GetGUI()->FindWords(Text());
     std::set<std::pair<CPSize, CPSize> >::const_iterator it =
         std::find_if(words.begin(), words.end(), InRange(char_index));
+
     if (it != words.end())
         retval = *it;
     return retval;

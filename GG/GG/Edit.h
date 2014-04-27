@@ -206,7 +206,7 @@ protected:
         (its .first and .second members will be equal).  This function should
         be called in LDrag() overrides when InDoubleButtonDownMode() is
         true. */
-    std::pair<CPSize, CPSize> GetDoubleButtonDownDragWordIndices(CPSize char_index);
+    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownDragWordIndices(CPSize char_index);
 
     /** Sets the value of InDoubleButtonDownMode() to false.  This should be
         called in LClick() and LButtonUp() overrides. */
