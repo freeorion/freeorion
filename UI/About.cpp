@@ -50,30 +50,23 @@ About::About():
 About::~About()
 {}
 
-void About::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void About::KeyPress (GG::Key key, boost::uint32_t key_code_point,
+                      GG::Flags<GG::ModKey> mod_keys)
 {
-    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) {
+    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE))
         OnDone();
-    }
 }
 
 void About::OnDone()
-{
-    m_done = true;
-}
+{ m_done = true; }
 
 void About::OnLicense()
-{
-   m_info->SetText(m_license_str);
-}
+{ m_info->SetText(m_license_str); }
 
 void About::OnVision()
-{
-   m_info->SetText(UserString("FREEORION_VISION"));
-}
+{ m_info->SetText(UserString("FREEORION_VISION")); }
 
-void About::DoLayout(void)
-{
+void About::DoLayout(void) {
     GG::X HORIZONTAL_SPACING(5);
     GG::Y VERTICAL_SPACING(5);
     GG::X BUTTON_WIDTH(95);
