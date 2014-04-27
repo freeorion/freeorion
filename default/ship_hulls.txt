@@ -2840,6 +2840,8 @@ Hull
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
             ]
+            activation =
+                InSystem
             effects = [
                 AddSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
                 RemoveSpecial "SUPERNOVA_SPECIAL"
