@@ -240,23 +240,30 @@ void Edit::AcceptPastedText(const std::string& text)
     if (!utf8::is_valid(text.begin(), text.end()))
         return;
 
-    bool emit_signal = false;
+    bool modified_text = false;
 
     if (MultiSelected()) {
         ClearSelected();
-        emit_signal = true;
+        modified_text = true;
         m_cursor_pos.second = m_cursor_pos.first;
     }
 
     if (!text.empty()) {
-        Insert(0, m_cursor_pos.first, text);
-        emit_signal = true;
+        Insert(m_cursor_pos.first, text);
+        modified_text = true;
     }
 
-    if (emit_signal) {
-        m_cursor_pos.second += text.length();       // moves cursor to end of pasted text
-        m_cursor_pos.first = m_cursor_pos.second;   // ensures nothing is selected after pasting
-        EditedSignal(Text());                       // notifies rest of GUI of change to text in this Edit
+    if (modified_text) {
+        // moves cursor to end of pasted text
+        CPSize text_span(utf8::distance(text.begin(), text.end()));
+        CPSize new_cursor_pos = std::max(CP0, std::min(Length() - 1, m_cursor_pos.second + text_span));
+        m_cursor_pos.second = new_cursor_pos;
+
+        // ensure nothing is selected after pasting
+        m_cursor_pos.first = m_cursor_pos.second;
+
+        // notify rest of GUI of change to text in this Edit
+        EditedSignal(Text());
     }
 }
 

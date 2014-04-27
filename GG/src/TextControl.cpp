@@ -88,12 +88,19 @@ std::string TextControl::Text(CPSize from, CPSize to) const
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
-    CPSize low = std::max(CPSize(0), std::min(from, to));
+    CPSize low = std::max(CP0, std::min(from, to));
     CPSize high = std::min(Length(), std::max(from, to));
 
-    std::string::const_iterator it = m_text.begin() + Value(low);
-    std::string::const_iterator end_it = m_text.begin() + Value(high);
-    return std::string(it, end_it);
+    std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, GetLineData());
+    std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, GetLineData());
+
+    StrSize low_string_idx = StringIndexOf(low_pos.first, low_pos.second, GetLineData());
+    StrSize high_string_idx = StringIndexOf(high_pos.first, high_pos.second, GetLineData());
+
+    std::string::const_iterator low_it = m_text.begin() + Value(low_string_idx);
+    std::string::const_iterator high_it = m_text.begin() + Value(high_string_idx);
+
+    return std::string(low_it, high_it);
 }
 
 Flags<TextFormat> TextControl::GetTextFormat() const
