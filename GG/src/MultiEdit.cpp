@@ -185,37 +185,41 @@ void MultiEdit::Render()
     Flags<TextFormat> text_format = TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM) | FORMAT_VCENTER;
     const std::vector<Font::LineData>& lines = GetLineData();
     GetFont()->ProcessTagsBefore(lines, state, first_visible_row, CP0);
+
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
-        Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < 0) ? 
-            cl_ul.y + static_cast<int>(row) * GetFont()->Lineskip() - m_first_row_shown : 
-            cl_lr.y - static_cast<int>(lines.size() - row) * GetFont()->Lineskip() - m_first_row_shown + 
-            (m_vscroll && m_hscroll ? BottomMargin() : Y0);
+        Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < 0) ?
+            cl_ul.y + static_cast<int>(row) * GetFont()->Lineskip() - m_first_row_shown :
+            cl_lr.y - static_cast<int>(lines.size() - row) * GetFont()->Lineskip() -
+                m_first_row_shown + (m_vscroll && m_hscroll ? BottomMargin() : Y0);
+
         Pt text_pos(cl_ul.x + RowStartX(row), row_y_pos);
         X initial_text_x_pos = text_pos.x;
 
-        if (!lines[row].Empty())
-        {
-            // if one or more chars of this row are selected, highlight, then draw the range in the selected-text color
+        const Font::LineData& line = lines[row];
+        if (!line.Empty()) {
+            // if one or more chars of this row are selected, highlight, then
+            // draw the range in the selected-text color
             std::pair<std::size_t, CPSize> low_cursor_pos  = LowCursorPos();
             std::pair<std::size_t, CPSize> high_cursor_pos = HighCursorPos();
+
             if (low_cursor_pos.first <= row && row <= high_cursor_pos.first && MultiSelected()) {
                 // idx0 to idx1 is unhilited, idx1 to idx2 is hilited, and
                 // idx2 to idx3 is unhilited; each range may be empty
                 CPSize idx0(0);
                 CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
-                CPSize idx3(lines[row].char_data.size());
+                CPSize idx3(line.char_data.size());
                 if (LineEndsWithEndlineCharacter(lines, row, Text()))
                     --idx3;
                 CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // draw text
                 glColor(text_color_to_use);
-                Pt text_lr((idx0 != idx1 ? initial_text_x_pos + lines[row].char_data[Value(idx1 - 1)].extent : text_pos.x), text_pos.y + GetFont()->Height());
+                Pt text_lr((idx0 != idx1 ? initial_text_x_pos + line.char_data[Value(idx1 - 1)].extent : text_pos.x), text_pos.y + GetFont()->Height());
                 GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw hiliting
-                text_lr.x = idx1 != idx2 ? initial_text_x_pos + lines[row].char_data[Value(idx2 - 1)].extent : text_lr.x;
+                text_lr.x = idx1 != idx2 ? initial_text_x_pos + line.char_data[Value(idx2 - 1)].extent : text_lr.x;
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + GetFont()->Lineskip()), hilite_color_to_use, CLR_ZERO, 0);
                 // draw hilited text
                 glColor(sel_text_color_to_use);
@@ -223,17 +227,22 @@ void MultiEdit::Render()
                 text_pos.x = text_lr.x;
 
                 glColor(text_color_to_use);
-                text_lr.x = idx2 != idx3 ? initial_text_x_pos + lines[row].char_data[Value(idx3 - 1)].extent : text_lr.x;
+                text_lr.x = idx2 != idx3 ? initial_text_x_pos + line.char_data[Value(idx3 - 1)].extent : text_lr.x;
                 GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx2, row + 1, idx3);
             } else { // just draw normal text on this line
-                Pt lr = text_pos + Pt(lines[row].char_data.back().extent, GetFont()->Height());
+                Pt lr = text_pos + Pt(line.char_data.back().extent, GetFont()->Height());
                 glColor(text_color_to_use);
-                GetFont()->RenderText(text_pos, lr, Text(), text_format, lines, state, row, CP0, row + 1, CPSize(lines[row].char_data.size()));
+                GetFont()->RenderText(text_pos, lr, Text(), text_format, lines, state, row, CP0, row + 1, CPSize(line.char_data.size()));
             }
         }
-        // if there's no selected text, but this row contains the caret (and MULTI_READ_ONLY is not in effect)
+
+        // if there's no selected text, but this row contains the caret (and
+        // MULTI_READ_ONLY is not in effect)
         if (GUI::GetGUI()->FocusWnd() == this &&
-            !MultiSelected() && m_cursor_begin.first == row && !(m_style & MULTI_READ_ONLY)) {
+            !MultiSelected() &&
+            m_cursor_begin.first == row &&
+            !(m_style & MULTI_READ_ONLY))
+        {
             X caret_x = CharXOffset(m_cursor_begin.first, m_cursor_begin.second) + initial_text_x_pos;
             glDisable(GL_TEXTURE_2D);
             glColor(text_color_to_use);
@@ -474,14 +483,18 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 {
     std::pair<std::size_t, CPSize> retval(0, CP0);
-    if (idx <= Text().size()) {
-        const std::vector<Font::LineData>& lines = GetLineData();
-        retval = LinePositionOf(idx, lines);
-        if (retval.second == INVALID_CP_SIZE) {
-            retval.first = lines.size() - 1;
-            retval.second = CPSize(lines.back().char_data.size());
-        }
+    if (idx > Text().size())
+        return retval;
+
+    const std::vector<Font::LineData>& lines = GetLineData();
+
+    retval = LinePositionOf(idx, lines);
+
+    if (retval.second == INVALID_CP_SIZE) {
+        retval.first = lines.size() - 1;
+        retval.second = CPSize(lines.back().char_data.size());
     }
+
     return retval;
 }
 
@@ -706,22 +719,9 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
 
-    //std::pair<CPSize, CPSize> word_indices =
-    //    MultiEdit::GetDoubleButtonDownWordIndices(CodePointIndexOf(m_cursor_begin.first,
-    //                                                               m_cursor_begin.second,
-    //                                                               GetLineData()));
-
-
-    //if (word_indices.first != word_indices.second) {
-    //    m_cursor_begin = CharAt(word_indices.first);
-    //    m_cursor_end = CharAt(word_indices.second);
-    //}
-
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
-
-    AdjustView();
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
@@ -734,10 +734,13 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = CharAt(click_pos);
 
-    if (InDoubleButtonDownMode()) {
+    if (m_in_double_click_mode) {
+        // if drag-selecting after a double click, select full words
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
+
         CPSize idx = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
         std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
+
         std::pair<CPSize, CPSize> final_indices;
         if (word_indices.first == word_indices.second) {
             if (idx < initial_indices.first) {
@@ -766,7 +769,8 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
 
-    // if we're dragging past the currently visible text, adjust the view so more text can be selected
+    // if dragging past the currently visible text, adjust
+    // the view so more text can be selected
     if (click_pos.x < 0 || click_pos.x > ClientSize().x ||
         click_pos.y < 0 || click_pos.y > ClientSize().y)
     { AdjustView(); }
@@ -1249,11 +1253,14 @@ void MultiEdit::AdjustScrolls()
         Connect(m_hscroll->ScrolledSignal, &MultiEdit::HScrolled, this);
     }
 
-    // if the new client dimensions changed after adjusting the scrolls, they are unequal to the extent of the text,
-    // and there is some kind of wrapping going on, we need to re-SetText()
+    // if the new client dimensions changed after adjusting the scrolls,
+    // they are unequal to the extent of the text, and there is some kind
+    // of wrapping going on, we need to re-SetText()
     Pt new_cl_sz = ClientSize();
-    if (orig_cl_sz != new_cl_sz && (new_cl_sz.x != m_contents_sz.x || new_cl_sz.y != m_contents_sz.y) && 
-        (m_style & (MULTI_WORDBREAK | MULTI_LINEWRAP))) {
+    if (orig_cl_sz != new_cl_sz &&
+        (new_cl_sz.x != m_contents_sz.x || new_cl_sz.y != m_contents_sz.y) &&
+        (m_style & (MULTI_WORDBREAK | MULTI_LINEWRAP)))
+    {
         SetText(Text());
     }
 }
