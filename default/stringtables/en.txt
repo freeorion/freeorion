@@ -3555,6 +3555,15 @@ Expand All
 ## Objects Columns ##
 #####################
 
+COLUMN_SORT_NONE
+%1%
+
+COLUMN_SORT_ASCENDING
+%1% △
+
+COLUMN_SORT_DESCENDING
+%1% ▽
+
 METERS_SUBMENU
 Meters
 
@@ -3565,7 +3574,7 @@ NAME
 Name
 
 OWNER
-Owner
+%1% ▽
 
 SPECIES
 Species
@@ -10802,7 +10811,7 @@ Nit
 Nitzer
 Nivrim
 Niyat
-Njord 
+Njord
 Nocobi
 Nodus
 Nordia
