@@ -22,10 +22,16 @@
   * the tag name of "planet" and substitute the name of the planet in the game
   * universe with the appropriate ID number that is stored in that VarText
   * entry.
+  * 
+  * If you need to use more than one item of the same type, you must label
+  * the tags. For example: %planet:my_planet% crashed into %planet:other_planet%.
+  * That will look for the xml elements "my_planet" and "other_planet" and
+  * do the planet lookup for them.
   *
   * An example of VarText implementation are SitReps. They are created by the
   * server which knows nothing about what the final string will look like.
-  * ClientUI.cpp ultimately generates a string from the variables. */
+  * ClientUI.cpp ultimately generates a string from the variables. 
+  */
 class FO_COMMON_API VarText {
 public:
     /** \name Structors */ //@{
