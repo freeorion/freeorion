@@ -175,6 +175,7 @@ set (freeorioncommon_HEADER
     util/blocking_combiner.h
     util/DataTable.h
     util/Directories.h
+    util/EnumText.h
     util/i18n.h
     util/Logger.h
     util/Math.h
@@ -186,6 +187,7 @@ set (freeorioncommon_HEADER
     util/OrderSet.h
     util/Process.h
     util/Random.h
+    util/SaveGamePreviewUtils.h
     util/ScopedTimer.h
     util/Serialize.h
     util/Serialize.ipp
@@ -241,6 +243,7 @@ set (freeorioncommon_SOURCE
     util/AppInterface.cpp
     util/DataTable.cpp
     util/Directories.cpp
+    util/EnumText.cpp
     util/i18n.cpp
     util/Logger.cpp
     util/Math.cpp
@@ -251,6 +254,7 @@ set (freeorioncommon_SOURCE
     util/OrderSet.cpp
     util/Process.cpp
     util/Random.cpp
+    util/SaveGamePreviewUtils.cpp
     util/ScopedTimer.cpp
     util/SerializeEmpire.cpp
     util/SerializeModeratorAction.cpp

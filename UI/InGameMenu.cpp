@@ -142,26 +142,36 @@ void InGameMenu::Save() {
     }
 
     const std::string SAVE_GAME_EXTENSION =
-        HumanClientApp::GetApp()->SinglePlayerGame() ?
+        app->SinglePlayerGame() ?
         SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
 
-    std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::make_pair(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
-
     try {
-        Logger().debugStream() << "... running save file dialog";
-        SaveFileDialog dlg(SAVE_GAME_EXTENSION);
-        dlg.Run();
-        if (!dlg.Result().empty()) {
+        
+        std::string filename;
+        
+        // When saving in multiplayer, you cannot see the old saves or
+        // browse directories, only give a save file name.
+        if(app->SinglePlayerGame()){
+            
+            Logger().debugStream() << "... running save file dialog";
+            SaveFileDialog dlg(SAVE_GAME_EXTENSION);
+            dlg.Run();
+            filename = dlg.Result();
+        }else{
+            /// Multiplayer save. Talk to the server.
+            filename = app->SelectSaveFile();
+        }
+        if (!filename.empty()) {
             if (!app->CanSaveNow()) {
                 Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
                 throw std::runtime_error(UserString("UNABLE_TO_SAVE_NOW_TRY_AGAIN"));
             }
-            Logger().debugStream() << "... initiating save to " << dlg.Result() ;
-            app->SaveGame(dlg.Result());
+            Logger().debugStream() << "... initiating save to " << filename ;
+            app->SaveGame(filename);
             CloseClicked();
             Logger().debugStream() << "... save done";
         }
+    
     } catch (const std::exception& e) {
         Logger().errorStream() << "Exception thrown attempting save: " << e.what();
         ClientUI::MessageBox(e.what(), true);

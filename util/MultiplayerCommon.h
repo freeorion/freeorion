@@ -12,6 +12,7 @@
 #include <vector>
 
 
+
 class System;
 class XMLElement;
 
@@ -162,21 +163,18 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
         m_new_game(true),
-        m_save_file_index(-1),
         m_players(),
-        m_save_games(),
+        m_save_game(),
         m_save_game_empire_data()
     {}
-    explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
     //@}
 
     std::string Dump() const;
 
     bool                                        m_new_game;
-    int                                         m_save_file_index;
     std::list<std::pair<int, PlayerSetupData> > m_players;              // <player_id, PlayerSetupData>
 
-    std::vector<std::string>                    m_save_games;
+    std::string                                 m_save_game;            //< File name of a save file
     std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id
 
 private:
@@ -299,35 +297,6 @@ struct CombatSetupGroup {
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Contains preview information about a savegame.
- */
-struct FO_COMMON_API SaveGamePreviewData {
-    /// Initialize with unknown markers.
-    SaveGamePreviewData();
-
-    /// Checks that this is a valid preview
-    bool Valid() const;
-
-    /// A marker for the presence of the header
-    static const short PREVIEW_PRESENT_MARKER = 0xDA;
-    /// This should always contain PREVIEW_PRESENT_MARKER
-    short magic_number;
-    
-    /// The name of the hosting player, or the single human player in single player games
-    std::string main_player_name;
-    /// The name of the empire of the main player
-    std::string main_player_empire_name;
-    /// The colour of the empire of the main player
-    GG::Clr main_player_empire_colour;
-    /// The turn the game as saved one
-    int current_turn;
-    /// The time the game was saved as ISO 8601 YYYY-MM-DD"T"HH:MM:SS±HH:MM or Z
-    std::string save_time;
-
-    template <class Archive>
-    void serialize ( Archive& ar, unsigned int version );
 };
 
 // Note: *::serialize() implemented in SerializeMultiplayerCommon.cpp.

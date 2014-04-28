@@ -43,7 +43,7 @@ private:
     void            Init();
     void            NewLoadClicked(std::size_t idx);
     void            GalaxySetupPanelChanged();
-    void            SaveGameChanged(GG::DropDownList::iterator it);
+    void            SaveGameBrowse();
     void            PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void            PlayerDataChangedLocally();
     bool            PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
@@ -60,7 +60,8 @@ private:
     CUIEdit*                m_chat_input_edit;
     GG::RadioButtonGroup*   m_new_load_game_buttons;
     GalaxySetupPanel*       m_galaxy_setup_panel;
-    CUIDropDownList*        m_saved_games_list;
+    GG::TextControl*        m_save_file_text;
+    CUIButton*              m_browse_saves_btn;
     GG::StaticGraphic*      m_preview_image;
     GG::TextControl*        m_players_lb_player_type_label;
     GG::TextControl*        m_players_lb_player_name_column_label;

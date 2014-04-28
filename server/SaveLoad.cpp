@@ -10,11 +10,13 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
+#include "../util/SaveGamePreviewUtils.h"
 #include "../util/Serialize.h"
 #include "../combat/CombatLogManager.h"
 
@@ -50,22 +52,43 @@ namespace {
         
         typedef std::vector<PlayerSaveGameData>::const_iterator player_iterator;
         
-        // Find the human player
-        const PlayerSaveGameData* the_player;
-        for(player_iterator it = player_save_game_data.begin(); it != player_save_game_data.end(); ++it){
-            if(it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER){
-                the_player = &(*it);
+        // First compile the non-player related data
+        preview.current_turn = server_save_game_data.m_current_turn;
+        preview.number_of_empires = empire_save_game_data.size();
+        preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
+        
+        if (player_save_game_data.empty()) {
+            preview.main_player_name = "No players.";
+            preview.main_player_empire_name ="No players";
+        } else {
+            // Consider the first player the main player
+            const PlayerSaveGameData* the_player = &(*player_save_game_data.begin());
+            
+            // If there are human players, the first of them should be the main player
+            short humans = 0;
+            for (player_iterator it = player_save_game_data.begin(); it != player_save_game_data.end(); ++it) {
+                if (it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                    if (the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                       the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                       the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR
+                    ){ 
+                        the_player = &(*it);
+                    }
+                    ++humans;
+                }
+            }
+            
+            preview.main_player_name = the_player->m_name;
+            preview.number_of_human_players = humans;
+            
+            // Find the empire of the player, if it has one
+            std::map<int, SaveGameEmpireData>::const_iterator the_empire = empire_save_game_data.find(the_player->m_empire_id);
+            if ( the_empire != empire_save_game_data.end()) {
+                preview.main_player_empire_name = the_empire->second.m_empire_name;
+                preview.main_player_empire_colour = the_empire->second.m_color;
             }
         }
-               
-        // Find the empire of the player
-        std::map<int, SaveGameEmpireData>::const_iterator the_empire = empire_save_game_data.find(the_player->m_empire_id);
         
-        preview.current_turn = server_save_game_data.m_current_turn;
-        preview.main_player_name = the_player->m_name;
-        preview.main_player_empire_name = the_empire->second.m_empire_name;
-        preview.main_player_empire_colour = the_empire->second.m_color;
-        preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
     }
     
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
@@ -75,8 +98,9 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
               const std::vector<PlayerSaveGameData>& player_save_game_data,
               const Universe& universe, const EmpireManager& empire_manager,
               const SpeciesManager& species_manager, const CombatLogManager& combat_log_manager,
-              const GalaxySetupData& galaxy_setup_data)
+              const GalaxySetupData& galaxy_setup_data, bool multiplayer)
 {
+    Logger().debugStream() << "SaveGame:: filename: " << filename;
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
@@ -92,6 +116,19 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 #else
         fs::path path = fs::path(filename);
 #endif
+        // A relative path should be relative to the save directory.
+        if (path.is_relative()) {
+            path = GetSaveDir()/path;
+            Logger().debugStream() << "Made save path relative to save dir. Is now: " << path;
+        }
+        
+        if (multiplayer) {
+            // Make sure the path points into our save directory
+            if(!IsInside(path, GetSaveDir())){
+                path = GetSaveDir() / path.filename();
+            }
+        }
+        
         fs::ofstream ofs(path, std::ios_base::binary);
 
         if (!ofs)
@@ -248,6 +285,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 #else
         fs::path path = fs::path(filename);
 #endif
+        Logger().debugStream() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
         fs::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)

@@ -8,6 +8,7 @@
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
+#include "../util/SaveGamePreviewUtils.h"
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
@@ -503,6 +504,19 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
 Message ShutdownServerMessage(int sender)
 { return Message(Message::SHUT_DOWN_SERVER, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
 
+/** requests previews of savefiles from server synchronously */
+Message RequestSavePreviewsMessage(int sender, std::string directory)
+{ return Message(Message::REQUEST_SAVE_PREVIEWS, sender, Networking::INVALID_PLAYER_ID, directory); }
+
+/** returns the savegame previews to the client */
+Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& previews) {
+    std::ostringstream os;
+    {
+        freeorion_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(previews);
+    }
+    return Message(Message::DISPATCH_SAVE_PREVIEWS, Networking::INVALID_PLAYER_ID, receiver, os.str(), true);
+}
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -963,6 +977,25 @@ void ExtractMessageData(const Message& msg, TemporaryPtr<System> system,
                                << "Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractMessageData(const Message& msg, std::string& directory) {
+    directory = msg.Text();
+}
+
+void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
+    try{
+        std::istringstream is(msg.Text());
+        freeorion_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(previews);
+    }catch(const std::exception& err){
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, PreviewInformation& previews"
+        << ") failed!  "
+        << "Message:\n"
+        << msg.Text() << "\n"
+        << "Error: " << err.what();
         throw err;
     }
 }

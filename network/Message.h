@@ -27,6 +27,7 @@ struct MultiplayerLobbyData;
 class OrderSet;
 struct PlayerInfo;
 struct SaveGameUIData;
+struct PreviewInformation;
 struct GalaxySetupData;
 struct SinglePlayerSetupData;
 class ShipDesign;
@@ -92,7 +93,9 @@ public:
         PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
-        SHUT_DOWN_SERVER        ///< sent by host client to server to kill the server process
+        SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
+        REQUEST_SAVE_PREVIEWS,  ///< sent by client to request previews of available savegames
+        DISPATCH_SAVE_PREVIEWS  ///< sent by host to client to provide the savegame previews
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -329,6 +332,12 @@ FO_COMMON_API Message ModeratorActionMessage(int sender, const Moderator::Modera
 /** tells server to shut down. */
 FO_COMMON_API Message ShutdownServerMessage(int sender);
 
+/** requests previews of savefiles from server */
+FO_COMMON_API Message RequestSavePreviewsMessage(int sender, std::string directory);
+
+/** returns the savegame previews to the client */
+FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& preview);
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -428,5 +437,9 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, CombatData& combat_dat
 
 void ExtractMessageData(const Message& msg, System*& system,
                         std::map<int, UniverseObject*>& combat_universe);
+
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
+
+FO_COMMON_API void ExtractMessageData(const Message& msg, PreviewInformation& previews);
 
 #endif // _Message_h_

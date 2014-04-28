@@ -22,6 +22,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
+#include "../util/SaveGamePreviewUtils.h"
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
 
@@ -50,6 +51,22 @@ namespace {
                 if (*enemy_it != empire_id)
                     return *enemy_it;
         return ALL_EMPIRES;
+    }
+    
+    /// Generates information on the subdirectories of the save directory
+    void ListSaveSubdirectories(std::vector<std::string>& list) {
+        fs::recursive_directory_iterator end;
+        std::string savedir = fs::canonical(GetSaveDir()).generic_string();
+        for (fs::recursive_directory_iterator it(GetSaveDir()); it != end; ++it) {
+            if (fs::is_directory(it->path())) {
+                std::string subdirectory = it->path().generic_string();
+                if (subdirectory.find(savedir) == 0){
+                    list.push_back(subdirectory.substr(savedir.length()));
+                } else {
+                    Logger().errorStream() << "ListSaveSubfolders Expected a subdirectory of " << GetSaveDir() << " got " << subdirectory;
+                }
+            }
+        }
     }
 };
 ////////////////////////////////////////////////
@@ -355,6 +372,8 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
 
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
+    case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
+    
     default:
         Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);
@@ -741,6 +760,34 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     }
 
     LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, server_save_game_data);
+}
+
+void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection){
+    Logger().debugStream() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
+
+    std::string directory_name;
+    ExtractMessageData(msg, directory_name);
+
+    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
+    
+    fs::path directory = GetSaveDir() / directory_name;
+    // Do not allow a relative path to lead outside the save directory.
+    if(!IsInside(directory, GetSaveDir())) {
+        Logger().errorStream() << "ServerApp::UpdateSavePreviews: Tried to load previews from "
+                               << directory_name
+                               << " which is outside the allowed save directory. Defaulted to the save directory, "
+                               << directory;
+        directory = GetSaveDir();
+        directory_name = ".";
+    }
+    
+    PreviewInformation preview_information;
+    preview_information.folder = directory_name;
+    ListSaveSubdirectories( preview_information.subdirectories);
+    LoadSaveGamePreviews(directory_name, m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION, preview_information.previews);
+    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
+    player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
+    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
 namespace {

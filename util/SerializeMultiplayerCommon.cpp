@@ -79,9 +79,8 @@ void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
         & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_save_file_index)
         & BOOST_SERIALIZATION_NVP(m_players)
-        & BOOST_SERIALIZATION_NVP(m_save_games)
+        & BOOST_SERIALIZATION_NVP(m_save_game)
         & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
 }
 
@@ -149,17 +148,3 @@ void CombatSetupGroup::serialize(Archive & ar, const unsigned int version)
 
 template void CombatSetupGroup::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
 template void CombatSetupGroup::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
-
-template<class Archive>
-void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(magic_number)
-    & BOOST_SERIALIZATION_NVP(main_player_name)
-    & BOOST_SERIALIZATION_NVP(main_player_empire_name)
-    & BOOST_SERIALIZATION_NVP(main_player_empire_colour)
-    & BOOST_SERIALIZATION_NVP(save_time)
-    & BOOST_SERIALIZATION_NVP(current_turn);
-}
-
-template void SaveGamePreviewData::serialize<freeorion_oarchive>(freeorion_oarchive&, unsigned int);
-template void SaveGamePreviewData::serialize<freeorion_iarchive>(freeorion_iarchive&, unsigned int);

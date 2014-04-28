@@ -316,44 +316,7 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 ////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////
-MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
-    m_new_game(true),
-    m_save_file_index(-1),
-    m_players(),
-    m_save_games(),
-    m_save_game_empire_data()
-{
-    if (!build_save_game_list)
-        return;
 
-    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData(true)";
-
-    // build a list of save files
-    fs::path save_dir(GetSaveDir());
-    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << PathString(save_dir);
-    fs::directory_iterator end_it;
-    for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-        try {
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-            if (fs::exists(*it) && !fs::is_directory(*it) && PathString(it->path().filename())[0] != '.') {
-                std::string filename = PathString(it->path().filename());
-#else
-            if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename()[0] != '.') {
-                std::string filename = it->path().filename();
-#endif
-                // disallow filenames that begin with a dot, and filenames with spaces in them
-                if (filename.find('.') != 0 && filename.find(' ') == std::string::npos &&
-                    filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
-                    m_save_games.push_back(filename);
-                }
-            }
-        } catch (const fs::filesystem_error& e) {
-            // ignore files for which permission is denied, and rethrow other exceptions
-            if (e.code() != boost::system::posix_error::permission_denied)
-                throw;
-        }
-    }
-}
 
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
@@ -554,15 +517,3 @@ bool PointInRegion(double point[2], const CombatSetupRegion& region)
     }
     return retval;
 }
-
-
-SaveGamePreviewData::SaveGamePreviewData():
-magic_number(PREVIEW_PRESENT_MARKER),
-main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
-main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
-current_turn(-1) {}
-
-bool SaveGamePreviewData::Valid() const {
-    return magic_number == SaveGamePreviewData::PREVIEW_PRESENT_MARKER && current_turn >= -1 ;
-}
-

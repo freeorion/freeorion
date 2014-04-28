@@ -34,6 +34,7 @@ namespace {
     const GG::Y PLAYER_ROW_HEIGHT(22);
     const GG::Y ROW_HEIGHT_PAD(6);
     const GG::X EMPIRE_NAME_WIDTH(150);
+    const GG::X BROWSE_BTN_WIDTH(50);
 
     // Shows information about a single player in the mulitplayer lobby.
     // This inclues whether the player is a human or AI player, or an observer,
@@ -382,7 +383,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_chat_input_edit(0),
     m_new_load_game_buttons(0),
     m_galaxy_setup_panel(0),
-    m_saved_games_list(0),
+    m_browse_saves_btn(0),
     m_preview_image(0),
     m_players_lb_player_name_column_label(0),
     m_players_lb_empire_name_column_label(0),
@@ -414,16 +415,17 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_new_load_game_buttons->AddButton(
         new CUIStateButton(UserString("LOAD_GAME_BN"), GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
-    m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->Bottom() + CONTROL_MARGIN,
-                                             GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
-    m_saved_games_list->SetStyle(GG::LIST_NOSORT);
+    
+    m_browse_saves_btn = new CUIButton("...", CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->Bottom() + CONTROL_MARGIN, BROWSE_BTN_WIDTH);
+    m_save_file_text = new GG::TextControl(m_browse_saves_btn->Right() + CONTROL_MARGIN, m_browse_saves_btn->Top() + 2,
+                                           "", ClientUI::GetFont(), ClientUI::TextColor());
 
     g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, GG::Y(CONTROL_MARGIN + PREVIEW_MARGIN));
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
-    GG::Y y = std::max(m_saved_games_list->Bottom(), m_preview_image->Bottom()) + CONTROL_MARGIN;
+    GG::Y y = std::max(m_save_file_text->Bottom(), m_preview_image->Bottom()) + 5*CONTROL_MARGIN;
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
 
@@ -478,7 +480,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     AttachChild(m_chat_input_edit);
     AttachChild(m_new_load_game_buttons);
     AttachChild(m_galaxy_setup_panel);
-    AttachChild(m_saved_games_list);
+    AttachChild(m_save_file_text);
+    AttachChild(m_browse_saves_btn);
     AttachChild(m_preview_image);
     AttachChild(m_players_lb);
     AttachChild(m_start_game_bn);
@@ -488,11 +491,12 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
-    m_saved_games_list->Disable();
+    m_save_file_text->Disable();
+    m_browse_saves_btn->Disable();
 
     GG::Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiPlayerLobbyWnd::NewLoadClicked,           this);
     GG::Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiPlayerLobbyWnd::GalaxySetupPanelChanged,  this);
-    GG::Connect(m_saved_games_list->SelChangedSignal,           &MultiPlayerLobbyWnd::SaveGameChanged,          this);
+    GG::Connect(m_browse_saves_btn->LeftClickedSignal,          &MultiPlayerLobbyWnd::SaveGameBrowse,          this);
     GG::Connect(m_start_game_bn->LeftClickedSignal,             &MultiPlayerLobbyWnd::StartGameClicked,         this);
     GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,       &MultiPlayerLobbyWnd::PreviewImageChanged,      this);
     GG::Connect(m_cancel_bn->LeftClickedSignal,                 &MultiPlayerLobbyWnd::CancelClicked,            this);
@@ -574,12 +578,7 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
     m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
-    m_saved_games_list->Clear();
-    for (unsigned int i = 0; i < lobby_data.m_save_games.size(); ++i) {
-        m_saved_games_list->Insert(new CUISimpleDropDownListRow(lobby_data.m_save_games[i]));
-        if (static_cast<int>(i) == lobby_data.m_save_file_index)
-            m_saved_games_list->Select(lobby_data.m_save_file_index);
-    }
+    m_save_file_text->SetText(lobby_data.m_save_game);
 
     m_lobby_data = lobby_data;
 
@@ -596,12 +595,14 @@ void MultiPlayerLobbyWnd::Refresh() {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i, false);
         m_galaxy_setup_panel->Disable(false);
-        m_saved_games_list->Disable(false);
+        m_save_file_text->Disable(false);
+        m_browse_saves_btn->Disable(false);
     } else {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i);
         m_galaxy_setup_panel->Disable();
-        m_saved_games_list->Disable();
+        m_save_file_text->Disable();
+        m_browse_saves_btn->Disable();
     }
 
     m_start_game_bn->Disable(!ThisClientIsHost() || !CanStart());
@@ -612,12 +613,14 @@ void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx) {
     case std::size_t(0):
         m_lobby_data.m_new_game = true;
         m_galaxy_setup_panel->Disable(false);
-        m_saved_games_list->Disable();
+        m_save_file_text->Disable();
+        m_browse_saves_btn->Disable();
         break;
     case std::size_t(1):
         m_lobby_data.m_new_game = false;
         m_galaxy_setup_panel->Disable();
-        m_saved_games_list->Disable(false);
+        m_save_file_text->Disable(false);
+        m_browse_saves_btn->Disable(false);
         break;
     default:
         break;
@@ -631,8 +634,8 @@ void MultiPlayerLobbyWnd::GalaxySetupPanelChanged() {
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::SaveGameChanged(GG::DropDownList::iterator it) {
-    m_lobby_data.m_save_file_index = m_saved_games_list->IteratorToIndex(it);
+void MultiPlayerLobbyWnd::SaveGameBrowse() {
+    m_lobby_data.m_save_game = HumanClientApp::GetApp()->SelectLoadFile();
     m_lobby_data.m_save_game_empire_data.clear();
     PopulatePlayerList();
     SendUpdate();

@@ -312,7 +312,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 ////////////////////////////////////////////////////////////
 MPLobby::MPLobby(my_context c) :
     my_base(c),
-    m_lobby_data(new MultiplayerLobbyData(true)),
+    m_lobby_data(new MultiplayerLobbyData()),
     m_server_save_game_data(new ServerSaveGameData())
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
@@ -621,14 +621,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // to determine if a new save file was selected, check if the selected file
     // index is different, and the new file index is in the valid range
     bool new_save_file_selected = false;
-    int new_file_index = incoming_lobby_data.m_save_file_index;
-    int old_file_index = m_lobby_data->m_save_file_index;
-    const int NUM_FILE_INDICES = static_cast<int>(m_lobby_data->m_save_games.size());
-    if (new_file_index != old_file_index  &&  new_file_index >= 0  &&  new_file_index < NUM_FILE_INDICES) {
+    std::string new_file = incoming_lobby_data.m_save_game;
+    std::string old_file = m_lobby_data->m_save_game;
+    if (new_file != old_file) {
         new_save_file_selected = true;
 
         // update selected file index
-        m_lobby_data->m_save_file_index = new_file_index;
+        m_lobby_data->m_save_game = new_file;
 
         // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
         for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
@@ -639,16 +638,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         // refresh save game empire data
         boost::filesystem::path save_dir(GetSaveDir());
-        const std::string& save_filename = m_lobby_data->m_save_games[new_file_index];
         try {
-            LoadEmpireSaveGameData((save_dir / save_filename).string(),
+            LoadEmpireSaveGameData((save_dir / m_lobby_data->m_save_game).string(),
                                    m_lobby_data->m_save_game_empire_data);
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
             PlayerConnectionPtr& player_connection = msg.m_player_connection;
             player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
             // revert to old save file
-            m_lobby_data->m_save_file_index = old_file_index;
+            m_lobby_data->m_save_game = old_file;
         }
     }
 
@@ -706,11 +704,10 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 
         } else {
             // Load game...
-            boost::filesystem::path save_dir(GetSaveDir());
-            std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
+            std::string save_filename = (GetSaveDir() / m_lobby_data->m_save_game).string();
 
             try {
-                LoadGame((save_dir / save_filename).string(),   *m_server_save_game_data,
+                LoadGame(save_filename,   *m_server_save_game_data,
                          m_player_save_game_data,               GetUniverse(),
                          Empires(),     GetSpeciesManager(),    GetCombatLogManager(),
                          server.m_galaxy_setup_data);
@@ -1390,7 +1387,9 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         try {
             SaveGame(save_filename,     server_data,    m_player_save_game_data,
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
-                     GetCombatLogManager(),             server.m_galaxy_setup_data);
+                     GetCombatLogManager(),             server.m_galaxy_setup_data,
+                     !server.m_single_player_game
+                    );
 
         } catch (const std::exception&) {
             Logger().debugStream() << "Catch std::exception&";

@@ -793,6 +793,16 @@ Select which monitor to use in fullscreen mode. Primary monitor should be index 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
 Time interval, in seconds, after which the multiplayer chat window will disappear if nothing is added to it. A value of 0 indicates that the window should never disappear.
 
+OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
+'''List the columns to show in the save file dialog, separated by commas.
+Valid columns: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
+
+OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
+If UI.save-file-dialog.[name].wide-as is set, the column will always be wide enough to contain the text there.
+
+OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
+If UI.save-file-dialog.[name].stretch is set, the column will get that stretch factor if visible.
+
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
 The number of outgoing messages to keep in the chat edit box history.
 
@@ -1600,6 +1610,64 @@ SAVE_EMPIRE_TITLE
 
 SAVE_FILE_TITLE
 <u>File</u>
+
+SAVE_SEED_TITLE
+<u>Seed</u>
+
+SAVE_GALAXY_AGE_TITLE
+<u>Galaxy Age</u>
+
+SAVE_MONSTER_FREQ_TITLE
+<u>Monster Frequency</u>
+
+SAVE_NATIVE_FREQ_TITLE
+<u>Native Frequency</u>
+
+SAVE_PLANET_FREQ_TITLE
+<u>Planet Frequency</u>
+
+SAVE_SPECIALS_FREQ_TITLE
+<u>Specials Frequency</u>
+
+SAVE_STARLANE_FREQ_TITLE
+<u>Starlane Frequency</u>
+
+SAVE_GALAXY_SIZE_TITLE
+<u>Galaxy size</u>
+
+SAVE_GALAXY_SHAPE_TITLE
+<u>Galaxy Shape</u>
+
+SAVE_AI_AGGRESSION_TITLE
+<u>AI Aggression</u>
+
+SAVE_NUMBER_EMPIRES_TITLE
+<u>Empires</u>
+
+SAVE_NUMBER_HUMANS_TITLE
+<u>Human Players</u>
+
+SAVE_DIALOG_REMOTE_SUGGESTIVE_ONLY
+These reside on a multiplayer server. Only saves you know about are listed.
+
+SAVE_DIALOG_ROW_BROWSE_TEMPLATE
+'''
+Filename:  %raw:file%
+Save time: %raw:time%
+Turn:       %raw:turn%
+Seed:      %raw:seed%
+Player:    %raw:player%
+Empire:   %raw:empire%
+Empires:  %raw:number_of_empires%
+Human Players: %raw:number_of_humans%
+Galaxy
+    Shape: %raw:galaxy_shape%
+    Age:     %raw:galaxy_age%
+Frequencies:
+    Specials:   %raw:specials_freq%
+    Monsters: %raw:monster_freq%
+    Natives:    %raw:native_freq%
+'''
 
 SAVE_FILENAME
 File:

@@ -15,6 +15,7 @@
 
 struct HumanClientFSM;
 class MultiPlayerLobbyWnd;
+struct PreviewInformation;
 
 /** the application framework class for the human player FreeOrion client. */
 class HumanClientApp :
@@ -53,7 +54,10 @@ public:
     void                StartGame();
     void                EndGame(bool suppress_FSM_reset = false);       ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void                RequestSavePreviews(const std::string& directory, PreviewInformation& previews); ///< Requests the savegame previews for choosing one.
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
+    std::string         SelectLoadFile();                               //< Lets the user select a multiplayer save to load.
+    std::string         SelectSaveFile();                               //< Lets the user select a multiplayer save to save to.
 
     Ogre::SceneManager* SceneManager();
     Ogre::Camera*       Camera();

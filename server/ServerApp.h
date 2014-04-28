@@ -153,7 +153,10 @@ public:
     void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
                            boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+    
     //@}
+    
+    void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
 
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     Universe&                   GetUniverse();    ///< returns server's copy of Universe

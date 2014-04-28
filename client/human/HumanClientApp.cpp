@@ -20,8 +20,10 @@
 #include "../../network/Message.h"
 #include "../../network/Networking.h"
 #include "../../util/i18n.h"
+#include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
+#include "../../util/SaveGamePreviewUtils.h"
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
@@ -43,6 +45,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <sstream>
 
@@ -612,6 +615,38 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_fsm->process_event(HostSPGameRequested());
 }
 
+void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews){
+    bool server_just_for_us = false;
+    std::string  generic_directory = fs::path(directory).generic_string();
+    if(!m_networking.Connected()){
+        Logger().debugStream() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
+        StartServer();
+        server_just_for_us = true;
+        
+        Logger().debugStream() << "HumanClientApp::RequestSavePreviews Connecting to server";
+        unsigned int start_time = Ticks();
+        while (!m_networking.ConnectToLocalHostServer()) {
+            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+                Logger().errorStream() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+                KillServer();
+                return;
+            }
+        }
+        m_connected = true;
+    }
+    Logger().debugStream() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
+    Message response;
+    m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
+    if(response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
+        ExtractMessageData(response, previews);
+        Logger().debugStream() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+    }else{
+        Logger().errorStream() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << EnumToString(response.Type());
+    }
+}
+
+
 Ogre::SceneManager* HumanClientApp::SceneManager()
 { return m_scene_manager; }
 
@@ -1069,6 +1104,19 @@ void HumanClientApp::Autosave() {
         std::cerr << "Autosave failed: " << e.what() << std::endl;
     }
 }
+
+std::string HumanClientApp::SelectLoadFile(){
+    SaveFileDialog sfd(true);
+    sfd.Run();
+    return sfd.Result();
+}
+
+std::string HumanClientApp::SelectSaveFile() {
+    SaveFileDialog sfd(false);
+    sfd.Run();
+    return sfd.Result();
+}
+
 
 void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     Logger().debugStream() << "HumanClientApp::EndGame";
