@@ -385,6 +385,8 @@
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
+		82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */; };
+		82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */; };
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
@@ -1386,6 +1388,10 @@
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
+		82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumText.cpp; sourceTree = "<group>"; };
+		82E68F60190ECB8400BB1AD9 /* EnumText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumText.h; sourceTree = "<group>"; };
+		82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveGamePreviewUtils.cpp; sourceTree = "<group>"; };
+		82E68F62190ECB8400BB1AD9 /* SaveGamePreviewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveGamePreviewUtils.h; sourceTree = "<group>"; };
 		82F06B6417B7C3BD00982965 /* TemporaryPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryPtr.h; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; name = OISInput.cfg; path = ../GG/src/Ogre/Plugins/OISInput.cfg; sourceTree = "<group>"; };
@@ -2303,6 +2309,8 @@
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
 				471D5D200A98A3F900DA9C21 /* doc */,
+				82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */,
+				82E68F60190ECB8400BB1AD9 /* EnumText.h */,
 				827AF39F185B2FB9001CD79C /* Export.h */,
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
@@ -2325,6 +2333,8 @@
 				471D5D310A98A3F900DA9C21 /* Process.h */,
 				471D5D320A98A3F900DA9C21 /* Random.cpp */,
 				471D5D330A98A3F900DA9C21 /* Random.h */,
+				82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */,
+				82E68F62190ECB8400BB1AD9 /* SaveGamePreviewUtils.h */,
 				8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */,
 				8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */,
 				471D5D350A98A3F900DA9C21 /* Serialize.h */,
@@ -3161,6 +3171,8 @@
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
 				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
 				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
+				82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */,
+				82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
