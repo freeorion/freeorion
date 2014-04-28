@@ -1652,21 +1652,21 @@ These reside on a multiplayer server. Only saves you know about are listed.
 
 SAVE_DIALOG_ROW_BROWSE_TEMPLATE
 '''
-Filename:  %raw:file%
-Save time: %raw:time%
-Turn:       %raw:turn%
-Seed:      %raw:seed%
-Player:    %raw:player%
-Empire:   %raw:empire%
-Empires:  %raw:number_of_empires%
-Human Players: %raw:number_of_humans%
+Filename:  %rawtext:file%
+Save time: %rawtext:time%
+Turn:       %rawtext:turn%
+Seed:      %rawtext:seed%
+Player:    %rawtext:player%
+Empire:   %rawtext:empire%
+Empires:  %rawtext:number_of_empires%
+Human Players: %rawtext:number_of_humans%
 Galaxy
-    Shape: %raw:galaxy_shape%
-    Age:     %raw:galaxy_age%
+    Shape: %rawtext:galaxy_shape%
+    Age:     %rawtext:galaxy_age%
 Frequencies:
-    Specials:   %raw:specials_freq%
-    Monsters: %raw:monster_freq%
-    Natives:    %raw:native_freq%
+    Specials:   %rawtext:specials_freq%
+    Monsters: %rawtext:monster_freq%
+    Natives:    %rawtext:native_freq%
 '''
 
 SAVE_FILENAME
