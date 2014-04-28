@@ -34,30 +34,30 @@ namespace {
     //////////////////////////////////////////
     ///// Tag substitution generators////////
     ////////////////////////////////////////
-    
+
     /// Surround content with approprite tags based on tag_of
     std::string WithTags(const std::string& content, const std::string& tag, const XMLElement& data) {
         std::string open_tag = "<" + tag + " " + data.Attribute("value") + ">";
         std::string close_tag = "</" + tag + ">";
         return open_tag + content + close_tag;
     }
-    
+
     /// The signature of functions that generate substitution strings for
     /// tags.
     typedef std::string (*TagString)(const XMLElement& data, const std::string& tag, bool& valid);
-    
+
     /// Get string substitute for a translated text tag
     std::string TextString(const XMLElement& data, const std::string& tag, bool& valid) {
         const std::string& text = data.Attribute("value");
         return UserString(text);
     }
-    
+
     /// Get string substitute for a raw text tag
     std::string RawTextString(const XMLElement& data, const std::string& tag, bool& valid) {
         const std::string& text = data.Attribute("value");
         return text;
     }
-    
+
     ///Get string substitute for a tag that is a universe object
     std::string UniverseObjectString(const XMLElement& data, const std::string& tag, bool& valid) {
         int object_id = INVALID_OBJECT_ID;
@@ -74,15 +74,14 @@ namespace {
             valid = false;
             return UserString("ERROR");
         }
-        
+
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
-    
+
     /// combat links always just labelled "Combat"; don't need to look up details
-    std::string CombatLogString(const XMLElement& data, const std::string& tag, bool& valid) {
-        return WithTags(UserString("COMBAT"), tag, data);
-    }
-    
+    std::string CombatLogString(const XMLElement& data, const std::string& tag, bool& valid)
+    { return WithTags(UserString("COMBAT"), tag, data); }
+
     /// Returns substitution string for a ship design tag
     std::string ShipDesignString(const XMLElement& data, const std::string& tag, bool& valid) {
         int design_id = ShipDesign::INVALID_DESIGN_ID;
@@ -101,7 +100,7 @@ namespace {
         }
         return WithTags(design->Name(), tag, data);
     }
-    
+
     /// Returns substitution string for a predefined ship design tag
     std::string PredefinedShipDesignString(const XMLElement& data, const std::string& tag, bool& valid) {
         const std::string& design_name = data.Attribute("value");
@@ -145,14 +144,14 @@ namespace {
         }
         return WithTags(UserString(name), tag, data);
     }
-    
+
     /// Returns a map that tells shich function should be used to
     /// generate a substitution for which tag.
     std::map<std::string, TagString> CreateSubstituterMap() {
         std::map<std::string, TagString> subs;
         subs[VarText::TEXT_TAG] = TextString;
         subs[VarText::RAW_TEXT_TAG] = RawTextString;
-        
+
         subs[VarText::PLANET_ID_TAG] =
             subs[VarText::SYSTEM_ID_TAG] =
             subs[VarText::SHIP_ID_TAG] =
@@ -172,14 +171,14 @@ namespace {
         subs[VarText::EMPIRE_ID_TAG] = EmpireString;
         return subs;
     }
-    
+
     /// Global substitution map, wrapped in a function to avoid initialization order issues
     const std::map<std::string, TagString>& SubstitutionMap() {
         static std::map<std::string, TagString> subs = CreateSubstituterMap();
         return subs;
     }
-    
-    
+
+
     /** Converts (first, last) to a string, looks up its value in the Universe,
       * then appends this to the end of a std::string. */
     struct SubstituteAndAppend {
@@ -191,17 +190,17 @@ namespace {
 
         void operator()(const char* first, const char* last) const {
             std::string token(first, last);
-            
+
             // special case: "%%" is interpreted to be a '%' character
             if (token.empty()) {
                 m_str += "%";
                 return;
             }
-            
+
             // Labelled tokens have the form %tag:label%,  unlabelled are just %tag%
             std::vector<std::string> pieces;
             boost::split(pieces, token, boost::is_any_of(LABEL_SEPARATOR));
-            
+
             std::string tag; //< The tag of the token (the type)
             std::string label; //< The label of the token (the kay to fetch data by)
             if (pieces.size() == 1) {
@@ -220,7 +219,7 @@ namespace {
                 m_valid = false;
                 return;
             }
-            
+
             const XMLElement& token_elem = m_variables.Child(label);
 
             std::map<std::string, TagString>::const_iterator substituter = SubstitutionMap().find(tag);
