@@ -678,6 +678,7 @@ Tech
             effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
 
+/*  // commented out because current form doesn't work with current detection mechanics, which have a hard limit on range that can't be exceeded
 Tech
     name = "LRN_OBSERVATORY_I"
     description = "LRN_OBSERVATORY_I_DESC"
@@ -688,6 +689,7 @@ Tech
     researchturns = 4
     prerequisites = "LRN_FORCE_FIELD"
     unlock = Item type = Building name = "BLD_OBSERVATORY"
+*/
 
 /*
 Tech
