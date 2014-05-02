@@ -1246,7 +1246,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             continue;
         int ship_id = ship->ID();
         float planet_capacity = -999.9f;
-        std::pair<int,int> this_pair = std::make_pair<int,int>(ship_id, target_planet_id);
+        std::pair<int,int> this_pair = std::make_pair(ship_id, target_planet_id);
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
@@ -1259,7 +1259,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             colony_ship_capacity = design->ColonyCapacity();
             if (colony_ship_capacity > 0.0f ) {
                 ship_species_name = ship->SpeciesName();
-                std::pair<std::string,int> spec_pair = std::make_pair<std::string,int>(ship_species_name, target_planet_id);
+                std::pair<std::string,int> spec_pair = std::make_pair(ship_species_name, target_planet_id);
                 std::map<std::pair<std::string,int>,float>::iterator spec_pair_it = species_colony_projections.find(spec_pair);
                 if (spec_pair_it != species_colony_projections.end()) {
                     planet_capacity = spec_pair_it->second;
@@ -1508,7 +1508,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // colony_projections map.
         AttachChild(m_colonize_button);
         double planet_capacity;
-        std::pair<int,int> this_pair = std::make_pair<int,int>(selected_colony_ship->ID(), m_planet_id);
+        std::pair<int,int> this_pair = std::make_pair(selected_colony_ship->ID(), m_planet_id);
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
@@ -2790,7 +2790,7 @@ void SidePanel::RefreshImpl() {
              sys_it != Objects().const_end<System>(); ++sys_it) 
         {
             if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-                system_map.insert(std::make_pair<std::string, int>(sys_it->Name(), sys_it->ID()));
+                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
         }
         std::vector<GG::DropDownList::Row*> rows;
         rows.reserve(system_map.size());

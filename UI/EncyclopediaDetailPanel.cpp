@@ -1860,7 +1860,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 std::vector<std::pair<double, double> > line_data_pts;
                 for (std::map<int, double>::const_iterator line_it = empire_line.begin();
                      line_it != empire_line.end(); ++line_it)
-                { line_data_pts.push_back(std::make_pair<double, double>(line_it->first, line_it->second)); }
+                { line_data_pts.push_back(std::make_pair(line_it->first, line_it->second)); }
 
                 m_graph->AddSeries(line_data_pts, empire_clr);
             }

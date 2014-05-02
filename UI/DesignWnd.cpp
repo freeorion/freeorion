@@ -338,7 +338,7 @@ partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             
         for (std::set<ShipSlotType>::const_iterator it = m_slot_types_shown.begin(); it != m_slot_types_shown.end(); ++it) {
             if (part->CanMountInSlotType(*it)) {
-                partGroups[ std::make_pair<ShipPartClass,ShipSlotType>(part_class, *it) ].push_back( part );
+                partGroups[ std::make_pair(part_class, *it) ].push_back( part );
             }
         }
     }
@@ -429,7 +429,7 @@ void PartsListBox::Populate() {
             if (alreadyAdded.find(part) != alreadyAdded.end())
                 continue;
             alreadyAdded.insert(part);
-            sortedGroup.insert(std::make_pair<double, const PartType*>(getMainStat(pclass, part->Stats()), part));
+            sortedGroup.insert(std::make_pair(getMainStat(pclass, part->Stats()), part));
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
