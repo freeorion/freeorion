@@ -3926,7 +3926,7 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Object Damaged
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-At  %system%: a %shipdesign%, the '%ship%', was damaged; it is owned by %empire%.
+At %system%: a %shipdesign%, the '%ship%', was damaged; it is owned by %empire%.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Empire Ship Damaged
 
