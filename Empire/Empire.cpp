@@ -2916,6 +2916,7 @@ void Empire::CheckProductionProgress() {
 
             // rename fleet, given its id and the ship that is in it
             fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet->ID()));
+            fleet->SetAggressive(fleet->HasArmedShips());
 
             Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
         }

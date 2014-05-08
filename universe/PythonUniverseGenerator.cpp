@@ -589,6 +589,7 @@ namespace {
         // add ship to fleet, this also moves the ship to the
         // fleets location and inserts it into the system
         fleet->AddShip(ship->ID());
+        fleet->SetAggressive(fleet->HasArmedShips());
         ship->SetFleetID(fleet->ID());
 
         //return the new ships id
