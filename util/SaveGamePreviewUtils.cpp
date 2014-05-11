@@ -4,12 +4,12 @@
 
 #include "SaveGamePreviewUtils.h"
 
-#include "../util/i18n.h"
-#include "../util/Directories.h"
-#include "../util/Logger.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/EnumText.h"
-#include "../util/Serialize.h"
+#include "i18n.h"
+#include "Directories.h"
+#include "Logger.h"
+#include "MultiplayerCommon.h"
+#include "EnumText.h"
+#include "Serialize.h"
 #include "Serialize.ipp"
 
 #include <boost/lexical_cast.hpp>

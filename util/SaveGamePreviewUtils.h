@@ -12,8 +12,8 @@
 
 #include <GG/Clr.h>
 
-#include "../util/MultiplayerCommon.h"
-#include "../util/Export.h"
+#include "MultiplayerCommon.h"
+#include "Export.h"
 
 namespace boost { namespace filesystem { class path; } }
 namespace boost { namespace serialization { class access; } }
