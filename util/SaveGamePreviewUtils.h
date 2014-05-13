@@ -14,9 +14,7 @@
 
 #include "MultiplayerCommon.h"
 #include "Export.h"
-
-namespace boost { namespace filesystem { class path; } }
-namespace boost { namespace serialization { class access; } }
+#include "Directories.h"
 
 /** Contains preview information about a savegame.
  *  Stored the beginning of a savefile for quick access.
