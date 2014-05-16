@@ -2044,6 +2044,15 @@ HAS_ADVANCED_FOCI
                 ]
             ]
             graphic = "icons/focus/distortion.png"
+
+        Focus
+            name = "FOCUS_DOMINATION"
+            description = "FOCUS_DOMINATION_DESC"
+            location = And [
+                HasTag "TELEPATHIC"
+                OwnerHasTech "LRN_PSY_DOM"
+            ]
+            graphic = "icons/focus/psi_domination.png"
 '''
 
 STANDARD_CONSTRUCTION

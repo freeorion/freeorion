@@ -830,17 +830,21 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                WithinStarlaneJumps 1 And [
-                    Planet
-                    OwnedBy TheEmpire Source.Owner
-                    TargetPopulation low = 1
-                ]
                 Not OwnedBy TheEmpire Source.Owner
                 VisibleToEmpire Source.Owner
                 Random .1
                 Not Monster
                 Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
+                ContainedBy And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy TheEmpire Source.Owner
+                        HasTag "TELEPATHIC"
+                        Focus "FOCUS_DOMINATION"
+                    ]
+                ]
             ]
             effects = [
                 GenerateSitRepMessage
@@ -860,17 +864,8 @@ Tech
                     ]
                     empire = Source.Owner
                 SetOwner Source.Owner
-                MoveTo NumberOf 1 And [ 
-                    System And [ 
-                        WithinStarlaneJumps 1 Target
-                        WithinStarlaneJumps 1 And [
-                            Planet
-                            OwnedBy TheEmpire Source.Owner
-                            TargetPopulation low = 1
-                        ]
-                    ]
-                ]
             ]
+
 Tech
     name = "LRN_ART_BLACK_HOLE"
     description = "LRN_ART_BLACK_HOLE_DESC"
