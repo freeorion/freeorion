@@ -80,11 +80,11 @@ namespace {
         ship_ids.push_back(ship->ID());
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, fleet->ID());
         fleet->Rename(fleet_name);
-        fleet->SetAggressive(fleet->HasArmedShips());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         fleet->AddShip(ship->ID());
         ship->SetFleetID(fleet->ID());
+        fleet->SetAggressive(fleet->HasArmedShips());
 
         return fleet;
     }
