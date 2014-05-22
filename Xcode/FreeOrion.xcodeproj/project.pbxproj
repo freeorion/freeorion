@@ -493,6 +493,13 @@
 			remoteGlobalIDString = 829C76351689EFD4005881B4;
 			remoteInfo = INIT;
 		};
+		82A1B47019240B3100A3C137 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 829C76351689EFD4005881B4;
+			remoteInfo = Configure;
+		};
 		82C07477149DE7AC00E76876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -2856,6 +2863,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				82A1B47119240B3100A3C137 /* PBXTargetDependency */,
 				3A7604B91749B25A00363653 /* PBXTargetDependency */,
 			);
 			name = Common;
@@ -3006,7 +3014,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "FreeOrion" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -3084,7 +3092,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode 3\"\nfi";
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode ${XCODE_VERSION_ACTUAL}\"\nfi";
 		};
 		82EC621B18C6109D000237C2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3530,6 +3538,11 @@
 			target = 829C76351689EFD4005881B4 /* Configure */;
 			targetProxy = 829C763E1689F0EA005881B4 /* PBXContainerItemProxy */;
 		};
+		82A1B47119240B3100A3C137 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 829C76351689EFD4005881B4 /* Configure */;
+			targetProxy = 82A1B47019240B3100A3C137 /* PBXContainerItemProxy */;
+		};
 		82C07478149DE7AC00E76876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 82C073D8149DE46200E76876 /* Parse */;
@@ -3575,8 +3588,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -3591,9 +3605,6 @@
 					BOOST_DATE_TIME_NO_LOCALE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
@@ -3610,11 +3621,15 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-ftemplate-depth=1024",
+				);
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = $SRCROOT/build;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -3721,7 +3736,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3737,9 +3752,6 @@
 					BOOST_DATE_TIME_NO_LOCALE,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
@@ -3755,11 +3767,15 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-ftemplate-depth=1024",
+				);
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
+				SYMROOT = $SRCROOT/build;
 				ZERO_LINK = NO;
 			};
 			name = Test;
@@ -3777,6 +3793,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
 				);
@@ -3893,367 +3910,6 @@
 			};
 			name = Test;
 		};
-		8218683814AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
-					OGRE_GUI_GLX,
-					FREEORION_MACOSX,
-					__MACOSX__,
-					BOOST_DATE_TIME_NO_LOCALE,
-					NDEBUG,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.5;
-				SEPARATE_STRIP = NO;
-				STRIP_INSTALLED_PRODUCT = YES;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218683A14AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = GG;
-				ZERO_LINK = YES;
-			};
-			name = Release_10_5;
-		};
-		8218683D14AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
-				);
-				PRODUCT_NAME = freeorionparse;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218683E14AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/..\"",
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = (
-					"-fvisibility=hidden",
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = freeorioncommon;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218683F14AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = ClientCommon;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218684014AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/Frameworks\"",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_SERVER,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeoriond;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218684114AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_HUMAN,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = FreeOrion;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218684214AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_AI,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeorionca;
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8218684314AA28BE009441B8 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = Info.plist;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				PRODUCT_NAME = FreeOrion;
-			};
-			name = Release_10_5;
-		};
-		8219A98014AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
-					OGRE_GUI_GLX,
-					FREEORION_MACOSX,
-					__MACOSX__,
-					BOOST_DATE_TIME_NO_LOCALE,
-					NDEBUG,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
-				SEPARATE_STRIP = NO;
-				STRIP_INSTALLED_PRODUCT = YES;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A98214AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = GG;
-				ZERO_LINK = YES;
-			};
-			name = Release_LLVM;
-		};
-		8219A98E14AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
-					OGRE_GUI_GLX,
-					FREEORION_MACOSX,
-					__MACOSX__,
-					NDEBUG,
-				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
-				);
-				PRODUCT_NAME = freeorionparse;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A99D14AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/..\"",
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = (
-					"-fvisibility=hidden",
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = freeorioncommon;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A99E14AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = ClientCommon;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A99F14AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/Frameworks\"",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_SERVER,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeoriond;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A9A014AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_HUMAN,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = FreeOrion;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A9A114AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_AI,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeorionca;
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		8219A9A214AAFFC300EEE387 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = Info.plist;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				PRODUCT_NAME = FreeOrion;
-			};
-			name = Release_LLVM;
-		};
 		821CB90515F8C15A00D48537 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4272,29 +3928,11 @@
 			};
 			name = Test;
 		};
-		821CB90715F8C15A00D48537 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = log4cpp;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		821CB90815F8C15A00D48537 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = log4cpp;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
 		8221B22F160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -4311,9 +3949,6 @@
 					NDEBUG,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
 					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
@@ -4329,11 +3964,15 @@
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-ftemplate-depth=1024",
+				);
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
+				SYMROOT = $SRCROOT/build;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -4369,6 +4008,7 @@
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
 				);
@@ -4503,225 +4143,6 @@
 			};
 			name = Test;
 		};
-		82271C3815F8AB900063179C /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = OIS;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Release_LLVM;
-		};
-		82271C3915F8AB900063179C /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = OIS;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Release_10_5;
-		};
-		8263A0C916DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
-					OGRE_GUI_GLX,
-					FREEORION_MACOSX,
-					__MACOSX__,
-					BOOST_DATE_TIME_NO_LOCALE,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = 4.2;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
-				SEPARATE_STRIP = NO;
-				STRIP_INSTALLED_PRODUCT = YES;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0CA16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = INIT;
-			};
-			name = Test_GCC42;
-		};
-		8263A0CC16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = GG;
-				ZERO_LINK = YES;
-			};
-			name = Test_GCC42;
-		};
-		8263A0CD16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = OIS;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0CE16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = log4cpp;
-				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0DD16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
-				);
-				PRODUCT_NAME = freeorionparse;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0EC16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/..\"",
-					"\"$(SOURCE_ROOT)/dep/include\"",
-					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
-					"\"$(SOURCE_ROOT)/../GG\"",
-					"\"$(SOURCE_ROOT)/../OIS\"",
-					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
-					"\"$(SOURCE_ROOT)/../log4cpp\"",
-					"\"$(SOURCE_ROOT)/../network\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
-					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
-				);
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = (
-					"-fvisibility=hidden",
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = freeorioncommon;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0ED16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = ClientCommon;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0EE16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/Frameworks\"",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_SERVER,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeoriond;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0EF16DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_HUMAN,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = FreeOrion;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0F016DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					FREEORION_BUILD_AI,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/dep/lib\"",
-					"\"$(SRCROOT)/dep/dyn_lib\"",
-				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
-				PRODUCT_NAME = freeorionca;
-				ZERO_LINK = NO;
-			};
-			name = Test_GCC42;
-		};
-		8263A0F116DDFC9400A2AACD /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = Info.plist;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				PRODUCT_NAME = FreeOrion;
-			};
-			name = Test_GCC42;
-		};
 		829C76361689EFD4005881B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4750,25 +4171,12 @@
 			};
 			name = Release;
 		};
-		829C76391689EFD4005881B4 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = INIT;
-			};
-			name = Release_LLVM;
-		};
-		829C763A1689EFD4005881B4 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = INIT;
-			};
-			name = Release_10_5;
-		};
 		82C07435149DE46200E76876 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
 				);
@@ -4794,13 +4202,6 @@
 			};
 			name = Test;
 		};
-		82EC621F18C6109D000237C2 /* Test_GCC42 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = MakeDMG;
-			};
-			name = Test_GCC42;
-		};
 		82EC622018C6109D000237C2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4812,20 +4213,6 @@
 			};
 			name = Release;
 		};
-		82EC622118C6109D000237C2 /* Release_LLVM */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = MakeDMG;
-			};
-			name = Release_LLVM;
-		};
-		82EC622218C6109D000237C2 /* Release_10_5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = MakeDMG;
-			};
-			name = Release_10_5;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4834,10 +4221,7 @@
 			buildConfigurations = (
 				1DEB923208733DC60010E9CD /* Debug */,
 				8218683114A9F82D009441B8 /* Test */,
-				8263A0EF16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B254160F2211007D86B9 /* Release */,
-				8219A9A014AAFFC300EEE387 /* Release_LLVM */,
-				8218684114AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4847,10 +4231,7 @@
 			buildConfigurations = (
 				1DEB923608733DC60010E9CD /* Debug */,
 				8218682814A9F82D009441B8 /* Test */,
-				8263A0C916DDFC9400A2AACD /* Test_GCC42 */,
 				8221B22F160F2211007D86B9 /* Release */,
-				8219A98014AAFFC300EEE387 /* Release_LLVM */,
-				8218683814AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4860,10 +4241,7 @@
 			buildConfigurations = (
 				3402E25F0F5A317400DF6FE7 /* Debug */,
 				8218683314A9F82D009441B8 /* Test */,
-				8263A0F116DDFC9400A2AACD /* Test_GCC42 */,
 				8221B256160F2211007D86B9 /* Release */,
-				8219A9A214AAFFC300EEE387 /* Release_LLVM */,
-				8218684314AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4873,10 +4251,7 @@
 			buildConfigurations = (
 				47103BE40CF04DC700A7DF2B /* Debug */,
 				8218682E14A9F82D009441B8 /* Test */,
-				8263A0EC16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B251160F2211007D86B9 /* Release */,
-				8219A99D14AAFFC300EEE387 /* Release_LLVM */,
-				8218683E14AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4886,10 +4261,7 @@
 			buildConfigurations = (
 				471D5A3B0A988D8600DA9C21 /* Debug */,
 				8218682A14A9F82D009441B8 /* Test */,
-				8263A0CC16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B231160F2211007D86B9 /* Release */,
-				8219A98214AAFFC300EEE387 /* Release_LLVM */,
-				8218683A14AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4899,10 +4271,7 @@
 			buildConfigurations = (
 				471D5D6C0A98A48500DA9C21 /* Debug */,
 				8218683014A9F82D009441B8 /* Test */,
-				8263A0EE16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B253160F2211007D86B9 /* Release */,
-				8219A99F14AAFFC300EEE387 /* Release_LLVM */,
-				8218684014AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4912,10 +4281,7 @@
 			buildConfigurations = (
 				471FEFD50A9A629800C36AA3 /* Debug */,
 				8218683214A9F82D009441B8 /* Test */,
-				8263A0F016DDFC9400A2AACD /* Test_GCC42 */,
 				8221B255160F2211007D86B9 /* Release */,
-				8219A9A114AAFFC300EEE387 /* Release_LLVM */,
-				8218684214AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4925,10 +4291,7 @@
 			buildConfigurations = (
 				478417AF0CF0592E00BE4710 /* Debug */,
 				8218682F14A9F82D009441B8 /* Test */,
-				8263A0ED16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B252160F2211007D86B9 /* Release */,
-				8219A99E14AAFFC300EEE387 /* Release_LLVM */,
-				8218683F14AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4938,10 +4301,7 @@
 			buildConfigurations = (
 				821CB90515F8C15A00D48537 /* Debug */,
 				821CB90615F8C15A00D48537 /* Test */,
-				8263A0CE16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B233160F2211007D86B9 /* Release */,
-				821CB90715F8C15A00D48537 /* Release_LLVM */,
-				821CB90815F8C15A00D48537 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4951,10 +4311,7 @@
 			buildConfigurations = (
 				82271C3615F8AB900063179C /* Debug */,
 				82271C3715F8AB900063179C /* Test */,
-				8263A0CD16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B232160F2211007D86B9 /* Release */,
-				82271C3815F8AB900063179C /* Release_LLVM */,
-				82271C3915F8AB900063179C /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4964,10 +4321,7 @@
 			buildConfigurations = (
 				829C76361689EFD4005881B4 /* Debug */,
 				829C76371689EFD4005881B4 /* Test */,
-				8263A0CA16DDFC9400A2AACD /* Test_GCC42 */,
 				829C76381689EFD4005881B4 /* Release */,
-				829C76391689EFD4005881B4 /* Release_LLVM */,
-				829C763A1689EFD4005881B4 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4977,10 +4331,7 @@
 			buildConfigurations = (
 				82C07435149DE46200E76876 /* Debug */,
 				8218682D14A9F82D009441B8 /* Test */,
-				8263A0DD16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B242160F2211007D86B9 /* Release */,
-				8219A98E14AAFFC300EEE387 /* Release_LLVM */,
-				8218683D14AA28BE009441B8 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
@@ -4990,10 +4341,7 @@
 			buildConfigurations = (
 				82EC621D18C6109D000237C2 /* Debug */,
 				82EC621E18C6109D000237C2 /* Test */,
-				82EC621F18C6109D000237C2 /* Test_GCC42 */,
 				82EC622018C6109D000237C2 /* Release */,
-				82EC622118C6109D000237C2 /* Release_LLVM */,
-				82EC622218C6109D000237C2 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
