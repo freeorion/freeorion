@@ -17,7 +17,7 @@ import math
 
 empireSpecies = {}
 empireSpeciesByPlanet = {}
-empireSpeciesSystems={}
+empireSpeciesSystems={}  #TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
 empireColonizers = {}
 empireShipBuilders={}
 empireShipyards = {}
@@ -41,7 +41,9 @@ curMidPilotRating = 1e-8
 pilotRatings = {}
 colony_status = {}
 pop_map = {}
-empire_status = {'industrialists':0,  'researchers':0} 
+empire_status = {'industrialists':0,  'researchers':0}
+unowned_planet_ids = set()
+empireOutpostIDs = set()
 
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
@@ -85,6 +87,8 @@ def resetCAIGlobals():
     annexablePlanetIDs.clear()
     curBestMilShipRating = 20
     allColonyOpportunities.clear()
+    unowned_planet_ids.clear()
+    empireOutpostIDs.clear()
 
 def ratePilotingTag(tagList):
     grade = 2.0
@@ -105,30 +109,16 @@ def ratePlanetaryPiloting(pid):
         return 0.0
     return ratePilotingTag(thisSpec.tags)
 
-def getColonyFleets():
-    "examines known planets, collects various colonization data, to be later used to send colony fleets"
-    global  curBestMilShipRating,  gotRuins, gotAst,  gotGG,  curBestPilotRating, curMidPilotRating
-    times=[]
-    tasks = []
-    times.append( time() )
-    tasks.append("init")
 
-    curBestMilShipRating = ProductionAI.curBestMilShipRating()
-    times.append( time() )
-    tasks.append( "getting best milship rating" )
-
-
-    allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
-    AIstate.colonyFleetIDs[:] = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allColonyFleetIDs)
-    times.append( time() )
-    tasks.append( "getting avail colony fleets" )
+def check_supply():
 
     # get suppliable systems and planets
+    supp_timing = [ [], [] ]
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitalID = PlanetUtilsAI.getCapital()
-    #capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital() # don't just use empire.capitalID since might be -1
+    
     homeworld=None
     if capitalID:
         homeworld = universe.getPlanet(capitalID)
@@ -140,15 +130,6 @@ def getColonyFleets():
         speciesName = ""
         homeworldName=" no remaining homeworld "
         homeSystemID = -1
-    if not speciesName:
-        speciesName = foAI.foAIstate.origSpeciesName
-    species = fo.getSpecies(speciesName)
-    if not species:
-        print "**************************************************************************************"
-        print "**************************************************************************************"
-        print "Problem determining species for colonization planning: capitalID: %s,  homeworld %s  and species name %s"%(capitalID,  homeworldName,  speciesName)
-    else:
-        print "Plannning colonization for species name %s"%species.name
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
@@ -159,9 +140,8 @@ def getColonyFleets():
 
     print "-------\nEmpire Obstructed Starlanes:"
     print  list(empire.obstructedStarlanes())
-    times.append( time() )
-    tasks.append( "getting Empire Supply Info" )
-
+    supp_timing[0].append( time() )
+    supp_timing[1].append( "getting Empire Supply Info" )
 
     annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexableRing1.clear()
@@ -200,11 +180,24 @@ def getColonyFleets():
         print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
         annexableSystemIDs.update(annexableRing3)
     annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
-    times.append( time() )
-    tasks.append( "Determining Annexible Systems" )
+    supp_timing[0].append( time() )
+    supp_timing[1].append( "Determining Annexible Systems" )
+    return supp_timing, fleetSupplyablePlanetIDs
+
+def survey_universe():
+    global  gotRuins, gotAst,  gotGG,  curBestPilotRating, curMidPilotRating
+    u_timing = [ [], [] ]
+    univ_stats = {}
+    supp_timing, fleetSupplyablePlanetIDs = check_supply()
+    univ_stats['fleetSupplyablePlanetIDs'] = fleetSupplyablePlanetIDs
+    for timing_index in [0,1]:
+        u_timing[timing_index].extend(supp_timing[timing_index])
+        
+    universe = fo.getUniverse()
+    empire = fo.getEmpire()
+    empire_id = empire.empireID
 
     # get outpost and colonization planets
-
     exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
     unExSysIDs = list(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     unExSystems = map(universe.getSystem,  unExSysIDs)
@@ -218,153 +211,150 @@ def getColonyFleets():
     #visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
     #visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
     #print "VisiblePlanets: %s "%[ (pid,  (universe.getPlanet(pid) and  universe.getPlanet(pid).name) or "unknown") for pid in  visiblePlanetIDs]
-    #print ""
-
     #accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
     #acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
 
-    empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
+    #set up / reset various variables; the 'if' is purely for code folding convenience
+    if True:
+        colony_status['colonies_under_attack'] = []
+        colony_status['colonies_under_threat'] = []
+        pop_map.clear()
+        empire_status.clear()
+        empire_status.update( {'industrialists':0,  'researchers':0} )
+        AIstate.empireStars.clear()
+        
+        #empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+        #print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
+        ##allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
+        #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(annexablePlanetIDs) #
+        #print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empireOwnedPlanetIDs))
+        ##unowned_planet_ids = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
+        #unowned_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
+        #print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unowned_planet_ids))
+        empireOwnedPlanetIDs = []
+        empirePopCtrs = set()
+        empireOutpostIDs.clear()
 
-    #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
-    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(annexablePlanetIDs) #
-    print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empireOwnedPlanetIDs))
-
-    #unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
-    unOwnedPlanetIDs = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-    print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unOwnedPlanetIDs))
-
-    colony_status['colonies_under_attack'] = []
-    colony_status['colonies_under_threat'] = []
-    empirePopCtrs = set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
-    empireOutpostIDs=set(empireOwnedPlanetIDs) - empirePopCtrs
-    AIstate.popCtrIDs[:]=list(empirePopCtrs)
-    AIstate.popCtrSystemIDs[:]=list(set(PlanetUtilsAI.getSystems(empirePopCtrs)))
-    AIstate.outpostIDs[:]=list(empireOutpostIDs)
-    AIstate.outpostSystemIDs[:]=list(set(PlanetUtilsAI.getSystems(empireOutpostIDs)))
-    AIstate.colonizedSystems.clear()
-    pop_map.clear()
-    empire_status.clear()
-    empire_status.update( {'industrialists':0,  'researchers':0} )
-    times.append( time() )
-    tasks.append( "Categorizing Visible Planets" )
-    
-    for pid in empireOwnedPlanetIDs:
-        planet=universe.getPlanet(pid)
-        if planet:
-            AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
-            if "ANCIENT_RUINS_SPECIAL" in planet.specials:
-                gotRuins = True
-            if planet.size == fo.planetSize.asteroids:
-                gotAst = True
-            elif planet.size == fo.planetSize.gasGiant:
-                gotGG = True
-            planetPopulation = planet.currentMeterValue(fo.meterType.population)
-            pop_map[pid] = planetPopulation
-            if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
-                empire_status['industrialists'] += planetPopulation
-            elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
-                empire_status['researchers'] += planetPopulation
-    AIstate.empireStars.clear()
-    for sysID in AIstate.colonizedSystems:
-        system = universe.getSystem(sysID)
-        if system:
-            AIstate.empireStars.setdefault(system.starType, []).append(sysID)
-        sys_status = foAI.foAIstate.systemStatus.get(sysID,  {})
-        if sys_status.get('fleetThreat') > 0:
-            colony_status['colonies_under_attack'].append(sysID)
-        if sys_status.get('neighborThreat') > 0:
-            colony_status['colonies_under_threat'].append(sysID)
-
-    claimedStars = {}
-    for sType in AIstate.empireStars:
-        claimedStars[sType] = list( AIstate.empireStars[sType] )
-    for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-        tSys = universe.getSystem(sysID)
-        if not tSys: continue
-        claimedStars.setdefault( tSys.starType, []).append(sysID)
-    #foAI.foAIstate.misc['claimedStars'] = claimedStars
-
-
-    oldPopCtrs=[]
-    for specN in empireSpecies:
-        oldPopCtrs.extend(empireSpecies[specN])
-    oldEmpSpec = {}
-    oldEmpSpec.update(empireSpecies)
-    empireSpecies.clear()
-    empireSpeciesByPlanet.clear()
-    oldEmpCol= {}
-    oldEmpCol.update(empireColonizers)
-    empireColonizers.clear()
-    empireShipBuilders.clear()
-    empireShipyards.clear()
-    empire_dry_docks.clear()
-    empireMetabolisms.clear()
-    availableGrowthSpecials.clear()
-    activeGrowthSpecials.clear()
-    empirePlanetsWithGrowthSpecials.clear()
-    if empire.getTechStatus(TechsListsAI.EXOBOT_TECH_NAME) == fo.techStatus.complete:
-        empireColonizers["SP_EXOBOT"]=[]# get it into colonizer list even if no colony yet
-    empireSpeciesSystems.clear()
-
-    for pID in empirePopCtrs:
-        planet=universe.getPlanet(pID)
-        if not planet:
-            print "Error empire has apparently lost sight of former colony at planet %d but doesn't realize it"%pID
+        oldPopCtrs=[]
+        for specN in empireSpecies:
+            oldPopCtrs.extend(empireSpecies[specN])
+        oldEmpSpec = {}
+        oldEmpSpec.update(empireSpecies)
+        empireSpecies.clear()
+        empireSpeciesByPlanet.clear()
+        oldEmpCol= {}
+        oldEmpCol.update(empireColonizers)
+        empireColonizers.clear()
+        empireShipBuilders.clear()
+        empireShipyards.clear()
+        empire_dry_docks.clear()
+        empireMetabolisms.clear()
+        availableGrowthSpecials.clear()
+        activeGrowthSpecials.clear()
+        empirePlanetsWithGrowthSpecials.clear()
+        if empire.getTechStatus(TechsListsAI.EXOBOT_TECH_NAME) == fo.techStatus.complete:
+            empireColonizers["SP_EXOBOT"]=[]# get it into colonizer list even if no colony yet
+        empireSpeciesSystems.clear()
+        AIstate.popCtrIDs[:]=[]
+        AIstate.popCtrSystemIDs[:]=[]
+        AIstate.outpostIDs[:]=[]
+        AIstate.outpostSystemIDs[:]=[]
+        AIstate.colonizedSystems.clear()
+        pilotRatings.clear()
+        unowned_planet_ids.clear()
+    # var setup done
+        
+    for sys_id in universe.systemIDs:
+        sys = universe.getSystem(sys_id)
+        if not sys:
             continue
-        pSpecName=planet.speciesName
-        empireSpeciesByPlanet[pID] = pSpecName
-        if pID not in oldPopCtrs:
-            if  (AIFocusType.FOCUS_MINING in planet.availableFoci):
-                fo.issueChangeFocusOrder(pID, AIFocusType.FOCUS_MINING)
-                print "Changing focus of newly acquired planet ID %d : %s  to mining "%(pID,  planet.name ) #stale code left as an example; Mining no longer an option
-        if planet.currentMeterValue(fo.meterType.population)>0 :
-            empireSpecies.setdefault(pSpecName,  []).append(pID)
-    pilotRatings.clear()
-    print "\n"+"Empire species roster:"
-    for specName in empireSpecies:
-        thisSpec=fo.getSpecies(specName)
-        pilotVal = 0
-        if thisSpec:
-            if thisSpec.canProduceShips:
-                pilotVal = ratePilotingTag(list(thisSpec.tags) )
-                if specName == "SP_ACIREMA":
-                    pilotVal += 1
-            thisMetab = [ tag for tag in thisSpec.tags if tag in  AIDependencies.metabolims]
-            shipyards=[]
-            for pID in empireSpecies[specName]:
-                planet=universe.getPlanet(pID)
-                if not planet: 
-                    continue
-                for metab in thisMetab:
-                    #prev = empireMetabolisms.get(metab,  [0.0,  0.0] )
-                    prev = empireMetabolisms.get(metab,  0.0 )
-                    #prev[0] += planet.currentMeterValue(fo.meterType.population)
-                    #prev[1] += planet.size
-                    prev  += planet.size
-                    empireMetabolisms[metab] = prev
+        empire_has_colony_in_sys = False
+        empire_has_pop_ctr_in_sys = False
+        for pid in sys.planetIDs:
+            planet = universe.getPlanet(pid)
+            if not planet:
+                continue
+            spec_name=planet.speciesName
+            thisSpec=fo.getSpecies(spec_name)
+            owner_id = planet.owner
+            planet_population = planet.currentMeterValue(fo.meterType.population)
+            buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
+            if planet.owner == empire_id:
+                empire_has_colony_in_sys = True
+                empireOwnedPlanetIDs.append(pid)
+                AIstate.colonizedSystems.setdefault(sys_id,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
+                pop_map[pid] = planet_population
+                if planet_population <= 0.0:
+                    empireOutpostIDs.add(pid)
+                    AIstate.outpostIDs.append(pid)
+                else:
+                    empirePopCtrs.add(pid)
+                    AIstate.popCtrIDs.append(pid)
+                    empireSpeciesSystems.setdefault(sys_id,  {}).setdefault('pids', []).append(pid)
+                    empire_has_pop_ctr_in_sys = True
+                    empireSpeciesByPlanet[pid] = spec_name
+                    empireSpecies.setdefault(spec_name,  []).append(pid)
+                    for metab in [ tag for tag in thisSpec.tags if tag in  AIDependencies.metabolims]:
+                        empireMetabolisms[metab] = empireMetabolisms.get(metab,  0.0 ) + planet.size
+                    pilotVal = 0.0
+                    if thisSpec.canProduceShips:
+                        pilotVal = ratePilotingTag(list(thisSpec.tags) )
+                        if spec_name == "SP_ACIREMA":
+                            pilotVal += 1
+                        pilotRatings[pid] = pilotVal
+                        yard_here = []
+                        if "BLD_SHIPYARD_BASE" in buildings_here:
+                            empireShipBuilders.setdefault(spec_name, []).append(pid)
+                            empireShipyards[pid] = pilotVal
+                            yard_here = [pid]
+                        if thisSpec.canColonize:
+                            empireColonizers.setdefault(spec_name, []).extend(yard_here)
+                            
+                            
+                if planet.size == fo.planetSize.asteroids:
+                    gotAst = True
+                elif planet.size == fo.planetSize.gasGiant:
+                    gotGG = True
+                if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
+                    empire_status['industrialists'] += planet_population
+                elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
+                    empire_status['researchers'] += planet_population
+                if "ANCIENT_RUINS_SPECIAL" in planet.specials:
+                    gotRuins = True
                 for special in planet.specials:
                     if special in AIDependencies.metabolimBoosts:
-                        empirePlanetsWithGrowthSpecials.setdefault(pID,  []).append(special)
-                        availableGrowthSpecials.setdefault(special,  []).append(pID)
+                        empirePlanetsWithGrowthSpecials.setdefault(pid,  []).append(special)
+                        availableGrowthSpecials.setdefault(special,  []).append(pid)
                         if planet.focus == AIFocusType.FOCUS_GROWTH:
-                            activeGrowthSpecials.setdefault(special,  []).append(pID)
-                buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
-                if  thisSpec.canProduceShips:
-                    pilotRatings[pID] = pilotVal
-                    if "BLD_SHIPYARD_BASE" in buildings_here:
-                        shipyards.append(pID)
+                            activeGrowthSpecials.setdefault(special,  []).append(pid)
                 if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
-                    empire_dry_docks.setdefault(planet.systemID,  []).append(pID)
-                empireSpeciesSystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pID)
-            if thisSpec.canProduceShips:
-                empireShipBuilders[specName]=shipyards
-                empireShipyards.update( [(yard, pilotVal) for yard in shipyards] )
-                if thisSpec.canColonize:
-                    empireColonizers[specName]=shipyards
-            print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(specName,  empireSpecies[specName],  ["not", ""][thisSpec.canColonize and thisSpec.canProduceShips], len(shipyards),  list(thisSpec.tags))
-        else:
-            print "Unable to retrieve info for Species named %s"%specName
+                    empire_dry_docks.setdefault(planet.systemID,  []).append(pid)
+            else:
+                unowned_planet_ids.add(pid)
+                    
+        if empire_has_colony_in_sys:
+            if empire_has_pop_ctr_in_sys:
+                AIstate.popCtrSystemIDs.append(sys_id)
+            else:
+                AIstate.outpostSystemIDs.append(sys_id)
+            AIstate.empireStars.setdefault(sys.starType, []).append(sys_id)
+            sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id,  {})
+            if sys_status.get('fleetThreat', 0) > 0:
+                colony_status['colonies_under_attack'].append(sys_id)
+            if sys_status.get('neighborThreat', 0) > 0:
+                colony_status['colonies_under_threat'].append(sys_id)
+            
+    if empireSpecies!=oldEmpSpec:
+        print "Old empire species: %s  ; new empire species: %s"%(oldEmpSpec,  empireSpecies)
+    if empireColonizers!=oldEmpCol:
+        print "Old empire colonizers: %s  ; new empire colonizers: %s"%(oldEmpCol,  empireColonizers)
+
+        
+    print "\n"+"Empire species roster:"
+    for spec_name in empireSpecies:
+        this_spec=fo.getSpecies(spec_name)
+        print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(spec_name,  empireSpecies[spec_name],  ["not", ""][spec_name in empireColonizers], 
+                                len(empireShipBuilders.get(spec_name,[])),  list(this_spec.tags))
     print""
     if len(pilotRatings) != 0:
         ratingList=sorted(pilotRatings.values(), reverse=True)
@@ -376,14 +366,71 @@ def getColonyFleets():
     else:
         curBestPilotRating = 1e-8
         curMidPilotRating = 1e-8
-    if empireSpecies!=oldEmpSpec:
-        print "Old empire species: %s  ; new empire species: %s"%(oldEmpSpec,  empireSpecies)
-    if empireColonizers!=oldEmpCol:
-        print "Old empire colonizers: %s  ; new empire colonizers: %s"%(oldEmpCol,  empireColonizers)
 
-    print
+    #the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targetted
+    # for making/invading a colony
+    #claimedStars = {}
+    #for sType in AIstate.empireStars:
+        #claimedStars[sType] = list( AIstate.empireStars[sType] )
+    #for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+        #tSys = universe.getSystem(sysID)
+        #if not tSys: continue
+        #claimedStars.setdefault( tSys.starType, []).append(sysID)
+    #foAI.foAIstate.misc['claimedStars'] = claimedStars
+
+
+    u_timing[0].append( time() )
+    u_timing[1].append( "Categorizing Visible Planets" )
+         
+        
+    return u_timing, univ_stats
+    
+def getColonyFleets():
+    "examines known planets, collects various colonization data, to be later used to send colony fleets"
+    global  curBestMilShipRating
+    times=[]
+    tasks = []
     times.append( time() )
-    tasks.append( "Evaluating Existing Colonies" )
+    tasks.append("init")
+
+    curBestMilShipRating = ProductionAI.curBestMilShipRating()
+    times.append( time() )
+    tasks.append( "getting best milship rating" )
+
+
+    allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    AIstate.colonyFleetIDs[:] = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allColonyFleetIDs)
+    times.append( time() )
+    tasks.append( "getting avail colony fleets" )
+
+    # get suppliable systems and planets
+    universe = fo.getUniverse()
+    empire = fo.getEmpire()
+    empireID = empire.empireID
+    capitalID = PlanetUtilsAI.getCapital()
+    #capitalID = empire.capitalID
+    
+    homeworld=None
+    if capitalID:
+        homeworld = universe.getPlanet(capitalID)
+    if homeworld:
+        speciesName = homeworld.speciesName
+        homeworldName=homeworld.name
+        homeSystemID = homeworld.systemID
+    else:
+        speciesName = ""
+        homeworldName=" no remaining homeworld "
+        homeSystemID = -1
+
+
+    #
+    ## survey universe -----------------------------------------------------------
+    #
+    u_timing, univ_stats = survey_universe()
+    fleetSupplyablePlanetIDs = univ_stats['fleetSupplyablePlanetIDs']
+    times.extend( u_timing[0] )
+    tasks.extend( u_timing[1] )
+    print
 
     # export colony targeted systems for other AI modules
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
@@ -444,7 +491,7 @@ def getColonyFleets():
                 buildPlanet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(buildPlanet.systemID)
 
-    evaluatedColonyPlanetIDs = list(set(unOwnedPlanetIDs).union(empireOutpostIDs) - set(colonyTargetedPlanetIDs) ) # places for possible colonyBase
+    evaluatedColonyPlanetIDs = list(unowned_planet_ids.union(AIstate.outpostIDs) - set(colonyTargetedPlanetIDs) ) # places for possible colonyBase
     
     #foAI.foAIstate.qualifyingOutpostBaseTargets.clear() #don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
     #foAI.foAIstate.qualifyingColonyBaseTargets.clear()
@@ -477,7 +524,7 @@ def getColonyFleets():
             if len(queued_outpost_bases) >=max_queued_outpost_bases:
                 print "too many queued outpost bases to build any more now"
                 break
-            if pid not in unOwnedPlanetIDs: 
+            if pid not in unowned_planet_ids: 
                 continue
             if  foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1: 
                 continue  #already building for here
@@ -505,7 +552,7 @@ def getColonyFleets():
     times.append( time() )
     tasks.append( "initiate outpost base construction" )
 
-    evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
+    evaluatedOutpostPlanetIDs = list(unowned_planet_ids - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
 
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
@@ -682,7 +729,21 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         backupFactor = min(1.0,  (empire.productionPoints/200.0)**2 )
 
     universe = fo.getUniverse()
-    claimedStars= foAI.foAIstate.misc.get('claimedStars',  {} )
+    capitalID = PlanetUtilsAI.getCapital()
+    homeworld = universe.getPlanet(capitalID)
+    planet = universe.getPlanet(planetID)
+    this_sysid = planet.systemID
+    distanceFactor = 0
+    if homeworld:
+        homeSystemID = homeworld.systemID
+        evalSystemID = this_sysid
+        if (homeSystemID != -1) and (evalSystemID != -1):
+            leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
+            if leastJumps == -1: #indicates no known path
+                return 0.0
+            #distanceFactor = 1.001 / (leastJumps + 1)
+
+    claimedStars= foAI.foAIstate.misc.setdefault('claimedStars',  {} )
     if claimedStars == {}:
         for sType in AIstate.empireStars:
             claimedStars[sType] = list( AIstate.empireStars[sType] )
@@ -690,15 +751,13 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             tSys = universe.getSystem(sysID)
             if not tSys: continue
             claimedStars.setdefault( tSys.starType, []).append(sysID)
-
+    
     empireResearchList = [element.tech for element in empire.researchQueue]
-    planet = universe.getPlanet(planetID)
     if (planet == None):
         VisMap = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empire.empireID))
         print "Planet %d object not available; visMap: %s"%(planetID,  VisMap)
         return 0
     detail.append("%s : "%planet.name )
-    this_sysid = planet.systemID
     haveExistingPresence=False
     if  AIstate.colonizedSystems.get(this_sysid,  []) not in [ [],  [planetID]]: #if existing presence is target planet, don't count
         haveExistingPresence=True
@@ -1106,16 +1165,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         indVal = project_ind_val(cur_pop,  max_pop_size,  cur_industry,  max_ind_factor, flat_industry, discountMultiplier)
         detail.append("indVal %.1f"%indVal)
         # used to give preference to closest worlds
-        empireID = empire.empireID
-        capitalID = PlanetUtilsAI.getCapital()
-        homeworld = universe.getPlanet(capitalID)
-        distanceFactor = 0
-        if homeworld:
-            homeSystemID = homeworld.systemID
-            evalSystemID = this_sysid
-            if (homeSystemID != -1) and (evalSystemID != -1):
-                leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
-                distanceFactor = 1.001 / (leastJumps + 1)
 
         for special in [ spec for spec in  planetSpecials if spec in AIDependencies.metabolimBoosts]:
             gbonus =  discountMultiplier  * basePopInd  * indMult * empireMetabolisms.get( AIDependencies.metabolimBoosts[special] , 0)#  due to growth applicability to other planets

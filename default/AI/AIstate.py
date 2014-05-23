@@ -95,6 +95,7 @@ class AIstate(object):
         #                             'myDefenses' (planet rating), 'myfleets', 'myFleetsAccessible'(not just next desitination), 'myFleetRating'
         #                             'my_neighbor_rating' (up to 1 jump away), 'my_jump2_rating', 'my_jump3_rating', my_jump4_rating'
         self.systemStatus={} 
+        self.planet_status={} 
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
         self.aggression=aggression
@@ -109,7 +110,10 @@ class AIstate(object):
         
     def __setstate__(self, state_dict):
         self.__dict__.update(state_dict)   # update attributes
-        for dict_attrib in ['qualifyingColonyBaseTargets',  'qualifyingOutpostBaseTargets',  'qualifyingTroopBaseTargets']:
+        for dict_attrib in ['qualifyingColonyBaseTargets',  
+                            'qualifyingOutpostBaseTargets',  
+                            'qualifyingTroopBaseTargets', 
+                            'planet_status']:
             if dict_attrib not in state_dict:
                 self.__dict__[dict_attrib] = {}
         for std_attrib in ['empire_standard_fighter',  'empire_standard_enemy']:
@@ -117,7 +121,7 @@ class AIstate(object):
                 self.__dict__[std_attrib] = (4,  ((4, 1),), 0.0, 10.0)
 
 
-    def __del__(self): #TODO: confirm if anything about bosst interface really requires this
+    def __del__(self): #TODO: confirm if anything about boost interface really requires this
         "destructor"
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
@@ -132,14 +136,14 @@ class AIstate(object):
         del self.qualifyingOutpostBaseTargets
         del self.qualifyingTroopBaseTargets
 
-    def clean(self):
-        "turn start AIstate cleanup"
-
+    def refresh(self):
+        "turn start AIstate cleanup/refresh"
+        #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
         invasionTargets[:]=[]
         exploration_center = PlanetUtilsAI.getCapitalSysID()
-        if exploration_center == -1: #a bad state probably from an old savegame
+        if exploration_center == -1: #a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.origHomeSystemID
 
         ExplorationAI.graphFlags.clear()
@@ -179,7 +183,7 @@ class AIstate(object):
         """Returns assessed Rating of specified empire"""
         return 1
         
-    def fleet_summary_to_estats(self, summary):
+    def fleet_sum_tups_to_estat_dicts(self, summary):
         if not summary:
             return None
         #print "converting summary: ",  summary
@@ -334,7 +338,7 @@ class AIstate(object):
             enemyRatings = []
             for fid in localEnemyFleetIDs:
                 oldstyle_rating = self.old_rate_fleet(fid)
-                newstyle_rating = self.rateFleet(fid, self.fleet_summary_to_estats([(1,  self.empire_standard_fighter  )]))
+                newstyle_rating = self.rateFleet(fid, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_fighter  )]))
                 enemyRatings.append(newstyle_rating)
                 if oldstyle_rating.get('overall', 0) != newstyle_rating.get('overall', 0):
                     loc = ""
@@ -396,7 +400,7 @@ class AIstate(object):
                 for fleetID in localEnemyFleetIDs:
                     fleet = universe.getFleet(fleetID)
                     if ( fleet) and  (not fleet.ownedBy(self.empireID)):
-                        rating=self.rateFleet(fleetID,  self.fleet_summary_to_estats([(1, self.empire_standard_fighter)]))
+                        rating=self.rateFleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
                         if fleet.speed==0:
                             monsterattack += rating['attack']
                             monsterhealth += rating['health']
@@ -412,7 +416,7 @@ class AIstate(object):
             sysStatus = self.systemStatus[sysID]
             myattack, myhealth=0, 0
             for fid in sysStatus['myfleets']:
-                thisRating=self.getRating(fid,  True, self.fleet_summary_to_estats([(1,  self.empire_standard_enemy)]))
+                thisRating=self.getRating(fid,  True, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_enemy)]))
                 myattack += thisRating['attack']
                 myhealth += thisRating['health']
             if sysID != -1:
@@ -556,11 +560,14 @@ class AIstate(object):
         return False
         
     def rate_psuedo_fleet(self,  ship_info):
-        return self.rateFleet(-1, enemy_stats=self.fleet_summary_to_estats([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
+        return self.rateFleet(-1, enemy_stats=self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
         
     def rateFleet(self, fleetID,  enemy_stats=None,  ship_info = None):
-        """ for enemy stats format see adjust_stats_vs_enemy() 
-            summary is (attacks, attack, shields, max_structure) 
+        """ for enemy stats format see adjust_stats_vs_enemy()
+            returns {'overall': adjusted attack*health,  'tally':sum_over_ships of ship_rating, 'attack':attack, 'health':health, 'nships':nships, 'summary':fleet_summary_tups}
+            fleet_summary_tups is tuple of (nships, profile_tuple) tuples,
+            where a profile tuple is ( total_attack, attacks, shields, max_structure)
+            where attacks is a tuple of (n_shots, damage) tuples
             ship_info is an optional (used iff fleetID==-1)  list of ( id, design_id, species_name) tuples where id can be -1 for a design-only analysis"""
         if enemy_stats is None:
             enemy_stats=[ (1, {}) ]
@@ -597,10 +604,10 @@ class AIstate(object):
             attack += stats['attack']
             health += stats['structure']
             ship_summary = ( stats['attack'], tuple( [tuple(item) for item in stats['attacks'].items() ] or [(0, 0)] ),  stats['shields'],  max_struct )
-            summary.setdefault( ship_summary, [0])[0] += 1
+            summary.setdefault( ship_summary, [0])[0] += 1 # increment tally of ships with this summary profile
             nships+=1
-        fleet_summary = [ (v[0],  k) for k, v in summary.items()]
-        return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships,  'summary':fleet_summary}
+        fleet_summary_tuples = [ (v[0],  k) for k, v in summary.items()]
+        return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships,  'summary':fleet_summary_tuples}
 
     def old_rate_fleet(self, fleetID):
         universe=fo.getUniverse()
@@ -726,6 +733,7 @@ class AIstate(object):
                 structure_tally += count * (mystructure + shield_boost) #uses num of my attacks for proxy calc of structure help from shield
                 total_enemy_weights += count
                 continue
+            #(else)
             eshields = estats.get('shields',  0)
             tempattacktally=0
             tempstruc = max(1e-4, estats.get('structure', 1))
@@ -931,7 +939,7 @@ class AIstate(object):
         for fleetID in fleetList:
             status=self.fleetStatus.setdefault(fleetID,  {} )
             rating = status.get('rating', {'overall':0,  'attack':0,  'health':0} )
-            newRating = self.rateFleet(fleetID,  self.fleet_summary_to_estats([(1, self.empire_standard_enemy)]))
+            newRating = self.rateFleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]))
             oldSysID = status.get('sysID',  -2)
             fleet = universe.getFleet(fleetID)
             #if fleet and not fleet.aggressive:
@@ -995,7 +1003,7 @@ class AIstate(object):
                             if mMT0.target_type == AITargetType.TARGET_SYSTEM:
                                 status['sysID'] = mMT0.target_id #hmm, but might still be a fair ways from here
         self.shipCount = shipCount
-        std_fighter = sorted( [ (v, k) for k, v in fighters.items()] )[-1][1]
+        std_fighter = sorted( [ (v, k) for k, v in fighters.items()] )[-1][1] # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter
         print "------------------------"
         print "Empire Ship Count: ",  shipCount

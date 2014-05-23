@@ -238,7 +238,7 @@ def generateOrders(): # pylint: disable=invalid-name
     #updateShipDesigns()   #should not be needed anymore;
     #updateFleetsRoles()
 
-    foAIstate.clean() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs
+    foAIstate.refresh() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
     foAIstate.reportSystemThreats()
     # ...missions
     # ...demands/priorities

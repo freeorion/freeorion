@@ -147,7 +147,7 @@ def getBestShipRatings(loc=None,  verbose = False):
     style_index = fo.empireID() %2
     if verbose:
         print "getBestShipRatings checking %d designs w/r/t enemy stats %s  on planetIDs %s from loc set %s" % (
-                    len(theseDesignIDs),  foAI.foAIstate.fleet_summary_to_estats([(1,  foAI.foAIstate.empire_standard_enemy)]),  planetIDs, loc)
+                    len(theseDesignIDs),  foAI.foAIstate.fleet_sum_tups_to_estat_dicts([(1,  foAI.foAIstate.empire_standard_enemy)]),  planetIDs, loc)
     for pid in planetIDs:
         localBestCostRating = 0.0
         bestDesignID = -1
