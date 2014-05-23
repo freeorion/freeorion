@@ -20,6 +20,7 @@ import AIDependencies
 
 allottedInvasionTargets=0
 allottedColonyTargets=0
+colonyGrowthBarrier = 2
 scoutsNeeded = 0
 unmetThreat = 0
 
@@ -58,12 +59,12 @@ def calculatePriorities():
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION, calculateExplorationPriority())
     times.append( time() )
     tasks.append(  "setting Exploration Priority")
-    foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, calculateOutpostPriority())
-    times.append( time() )
-    tasks.append(  "setting Outpost Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, calculateColonisationPriority())
     times.append( time() )
     tasks.append(  "setting Colony Priority")
+    foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, calculateOutpostPriority())
+    times.append( time() )
+    tasks.append(  "setting Outpost Priority")
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION, calculateInvasionPriority())
     times.append( time() )
     tasks.append(  "setting Invasion Priority")
@@ -241,9 +242,12 @@ def calculateExplorationPriority():
 
 def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
-    global allottedColonyTargets
+    global allottedColonyTargets, colonyGrowthBarrier
     totalPP=fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
+    colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
+    if num_colonies > colonyGrowthBarrier:
+        return 0.0
     colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
@@ -305,6 +309,9 @@ def calculateInvasionPriority():
     troopsPerPod=2
     empire=fo.getEmpire()
     multiplier = 1
+    num_colonies = len( list(AIstate.popCtrIDs) )
+    if num_colonies > colonyGrowthBarrier:
+        return 0.0
     
     if len(foAI.foAIstate.colonisablePlanetIDs) > 0:
         bestColonyScore = max( 2,  foAI.foAIstate.colonisablePlanetIDs[0][1][0] )
