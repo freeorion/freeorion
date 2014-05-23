@@ -85,12 +85,6 @@
 		34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */; };
 		34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A7028E118360090013F8C6 /* CombatCamera.cpp */; };
-		34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA37F0FFFAB4900500F40 /* AppKit.framework */; };
-		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
-		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
-		34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346BCA5F0FF6E6A200582E3D /* Cocoa.framework */; };
-		34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
-		34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */; };
 		34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4BE0FFFD2DB00500F40 /* chmain.mm */; };
 		34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4C00FFFD2DB00500F40 /* OgreController.mm */; };
 		34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C620A98A3F900DA9C21 /* chmain.cpp */; };
@@ -166,7 +160,6 @@
 		3ABEAB3B1749BFED00E34912 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
 		3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
 		3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
-		3ABEAB421749C2B200E34912 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
 		3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
 		3ABEAB741749C36200E34912 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
 		3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
@@ -278,8 +271,6 @@
 		471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */; };
 		471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */; };
 		471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */; };
-		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
-		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
 		471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */; };
 		471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5C0A98A3F900DA9C21 /* camain.cpp */; };
 		478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
@@ -384,6 +375,15 @@
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
+		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
+		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
+		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
+		82E52399192FE99D001E2374 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52393192FE99C001E2374 /* Cocoa.framework */; };
+		82E5239A192FE99D001E2374 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52394192FE99C001E2374 /* CoreData.framework */; };
+		82E5239B192FE99D001E2374 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52395192FE99C001E2374 /* Foundation.framework */; };
+		82E5239C192FE99D001E2374 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52396192FE99C001E2374 /* OpenAL.framework */; };
+		82E5239D192FE99D001E2374 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52397192FE99D001E2374 /* OpenGL.framework */; };
+		82E5239F192FEAA6001E2374 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5239E192FEAA6001E2374 /* CoreFoundation.framework */; };
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */; };
 		82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */; };
@@ -640,7 +640,6 @@
 		3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindBatchPage.cpp; sourceTree = "<group>"; };
 		3402E24C0F5A30D600DF6FE7 /* WindBatchPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindBatchPage.h; sourceTree = "<group>"; };
 		3402E25D0F5A317400DF6FE7 /* FreeOrion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeOrion.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		341395C90F549BE0008FF42C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatSetupWnd.cpp; sourceTree = "<group>"; };
 		3415B09F10851BB200009F19 /* CombatSetupWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatSetupWnd.h; sourceTree = "<group>"; };
 		343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeCharsets.cpp; sourceTree = "<group>"; };
@@ -663,7 +662,6 @@
 		343EC6770F3F61D000782AD3 /* PythonSetWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonSetWrapper.h; sourceTree = "<group>"; };
 		343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseWrapper.cpp; sourceTree = "<group>"; };
 		343EC6790F3F61D000782AD3 /* PythonWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonWrappers.h; sourceTree = "<group>"; };
-		346BCA5F0FF6E6A200582E3D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		346D87E60FC5F52A0095593E /* CombatEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEventListener.h; sourceTree = "<group>"; };
 		346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsteroidBeltObstacle.cpp; sourceTree = "<group>"; };
 		346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsteroidBeltObstacle.h; sourceTree = "<group>"; };
@@ -691,9 +689,6 @@
 		34A70290118360090013F8C6 /* CombatWndFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatWndFwd.h; sourceTree = "<group>"; };
 		34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
 		34A97FE60FC978C600620707 /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
-		34ACA37F0FFFAB4900500F40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		34ACA3800FFFAB4900500F40 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		34ACA3810FFFAB4900500F40 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
 		34ACA4C00FFFD2DB00500F40 /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
@@ -781,7 +776,6 @@
 		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 4; path = Version.cpp.in; sourceTree = "<group>"; };
 		34C9B34311DA2E95003695F4 /* ClrConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClrConstants.cpp; sourceTree = "<group>"; };
 		34C9B34711DA2ECA003695F4 /* ClrConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClrConstants.h; sourceTree = "<group>"; };
-		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		34D3CE8A11D7DA03007C1E78 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
 		34D3CE8B11D7DA03007C1E78 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
 		34DD943911360BFA00265AF9 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
@@ -1064,14 +1058,11 @@
 		471D5D3C0A98A3F900DA9C21 /* XMLDoc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDoc.cpp; sourceTree = "<group>"; };
 		471D5D3D0A98A3F900DA9C21 /* XMLDoc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLDoc.h; sourceTree = "<group>"; };
 		471D5D440A98A46000DA9C21 /* freeoriond */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeoriond; sourceTree = BUILT_PRODUCTS_DIR; };
-		471D650C0A98B4C100DA9C21 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = /System/Library/Frameworks/OpenAL.framework; sourceTree = "<absolute>"; };
-		471D650D0A98B4C100DA9C21 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		471D654D0A98B7F800DA9C21 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfreetype.a; sourceTree = "<group>"; };
 		471FEFD70A9A629800C36AA3 /* freeorionca */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeorionca; sourceTree = BUILT_PRODUCTS_DIR; };
 		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		478417B10CF0592E00BE4710 /* libClientCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libClientCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		479036420B04CA23001FEF7B /* default */ = {isa = PBXFileReference; explicitFileType = folder; name = default; path = ../default; sourceTree = SOURCE_ROOT; };
-		47AD8A180AA609980089CE8D /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8201E5F215E2C0770037D453 /* EffectParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser1.cpp; sourceTree = "<group>"; };
 		8201E5F315E2C0770037D453 /* EffectParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser2.cpp; sourceTree = "<group>"; };
 		8201E5F415E2C0770037D453 /* EffectParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParserImpl.h; sourceTree = "<group>"; };
@@ -1395,6 +1386,15 @@
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
+		82E5238E192FE8CE001E2374 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		82E52390192FE90F001E2374 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		82E52392192FE99C001E2374 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		82E52393192FE99C001E2374 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		82E52394192FE99C001E2374 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		82E52395192FE99C001E2374 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		82E52396192FE99C001E2374 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		82E52397192FE99D001E2374 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		82E5239E192FEAA6001E2374 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumText.cpp; sourceTree = "<group>"; };
 		82E68F60190ECB8400BB1AD9 /* EnumText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumText.h; sourceTree = "<group>"; };
 		82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveGamePreviewUtils.cpp; sourceTree = "<group>"; };
@@ -1424,7 +1424,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3ABEAB421749C2B200E34912 /* CoreFoundation.framework in Frameworks */,
+				82E5239F192FEAA6001E2374 /* CoreFoundation.framework in Frameworks */,
 				3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */,
 				3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */,
 				3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */,
@@ -1467,27 +1467,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */,
 				828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */,
-				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
-				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
 				3ABEAB9C1749C96400E34912 /* libboost_signals.a in Frameworks */,
-				34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */,
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
 				34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */,
+				82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */,
+				82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */,
+				82E52399192FE99D001E2374 /* Cocoa.framework in Frameworks */,
+				82E5239A192FE99D001E2374 /* CoreData.framework in Frameworks */,
+				82E5239B192FE99D001E2374 /* Foundation.framework in Frameworks */,
+				82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */,
+				82E5239C192FE99D001E2374 /* OpenAL.framework in Frameworks */,
+				82E5239D192FE99D001E2374 /* OpenGL.framework in Frameworks */,
+				4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */,
+				34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */,
+				471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */,
+				82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */,
+				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
 				478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */,
 				478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */,
-				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
-				82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */,
-				471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */,
-				471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */,
-				4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */,
-				471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */,
-				82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */,
-				34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */,
-				34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */,
-				34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */,
-				34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */,
 				82C07479149DE7CE00E76876 /* freeorionparse.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2812,15 +2812,15 @@
 		8288CC3D15F4AF6000F8318D /* System Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				34ACA37F0FFFAB4900500F40 /* AppKit.framework */,
-				34ACA3800FFFAB4900500F40 /* CoreData.framework */,
-				34ACA3810FFFAB4900500F40 /* Foundation.framework */,
-				341395C90F549BE0008FF42C /* CoreFoundation.framework */,
-				34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */,
-				471D650D0A98B4C100DA9C21 /* OpenGL.framework */,
-				471D650C0A98B4C100DA9C21 /* OpenAL.framework */,
-				47AD8A180AA609980089CE8D /* Carbon.framework */,
-				346BCA5F0FF6E6A200582E3D /* Cocoa.framework */,
+				82E5238E192FE8CE001E2374 /* AppKit.framework */,
+				82E52392192FE99C001E2374 /* Carbon.framework */,
+				82E52393192FE99C001E2374 /* Cocoa.framework */,
+				82E52394192FE99C001E2374 /* CoreData.framework */,
+				82E5239E192FEAA6001E2374 /* CoreFoundation.framework */,
+				82E52395192FE99C001E2374 /* Foundation.framework */,
+				82E52390192FE90F001E2374 /* IOKit.framework */,
+				82E52396192FE99C001E2374 /* OpenAL.framework */,
+				82E52397192FE99D001E2374 /* OpenGL.framework */,
 			);
 			name = "System Frameworks";
 			sourceTree = "<group>";
@@ -3569,6 +3569,10 @@
 		1DEB923208733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
@@ -3577,6 +3581,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
+					"$(PROJECT_DIR)/dep/lib",
+					"$(PROJECT_DIR)/dep/dyn_lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
@@ -3860,6 +3866,10 @@
 		8218683114A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
@@ -3868,6 +3878,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
+					"$(PROJECT_DIR)/dep/lib",
+					"$(PROJECT_DIR)/dep/dyn_lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
@@ -4075,6 +4087,10 @@
 		8221B254160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
@@ -4083,6 +4099,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/dep/lib\"",
 					"\"$(SRCROOT)/dep/dyn_lib\"",
+					"$(PROJECT_DIR)/dep/lib",
+					"$(PROJECT_DIR)/dep/dyn_lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = FreeOrion;
@@ -4164,7 +4182,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = INIT;
 				ZERO_LINK = NO;
@@ -4206,7 +4223,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = MakeDMG;
 				ZERO_LINK = NO;
