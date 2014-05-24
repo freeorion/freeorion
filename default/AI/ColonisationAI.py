@@ -44,7 +44,7 @@ pop_map = {}
 empire_status = {'industrialists':0,  'researchers':0}
 unowned_planet_ids = set()
 empireOutpostIDs = set()
-
+claimedStars = {}
 
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
 photoMap= { fo.starType.blue:3    , fo.starType.white:1.5  , fo.starType.red:-1 ,  fo.starType.neutron: -1 , fo.starType.blackHole: -10 , fo.starType.noStar: -10     }
@@ -216,6 +216,7 @@ def survey_universe():
 
     #set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
+        claimedStars.clear()
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
         pop_map.clear()
@@ -743,7 +744,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 return 0.0
             #distanceFactor = 1.001 / (leastJumps + 1)
 
-    claimedStars= foAI.foAIstate.misc.setdefault('claimedStars',  {} )
+    #claimedStars= foAI.foAIstate.misc.get('claimedStars',  {} ) #use ColonisationAI.claimedStars instead to avoid trying to pickle a dict keyed by a <class 'freeOrionAIInterface.starType'>
     if claimedStars == {}:
         for sType in AIstate.empireStars:
             claimedStars[sType] = list( AIstate.empireStars[sType] )
