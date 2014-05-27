@@ -677,6 +677,7 @@ Tech
             ]
             effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
+    graphic = "icons/tech/distributed_thought.png"
 
 /*  // commented out because current form doesn't work with current detection mechanics, which have a hard limit on range that can't be exceeded
 Tech
