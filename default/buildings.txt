@@ -1243,7 +1243,7 @@ BuildingType
         Not Contains Building "BLD_TRANSFORMER"
         OwnedBy TheEmpire Source.Owner
     ]
-    icon = ""
+    icon = "icons/building/transformer.png"
 
 BuildingType
     name = "BLD_GATEWAY_VOID"
