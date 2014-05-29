@@ -380,6 +380,17 @@ namespace {
 
     const double TWO_PI = 2.0*3.14159;
     boost::shared_ptr<ShaderProgram> scanline_shader;
+
+    void AddOptions(OptionsDB& db) {
+        db.Add("ui.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   true,   Validator<bool>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
+    bool NewFleetsAggressiveOptionSetting()
+    { return GetOptionsDB().Get<bool>("ui.fleet-wnd-aggression"); }
+
+    void SetNewFleetAggressiveOptionSetting(bool aggressive)
+    { GetOptionsDB().Set<bool>("ui.fleet-wnd-aggression", aggressive); }
 }
 
 ////////////////////////////////////////////////
@@ -1048,7 +1059,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
     m_new_fleet_drop_target(false),
-    m_new_fleet_aggression(false),
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
@@ -1137,7 +1148,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
     m_new_fleet_drop_target(new_fleet_drop_target), // should be true?
-    m_new_fleet_aggression(false),
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
@@ -1322,17 +1333,18 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
             if (client_empire_id == ALL_EMPIRES)
                 return;
 
-            bool new_aggression_State = !fleet->Aggressive();
+            bool new_aggression_state = !fleet->Aggressive();
 
             // toggle fleet aggression status
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+                OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
         } else {
             // TODO: moderator action to toggle fleet aggression
         }
     } else if (m_new_fleet_drop_target) {
         // toggle new fleet aggression
         m_new_fleet_aggression = !m_new_fleet_aggression;
+        SetNewFleetAggressiveOptionSetting(m_new_fleet_aggression);
         UpdateAggressionToggle();
     }
 }
