@@ -2476,6 +2476,12 @@ Hide
 FW_PASSIVE_DESC
 Fleet will attempt to stay hidden; it will not blockade or initiate battle.
 
+FW_AUTO
+Automatic Aggression Selection
+
+FW_AUTO_DESC
+Automatically select aggression for new fleet based on whether ships have weapons.
+
 FW_SHIP_CLASS
 Ship Class 
 

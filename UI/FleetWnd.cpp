@@ -27,8 +27,10 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TextControl.h>
+#include <GG/Enum.h>
 
 #include <boost/cast.hpp>
+
 
 namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
@@ -128,7 +130,38 @@ namespace {
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
-    void CreateNewFleetsForShips(const std::vector<std::vector<int> >& ship_id_groups, bool aggressive = false) {
+    bool ContainsArmedShips(const std::vector<int>& ship_ids) {
+        for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
+            if (TemporaryPtr<const Ship> ship = GetShip(*it))
+                if (ship->IsArmed())
+                    return true;
+        return false;
+    }
+
+    bool ContainsArmedShips(int fleet_id) {
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+        if (!fleet)
+            return false;
+        const std::set<int>& ship_ids = fleet->ShipIDs();
+        for (std::set<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
+            if (TemporaryPtr<const Ship> ship = GetShip(*it))
+                if (ship->IsArmed())
+                    return true;
+        return false;
+    }
+
+    bool AggressionForFleet(NewFleetAggression aggression_mode, const std::vector<int>& ship_ids) {
+        if (aggression_mode == FLEET_AGGRESSIVE)
+            return true;
+        if (aggression_mode == FLEET_PASSIVE)
+            return false;
+        // auto aggression; examine ships to see if any are armed...
+        return ContainsArmedShips(ship_ids);
+    }
+
+    void CreateNewFleetsForShips(const std::vector<std::vector<int> >& ship_id_groups,
+                                 NewFleetAggression aggression)
+    {
         if (ship_id_groups.empty())
             return;
         if (ClientPlayerIsModerator())
@@ -137,7 +170,8 @@ namespace {
         if (client_empire_id == ALL_EMPIRES)
             return;
 
-        // TODO: We should probably have the sound effect occur exactly once instead of not at all.
+        // TODO: Should probably have the sound effect occur exactly once instead
+        //       of not at all.
         Sound::TempUISoundDisabler sound_disabler;
 
         std::set<int> original_fleet_ids;           // ids of fleets from which ships were taken
@@ -147,8 +181,10 @@ namespace {
         std::vector<std::string>        order_fleet_names;
         std::vector<int>                order_fleet_ids;
         std::vector<std::vector<int> >  order_ship_id_groups;
-        std::vector<bool>               order_ship_aggressives(ship_id_groups.size(), aggressive);  // all get the same aggressiveness
+        std::vector<bool>               order_ship_aggressives;
 
+
+        // validate ships in each group, and generate fleet names for those ships
         for (std::vector<std::vector<int> >::const_iterator group_it = ship_id_groups.begin();
              group_it != ship_id_groups.end(); ++group_it)
         {
@@ -205,6 +241,7 @@ namespace {
             order_ship_id_groups.push_back(ship_ids);
         }
 
+        // sanity check
         if (   systems_containing_new_fleets.size() != 1
             || *systems_containing_new_fleets.begin() == INVALID_OBJECT_ID)
         {
@@ -212,6 +249,12 @@ namespace {
             return;
         }
 
+        // set / determine aggressiveness for new fleets
+        for (std::vector<std::vector<int> >::const_iterator groups_it = order_ship_id_groups.begin();
+             groups_it != order_ship_id_groups.end(); ++groups_it)
+        {
+            order_ship_aggressives.push_back(AggressionForFleet(aggression, *groups_it));
+        }
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
@@ -232,17 +275,19 @@ namespace {
         }
     }
 
-    void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
-        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size()
-                               << " ship ids (" << (aggressive ? "Aggressive" : "Passive") << ")";
+    void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
+                                 NewFleetAggression aggression)
+    {
+        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size();
         std::vector<std::vector<int> > ship_id_groups;
         ship_id_groups.push_back(ship_ids);
 
-        CreateNewFleetsForShips(ship_id_groups, aggressive);
+        CreateNewFleetsForShips(ship_id_groups, aggression);
     }
 
     void CreateNewFleetFromShipsWithDesign(const std::set<int>& ship_ids,
-                                           int design_id, bool aggressive = false)
+                                           int design_id,
+                                           NewFleetAggression aggression)
     {
         Logger().debugStream() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
                                << " ship ids and design id: " << design_id;
@@ -263,11 +308,11 @@ namespace {
                 ships_of_design_ids.push_back(ship->ID());
         }
 
-        CreateNewFleetFromShips(ships_of_design_ids, aggressive);
+        CreateNewFleetFromShips(ships_of_design_ids, aggression);
     }
 
     void CreateNewFleetsFromShipsForEachDesign(const std::set<int>& ship_ids,
-                                               bool aggressive = false)
+                                               NewFleetAggression aggression)
     {
         Logger().debugStream() << "CreateNewFleetsFromShipsForEachDesign with "
                                << ship_ids.size() << " ship ids";
@@ -292,7 +337,7 @@ namespace {
         // we can re-evaluate this code if it presents a noticable performance problem
         for (std::map<int, std::vector<int> >::const_iterator it = designs_ship_ids.begin();
              it != designs_ship_ids.end(); ++it)
-        { CreateNewFleetFromShips(it->second, aggressive); }
+        { CreateNewFleetFromShips(it->second, aggression); }
     }
 
     void MergeFleetsIntoFleet(int fleet_id) {
@@ -382,15 +427,15 @@ namespace {
     boost::shared_ptr<ShaderProgram> scanline_shader;
 
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   true,   Validator<bool>());
+        db.Add("ui.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    bool NewFleetsAggressiveOptionSetting()
-    { return GetOptionsDB().Get<bool>("ui.fleet-wnd-aggression"); }
+    NewFleetAggression NewFleetsAggressiveOptionSetting()
+    { return GetOptionsDB().Get<NewFleetAggression>("ui.fleet-wnd-aggression"); }
 
-    void SetNewFleetAggressiveOptionSetting(bool aggressive)
-    { GetOptionsDB().Set<bool>("ui.fleet-wnd-aggression", aggressive); }
+    void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
+    { GetOptionsDB().Set<NewFleetAggression>("ui.fleet-wnd-aggression", aggression); }
 }
 
 ////////////////////////////////////////////////
@@ -1015,7 +1060,7 @@ public:
     virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
 
     bool                Selected() const;
-    bool                NewFleetAggression() const;
+    NewFleetAggression  GetNewFleetAggression() const;
 
     virtual void        Render();
     virtual void        DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
@@ -1038,7 +1083,7 @@ private:
     const int           m_fleet_id;
     const int           m_system_id;
     const bool          m_new_fleet_drop_target;
-    bool                m_new_fleet_aggression;
+    NewFleetAggression  m_new_fleet_aggression;
 
     boost::signals2::connection  m_fleet_connection;
 
@@ -1182,7 +1227,7 @@ GG::Pt FleetDataPanel::ClientLowerRight() const
 bool FleetDataPanel::Selected() const
 { return m_selected; }
 
-bool FleetDataPanel::NewFleetAggression() const
+NewFleetAggression FleetDataPanel::GetNewFleetAggression() const
 { return m_new_fleet_aggression; }
 
 void FleetDataPanel::Render() {
@@ -1339,11 +1384,16 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
         } else {
-            // TODO: moderator action to toggle fleet aggression
+            // TODO: Moderator action to alter non-player fleet aggression
         }
     } else if (m_new_fleet_drop_target) {
-        // toggle new fleet aggression
-        m_new_fleet_aggression = !m_new_fleet_aggression;
+        // cycle new fleet aggression
+        if (m_new_fleet_aggression == INVALID_FLEET_AGGRESSION)
+            m_new_fleet_aggression = FLEET_AGGRESSIVE;
+        else if(m_new_fleet_aggression == FLEET_AGGRESSIVE)
+            m_new_fleet_aggression = FLEET_PASSIVE;
+        else
+            m_new_fleet_aggression = INVALID_FLEET_AGGRESSION;
         SetNewFleetAggressiveOptionSetting(m_new_fleet_aggression);
         UpdateAggressionToggle();
     }
@@ -1358,6 +1408,10 @@ namespace {
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive.png"); }
     boost::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive_mouseover.png"); }
+    boost::shared_ptr<GG::Texture> FleetAutoIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto.png"); }
+    boost::shared_ptr<GG::Texture> FleetAutoMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto_mouseover.png"); }
 }
 
 void FleetDataPanel::Refresh() {
@@ -1483,30 +1537,37 @@ void FleetDataPanel::UpdateAggressionToggle() {
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     m_aggression_toggle->SetBrowseModeTime(tooltip_delay);
 
-    bool aggressive = false;
+    NewFleetAggression aggression = FLEET_AGGRESSIVE;
 
     if (m_new_fleet_drop_target) {
-        aggressive = m_new_fleet_aggression;
+        aggression = m_new_fleet_aggression;
     } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
-        aggressive = fleet->Aggressive();
+        aggression = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
     } else {
         DetachChild(m_aggression_toggle);
         return;
     }
 
-    if (aggressive) {
+    if (aggression == FLEET_AGGRESSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon()));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
-    } else {
+    } else if (aggression == FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAutoIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
+        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
+    } else {    // aggression == INVALID_FLEET_AGGRESSION
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAutoIcon()));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAutoMouseoverIcon()));
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            FleetPassiveIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     }
 }
@@ -2432,7 +2493,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             if (!parent_fleet_wnd)
                 return;
             CreateNewFleetFromShipsWithDesign(fleet->ShipIDs(), design->ID(),
-                                              parent_fleet_wnd->NewFleetAggression());
+                                              parent_fleet_wnd->GetNewFleetAggression());
             break;
         }
 
@@ -2444,7 +2505,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             if (!parent_fleet_wnd)
                 return;
             CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(),
-                                                  parent_fleet_wnd->NewFleetAggression());
+                                                  parent_fleet_wnd->GetNewFleetAggression());
             break;
         }
 
@@ -2968,10 +3029,10 @@ std::set<int> FleetWnd::SelectedFleetIDs() const {
 std::set<int> FleetWnd::SelectedShipIDs() const
 { return m_fleet_detail_panel->SelectedShipIDs(); }
 
-bool FleetWnd::NewFleetAggression() const {
+NewFleetAggression FleetWnd::GetNewFleetAggression() const {
     if (m_new_fleet_drop_target)
-        return m_new_fleet_drop_target->NewFleetAggression();
-    return false;
+        return m_new_fleet_drop_target->GetNewFleetAggression();
+    return INVALID_FLEET_AGGRESSION;
 }
 
 void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
@@ -3211,13 +3272,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 2: { // split damaged
-            bool aggressive = false;    // damaged ships want to avoid fighting more
-            CreateNewFleetFromShips(damaged_ship_ids, aggressive);
+            // damaged ships want to avoid fighting more
+            CreateNewFleetFromShips(damaged_ship_ids, FLEET_PASSIVE);
             break;
         }
 
         case 3: { // split unfueled
-            CreateNewFleetFromShips(unfueled_ship_ids, fleet->Aggressive());
+            NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
+            CreateNewFleetFromShips(unfueled_ship_ids, nfa);
             break;
         }
 
@@ -3234,19 +3296,20 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
                 ship_id_groups.push_back(single_id);
             }
 
-            bool aggressive = false;
+            NewFleetAggression new_aggression_setting = INVALID_FLEET_AGGRESSION;
             if (m_new_fleet_drop_target)
-                aggressive = m_new_fleet_drop_target->NewFleetAggression();
+                new_aggression_setting = m_new_fleet_drop_target->GetNewFleetAggression();
 
-            CreateNewFleetsForShips(ship_id_groups, aggressive);
+            CreateNewFleetsForShips(ship_id_groups, new_aggression_setting);
             break;
         }
 
         case 9: { // split fleet into separate fleets for each design
-            bool aggressive = false;
+            NewFleetAggression new_aggression_setting = INVALID_FLEET_AGGRESSION;
             if (m_new_fleet_drop_target)
-                aggressive = m_new_fleet_drop_target->NewFleetAggression();
-            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), aggressive);
+                new_aggression_setting = m_new_fleet_drop_target->GetNewFleetAggression();
+
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting);
         }
 
         case 5: { // issue scrap orders to all ships in this fleet
@@ -3371,15 +3434,15 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
     if (ship_ids.empty())
         return;
 
-    bool aggressive = false;
+    NewFleetAggression aggression = INVALID_FLEET_AGGRESSION;
     if (m_new_fleet_drop_target)
-        aggressive = m_new_fleet_drop_target->NewFleetAggression();
+        aggression = m_new_fleet_drop_target->GetNewFleetAggression();
 
     // deselect all ships so that response to fleet rearrangement doesn't attempt
     // to get the selected ships that are no longer in their old fleet.
     m_fleet_detail_panel->SetSelectedShips(std::set<int>());
 
-    CreateNewFleetFromShips(ship_ids, aggressive);
+    CreateNewFleetFromShips(ship_ids, aggression);
 }
 
 void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
