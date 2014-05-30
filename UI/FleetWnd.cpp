@@ -1390,7 +1390,7 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
         // cycle new fleet aggression
         if (m_new_fleet_aggression == INVALID_FLEET_AGGRESSION)
             m_new_fleet_aggression = FLEET_AGGRESSIVE;
-        else if(m_new_fleet_aggression == FLEET_AGGRESSIVE)
+        else if (m_new_fleet_aggression == FLEET_AGGRESSIVE)
             m_new_fleet_aggression = FLEET_PASSIVE;
         else
             m_new_fleet_aggression = INVALID_FLEET_AGGRESSION;
@@ -1557,7 +1557,10 @@ void FleetDataPanel::UpdateAggressionToggle() {
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     } else if (aggression == FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAutoIcon()));
+        if (m_new_fleet_drop_target)
+            m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAutoIcon()));
+        else
+            m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
