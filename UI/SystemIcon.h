@@ -71,10 +71,10 @@ public:
     void            ShowName();                     //!< enables the system name text
     void            HideName();                     //!< disables the system name text
 
-    mutable boost::signals2::signal<void (int)> MouseEnteringSignal;
+    mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> MouseEnteringSignal;
     mutable boost::signals2::signal<void (int)> MouseLeavingSignal;
     mutable boost::signals2::signal<void (int)> LeftClickedSignal;
-    mutable boost::signals2::signal<void (int)> RightClickedSignal;
+    mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> RightClickedSignal;
     mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
     mutable boost::signals2::signal<void (int)> RightDoubleClickedSignal;
     //!@}

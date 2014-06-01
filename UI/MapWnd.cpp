@@ -49,6 +49,7 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <boost/timer.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
@@ -1984,6 +1985,19 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
         Zoom(move, pt);
 }
 
+void MapWnd::KeyPress ( GG::Key key, boost::uint32_t key_code_point, GG::Flags< GG::ModKey > mod_keys ) {
+    if (key == GG::GGK_LSHIFT || key == GG::GGK_RSHIFT) {
+        ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
+    }
+}
+
+void MapWnd::KeyRelease ( GG::Key key, boost::uint32_t key_code_point, GG::Flags< GG::ModKey > mod_keys ) {
+    if (key == GG::GGK_LSHIFT || key == GG::GGK_RSHIFT) {
+        ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
+    }
+}
+
+
 void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
@@ -3208,21 +3222,21 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
     }
 
-    // if route is empty, no projected line to show
-    if (travel_route.empty()) {
-        RemoveProjectedFleetMovementLine(fleet_id);
-        return;
-    }
     //std::cout << "creating projected fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
     const Empire* empire = Empires().Lookup(fleet->Owner());
 
     // get move path to show.  if there isn't one, show nothing
     std::list<MovePathNode> path = fleet->MovePath(travel_route, true);
+    
+    
+    
+    // We need the route to contain the current system
+    // even when it is empty to switch between non appending
+    // and appending projections on shift changes
     if (path.empty()) {
-        // no route to display
-        RemoveProjectedFleetMovementLine(fleet_id);
-        return;
+        path.push_back(MovePathNode(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(), INVALID_OBJECT_ID, INVALID_OBJECT_ID));
     }
+
     std::list<int>::const_iterator route_it = travel_route.begin();
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
         if (fleet->SystemID() == travel_route.front() && fleet->BlockadedAtSystem(travel_route.front(), *route_it)) { //adjust ETAs if necessary
@@ -3279,6 +3293,7 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
             }
         }
     }
+
     return false;
 }
 
@@ -3933,7 +3948,7 @@ void MapWnd::SystemLeftClicked(int system_id) {
     SystemLeftClickedSignal(system_id);
 }
 
-void MapWnd::SystemRightClicked(int system_id) {
+void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys) {
     if (ClientPlayerIsModerator()) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
@@ -3988,23 +4003,23 @@ void MapWnd::SystemRightClicked(int system_id) {
         if (system_id == INVALID_OBJECT_ID)
             ClearProjectedFleetMovementLines();
         else
-            PlotFleetMovement(system_id, true);
+            PlotFleetMovement(system_id, true, mod_keys &  GG::MOD_KEY_SHIFT);
         SystemRightClickedSignal(system_id);
     }
 }
 
-void MapWnd::MouseEnteringSystem(int system_id) {
+void MapWnd::MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys) {
     if (ClientPlayerIsModerator()) {
         //
     } else {
-        if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
-            PlotFleetMovement(system_id, false);
+        if (!m_in_production_view_mode)
+            PlotFleetMovement(system_id, false, mod_keys & GG::MOD_KEY_SHIFT);
     }
     SystemBrowsedSignal(system_id);
 }
 
 void MapWnd::MouseLeavingSystem(int system_id)
-{ MouseEnteringSystem(INVALID_OBJECT_ID); }
+{ MouseEnteringSystem(INVALID_OBJECT_ID, GG::Flags<GG::ModKey>()); }
 
 void MapWnd::PlanetRightClicked(int planet_id) {
     if (planet_id == INVALID_OBJECT_ID)
@@ -4046,10 +4061,26 @@ void MapWnd::BuildingRightClicked(int building_id) {
     }
 }
 
-void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
+void MapWnd::ReplotProjectedFleetMovement(bool append) {
+    Logger().debugStream() << "MapWnd::ReplotProjectedFleetMovement" << (append?" append":"");
+    for (std::map<int, MovementLineData>::iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it) {
+        MovementLineData& data = it->second;
+        if (!data.path.empty()) {
+            int target = data.path.back().object_id;
+            if (target != INVALID_OBJECT_ID) {
+                PlotFleetMovement(target, false, append);
+            }
+        }
+    }
+}
+
+
+void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         return;
 
+    Logger().debugStream() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
+    
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     std::set<int> fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
@@ -4075,6 +4106,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
         }
 
         int fleet_sys_id = fleet->SystemID();
+        if (append && !fleet->TravelRoute().empty()) {
+            fleet_sys_id = fleet->TravelRoute().back();
+        }
 
         int start_system = fleet_sys_id;
         if (fleet_sys_id == INVALID_OBJECT_ID)
@@ -4082,7 +4116,12 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
 
         // get path to destination...
         std::list<int> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
-
+        if (append && !fleet->TravelRoute().empty()) {
+            std::list<int> old_route(fleet->TravelRoute());
+            old_route.erase(--old_route.end()); //end of old is begin of new
+            route.splice(route.begin(), old_route);
+        }
+        
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
@@ -4099,10 +4138,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id, append)));
             StopFleetExploring(fleet_id);
         }
-
+        
         // show route on map
         SetProjectedFleetMovementLine(fleet_id, route);
     }

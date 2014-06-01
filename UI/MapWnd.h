@@ -103,6 +103,8 @@ public:
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    KeyRelease(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
     void            DoLayout();
 
@@ -263,14 +265,15 @@ private:
 
     void            SystemDoubleClicked(int system_id);
     void            SystemLeftClicked(int system_id);
-    void            SystemRightClicked(int system_id);
-    void            MouseEnteringSystem(int system_id);
+    void            SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys);
+    void            MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys);
     void            MouseLeavingSystem(int system_id);
 
     void            PlanetRightClicked(int planet_id);
     void            BuildingRightClicked(int building_id);
 
-    void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
+    void            ReplotProjectedFleetMovement(bool append); //!< Find any projected movement plots and replots them with the current append state
+    void            PlotFleetMovement(int system_id, bool execute_move, bool append);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
 
     void            FleetButtonLeftClicked(const FleetButton* fleet_btn);
     void            FleetButtonRightClicked(const FleetButton* fleet_btn);

@@ -163,7 +163,7 @@ class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
-    FleetMoveOrder(int empire, int fleet_id, int start_system_id, int dest_system_id);
+    FleetMoveOrder(int empire, int fleet_id, int start_system_id, int dest_system_id, bool append = false);
     //@}
 
     /** \name Accessors */ //@{
@@ -191,6 +191,7 @@ private:
     int              m_start_system;
     int              m_dest_system;
     std::vector<int> m_route;
+    bool             m_append;
 
     friend class boost::serialization::access;
     template <class Archive>

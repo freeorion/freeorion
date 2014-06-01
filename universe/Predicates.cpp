@@ -47,7 +47,7 @@ StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = ALL_EMPIRES*/) :
 
 TemporaryPtr<UniverseObject> StationaryFleetVisitor::Visit(TemporaryPtr<Fleet> obj) const {
     if ((obj->FinalDestinationID() == INVALID_OBJECT_ID ||
-         obj->FinalDestinationID() == obj->SystemID()) &&
+         obj->TravelRoute().empty()) &&
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return TemporaryPtr<UniverseObject>();
@@ -65,7 +65,7 @@ OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = ALL_EMPIRES*
 
 TemporaryPtr<UniverseObject> OrderedMovingFleetVisitor::Visit(TemporaryPtr<Fleet> obj) const {
     if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
-        obj->FinalDestinationID() != obj->SystemID() &&
+        !obj->TravelRoute().empty() &&
         obj->SystemID() != INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;

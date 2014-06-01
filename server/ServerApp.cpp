@@ -2608,14 +2608,6 @@ void ServerApp::PreCombatProcessTurns() {
         }
     }
 
-
-    // update fleet routes after movement
-    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<Fleet> fleet = *it;
-        if (fleet)
-            fleet->CalculateRoute();
-    }
-
     // indicate that the clients are waiting for their new Universes
     m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
 
@@ -2910,15 +2902,6 @@ void ServerApp::PostCombatProcessTurns() {
 
     // update empire-visibility filtered graphs after visiblity update
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
-
-
-    // update fleet routes after combat, production, growth, effects, etc.
-    std::vector<TemporaryPtr<Fleet> > fleets = objects.FindObjects<Fleet>();
-    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<Fleet> fleet = *it;
-        if (fleet)
-            fleet->CalculateRoute();
-    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";

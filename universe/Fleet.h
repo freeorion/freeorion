@@ -64,7 +64,7 @@ public:
     float                               Shields() const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
     float                               Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
     float                               MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
-    int                                 FinalDestinationID() const          { return m_moving_to; }     ///< Returns ID of system that this fleet is moving to.
+    int                                 FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
     int                                 PreviousSystemID() const            { return m_prev_system; }   ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int                                 NextSystemID() const                { return m_next_system; }   ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     bool                                BlockadedAtSystem(int start_system_id, int dest_system_id) const; ///< returns true iff this fleet's movement would be blockaded at system.
@@ -102,7 +102,7 @@ public:
     virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
     void                    SetRoute(const std::list<int>& route);          ///< sets this fleet to move through the series of systems in the list, in order
-    void                    CalculateRoute() const;                         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to its current destination system
+    void                    CalculateRouteTo(int target_system_id);   ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
 
@@ -137,11 +137,11 @@ protected:
     /** \name Structors */ //@{
     Fleet() :
         UniverseObject(),
-        m_moving_to(INVALID_OBJECT_ID),
         m_prev_system(INVALID_OBJECT_ID),
         m_next_system(INVALID_OBJECT_ID),
         m_aggressive(true),
         m_ordered_given_to_empire_id(ALL_EMPIRES),
+        m_travel_route(),
         m_travel_distance(0.0),
         m_arrived_this_turn(false),
         m_arrival_starlane(INVALID_OBJECT_ID)
@@ -160,7 +160,6 @@ private:
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);
 
     std::set<int>               m_ships;
-    int                         m_moving_to;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
     int                         m_prev_system;  ///< the previous system in the route, if any
@@ -175,9 +174,9 @@ private:
       * first system on the list.  Otherwise, the first system on the list will
       * be the next system the fleet will reach along its path.  The list may
       * also contain a single null pointer, which indicates that the route is
-      * unknown.  The list may also be empty, which indicates that it has not
-      * yet been caluclated, and CalculateRoute should be called. */
-    mutable std::list<int>      m_travel_route;
+      * unknown.  The list may also be empty, which indicates that the fleet
+      * is not planning to move. */
+    std::list<int>              m_travel_route;
     mutable double              m_travel_distance;
 
     bool                        m_arrived_this_turn;
@@ -188,6 +187,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(Fleet, 1)
+BOOST_CLASS_VERSION(Fleet, 2)
 
 #endif // _Fleet_h_

@@ -507,7 +507,7 @@ void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) LeftClickedSignal(m_system_id); }
 
 void SystemIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ if (!Disabled()) RightClickedSignal(m_system_id); }
+{ if (!Disabled()) RightClickedSignal(m_system_id, mod_keys); }
 
 void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) LeftDoubleClickedSignal(m_system_id); }
@@ -538,7 +538,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     PlaySystemIconRolloverSound();
 
-    MouseEnteringSignal(m_system_id);
+    MouseEnteringSignal(m_system_id, mod_keys);
 }
 
 void SystemIcon::MouseLeave() {

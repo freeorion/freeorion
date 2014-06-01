@@ -7,6 +7,8 @@
 #include "../combat/CombatObject.h"
 
 #include "Serialize.ipp"
+#include <boost/serialization/version.hpp>
+
 
 
 ////////////////////////////////////////////////////////////
@@ -65,7 +67,14 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_start_system)
         & BOOST_SERIALIZATION_NVP(m_dest_system)
         & BOOST_SERIALIZATION_NVP(m_route);
+    if(version > 0) {
+        ar & BOOST_SERIALIZATION_NVP(m_append);
+    }else{
+        m_append = false;
+    }
 }
+
+BOOST_CLASS_VERSION(FleetMoveOrder, 1);
 
 template <class Archive>
 void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)

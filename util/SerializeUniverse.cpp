@@ -193,7 +193,6 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_ships)
-        & BOOST_SERIALIZATION_NVP(m_moving_to)
         & BOOST_SERIALIZATION_NVP(m_prev_system)
         & BOOST_SERIALIZATION_NVP(m_next_system)
         & BOOST_SERIALIZATION_NVP(m_aggressive)
