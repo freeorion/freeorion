@@ -350,7 +350,7 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
 }
 
 boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerChat";
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerChat: " << msg.m_message.Text();
     const std::string& text = msg.m_message.Text();
     int sending_player_id = msg.m_message.SendingPlayer();
     int recipient_player_id = msg.m_message.ReceivingPlayer();
