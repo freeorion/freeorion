@@ -13,7 +13,7 @@ add_executable(test_parsers
     ../../server/SaveLoad.cpp
     ../../server/ServerApp.cpp
     ../../server/ServerFSM.cpp
-    ../../universe/UniverseServer.cpp
+    ../../universe/UniverseObject.cpp
     ../../universe/Universe.cpp
     test.cpp
     lexer_test_rules.cpp

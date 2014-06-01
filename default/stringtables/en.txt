@@ -3240,10 +3240,10 @@ ENC_COMBAT_LOG_DESCRIPTION_STR
 Combat at %1% on turn %2%:
 
 ENC_COMBAT_ATTACK_STR
-Round %4%: %1% attacks %2% and does %3% damage
+Round %4%.%5%: %1% attacks %2% and does %3% damage
 
 ENC_COMBAT_ATTACK_DESTROY_STR
-Round %4%: %1% attacks %2% and does %3% damage, destroying target
+Round %4%.%5%: %1% attacks %2% and does %3% damage, destroying target
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unknown

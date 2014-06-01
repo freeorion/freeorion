@@ -5,21 +5,26 @@
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 
+#include <boost/serialization/version.hpp>
+
 struct AttackEvent {
     AttackEvent() :
+        bout(-1),
         round(-1),
         attacker_id(INVALID_OBJECT_ID),
         target_id(INVALID_OBJECT_ID),
         damage(0.0f),
         target_destroyed(false)
     {}
-    AttackEvent(int round_, int attacker_id_, int target_id_, float damage_, bool target_destroyed_) :
+    AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, bool target_destroyed_) :
+        bout(bout_),
         round(round_),
         attacker_id(attacker_id_),
         target_id(target_id_),
         damage(damage_),
         target_destroyed(target_destroyed_)
     {}
+    int     bout;
     int     round;
     int     attacker_id;
     int     target_id;
@@ -84,12 +89,19 @@ void AutoResolveCombat(CombatInfo& combat_info);
 template <class Archive>
 void AttackEvent::serialize(Archive& ar, const unsigned int version)
 {
+    if(version > 0){
+        ar  & BOOST_SERIALIZATION_NVP(bout);
+    }else{
+        bout = 0;
+    }
     ar  & BOOST_SERIALIZATION_NVP(round)
         & BOOST_SERIALIZATION_NVP(attacker_id)
         & BOOST_SERIALIZATION_NVP(target_id)
         & BOOST_SERIALIZATION_NVP(damage)
         & BOOST_SERIALIZATION_NVP(target_destroyed);
 }
+
+BOOST_CLASS_VERSION(AttackEvent, 1);
 
 template <class Archive>
 void CombatInfo::save(Archive & ar, const unsigned int version) const

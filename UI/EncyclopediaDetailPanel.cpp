@@ -1720,6 +1720,7 @@ namespace {
                                         % attacker_link
                                         % target_link
                                         % it->damage
+                                        % it->bout
                                         % it->round) + "\n";
         }
     }
