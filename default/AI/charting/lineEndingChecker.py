@@ -2,7 +2,7 @@ import os
 import glob
 
 # adjust this to point to your main FreeOrion directory
-FOHome = os.path.expanduser('~/programs/freeorion_test/')
+FOHome = os.path.expanduser('~/programs/freeorion_dev1/')
 
 #if testAll is true the script will crawl through all FO files, skipping any folders in dirs_to_skip
 # checking files but not fixing
@@ -12,10 +12,10 @@ dirs_to_skip = ['GG', 'OIS']
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
 # use "default/buildings.txt", NOT "/default/buildings.txt"
-file_list = "default/stringtables/en.txt"
+file_list = "Supply_Tweaked7-remake.patch"
 
 # if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
-fixfiles = False
+fixfiles = True
 
 def checkLineEndings(filename,  fix=False):
     thisFile = open(filename, 'r')
@@ -70,9 +70,9 @@ if testAll:
 if not testAll:
     print
     for fname in file_list.split():
-        results1=checkLineEndings(fname,  fix=False)
+        results1=checkLineEndings(fname,  fix=fixfiles)
         if fixfiles and results1.keys()!=['LF']:
-            results2=checkLineEndings(fname,  fix=True)
+            results2=checkLineEndings(fname,  fix=False)
             print fname,  "line endings were",  results1,  "now are",  results2
         else:
             print fname,  "line endings are",  results1

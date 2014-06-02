@@ -1819,6 +1819,10 @@ void Empire::UpdateSupply()
 void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
     //std::cout << "Empire::UpdateSupply for empire " << this->Name() << std::endl;
 
+    // Please also update PythonEmpireWrapper.cpp:CalculateSupplyUpdate if there is a change to the supply propagation rules: 
+    // (i) there is a set of supply sources in systems, (ii) propagating supply drops one per starlane jump, (iii) propagation is blocked
+    // into and out of any systems not in SupplyUnobstructedSystems, and (iv) a system gets the highest supply thus available to it.
+
     m_supply_starlane_traversals.clear();
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();

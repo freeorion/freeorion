@@ -31,6 +31,8 @@ annexableRing1=set()
 annexableRing2=set()
 annexableRing3=set()
 annexablePlanetIDs=set()
+systems_by_supply_tier = {}
+system_supply = {}
 curBestMilShipRating = 20
 allColonyOpportunities = {}
 gotRuins=False
@@ -89,6 +91,8 @@ def resetCAIGlobals():
     allColonyOpportunities.clear()
     unowned_planet_ids.clear()
     empireOutpostIDs.clear()
+    systems_by_supply_tier.clear()
+    system_supply.clear()
 
 def ratePilotingTag(tagList):
     grade = 2.0
@@ -109,9 +113,7 @@ def ratePlanetaryPiloting(pid):
         return 0.0
     return ratePilotingTag(thisSpec.tags)
 
-
 def check_supply():
-
     # get suppliable systems and planets
     supp_timing = [ [], [] ]
     universe = fo.getUniverse()
@@ -148,12 +150,16 @@ def check_supply():
     annexableRing2.clear()
     annexableRing3.clear()
     annexablePlanetIDs.clear()
-    supply_distance = 1
+    systems_by_supply_tier.clear()
+    system_supply.clear()
+    supply_distance = 0
     for tech in AIDependencies.supply_range_techs:
         if empire.getTechStatus(tech) == fo.techStatus.complete:
-            supply_distance += 1 
-    if foAI.foAIstate.aggression >= fo.aggression.aggressive:
-        supply_distance += 1 
+            supply_distance += AIDependencies.supply_range_techs[tech] 
+    foAI.foAIstate.misc['supply_tech'] = supply_distance
+    supply_distance += 4 # 2 for up to great supply species, and 2 for possible tiny planets 
+    #if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+    #    supply_distance += 1 
     for sysID in empire.fleetSupplyableSystemIDs:
         annexableSystemIDs.add(sysID) #add fleet supplyable system
         for nID in  universe.getImmediateNeighbors(sysID,  empireID):
@@ -164,24 +170,50 @@ def check_supply():
                 annexableRing1.add(nID)
         annexableRing1.difference_update(annexableSystemIDs)
         annexableSystemIDs.update(annexableRing1)
-        print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
     if supply_distance > 2:
         for sysID in list(annexableRing1):
             for nID in  universe.getImmediateNeighbors(sysID,  empireID):
                 annexableRing2.add(nID)
         annexableRing2.difference_update(annexableSystemIDs)
-        print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
         annexableSystemIDs.update(annexableRing2)
     if supply_distance > 3:
         for sysID in list(annexableRing2):
             for nID in  universe.getImmediateNeighbors(sysID,  empireID):
                 annexableRing3.add(nID)
         annexableRing3.difference_update(annexableSystemIDs)
-        print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
         annexableSystemIDs.update(annexableRing3)
     annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
     supp_timing[0].append( time() )
-    supp_timing[1].append( "Determining Annexible Systems" )
+    supp_timing[1].append( "Determining Annexable Systems" )
+    print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
+    print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
+    print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
+    print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
+    print
+    new_supply_map = empire.supplyProjections(-3, False)
+    new_time = time()
+    print "New Supply Calc:"
+    print "Known Systems:", list(universe.systemIDs)
+    print "Base Supply:", dictFromMap(empire.systemSupplyRanges)
+    for el in new_supply_map:
+        #print PlanetUtilsAI.sysNameIDs([el.key()]), ' -- ', el.data()
+        systems_by_supply_tier.setdefault(min(0, el.data()), []).append(el.key())
+        system_supply[el.key()] = el.data()
+    print "New Supply connected systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(0, []))
+    print "New First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-1, []))
+    print "New Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-2, []))
+    print "New Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-3, []))
+    print "new supply calc took ", new_time-supp_timing[0][-1]
+    annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
+    annexableRing1.clear()
+    annexableRing2.clear()
+    annexableRing3.clear()
+    annexableRing1.update(systems_by_supply_tier.get(-1, []))
+    annexableRing2.update(systems_by_supply_tier.get(-2, []))
+    annexableRing3.update(systems_by_supply_tier.get(-3, []))
+    #annexableSystemIDs.update(systems_by_supply_tier.get(0, []), annexableRing1, annexableRing2, annexableRing3)
+    for jumps in range(0, -1-supply_distance, -1):
+        annexableSystemIDs.update(systems_by_supply_tier.get(jumps, []))
     return supp_timing, fleetSupplyablePlanetIDs
 
 def survey_universe():
@@ -733,6 +765,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
     planet = universe.getPlanet(planetID)
+    planet_size = planet.size
     this_sysid = planet.systemID
     distanceFactor = 0
     if homeworld:
@@ -763,7 +796,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     if  AIstate.colonizedSystems.get(this_sysid,  []) not in [ [],  [planetID]]: #if existing presence is target planet, don't count
         haveExistingPresence=True
     system = universe.getSystem(this_sysid)
-    sys_status = foAI.foAIstate.systemStatus.get(planet.systemID,  {})
+    sys_status = foAI.foAIstate.systemStatus.get(this_sysid,  {})
+    
+    sys_supply = system_supply.get(this_sysid, -99)
+    planet_supply = AIDependencies.supply_by_size.get( int(planet_size), 0 )
+    planet_build_names = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
+    for bldType in set(planet_build_names).intersection(AIDependencies.building_supply):
+        planet_supply += sum([AIDependencies.building_supply.get(bldType, {}).get(int(psize),0) for psize in [-1, planet.size]])
+    planet_supply += foAI.foAIstate.misc.get('supply_tech', 0)
+
     myrating = sys_status.get('myFleetRating', 0)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating ) / float(curBestMilShipRating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(curBestMilShipRating)
@@ -956,6 +997,13 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         if haveExistingPresence:
             detail.append("preexisting system colony")
             retval *=1.5
+        if sys_supply < 0:
+            if sys_supply + planet_supply >= 0:
+                retval += 50*(planet_supply - max(-3, sys_supply))
+            else:
+                retval += 50*(planet_supply + sys_supply) # (a penalty)
+        elif planet_supply > sys_supply and (sys_supply < 2): #TODO: check min neighbor supply
+            retval += 25*(planet_supply - sys_supply)
         return int(retval)
     else: #colonization mission
         if not species:
@@ -968,6 +1016,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         popTagMod = 1.0
         indTagMod = 1.0
         resTagMod = 1.0
+        supplyTagMod = 0.0
         AITags=""
         for tag in [tag1 for tag1 in tagList if "AI_TAG" in tag1]:
             tagParts = tag.split('_')
@@ -980,7 +1029,18 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
                 indTagMod = grade
             elif tagType =="RESEARCH":
                 resTagMod = grade
+            elif tagType =="SUPPLY":
+                supplyTagMod = {'BAD':0, 'AVERAGE':1,  'GOOD':1,  'GREAT':2,  'ULTIMATE':3 }.get(tagParts[2],  0)
 
+        planet_supply += supplyTagMod
+        if sys_supply <= 0:
+            if sys_supply + planet_supply >= 0:
+                retval += 100*(planet_supply - max(-3, sys_supply))
+            else:
+                retval += 200*(planet_supply + sys_supply) # (a penalty)
+        elif (planet_supply > sys_supply) and (sys_supply == 1): #TODO: check min neighbor supply
+            retval += 50*(planet_supply - sys_supply)
+            
         #if AITags != "":
         #    print "Species %s has AITags %s"%(specName,  AITags)
 
@@ -1187,13 +1247,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             return 0
 
         retval  += max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
-        if this_sysid in annexableRing1:
-            retval += 10
-        elif this_sysid in annexableRing2:
-            retval += 20
-        elif this_sysid in annexableRing3:
-            retval += 10
-
         retval *= priorityScaling
 
         if thrtFactor < 1.0:

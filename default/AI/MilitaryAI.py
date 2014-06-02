@@ -355,7 +355,8 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
                 print "-----------------"
 
     otherTargetedSystemIDs = []
-    targetableIDs = ColonisationAI.annexableSystemIDs.union( empire.fleetSupplyableSystemIDs )
+    #targetableIDs = ColonisationAI.annexableSystemIDs.union( empire.fleetSupplyableSystemIDs )
+    targetableIDs = set(ColonisationAI.systems_by_supply_tier.get(0, []) + ColonisationAI.systems_by_supply_tier.get(1, []))
     for sysID in  AIstate.opponentSystemIDs:
         if sysID in targetableIDs:
             otherTargetedSystemIDs.append(sysID)

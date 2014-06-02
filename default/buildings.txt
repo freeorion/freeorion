@@ -703,6 +703,7 @@ BuildingType
     location = And [
         Planet
         Not Contains Building "BLD_SPACE_ELEVATOR"
+        Not Planet type = Asteroids
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
