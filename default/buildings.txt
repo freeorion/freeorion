@@ -114,7 +114,7 @@ BuildingType
                 OwnedBy TheEmpire Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply Value + 2
 
         EffectsGroup
             scope = And [
@@ -706,14 +706,55 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Object Source.PlanetID
-                Planet
+                Planet size = Tiny
             ]
             activation = Source
-            effects = SetMaxSupply Value * 2
+            effects = SetMaxSupply Value + 1
+
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet size = Small
+            ]
+            activation = Source
+            effects = SetMaxSupply Value + 2
+
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet size = Medium
+            ]
+            activation = Source
+            effects = SetMaxSupply Value + 3
+
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet size = Large
+            ]
+            activation = Source
+            effects = SetMaxSupply Value + 4
+
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet size = Huge
+            ]
+            activation = Source
+            effects = SetMaxSupply Value + 5
+
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet type = GasGiant
+            ]
+            activation = Source
+            effects = SetMaxSupply Value + 4
+    ]
     icon = ""
 
 BuildingType

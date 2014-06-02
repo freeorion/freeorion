@@ -954,13 +954,6 @@ Tech
     researchcost = 3 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
-    EffectsGroup
-        scope = And [
-            OwnedBy TheEmpire Source.Owner
-            Planet Population high = 0
-        ] 
-        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
-        effects = SetMaxSupply Value + 1
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -1815,6 +1808,52 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 1
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+            ]
+            activation = Planet
+            accountinglabel = "TINY_PLANET_LABEL"
+            effects = SetMaxSupply Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+            ]
+            activation = Planet
+            accountinglabel = "SMALL_PLANET_LABEL"
+            effects = SetMaxSupply Value + 1
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+            ]
+            activation = Planet
+            accountinglabel = "LARGE_PLANET_LABEL"
+            effects = SetMaxSupply Value - 1
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+            ]
+            activation = Planet
+            accountinglabel = "HUGE_PLANET_LABEL"
+            effects = SetMaxSupply Value - 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet type = GasGiant
+            ]
+            activation = Planet
+            accountinglabel = "GAS_GIANT_LABEL"
+            effects = SetMaxSupply Value - 1
+    ]
     graphic = "icons/tech/galactic_exploration.png"
 
 Tech

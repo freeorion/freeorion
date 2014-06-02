@@ -4232,6 +4232,7 @@ Prefer Terran planets.
 [[AVERAGE_RESEARCH]]
 
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -4249,6 +4250,7 @@ Prefer Ocean planets.
 [[GREAT_RESEARCH]]
 
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -4278,6 +4280,7 @@ Prefer Swamp planets.
 [[GREAT_RESEARCH]]
 
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 [[BAD_WEAPONS]]
 '''
@@ -4307,6 +4310,7 @@ Prefer Toxic planets.
 [[GREAT_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
@@ -4331,6 +4335,7 @@ Prefer Desert planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
         
 [[GREAT_DETECTION]]
@@ -4358,6 +4363,7 @@ Prefer Tundra planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GREAT_GROUND_TROOPS]]
         
 [[GOOD_WEAPONS]]
@@ -4383,6 +4389,7 @@ Prefer Terran planets.
 [[AVERAGE_RESEARCH]]
 
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 [[GREAT_WEAPONS]]
 '''
@@ -4408,6 +4415,10 @@ Prefer Toxic planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
+[[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
+[[AVERAGE_GROUND_TROOPS]]
+
 [[BAD_WEAPONS]]
 '''
 
@@ -4430,6 +4441,7 @@ Prefer Ocean Planets.
 [[BAD_RESEARCH]]
         
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 
 [[GREAT_DETECTION]]
@@ -4455,6 +4467,7 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
         
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 [[BAD_WEAPONS]]
 '''
@@ -4479,6 +4492,7 @@ Prefer Desert planets.
 [[BAD_RESEARCH]]
 
 [[GREAT_WEAPONS]]
+[[BAD_SUPPLY]]
 [[GREAT_GROUND_TROOPS]]
 '''
 
@@ -4496,6 +4510,7 @@ Prefers Tundra planets.
 [[BAD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[GREAT_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 
 [[BROAD_EP]]
@@ -4520,6 +4535,7 @@ Prefer Barren planets.
 [[GOOD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
@@ -4546,6 +4562,7 @@ Prefer Desert planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[GREAT_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
                 
 [[GOOD_WEAPONS]]
@@ -4576,6 +4593,7 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
@@ -4605,6 +4623,7 @@ Prefer Swamp planets.
 [[NO_RESEARCH]]
                 
 [[AVERAGE_POPULATION]]
+[[BAD_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -4630,6 +4649,7 @@ Prefer Inferno planets.
 [[BAD_RESEARCH]]
 
 [[BAD_POPULATION]]
+[[GREAT_SUPPLY]]
 [[GREAT_GROUND_TROOPS]]
 [[NARROW_EP]]
 '''
@@ -4656,6 +4676,7 @@ Prefer Tundra planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
         
 [[NARROW_EP]]
@@ -4680,6 +4701,7 @@ Prefer Swamp planets.
 [[ULTIMATE_RESEARCH]]
         
 [[BAD_POPULATION]]
+[[BAD_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -4709,6 +4731,7 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
         
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[NO_GROUND_TROOPS]]  
         
 [[GREAT_STEALTH]]
@@ -4737,6 +4760,7 @@ Prefer Desert planets.
 [[AVERAGE_RESEARCH]]
 
 [[BAD_POPULATION]]
+[[BAD_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 
 [[GREAT_DETECTION]]
@@ -4757,6 +4781,7 @@ Prefers Barren planets.
 [[NO_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[BAD_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -4774,6 +4799,7 @@ Prefer Terran planets.
 [[NO_RESEARCH]]
                 
 [[AVERAGE_POPULATION]]
+[[BAD_SUPPLY]]
 [[ULTIMATE_GROUND_TROOPS]]
 '''
 
@@ -4802,6 +4828,7 @@ Prefers Radiated planets.
 [[NO_RESEARCH]]
         
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GREAT_GROUND_TROOPS]]
 '''
 
@@ -4820,6 +4847,7 @@ Prefer Terran planets.
 [[BAD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[GREAT_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 [[BAD_WEAPONS]]
 '''
@@ -4849,6 +4877,7 @@ Prefer Barren planets.
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -4871,6 +4900,7 @@ Prefer Inferno planets.
 [[BAD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
 '''
 
@@ -4900,6 +4930,7 @@ Prefer Toxic planets.
 [[GOOD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -4943,6 +4974,7 @@ Prefers Inferno planets.
 [[BAD_RESEARCH]]
                 
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -4967,6 +4999,7 @@ Prefers Radiated planets.
 [[GOOD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[GREAT_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -4996,6 +5029,7 @@ Prefer Ocean planets.
 [[AVERAGE_RESEARCH]]
                 
 [[AVERAGE_POPULATION]]
+[[BAD_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
         
 [[ULTIMATE_DETECTION]]
@@ -5026,7 +5060,8 @@ Prefer Barren planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
-[[GOOD_POPULATION]]        
+[[GOOD_POPULATION]]
+[[ULTIMATE_SUPPLY]]        
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -5054,6 +5089,7 @@ Prefer Tundra planets.
 [[BAD_RESEARCH]]
                 
 [[BAD_POPULATION]]
+[[BAD_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
         
 [[GOOD_DETECTION]]
@@ -5084,6 +5120,7 @@ SP_EXOBOT_GAMEPLAY_DESC
 [[BAD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[BAD_GROUND_TROOPS]]
 [[BAD_WEAPONS]]
 '''
@@ -5102,6 +5139,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 [[ULTIMATE_RESEARCH]]
 
 [[GOOD_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[ULTIMATE_GROUND_TROOPS]]
         
 [[ULTIMATE_STEALTH]]
@@ -5124,6 +5162,7 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 [[GREAT_RESEARCH]]
         
 [[GOOD_POPULATION]]
+[[ULTIMATE_SUPPLY]]
 [[GREAT_GROUND_TROOPS]]
         
 [[ULTIMATE_WEAPONS]]
@@ -7100,7 +7139,7 @@ SHP_INTSTEL_LOG
 Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
-'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by 4.
+'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] of planets by 3.
 
 Increases Starlane Speed of your ships by 20 when they are within 50 uu of a controlled planet.
 
@@ -8316,7 +8355,7 @@ BLD_SPACE_ELEVATOR
 Space Elevator
 
 BLD_SPACE_ELEVATOR_DESC
-'''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
+'''Replaces the [[encyclopedia SUPPLY_TITLE]] malus/bonus caused by the planet size with a bonus of +3.
 
 Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
@@ -9628,6 +9667,18 @@ AVERAGE_POPULATION
 GOOD_POPULATION
 '''+	Good Population 125%'''
 
+BAD_SUPPLY
+'''-	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus'''
+
+AVERAGE_SUPPLY
+'''	Average [[encyclopedia SUPPLY_TITLE]]: +1'''
+
+GREAT_SUPPLY
+'''+	Great [[encyclopedia SUPPLY_TITLE]]: +2'''
+
+ULTIMATE_SUPPLY
+'''++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3'''
+
 BROAD_EP
 '''++	Broad Planet Tolerance: flourishes on more types.'''
 
@@ -9641,12 +9692,6 @@ NARROW_EP
 
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Average [[encyclopedia INFRASTRUCTURE_TITLE]]'''
-
-STANDARD_COLONY_SUPPLY_LABEL
-'''%2% Average Colony Supply'''
-
-STANDARD_OUTPOST_SUPPLY_LABEL
-'''%2% Average Outpost Supply'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Good Environment'''
@@ -9729,6 +9774,15 @@ GREAT_RESEARCH_LABEL
 ULTIMATE_RESEARCH_LABEL
 '''%2% Ultimate Research'''
 
+AVERAGE_SUPPLY_LABEL
+'''%2% Average Supply'''
+
+GREAT_SUPPLY_LABEL
+'''%2% Great Supply'''
+
+ULTIMATE_SUPPLY_LABEL
+'''%2% Ultimate Supply'''
+
 BAD_TROOPS_LABEL
 '''%2% Bad Ground Troops'''
 
@@ -9767,6 +9821,21 @@ DIM_STAR
 
 NO_STAR
 '''No star'''
+
+TINY_PLANET_LABEL
+'''Tiny Planet'''
+
+SMALL_PLANET_LABEL
+'''Small Planet'''
+
+LARGE_PLANET_LABEL
+'''Large Planet'''
+
+HUGE_PLANET_LABEL
+'''Huge Planet'''
+
+GAS_GIANT_LABEL
+'''Gas Giant'''
 
 HOMEWORLD_SUPPLY
 '''Homeworld Supply'''

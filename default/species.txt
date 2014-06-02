@@ -36,6 +36,7 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
         
         // not for description
@@ -71,6 +72,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
 
         // not for description
@@ -145,6 +147,7 @@ Species
         
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[GREAT_GROUND_TROOPS]]
         
         // not for description
@@ -183,6 +186,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
         
         // not for description
@@ -220,6 +224,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[GOOD_GROUND_TROOPS]]
         
         // not for description
@@ -256,6 +261,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[GOOD_GROUND_TROOPS]]
         
         // not for description
@@ -292,6 +298,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         [[BAD_WEAPONS]]
         
@@ -329,6 +336,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         
         [[GREAT_WEAPONS]]
@@ -375,6 +383,7 @@ Species
         
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
         [[GREAT_GROUND_TROOPS]]
         
         // not for description
@@ -415,6 +424,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
         [[GOOD_GROUND_TROOPS]]
 
                 
@@ -456,6 +466,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_WEAPONS]]
         
         
@@ -502,6 +513,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[ULTIMATE_GROUND_TROOPS]]
         
         [[ULTIMATE_STEALTH]]
@@ -539,6 +551,7 @@ Species
         
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         // not for description
@@ -575,6 +588,7 @@ Species
                 
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[GOOD_GROUND_TROOPS]]
         
         [[GOOD_DETECTION]]
@@ -614,6 +628,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
      
         // not for description
@@ -649,6 +664,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         // not for description
@@ -685,6 +701,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
         [[BAD_WEAPONS]]
         
@@ -724,6 +741,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[GREAT_GROUND_TROOPS]]
         
         [[GOOD_WEAPONS]]
@@ -765,6 +783,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
@@ -802,6 +821,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         // not for description
@@ -838,6 +858,7 @@ Species
         
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         [[GREAT_DETECTION]]
@@ -878,6 +899,7 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[GREAT_GROUND_TROOPS]]
 
         [[GREAT_WEAPONS]]
@@ -915,6 +937,7 @@ Species
         
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
    
         [[GREAT_DETECTION]]
@@ -952,6 +975,7 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         
         [[ULTIMATE_DETECTION]]
@@ -990,6 +1014,7 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
 
         // not for description
@@ -1024,6 +1049,7 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[ULTIMATE_GROUND_TROOPS]]
 
         // not for description
@@ -1063,6 +1089,7 @@ Species
         
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
@@ -1100,6 +1127,7 @@ Species
         
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[NO_GROUND_TROOPS]]  
         
         [[GREAT_STEALTH]]
@@ -1138,6 +1166,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         [[BAD_WEAPONS]]
 
@@ -1175,6 +1204,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         // not for description
@@ -1211,6 +1241,7 @@ Species
         
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[ULTIMATE_SUPPLY]]
         [[GREAT_GROUND_TROOPS]]
         
         [[ULTIMATE_WEAPONS]]
@@ -1261,6 +1292,7 @@ Species
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
         [[BAD_WEAPONS]]
 
@@ -1296,6 +1328,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
         [[BAD_GROUND_TROOPS]]
 
         // not for description
@@ -1332,6 +1365,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
         
         [[GREAT_DETECTION]]
@@ -1379,6 +1413,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         [[GOOD_GROUND_TROOPS]]
 
         // not for description
@@ -1412,7 +1447,8 @@ Species
         [[AVERAGE_RESEARCH]]
         
         [[GOOD_POPULATION]]
-        [[AVERAGE_HAPPINESS]]        
+        [[AVERAGE_HAPPINESS]]
+        [[ULTIMATE_SUPPLY]]        
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
@@ -1453,6 +1489,7 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
         
         
         [[NOT_HUGE_PLANET]]
@@ -2068,56 +2105,31 @@ NO_SUPPLY
 '''
 
 BAD_SUPPLY
-'''        EffectsGroup
-            scope = And [
-                Source
-                Planet size = [Tiny Small]
-            ]
-            activation = Planet
-            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 1
+'''
 '''
 
 AVERAGE_SUPPLY
-'''        EffectsGroup
-            scope = And [
-                Source
-                Planet size = [Tiny Small Medium]
-            ]
+'''     EffectsGroup
+            scope = Source
             activation = Planet
-            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            accountinglabel = "AVERAGE_SUPPLY_LABEL"
             effects = SetMaxSupply Value + 1
 '''
 
 GREAT_SUPPLY
-'''        EffectsGroup
-            scope = And [
-                Source
-                Planet size = Tiny
-            ]
+'''     EffectsGroup
+            scope = Source
             activation = Planet
-            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 1.5
-
-        EffectsGroup
-            scope = And [
-                Source
-                Planet size = [Small Medium Large]
-            ]
-            activation = Planet
-            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 1
+            accountinglabel = "GREAT_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 2
 '''
 
 ULTIMATE_SUPPLY
-'''        EffectsGroup
-            scope = And [
-                Source
-                Planet size = [Tiny Small Medium Large Huge]
-            ]
+'''     EffectsGroup
+            scope = Source
             activation = Planet
-            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 1.5
+            accountinglabel = "ULTIMATE_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 3
 '''
 
 
@@ -2139,7 +2151,6 @@ AVERAGE_POPULATION
         [[FOCUS_CHANGE_PENALTY]]
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GREAT_SUPPLY]]
 '''
 
 BAD_POPULATION
