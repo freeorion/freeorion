@@ -129,6 +129,8 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
 
                 const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
+                if (m_travel_route.empty() && !copied_fleet->m_travel_route.empty())
+                    m_travel_route.push_back(moving_to);
                 ShortenRouteToEndAtSystem(travel_route, moving_to);
                 if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != copied_fleet_route.size()) {
                     try {
