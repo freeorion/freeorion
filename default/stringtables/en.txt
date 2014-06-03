@@ -191,13 +191,13 @@ SD_AST_SCOUT
 Scout
 
 SD_AST_SCOUT_DESC
-Small and cheap unarmed vessel made from a hollowed out asteroid designed for recon and exploration.  Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.  Asteroid ships can only be built in systems with an asteroid processor.
+Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration.  Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.  Asteroid ships can only be built in systems with an asteroid processor.
 
 SD_ADV_SCOUT
 Advanced Scout
 
 SD_ADV_SCOUT_DESC
-Small and cheap unarmed vessel equiped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration.
+Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration.
 
 SD_ENG_SCOUT
 Scout
@@ -374,25 +374,25 @@ SD_COLONY_SHIP
 Colony Ship
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a popluation of at least three, with a shipyard.
+Unarmed vessel capable of delivering millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a popluation of at least three, with a shipyard.
+Unarmed vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_ORG_CRYOCOL_SHIP
 Cryonic Colony Ship
 
 SD_ORG_CRYOCOL_SHIP_DESC
-Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a popluation of at least three, with an orbital incubator.
+Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
 
 SD_AST_CRYOCOL_SHIP
 Cryonic Colony Ship
 
 SD_AST_CRYOCOL_SHIP_DESC
-Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a popluation of at least three, with a shipyard, in a system with an asteroid processor.
+Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard, in a system with an asteroid processor.
 
 SD_OUTPOST_SHIP
 Outpost Ship
@@ -3250,7 +3250,7 @@ Unknown
 
 
 ###########################################
-# ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
@@ -3459,7 +3459,7 @@ FLEET_UPKEEP_TEXT
 EVACUATION_TITLE
 Evacuation
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
+'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disappears into the vastness of space.
 During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
 
 AI_LEVELS_TITLE
@@ -3468,7 +3468,7 @@ AI Aggression Levels
 AI_LEVELS_TEXT
 '''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
 
-AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
+AIs rename their capital planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
 The current prefixes are:
 
 Beginner: 
@@ -3841,7 +3841,7 @@ SITREP_BUILDING_BUILT_LABEL
 Building Produced
 
 SITREP_TECH_RESEARCHED
-%tech% has been researched!
+%tech% has been researched.
 SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
@@ -3866,7 +3866,7 @@ SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Building Type Unlocked
 
 SITREP_COMBAT_SYSTEM
-At %system%: there was %combat%!
+At %system%: there was %combat%.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat at System
 SITREP_COMBAT_SYSTEM_ENEMY
@@ -3877,32 +3877,32 @@ COMBAT
 Combat
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
-At %system%: an unidentified object was destroyed!
+At %system%: an unidentified object was destroyed.
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Object Destroyed
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
-At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed!
+At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed.
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Own Ship Destroyed
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed!
+At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Empire Ship Destroyed
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-At %system%: a %shipdesign% was destroyed!
+At %system%: a %shipdesign% was destroyed.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Unowned Ship Destroyed
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
-At %system%: the %empire% fleet '%fleet%' was destroyed!
+At %system%: the %empire% fleet '%fleet%' was destroyed.
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Empire Fleet Destroyed
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
-At %system%: the fleet '%fleet%' was destroyed!
+At %system%: the fleet '%fleet%' was destroyed.
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Unowned Fleet Destroyed
 
@@ -3961,7 +3961,7 @@ SITREP_GROUND_BATTLE_ENEMY_LABEL
 Ground Battle
 
 SITREP_PLANET_CAPTURED
-%planet% was captured by %empire%!
+%planet% was captured by %empire%.
 SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
@@ -4086,7 +4086,7 @@ EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Drydock Repair
 
 EFFECT_MONSTER_SPAWNING
-A %predefinedshipdesign% was spawned in %system%!
+A %predefinedshipdesign% was spawned in %system%.
 EFFECT_MONSTER_SPAWNING_LABEL
 Monster Spawn
 
@@ -4136,7 +4136,7 @@ EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack!
+%system% has lost population due to a biological attack.
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
@@ -4166,7 +4166,7 @@ EFFECT_MINES_LABEL
 System Mines
 
 EFFECT_MINES_SHIP_DESTROYED
-At %system%: mines destroyed the %ship% (owned by %empire%)!
+At %system%: mines destroyed the %ship% (owned by %empire%).
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
@@ -4402,7 +4402,7 @@ Social Structure:
 Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
 
 History:
-A long time ago a derelict ship of the Precursors crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
+A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!".
 '''
 
 SP_DERTHREAN
@@ -4913,10 +4913,10 @@ The Larar drifts are the true center of the species. These masses of yeast sit o
 Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
 
 Description:
-An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dieing of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
+An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dying of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
 
 Homeworld:
-The Ugmors home world is a rockey planet that rotates very quickly, (once every 3 and a half hours) and 30% of it’s surface is covered by seas of lava and liquid metals.
+The Ugmor homeworld is a rocky planet that rotates very quickly (once every 3 and a half hours). 30% of its surface is covered by seas of lava and liquid metals.
 '''
 
 SP_GISGUFGTHRIM
@@ -5081,7 +5081,7 @@ Volp-Uglush are now too integrated and ingrown. They now totally lack the indepe
 SP_FURTHEST
 Furthest
 SP_FURTHEST_GAMEPLAY_DESC
-'''Paranoid three-headed, triped herbivores
+'''Paranoid three-headed, tripedal herbivores.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -5276,17 +5276,17 @@ Head on a Spike
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
-Non-empire ships, both enemies and allies, within 100uu will have slightly reduced shields, structure and weapons. 
+Non-empire ships, both enemies and allies, within 100uu will have slightly reduced shields, structure and weapons.
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
 Cowering in fear
 
 HEAD_ON_A_SPIKE_MESSAGE
-The capitol of the %empire% empire has fallen. 
+The capital of the %empire% empire has fallen.
 
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
-Empire Capitol Captured
+Empire Capital Captured
 
 CONC_CAMP_MASTER_SPECIAL
 Pall of Death
@@ -5311,7 +5311,7 @@ This planet has unusually dense cloud cover, increasing its [[encyclopedia STEAL
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphasis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
+This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphosis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
 
 VOLCANIC_ACTIVITY_SPECIAL
 High Volcanic Activity
@@ -6397,7 +6397,7 @@ DESC_ENQUEUED_DESIGN
  where empire %1% has between %2% and %3% %4% ships on the production queue
 
 DESC_ENQUEUED_DESIGN_NOT
- where empire %1% dows not have between %2% and %3% %4% ships on the production queue
+ where empire %1% does not have between %2% and %3% %4% ships on the production queue
 
 DESC_FOCUS_TYPE
  that has focus %1%
@@ -9070,7 +9070,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Colonies can be founded on planets that already have an Outpost.'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -9933,10 +9933,10 @@ Orbital
 #############################################################
 
 
-### Translator Note: the formatting of capitol name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capitol Name list include more or fewer names than are provided below in the EN stringtable
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-### Beginning of AI Aggression Level Capitol Name Lists
+### Beginning of AI Aggression Level Capital Name Lists
 AI_CAPITOL_NAMES_BEGINNER
 '''Ivory Tower
 Nunnery
@@ -9961,7 +9961,7 @@ Imperial Court'''
 AI_CAPITOL_NAMES_MANIACAL
 '''Throne of Heaven,
 Glorious Revolutionary Planning Center, '''
-### End of Capitol Names Lists
+### End of Capital Names Lists
 
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
