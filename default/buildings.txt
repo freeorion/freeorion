@@ -1449,7 +1449,7 @@ BuildingType
     description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
     buildcost = 1
     buildtime = 1
-    captureresult = destroy
+   // captureresult = destroy
     location = All
     effectsgroups = [
         EffectsGroup
@@ -1476,13 +1476,19 @@ BuildingType
             ]
             effects = SetStealth Value + 40
 
-/*        EffectsGroup
+        EffectsGroup
             scope = And [
-                Object Source.SystemID
-                System
+				Source
+                OwnedBy AnyEmpire
+                Species "SP_EXPERIMENTOR" 
             ]
-            effects = AddSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
-*/
+            effects = [
+			    GenerateSitRepMessage
+                     message = "SITREP_VICTORY_CAPTURE"
+                     icon = "icons/sitrep/victory.png"
+                     empire = Source.Owner
+				Destroy
+			]
 
         EffectsGroup
             scope = Source
@@ -1515,6 +1521,15 @@ BuildingType
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "5"
+						]
             ]
 
         EffectsGroup
@@ -1526,6 +1541,15 @@ BuildingType
             effects = [
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+						]
             ]
 
         EffectsGroup
@@ -1540,6 +1564,15 @@ BuildingType
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "5"
+						]
             ]
 
         EffectsGroup
@@ -1551,6 +1584,15 @@ BuildingType
             effects = [
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+						]
             ]
 
         EffectsGroup
@@ -1565,6 +1607,15 @@ BuildingType
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "5"
+						]
             ]
 
         EffectsGroup
@@ -1576,6 +1627,15 @@ BuildingType
             effects = [
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+						]
             ]
 
         EffectsGroup
@@ -1588,6 +1648,15 @@ BuildingType
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_large/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
+						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "3"
+						]
             ]
     ]
     icon = ""

@@ -370,7 +370,7 @@ ShipDesign
         "SP_BIOTERM"
         "SR_WEAPON_4_4"
         "SR_WEAPON_4_4"
-        "ST_CLOAK_2"
+        "ST_CLOAK_1"
     ]
     icon = "icons/monsters/kraken-4.png"
     model = "seed"
@@ -386,7 +386,7 @@ ShipDesign
         "SR_WEAPON_4_4"
         "SR_WEAPON_4_4"
         "SR_WEAPON_4_4"
-        "ST_CLOAK_3"
+        "ST_CLOAK_2"
     ]
     icon  = "icons/monsters/juggernaut-4.png"
     model = "seed"

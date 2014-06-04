@@ -531,62 +531,86 @@ Wardens guard cool major stuff.
 SM_KRAKEN_1
 Larval Kraken
 SM_KRAKEN_1_DESC
-In the larval form, a kraken is a cautious and harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+'''In the larval form, a kraken is a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
 
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-A formidable medium-weight space monster.
+'''A formidable medium-weight space monster.
+
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
 
 SM_KRAKEN_3
 Great Kraken
 SM_KRAKEN_3_DESC
-A formidable medium-weight space monster.
+'''A formidable and very tough space monster.
+
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
 
 SM_BLACK_KRAKEN
 Black Kraken
 SM_BLACK_KRAKEN_DESC
-A powerful, unnatural-seeming space monster.
+'''A powerful, unnatural-seeming space monster.
+
+Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack populated planets, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
 
 SM_SNOWFLAKE_1
 Small Snowflake
 SM_SNOWFLAKE_1_DESC
-A formidable light-weight space monster.
+'''A small and harmless space monster with exceptional vision.
+
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
 
 SM_SNOWFLAKE_2
 Snowflake
 SM_SNOWFLAKE_2_DESC
-A formidable light-weight space monster.
+'''A light-weight space monster with exceptional vision.
+
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
 
 SM_SNOWFLAKE_3
 Large Snowflake
 SM_SNOWFLAKE_3_DESC
-A formidable light-weight space monster.
+'''A formidable light-weight space monster.
+
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
 
 SM_PSIONIC_SNOWFLAKE
 Psionic Snowflake
 SM_PSIONIC_SNOWFLAKE_DESC
-A monster with the power to neutralize the minds of organic beings.
+'''A monster with the power to neutralize the minds of organic beings.
+
+Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire.'''
 
 SM_JUGGERNAUT_1
 Small Juggernaut
 SM_JUGGERNAUT_1_DESC
-A formidable heavy-weight space monster.
+'''A formidable heavy-weight space monster with protective shielding.
+
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
 
 SM_JUGGERNAUT_2
 Juggernaut
 SM_JUGGERNAUT_2_DESC
-A formidable heavy-weight space monster.
+'''A formidable heavy-weight space monster with moderate protective shielding.
+
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
 
 SM_JUGGERNAUT_3
 Large Juggernaut
 SM_JUGGERNAUT_3_DESC
-A formidable heavy-weight space monster.
+'''A formidable heavy-weight space monster with powerful protective shielding.
+
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
 SM_BLOATED_JUGGERNAUT_DESC
-A massive, sickly-looking space monster.
+'''A massive, sickly-looking space monster.
+
+Bloated Juggernaut are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack planetary buildings, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
 
 SM_CLOUD
 Space Cloud
@@ -631,7 +655,9 @@ An outpost ship constructed by the Experimentors to transport experimental equip
 SM_COSMIC_DRAGON
 Cosmic Dragon
 SM_COSMIC_DRAGON_DESC
-A fearsome space monster with the power to destroy entire star systems.
+'''A fearsome space monster with the power to destroy entire star systems.
+
+Cosmic Dragons are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A very powerful fleet with high [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack inhabited planets, and are able to vaporise entire star systems if left alone.'''
 
 ##########
 # Fields #
@@ -3789,6 +3815,7 @@ SITREP_VICTORY_CAPTURE
 SITREP_VICTORY_TECH
 SITREP_VICTORY_BIO
 SITREP_EMPIRE_ELIMINATED
+EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 EFFECT_ANCIENT_SHIP
 EFFECT_ANCIENT_SHIP_RUMORS
 EFFECT_ANCIENT_BUILDING
@@ -3815,6 +3842,7 @@ SITREP_SHIP_BUILT
 SITREP_SHIP_BATCH_BUILT
 EFFECT_EVACUEES
 EFFECT_PSY_DOM
+EFFECT_STARGATE
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
@@ -3823,7 +3851,6 @@ SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
 SITREP_FLEET_ARRIVED_AT_DESTINATION'''
 ## END OF SITREP_PRIORITY_ORDER
-
 
 SITREP_SHIP_BUILT
 At %system%: a new %shipdesign%, the '%ship%', has been produced.
@@ -4031,7 +4058,7 @@ SITREP_VICTORY_DESTRUCTION_LABEL
 Victory Destruction
 
 SITREP_VICTORY_CAPTURE
-The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen under your control.
+VICTORY! You have captured the powerful Experimentors and ended the fearsome threat plaguing the galaxy. You may continue playing if you wish.
 SITREP_VICTORY_CAPTURE_LABEL
 Victory Capture
 
@@ -4044,6 +4071,11 @@ SITREP_VICTORY_BIO
 The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty war fleet.
 SITREP_VICTORY_BIO_LABEL
 Victory Biological
+
+EFFECT_EXPERIMENT_MONSTERS_LAUNCH
+WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %planet%!
+EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
+Experimentor Monster Spawn
 
 EFFECT_ANCIENT_SHIP
 A %predefinedshipdesign% on %planet% was revealed in the Ancient Ruins!
