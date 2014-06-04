@@ -1887,6 +1887,10 @@ Tech
             ]
         effects = SetStarlaneSpeed Value + 20
     graphic = "icons/tech/stellar_navigation.png"
+    
+//########################################################
+//#     Robotic Hulls
+//########################################################
 
 Tech
     name = "SHP_MIL_ROBO_CONT"
@@ -1939,9 +1943,9 @@ Tech
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 600 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 8
+    researchturns = 10
     prerequisites = [
-        "SHP_CONTGRAV_MAINT"
+        "SHP_SPACE_FLUX_DRIVE"
         "PRO_NANOTECH_PROD"
     ]
     unlock = [
@@ -1958,7 +1962,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 1000 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
-    prerequisites = "SHP_NANOROBO_MAINT"
+    prerequisites = "SHP_CONTGRAV_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_TITANIC"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
@@ -1973,7 +1977,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 850 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    prerequisites = "SHP_MASSPROP_SPEC"
+    prerequisites = "SHP_NANOROBO_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_TRANSSPATIAL"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -1988,6 +1992,7 @@ Tech
     researchcost = 800 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = [
+	    "SHP_MASSPROP_SPEC"
         "SHP_TRANSSPACE_DRIVE"
         "CON_GAL_INFRA"
     ]
@@ -1997,6 +2002,10 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
+    
+//########################################################
+//#     Asteroid Hulls
+//########################################################
 
 Tech
     name = "SHP_ASTEROID_HULLS"
@@ -2056,6 +2065,49 @@ Tech
         Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
         Item type = ShipPart name = "AR_CRYSTAL_PLATE"
         ]
+
+Tech
+    name = "SHP_CAMO_AST_HULL"
+    description = "SHP_CAMO_AST_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 26 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    prerequisites = "SHP_ASTEROID_HULLS"
+    unlock = [
+        Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
+        Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
+        Item type = Building name = "BLD_SHIPYARD_AST"
+    ]
+
+Tech
+    name = "SHP_MINIAST_SWARM"
+    description = "SHP_MINIAST_SWARM_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "SHP_ASTEROID_REFORM"
+    unlock = [
+        Item type = ShipHull name = "SH_MINIASTEROID_SWARM"
+        Item type = Building name = "BLD_SHIPYARD_AST_REF"
+    ]
+
+Tech
+    name = "SHP_SCAT_AST_HULL"
+    description = "SHP_SCAT_AST_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 145 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SHP_MINIAST_SWARM"
+    unlock = [
+        Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
+        Item type = Building name = "BLD_SHIPYARD_AST_REF"
+    ]
 
         
 //########################################################
@@ -2179,6 +2231,7 @@ Tech
         Item type = ShipHull name = "SH_BIOADAPTIVE"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
+    
 
 Tech
     name = "SHP_CONT_BIOADAPT"
@@ -2215,7 +2268,12 @@ Tech    name = "SHP_SENT_HULL"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
+    
+//########################################################
+//#     Energy Hulls
+//########################################################
 
+    
 Tech
     name = "SHP_FRC_ENRG_COMP"
     description = "SHP_FRC_ENRG_COMP_DESC"
@@ -2274,49 +2332,10 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
     ]
     graphic = "icons/ship_hulls/solar_hull_small.png"
-
-Tech
-    name = "SHP_CAMO_AST_HULL"
-    description = "SHP_CAMO_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 26 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 2
-    prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = [
-        Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
-        Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
-    ]
-
-Tech
-    name = "SHP_MINIAST_SWARM"
-    description = "SHP_MINIAST_SWARM_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 4
-    prerequisites = "SHP_ASTEROID_REFORM"
-    unlock = [
-        Item type = ShipHull name = "SH_MINIASTEROID_SWARM"
-        Item type = Building name = "BLD_SHIPYARD_AST_REF"
-    ]
-
-Tech
-    name = "SHP_SCAT_AST_HULL"
-    description = "SHP_SCAT_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 145 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
-    prerequisites = "SHP_MINIAST_SWARM"
-    unlock = [
-        Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST_REF"
-    ]
+        
+//########################################################
+//#     Damage control
+//########################################################
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -2339,6 +2358,62 @@ Tech
                 ResupplyableBy empire = Source.Owner
             ]
             effects = SetStructure Value + 1
+
+Tech
+    name = "SHP_REINFORCED_HULL"
+    description = "SHP_REINFORCED_HULL_DESC"
+    short_description = "STRUCTURE_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 36 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = "CON_ARCH_MONOFILS"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetMaxStructure Value + 5
+
+Tech
+    name = "SHP_BASIC_DAM_CONT"
+    description = "SHP_BASIC_DAM_CONT_DESC"
+    short_description = "STRUCTURE_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 40 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "SHP_MIL_ROBO_CONT"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
+            effects = SetStructure Value + 1
+
+Tech
+    name = "SHP_ADV_DAM_CONT"
+    description = "SHP_ADV_DAM_CONT_DESC"
+    short_description = "STRUCTURE_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = "SHP_BASIC_DAM_CONT"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetStructure Value + (Target.MaxStructure/4)
+   
+//########################################################
+//#     Parts
+//########################################################
 
 Tech
     name = "SHP_IMPROVED_ENGINE_COUPLINGS"
@@ -2399,58 +2474,6 @@ Tech
         Item type = ShipPart name = "FU_RAMSCOOP"
     ]
     graphic = "icons/ship_parts/deuterium_tank.png"
-
-Tech
-    name = "SHP_REINFORCED_HULL"
-    description = "SHP_REINFORCED_HULL_DESC"
-    short_description = "STRUCTURE_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 36 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 3
-    prerequisites = "CON_ARCH_MONOFILS"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetMaxStructure Value + 5
-
-Tech
-    name = "SHP_BASIC_DAM_CONT"
-    description = "SHP_BASIC_DAM_CONT_DESC"
-    short_description = "STRUCTURE_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 40 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 4
-    prerequisites = "SHP_MIL_ROBO_CONT"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy TheEmpire Source.Owner
-            ]
-            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
-            effects = SetStructure Value + 1
-
-Tech
-    name = "SHP_ADV_DAM_CONT"
-    description = "SHP_ADV_DAM_CONT_DESC"
-    short_description = "STRUCTURE_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 3
-    prerequisites = "SHP_BASIC_DAM_CONT"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetStructure Value + (Target.MaxStructure/4)
 
 Tech
     name = "SHP_ANTIMATTER_TANK"

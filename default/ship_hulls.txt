@@ -87,7 +87,7 @@ Hull
         Slot type = External position = (0.65, 0.40)
         Slot type = Internal position = (0.50, 0.65)
     ]
-    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -106,7 +106,7 @@ Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 40
+    starlaneSpeed = 60
     fuel = 3
     stealth = 5
     structure = 15
@@ -116,7 +116,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -146,7 +146,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -231,7 +231,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
-    buildCost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -334,7 +334,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
     ]
-    buildCost = 400 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 180 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -414,7 +414,7 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
-    buildCost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [

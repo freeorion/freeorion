@@ -7290,7 +7290,6 @@ This mighty flagship is essentially a miniature sun, and as such is a great sour
 
 SHP_KRILL_SPAWN
 Krill Spawner
-
 SHP_KRILL_SPAWN_DESC
 Unlocks the Krill Spawner ship part, which causes wild space krill to appear in systems with asteroid belts.
 
@@ -8224,7 +8223,7 @@ BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
 
 BLD_SHIPYARD_CON_NANOROBO_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_NANOROBOTIC]]s.
+'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_NANOROBOTIC]]s and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
 
 The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls.'''
 
@@ -8232,7 +8231,7 @@ BLD_SHIPYARD_CON_GEOINT
 Geo-Integration Facility
 
 BLD_SHIPYARD_CON_GEOINT_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_TITANIC]]s and [[shiphull SH_SELF_GRAVITATING]]s.
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_TITANIC]]s, [[shiphull SH_SELF_GRAVITATING]]s and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
 
 When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities. Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
 
@@ -8240,9 +8239,9 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shiphull SH_TRANSSPATIAL]] and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
 
-An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
+An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive.'''
 
 BLD_SHIPYARD_AST
 Asteroid Processor
@@ -9045,7 +9044,7 @@ ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength.
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in hull types that have Robotic Hulls as a prerequisite.
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
 '''
@@ -9116,10 +9115,8 @@ A weapon of tremendous power capable of destroying an entire system.  The weapon
 
 SP_KRILL_SPAWNER
 Krill Spawner
-
 SP_KRILL_SPAWNER_DESC
 Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
-
 
 #############################################################
 ####                 S H I P   H U L L S                 ####
@@ -9140,13 +9137,13 @@ Spatial Flux Hull
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. [[encyclopedia STEALTH_TITLE]] is fairly high, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map.
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] is required at the planet where it is constructed.'''
+In addition to a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_TITLE]] and speed are fairly low.
+'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_TITLE]] and speed are fairly low.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
 
