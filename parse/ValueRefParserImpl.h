@@ -66,6 +66,23 @@ struct statistic_rule
 };
 
 template <typename T>
+struct complex_variable_rule
+{
+    typedef qi::rule<
+        parse::token_iterator,
+        ValueRef::ComplexVariable<T>* (),
+        qi::locals<
+            std::string,
+            ValueRef::ValueRefBase<int>*,
+            ValueRef::ValueRefBase<int>*,
+            ValueRef::ValueRefBase<std::string>*,
+            ValueRef::ValueRefBase<std::string>*
+        >,
+        parse::skipper_type
+    > type;
+};
+
+template <typename T>
 struct expression_rule
 {
     typedef qi::rule<
@@ -189,12 +206,14 @@ void initialize_expression_parsers(
         ;
 }
 
-const reference_token_rule&         variable_scope();
-const name_token_rule&              container_type();
-const name_token_rule&              int_var_variable_name();
-const statistic_rule<int>::type&    int_var_statistic();
-const name_token_rule&              double_var_variable_name();
-const statistic_rule<double>::type& double_var_statistic();
+const reference_token_rule&                 variable_scope();
+const name_token_rule&                      container_type();
+const name_token_rule&                      int_var_variable_name();
+const statistic_rule<int>::type&            int_var_statistic();
+const complex_variable_rule<int>::type&     int_var_complex();
+const name_token_rule&                      double_var_variable_name();
+const statistic_rule<double>::type&         double_var_statistic();
+const complex_variable_rule<double>::type&  double_var_complex();
 
 template <typename T>
 void initialize_bound_variable_parser(
@@ -282,5 +301,33 @@ void initialize_nonnumeric_statistic_parser(
               >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+        ;
+}
+
+template <typename T>
+void initialize_complex_parser(
+    typename complex_variable_rule<T>::type& complex_variable,
+    const name_token_rule& variable_name)
+{
+    const parse::lexer& tok = parse::lexer::instance();
+
+    qi::_1_type _1;
+    qi::_a_type _a;
+    qi::_b_type _b;
+    qi::_c_type _c;
+    qi::_d_type _d;
+    qi::_d_type _e;
+    qi::_val_type _val;
+    qi::eps_type eps;
+    using phoenix::construct;
+    using phoenix::new_;
+    using phoenix::push_back;
+    using phoenix::val;
+
+    complex_variable
+        =    (
+                parse::label(EmpireBuildingTypesProduced_token)
+             )
+             [ _val = new_<ValueRef::ComplexVariable<T> >(_a, _b, _c, _d, _e) ]
         ;
 }
