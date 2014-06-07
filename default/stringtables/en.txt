@@ -3135,11 +3135,23 @@ Species Ships Lost
 SHIP_DESIGNS_LOST
 Ship Designs Lost
 
+SPECIES_SHIPS_SCRAPPED
+Species Ships Scrapped
+
+SHIP_DESIGNS_SCRAPPED
+Ship Designs Scrapped
+
 SPECIES_PLANETS_DEPOPED
 Species Planets Depopulated
 
 SPECIES_PLANETS_BOMBED
 Species Planets Bombed
+
+BUILDING_TYPES_PRODUCED
+Building Types Produced
+
+BUILDING_TYPES_SCRAPPED
+Building Types Scrapped
 
 ENC_SHIP
 Ship

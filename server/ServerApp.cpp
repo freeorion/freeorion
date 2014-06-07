@@ -2440,6 +2440,22 @@ namespace {
                 }
             }
 
+            // record scrapping in empire stats
+            Empire* scrapping_empire = Empires().Lookup(ship->Owner());
+            if (scrapping_empire) {
+                std::map<int, int>& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
+                if (designs_scrapped.find(ship->DesignID()) != designs_scrapped.end())
+                    designs_scrapped[ship->DesignID()]++;
+                else
+                    designs_scrapped[ship->DesignID()] = 1;
+
+                std::map<std::string, int>& species_ships_scrapped = scrapping_empire->SpeciesShipsScrapped();
+                if (species_ships_scrapped.find(ship->SpeciesName()) != species_ships_scrapped.end())
+                    species_ships_scrapped[ship->SpeciesName()]++;
+                else
+                    species_ships_scrapped[ship->SpeciesName()] = 1;
+            }
+
             //scrapped_object_ids.push_back(ship->ID());
             GetUniverse().Destroy(ship->ID());
         }
@@ -2457,6 +2473,16 @@ namespace {
 
             if (TemporaryPtr<System> system = GetSystem(building->SystemID()))
                 system->Remove(building->ID());
+
+            // record scrapping in empire stats
+            Empire* scrapping_empire = Empires().Lookup(building->Owner());
+            if (scrapping_empire) {
+                std::map<std::string, int>& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
+                if (buildings_scrapped.find(building->BuildingTypeName()) != buildings_scrapped.end())
+                    buildings_scrapped[building->BuildingTypeName()]++;
+                else
+                    buildings_scrapped[building->BuildingTypeName()] = 1;
+            }
 
             //scrapped_object_ids.push_back(building->ID());
             GetUniverse().Destroy(building->ID());

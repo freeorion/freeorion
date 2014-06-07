@@ -2777,6 +2777,12 @@ void Empire::CheckProductionProgress() {
                 building->SetPlanetID(planet->ID());
                 system->Insert(building);
 
+                // record building production in empire stats
+                if (m_building_types_produced.find(elem.item.name) != m_building_types_produced.end())
+                    m_building_types_produced[elem.item.name]++;
+                else
+                    m_building_types_produced[elem.item.name] = 1;
+
                 AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
                 Logger().debugStream() << "New Building created on turn: " << CurrentTurn();
                 break;
@@ -2837,6 +2843,17 @@ void Empire::CheckProductionProgress() {
                     // create ship
                     ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
                     system->Insert(ship);
+
+                    // record ship production in empire stats
+                    if (m_ship_designs_produced.find(elem.item.design_id) != m_ship_designs_produced.end())
+                        m_ship_designs_produced[elem.item.design_id]++;
+                    else
+                        m_ship_designs_produced[elem.item.design_id] = 1;
+                    if (m_species_ships_produced.find(species_name) != m_species_ships_produced.end())
+                        m_species_ships_produced[species_name]++;
+                    else
+                        m_species_ships_produced[species_name] = 1;
+
 
                     // set active meters that have associated max meters to an
                     // initial very large value, so that when the active meters are

@@ -681,7 +681,7 @@ namespace {
         default:                return EMPTY_STRING;
         }
     }
-    
+
     void RefreshDetailPanelPediaTag(        const std::string& item_type, const std::string& item_name,
                                             std::string& name, boost::shared_ptr<GG::Texture>& texture,
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -1128,6 +1128,7 @@ namespace {
             detailed_description += "\n" + target_empire_name + " : " + num_str;
         }
 
+
         // ship designs destroyed
         const std::map<int, int>&           empire_designs_destroyed = empire->ShipDesignsDestroyed();
         if (!empire_designs_destroyed.empty())
@@ -1146,6 +1147,7 @@ namespace {
             detailed_description += "\n" + design_name + " : " + num_str;
         }
 
+
         // species ships destroyed
         const std::map<std::string, int>&   species_ships_destroyed = empire->SpeciesShipsDestroyed();
         if (!species_ships_destroyed.empty())
@@ -1161,6 +1163,7 @@ namespace {
                 species_name = UserString(it->first);
             detailed_description += "\n" + species_name + " : " + num_str;;
         }
+
 
         // species planets invaded
         const std::map<std::string, int>&   species_planets_invaded = empire->SpeciesPlanetsInvaded();
@@ -1178,6 +1181,7 @@ namespace {
             detailed_description += "\n" + species_name + " : " + num_str;
         }
 
+
         // species ships produced
         const std::map<std::string, int>&   species_ships_produced = empire->SpeciesShipsProduced();
         if (!species_ships_produced.empty())
@@ -1193,6 +1197,7 @@ namespace {
                 species_name = UserString(it->first);
             detailed_description += "\n" + species_name + " : " + num_str;
         }
+
 
         // ship designs produced
         const std::map<int, int>&           ship_designs_produced = empire->ShipDesignsProduced();
@@ -1212,13 +1217,145 @@ namespace {
             detailed_description += "\n" + design_name + " : " + num_str;
         }
 
+
         // species ships lost
         const std::map<std::string, int>&   species_ships_lost = empire->SpeciesShipsLost();
+        if (!species_ships_lost.empty())
+            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_LOST");
+        for (std::map<std::string, int>::const_iterator it = species_ships_lost.begin();
+             it != species_ships_lost.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string species_name;
+            if (it->first.empty())
+                species_name = UserString("NONE");
+            else
+                species_name = UserString(it->first);
+            detailed_description += "\n" + species_name + " : " + num_str;
+        }
+
+
+        // ship designs lost
         const std::map<int, int>&           ship_designs_lost = empire->ShipDesignsLost();
+        if (!ship_designs_lost.empty())
+            detailed_description += "\n\n" + UserString("SHIP_DESIGNS_LOST");
+        for (std::map<int, int>::const_iterator it = ship_designs_lost.begin();
+             it != ship_designs_lost.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            const ShipDesign* design = GetShipDesign(it->first);
+            std::string design_name;
+            if (design)
+                design_name = design->Name();
+            else
+                design_name = UserString("UNKNOWN");
 
+            detailed_description += "\n" + design_name + " : " + num_str;
+        }
+
+
+        // species ships scrapped
+        const std::map<std::string, int>&   species_ships_scrapped = empire->SpeciesShipsScrapped();
+        if (!species_ships_scrapped.empty())
+            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_SCRAPPED");
+        for (std::map<std::string, int>::const_iterator it = species_ships_scrapped.begin();
+             it != species_ships_scrapped.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string species_name;
+            if (it->first.empty())
+                species_name = UserString("NONE");
+            else
+                species_name = UserString(it->first);
+            detailed_description += "\n" + species_name + " : " + num_str;
+        }
+
+
+        // ship designs scrapped
+        const std::map<int, int>&           ship_designs_scrapped = empire->ShipDesignsScrapped();
+        if (!ship_designs_scrapped.empty())
+            detailed_description += "\n\n" + UserString("SHIP_DESIGNS_SCRAPPED");
+        for (std::map<int, int>::const_iterator it = ship_designs_scrapped.begin();
+             it != ship_designs_scrapped.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            const ShipDesign* design = GetShipDesign(it->first);
+            std::string design_name;
+            if (design)
+                design_name = design->Name();
+            else
+                design_name = UserString("UNKNOWN");
+
+            detailed_description += "\n" + design_name + " : " + num_str;
+        }
+
+
+        // species planets depopulated
         const std::map<std::string, int>&   species_planets_depoped = empire->SpeciesPlanetsDepoped();
-        const std::map<std::string, int>&   species_planets_bombed = empire->SpeciesPlanetsBombed();
+        if (!species_planets_depoped.empty())
+            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_DEPOPED");
+        for (std::map<std::string, int>::const_iterator it = species_planets_depoped.begin();
+             it != species_planets_depoped.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string species_name;
+            if (it->first.empty())
+                species_name = UserString("NONE");
+            else
+                species_name = UserString(it->first);
+            detailed_description += "\n" + species_name + " : " + num_str;
+        }
 
+
+        // species planets bombed
+        const std::map<std::string, int>&   species_planets_bombed = empire->SpeciesPlanetsBombed();
+        if (!species_planets_bombed.empty())
+            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_BOMBED");
+        for (std::map<std::string, int>::const_iterator it = species_planets_bombed.begin();
+             it != species_planets_bombed.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string species_name;
+            if (it->first.empty())
+                species_name = UserString("NONE");
+            else
+                species_name = UserString(it->first);
+            detailed_description += "\n" + species_name + " : " + num_str;
+        }
+
+
+        // buildings produced
+        const std::map<std::string, int>&   building_types_produced = empire->BuildingTypesProduced();
+        if (!building_types_produced.empty())
+            detailed_description += "\n\n" + UserString("BUILDING_TYPES_PRODUCED");
+        for (std::map<std::string, int>::const_iterator it = building_types_produced.begin();
+             it != building_types_produced.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string building_type_name;
+            if (it->first.empty())
+                building_type_name = UserString("NONE");
+            else
+                building_type_name = UserString(it->first);
+            detailed_description += "\n" + building_type_name + " : " + num_str;
+        }
+
+
+        // buildings scrapped
+        const std::map<std::string, int>&   building_types_scrapped = empire->BuildingTypesScrapped();
+        if (!building_types_scrapped.empty())
+            detailed_description += "\n\n" + UserString("BUILDING_TYPES_SCRAPPED");
+        for (std::map<std::string, int>::const_iterator it = building_types_scrapped.begin();
+             it != building_types_scrapped.end(); ++it)
+        {
+            std::string num_str = boost::lexical_cast<std::string>(it->second);
+            std::string building_type_name;
+            if (it->first.empty())
+                building_type_name = UserString("NONE");
+            else
+                building_type_name = UserString(it->first);
+            detailed_description += "\n" + building_type_name + " : " + num_str;
+        }
     }
 
     void RefreshDetailPanelSpeciesTag(      const std::string& item_type, const std::string& item_name,

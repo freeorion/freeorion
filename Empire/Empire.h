@@ -560,8 +560,14 @@ public:
     std::map<std::string, int>& SpeciesShipsLost()      { return m_species_ships_lost; }
     std::map<int, int>&         ShipDesignsLost()       { return m_ship_designs_lost; }
 
+    std::map<std::string, int>& SpeciesShipsScrapped()  { return m_species_ships_scrapped; }
+    std::map<int, int>&         ShipDesignsScrapped()   { return m_ship_designs_scrapped; }
+
     std::map<std::string, int>& SpeciesPlanetsDepoped() { return m_species_planets_depoped; }
     std::map<std::string, int>& SpeciesPlanetsBombed()  { return m_species_planets_bombed; }
+
+    std::map<std::string, int>& BuildingTypesProduced() { return m_building_types_produced; }
+    std::map<std::string, int>& BuildingTypesScrapped() { return m_building_types_scrapped; }
     //@}
 
     /** Processes Builditems on queues of empires other than the indicated
@@ -612,8 +618,12 @@ private:
     std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
     std::map<std::string, int>      m_species_ships_lost;       ///< how mahy ships crewed by each species has this empire lost in combat?
     std::map<int, int>              m_ship_designs_lost;        ///< how many ships of each design has this empire lost in combat?
+    std::map<std::string, int>      m_species_ships_scrapped;   ///< how many ships crewed by each species has this empire scrapped?
+    std::map<int, int>              m_ship_designs_scrapped;    ///< how many ships of each design has this empire scrapped?
     std::map<std::string, int>      m_species_planets_depoped;  ///< how many planets populated by each species have depopulated while owned by this empire?
     std::map<std::string, int>      m_species_planets_bombed;   ///< how many planets populated by each species has this empire bombarded?
+    std::map<std::string, int>      m_building_types_produced;  ///< how many buildings of each type has this empire produced?
+    std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
     std::map<int, int>              m_supply_system_ranges;                 ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
