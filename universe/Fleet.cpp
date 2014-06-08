@@ -57,6 +57,28 @@ namespace {
         }
     }
 
+    void MoveFleetWithShips(TemporaryPtr<Fleet>& fleet, double x, double y){
+        fleet->MoveTo(x, y);
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            ship->MoveTo(x, y);
+        }
+    }
+    
+    void InsertFleetWithShips(TemporaryPtr<Fleet>& fleet, TemporaryPtr<System>& system){
+        system->Insert(fleet);
+        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
+        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
+             ship_it != ships.end(); ++ship_it)
+        {
+            TemporaryPtr<Ship> ship = *ship_it;
+            system->Insert(ship);
+        }
+    }
+    
 }
 
 // static(s)
@@ -329,6 +351,24 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         //    Logger().debugStream() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
         //else
         //    Logger().debugStream() << "     at (" << cur_x << ", " << cur_y << ")";
+        
+        // Make sure that there actually still is a starlane between the two systems
+        // we are between
+        TemporaryPtr<const System>* prev_or_cur = NULL;
+        if(cur_system){
+            prev_or_cur = &cur_system;
+        }else if(prev_system){
+            prev_or_cur = &prev_system;
+        }else{
+            Logger().errorStream() << "Fleet::MovePath: No previous or current system!?";
+        }
+        if(prev_or_cur){
+            if(!(*prev_or_cur)->HasStarlaneTo(next_system->ID())){
+                Logger().debugStream() << "Fleet::MovePath: There starlane to follow between Systems " << (*prev_or_cur)->ID() << " and " << next_system->ID()
+                << ". Abandoning the rest of the route.";
+                return retval;
+            }
+        }
 
 
         // check if fuel limits movement or current system refuels passing fleet
@@ -698,6 +738,11 @@ void Fleet::SetRoute(const std::list<int>& route) {
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
 
     m_travel_route = route;
+    
+    // Moving to where we are is not moving at all
+    if(m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()){
+        m_travel_route.clear();
+    }
 
 
     // calculate length of line segments between systems on route, and sum up to determine length of route between
@@ -796,6 +841,16 @@ void Fleet::MovementPhase() {
     TemporaryPtr<System> current_system = GetSystem(fleet->SystemID());
     TemporaryPtr<const System> initial_system = current_system;
     std::list<MovePathNode> move_path = fleet->MovePath();
+    
+    // If the move path cannot lead to our destination,
+    // make our route take us as far as it can
+    if(!move_path.empty() && !m_travel_route.empty() && move_path.back().object_id != m_travel_route.back()){
+        std::list<int> shortened_route = fleet->TravelRoute();
+        fleet->ShortenRouteToEndAtSystem(shortened_route, move_path.back().object_id);
+        fleet->SetRoute(shortened_route);
+        move_path = fleet->MovePath();
+    }
+    
     std::list<MovePathNode>::const_iterator it = move_path.begin();
     std::list<MovePathNode>::const_iterator next_it = it;
     if (next_it != move_path.end())
@@ -920,13 +975,7 @@ void Fleet::MovementPhase() {
             // is system the last node reached this turn?
             if (node_is_next_stop) {
                 // fleet ends turn at this node.  insert fleet and ships into system
-                system->Insert(fleet);
-                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                     ship_it != ships.end(); ++ship_it)
-                {
-                    TemporaryPtr<Ship> ship = *ship_it;
-                    system->Insert(ship);
-                }
+                InsertFleetWithShips(fleet, system);
 
                 current_system = system;
 
@@ -947,13 +996,7 @@ void Fleet::MovementPhase() {
             // node is not a system.
             fleet->m_arrival_starlane = fleet->m_prev_system;
             if (node_is_next_stop) {            // node is not a system, but is it the last node reached this turn?
-                fleet->MoveTo(it->x, it->y);    // fleet ends turn at this node.  move fleet and ships here
-                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                     ship_it != ships.end(); ++ship_it)
-                {
-                    TemporaryPtr<Ship> ship = *ship_it;
-                    ship->MoveTo(it->x, it->y);
-                }
+                MoveFleetWithShips(fleet, it->x, it->y);
                 break;
             }
         }
