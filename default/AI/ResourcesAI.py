@@ -282,8 +282,8 @@ def setPlanetResourceFoci(): #+
         id_set = set(empirePlanetIDs)
         for adj_round in [1, 2, 3, 4]:
             maxi_ratio = ctRP0 / max ( 0.01,  ctPP0 ) #should only change between rounds 1 and 2
-            for adj_round in list(id_set):
-                if round == 1: #tally max Industry
+            for pid in list(id_set):
+                if adj_round == 1: #tally max Industry
                     iPP,  iRP  = newTargets.get(pid, {}).get( IFocus,  [0, 0] )
                     ctPP0 += iPP
                     ctRP0 += iRP
@@ -310,7 +310,7 @@ def setPlanetResourceFoci(): #+
                     #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
                     if (pop < t_pop - 5):
                         continue
-                    if  ( CI > II + 8) or (( (RR>II) or ((RR-CR)>=1+2*research_penalty)) and ((RR-IR)>=3) and ( (CR-IR) >= 0.7*((II-CI)(1+0.1*research_penalty) ) )):
+                    if  ( CI > II + 8) or (( (RR>II) or ((RR-CR)>=1+2*research_penalty)) and ((RR-IR)>=3) and ( (CR-IR) >= 0.7*((II-CI)*(1+0.1*research_penalty) ) )):
                         curTargetPP += CI -1 - research_penalty#
                         curTargetRP +=  CR+1
                         newFoci[pid] = RFocus

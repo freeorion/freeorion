@@ -1629,7 +1629,7 @@ def generateProductionOrders():
     for pSet in allocatedPP:
         print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  allocatedPP[pSet])
 
-    if True: #log ship design assessment
+    if False: #log ship design assessment
         getBestShipRatings( list(AIstate.popCtrIDs),  verbose = True)
     print "\n\nBuilding Ships in system groups  with remaining  PP:"
     for pSet in planetsWithWastedPP:

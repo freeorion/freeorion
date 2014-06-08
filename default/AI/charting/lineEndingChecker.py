@@ -12,7 +12,7 @@ dirs_to_skip = ['GG', 'OIS']
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
 # use "default/buildings.txt", NOT "/default/buildings.txt"
-file_list = "Supply_Tweaked7-remake.patch"
+file_list = "planet-panel-4.patch"
 
 # if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
 fixfiles = True

@@ -151,6 +151,10 @@ def calculateResearchPriority():
     orbGenTech = "PRO_ORBITAL_GEN"
     got_orb_gen = (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete)
     got_solar_gen = (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete)
+    
+    milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"  ]
+    milestones_done = [mstone for mstone in milestone_techs if (empire.getTechStatus(mstone) == fo.techStatus.complete)]
+    print "Research Milestones accomplished at turn %d: %s"%(fo.currentTurn(), milestones_done)
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
@@ -186,13 +190,11 @@ def calculateResearchPriority():
         if len(researchQueue) == 0 :
             researchPriority = 0 # done with research
         elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
-            researchPriority =  len(researchQueue) # barely not done with research
+            researchPriority =  len(researchQueue) * 0.01 * industryPriority # barely not done with research
         elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
-            researchPriority = 4+ len(researchQueue) # almost done with research
+            researchPriority = (4+ 2*len(researchQueue)) * 0.01 * industryPriority  # almost done with research
         elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
-            researchPriority = 0.5 * researchPriority # closing in on end of research
-        elif len(researchQueue) <20:
-            researchPriority = 0.7*researchPriority # high  industry , low research
+            researchPriority = 0.7 * researchPriority # closing in on end of research
     if industrySurge:
         researchPriority *= 0.5
                 
@@ -201,7 +203,8 @@ def calculateResearchPriority():
             (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
         #industry_factor = [ [0.25,  0.2],  [0.3,  0.25],  [0.3,  0.25] ][styleIndex ]
         #researchPriority = min(researchPriority,  industry_factor[got_solar_gen]*industryPriority) 
-        researchPriority *= 0.6
+        #researchPriority *= 0.8
+        pass
     if got_quant:
         researchPriority = min(researchPriority + 0.1*industryPriority,  researchPriority * 1.3) 
     researchPriority = int(researchPriority)
