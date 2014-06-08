@@ -763,6 +763,13 @@ void Fleet::SetRoute(const std::list<int>& route) {
             double dist_y = starting_system->Y() - this->Y();
             m_travel_distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);
         }
+        if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
+            m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
+        } else if (SystemID() == route.front()) {
+            m_prev_system = SystemID();
+        }
+        std::list<int>::const_iterator it = m_travel_route.begin();
+        m_next_system = m_prev_system == SystemID() ? (*++it) : (*it);
     }
 
     StateChangedSignal();
