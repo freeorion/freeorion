@@ -63,6 +63,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(
         -DFREEORION_FREEBSD
         -DENABLE_BINRELOC
+        -DBOOST_DATE_TIME_NO_LOCALE
     )
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 else ()
