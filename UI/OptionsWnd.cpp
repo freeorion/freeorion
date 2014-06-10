@@ -874,6 +874,10 @@ void OptionsWnd::Init() {
     GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
 
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
+    IntOption("UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
+    IntOption("UI.keypress-repeat-interval",    UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
+    IntOption("UI.mouse-click-repeat-delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
+    IntOption("UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));
     FontOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"));

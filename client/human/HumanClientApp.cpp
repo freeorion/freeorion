@@ -91,11 +91,15 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player",    UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER"),    true,   Validator<bool>());
-        db.Add("autosave.multiplayer",      UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),      false,  Validator<bool>());
-        db.Add("autosave.turns",            UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),            1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.limit",            UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),            10,     RangedValidator<int>(1, 100));
-        db.Add("UI.swap-mouse-lr",          UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),          false);
+        db.Add("autosave.single-player",        UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER"),     true,   Validator<bool>());
+        db.Add("autosave.multiplayer",          UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),       false,  Validator<bool>());
+        db.Add("autosave.turns",                UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
+        db.Add("autosave.limit",                UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
+        db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
+        db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
+        db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
+        db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
+        db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -211,6 +215,11 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     boost::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
     SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
+
+    EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),
+                         GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
+    EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
+                                GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
 
     GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
@@ -645,7 +654,6 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         Logger().errorStream() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << EnumToString(response.Type());
     }
 }
-
 
 Ogre::SceneManager* HumanClientApp::SceneManager()
 { return m_scene_manager; }

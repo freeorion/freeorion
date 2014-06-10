@@ -169,7 +169,6 @@ struct GG::GUIImpl
                  m_last_pressed_key_code_point;
     int          m_prev_key_press_time;             // the time of the most recent key press
 
-
     int          m_mouse_button_down_repeat_delay;      // see note above GUI class definition
     int          m_mouse_button_down_repeat_interval;
     int          m_last_mouse_button_down_repeat_time;  // last time of a simulated button-down message

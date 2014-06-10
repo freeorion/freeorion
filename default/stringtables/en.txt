@@ -1129,6 +1129,18 @@ Sets size of system icons below which the fixed-size tiny icons will be shown.
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip pop-up delay, in ms.
 
+OPTIONS_DB_KEYPRESS_REPEAT_DELAY
+Sets delay between holding a key and repeat keypresses being generated
+
+OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL
+Sets delay between repeat keypresses while holding a key
+
+OPTIONS_DB_MOUSE_REPEAT_DELAY
+Sets delay between holding a mouse button and repeat clicks being generated
+
+OPTIONS_DB_MOUSE_REPEAT_INTERVAL
+Sets delay between repeat clicks while holding a moues button
+
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time. Otherwise, opening a fleet window will close any currently-open fleet window.
 
@@ -1761,6 +1773,18 @@ Vertical
 
 OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
+
+OPTIONS_KEYPRESS_REPEAT_DELAY
+Held key repeat delay
+
+OPTIONS_KEYPRESS_REPEAT_INTERVAL
+Held key repeat interval
+
+OPTIONS_MOUSE_REPEAT_DELAY
+Held mouse button repeat delay
+
+OPTIONS_MOUSE_REPEAT_INTERVAL
+Held mouse button repeat interval
 
 OPTIONS_SWAP_MOUSE_LR
 Swap Mouse Buttons Left-Right
