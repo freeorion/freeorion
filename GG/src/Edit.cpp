@@ -61,23 +61,29 @@ const int Edit::PIXEL_MARGIN = 5;
 
 Edit::Edit() :
     TextControl(),
-    m_first_char_shown(0),
-    m_recently_edited(false),
+    m_cursor_pos(CP0, CP0),
     m_last_button_down_time(0),
-    m_in_double_click_mode(false)
+    m_in_double_click_mode(false),
+    m_double_click_cursor_pos(CP0, CP0),
+    m_first_char_shown(0),
+    m_int_color(CLR_ZERO),
+    m_hilite_color(CLR_WHITE),
+    m_sel_text_color(CLR_CYAN),
+    m_recently_edited(false)
 {}
 
 Edit::Edit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
            Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     TextControl(x, y, w, HeightFromFont(font, PIXEL_MARGIN), str, font, text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, flags),
     m_cursor_pos(CP0, CP0),
+    m_last_button_down_time(0),
+    m_in_double_click_mode(false),
+    m_double_click_cursor_pos(CP0, CP0),
     m_first_char_shown(CP0),
     m_int_color(interior),
     m_hilite_color(CLR_SHADOW),
     m_sel_text_color(CLR_WHITE),
-    m_recently_edited(false),
-    m_last_button_down_time(0),
-    m_in_double_click_mode(false)
+    m_recently_edited(false)
 {
     SetColor(color);
 
