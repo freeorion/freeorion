@@ -192,7 +192,6 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     SetStyleFactory(style);
 
     SetMinDragTime(0);
-    EnableMouseButtonDownRepeat(250, 15);
 
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
 
