@@ -1436,13 +1436,14 @@ void FleetDataPanel::Refresh() {
         std::vector<boost::shared_ptr<GG::Texture> > icons;
         std::vector<GG::Flags<GG::GraphicStyle> > styles;
 
-        boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        icons.push_back(head_icon);
-        styles.push_back(DataPanelIconStyle());
-
         boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
         icons.push_back(size_icon);
         styles.push_back(DataPanelIconStyle());
+
+        std::vector<boost::shared_ptr<GG::Texture> > head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
+        std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(icons));
+        for (size_t i = 0; i < head_icons.size(); ++i)
+            styles.push_back(DataPanelIconStyle());
 
         m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icons, styles);
         AttachChild(m_fleet_icon);

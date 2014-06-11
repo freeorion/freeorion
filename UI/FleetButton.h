@@ -53,7 +53,8 @@ private:
     void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
     std::vector<int>                        m_fleets;           ///< the fleets represented by this button
-    boost::shared_ptr<GG::Texture>          m_head_icon;        ///< icon texture representing type of fleet
+    std::vector<boost::shared_ptr<GG::Texture> >
+                                            m_head_icons;       ///< icon textures representing capabilities of fleet
     boost::shared_ptr<GG::Texture>          m_size_icon;        ///< icon texture representing number of ships in fleet
     boost::shared_ptr<GG::Texture>          m_selection_texture;///< texture shown to indicate button is selected
     std::vector<double>                     m_vertex_components;///< x and y componentes of vertices to use to render this fleet button, relative to centre of the button
@@ -61,10 +62,10 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet>, FleetButton::SizeType size_type);
+std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(TemporaryPtr<const Fleet>, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleets at passed icon size */
-boost::shared_ptr<GG::Texture> FleetHeadIcon(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type);
+std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
 boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);

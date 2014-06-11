@@ -133,7 +133,7 @@ namespace {
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
-    m_head_icon(),
+    m_head_icons(),
     m_size_icon(),
     m_selection_texture(),
     m_vertex_components(),
@@ -145,7 +145,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
-    m_head_icon(),
+    m_head_icons(),
     m_size_icon(),
     m_selection_texture(),
     m_vertex_components(),
@@ -242,15 +242,15 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
             num_ships += fleet->NumShips();
     }
     m_size_icon = FleetSizeIcon(num_ships, size_type);
-    m_head_icon = FleetHeadIcon(fleets, size_type);
+    m_head_icons = FleetHeadIcons(fleets, size_type);
 
     // resize to fit icon by first determining necessary size, and then resizing
     GG::X texture_width(0);
     GG::Y texture_height(0);
 
-    if (m_head_icon) {
-        texture_width = m_head_icon->DefaultWidth();
-        texture_height = m_head_icon->DefaultHeight();
+    if (!m_head_icons.empty()) {
+        texture_width = m_head_icons.front()->DefaultWidth();
+        texture_height = m_head_icons.front()->DefaultHeight();
     }
     if (m_size_icon) {
         texture_width = std::max(texture_width, m_size_icon->DefaultWidth());
@@ -352,8 +352,8 @@ void FleetButton::RenderUnpressed() {
     if (m_vertex_components.empty()) {
         if (m_size_icon)
             m_size_icon->OrthoBlit(ul);
-        if (m_head_icon)
-            m_head_icon->OrthoBlit(ul);
+        for (std::vector<boost::shared_ptr<GG::Texture> >::iterator it = m_head_icons.begin(); it != m_head_icons.end(); ++it)
+            (*it)->OrthoBlit(ul);
     } else {
         std::vector<double> vertsXY;
         vertsXY.push_back(midX + m_vertex_components[0]);
@@ -365,7 +365,8 @@ void FleetButton::RenderUnpressed() {
         vertsXY.push_back(midX + m_vertex_components[6]);
         vertsXY.push_back(midY + m_vertex_components[7]);
 
-        RenderTexturedQuad(vertsXY, m_head_icon);
+        for (std::vector<boost::shared_ptr<GG::Texture> >::iterator it = m_head_icons.begin(); it != m_head_icons.end(); ++it)
+            RenderTexturedQuad(vertsXY, *it);
         RenderTexturedQuad(vertsXY, m_size_icon);
     }
 
@@ -421,19 +422,19 @@ void FleetButton::PlayFleetButtonOpenSound()
 /////////////////////
 // Free Functions
 /////////////////////
-boost::shared_ptr<GG::Texture> FleetHeadIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {
+std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {
     std::vector< TemporaryPtr<const Fleet> > fleets(1U, fleet);
-    return FleetHeadIcon(fleets, size_type);
+    return FleetHeadIcons(fleets, size_type);
 }
 
-boost::shared_ptr<GG::Texture> FleetHeadIcon(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type) {
+std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector< TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type) {
     if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
-        return boost::shared_ptr<GG::Texture>();
+        return std::vector<boost::shared_ptr<GG::Texture> >();
 
     // get file name prefix for appropriate size of icon
     std::string size_prefix = FleetIconSizePrefix(size_type);
     if (size_prefix.empty())
-        return boost::shared_ptr<GG::Texture>();
+        return std::vector<boost::shared_ptr<GG::Texture> >();
 
     // the set of fleets is treated like a fleet that contains all the ships
     bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
@@ -451,41 +452,24 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(const std::vector< TemporaryPtr<con
     
     // get file name main part depending on type of fleet
     // symbol type prioritized by the ship type arbitrarily deemed "most important"
-    std::string main_filename = "head-scout.png";
-    if (hasArmedShips) {
-        main_filename = "head-warship.png";
-        if (hasTroopShips)
-            main_filename = "head-lander.png";
-        else if (hasMonsters)
-            main_filename = "head-monster.png";
+    std::vector<std::string> main_filenames;
+    if (hasMonsters) {
+        if (hasArmedShips)   { main_filenames.push_back("head-monster.png"); }
+        else                 { main_filenames.push_back("head-monster-harmless.png"); }
     } else {
-        if (hasTroopShips)
-            main_filename = "head-lander.png";
-        else if (hasColonyShips)
-            main_filename = "head-colony.png";
-        else if (hasOutpostShips)
-            main_filename = "head-outpost.png";
-        else if (hasMonsters)
-            main_filename = "head-monster-harmless.png";
+        if (hasArmedShips)   { main_filenames.push_back("head-warship.png"); }
+        if (hasColonyShips)  { main_filenames.push_back("head-colony.png");  }
+        if (hasOutpostShips) { main_filenames.push_back("head-outpost.png"); }
+        if (hasTroopShips)   { main_filenames.push_back("head-lander.png");  }
     }
-    // reset to generic icon in cases where the above is too imprecise
-    if (hasArmedShips) {
-        if (hasColonyShips)
-            main_filename = "head-scout.png";
-        else if (hasOutpostShips)
-            main_filename = "head-scout.png";
-        else if (hasMonsters && main_filename != "head-monster.png")
-            main_filename = "head-scout.png";
-    } else {
-        if (hasColonyShips && main_filename != "head-colony.png")
-            main_filename = "head-scout.png";
-        else if (hasOutpostShips && main_filename != "head-outpost.png")
-            main_filename = "head-scout.png";
-        else if (hasMonsters && main_filename != "head-monster-harmless.png")
-            main_filename = "head-scout.png";
+    if (main_filenames.empty()) { main_filenames.push_back("head-scout.png"); }
+    
+    std::vector<boost::shared_ptr<GG::Texture> > result;
+    for (std::vector<std::string>::const_iterator it = main_filenames.begin(); it != main_filenames.end(); ++it) {
+        result.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + *it), false));
     }
     
-    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + main_filename), false);
+    return result;
 }
 
 boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type) {

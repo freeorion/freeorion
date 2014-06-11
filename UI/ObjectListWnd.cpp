@@ -1048,12 +1048,11 @@ namespace {
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
             if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
-                boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-                if (head_icon)
-                    retval.push_back(head_icon);
                 boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (size_icon)
                     retval.push_back(size_icon);
+                std::vector<boost::shared_ptr<GG::Texture> > head_icons = FleetHeadIcons(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(retval));
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
             if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj)) {
