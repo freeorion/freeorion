@@ -504,7 +504,7 @@ private:
     void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
-    GG::TextControl*        m_planet_name;              ///< planet name
+    ShadowedTextControl*    m_planet_name;              ///< planet name
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
     CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet

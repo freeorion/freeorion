@@ -260,7 +260,7 @@ namespace {
 
         const ProductionQueue::Element  m_build;
         GG::TextControl*                m_name_text;
-        GG::TextControl*                m_location_text;
+        GG::Control*                    m_location_text;
         GG::TextControl*                m_PPs_and_turns_text;
         GG::TextControl*                m_turns_remaining_until_next_complete_text;
         GG::StaticGraphic*              m_icon;

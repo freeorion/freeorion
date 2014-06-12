@@ -17,6 +17,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 #include <limits>
 
@@ -1423,41 +1424,80 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // ShadowedTextControl
 //////////////////////////////////////////////////
+
+// Create a regex that recognizes a tag
+boost::regex TagRegex(const std::string& tag){
+   return boost::regex(std::string("<")+tag+"[^<>]*>(.*)</"+tag+">");
+}
+
+
+std::string RemoveRGB(const std::string& text){
+    static boost::regex rx("<rgba[^<>]*>|</rgba>");// = TagRegex("rgba");
+    return boost::regex_replace(text, rx, "", boost::match_default | boost::format_all);
+}
+
 ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                          const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format,
                                          GG::Flags<GG::WndFlag> flags) :
-    GG::TextControl(x, y, w, h, str, font, color, format, flags)
-{}
+    GG::Control(x, y, w, h, flags),
+    shadow_text(new GG::TextControl(GG::X0, GG::Y0, w, h, RemoveRGB(str), font, GG::CLR_BLACK, format , flags)),
+    main_text(new GG::TextControl(GG::X0, GG::Y1, w, h, str, font, color, format, flags))
+{
+    AttachChild(shadow_text);
+    AttachChild(main_text);
+}
 
 ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str,
                                          const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format,
                                          GG::Flags<GG::WndFlag> flags) :
-    GG::TextControl(x, y, str, font, color, format, flags)
-{}
+    GG::Control(x, y, GG::X1, GG::Y1, flags),
+    shadow_text(new GG::TextControl(GG::X0, GG::Y0, RemoveRGB(str), font, GG::CLR_BLACK, format, flags)),
+    main_text(new GG::TextControl(GG::X0, GG::Y1, str, font, color, format, flags))
+{
+    Resize(main_text->Size());
+    AttachChild(shadow_text);
+    AttachChild(main_text);
+}
+
+GG::Pt ShadowedTextControl::MinUsableSize() const {
+    return main_text->MinUsableSize();
+}
+
+void ShadowedTextControl::SetText(const std::string& str){
+    shadow_text->SetText(str);
+    main_text->SetText(str);
+}
+
+void ShadowedTextControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr){
+    GG::Control::SizeMove(ul, lr);
+    main_text->Resize(Size());
+    shadow_text->Resize(Size());
+}
+
+void ShadowedTextControl::SetColor(GG::Clr c){
+    main_text->SetColor(c);
+}
+
+void ShadowedTextControl::SetTextColor ( GG::Clr c ) {
+    main_text->SetTextColor(c);
+}
 
 void ShadowedTextControl::Render() {
-    GG::Clr text_colour = TextColor();          // save original colour
+    shadow_text->OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
+    shadow_text->Render();
 
-    SetTextColor(GG::CLR_BLACK);                // render shadows in opaque black
+    shadow_text->OffsetMove(GG::Pt(GG::X1, GG::Y1));         // up
+    shadow_text->Render();
 
-    OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
-    TextControl::Render();
+    shadow_text->OffsetMove(GG::Pt(GG::X1, -GG::Y1));        // right
+    shadow_text->Render();
 
-    OffsetMove(GG::Pt(GG::X1, GG::Y1));         // up
-    TextControl::Render();
-
-    OffsetMove(GG::Pt(GG::X1, -GG::Y1));        // right
-    TextControl::Render();
-
-    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
-    TextControl::Render();
-
-    SetTextColor(text_colour);                  // restore original colour
-
-    OffsetMove(GG::Pt(GG::X(0), GG::Y1));       // render main coloured text
-    TextControl::Render();
+    shadow_text->OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
+    shadow_text->Render();
+    
+    shadow_text->OffsetMove(GG::Pt(GG::X0, GG::Y1));       // center
 }
 
 

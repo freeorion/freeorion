@@ -361,7 +361,7 @@ private:
 
     double              m_scale_factor;
     GG::X               m_line_length;
-    GG::TextControl*    m_label;
+    ShadowedTextControl* m_label;
     bool                m_enabled;
 };
 

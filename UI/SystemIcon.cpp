@@ -20,6 +20,8 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TextControl.h>
+#include <GG/utf8/core.h>
+#include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -37,6 +39,45 @@ namespace {
         static std::vector<boost::shared_ptr<GG::Texture> > tiny_textures =
             ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection_tiny", "system_selection_tiny", false);
         return tiny_textures;
+    }
+    
+    // Wrap content int an rgba tag with color color. Opacity ignored.
+    std::string ColorTag(const std::string& content, GG::Clr color){
+        boost::format templ("<rgba %d %d %d 255>%s</rgba>");
+        return (templ % static_cast<int>(color.r) % static_cast<int>(color.g) % static_cast<int>(color.b) % content).str();
+    }
+    
+    /// Adds color tags to name_o according to the empires in owner_empire_ids
+    std::string ColorNameByOwners(const std::string& name_o, std::set<int>& owner_empire_ids, const EmpireManager& empires) {
+        if (owner_empire_ids.size() < 1) {
+            return name_o;
+        } else if(owner_empire_ids.size() == 1) {
+            return ColorTag(name_o, empires.Lookup(*owner_empire_ids.begin())->Color());
+        } else {
+            // We will split the name into pieces.
+            // To avoid splitting multi-byte glyphs, we need to convert it to 32-bit form,
+            // where a single element always corresponds to a single glyph
+            std::vector<utf8::uint32_t> name;
+            utf8::utf8to32(name_o.begin(), name_o.end(), std::back_inserter(name));
+            const unsigned owner_count = owner_empire_ids.size();
+            const unsigned piece_length = name.size() / owner_count;
+            unsigned extra = name.size() - owner_count*piece_length; // letters that would be left over
+            std::string retval;
+            int start = 0;
+            for (std::set<int>::iterator it = owner_empire_ids.begin(); it != owner_empire_ids.end(); ++it) {
+                int current_length = piece_length;
+                if (extra > 0) { // Use left over letters as long as we have them
+                    ++current_length;
+                    --extra;
+                }
+                // Now we convert a piece of the name back into utf8 and wrap it in tags.
+                std::string  piece;
+                utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
+                retval += ColorTag(piece, empires.Lookup(*it)->Color());
+                start += current_length;
+            }
+            return retval;
+        }
     }
 
     const double        PI = 3.1415926535;
@@ -139,11 +180,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         }
 
         // remember if this system has a player-owned planet
-        if (!has_player_planet) {
-            if (!planet->Unowned()) {
-                has_player_planet = true;
-                owner_empire_ids.insert(planet->Owner());
-            }
+        if (!planet->Unowned()) {
+            has_player_planet = true;
+            owner_empire_ids.insert(planet->Owner());
         }
     }
 
@@ -155,7 +194,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // need to check all empires for homeworld or capitals
 
     // wrap with formatting tags
-    std::string wrapped_system_name = system_name;
+    std::string wrapped_system_name = ColorNameByOwners(system_name, owner_empire_ids, empire_manager);
     if (homeworld)
         wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
     if (has_shipyard)
@@ -174,7 +213,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         text_color = ClientUI::TextColor();
     }
 
-    GG::TextControl* text = new ShadowedTextControl(GG::X0, GG::Y0, wrapped_system_name, font, text_color);
+    GG::Control* text = new ShadowedTextControl(GG::X0, GG::Y0, wrapped_system_name, font, text_color);
     AttachChild(text);
     Resize(GG::Pt(text->Width(), text->Height()));
 }
