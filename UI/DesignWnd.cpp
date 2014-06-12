@@ -1829,6 +1829,7 @@ private:
     void            Populate();                         //!< creates and places SlotControls for current hull
     void            DoLayout();                         //!< positions buttons, text entry boxes and SlotControls
     void            DesignChanged();                    //!< responds to the design being changed
+    void            DesignNameChanged();                //!< responds to the design name being changed
     void            RefreshIncompleteDesign() const;
     std::string     GetCleanDesignDump(const ShipDesign* ship_design); //!< similar to ship design dump but without 'lookup_strings', icon and model entries
 
@@ -1855,6 +1856,7 @@ private:
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
+    bool                m_disabled_by_name; // if the design confirm button is currently disabled due to empty name
     boost::signals2::connection      m_empire_designs_changed_signal;
 };
 
@@ -1874,7 +1876,8 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     m_design_description_label(0),
     m_design_description(0),
     m_confirm_button(0),
-    m_clear_button(0)
+    m_clear_button(0),
+    m_disabled_by_name(false)
 {
     SetChildClippingMode(ClipToClient);
 
@@ -2078,7 +2081,7 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
 }
 
 void DesignWnd::MainPanel::EditedSignal(const std::string& new_name) {
-    DesignChangedSignal();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
+    DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
@@ -2283,6 +2286,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     std::string design_name;
+    m_disabled_by_name = false;
 
     if (!m_hull) {
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
@@ -2299,7 +2303,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
-
+        m_disabled_by_name = true;
         m_confirm_button->Disable(true);
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
@@ -2316,6 +2320,11 @@ void DesignWnd::MainPanel::DesignChanged() {
     else {
         m_confirm_button->Disable(false);
     }
+}
+
+void DesignWnd::MainPanel::DesignNameChanged() {
+    if (m_disabled_by_name || (m_design_name->Text().empty() && !m_confirm_button->Disabled()))
+        DesignChangedSignal;
 }
 
 std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_design) {
