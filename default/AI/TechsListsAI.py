@@ -39,14 +39,14 @@ def defense_techs_2():
 def tech_group_1a(): # early org_hull
     result = [
             "LRN_ALGO_ELEGANCE",
-            "SHP_WEAPON_1_2",
             "GRO_PLANET_ECOL",
+            "GRO_SUBTER_HAB",
+            "SHP_WEAPON_1_2",
             "SHP_DOMESTIC_MONSTER",
             "SHP_ORG_HULL",
             "CON_ENV_ENCAPSUL",
             "LRN_ARTIF_MINDS",
             "SHP_WEAPON_1_3",
-            "GRO_SUBTER_HAB",
             "SHP_WEAPON_1_4",
             "CON_ORBITAL_CON",
     ]
@@ -55,13 +55,13 @@ def tech_group_1a(): # early org_hull
 def tech_group_1b():  # early _lrn_artif_minds
     result = [
             "LRN_ALGO_ELEGANCE",
+            "GRO_PLANET_ECOL",
+            "GRO_SUBTER_HAB",
             "SHP_WEAPON_1_2",
             "CON_ENV_ENCAPSUL",
             "LRN_ARTIF_MINDS",
-            "GRO_PLANET_ECOL",
             "SHP_DOMESTIC_MONSTER",
             "SHP_ORG_HULL",
-            "GRO_SUBTER_HAB",
             "CON_ORBITAL_CON",
             "SHP_WEAPON_1_4",
     ]

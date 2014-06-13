@@ -342,9 +342,29 @@ def addMarkDesigns():
     else:
         maxEM= 10
 
-    nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  ""],  "",  model)    for iw in [1, 2, 3, 4] ]
+    nb,  hull =  designNameBases[1]+"-a-%1d",   "SH_BASIC_MEDIUM"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  ar1,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  ar1,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+
+    nb,  hull =  designNameBases[1]+"-b-%1d",   "SH_BASIC_MEDIUM"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  ar2,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  ar2,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+
+    nb,  hull =  designNameBases[1]+"-c-%1d",   "SH_BASIC_MEDIUM"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+
+    nb,  hull =  designNameBases[1]+"-d-%1d",   "SH_STANDARD"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  ar1,  ar1, if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  ar1, ar1,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+
+    nb,  hull =  designNameBases[1]+"-e-%1d",   "SH_STANDARD"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  ar2,  ar2, if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  ar2, ar2,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+
+    nb,  hull =  designNameBases[1]+"-f-%1d",   "SH_STANDARD"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ar1, if1],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw, ar1,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]
 
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC" #11 = "Comet":"BA"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  ar1, srb%iw,  if1],  "",  model)    for iw in [1, 2, 3, 4] ]

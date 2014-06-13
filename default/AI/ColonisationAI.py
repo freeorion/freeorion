@@ -536,14 +536,15 @@ def getColonyFleets():
         sysID = planet.systemID
         for pid2 in empireSpeciesSystems.get(sysID,  {}).get('pids', []):
             planet2 = universe.getPlanet(pid2)
-            if not planet2: 
+            if not (planet2 and planet2.speciesName  in empireColonizers): 
                 continue
-            if (pid not in  foAI.foAIstate.qualifyingOutpostBaseTargets) and (planet2.speciesName  in empireColonizers):
-                if  (pid not in empireOutpostIDs): 
+            if (pid not in  foAI.foAIstate.qualifyingOutpostBaseTargets):
+                if planet.unowned: 
                     foAI.foAIstate.qualifyingOutpostBaseTargets.setdefault(pid,  [pid2,  -1])
-            if (pid not in  foAI.foAIstate.qualifyingColonyBaseTargets) and (planet2.speciesName  in empireColonizers):
-                if  colonyCost <  cost_ratio * availPP_BySys.get(sysID,  0): 
-                    foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: check other local colonizers for better score
+            if ((pid not in  foAI.foAIstate.qualifyingColonyBaseTargets)  and
+                (colonyCost <  cost_ratio * availPP_BySys.get(sysID,  0)) and 
+                (planet.unowned or (pid in empireOutpostIDs))): 
+                    foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: enable actual building, remove from outpostbases, check other local colonizers for better score
 
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
     times.append( time() )

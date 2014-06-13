@@ -159,10 +159,10 @@ def calculateResearchPriority():
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge =  ((foAI.foAIstate.aggression > fo.aggression.cautious) and  
-                              ( totalPP <(30*(foAI.foAIstate.aggression))  )  and 
-                              (orbGenTech  in researchQueueList[:3]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete) and
+                              ( (totalPP + 1.6 * totalRP) <(60*(foAI.foAIstate.aggression))  )  and 
+                              ((orbGenTech  in researchQueueList[:3]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete) and ColonisationAI.gotGG ) and
                               ( not     (
-                                            (len(AIstate.popCtrIDs) >= 5 )))) # previously (empire.getTechStatus(AIDependencies.prod_auto_name) == fo.techStatus.complete) and   
+                                            (len(AIstate.popCtrIDs) >= 8 )))) # previously (empire.getTechStatus(AIDependencies.prod_auto_name) == fo.techStatus.complete) and   
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     planets = map(universe.getPlanet,  ownedPlanetIDs)
@@ -196,7 +196,7 @@ def calculateResearchPriority():
         elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
             researchPriority = 0.7 * researchPriority # closing in on end of research
     if industrySurge:
-        researchPriority *= 0.5
+        researchPriority *= 0.6
                 
     if (  ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
             (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
