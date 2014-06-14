@@ -11,7 +11,7 @@
 <4x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
 NoneUnused                      9999        0           0       0       -5       -10   0               0
-LowDensity                      85          0           0       0       -5       -10   0               0
+LowDensity                      77          0           0       0       -5       -10   0               0
 AverageDensity                  70          0           0       0       -5       -10   0               0
 HighDensity                     50          0           0       0       -5       -10   0               0
 

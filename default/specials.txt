@@ -104,14 +104,17 @@ Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
     stealth = 0
-    spawnrate = 1.0
+    spawnrate = 0.7
     spawnlimit = 9999
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
         Not ContainedBy And [
                 System 
-                Contains Capital
+                Contains Or [
+                    Capital
+                    And [ Planet HasSpecial "ANCIENT_RUINS_SPECIAL" ]
+                ]
             ]
     ]
     effectsgroups = [
@@ -123,7 +126,7 @@ Special
             scope = Source     
             activation = AND [
                 Turn high = 0
-                Random probability = 0.66
+                Random probability = 0.9
                 Not WithinStarlaneJumps 1 And [
                     System
                     Contains And [
