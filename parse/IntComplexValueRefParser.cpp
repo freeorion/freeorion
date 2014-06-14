@@ -158,9 +158,11 @@ namespace parse {
         complex_variable_rule<int>::type    empire_species_ships_scrapped;
         complex_variable_rule<int>::type    start;
     };
+
+    namespace detail {
+        int_complex_parser_rules int_complex_parser;
+    }
 }
 
-const complex_variable_rule<int>::type& int_var_complex() {
-    static parse::int_complex_parser_rules retval;
-    return retval.start;
-}
+const complex_variable_rule<int>::type& int_var_complex()
+{ return parse::detail::int_complex_parser.start; }
