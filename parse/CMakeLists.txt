@@ -50,6 +50,7 @@ set (freeorionparse_SOURCE
     FieldsParser.cpp
     FleetPlansParser.cpp
     Int.cpp
+    IntComplexValueRefParser.cpp
     IntValueRefParser.cpp
     ItemsParser.cpp
     KeymapParser.cpp

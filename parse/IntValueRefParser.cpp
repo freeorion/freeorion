@@ -11,7 +11,7 @@ namespace {
             using phoenix::push_back;
             using phoenix::static_cast_;
 
-            const parse::lexer& tok = parse::lexer::instance();
+            const parse::lexer& tok =   parse::lexer::instance();
 
             // TODO: Should we apply elements of this list only to certain
             // objects? For example, if one writes "Source.Planet.",
@@ -49,7 +49,6 @@ namespace {
 
             initialize_bound_variable_parser<int>(bound_variable, variable_name);
             initialize_numeric_statistic_parser<int>(statistic, variable_name);
-            initialize_complex_parser<int>(complex_variable, variable_name);
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
                                                multiplicative_expr,
@@ -63,6 +62,7 @@ namespace {
                 |   free_variable
                 |   bound_variable
                 |   statistic
+                |   int_var_complex()
                 ;
 
             variable_name.name("integer variable name (e.g., FleetID)");
@@ -94,7 +94,6 @@ namespace {
         typedef parse::value_ref_parser_rule<int>::type rule;
         typedef variable_rule<int>::type                variable_rule;
         typedef statistic_rule<int>::type               statistic_rule;
-        typedef complex_variable_rule<int>::type        complex_rule;
         typedef expression_rule<int>::type              expression_rule;
 
         name_token_rule     variable_name;
@@ -102,7 +101,6 @@ namespace {
         variable_rule       free_variable;
         variable_rule       bound_variable;
         statistic_rule      statistic;
-        complex_rule        complex_variable;
         expression_rule     function_expr;
         expression_rule     exponential_expr;
         expression_rule     multiplicative_expr;

@@ -235,12 +235,6 @@ struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
                              const ValueRefBase<std::string>* string_ref1 = 0,
                              const ValueRefBase<std::string>* string_ref2 = 0);
 
-    explicit ComplexVariable(const std::string& variable_name,
-                             const ValueRefBase<int>* int_ref1,
-                             const ValueRefBase<std::string>* string_ref1,
-                             const ValueRefBase<int>* int_ref2 = 0,
-                             const ValueRefBase<std::string>* string_ref2 = 0);
-
     ~ComplexVariable();
 
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
@@ -921,20 +915,11 @@ ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
     m_int_ref2(int_ref2),
     m_string_ref1(string_ref1),
     m_string_ref2(string_ref2)
-{}
-
-template <class T>
-ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                              const ValueRefBase<int>* int_ref1,
-                                              const ValueRefBase<std::string>* string_ref1,
-                                              const ValueRefBase<int>* int_ref2,
-                                              const ValueRefBase<std::string>* string_ref2) :
-    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
-    m_int_ref1(int_ref1),
-    m_int_ref2(int_ref2),
-    m_string_ref1(string_ref1),
-    m_string_ref2(string_ref2)
-{}
+{
+    std::cout << "ComplexVariable: " << variable_name << ", "
+              << int_ref1 << ", " << int_ref2 << ", "
+              << string_ref1 << ", " << string_ref2 << std::endl;
+}
 
 template <class T>
 ValueRef::ComplexVariable<T>::~ComplexVariable()

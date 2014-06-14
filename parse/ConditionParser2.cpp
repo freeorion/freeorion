@@ -33,7 +33,7 @@ namespace {
                 =    (
                             tok.HasSpecialSinceTurn_
                         >   parse::label(Name_token) >> tok.string [ _e = _1 ]
-                        >>-(parse::label(Low_token) >> int_value_ref [ _a = _1 ] )
+                        >>-(parse::label(Low_token) >>  int_value_ref [ _a = _1 ] )
                         >>-(parse::label(High_token) >> int_value_ref [ _b = _1 ] )
                      )
                      [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
@@ -45,7 +45,7 @@ namespace {
                         parse::label(Type_token) >> tok.Building_
                         >> (
                                parse::label(Name_token) >>       tok.string [ _e = _1 ]
-                            |                                   eps [ _e = "" ]
+                            |                                    eps [ _e = "" ]
                            )
                         >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
@@ -62,7 +62,7 @@ namespace {
                     )
                    |((
                         parse::label(Type_token) >> tok.Ship_
-                        >>      parse::label(Name_token) >>    tok.string [ _e = _1 ]
+                        >>      parse::label(Name_token) >>      tok.string [ _e = _1 ]
                         >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )

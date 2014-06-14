@@ -89,7 +89,6 @@ namespace {
                 ;
 
             initialize_numeric_statistic_parser<double>(statistic, variable_name);
-            initialize_complex_parser<double>(complex_variable, variable_name);
             initialize_expression_parsers<double>(function_expr,
                                                   exponential_expr,
                                                   multiplicative_expr,
@@ -101,6 +100,10 @@ namespace {
                 =    int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
+            int_complex_variable
+                =    int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                ;
+
             primary_expr
                 =   '(' > expr > ')'
                 |   constant
@@ -108,16 +111,17 @@ namespace {
                 |   variable
                 |   statistic
                 |   int_statistic
+                |   int_complex_variable
                 ;
 
             variable_name.name("real number variable name (e.g., Growth)");
             constant.name("real number constant");
-
-
             free_variable.name("free integer variable");
             variable.name("real number variable");
             statistic.name("real number statistic");
             int_statistic.name("integer statistic");
+            //complex_variable.name("real number complex variable");
+            int_complex_variable.name("integer complex variable");
             function_expr.name("real number function expression");
             exponential_expr.name("real number exponential expression");
             multiplicative_expr.name("real number multiplication expression");
@@ -132,6 +136,8 @@ namespace {
             debug(variable);
             debug(statistic);
             debug(int_statistic);
+            //debug(complex_variable);
+            debug(int_complex_variable);
             debug(negate_expr);
             debug(multiplicative_expr);
             debug(additive_expr);
@@ -143,7 +149,7 @@ namespace {
         typedef parse::value_ref_parser_rule<double>::type  rule;
         typedef variable_rule<double>::type                 variable_rule;
         typedef statistic_rule<double>::type                statistic_rule;
-        typedef complex_variable_rule<double>::type         complex_rule;
+        //typedef complex_variable_rule<double>::type         complex_rule;
         typedef expression_rule<double>::type               expression_rule;
 
         name_token_rule     variable_name;
@@ -152,7 +158,8 @@ namespace {
         variable_rule       variable;
         statistic_rule      statistic;
         rule                int_statistic;
-        complex_rule        complex_variable;
+        //complex_rule        complex_variable;
+        rule                int_complex_variable;
         expression_rule     function_expr;
         expression_rule     exponential_expr;
         expression_rule     multiplicative_expr;

@@ -119,6 +119,7 @@
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\Int.cpp" />
+    <ClCompile Include="..\..\parse\IntComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ItemsParser.cpp" />
     <ClCompile Include="..\..\parse\KeymapParser.cpp" />
