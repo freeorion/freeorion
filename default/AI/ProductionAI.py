@@ -210,7 +210,7 @@ def addDesigns(shipType,  newDesigns,  shipProdPriority):
     for baseName in designNameBases:
         designIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
     shipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in designIDs]
-    print "Current %s Designs: %s"%(shipType,  shipNames)
+    #print "Current %s Designs: %s"%(shipType,  shipNames)
 
     needsAdding=[ spec for spec in newDesigns if spec[0] not in shipNames   ]   #spec = ( name,  desc,  hull,  partslist,  icon,  model)
     if needsAdding != []:  #needsAdding = [ (name,  desc,  hull,  partslist,  icon,  model), ... ]

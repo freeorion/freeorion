@@ -312,7 +312,7 @@ def survey_universe():
             owner_id = planet.owner
             planet_population = planet.currentMeterValue(fo.meterType.population)
             buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
-            if planet.owner == empire_id:
+            if owner_id == empire_id:
                 empire_has_colony_in_sys = True
                 empireOwnedPlanetIDs.append(pid)
                 AIstate.colonizedSystems.setdefault(sys_id,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
@@ -362,7 +362,7 @@ def survey_universe():
                             activeGrowthSpecials.setdefault(special,  []).append(pid)
                 if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
                     empire_dry_docks.setdefault(planet.systemID,  []).append(pid)
-            else:
+            elif owner_id == -1:
                 unowned_planet_ids.add(pid)
                     
         if empire_has_colony_in_sys:
