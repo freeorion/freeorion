@@ -347,6 +347,7 @@
 		82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82271C3A15F8AB900063179C /* libOIS.a */; };
 		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
+		8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
@@ -363,6 +364,7 @@
 		8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
+		82AB1D13194D97A1009C8220 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */; };
 		82B743DF184E127A001A5803 /* PythonUniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */; };
 		82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9D445180C53FE0032F86D /* GraphControl.cpp */; };
@@ -1213,6 +1215,7 @@
 		822EB0FE170832240083EB38 /* CombatLogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatLogManager.h; sourceTree = "<group>"; };
 		8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedTimer.cpp; sourceTree = "<group>"; };
 		8242C81B176B0C8E001E1CF2 /* ScopedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedTimer.h; sourceTree = "<group>"; };
+		8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntComplexValueRefParser.cpp; sourceTree = "<group>"; };
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
 		824C0B7C15F61C45002081C2 /* libboost_chrono.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_chrono.a; sourceTree = "<group>"; };
@@ -1469,6 +1472,7 @@
 			files = (
 				82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */,
 				828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */,
+				82AB1D13194D97A1009C8220 /* libboost_regex.a in Frameworks */,
 				3ABEAB9C1749C96400E34912 /* libboost_signals.a in Frameworks */,
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
@@ -2665,6 +2669,7 @@
 				825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */,
 				825936E8147E3B1B00B840A5 /* Int.cpp */,
 				825936E9147E3B1B00B840A5 /* Int.h */,
+				8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */,
 				825936EA147E3B1B00B840A5 /* IntValueRefParser.cpp */,
 				825936EB147E3B1B00B840A5 /* ItemsParser.cpp */,
 				82D68C6C15F4F720006B772D /* KeymapParser.cpp */,
@@ -3379,6 +3384,7 @@
 				3A76046417499F4C00363653 /* PlanetTypeValueRefParser.cpp in Sources */,
 				3A76046517499F7D00363653 /* ReportParseError.cpp in Sources */,
 				3A76046617499F8800363653 /* ShipDesignsParser.cpp in Sources */,
+				8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */,
 				3A76046717499F9600363653 /* ShipHullsParser.cpp in Sources */,
 				3A76046817499FA400363653 /* ShipPartsParser.cpp in Sources */,
 				3A76046917499FA700363653 /* ShipPartStatsParser.cpp in Sources */,
