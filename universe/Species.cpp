@@ -232,6 +232,18 @@ void Species::SetHomeworlds(const std::set<int>& homeworld_ids) {
     // TODO if needed: StateChangedSignal();
 }
 
+void Species::SetEmpireOpinions(const std::map<int, double>& opinions)
+{}
+
+void Species::SetEmpireOpinion(int empire_id, double opinion)
+{}
+
+void Species::SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions)
+{}
+
+void Species::SetOtherSpeciesOpinion(const std::string& species_name, double opinion)
+{}
+
 
 /////////////////////////////////////////////////
 // SpeciesManager                              //
@@ -370,6 +382,12 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
     }
 }
 
+void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions)
+{}
+
+void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions)
+{}
+
 std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int> > retval;
     for (iterator it = begin(); it != end(); ++it) {
@@ -383,6 +401,16 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
         for (std::set<int>::const_iterator homeworlds_it = homeworld_ids.begin(); homeworlds_it != homeworld_ids.end(); ++homeworlds_it)
             retval[species_name].insert(*homeworlds_it);
     }
+    return retval;
+}
+
+std::map<std::string, std::map<int, double> > SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
+    std::map<std::string, std::map<int, double> > retval;
+    return retval;
+}
+
+std::map<std::string, std::map<std::string, double> > SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
+    std::map<std::string, std::map<std::string, double> > retval;
     return retval;
 }
 

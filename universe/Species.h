@@ -113,10 +113,14 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const            { return m_name; }              ///< returns the unique name for this type of species
-    const std::string&              Description() const     { return m_description; }       ///< returns a text description of this type of species
+    const std::string&              Name() const            { return m_name; }                      ///< returns the unique name for this type of species
+    const std::string&              Description() const     { return m_description; }               ///< returns a text description of this type of species
     const std::string&              GameplayDescription() const { return m_gameplay_description; }  ///< returns a text description of this type of species
-    const std::set<int>&            Homeworlds() const      { return m_homeworlds; }        ///< returns the ids of objects that are homeworlds for this species
+
+    const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
+    const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
+    const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
+
     std::string                     Dump() const;                                           ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
     const std::string&              PreferredFocus() const  { return m_preferred_focus; }   ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
@@ -133,21 +137,30 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                            AddHomeworld(int homeworld_id);
-    void                            RemoveHomeworld(int homeworld_id);
-    void                            SetHomeworlds(const std::set<int>& homeworld_ids);
+    void    AddHomeworld(int homeworld_id);
+    void    RemoveHomeworld(int homeworld_id);
+    void    SetHomeworlds(const std::set<int>& homeworld_ids);
+    void    SetEmpireOpinions(const std::map<int, double>& opinions);
+    void    SetEmpireOpinion(int empire_id, double opinion);
+    void    SetOtherSpeciesOpinions(const std::map<std::string, double>& opinions);
+    void    SetOtherSpeciesOpinion(const std::string& species_name, double opinion);
     //@}
 
 private:
     std::string                             m_name;
     std::string                             m_description;
     std::string                             m_gameplay_description;
+
     std::set<int>                           m_homeworlds;
+    std::map<int, double>                   m_empire_opinions;          // positive/negative rating of how this species views empires in the game
+    std::map<std::string, double>           m_other_species_opinions;   // positive/negative rating of how this species views other species in the game
+
     std::vector<FocusType>                  m_foci;
     std::string                             m_preferred_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                                            m_effects;
+
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
+
     bool                                    m_playable;
     bool                                    m_native;
     bool                                    m_can_colonize;
@@ -164,6 +177,7 @@ private:
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
     struct NativeSpecies
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
+
 public:
     typedef std::map<std::string, Species*>::const_iterator     iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
@@ -224,11 +238,25 @@ private:
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
-    void                    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
+    void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
+
+    /* */
+    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
+
+    /* */
+    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int> >   GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+    std::map<std::string, std::set<int> >                   GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns a map from species name to a map from empire id to each the
+      * species' opinion of the empire */
+    std::map<std::string, std::map<int, double> >           GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns a map from species name to a map from other species names to the
+      * opinion of the first species about the other species. */
+    std::map<std::string, std::map<std::string, double> >   GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     std::map<std::string, Species*> m_species;
 

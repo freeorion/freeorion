@@ -256,16 +256,24 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     // client or server.  Instead, just need to send the gamestate portion of
     // species: their homeworlds in the current game
 
-    std::map<std::string, std::set<int> > species_homeworlds_map;
+    std::map<std::string, std::set<int> >                   species_homeworlds;
+    std::map<std::string, std::map<int, double> >           empire_opinions;
+    std::map<std::string, std::map<std::string, double> >   other_species_opinions;
 
     if (Archive::is_saving::value) {
-        species_homeworlds_map = GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
+        species_homeworlds =    GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
+        empire_opinions =       GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
+        other_species_opinions= GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+    ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
+        & BOOST_SERIALIZATION_NVP(empire_opinions)
+        & BOOST_SERIALIZATION_NVP(other_species_opinions);
 
     if (Archive::is_loading::value) {
-        SetSpeciesHomeworlds(species_homeworlds_map);
+        SetSpeciesHomeworlds(species_homeworlds);
+        SetSpeciesEmpireOpinions(empire_opinions);
+        SetSpeciesSpeciesOpinions(other_species_opinions);
     }
 }
 
