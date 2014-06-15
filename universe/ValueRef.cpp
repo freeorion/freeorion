@@ -1042,7 +1042,6 @@ namespace ValueRef {
             if (it == designs_lost.end())
                 return 0;
             return it->second;
-            
 
         } else if (variable_name == "EmpireSpeciesShipsDestroyed") {
             if (!m_int_ref1 || !m_string_ref1)
@@ -1057,18 +1056,155 @@ namespace ValueRef {
             if (it == species_ships_destroyed.end())
                 return 0;
             return it->second;
+
+        } else if (variable_name == "EmpireShipDesignsProduced") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+
+            std::string predefined_design_name;
+            int design_id;
+            if (m_string_ref1) {
+                predefined_design_name = m_string_ref1->Eval(context);
+                // todo: get design id for this predefined design
+                design_id = ShipDesign::INVALID_DESIGN_ID;
+            } else if (m_int_ref2) {
+                design_id = m_int_ref2->Eval(context);
+            }
+
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+
+            const std::map<int, int>& designs_produced = empire->ShipDesignsProduced();
+            std::map<int, int>::const_iterator it = designs_produced.find(design_id);
+            if (it == designs_produced.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireShipDesignsScrapped") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+
+            std::string predefined_design_name;
+            int design_id;
+            if (m_string_ref1) {
+                predefined_design_name = m_string_ref1->Eval(context);
+                // todo: get design id for this predefined design
+                design_id = ShipDesign::INVALID_DESIGN_ID;
+            } else if (m_int_ref2) {
+                design_id = m_int_ref2->Eval(context);
+            }
+
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+
+            const std::map<int, int>& designs_scrapped = empire->ShipDesignsScrapped();
+            std::map<int, int>::const_iterator it = designs_scrapped.find(design_id);
+            if (it == designs_scrapped.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesPlanetsBombed") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_planets_bombed = empire->SpeciesPlanetsBombed();
+            std::map<std::string, int>::const_iterator it = species_planets_bombed.find(species_name);
+            if (it == species_planets_bombed.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesPlanetsDepoped") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_planets_depoped = empire->SpeciesPlanetsDepoped();
+            std::map<std::string, int>::const_iterator it = species_planets_depoped.find(species_name);
+            if (it == species_planets_depoped.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesPlanetsInvaded") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_planets_invaded = empire->SpeciesPlanetsInvaded();
+            std::map<std::string, int>::const_iterator it = species_planets_invaded.find(species_name);
+            if (it == species_planets_invaded.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesShipsDestroyed") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_ships_destroyed = empire->SpeciesShipsDestroyed();
+            std::map<std::string, int>::const_iterator it = species_ships_destroyed.find(species_name);
+            if (it == species_ships_destroyed.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesShipsLost") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_ships_lost = empire->SpeciesShipsLost();
+            std::map<std::string, int>::const_iterator it = species_ships_lost.find(species_name);
+            if (it == species_ships_lost.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesShipsProduced") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_ships_produced = empire->SpeciesShipsProduced();
+            std::map<std::string, int>::const_iterator it = species_ships_produced.find(species_name);
+            if (it == species_ships_produced.end())
+                return 0;
+            return it->second;
+
+        } else if (variable_name == "EmpireSpeciesShipsScrapped") {
+            if (!m_int_ref1 || !m_string_ref1)
+                return 0;
+            int empire_id = m_int_ref1->Eval(context);
+            std::string species_name = m_string_ref1->Eval(context);
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+            const std::map<std::string, int>& species_ships_scrapped = empire->SpeciesShipsScrapped();
+            std::map<std::string, int>::const_iterator it = species_ships_scrapped.find(species_name);
+            if (it == species_ships_scrapped.end())
+                return 0;
+            return it->second;
         }
-
-
-        //EmpireShipDesignsProduced
-        //EmpireShipDesignsScrapped
-        //EmpireSpeciesPlanetsBombed
-        //EmpireSpeciesPlanetsDepoped
-        //EmpireSpeciesPlanetsInvaded
-            //EmpireSpeciesShipsDestroyed
-        //EmpireSpeciesShipsLost
-        //EmpireSpeciesShipsProduced
-        //EmpireSpeciesShipsScrapped
 
         return 0;
     }

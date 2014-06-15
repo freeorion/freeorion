@@ -916,9 +916,9 @@ ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
     m_string_ref1(string_ref1),
     m_string_ref2(string_ref2)
 {
-    std::cout << "ComplexVariable: " << variable_name << ", "
-              << int_ref1 << ", " << int_ref2 << ", "
-              << string_ref1 << ", " << string_ref2 << std::endl;
+    //std::cout << "ComplexVariable: " << variable_name << ", "
+    //          << int_ref1 << ", " << int_ref2 << ", "
+    //          << string_ref1 << ", " << string_ref2 << std::endl;
 }
 
 template <class T>

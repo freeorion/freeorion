@@ -1190,6 +1190,7 @@ void Empire::Init() {
         const Alignment& alignment = *it;
         m_meters[alignment.Name()];
     }
+
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
 }
 
@@ -1471,7 +1472,7 @@ std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Eleme
 { return ProductionCostAndTime(element.item, element.location); }
 
 std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item,
-                                                     int location_id) const
+                                                    int location_id) const
 {
     if (item.build_type == BT_BUILDING) {
         const BuildingType* type =  GetBuildingType(item.name);
