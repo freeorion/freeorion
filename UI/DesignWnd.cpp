@@ -1809,6 +1809,9 @@ public:
       * name or description changes) */
     mutable boost::signals2::signal<void ()> DesignChangedSignal;
 
+    /** emitted when the design name is changed */
+    mutable boost::signals2::signal<void ()> DesignNameChangedSignal;
+
     /** propegates signals from contained SlotControls that signal that a part
       * has been clicked */
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
@@ -2324,7 +2327,9 @@ void DesignWnd::MainPanel::DesignChanged() {
 
 void DesignWnd::MainPanel::DesignNameChanged() {
     if (m_disabled_by_name || (m_design_name->Text().empty() && !m_confirm_button->Disabled()))
-        DesignChangedSignal;
+        DesignChangedSignal();
+    else
+        DesignNameChangedSignal();
 }
 
 std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_design) {
@@ -2414,6 +2419,10 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
     GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
+                                                                            m_detail_panel,
+                                                                            boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
+                                                                                        m_main_panel)));
+    GG::Connect(m_main_panel->DesignNameChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
                                                                             m_detail_panel,
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));
