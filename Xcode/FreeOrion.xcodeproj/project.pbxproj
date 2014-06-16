@@ -23,7 +23,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 82EC622518C610C9000237C2 /* Build configuration list for PBXAggregateTarget "MakeDMG" */;
 			buildPhases = (
-				82EC621B18C6109D000237C2 /* ShellScript */,
+				82EC621B18C6109D000237C2 /* make_dmg */,
 			);
 			dependencies = (
 				82EC622418C610AB000237C2 /* PBXTargetDependency */,
@@ -1402,6 +1402,9 @@
 		82E68F60190ECB8400BB1AD9 /* EnumText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumText.h; sourceTree = "<group>"; };
 		82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveGamePreviewUtils.cpp; sourceTree = "<group>"; };
 		82E68F62190ECB8400BB1AD9 /* SaveGamePreviewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveGamePreviewUtils.h; sourceTree = "<group>"; };
+		82ED913E194F5C85002F0A4A /* make_dmg.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = make_dmg.py; sourceTree = "<group>"; };
+		82ED9140194F5CDD002F0A4A /* make_ogre_plugins.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_ogre_plugins.py; path = ../cmake/make_ogre_plugins.py; sourceTree = "<group>"; };
+		82ED9141194F5CDD002F0A4A /* make_versioncpp.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_versioncpp.py; path = ../cmake/make_versioncpp.py; sourceTree = "<group>"; };
 		82F06B6417B7C3BD00982965 /* TemporaryPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryPtr.h; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; name = OISInput.cfg; path = ../GG/src/Ogre/Plugins/OISInput.cfg; sourceTree = "<group>"; };
@@ -1506,6 +1509,7 @@
 				47960BAF0A9CBF2900D0C556 /* Dependencies */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				82ED913F194F5C96002F0A4A /* Utils */,
 				471FF2560A9A7E6400C36AA3 /* Info.plist */,
 			);
 			name = FreeOrion;
@@ -2830,6 +2834,16 @@
 			name = "System Frameworks";
 			sourceTree = "<group>";
 		};
+		82ED913F194F5C96002F0A4A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				82ED9140194F5CDD002F0A4A /* make_ogre_plugins.py */,
+				82ED9141194F5CDD002F0A4A /* make_versioncpp.py */,
+				82ED913E194F5C85002F0A4A /* make_dmg.py */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3099,13 +3113,14 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode ${XCODE_VERSION_ACTUAL}\"\nfi";
 		};
-		82EC621B18C6109D000237C2 /* ShellScript */ = {
+		82EC621B18C6109D000237C2 /* make_dmg */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = make_dmg;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

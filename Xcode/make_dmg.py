@@ -29,4 +29,4 @@ if os.path.exists(out_path):
 
 print "Creating %s in %s" % (dmg_file, built_product_dir)
 
-sp.check_call('hdiutil create -volname FreeOrion -srcfolder "%s" -ov -format UDZO "%s"' % (app, out_path), shell=True)
+sp.check_call('hdiutil create -volname FreeOrion -megabytes 1000 -srcfolder "%s" -ov -format UDZO "%s"' % (app, out_path), shell=True)
