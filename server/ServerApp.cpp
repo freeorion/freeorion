@@ -46,14 +46,17 @@ void Seed(unsigned int seed);
 namespace {
     //If there's only one other empire, return their ID:
     int EnemyId(int empire_id, const std::set<int> &empire_ids) {
-        if (empire_ids.size() == 2)
+        if (empire_ids.size() == 2) {
             for (std::set<int>::const_iterator enemy_it = empire_ids.begin();
                  enemy_it != empire_ids.end(); ++enemy_it)
+            {
                 if (*enemy_it != empire_id)
                     return *enemy_it;
+            }
+        }
         return ALL_EMPIRES;
     }
-    
+
     /// Generates information on the subdirectories of the save directory
     void ListSaveSubdirectories(std::vector<std::string>& list) {
         fs::recursive_directory_iterator end;
