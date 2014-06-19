@@ -1493,7 +1493,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = Or [
-                Not ContainedBy Contains Monster
+                Not ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
                 Turn high = 200     // always remove lanes before turn 200
             ]
             effects = RemoveStarlanes WithinStarlaneJumps 1 Source
@@ -1501,7 +1501,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                ContainedBy Contains Monster
+                ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
                 Turn low = 200      // don't create lanes before turn 200
             ]
             effects = AddStarlanes NumberOf 1 And [
