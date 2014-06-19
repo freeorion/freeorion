@@ -71,12 +71,8 @@ namespace {
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
                 >    parse::label(Message_token) >> tok.string [ _a = _1 ]
-                >> -(
-                        parse::label(Icon_token) >> tok.string [ _b = _1 ]
-                    )
-                >> -(
-                        parse::label(Parameters_token) >> string_and_string_ref_vector [ _c = _1 ]
-                    )
+                >> -(   parse::label(Icon_token) >> tok.string [ _b = _1 ] )
+                >> -(   parse::label(Parameters_token) >> string_and_string_ref_vector [ _c = _1 ] )
                 >>  (
                         (
                             (
