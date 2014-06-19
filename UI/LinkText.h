@@ -7,8 +7,12 @@
 /// A class that can be subclassed to give types of links decorations in link text.
 /// "Decorations" here mean mostly wrapping the text in some styling tag or other,
 /// but a decorator is free to manipulate the decorated text in any way.
-class LinkDecorator{
+class LinkDecorator {
 public:
+    /** \name Structors */ //@{
+    LinkDecorator() {};
+    //@}
+
     /// Gets called for each link of the type this decorator is assigned to.
     /// The return value is shown to the user as the link.
     /// The default implementation wraps content in an rgba tag that colors it by ClientUI::DefaultLinkColor

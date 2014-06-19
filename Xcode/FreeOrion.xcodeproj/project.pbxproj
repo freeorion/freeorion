@@ -390,6 +390,8 @@
 		82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */; };
 		82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */; };
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
+		82E9DDF119530E5D007E681B /* CombatEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDED19530E5D007E681B /* CombatEvent.cpp */; };
+		82E9DDF219530E5D007E681B /* CombatEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDEF19530E5D007E681B /* CombatEvents.cpp */; };
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
@@ -1402,6 +1404,10 @@
 		82E68F60190ECB8400BB1AD9 /* EnumText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumText.h; sourceTree = "<group>"; };
 		82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveGamePreviewUtils.cpp; sourceTree = "<group>"; };
 		82E68F62190ECB8400BB1AD9 /* SaveGamePreviewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveGamePreviewUtils.h; sourceTree = "<group>"; };
+		82E9DDED19530E5D007E681B /* CombatEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvent.cpp; sourceTree = "<group>"; };
+		82E9DDEE19530E5D007E681B /* CombatEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvent.h; sourceTree = "<group>"; };
+		82E9DDEF19530E5D007E681B /* CombatEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvents.cpp; sourceTree = "<group>"; };
+		82E9DDF019530E5D007E681B /* CombatEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvents.h; sourceTree = "<group>"; };
 		82ED913E194F5C85002F0A4A /* make_dmg.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = make_dmg.py; sourceTree = "<group>"; };
 		82ED9140194F5CDD002F0A4A /* make_ogre_plugins.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_ogre_plugins.py; path = ../cmake/make_ogre_plugins.py; sourceTree = "<group>"; };
 		82ED9141194F5CDD002F0A4A /* make_versioncpp.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_versioncpp.py; path = ../cmake/make_versioncpp.py; sourceTree = "<group>"; };
@@ -2033,27 +2039,31 @@
 		471D5C6A0A98A3F900DA9C21 /* combat */ = {
 			isa = PBXGroup;
 			children = (
+				346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */,
+				346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */,
+				82E9DDED19530E5D007E681B /* CombatEvent.cpp */,
+				82E9DDEE19530E5D007E681B /* CombatEvent.h */,
+				346D87E60FC5F52A0095593E /* CombatEventListener.h */,
+				82E9DDEF19530E5D007E681B /* CombatEvents.cpp */,
+				82E9DDF019530E5D007E681B /* CombatEvents.h */,
+				34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */,
+				34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */,
+				822EB0FD170832240083EB38 /* CombatLogManager.cpp */,
+				822EB0FE170832240083EB38 /* CombatLogManager.h */,
+				346D87E90FC5F5B00095593E /* CombatObject.cpp */,
 				346D87EA0FC5F5B00095593E /* CombatObject.h */,
+				3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */,
+				3402E2330F5A300600DF6FE7 /* CombatOrder.h */,
 				34B9EBC40F5E1EEB005BF6A4 /* CombatShip.cpp */,
+				34B9EBC50F5E1EEB005BF6A4 /* CombatShip.h */,
+				471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */,
+				471D5C6E0A98A3F900DA9C21 /* CombatSystem.h */,
+				346D87EB0FC5F5B00095593E /* Missile.cpp */,
+				346D87EC0FC5F5B00095593E /* Missile.h */,
 				34B9EBCD0F5E1EEB005BF6A4 /* PathingEngine.cpp */,
 				34B9EBCE0F5E1EEB005BF6A4 /* PathingEngine.h */,
 				34B9EBCF0F5E1EEB005BF6A4 /* PathingEngineFwd.h */,
 				34B9EBD90F5E1EEB005BF6A4 /* ProximityDatabase.h */,
-				34B9EBC50F5E1EEB005BF6A4 /* CombatShip.h */,
-				34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */,
-				34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */,
-				346D87E90FC5F5B00095593E /* CombatObject.cpp */,
-				346D87EB0FC5F5B00095593E /* Missile.cpp */,
-				346D87EC0FC5F5B00095593E /* Missile.h */,
-				346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */,
-				346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */,
-				822EB0FD170832240083EB38 /* CombatLogManager.cpp */,
-				822EB0FE170832240083EB38 /* CombatLogManager.h */,
-				346D87E60FC5F52A0095593E /* CombatEventListener.h */,
-				3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */,
-				3402E2330F5A300600DF6FE7 /* CombatOrder.h */,
-				471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */,
-				471D5C6E0A98A3F900DA9C21 /* CombatSystem.h */,
 			);
 			path = combat;
 			sourceTree = "<group>";
@@ -3194,6 +3204,7 @@
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
+				82E9DDF119530E5D007E681B /* CombatEvent.cpp in Sources */,
 				822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */,
 				3A1BF3EB1748875300812237 /* Version.cpp in Sources */,
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
@@ -3201,6 +3212,7 @@
 				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
 				82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */,
 				82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */,
+				82E9DDF219530E5D007E681B /* CombatEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
