@@ -4,20 +4,15 @@
 
 namespace {
     GeneratorType gen; // the one random number generator driving the distributions below
-    boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
 }
 
 void Seed(unsigned int seed) { 
     gen.seed(static_cast<boost::mt19937::result_type>(seed)); 
-    // unlike other distributions, uniform_01 makes its own copy of the generator it was instantiated with, so:
-    zero_to_one_gen.base().seed(static_cast<boost::mt19937::result_type>(seed));
 }
 
 void ClockSeed() {
     boost::posix_time::time_duration diff = boost::posix_time::microsec_clock::local_time().time_of_day();
     gen.seed(static_cast<boost::mt19937::result_type>(diff.total_milliseconds()));
-    // unlike other distributions, uniform_01 makes its own copy of the generator it was instantiated with, so:
-    zero_to_one_gen.base().seed(static_cast<boost::mt19937::result_type>(diff.total_milliseconds()));
 }
 
 SmallIntDistType SmallIntDist(int min, int max)
@@ -39,7 +34,7 @@ int RandInt(int min, int max)
 { return (min == max ? min : IntDist(min, max)()); }
 
 double RandZeroToOne()
-{ return zero_to_one_gen(); }
+{ return DoubleDist(0.0, 1.0)(); }
 
 double RandDouble(double min, double max)
 { return (min == max ? min : DoubleDist(min, max)()); }
