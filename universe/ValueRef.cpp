@@ -19,6 +19,8 @@
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
+
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 
@@ -938,272 +940,233 @@ namespace ValueRef {
         return 0.0;
     }
 
+    namespace {
+        static std::map<std::string, int> EMPTY_STRING_INT_MAP;
+        static std::map<int, int> EMPTY_INT_INT_MAP;
+
+        const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return EMPTY_STRING_INT_MAP;
+
+            if (parsed_map_name == "BuildingTypesProduced")
+                return empire->BuildingTypesProduced();
+            if (parsed_map_name == "BuildingTypesScrapped")
+                return empire->BuildingTypesScrapped();
+            if (parsed_map_name == "SpeciesShipsDestroyed")
+                return empire->SpeciesShipsDestroyed();
+            if (parsed_map_name == "SpeciesPlanetsBombed")
+                return empire->SpeciesPlanetsBombed();
+            if (parsed_map_name == "SpeciesPlanetsDepoped")
+                return empire->SpeciesPlanetsDepoped();
+            if (parsed_map_name == "SpeciesPlanetsInvaded")
+                return empire->SpeciesPlanetsInvaded();
+            if (parsed_map_name == "SpeciesShipsDestroyed")
+                return empire->SpeciesShipsDestroyed();
+            if (parsed_map_name == "SpeciesShipsLost")
+                return empire->SpeciesShipsLost();
+            if (parsed_map_name == "SpeciesShipsProduced")
+                return empire->SpeciesShipsProduced();
+            if (parsed_map_name == "SpeciesShipsScrapped")
+                return empire->SpeciesShipsScrapped();
+
+            return EMPTY_STRING_INT_MAP;
+        }
+
+        const std::map<int, int>& GetEmpireIntIntMap(int empire_id, const std::string& parsed_map_name) {
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return EMPTY_INT_INT_MAP;
+
+            if (parsed_map_name == "EmpireShipsDestroyed")
+                return empire->EmpireShipsDestroyed();
+            if (parsed_map_name == "ShipDesignsDestroyed")
+                return empire->ShipDesignsDestroyed();
+            if (parsed_map_name == "ShipDesignsLost")
+                return empire->ShipDesignsLost();
+            if (parsed_map_name == "ShipDesignsProduced")
+                return empire->ShipDesignsProduced();
+            if (parsed_map_name == "ShipDesignsScrapped")
+                return empire->ShipDesignsScrapped();
+
+            return EMPTY_INT_INT_MAP;
+        }
+
+        // gets property for a particular map key string for one or all empires
+        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name, const std::string& map_key) {
+            int sum = 0;
+            if (map_key.empty())
+                return sum;
+
+            // single empire
+            if (empire_id != ALL_EMPIRES) {
+                const std::map<std::string, int>& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
+                std::map<std::string, int>::const_iterator it = map.find(map_key);
+                if (it == map.end())
+                    return 0;
+                return it->second;
+            }
+
+            // all empires summed
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                const std::map<std::string, int>& map = GetEmpireStringIntMap(it->first, parsed_property_name);
+                std::map<std::string, int>::const_iterator map_it = map.find(map_key);
+                if (map_it != map.end())
+                    sum += map_it->second;
+            }
+            return sum;
+        }
+
+        // gets property for the sum of all map keys for one or all empires
+        int GetEmpirePropertySumAllStringKeys(int empire_id, const std::string& parsed_property_name) {
+            int sum = 0;
+
+            // single empire
+            if (empire_id != ALL_EMPIRES) {
+                // sum of all key entries for this empire
+                const std::map<std::string, int>& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
+                for (std::map<std::string, int>::const_iterator it = map.begin(); it != map.end(); ++it)
+                    sum += it->second;
+                return sum;
+            }
+
+            // all empires summed
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                const std::map<std::string, int>& map = GetEmpireStringIntMap(it->first, parsed_property_name);
+                for (std::map<std::string, int>::const_iterator it = map.begin(); it != map.end(); ++it)
+                    sum += it->second;
+            }
+            return sum;
+        }
+
+        // gets property for a particular map key int for one or all empires
+        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name, int map_key) {
+            int sum = 0;
+
+            // single empire
+            if (empire_id != ALL_EMPIRES) {
+                const std::map<int, int>& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
+                std::map<int, int>::const_iterator it = map.find(map_key);
+                if (it == map.end())
+                    return 0;
+                return it->second;
+            }
+
+            // all empires summed
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                const std::map<int, int>& map = GetEmpireIntIntMap(it->first, parsed_property_name);
+                std::map<int, int>::const_iterator map_it = map.find(map_key);
+                if (map_it != map.end())
+                    sum += map_it->second;
+            }
+            return sum;
+        }
+
+        // gets property for the sum of all map keys for one or all empires
+        int GetEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
+            int sum = 0;
+
+            // single empire
+            if (empire_id != ALL_EMPIRES) {
+                // sum of all key entries for this empire
+                const std::map<int, int>& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
+                for (std::map<int, int>::const_iterator it = map.begin(); it != map.end(); ++it)
+                    sum += it->second;
+                return sum;
+            }
+
+            // all empires summed
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                const std::map<int, int>& map = GetEmpireIntIntMap(it->first, parsed_property_name);
+                for (std::map<int, int>::const_iterator it = map.begin(); it != map.end(); ++it)
+                    sum += it->second;
+            }
+            return sum;
+        }
+
+        // gets map index int for content specified by a string. eg. look up predefined ship design id by name.
+        // how to look up such strings depends on the parsed property name.
+        int GetIntKeyFromContentStringKey(const std::string& parsed_property_name, const std::string& key_string) {
+            if (boost::istarts_with(parsed_property_name, "ShipDesign")) {
+                // look up ship design id corresponding to specified predefined ship design name
+                const ShipDesign* design = GetPredefinedShipDesign(key_string);
+                if (design)
+                    return design->ID();
+            }
+            return -1;
+        }
+    }
+
     template <>
     int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     {
         const std::string& variable_name = m_property_name.back();
 
-        if (variable_name == "EmpireBuildingTypesProduced") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-
-            int empire_id = m_int_ref1->Eval(context);
-            std::string building_type_name = m_string_ref1->Eval(context);
-
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-
-            const std::map<std::string, int>& buildings_produced = empire->BuildingTypesProduced();
-            std::map<std::string, int>::const_iterator it = buildings_produced.find(building_type_name);
-            if (it == buildings_produced.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireBuildingTypesScrapped") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-
-            int empire_id = m_int_ref1->Eval(context);
-            std::string building_type_name = m_string_ref1->Eval(context);
-
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-
-            const std::map<std::string, int>& buildings_scrapped = empire->BuildingTypesScrapped();
-            std::map<std::string, int>::const_iterator it = buildings_scrapped.find(building_type_name);
-            if (it == buildings_scrapped.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireEmpireShipsDestroyed") {
-            if (!m_int_ref1 || !m_int_ref2)
-                return 0;
-            int empire1_id = m_int_ref1->Eval(context);
-            int empire2_id = m_int_ref2->Eval(context);
-
-            Empire* empire = Empires().Lookup(empire1_id);
-            if (!empire)
-                return 0;
-
-            const std::map<int, int>& empire_ships_destroyed = empire->EmpireShipsDestroyed();
-            std::map<int, int>::const_iterator it = empire_ships_destroyed.find(empire2_id);
-            if (it == empire_ships_destroyed.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireShipDesignsDestroyed") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-
-            std::string predefined_design_name;
-            int design_id;
+        // empire properties indexed by strings
+        if (variable_name == "BuildingTypesProduced" ||
+            variable_name == "BuildingTypesScrapped" ||
+            variable_name == "SpeciesShipsDestroyed" ||
+            variable_name == "SpeciesPlanetsBombed" ||
+            variable_name == "SpeciesPlanetsDepoped" ||
+            variable_name == "SpeciesPlanetsInvaded" ||
+            variable_name == "SpeciesShipsDestroyed" ||
+            variable_name == "SpeciesShipsLost" ||
+            variable_name == "SpeciesShipsProduced" ||
+            variable_name == "SpeciesShipsScrapped")
+        {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return 0;
+            }
+            std::string key_string;
             if (m_string_ref1) {
-                predefined_design_name = m_string_ref1->Eval(context);
-                // find id of this predefined design name
-                design_id = ShipDesign::INVALID_DESIGN_ID;
-            } else if (m_int_ref2) {
-                design_id = m_int_ref2->Eval(context);
+                key_string = m_string_ref1->Eval(context);
+                if (key_string.empty())
+                    return 0;
             }
 
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
+            // if a string specified, get just that entry (for single empire, or summed for all empires)
+            if (m_string_ref1)
+                return GetEmpirePropertySingleKey(empire_id, variable_name, key_string);
 
-            const std::map<int, int>& designs_destroyed = empire->ShipDesignsDestroyed();
-            std::map<int, int>::const_iterator it = designs_destroyed.find(design_id);
-            if (it == designs_destroyed.end())
-                return 0;
-            return it->second;
+            // if no string specified, get sum of all entries (for single empire, or summed for all empires)
+            return GetEmpirePropertySumAllStringKeys(empire_id, variable_name);
+        }
 
-        } else if (variable_name == "EmpireShipDesignsLost") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-
-            std::string predefined_design_name;
-            int design_id;
-            if (m_string_ref1) {
-                predefined_design_name = m_string_ref1->Eval(context);
-                // todo: get design id for this predefined design
-                design_id = ShipDesign::INVALID_DESIGN_ID;
-            } else if (m_int_ref2) {
-                design_id = m_int_ref2->Eval(context);
+        // empire properties indexed by integers
+        if (variable_name == "EmpireShipsDestroyed" ||
+            variable_name == "ShipDesignsDestroyed" ||
+            variable_name == "ShipDesignsLost" ||
+            variable_name == "ShipDesignsProduced" ||
+            variable_name == "ShipDesignsScrapped")
+        {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return 0;
             }
 
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-
-            const std::map<int, int>& designs_lost = empire->ShipDesignsLost();
-            std::map<int, int>::const_iterator it = designs_lost.find(design_id);
-            if (it == designs_lost.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesShipsDestroyed") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_ships_destroyed = empire->SpeciesShipsDestroyed();
-            std::map<std::string, int>::const_iterator it = species_ships_destroyed.find(species_name);
-            if (it == species_ships_destroyed.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireShipDesignsProduced") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-
-            std::string predefined_design_name;
-            int design_id;
-            if (m_string_ref1) {
-                predefined_design_name = m_string_ref1->Eval(context);
-                // todo: get design id for this predefined design
-                design_id = ShipDesign::INVALID_DESIGN_ID;
-            } else if (m_int_ref2) {
-                design_id = m_int_ref2->Eval(context);
+            // if a key integer specified, get just that entry (for single empire or sum of all empires)
+            if (m_int_ref2) {
+                int key_int = m_int_ref2->Eval(context);
+                return GetEmpirePropertySingleKey(empire_id, variable_name, key_int);
             }
 
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-
-            const std::map<int, int>& designs_produced = empire->ShipDesignsProduced();
-            std::map<int, int>::const_iterator it = designs_produced.find(design_id);
-            if (it == designs_produced.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireShipDesignsScrapped") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-
-            std::string predefined_design_name;
-            int design_id;
+            // although indexed by integers, some of these may be specified by a string that needs to be looked up.
+            // if a key string specified, get just that entry (for single empire or sum of all empires)
             if (m_string_ref1) {
-                predefined_design_name = m_string_ref1->Eval(context);
-                // todo: get design id for this predefined design
-                design_id = ShipDesign::INVALID_DESIGN_ID;
-            } else if (m_int_ref2) {
-                design_id = m_int_ref2->Eval(context);
+                std::string key_string = m_string_ref1->Eval(context);
+                if (key_string.empty())
+                    return 0;
+                int key_int = GetIntKeyFromContentStringKey(variable_name, key_string);
+                return GetEmpirePropertySingleKey(empire_id, variable_name, key_int);
             }
 
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-
-            const std::map<int, int>& designs_scrapped = empire->ShipDesignsScrapped();
-            std::map<int, int>::const_iterator it = designs_scrapped.find(design_id);
-            if (it == designs_scrapped.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesPlanetsBombed") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_planets_bombed = empire->SpeciesPlanetsBombed();
-            std::map<std::string, int>::const_iterator it = species_planets_bombed.find(species_name);
-            if (it == species_planets_bombed.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesPlanetsDepoped") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_planets_depoped = empire->SpeciesPlanetsDepoped();
-            std::map<std::string, int>::const_iterator it = species_planets_depoped.find(species_name);
-            if (it == species_planets_depoped.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesPlanetsInvaded") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_planets_invaded = empire->SpeciesPlanetsInvaded();
-            std::map<std::string, int>::const_iterator it = species_planets_invaded.find(species_name);
-            if (it == species_planets_invaded.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesShipsDestroyed") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_ships_destroyed = empire->SpeciesShipsDestroyed();
-            std::map<std::string, int>::const_iterator it = species_ships_destroyed.find(species_name);
-            if (it == species_ships_destroyed.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesShipsLost") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_ships_lost = empire->SpeciesShipsLost();
-            std::map<std::string, int>::const_iterator it = species_ships_lost.find(species_name);
-            if (it == species_ships_lost.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesShipsProduced") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_ships_produced = empire->SpeciesShipsProduced();
-            std::map<std::string, int>::const_iterator it = species_ships_produced.find(species_name);
-            if (it == species_ships_produced.end())
-                return 0;
-            return it->second;
-
-        } else if (variable_name == "EmpireSpeciesShipsScrapped") {
-            if (!m_int_ref1 || !m_string_ref1)
-                return 0;
-            int empire_id = m_int_ref1->Eval(context);
-            std::string species_name = m_string_ref1->Eval(context);
-            Empire* empire = Empires().Lookup(empire_id);
-            if (!empire)
-                return 0;
-            const std::map<std::string, int>& species_ships_scrapped = empire->SpeciesShipsScrapped();
-            std::map<std::string, int>::const_iterator it = species_ships_scrapped.find(species_name);
-            if (it == species_ships_scrapped.end())
-                return 0;
-            return it->second;
+            // if no key specified, get sum of all entries (for single empire or sum of all empires)
+            return GetEmpirePropertySumAllIntKeys(empire_id, variable_name);
         }
 
         return 0;

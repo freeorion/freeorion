@@ -38,6 +38,8 @@
     (BuildCost)                                 \
     (Building)                                  \
     (BuildingType)                              \
+    (BuildingTypesProduced)                     \
+    (BuildingTypesScrapped)                     \
     (BuildTime)                                 \
     (CanColonize)                               \
     (CanProduceShips)                           \
@@ -66,7 +68,9 @@
     (CreateShip)                                \
     (CreateSystem)                              \
     (CreationTurn)                              \
-    (CurrentTurn)                               \
+    (CurrentTurn)
+
+#define TOKEN_SEQ_2                             \
     (Damage)                                    \
     (Data)                                      \
     (Defense)                                   \
@@ -89,20 +93,7 @@
     (EffectsGroups)                             \
     (Empire)                                    \
     (EmpireMeter)                               \
-    (EmpireBuildingTypesProduced)               \
-    (EmpireBuildingTypesScrapped)               \
-    (EmpireEmpireShipsDestroyed)                \
-    (EmpireShipDesignsDestroyed)                \
-    (EmpireShipDesignsLost)                     \
-    (EmpireShipDesignsProduced)                 \
-    (EmpireShipDesignsScrapped)                 \
-    (EmpireSpeciesPlanetsBombed)                \
-    (EmpireSpeciesPlanetsDepoped)               \
-    (EmpireSpeciesPlanetsInvaded)               \
-    (EmpireSpeciesShipsDestroyed)               \
-    (EmpireSpeciesShipsLost)                    \
-    (EmpireSpeciesShipsProduced)                \
-    (EmpireSpeciesShipsScrapped)                \
+    (EmpireShipsDestroyed)                      \
     (Endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
@@ -111,7 +102,7 @@
     (ExploredByEmpire)                          \
     (External)
 
-#define TOKEN_SEQ_2                             \
+#define TOKEN_SEQ_3                             \
     (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
@@ -152,7 +143,9 @@
     (Item)                                      \
     (Jumps)                                     \
     (Keymap)                                    \
-    (Keys)                                      \
+    (Keys)
+
+#define TOKEN_SEQ_4                             \
     (Label)                                     \
     (Large)                                     \
     (LastTurnBattleHere)                        \
@@ -184,9 +177,7 @@
     (MountableSlotTypes)                        \
     (MoveInOrbit)                               \
     (MoveTo)                                    \
-    (MoveTowards)
-
-#define TOKEN_SEQ_3                             \
+    (MoveTowards)                               \
     (Name)                                      \
     (Native)                                    \
     (Neutron)                                   \
@@ -203,6 +194,8 @@
     (Number)                                    \
     (NumberOf)                                  \
     (NumShips)                                  \
+
+#define TOKEN_SEQ_5                             \
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
@@ -247,7 +240,9 @@
     (Product)                                   \
     (ProductionCenter)                          \
     (Progress)                                  \
-    (Property)                                  \
+    (Property)
+
+#define TOKEN_SEQ_6                             \
     (Radiated)                                  \
     (Radius)                                    \
     (Random)                                    \
@@ -267,9 +262,7 @@
     (Retain)                                    \
     (RMS)                                       \
     (ROF)                                       \
-    (RootCandidate)
-
-#define TOKEN_SEQ_4                             \
+    (RootCandidate)                             \
     (Scope)                                     \
     (SetAggressive)                             \
     (SetAntiFighterDamage)                      \
@@ -301,7 +294,9 @@
     (SetPassive)                                \
     (SetPlanetSize)                             \
     (SetPlanetType)                             \
-    (SetPopulation)                             \
+    (SetPopulation)
+
+#define TOKEN_SEQ_7                             \
     (SetRange)                                  \
     (SetRebelTroops)                            \
     (SetResearch)                               \
@@ -326,6 +321,10 @@
     (SetTroops)                                 \
     (Shield)                                    \
     (ShipDesign)                                \
+    (ShipDesignsDestroyed)                      \
+    (ShipDesignsLost)                           \
+    (ShipDesignsProduced)                       \
+    (ShipDesignsScrapped)                       \
     (Ship)                                      \
     (ShipHull)                                  \
     (ShipPart)                                  \
@@ -337,7 +336,7 @@
     (Size)                                      \
     (SizeAsDouble)
 
-#define TOKEN_SEQ_5                             \
+#define TOKEN_SEQ_8                             \
     (Slot)                                      \
     (Slots)                                     \
     (SlotType)                                  \
@@ -350,6 +349,13 @@
     (SpawnRate)                                 \
     (Special)                                   \
     (Species)                                   \
+    (SpeciesPlanetsBombed)                      \
+    (SpeciesPlanetsDepoped)                     \
+    (SpeciesPlanetsInvaded)                     \
+    (SpeciesShipsDestroyed)                     \
+    (SpeciesShipsLost)                          \
+    (SpeciesShipsProduced)                      \
+    (SpeciesShipsScrapped)                      \
     (Speed)                                     \
     (Spread)                                    \
     (StackingGroup)                             \
@@ -365,7 +371,9 @@
     (Supply)                                    \
     (Swamp)                                     \
     (System)                                    \
-    (SystemID)                                  \
+    (SystemID)
+
+#define TOKEN_SEQ_9                             \
     (Tag)                                       \
     (Tags)                                      \
     (Target)                                    \
@@ -412,6 +420,10 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_4)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_5)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_6)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_7)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_8)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_9)
 #undef DECLARE_TOKEN
 
 
