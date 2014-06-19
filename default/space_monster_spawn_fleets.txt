@@ -188,6 +188,11 @@ MonsterFleet
             Not OwnedBy AnyEmpire
             Not Planet type = [Asteroids GasGiant]
         ]
+        Not Contains Or [
+                        HasSpecial name = "ANCIENT_RUINS_SPECIAL"
+                        HasSpecial name = "PANOPTICON_SPECIAL"
+                        HasSpecial name = "GAIA_SPECIAL"
+                        ]
         Not WithinStarlaneJumps 6 And [
             Planet
             OwnedBy AnyEmpire

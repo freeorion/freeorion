@@ -114,6 +114,7 @@ Special
                 Contains Or [
                     Capital
                     And [ Planet HasSpecial "ANCIENT_RUINS_SPECIAL" ]
+                    Design name = "SM_EXP_OUTPOST"
                 ]
             ]
     ]
@@ -296,6 +297,7 @@ Special
                 OwnedBy AnyEmpire
             ]
         ]
+        Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
     ]
     effectsgroups = [
         EffectsGroup
@@ -508,6 +510,7 @@ Special
                 OwnedBy AnyEmpire
             ]
         ]
+        Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
     ]
     effectsgroups = [
         EffectsGroup
@@ -1688,6 +1691,10 @@ CHANCE_OF_GUARD_1
             activation = AND [
                 Turn high = 0
                 Random probability = 0.60
+                Not ContainedBy Contains OR [
+                                    Design name = "SM_EXP_OUTPOST"
+                                    Building "BLD_EXPERIMENTOR_OUTPOST"
+                                    ]
             ]
             effects = CreateShip "SM_GUARD_1"
 '''
