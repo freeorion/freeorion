@@ -13,13 +13,6 @@ namespace {
     // closing format tag
     static const std::string LINK_FORMAT_CLOSE = "</rgba>";
 
-    std::string LinkDefaultFormatTag()
-    { return GG::RgbaTag(ClientUI::DefaultLinkColor()); }
-
-    std::string LinkRolloverFormatTag()
-    { return GG::RgbaTag(ClientUI::RolloverLinkColor()); }
-
-
     static bool link_tags_registered = false;
     void RegisterLinkTags() {
         if (link_tags_registered)
@@ -124,6 +117,31 @@ void LinkText::MouseLeave()
 
 
 ///////////////////////////////////////
+// LinkDecorator
+///////////////////////////////////////
+
+std::string LinkDecorator::Decorate ( const std::string& target, const std::string& content ) const{
+    return GG::RgbaTag(ClientUI::DefaultLinkColor()) + content + LINK_FORMAT_CLOSE;
+}
+
+std::string LinkDecorator::DecorateRollover ( const std::string& target, const std::string& content ) const{
+    return GG::RgbaTag(ClientUI::RolloverLinkColor()) + content + LINK_FORMAT_CLOSE;
+}
+
+int LinkDecorator::try_to_int ( const std::string& str ) {
+    std::stringstream ss;
+    ss << str;
+    int ret = 0;
+    ss >> ret;
+    if ( ss.eof() ) {
+        return ret;
+    } else {
+        return 0;
+    }
+}
+
+
+///////////////////////////////////////
 // TextLinker::Link
 ///////////////////////////////////////
 struct TextLinker::Link {
@@ -149,6 +167,38 @@ TextLinker::TextLinker() :
 
 TextLinker::~TextLinker()
 {}
+
+void TextLinker::SetDecorator ( const std::string& link_type, LinkDecorator* decorator ) {
+    m_decorators[link_type] = boost::shared_ptr<LinkDecorator>(decorator);
+    MarkLinks();
+}
+
+std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const{
+    
+    const LinkDecorator* decorator = &DEFAULT_DECORATOR;
+    
+    std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
+    if (it != m_decorators.end()){
+        decorator = it->second.get();
+    }
+    
+    return decorator->Decorate(link.data, content);
+}
+
+
+std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const{
+    
+    const LinkDecorator* decorator = &DEFAULT_DECORATOR;
+    
+    std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
+    if (it != m_decorators.end()){
+        decorator = it->second.get();
+    }
+    
+    return decorator->DecorateRollover(link.data, content);
+}
+
+
 
 void TextLinker::Render_() {
     if (!RENDER_DEBUGGING_LINK_RECTS)
@@ -331,17 +381,12 @@ void TextLinker::MarkLinks() {
         // copy raw text up to start of first link
         std::copy(raw_text_start_it + copy_start_index, raw_text_start_it + link_start_index, std::back_inserter(marked_text));
 
+        std::string content = std::string(raw_text_start_it + link_start_index, raw_text_start_it + link_end_index);
         // add link markup open tag
         if (i == m_rollover_link)
-            marked_text += LinkRolloverFormatTag();
+            marked_text += LinkRolloverFormatTag(link, content);
         else
-            marked_text += LinkDefaultFormatTag();
-
-        // copy link text itself
-        std::copy(raw_text_start_it + link_start_index, raw_text_start_it + link_end_index, std::back_inserter(marked_text));
-
-        // add link markup close tag
-        marked_text += LINK_FORMAT_CLOSE;
+            marked_text += LinkDefaultFormatTag(link, content);
 
         // update copy point for following text
         copy_start_index = link_end_index;
@@ -355,3 +400,4 @@ void TextLinker::MarkLinks() {
     //std::cout << "marktext:" << marked_text << std::endl << std::endl;
 }
 
+const LinkDecorator TextLinker::DEFAULT_DECORATOR;

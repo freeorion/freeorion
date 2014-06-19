@@ -16,7 +16,7 @@ struct FO_COMMON_API CombatLog {
     std::set<int>               object_ids;
     std::set<int>               damaged_object_ids;
     std::set<int>               destroyed_object_ids;
-    std::vector<AttackEvent>    attack_events;
+    std::vector<CombatEventPtr> combat_events;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -66,18 +66,6 @@ FO_COMMON_API const CombatLog&    GetCombatLog(int log_id);
 
 /** Returns true if a CombatLog with the indicated id is available. */
 FO_COMMON_API bool                CombatLogAvailable(int log_id);
-
-template <class Archive>
-void CombatLog::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(turn)
-        & BOOST_SERIALIZATION_NVP(system_id)
-        & BOOST_SERIALIZATION_NVP(empire_ids)
-        & BOOST_SERIALIZATION_NVP(object_ids)
-        & BOOST_SERIALIZATION_NVP(damaged_object_ids)
-        & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
-        & BOOST_SERIALIZATION_NVP(attack_events);
-}
 
 template <class Archive>
 void CombatLogManager::serialize(Archive& ar, const unsigned int version)

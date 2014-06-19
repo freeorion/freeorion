@@ -128,6 +128,8 @@ endif ()
 set (freeorioncommon_HEADER
     combat/AsteroidBeltObstacle.h
     combat/CombatEventListener.h
+    combat/CombatEvent.h
+    combat/CombatEvents.h
     combat/CombatFighter.h
     combat/CombatLogManager.h
     combat/CombatObject.h
@@ -201,6 +203,8 @@ set (freeorioncommon_HEADER
 
 set (freeorioncommon_SOURCE
     combat/AsteroidBeltObstacle.cpp
+    combat/CombatEvent.cpp
+    combat/CombatEvents.cpp
     combat/CombatFighter.cpp
     combat/CombatLogManager.cpp
     combat/CombatObject.cpp

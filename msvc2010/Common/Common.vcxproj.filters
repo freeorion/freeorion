@@ -253,6 +253,12 @@
     <ClInclude Include="..\..\universe\EnableTemporaryFromThis.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\combat\CombatEvent.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatEvents.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -455,6 +461,12 @@
     </ClCompile>
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatEvents.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatEvent.cpp">
+      <Filter>Source Files\combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

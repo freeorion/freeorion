@@ -3,6 +3,7 @@
 #include "SaveLoad.h"
 #include "ServerFSM.h"
 #include "../combat/CombatSystem.h"
+#include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
@@ -1800,12 +1801,18 @@ namespace {
         for (std::vector<CombatInfo>::const_iterator it = combats.begin();
              it != combats.end(); ++it)
         {
-            const std::vector<AttackEvent>& attacks = it->combat_events;
-            for (std::vector<AttackEvent>::const_iterator it = attacks.begin();
+            const std::vector<CombatEventPtr>& attacks = it->combat_events;
+            const CombatInfo& combat_info = *it;
+            for (std::vector<CombatEventPtr>::const_iterator it = attacks.begin();
                  it != attacks.end(); ++it)
             {
-                const AttackEvent& attack = *it;
-                if (!attack.target_destroyed)
+                const AttackEvent* maybe_attack = dynamic_cast<AttackEvent*>(it->get());
+                if(!maybe_attack){
+                    continue;
+                }
+                const AttackEvent& attack = *maybe_attack;
+                // Check that the thing that was hurt died
+                if (combat_info.destroyed_object_ids.find(attack.target_id) == combat_info.destroyed_object_ids.end())
                     continue;
                 TemporaryPtr<const UniverseObject> attacker = GetUniverseObject(attack.attacker_id);
                 if (!attacker)

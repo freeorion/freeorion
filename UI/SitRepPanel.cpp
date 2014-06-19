@@ -123,6 +123,20 @@ namespace {
         return retval;
     }
 
+    
+    class ColorEmpire : public LinkDecorator {
+    public:
+        virtual std::string Decorate ( const std::string& target, const std::string& content ) const{
+            GG::Clr color = ClientUI::DefaultLinkColor();
+            int id = try_to_int(target);
+            Empire* empire = Empires().Lookup(id);
+            if( empire ) {
+                color = empire->Color();
+            }
+            return GG::RgbaTag(color) + content + "</rgba>";
+        }
+    };
+    
     //////////////////////////////////
     // SitRepDataPanel
     //////////////////////////////////
@@ -185,6 +199,7 @@ namespace {
             m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
                                        m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER, ClientUI::TextColor());
+            m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
 
             GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);

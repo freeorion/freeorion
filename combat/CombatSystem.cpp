@@ -1,4 +1,5 @@
 #include "CombatSystem.h"
+#include "CombatEvents.h"
 
 #include "../universe/Universe.h"
 #include "../util/MultiplayerCommon.h"
@@ -17,6 +18,8 @@
 
 #include "../server/ServerApp.h"
 #include "../network/Message.h"
+
+#include <boost/make_shared.hpp>
 
 ////////////////////////////////////////////////
 // CombatInfo
@@ -216,7 +219,7 @@ void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int
     filtered_destroyed_object_knowers = this->destroyed_object_knowers;
 }
 
-void CombatInfo::GetCombatEventsToSerialize(std::vector<AttackEvent>& filtered_combat_events,
+void CombatInfo::GetCombatEventsToSerialize(std::vector<CombatEventPtr>& filtered_combat_events,
                                             int encoding_empire) const
 {
     filtered_combat_events = this->combat_events;
@@ -272,9 +275,7 @@ namespace {
                 Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack(bout, round, attacker->ID(), target->ID(), damage,
-                           (target_structure->Current() <= 0.0f));
-        combat_info.combat_events.push_back(attack);
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
@@ -345,8 +346,7 @@ namespace {
                 Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack(bout, round, attacker->ID(), target->ID(), damage, false);
-        combat_info.combat_events.push_back(attack);
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
@@ -386,9 +386,7 @@ namespace {
                 Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack(bout, round, attacker->ID(), target->ID(), damage,
-                           (target_structure->Current() <= 0.0f));
-        combat_info.combat_events.push_back(attack);
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -464,7 +462,7 @@ namespace {
 
     bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
         if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
-            return ship->IsArmed() && ship->CurrentMeterValue(METER_STRUCTURE) > 0.0;
+            return ship->IsArmed();
         } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
         } else {
@@ -579,8 +577,29 @@ namespace {
                  return false;
         }
         
-        /// Checks if target is destroyed and if it is, update lists of living objects
-        void CheckDestruction(TemporaryPtr<UniverseObject>& target) {
+        /// Removes dead units from lists of attackers and defenders
+        void CullTheDead ( int bout ) {
+            for ( ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it ) {
+                TemporaryPtr<const UniverseObject> obj = *it;
+                
+                // There may be objects, for example unowned planets, that were no a part of the battle to start with.
+                // Ignore them
+                if ( valid_attacker_object_ids.find ( obj->ID() ) == valid_attacker_object_ids.end() &&
+                    valid_target_object_ids.find(obj->ID()) == valid_target_object_ids.end()){
+                    continue;
+                }
+                
+                // Check if the target was destroyed and update lists if yes
+                bool destroyed = CheckDestruction(obj);
+                if ( destroyed ) {
+                    combat_info.combat_events.push_back(boost::make_shared<IncapacitationEvent>(bout, obj->ID()));
+                }
+            }
+        }
+        
+        /// Checks if target is destroyed and if it is, update lists of living objects.
+        /// Return true if is incapacitated
+        bool CheckDestruction(const TemporaryPtr<const UniverseObject>& target) {
             int target_id = target->ID();
             // check for destruction of target object
             if (target->ObjectType() == OBJ_SHIP) {
@@ -611,6 +630,8 @@ namespace {
                         
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
+                    CleanEmpires();
+                    return true;
                 }
                 
             } else if (target->ObjectType() == OBJ_PLANET) {
@@ -638,10 +659,13 @@ namespace {
                     
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
+                    
+                    CleanEmpires();
+                    return true;
                 }
             }
             
-            CleanEmpires();
+            return false;
         }
         
         /// check if any empire has no remaining target or attacker objects.
@@ -790,8 +814,6 @@ namespace {
             Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round);
             combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
             
-            // Check if the target was destroyed and update lists if yes
-            combat_state.CheckDestruction(target);
         } // end for over weapons
     }
     
@@ -821,6 +843,9 @@ namespace {
     }
     
     void CombatRound(int bout, CombatInfo& combat_info, AutoresolveInfo& combat_state) {
+        
+        combat_info.combat_events.push_back(boost::make_shared<BoutBeginEvent>(bout));
+        
         std::vector<int> shuffled_attackers;
         combat_state.GiveAttackersShuffled(shuffled_attackers);
         
@@ -846,6 +871,9 @@ namespace {
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
         }
+        
+        /// Remove all who died in the bout
+        combat_state.CullTheDead(bout);
     }
     
 }
@@ -906,13 +934,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
         Logger().debugStream() << "combat event log:";
-        for (std::vector<AttackEvent>::const_iterator it = combat_info.combat_events.begin();
+        for (std::vector<CombatEventPtr>::const_iterator it = combat_info.combat_events.begin();
             it != combat_info.combat_events.end(); ++it)
         {
-            Logger().debugStream() << "rnd: " << it->round << " : "
-                                << it->attacker_id << " -> " << it->target_id << " : "
-                                << it->damage
-                                << (it->target_destroyed ? " (destroyed)" : "");
+            Logger().debugStream() << (*it)->DebugString();
         }
     }
 }

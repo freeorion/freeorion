@@ -4,37 +4,9 @@
 
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
+#include "CombatEvent.h"
 
 #include <boost/serialization/version.hpp>
-
-struct AttackEvent {
-    AttackEvent() :
-        bout(-1),
-        round(-1),
-        attacker_id(INVALID_OBJECT_ID),
-        target_id(INVALID_OBJECT_ID),
-        damage(0.0f),
-        target_destroyed(false)
-    {}
-    AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, bool target_destroyed_) :
-        bout(bout_),
-        round(round_),
-        attacker_id(attacker_id_),
-        target_id(target_id_),
-        damage(damage_),
-        target_destroyed(target_destroyed_)
-    {}
-    int     bout;
-    int     round;
-    int     attacker_id;
-    int     target_id;
-    float   damage;
-    bool    target_destroyed;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
 
 /** Contains information about the state of a combat before or after the combat
   * occurs. */
@@ -63,7 +35,7 @@ public:
     std::set<int>                       destroyed_object_ids;       ///< ids of objects destroyed during this battle
     std::map<int, std::set<int> >       destroyed_object_knowers;   ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
     Universe::EmpireObjectVisibilityMap empire_object_visibility;   ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
-    std::vector<AttackEvent>            combat_events;              ///< list of combat attack events that occur in combat
+    std::vector<CombatEventPtr>         combat_events;              ///< list of combat attack events that occur in combat
 
 private:
     void    GetEmpireIdsToSerialize(             std::set<int>&                         filtered_empire_ids,                int encoding_empire) const;
@@ -73,7 +45,7 @@ private:
     void    GetDestroyedObjectsToSerialize(      std::set<int>&                         filtered_destroyed_objects,         int encoding_empire) const;
     void    GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&         filtered_destroyed_object_knowers,  int encoding_empire) const;
     void    GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&   filtered_empire_object_visibility,  int encoding_empire) const;
-    void    GetCombatEventsToSerialize(          std::vector<AttackEvent>&              filtered_combat_events,             int encoding_empire) const;
+    void    GetCombatEventsToSerialize(          std::vector<CombatEventPtr>&           filtered_combat_events,             int encoding_empire) const;
 
     friend class boost::serialization::access;
     template<class Archive>
@@ -87,23 +59,6 @@ private:
 void AutoResolveCombat(CombatInfo& combat_info);
 
 template <class Archive>
-void AttackEvent::serialize(Archive& ar, const unsigned int version)
-{
-    if(version > 0){
-        ar  & BOOST_SERIALIZATION_NVP(bout);
-    }else{
-        bout = 0;
-    }
-    ar  & BOOST_SERIALIZATION_NVP(round)
-        & BOOST_SERIALIZATION_NVP(attacker_id)
-        & BOOST_SERIALIZATION_NVP(target_id)
-        & BOOST_SERIALIZATION_NVP(damage)
-        & BOOST_SERIALIZATION_NVP(target_destroyed);
-}
-
-BOOST_CLASS_VERSION(AttackEvent, 1);
-
-template <class Archive>
 void CombatInfo::save(Archive & ar, const unsigned int version) const
 {
     std::set<int>                       filtered_empire_ids;
@@ -113,7 +68,7 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
     std::set<int>                       filtered_destroyed_object_ids;
     std::map<int, std::set<int> >       filtered_destroyed_object_knowers;
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
-    std::vector<AttackEvent>            filtered_combat_events;
+    std::vector<CombatEventPtr>         filtered_combat_events;
 
     GetEmpireIdsToSerialize(                filtered_empire_ids,                GetUniverse().EncodingEmpire());
     GetObjectsToSerialize(                  filtered_objects,                   GetUniverse().EncodingEmpire());
@@ -146,7 +101,7 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     std::set<int>                       filtered_destroyed_object_ids;
     std::map<int, std::set<int> >       filtered_destroyed_object_knowers;
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
-    std::vector<AttackEvent>            filtered_combat_events;
+    std::vector<CombatEventPtr>         filtered_combat_events;
 
     ar  & BOOST_SERIALIZATION_NVP(turn)
         & BOOST_SERIALIZATION_NVP(system_id)

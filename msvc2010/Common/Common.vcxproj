@@ -87,7 +87,8 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
-      <AdditionalDependencies></AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +134,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\AsteroidBeltObstacle.h" />
+    <ClInclude Include="..\..\combat\CombatEvent.h" />
+    <ClInclude Include="..\..\combat\CombatEvents.h" />
     <ClInclude Include="..\..\combat\CombatFighter.h" />
     <ClInclude Include="..\..\combat\CombatLogManager.h" />
     <ClInclude Include="..\..\combat\CombatObject.h" />
@@ -200,6 +203,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\AsteroidBeltObstacle.cpp" />
+    <ClCompile Include="..\..\combat\CombatEvent.cpp" />
+    <ClCompile Include="..\..\combat\CombatEvents.cpp" />
     <ClCompile Include="..\..\combat\CombatFighter.cpp" />
     <ClCompile Include="..\..\combat\CombatLogManager.cpp" />
     <ClCompile Include="..\..\combat\CombatObject.cpp" />

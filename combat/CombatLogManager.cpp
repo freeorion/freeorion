@@ -1,5 +1,8 @@
 #include "CombatLogManager.h"
 #include "../universe/UniverseObject.h"
+#include "../util/Serialize.h"
+#include "../util/Serialize.ipp"
+#include "CombatEvents.h"
 
 ////////////////////////////////////////////////
 // CombatLog
@@ -16,7 +19,7 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     object_ids(),
     damaged_object_ids(combat_info.damaged_object_ids),
     destroyed_object_ids(combat_info.destroyed_object_ids),
-    attack_events(combat_info.combat_events)
+    combat_events(combat_info.combat_events)
 {
     // compile all remaining and destroyed objects' ids
     object_ids = combat_info.destroyed_object_ids;
@@ -24,6 +27,32 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
          it != combat_info.objects.const_end(); ++it)
     { object_ids.insert(it->ID()); }
 }
+
+
+template <class Archive>
+void CombatLog::serialize(Archive& ar, const unsigned int version)
+{
+    // CombatEvents are serialized only through
+    // pointers to their base class.
+    // Therefore we need to manually register their types
+    // in the archive.
+    ar.template register_type<AttackEvent>();
+    ar.template register_type<IncapacitationEvent>();
+    ar.template register_type<BoutBeginEvent>();
+    
+    ar  & BOOST_SERIALIZATION_NVP(turn)
+    & BOOST_SERIALIZATION_NVP(system_id)
+    & BOOST_SERIALIZATION_NVP(empire_ids)
+    & BOOST_SERIALIZATION_NVP(object_ids)
+    & BOOST_SERIALIZATION_NVP(damaged_object_ids)
+    & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
+    & BOOST_SERIALIZATION_NVP(combat_events);
+}
+
+template
+void CombatLog::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version);
+template
+void CombatLog::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version);
 
 
 ////////////////////////////////////////////////

@@ -3302,14 +3302,32 @@ ENC_COMBAT_LOG_DESCRIPTION_STR
 Combat at %1% on turn %2%:
 
 ENC_COMBAT_ATTACK_STR
-Round %4%.%5%: %1% attacks %2% and does %3% damage
-
-ENC_COMBAT_ATTACK_DESTROY_STR
-Round %4%.%5%: %1% attacks %2% and does %3% damage, destroying target
+%1% attacks %2% and does %3% damage
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unknown
 
+ENC_ROUND_BEGIN
+'''
+Round %1%'''
+
+ENC_COMBAT_UNKNOWN_DESTROYED_STR
+Something %2% was incapacitated one way or another
+
+ENC_COMBAT_PLANET_INCAPACITATED_STR
+The%1%planet %2% was incapacitated
+
+ENC_COMBAT_DESTROYED_STR
+The%1%ship %2% was destroyed
+
+NEUTRAL
+Neutral
+
+COMBAT_INITIAL_FORCES
+Initial forces
+
+COMBAT_SUMMARY_DESTROYED
+Lost:
 
 ###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
