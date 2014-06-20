@@ -1483,12 +1483,16 @@ BuildingType
                 Species "SP_EXPERIMENTOR" 
             ]
             effects = [
-			    GenerateSitRepMessage
-                     message = "SITREP_VICTORY_CAPTURE"
-                     icon = "icons/sitrep/victory.png"
-                     empire = Source.Owner
-				Destroy
-			]
+                        GenerateSitRepMessage
+                            message = "SITREP_VICTORY_CAPTURE"
+                            icon = "icons/sitrep/victory.png"
+                            empire = Source.Owner
+                        AddStarlanes NumberOf 1 And [
+                                                    WithinDistance 100 Source
+                                                    System
+                                                ]
+                        Destroy
+                    ]
 
         EffectsGroup
             scope = Source
