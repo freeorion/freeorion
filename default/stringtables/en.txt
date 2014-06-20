@@ -3028,6 +3028,33 @@ Armed Ships
 ARMED_MONSTER_COUNT
 Roaming Armed Monsters
 
+BUILDINGS_PRODUCED
+Buildings Produced
+
+BUILDINGS_SCRAPPED
+Buildings Scrapped
+
+SHIPS_DESTROYED
+Ships Destroyed in Combat
+
+SHIPS_LOST
+Ships Lost in Combat
+
+SHIPS_PRODUCED
+Ships Produced
+
+SHIPS_SCRAPPED
+Ships Scrapped
+
+PLANETS_BOMBED
+Planets Bombed
+
+PLANETS_DEPOPULATED
+Own Planets Depopulated
+
+PLANETS_INVADED
+Planets Invaded
+
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
