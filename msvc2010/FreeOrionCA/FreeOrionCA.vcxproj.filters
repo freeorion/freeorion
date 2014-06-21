@@ -51,9 +51,6 @@
     <Filter Include="Source Files\network">
       <UniqueIdentifier>{0de6ad2e-dcac-40fb-93fb-19267615fa87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\util">
-      <UniqueIdentifier>{1e982752-0e28-4beb-ad8f-7e5c43d6142a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\python">
       <UniqueIdentifier>{2ab2cfda-27b9-4be9-a9ce-9e5b1cec2e28}</UniqueIdentifier>
     </Filter>
