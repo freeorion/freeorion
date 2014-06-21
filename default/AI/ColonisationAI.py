@@ -1000,9 +1000,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             retval *=1.5
         if sys_supply < 0:
             if sys_supply + planet_supply >= 0:
-                retval += 50*(planet_supply - max(-3, sys_supply))
+                retval += 30*(planet_supply - max(-3, sys_supply))
             else:
-                retval += 50*(planet_supply + sys_supply) # (a penalty)
+                retval += 30*(planet_supply + sys_supply) # (a penalty)
         elif planet_supply > sys_supply and (sys_supply < 2): #TODO: check min neighbor supply
             retval += 25*(planet_supply - sys_supply)
         return int(retval)
@@ -1010,6 +1010,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         if not species:
             return 0
 
+        supplyval = 0
         if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ):
             retval += discountMultiplier*50
             detail.append("Undepleted Ruins %.1f"%discountMultiplier*50)
@@ -1036,11 +1037,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         planet_supply += supplyTagMod
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:
-                retval += 100*(planet_supply - max(-3, sys_supply))
+                supplyval = 100*(planet_supply - max(-3, sys_supply))
             else:
-                retval += 200*(planet_supply + sys_supply) # (a penalty)
+                supplyval = 200*(planet_supply + sys_supply) # (a penalty)
         elif (planet_supply > sys_supply) and (sys_supply == 1): #TODO: check min neighbor supply
-            retval += 50*(planet_supply - sys_supply)
+            supplyval = 50*(planet_supply - sys_supply)
             
         #if AITags != "":
         #    print "Species %s has AITags %s"%(specName,  AITags)
@@ -1247,7 +1248,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             detail.append("Non-positive population projection for species '%s',  so no colonization value"%(species and species.name))
             return 0
 
-        retval  += max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
+        retval  += max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes  + supplyval
         retval *= priorityScaling
 
         if thrtFactor < 1.0:
