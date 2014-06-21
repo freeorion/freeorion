@@ -637,6 +637,6 @@ namespace FreeOrionPython {
             .def_readonly ("specialsFrequency", &GalaxySetupData::m_specials_freq)
             .def_readonly ("monsterFrequency",  &GalaxySetupData::m_monster_freq)
             .def_readonly ("nativeFrequency",   &GalaxySetupData::m_native_freq)
-            .def_readonly ("maxAIAgression",    &GalaxySetupData::m_ai_aggr);
+            .def_readonly ("maxAIAggression",   &GalaxySetupData::m_ai_aggr);
     }
 }

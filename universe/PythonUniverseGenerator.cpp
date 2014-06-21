@@ -71,7 +71,7 @@ namespace {
     GalaxySetupData* g_galaxy_setup_data = 0;
 
     // Returns the global GalaxySetupData instance
-    GalaxySetupData& GetGalaxySetupData()
+    GalaxySetupData& GetGalaxySetupDataQ()
     { return *g_galaxy_setup_data; }
 
     // Global reference to the player setup data
@@ -79,7 +79,7 @@ namespace {
     std::map<int, PlayerSetupData> g_player_setup_data;
 
     // Returns the global PlayerSetupData map
-    std::map<int, PlayerSetupData>& GetPlayerSetupData()
+    std::map<int, PlayerSetupData>& GetPlayerSetupDataQ()
     { return g_player_setup_data; }
 
     // Functions that return various important constants
@@ -820,8 +820,8 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
         .def("name",            &FleetPlanWrapper::Name)
         .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
-    def("get_galaxy_setup_data",                GetGalaxySetupData,             return_value_policy<reference_existing_object>());
-    def("get_player_setup_data",                GetPlayerSetupData,             return_value_policy<reference_existing_object>());
+    def("get_galaxy_setup_data",                GetGalaxySetupDataQ,            return_value_policy<reference_existing_object>());
+    def("get_player_setup_data",                GetPlayerSetupDataQ,            return_value_policy<reference_existing_object>());
 
     def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
     def("roman_number",                         RomanNumber);

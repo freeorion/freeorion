@@ -71,7 +71,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
     "called by client at start of new game"
     global _timerFile,  _lastTurnTimestamp,  _timerBucketFile
-    print "New game started, AI Agression level %d"% aggression
+    print "New game started, AI Aggression level %d"% aggression
 
     # initialize AIstate
     global foAIstate

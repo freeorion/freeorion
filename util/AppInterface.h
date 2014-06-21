@@ -17,6 +17,7 @@ class Ship;
 class Fleet;
 class Building;
 class Field;
+struct GalaxySetupData;
 
 class FO_COMMON_API IApp {
 public:
@@ -46,6 +47,8 @@ public:
     virtual int GetNewDesignID() = 0;
 
     virtual int CurrentTurn() const = 0;        ///< returns the current game turn
+
+    virtual const GalaxySetupData& GetGalaxySetupData() const = 0;
 
 protected:
     IApp();
@@ -141,10 +144,15 @@ inline int GetNewObjectID()
 inline int GetNewDesignID()
 { return IApp::GetApp()->GetNewDesignID(); }
 
-/** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN during galaxy setup, or is
-    INVALID_GAME_TURN at other times */
+/** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
+  * during galaxy setup, or is INVALID_GAME_TURN at other times */
 inline int CurrentTurn()
 { return IApp::GetApp()->CurrentTurn(); }
+
+/** Returns the galaxy setup settings used in the current game. */
+inline const GalaxySetupData& GetGalaxySetupData()
+{ return IApp::GetApp()->GetGalaxySetupData(); }
+
 
 // sentinel values returned by CurrentTurn().  Can't be an enum since CurrentGameTurn() needs to return an integer
 // game turn number
