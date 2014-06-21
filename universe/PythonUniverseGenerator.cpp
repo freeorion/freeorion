@@ -66,21 +66,16 @@ using boost::python::len;
 // Helper stuff (classes, functions etc.) exposed to the
 // universe generator Python scripts
 namespace {
-    // Global pointer to the GalaxySetupData
-    // instance that has been passed in
-    GalaxySetupData* g_galaxy_setup_data = 0;
-
     // Returns the global GalaxySetupData instance
     GalaxySetupData& GetGalaxySetupDataQ()
-    { return *g_galaxy_setup_data; }
+    { return ServerApp::GetApp()->GetGalaxySetupData(); }
 
-    // Global reference to the player setup data
-    // map that has been passed in
-    std::map<int, PlayerSetupData> g_player_setup_data;
+    // Copy of player setup data last passed to GenerateUniverse
+    std::map<int, PlayerSetupData> player_setup_data;
 
     // Returns the global PlayerSetupData map
     std::map<int, PlayerSetupData>& GetPlayerSetupDataQ()
-    { return g_player_setup_data; }
+    { return player_setup_data; }
 
     // Functions that return various important constants
     int     AllEmpires()
@@ -1043,36 +1038,33 @@ namespace {
 }
 
 
-void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
-                      const std::map<int, PlayerSetupData>& player_setup_data)
-{
+void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) {
     Universe& universe = GetUniverse();
 
-    // Set the global GalaxySetupData reference and PlayerSetupData map
-    // to the instances we received
-    g_galaxy_setup_data = &galaxy_setup_data;
-    g_player_setup_data = player_setup_data;
+    player_setup_data = player_setup_data_;
 
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
     try {
-        seed = boost::lexical_cast<unsigned int>(g_galaxy_setup_data->m_seed);
+        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().m_seed);
     } catch (...) {
         try {
             boost::hash<std::string> string_hash;
-            std::size_t h = string_hash(g_galaxy_setup_data->m_seed);
+            std::size_t h = string_hash(GetGalaxySetupData().m_seed);
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
     }
-    if (g_galaxy_setup_data->m_seed.empty()) {
+    if (GetGalaxySetupData().m_seed.empty()) {
         //ClockSeed();
         // replicate ClockSeed code here so can log the seed used
         boost::posix_time::ptime ltime = boost::posix_time::microsec_clock::local_time();
-        std::string newseed = boost::posix_time::to_simple_string(ltime);
+        std::string new_seed = boost::posix_time::to_simple_string(ltime);
         boost::hash<std::string> string_hash;
-        std::size_t h = string_hash(newseed);
-        Logger().debugStream() << "CreateUniverse:: using clock for Seed:" << newseed;
+        std::size_t h = string_hash(new_seed);
+        Logger().debugStream() << "CreateUniverse:: using clock for Seed:" << new_seed;
         seed = static_cast<unsigned int>(h);
+        // store seed in galaxy setup data
+        ServerApp::GetApp()->GetGalaxySetupData().m_seed = boost::lexical_cast<std::string>(seed);
     }
     Seed(seed);
     Logger().debugStream() << "GenerateUniverse with seed: " << seed;
@@ -1092,11 +1084,11 @@ void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
     // TEMPORARY: Use legacy universe generation funtions for
     // all the stuff that hasn't been ported to Python yet
     Logger().debugStream() << "Generating Natives";
-    GenerateNatives(universe, galaxy_setup_data.m_native_freq);
+    GenerateNatives(universe, GetGalaxySetupData().m_native_freq);
     Logger().debugStream() << "Generating Space Monsters";
-    GenerateSpaceMonsters(universe, galaxy_setup_data.m_monster_freq);
+    GenerateSpaceMonsters(universe, GetGalaxySetupData().m_monster_freq);
     Logger().debugStream() << "Adding Starting Specials";
-    AddStartingSpecials(universe, galaxy_setup_data.m_specials_freq);
+    AddStartingSpecials(universe, GetGalaxySetupData().m_specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 

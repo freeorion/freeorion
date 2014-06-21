@@ -78,12 +78,16 @@ public:
     bool    IsLocalHumanPlayer(int player_id);
     //@}
 
+
     /** \name Mutators */ //@{
     void    operator()();               ///< external interface to Run()
     void    Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
 
+    /** Returns the galaxy setup data used for the current game */
+    GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
+
     /** creates an AI client child process for each element of \a AIs*/
-    void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int maxAggr=4);
+    void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression = 4);
 
     /**  Adds an existing empire to turn processing. The position the empire is
       * in the vector is it's position in the turn processing.*/
@@ -156,9 +160,8 @@ public:
     void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
                            boost::shared_ptr<ServerSaveGameData> server_save_game_data);
-    
     //@}
-    
+
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
 
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app

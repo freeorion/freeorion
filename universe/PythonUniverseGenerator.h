@@ -11,8 +11,7 @@
 // interface to create a new game universe
 // Serves as an interface to the server-side universe generator
 // functions of the Universe class
-void GenerateUniverse(GalaxySetupData&                      galaxy_setup_data,
-                      const std::map<int, PlayerSetupData>& player_setup_data);
+void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_);
 
 
 #endif // _PythonUniverseGenerator_h_

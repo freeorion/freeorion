@@ -167,8 +167,8 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int maxAggr) {
-    Logger().debugStream() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << maxAggr;
+void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
+    Logger().debugStream() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
@@ -219,14 +219,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("\"" + AI_CLIENT_EXE + "\"");
         args.push_back(player_name);
         std::stringstream maxAggrStr;
-        maxAggrStr << maxAggr;
+        maxAggrStr << max_aggression;
         args.push_back(maxAggrStr.str());
         args.push_back("--resource-dir");
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
 
-        Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << maxAggr;
+        Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
 
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 
@@ -645,8 +645,9 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
 
 
-    // m_current_turn set above so that every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    GenerateUniverse(m_galaxy_setup_data, active_players_id_setup_data);
+    // m_current_turn set above so that every UniverseObject created before game
+    // starts will have m_created_on_turn BEFORE_FIRST_TURN
+    GenerateUniverse(active_players_id_setup_data);
     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_current_turn = 1;
 
