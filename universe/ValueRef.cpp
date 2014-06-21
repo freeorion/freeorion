@@ -16,6 +16,7 @@
 #include "../Empire/Empire.h"
 #include "../util/Random.h"
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -543,10 +544,8 @@ namespace ValueRef {
         IF_CURRENT_VALUE(float)
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
-            if (property_name == "CurrentTurn") {
-                return CurrentTurn();
-            } else if (property_name == "UniverseCentreX" |
-                       property_name == "UniverseCentreY")
+            if (property_name == "UniverseCentreX" |
+                property_name == "UniverseCentreY")
             {
                 return GetUniverse().UniverseWidth() / 2;
             }
@@ -619,6 +618,24 @@ namespace ValueRef {
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
             if (property_name == "CurrentTurn")
                 return CurrentTurn();
+            if (property_name == "GalaxySize")
+                return GetGalaxySetupData().m_size;
+            if (property_name == "GalaxyShape")
+                return static_cast<int>(GetGalaxySetupData().m_shape);
+            if (property_name == "GalaxyAge")
+                return static_cast<int>(GetGalaxySetupData().m_age);
+            if (property_name == "GalaxyStarlaneFrequency")
+                return static_cast<int>(GetGalaxySetupData().m_starlane_freq);
+            if (property_name == "GalaxyPlanetDensity")
+                return static_cast<int>(GetGalaxySetupData().m_planet_density);
+            if (property_name == "GalaxySpecialFrequency")
+                return static_cast<int>(GetGalaxySetupData().m_specials_freq);
+            if (property_name == "GalaxyMonsterFrequency")
+                return static_cast<int>(GetGalaxySetupData().m_monster_freq);
+            if (property_name == "GalaxyNativeFrequency")
+                return static_cast<int>(GetGalaxySetupData().m_native_freq);
+            if (property_name == "GalaxyMaxAIAggression")
+                return static_cast<int>(GetGalaxySetupData().m_ai_aggr);
 
             // add more non-object reference int functions here
             Logger().errorStream() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -723,7 +740,9 @@ namespace ValueRef {
         IF_CURRENT_VALUE(std::string)
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
-            // add non-object reference string functions here
+            if (property_name == "GalaxySeed")
+                return GetGalaxySetupData().m_seed;
+
             Logger().errorStream() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
             return "";
         }

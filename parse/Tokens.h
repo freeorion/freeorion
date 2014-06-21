@@ -116,6 +116,16 @@
     (Focus)                                     \
     (FocusType)                                 \
     (Fuel)                                      \
+    (GalaxyAge)                                 \
+    (GalaxyMaxAIAggression)                     \
+    (GalaxyMonsterFrequency)                    \
+    (GalaxyNativeFrequency)                     \
+    (GalaxyPlanetDensity)                       \
+    (GalaxySeed)                                \
+    (GalaxyShape)                               \
+    (GalaxySize)                                \
+    (GalaxySpecialFrequency)                    \
+    (GalaxyStarlaneFrequency)                   \
     (Gameplay_Description)                      \
     (GasGiant)                                  \
     (General)                                   \

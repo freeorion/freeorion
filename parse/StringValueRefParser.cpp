@@ -43,15 +43,17 @@ namespace { struct string_parser_rules {
                 ;
 
             free_variable
-                =   tok.Value_       [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
-                |   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ]
+                = ( tok.Value_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ] )
+                | ((    tok.CurrentTurn_
+                    |   tok.GalaxySeed_
+                   ) [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ] )
                 ;
 
-            variable
+            bound_variable
                 = (
                         variable_scope()  [ _b = _1 ] > '.'
                     >  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-                    >   (
+                    >>  (
                             variable_name
                             [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<std::string> >(_b, _a) ]
                         |   int_var_variable_name()
@@ -75,16 +77,16 @@ namespace { struct string_parser_rules {
             expr
                 %=   constant
                 |    free_variable
-                |    variable
+                |    bound_variable
                 |    int_statistic
                 |    double_statistic
                 |    statistic
                 ;
 
-            variable_name.name("string variable name (e.g., Name)");
+            variable_name.name("string bound_variable name (e.g., Name)");
             constant.name("string");
             free_variable.name("free string variable");
-            variable.name("string variable");
+            bound_variable.name("string bound_variable");
             statistic.name("string statistic");
             int_statistic.name("integer statistic");
             double_statistic.name("real number statistic");
@@ -94,7 +96,7 @@ namespace { struct string_parser_rules {
             debug(variable_name);
             debug(constant);
             debug(free_variable);
-            debug(variable);
+            debug(bound_variable);
             debug(statistic);
             debug(int_statistic);
             debug(double_statistic);
@@ -109,7 +111,7 @@ namespace { struct string_parser_rules {
         name_token_rule variable_name;
         rule            constant;
         variable_rule   free_variable;
-        variable_rule   variable;
+        variable_rule   bound_variable;
         statistic_rule  statistic;
         rule            int_statistic;
         rule            double_statistic;
