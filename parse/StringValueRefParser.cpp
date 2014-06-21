@@ -30,8 +30,8 @@ namespace { struct string_parser_rules {
                 ;
 
             constant
-                =    tok.string [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
-                |    as_string [
+                =   tok.string [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
+                |   as_string [
                             parse::enum_parser<PlanetSize>()
                         |   parse::enum_parser<PlanetType>()
                         |   parse::enum_parser<PlanetEnvironment>()
@@ -39,14 +39,12 @@ namespace { struct string_parser_rules {
                         |   parse::enum_parser<StarType>()
                         |   tok.double_
                         |   tok.int_
-                     ]
+                    ]
                 ;
 
             free_variable
-                = ( tok.Value_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ] )
-                | ((    tok.CurrentTurn_
-                    |   tok.GalaxySeed_
-                   ) [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a)) ] )
+                =   tok.Value_      [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _1) ]
+                |   tok.GalaxySeed_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
             bound_variable
