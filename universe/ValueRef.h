@@ -151,6 +151,7 @@ template <class T>
 struct FO_COMMON_API ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
+    Variable(ReferenceType ref_type, const std::string& property_name);
 
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
     ReferenceType                   GetReferenceType() const;
@@ -481,6 +482,14 @@ ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::s
     m_ref_type(ref_type),
     m_property_name(property_name.begin(), property_name.end())
 {}
+
+template <class T>
+ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name) :
+    m_ref_type(ref_type),
+    m_property_name()
+{
+    m_property_name.push_back(property_name);
+}
 
 template <class T>
 bool ValueRef::Variable<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
