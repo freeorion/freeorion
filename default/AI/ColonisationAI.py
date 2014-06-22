@@ -44,7 +44,7 @@ pilotRatings = {}
 colony_status = {}
 pop_map = {}
 empire_status = {'industrialists':0,  'researchers':0}
-unowned_planet_ids = set()
+unowned_empty_planet_ids = set()
 empireOutpostIDs = set()
 claimedStars = {}
 
@@ -89,7 +89,7 @@ def resetCAIGlobals():
     annexablePlanetIDs.clear()
     curBestMilShipRating = 20
     allColonyOpportunities.clear()
-    unowned_planet_ids.clear()
+    unowned_empty_planet_ids.clear()
     empireOutpostIDs.clear()
     systems_by_supply_tier.clear()
     system_supply.clear()
@@ -261,9 +261,9 @@ def survey_universe():
         ##allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
         #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(annexablePlanetIDs) #
         #print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empireOwnedPlanetIDs))
-        ##unowned_planet_ids = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
-        #unowned_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-        #print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unowned_planet_ids))
+        ##unowned_empty_planet_ids = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
+        #unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
+        #print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unowned_empty_planet_ids))
         empireOwnedPlanetIDs = []
         empirePopCtrs = set()
         empireOutpostIDs.clear()
@@ -294,7 +294,7 @@ def survey_universe():
         AIstate.outpostSystemIDs[:]=[]
         AIstate.colonizedSystems.clear()
         pilotRatings.clear()
-        unowned_planet_ids.clear()
+        unowned_empty_planet_ids.clear()
     # var setup done
         
     for sys_id in universe.systemIDs:
@@ -362,8 +362,8 @@ def survey_universe():
                             activeGrowthSpecials.setdefault(special,  []).append(pid)
                 if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
                     empire_dry_docks.setdefault(planet.systemID,  []).append(pid)
-            elif owner_id == -1:
-                unowned_planet_ids.add(pid)
+            elif (owner_id == -1) and (spec_name==""):
+                unowned_empty_planet_ids.add(pid)
                     
         if empire_has_colony_in_sys:
             if empire_has_pop_ctr_in_sys:
@@ -524,7 +524,7 @@ def getColonyFleets():
                 buildPlanet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(buildPlanet.systemID)
 
-    evaluatedColonyPlanetIDs = list(unowned_planet_ids.union(AIstate.outpostIDs) - set(colonyTargetedPlanetIDs) ) # places for possible colonyBase
+    evaluatedColonyPlanetIDs = list(unowned_empty_planet_ids.union(AIstate.outpostIDs) - set(colonyTargetedPlanetIDs) ) # places for possible colonyBase
     
     #foAI.foAIstate.qualifyingOutpostBaseTargets.clear() #don't want to lose the info by clearing, but #TODO: should double check if still own colonizer planet
     #foAI.foAIstate.qualifyingColonyBaseTargets.clear()
@@ -558,7 +558,7 @@ def getColonyFleets():
             if len(queued_outpost_bases) >=max_queued_outpost_bases:
                 print "too many queued outpost bases to build any more now"
                 break
-            if pid not in unowned_planet_ids: 
+            if pid not in unowned_empty_planet_ids: 
                 continue
             if  foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1: 
                 continue  #already building for here
@@ -586,7 +586,7 @@ def getColonyFleets():
     times.append( time() )
     tasks.append( "initiate outpost base construction" )
 
-    evaluatedOutpostPlanetIDs = list(unowned_planet_ids - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
+    evaluatedOutpostPlanetIDs = list(unowned_empty_planet_ids - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
 
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
@@ -766,6 +766,12 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
     planet = universe.getPlanet(planetID)
+    
+    if (    (specName != planet.speciesName) and
+            (planet.speciesName != "" ) and
+            (missionType != AIFleetMissionType.FLEET_MISSION_INVASION)):
+                return 0
+    
     planet_size = planet.size
     this_sysid = planet.systemID
     distanceFactor = 0
@@ -915,7 +921,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         fixedRes += discountMultiplier*2*3
         detail.append( "ECCENTRIC_ORBIT_SPECIAL  %.1f"%(discountMultiplier*2*3  )  )
 
-    if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
+
+    if   (  (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ) or 
+            ((missionType == AIFleetMissionType.FLEET_MISSION_INVASION) and (specName == ""))):
 
         if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
             retval += discountMultiplier*30

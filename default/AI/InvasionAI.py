@@ -311,10 +311,10 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species: #this call iterates over this Empire's available species with which it could colonize after an invasion
-        planetEval = ColonisationAI.assignColonisationValues([planetID],  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  None,  empire, detail) 
+        planetEval = ColonisationAI.assignColonisationValues([planetID],  EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION,  [planetID],  None,  empire, detail) 
         popVal = max( 0.75*planetEval.get(planetID,  [0])[0],   ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  [planetID],  None,  empire, detail)  )
     else:
-        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  specName,  empire, detail) 
+        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION,  [planetID],  specName,  empire, detail) 
 
     bldTally=0
     for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
@@ -381,7 +381,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         supplyVal =  200
     elif pSysID in ColonisationAI.annexableRing2:
         supplyVal =  300
-    elif pSysID in ColonisationAI.annexableRing2:
+    elif pSysID in ColonisationAI.annexableRing3:
         supplyVal =  400
     if ( max_path_threat > 0.5 * mil_ship_rating ):
         if ( max_path_threat < 3 * mil_ship_rating ):
