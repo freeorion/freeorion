@@ -57,15 +57,16 @@ namespace {
             qi::_h_type _h;
             qi::_i_type _i;
             qi::_r1_type _r1;
-            qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
+            using phoenix::construct;
 
             building_prefix
                 =    tok.BuildingType_
-                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
+                >    parse::label(Name_token)        > tok.string [ _a = _1 ]
+                >    parse::label(Description_token) > tok.string
+                [ _val = construct<std::pair<std::string, std::string> >(_a, _1) ]
                 ;
 
             producible
@@ -75,17 +76,18 @@ namespace {
                 ;
 
             building_type
-                =    building_prefix(_a, _b)
-                >    parse::label(BuildCost_token)               > double_value_ref [ _c = _1 ]
-                >    parse::label(BuildTime_token)               > int_value_ref [ _d = _1 ]
-                >    producible [ _e = _1 ]
+                =    building_prefix [ _a = _1 ]
+                >    parse::label(BuildCost_token)               > double_value_ref [ _b = _1 ]
+                >    parse::label(BuildTime_token)               > int_value_ref [ _c = _1 ]
+                >    producible [ _d = _1 ]
                 >    (
-                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
-                        |   eps [ _f = CR_CAPTURE ]
+                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _e = _1 ]
+                        |   eps [ _e = CR_CAPTURE ]
                      )
-                >    parse::detail::tags_parser()(_g)
-                >    parse::label(Location_token)                > parse::detail::condition_parser [ _h = _1 ]
-                >    parse::label(EffectsGroups_token)           > -parse::detail::effects_group_parser() [ _i = _1 ]
+                >    parse::detail::tags_parser()(_f)
+                >  -(parse::label(Location_token)               >> parse::detail::condition_parser [ _g = _1 ] )
+                >  -(parse::label(EnqueueLocation_token)        >> parse::detail::condition_parser [ _h = _1 ] )
+                >  -(parse::label(EffectsGroups_token)          >> parse::detail::effects_group_parser() [ _i = _1 ] )
                 >    parse::label(Icon_token)                    > tok.string
                     [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
                 ;
@@ -109,7 +111,8 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::string&, std::string&),
+            std::pair<std::string, std::string> (),
+            qi::locals<std::string, std::string>,
             parse::skipper_type
         > building_prefix_rule;
 
@@ -123,13 +126,13 @@ namespace {
             parse::token_iterator,
             void (std::map<std::string, BuildingType*>&),
             qi::locals<
-                std::string,
-                std::string,
+                std::pair<std::string, std::string>,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<int>*,
                 bool,
                 CaptureResult,
                 std::set<std::string>,
+                Condition::ConditionBase*,
                 Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
             >,

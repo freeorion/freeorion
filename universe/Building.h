@@ -90,35 +90,38 @@ public:
     /** \name Structors */ //@{
     /** default ctor */
     BuildingType() :
-        m_name(""),
-        m_description(""),
+        m_name(),
+        m_description(),
         m_production_cost(0),
         m_production_time(0),
         m_capture_result(CR_DESTROY),
         m_tags(),
         m_location(0),
+        m_enqueue_location(0),
         m_effects(0),
         m_icon("")
     {};
 
     /** basic ctor */
-    BuildingType(const std::string& name, const std::string& description,
+    BuildingType(const std::pair<std::string, std::string>& name_and_description,
                  const ValueRef::ValueRefBase<double>* production_cost,
                  const ValueRef::ValueRefBase<int>* production_time,
                  bool producible,
                  CaptureResult capture_result,
                  const std::set<std::string>& tags,
                  const Condition::ConditionBase* location,
+                 const Condition::ConditionBase* enqueue_location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& icon) :
-        m_name(name),
-        m_description(description),
+        m_name(name_and_description.first),
+        m_description(name_and_description.second),
         m_production_cost(production_cost),
         m_production_time(production_time),
         m_producible(producible),
         m_capture_result(capture_result),
         m_tags(tags),
         m_location(location),
+        m_enqueue_location(enqueue_location),
         m_effects(effects),
         m_icon(icon)
     {}
@@ -137,12 +140,16 @@ public:
     int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
-    const std::set<std::string>& Tags() const               { return m_tags; }
+    const std::set<std::string>&    Tags() const            { return m_tags; }
     const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
+    const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
+
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
     const std::string&              Icon() const            { return m_icon; }              ///< returns the name of the grapic file for this building type
+
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
+    bool EnqueueLocation(int empire_id, int location_id) const;     ///< returns true iff the empire with ID empire_id can enqueue this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
       * empire with IDs \a from_empire_id the planet (or other UniverseObject)
@@ -163,6 +170,7 @@ private:
     CaptureResult                                               m_capture_result;
     std::set<std::string>                                       m_tags;
     const Condition::ConditionBase*                             m_location;
+    const Condition::ConditionBase*                             m_enqueue_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_icon;
 };

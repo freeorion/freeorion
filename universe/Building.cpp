@@ -275,6 +275,21 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
+    if (!m_enqueue_location)
+        return true;
+
+    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
+    if (!location)
+        return false;
+
+    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+    if (!source)
+        return false;
+
+    return m_enqueue_location->Eval(ScriptingContext(source), location);
+}
+
+bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
