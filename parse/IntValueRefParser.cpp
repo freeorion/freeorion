@@ -16,7 +16,7 @@ namespace {
             // TODO: Should we apply elements of this list only to certain
             // objects? For example, if one writes "Source.Planet.",
             // "NumShips" should not follow.
-            variable_name
+            bound_variable_name
                 =   tok.Owner_
                 |   tok.ID_
                 |   tok.CreationTurn_
@@ -38,17 +38,31 @@ namespace {
 
             constant
                 =   tok.double_ [ _val = new_<ValueRef::Constant<int> >(static_cast_<int>(_1)) ]
-                |   tok.int_ [ _val = new_<ValueRef::Constant<int> >(_1) ]
+                |   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
 
-            // add more object-independent ValueRef int functions here
+            free_variable_name
+                =   tok.CurrentTurn_
+                |   tok.GalaxyAge_
+                |   tok.GalaxyMaxAIAggression_
+                |   tok.GalaxyMonsterFrequency_
+                |   tok.GalaxyNativeFrequency_
+                |   tok.GalaxyPlanetDensity_
+                |   tok.GalaxyShape_
+                |   tok.GalaxySize_
+                |   tok.GalaxySpecialFrequency_
+                |   tok.GalaxyStarlaneFrequency_
+                ;
+
             free_variable
-                =   tok.CurrentTurn_ [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _a) ]
-                |   tok.Value_       [ _val = new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _a) ]
+                =   tok.Value_
+                    [ _val = new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   free_variable_name
+                    [ _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
-            initialize_bound_variable_parser<int>(bound_variable, variable_name);
-            initialize_numeric_statistic_parser<int>(statistic, variable_name);
+            initialize_bound_variable_parser<int>(bound_variable, bound_variable_name);
+            initialize_numeric_statistic_parser<int>(statistic, bound_variable_name);
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
                                                multiplicative_expr,
@@ -65,7 +79,8 @@ namespace {
                 |   int_var_complex()
                 ;
 
-            variable_name.name("integer variable name (e.g., FleetID)");
+            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
+            bound_variable_name.name("integer bound variable name (e.g., FleetID)");
             constant.name("integer constant");
             free_variable.name("free integer variable");
             bound_variable.name("bound integer variable");
@@ -78,7 +93,8 @@ namespace {
             primary_expr.name("integer expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(variable_name);
+            debug(free_variable_name);
+            debug(bound_variable_name);
             debug(constant);
             debug(free_variable);
             debug(bound_variable);
@@ -96,7 +112,8 @@ namespace {
         typedef statistic_rule<int>::type               statistic_rule;
         typedef expression_rule<int>::type              expression_rule;
 
-        name_token_rule     variable_name;
+        name_token_rule     free_variable_name;
+        name_token_rule     bound_variable_name;
         rule                constant;
         variable_rule       free_variable;
         variable_rule       bound_variable;
@@ -115,8 +132,11 @@ namespace {
     }
 }
 
-const name_token_rule& int_var_variable_name()
-{ return get_int_parser_rules().variable_name; }
+const name_token_rule& int_bound_variable_name()
+{ return get_int_parser_rules().bound_variable_name; }
+
+const variable_rule<int>::type& int_free_variable()
+{ return get_int_parser_rules().free_variable; }
 
 const statistic_rule<int>::type& int_var_statistic()
 { return get_int_parser_rules().statistic; }

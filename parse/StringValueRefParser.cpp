@@ -43,8 +43,14 @@ namespace { struct string_parser_rules {
                 ;
 
             free_variable
-                =   tok.Value_      [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, _1) ]
-                |   tok.GalaxySeed_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                =   tok.Value_
+                    [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   tok.GalaxySeed_
+                    [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                |   int_free_variable()
+                    [ _val = new_<ValueRef::StringCast<int> >(_1) ]
+                |   double_free_variable()
+                    [ _val = new_<ValueRef::StringCast<double> >(_1) ]
                 ;
 
             bound_variable
@@ -53,11 +59,14 @@ namespace { struct string_parser_rules {
                     >  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
                     >>  (
                             variable_name
-                            [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<std::string> >(_b, _a) ]
-                        |   int_var_variable_name()
-                            [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
-                        |   double_var_variable_name()
-                            [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_b, _a)) ]
+                            [ push_back(_a, construct<std::string>(_1)),
+                              _val = new_<ValueRef::Variable<std::string> >(_b, _a) ]
+                        |   int_bound_variable_name()
+                            [ push_back(_a, construct<std::string>(_1)),
+                              _val = new_<ValueRef::StringCast<int> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
+                        |   double_bound_variable_name()
+                            [ push_back(_a, construct<std::string>(_1)),
+                              _val = new_<ValueRef::StringCast<double> >(new_<ValueRef::Variable<double> >(_b, _a)) ]
                         )
                     )
                 ;

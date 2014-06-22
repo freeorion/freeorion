@@ -56,10 +56,10 @@ namespace {
         typedef statistic_rule<PlanetType>::type statistic_rule;
 
         name_token_rule variable_name;
-        rule constant;
-        variable_rule bound_variable;
-        statistic_rule statistic;
-        rule primary_expr;
+        rule            constant;
+        variable_rule   bound_variable;
+        statistic_rule  statistic;
+        rule            primary_expr;
     };
 }
 
