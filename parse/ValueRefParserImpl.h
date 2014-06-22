@@ -209,6 +209,7 @@ void initialize_expression_parsers(
 const reference_token_rule&             variable_scope();
 const name_token_rule&                  container_type();
 const name_token_rule&                  int_bound_variable_name();
+const variable_rule<int>::type&         int_bound_variable();
 const name_token_rule&                  int_free_variable_name();
 const variable_rule<int>::type&         int_free_variable();
 const statistic_rule<int>::type&        int_var_statistic();

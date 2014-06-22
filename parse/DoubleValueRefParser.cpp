@@ -99,13 +99,6 @@ namespace {
                                                   expr,
                                                   primary_expr);
 
-            int_bound_variable
-                =       variable_scope() [ _b = _1 ] > '.'  // determines reference type from explicit use of Source, Target, LocalCandiate, or RootCandidate in expression
-                    >  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-                    >   int_bound_variable_name() [ push_back(_a, construct<std::string>(_1)),
-                                                    _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
-                ;
-
             int_statistic
                 =    int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
@@ -119,7 +112,6 @@ namespace {
                 |   constant
                 |   free_variable
                 |   bound_variable
-//                |   int_bound_variable
                 |   statistic
                 |   int_statistic
                 |   int_complex_variable
@@ -130,7 +122,6 @@ namespace {
             constant.name("real number constant");
             free_variable.name("free real number variable");
             bound_variable.name("real number bound variable");
-            int_bound_variable.name("integer bound variable");
             statistic.name("real number statistic");
             int_statistic.name("integer statistic");
             int_complex_variable.name("integer complex variable");
@@ -147,7 +138,6 @@ namespace {
             debug(constant);
             debug(free_variable);
             debug(bound_variable);
-            debu(int_bound_variable);
             debug(statistic);
             debug(int_statistic);
             debug(int_complex_variable);
@@ -169,7 +159,6 @@ namespace {
         rule                constant;
         variable_rule       free_variable;
         variable_rule       bound_variable;
-        variable_rule       int_bound_variable;
         statistic_rule      statistic;
         rule                int_statistic;
         rule                int_complex_variable;
