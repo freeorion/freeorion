@@ -97,6 +97,7 @@
     (Endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
+    (EnqueueLocation)                           \
     (Environment)                               \
     (Environments)                              \
     (ExploredByEmpire)                          \
@@ -396,6 +397,7 @@
     (Tech)                                      \
     (TechType)                                  \
     (Terran)                                    \
+    (TestValue)                                 \
     (TheEmpire)                                 \
     (Theory)                                    \
     (Tiny)                                      \

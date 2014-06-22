@@ -70,13 +70,13 @@ namespace {
                 =
                     tok.ValueTest_
                     >> -(
-                            parse::label(Low_token)  >> double_value_ref [ _a = _1 ]
+                            parse::label(Low_token)     >> double_value_ref [ _a = _1 ]
                         )
                     >> -(
-                            parse::label(High_token) >> double_value_ref [ _b = _1 ]
+                            parse::label(High_token)    >> double_value_ref [ _b = _1 ]
                         )
-                    >> parse::label(Value_token)     >> double_value_ref
-                    [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
+                    >> parse::label(TestValue_token)    >> double_value_ref
+                       [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
                 ;
 
             turn
@@ -115,7 +115,7 @@ namespace {
                         (
                                 tok.MaximumNumberOf_ [ _b = Condition::SORT_MAX ]
                             |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
-                            |   tok.ModeNumberOf_ [ _b = Condition::SORT_MODE ]
+                            |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                         )
                         >>  parse::label(Number_token)    >> int_value_ref [ _a = _1 ]
                         >>  parse::label(SortKey_token)   >> double_value_ref [ _c = _1 ]
