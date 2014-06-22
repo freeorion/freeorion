@@ -112,8 +112,8 @@ namespace { struct string_parser_rules {
         }
 
         typedef parse::value_ref_parser_rule<std::string>::type rule;
-        typedef variable_rule<std::string>::type variable_rule;
-        typedef statistic_rule<std::string>::type statistic_rule;
+        typedef variable_rule<std::string>::type                variable_rule;
+        typedef statistic_rule<std::string>::type               statistic_rule;
 
         name_token_rule variable_name;
         rule            constant;
