@@ -98,6 +98,34 @@ BuildingType
             ProducedByEmpire empire = Source.Owner
         ]
     ]
+    enqueuelocation = And [
+        // must own production location planet
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        
+        // can't build where another palace exists (even if not owned by this empire)
+        Not Contains Building "BLD_IMPERIAL_PALACE"
+        
+        // must have a non-trivial population
+        TargetPopulation low = 1
+        
+        // can't enqueue if already own a self-built palace
+        Number 0 0 And [
+            Building name = "BLD_IMPERIAL_PALACE"
+            OwnedBy Source.Owner
+            ProducedByEmpire empire = Source.Owner
+        ]
+        
+        // can't enqueue if already have an enqueued palace anywhere
+        Number 0 0 And [
+            Planet
+            Enqueued
+                type = Building
+                name = "BLD_IMPERIAL_PALACE"
+                empire = Source.Owner
+                low = 1
+        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
