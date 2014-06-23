@@ -51,16 +51,17 @@ private:
     void Init();
         
     void Confirm();                         //!< when m_save_btn button is pressed
+    void AskDelete();                       //!< when a file is trying to be deleted
     void DoubleClickRow ( GG::ListBox::iterator row );
     void Cancel();                          //!< when m_load_btn button is pressed
     void SelectionChanged ( const GG::ListBox::SelectionSet& files );   //!< When file selection changes.
-    void BrowseDirectories();
     void UpdateDirectory ( const std::string& newdir );                 //!< Change current directory
     void DirectoryDropdownSelect(GG::DropDownList::iterator selection);      //!< On remote directory select
 
     void UpdatePreviewList();
     bool CheckChoiceValidity();             //!< Disables confirm if filename invalid. Returns false if not valid.
     void FileNameEdited ( const std::string& filename ); //!< Called when the filename changes
+    void DirectoryEdited ( const std::string& filename ); //!< Called when the directory text changes
     
     std::string GetDirPath() const;              //!< Gets the current directory path string clean of display decorations
     void        SetDirPath(const std::string& path); //!< Sets the shown directory path, apllying decorations if applicable
@@ -70,7 +71,6 @@ private:
     SaveFileListBox*    m_file_list;        //!< The list of available saves
     CUIEdit*            m_name_edit;        //!< The file name edit control
     CUIEdit*            m_current_dir_edit; //!< The editor for the save directory
-    CUIButton*          m_browse_dir_btn;   //!< Button to browse directories
     CUIDropDownList*    m_remote_dir_dropdown; //!< Dropdown to select remote dir
     CUIButton*          m_confirm_btn;      //!< Button to confirm choice
 

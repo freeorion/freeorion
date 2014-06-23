@@ -17,12 +17,13 @@
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
 #include <GG/utf8/checked.h>
-#include <GG/dialogs/FileDlg.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/cast.hpp>
+#include <boost/format.hpp>
 
 #include <string>
 
@@ -36,12 +37,18 @@ namespace {
     const GG::Y SAVE_FILE_DIALOG_HEIGHT ( 400 );
     const GG::X SAVE_FILE_DIALOG_MIN_WIDTH ( 160 );
     const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT ( 100 );
+    
+    const GG::X PROMT_WIDTH ( 200 );
+    const GG::Y PROMPT_HEIGHT ( 75 );
 
     const double DEFAULT_STRETCH = 1.0;
 
     const GG::X SAVE_FILE_BUTTON_MARGIN ( 10 );
     const unsigned int SAVE_FILE_CELL_MARGIN = 2;
     const unsigned int ROW_MARGIN = 2;
+    
+    const std::string PATH_DELIM_BEGIN = "[";
+    const std::string PATH_DELIM_END = "]";
     
     const std::string WIDE_AS = "wide-as";
     const std::string STRETCH = "stretch";
@@ -55,6 +62,8 @@ namespace {
     };
     
     const unsigned int VALID_PREVIEW_COLUMN_COUNT = sizeof(VALID_PREVIEW_COLUMNS) / sizeof(std::string);
+    
+    const int WHEEL_INCREMENT = 80;
     
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -105,6 +114,35 @@ namespace {
         utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
         return retval;
         #endif
+    }
+    
+    bool Prompt(const std::string& question){
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::ThreeButtonDlg prompt(PROMT_WIDTH, PROMPT_HEIGHT, question, font,
+                                  ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
+                                  std::size_t(2), UserString("YES"), UserString("CANCEL"), "");
+        prompt.Run();
+        return prompt.Result() == 0;
+    }
+    
+    /// Returns true if list contains a row with the text str
+    bool HasRow(const GG::DropDownList* list, const std::string& str){
+        if (list == NULL) {
+            return false;
+        }
+        for (unsigned i = 0; i < list->NumRows(); ++i) {
+            const GG::DropDownList::Row& row = list->GetRow(i);
+            for (unsigned j = 0; j < row.size(); ++j) {
+                const GG::Control* control = row.at(j);
+                const GG::TextControl* text = dynamic_cast<const GG::TextControl*>(control);
+                if (text) {
+                    if (text->Text() == str || text->Text() + "/" == str) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
 
@@ -240,7 +278,7 @@ class SaveFileRow: public GG::ListBox::Row {
 public:
     /// What sort of a row
     enum RowType {
-        HEADER, PREVIEW
+        HEADER, PREVIEW, DIRECTORY
     };
 
     /// Creates a header row
@@ -268,10 +306,10 @@ public:
         
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr color = ClientUI::TextColor();
-        for(std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin(); it != visible_columns.end(); ++it){
+        for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin(); it != visible_columns.end(); ++it) {
             push_back(SaveFileColumn::CellForColumn(*it, full, font, color));
         }
-        for(std::vector<SaveFileColumn>::const_iterator it = columns.begin(); it != columns.end(); ++it){
+        for (std::vector<SaveFileColumn>::const_iterator it = columns.begin(); it != columns.end(); ++it) {
             browse_text.AddVariable(it->Name(), ColumnInPreview(full, it->Name(), false));
         }
         AdjustColumns(visible_columns);
@@ -279,6 +317,19 @@ public:
         SetBrowseText(browse_text.GetText());
     }
 
+    /// Creates a directory row
+    SaveFileRow ( const std::string& directory ) :
+        m_filename( directory ),
+        m_type (DIRECTORY)
+    {
+        SetMargin ( ROW_MARGIN );
+        
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr color = ClientUI::TextColor();
+        push_back ( new GG::TextControl(GG::X0, GG::Y0, PATH_DELIM_BEGIN + directory + PATH_DELIM_END, font, color) );
+        GetLayout()->SetColumnStretch(0, 1.0);
+    }
+    
     const std::string&  Filename() const {
         return m_filename;
     }
@@ -306,11 +357,22 @@ public:
     }
 
     void AdjustColumns( const std::vector<SaveFileColumn>& columns){
-        GG::Layout* layout = GetLayout();
-        for(unsigned int i = 0; i < columns.size(); ++i){
-            const SaveFileColumn& column = columns[i];
-            layout->SetColumnStretch ( i, column.Stretch() );
-            layout->SetMinimumColumnWidth ( i, column.FixedWidth() ); // Considers header
+        if ( Type() != DIRECTORY ){
+            GG::Layout* layout = GetLayout();
+            for(unsigned int i = 0; i < columns.size(); ++i){
+                const SaveFileColumn& column = columns[i];
+                layout->SetColumnStretch ( i, column.Stretch() );
+                layout->SetMinimumColumnWidth ( i, column.FixedWidth() ); // Considers header
+            }
+        } else {
+            // Give the directory label at least all the room that the other columns demand anyway
+            GG::Layout* layout = GetLayout();
+            GG::X sum(0);
+            for(unsigned int i = 0; i < columns.size(); ++i){
+                const SaveFileColumn& column = columns[i];
+                sum += column.FixedWidth();
+            }
+            layout->SetMinimumColumnWidth ( 0, sum );
         }
     }
 
@@ -333,6 +395,8 @@ public:
         }
         LockColWidths();
         SetColHeaders ( new SaveFileRow(m_visible_columns) );
+        SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
+        SetVScrollWheelIncrement(WHEEL_INCREMENT);
     }
 
     virtual void SizeMove ( const GG::Pt& ul, const GG::Pt& lr ) {
@@ -374,9 +438,10 @@ public:
     /// @param [in] path The path of the directory
     /// @param [out] previews The preview datas indexed by file names
     void LoadSaveGamePreviews ( const fs::path& path, const std::string& extension ) {
+        LoadDirectories(path);
+        
         vector<FullPreview> previews;
         ::LoadSaveGamePreviews(path, extension, previews);
-
         LoadSaveGamePreviews(previews);
     }
     
@@ -387,6 +452,18 @@ public:
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
         for ( vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end() ; ++it){
             Insert ( new SaveFileRow ( *it, m_visible_columns, m_columns, tooltip_delay ) );
+        }
+    }
+    
+    void LoadDirectories(const fs::path& path){
+        fs::directory_iterator end_it;
+        if (path.has_parent_path() && path.parent_path() != path) {
+            Insert ( new SaveFileRow ( ".." ) );
+        }
+        for ( fs::directory_iterator it ( path ); it != end_it; ++it ) {
+            if ( fs::is_directory ( it->path() ) ) {
+                Insert ( new SaveFileRow ( PathString( it->path().filename() ) ) );
+            }
         }
     }
 
@@ -423,6 +500,53 @@ private:
         Logger().debugStream() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
         return columns;
     }
+    
+    static bool IsDelimitedWith(const std::string& str, const std::string& begin, const std::string& end) {
+        return str.find(begin) == 0 && str.find(end) == str.size() - end.size();
+    }
+    
+    /// We want the timestamps to be sorted in ascending order to get the latest save
+    /// first, but we want the directories to
+    /// a) always be first
+    /// b) be sorted alphabetically, ignoring the PATH_DELIM_BEGIN and PATH_DELIM_END they are wrapped with
+    /// This custom comparer achieves these goals.
+    static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) {
+        unsigned column = 0;
+        if (column_int >= 0) {
+            column = column_int;
+        }
+        std::string key1;
+        std::string key2;
+        // If column is other than the first one,
+        // use the first one for columns that don't have that many,
+        // since they should be directories.
+        if (row1.size() < column) {
+            key1 = row1.SortKey(column);
+        } else {
+            key1 = row1.SortKey(0);
+        }
+        if (row2.size() < column) {
+            key2 = row2.SortKey(column);
+        } else {
+            key2 = row2.SortKey(0);
+        }
+        const int total_delim_size = PATH_DELIM_BEGIN.size() + PATH_DELIM_END.size();
+        const bool row1_is_directory = IsDelimitedWith(key1, PATH_DELIM_BEGIN, PATH_DELIM_END);
+        const bool row2_is_directory = IsDelimitedWith(key2, PATH_DELIM_BEGIN, PATH_DELIM_END);
+        if (!row1_is_directory && !row2_is_directory) {
+            return key1.compare(key2) <= 0;
+        } else if ( row1_is_directory && row2_is_directory ) {
+            // Clean out the delimiters
+            std::string true_key1 = key1.substr(PATH_DELIM_BEGIN.size(), key1.size() - total_delim_size );
+            std::string true_key2 = key2.substr(PATH_DELIM_BEGIN.size(), key2.size() - total_delim_size );
+            // Compare directories alphabetically ascending, while the timestamp comparisons are descending
+            return true_key1.compare(true_key2) >= 0;
+        } else if ( row1_is_directory && !row2_is_directory ){
+            return false;
+        } else {
+            return true;
+        }
+    }
 };
 
 SaveFileDialog::SaveFileDialog (const std::string& extension, bool load ) :
@@ -457,7 +581,7 @@ void SaveFileDialog::Init() {
     
     m_layout = new GG::Layout ( GG::X0, GG::Y0,
                                 SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
-                                SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 3, 4 );
+                                SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4 );
     m_layout->SetCellMargin ( SAVE_FILE_CELL_MARGIN );
     m_layout->SetBorderMargin ( SAVE_FILE_CELL_MARGIN*2 );
     
@@ -477,18 +601,19 @@ void SaveFileDialog::Init() {
     
     m_layout->Add ( directory_label,    0, 0 );
     
-    if(!m_server_previews){
-        m_browse_dir_btn = new CUIButton ( "..." );
-        m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 2);
-        m_layout->Add ( m_browse_dir_btn,   0, 3 );
+    if (!m_server_previews) {
+        m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 3);
         
+        CUIButton* delete_btn = new CUIButton( UserString("DELETE") );
+        m_layout->Add( delete_btn, 2, 3 );
+        GG::Connect ( delete_btn->LeftClickedSignal, &SaveFileDialog::AskDelete, this );
+        
+        m_layout->SetMinimumRowHeight ( 2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)) );
         m_layout->SetMinimumColumnWidth ( 2, m_confirm_btn->MinUsableSize().x +
         2*SAVE_FILE_BUTTON_MARGIN );
-        m_layout->SetMinimumColumnWidth ( 3, cancel_btn->MinUsableSize().x +
+        m_layout->SetMinimumColumnWidth ( 3, std::max( cancel_btn->MinUsableSize().x , delete_btn->MinUsableSize().x ) +
         SAVE_FILE_BUTTON_MARGIN );
-        
-        GG::Connect ( m_browse_dir_btn->LeftClickedSignal,   &SaveFileDialog::BrowseDirectories, this );
-    }else{
+    } else {
         m_remote_dir_dropdown = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, SAVE_FILE_DIALOG_HEIGHT/2);
         m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 1);
         m_layout->Add ( m_remote_dir_dropdown,   0, 2 , 1, 2);
@@ -504,14 +629,14 @@ void SaveFileDialog::Init() {
     
     m_layout->Add ( m_file_list,        1, 0, 1, 4 );
     m_layout->Add ( filename_label,     2, 0 );
-    m_layout->Add ( m_name_edit,        2, 1, 1, 1 );
-    m_layout->Add ( m_confirm_btn,      2, 2 );
-    m_layout->Add ( cancel_btn,         2, 3 );
+    m_layout->Add ( m_name_edit,        3, 0, 1, 2 );
+    m_layout->Add ( m_confirm_btn,      3, 2 );
+    m_layout->Add ( cancel_btn,         3, 3 );
     
     
     m_layout->SetMinimumRowHeight ( 0, m_current_dir_edit->MinUsableSize().y );
     m_layout->SetRowStretch       ( 1, 1.0 );
-    m_layout->SetMinimumRowHeight ( 2, font->TextExtent ( cancel_btn->Text() ).y );
+    m_layout->SetMinimumRowHeight ( 3, font->TextExtent ( cancel_btn->Text() ).y );
     
     m_layout->SetMinimumColumnWidth ( 0, std::max ( font->TextExtent ( filename_label->Text() ).x,
                                                     font->TextExtent ( directory_label->Text() ).x ) );
@@ -524,13 +649,15 @@ void SaveFileDialog::Init() {
     GG::Connect ( m_file_list->SelChangedSignal,         &SaveFileDialog::SelectionChanged,  this );
     GG::Connect ( m_file_list->DoubleClickedSignal,      &SaveFileDialog::DoubleClickRow,    this );
     GG::Connect ( m_name_edit->EditedSignal,             &SaveFileDialog::FileNameEdited,    this );
+    GG::Connect ( m_current_dir_edit->EditedSignal,      &SaveFileDialog::DirectoryEdited,   this );
+    GG::Connect ( HumanClientApp::GetApp()->FocusChangedSignal, &SaveFileDialog::UpdatePreviewList, this );
     
-    if(!m_load_only){
+    if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp());
         m_name_edit->SelectAll();
     }
     
-    if(m_server_previews){
+    if (m_server_previews) {
         // Indicate to the user that they are browsing server saves
         SetDirPath("./");
     }
@@ -563,12 +690,15 @@ void SaveFileDialog::KeyPress ( GG::Key key, boost::uint32_t key_code_point, GG:
                 Confirm();
             }
         }
+    } else if ( key == GG::GGK_DELETE ) { // Delete would be better, but gets eaten by someone
+        // Ask to delete selection on Delete, if valid and not editing text
+        if ( CheckChoiceValidity() && GG::GUI::GetGUI()->FocusWnd() != m_name_edit && GG::GUI::GetGUI()->FocusWnd() != m_current_dir_edit ) {
+            AskDelete();
+        }
     } else {
         // The keypress may have changed our choice
         CheckChoiceValidity();
     }
-
-
 }
 
 void SaveFileDialog::Confirm() {
@@ -590,6 +720,15 @@ void SaveFileDialog::Confirm() {
             return;
         } else {
             Logger().debugStream() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
+            // If not loading and file exists, ask to confirm override
+            // Use Result() to ensure we are using the extension.
+            if ( !m_load_only && fs::exists(fs::path(Result())) ) {
+                boost::format templ( UserString("SAVE_REALLY_OVERRIDE") );
+                std::string question = (templ % choice).str();
+                if(!Prompt(question)){
+                    return;
+                }
+            }
         }
     } else {
         Logger().debugStream() << "SaveFileDialog::Confirm: Returning no file.";
@@ -597,6 +736,42 @@ void SaveFileDialog::Confirm() {
 
     CloseClicked();
 }
+
+void SaveFileDialog::AskDelete() {
+    if ( m_server_previews ) {
+        return;
+    }
+    
+    
+    fs::path chosen(Result());
+    if (fs::exists (chosen) && fs::is_regular_file (chosen)) {
+    
+        std::string filename = m_name_edit->Text();
+        
+        boost::format templ(UserString("SAVE_REALLY_DELETE"));
+        
+        std::string question = str(templ % filename);
+        if (Prompt (question)) {
+            fs::remove(chosen);
+            // Move selection to next if any or previous, if any
+            GG::ListBox::SelectionSet::iterator it = m_file_list->Selections().begin();
+            if (it != m_file_list->Selections().end()) {
+                GG::ListBox::iterator row_it = *it;
+                GG::ListBox::iterator next(row_it);
+                ++next;
+                if (next != m_file_list->end()) {
+                    m_file_list->SelectRow(next, true);
+                } else if (row_it != m_file_list->begin()) {
+                    GG::ListBox::iterator prev(row_it);
+                    --prev;
+                    m_file_list->SelectRow(next, true);
+                }
+                delete m_file_list->Erase(row_it);
+            }
+        }
+    }
+}
+
 
 void SaveFileDialog::DoubleClickRow ( GG::ListBox::iterator row ) {
     m_file_list->SelectRow ( row );
@@ -620,18 +795,6 @@ void SaveFileDialog::SelectionChanged ( const GG::ListBox::SelectionSet& selecti
         Logger().debugStream() << "SaveFileDialog::SelectionChanged: Unexpected selection size: " << selections.size();
     }
     CheckChoiceValidity();
-}
-
-void SaveFileDialog::BrowseDirectories() {
-    std::vector<std::pair<std::string, std::string> > dummy;
-    FileDlg dlg ( GetDirPath(), "", false, false, dummy );
-    dlg.SelectDirectories ( true );
-    dlg.Run();
-    if ( !dlg.Result().empty() ) {
-        // Normalize the path by converting it into a path and back
-        fs::path choice ( *dlg.Result().begin() );
-        UpdateDirectory ( PathString ( fs::canonical ( choice ) ) );
-    }
 }
 
 void SaveFileDialog::UpdateDirectory ( const std::string& newdir ) {
@@ -702,6 +865,23 @@ void SaveFileDialog::UpdatePreviewList() {
 }
 
 bool SaveFileDialog::CheckChoiceValidity() {
+    // Check folder validity
+    if ( !m_server_previews ) {
+        fs::path dir ( GetDirPath() );
+        if (fs::exists (dir) && fs::is_directory (dir)) {
+            m_current_dir_edit->SetColor(ClientUI::TextColor());
+        } else {
+            m_current_dir_edit->SetColor(GG::CLR_RED);
+        }
+    } else {
+        if (HasRow(m_remote_dir_dropdown, m_current_dir_edit->Text())) {
+            m_current_dir_edit->SetColor(ClientUI::TextColor());
+        } else {
+            m_current_dir_edit->SetColor(GG::CLR_RED);
+        }
+    }
+    
+    // Check file name validity
     if ( m_load_only ) {
         if ( !m_file_list->HasFile ( m_name_edit->Text() ) ) {
             m_confirm_btn->Disable();
@@ -718,6 +898,11 @@ bool SaveFileDialog::CheckChoiceValidity() {
 void SaveFileDialog::FileNameEdited ( const std::string& filename ) {
     CheckChoiceValidity();
 }
+
+void SaveFileDialog::DirectoryEdited ( const string& filename ) {
+    CheckChoiceValidity();
+}
+
 
 std::string SaveFileDialog::GetDirPath() const{
     std::string dir = m_current_dir_edit->Text();
@@ -756,6 +941,13 @@ void SaveFileDialog::SetDirPath ( const string& path ) {
             // Already has label. No need to change
         }else{
             dirname = SERVER_LABEL + "/" + path;
+        }
+    } else {
+        // Normalize path
+        fs::path path(dirname);
+        if (fs::is_directory (path)) {
+            path = fs::canonical(path);
+            dirname = PathString(path);
         }
     }
     m_current_dir_edit->SetText(dirname);

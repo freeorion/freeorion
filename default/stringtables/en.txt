@@ -34,6 +34,9 @@ Load
 SAVE
 Save
 
+DELETE
+Delete
+
 OPEN
 Open
 
@@ -1712,6 +1715,12 @@ File:
 
 SAVE_DIRECTORY
 Path:
+
+SAVE_REALLY_DELETE
+Are you sure you want to delete %1%?
+
+SAVE_REALLY_OVERRIDE
+Are you sure you want to override %1%?
 
 ###########################
 # Game Options            #

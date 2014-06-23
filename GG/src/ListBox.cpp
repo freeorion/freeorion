@@ -1228,6 +1228,9 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
                     }
                     m_selections.clear();
                 }
+            } else {
+                // Pass delete on if we ignored it
+                Control::KeyPress(key, key_code_point, mod_keys);
             }
             break;
 
