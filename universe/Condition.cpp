@@ -3593,6 +3593,14 @@ void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
         int empire_id = (m_empire_id ?  m_empire_id->Eval(parent_context) : ALL_EMPIRES);
         int low =       (m_low ?        m_low->Eval(parent_context) :       0);
         int high =      (m_high ?       m_high->Eval(parent_context) :      INT_MAX);
+        // special case: if neither low nor high is specified, default to a
+        // minimum of 1, so that just matching "Enqueued (type) (name/id)" will
+        // match places where at least one of the specified item is enqueued.
+        // if a max or other minimum are specified, then default to 0 low, so
+        // that just specifying a max will include anything below that max,
+        // including 0.
+        if (!m_low && !m_high)
+            low = 1;
 
         EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, m_name, design_id, 
                                                                           empire_id, low, high));
