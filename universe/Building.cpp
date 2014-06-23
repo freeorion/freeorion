@@ -304,7 +304,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 
 bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_enqueue_location)
-        return true;
+        return ProductionLocation(empire, location_id);
 
     TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location)
