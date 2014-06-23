@@ -156,10 +156,13 @@ std::string BuildingType::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
-    retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
+    if (m_production_cost)
+        retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
+    if (m_production_time)
+        retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
     retval += DumpIndent() + (m_producible ? "Producible" : "Unproducible") + "\n";
     retval += DumpIndent() + "captureresult = " + lexical_cast<std::string>(m_capture_result) + "\n";
+
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {
             retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
@@ -171,10 +174,20 @@ std::string BuildingType::Dump() const {
             retval += " ]\n";
         }
     }
-    retval += DumpIndent() + "location = \n";
-    ++g_indent;
-    retval += m_location->Dump();
-    --g_indent;
+
+    if (m_location) {
+        retval += DumpIndent() + "location = \n";
+        ++g_indent;
+            retval += m_location->Dump();
+        --g_indent;
+    }
+    if (m_enqueue_location) {
+        retval += DumpIndent() + "enqueue location = \n";
+        ++g_indent;
+            retval += m_location->Dump();
+        --g_indent;
+    }
+
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;
@@ -275,21 +288,6 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
-    if (!m_enqueue_location)
-        return true;
-
-    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
-    if (!location)
-        return false;
-
-    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
-    if (!source)
-        return false;
-
-    return m_enqueue_location->Eval(ScriptingContext(source), location);
-}
-
-bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
@@ -302,6 +300,21 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
         return false;
 
     return m_location->Eval(ScriptingContext(source), location);
+}
+
+bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
+    if (!m_enqueue_location)
+        return true;
+
+    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
+    if (!location)
+        return false;
+
+    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+    if (!source)
+        return false;
+
+    return m_enqueue_location->Eval(ScriptingContext(source), location);
 }
 
 /////////////////////////////////////////////////
