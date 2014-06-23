@@ -1038,8 +1038,7 @@ void BuildDesignatorWnd::HideAllTypes(bool refresh_list) {
     m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
 }
 
-void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list)
-{
+void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list) {
     if (type == BT_BUILDING || type == BT_SHIP) {
         const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
         if (types_shown.find(type) == types_shown.end())
@@ -1048,11 +1047,10 @@ void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list)
             HideType(type, refresh_list);
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
-    } 
+    }
 }
 
-void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list)
-{
+void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list) {
     const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
     if (types_shown.size() == NUM_BUILD_TYPES - 1)  // -1 because there are no buttons for BuildType::BT_NOT_BUILDING
         HideAllTypes(refresh_list);
@@ -1060,8 +1058,7 @@ void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list)
         ShowAllTypes(refresh_list);
 }
 
-void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list)
-{
+void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list) {
     m_build_selector->ShowAvailability(available, refresh_list);
     if (available)
         m_build_selector->m_availability_buttons.at(0)->MarkSelectedGray();
@@ -1069,8 +1066,7 @@ void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list)
         m_build_selector->m_availability_buttons.at(1)->MarkSelectedGray();
 }
 
-void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list)
-{
+void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list) {
     m_build_selector->HideAvailability(available, refresh_list);
     if (available)
         m_build_selector->m_availability_buttons.at(0)->MarkNotSelected();
@@ -1078,8 +1074,7 @@ void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list)
         m_build_selector->m_availability_buttons.at(1)->MarkNotSelected();
 }
 
-void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
-{
+void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list) {
     const std::pair<bool, bool>& avail_shown = m_build_selector->GetAvailabilitiesShown();
     if (available) {
         if (avail_shown.first)
@@ -1095,29 +1090,25 @@ void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
 }
 
 void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
-{
-    m_enc_detail_panel->SetBuildingType(building_type);
-}
+{ m_enc_detail_panel->SetBuildingType(building_type); }
 
 void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
-{
-    m_enc_detail_panel->SetDesign(design_id);
-}
+{ m_enc_detail_panel->SetDesign(design_id); }
 
 int BuildDesignatorWnd::BuildLocation() const
-{
-    return m_side_panel->SelectedPlanetID();
-}
+{ return m_side_panel->SelectedPlanetID(); }
 
-void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
+void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item,
+                                            int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->ProducibleItem(build_type, item, BuildLocation()))
+    if (empire && empire->EnqueuableItem(build_type, item, BuildLocation()))
         AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
 }
 
-void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id, int num_to_build)
+void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id,
+                                            int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -1126,12 +1117,9 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id,
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
-{
-    BuildQuantityChangedSignal(queue_idx, quantity);
-}
+{ BuildQuantityChangedSignal(queue_idx, quantity); }
 
-void BuildDesignatorWnd::SelectDefaultPlanet()
-{
+void BuildDesignatorWnd::SelectDefaultPlanet() {
     int system_id = SidePanel::SystemID();
     if (system_id == INVALID_OBJECT_ID) {
         this->SelectPlanet(INVALID_OBJECT_ID);
