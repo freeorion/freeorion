@@ -1556,6 +1556,22 @@ bool Empire::ProducibleItem(const ProductionQueue::ProductionItem& item, int loc
     return false;
 }
 
+bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int location) const {
+    if (build_type != BT_BUILDING)
+        return false;
+
+    const BuildingType* building_type = GetBuildingType(name);
+    if (!building_type || !building_type->Producible())
+        return false;
+
+    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
+    if (!build_location)
+        return false;
+
+    // specified location must be a valid production location for that building type
+    return building_type->EnqueueLocation(m_id, location);
+}
+
 int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     if (turn == INVALID_GAME_TURN)
         return m_sitrep_entries.size();
@@ -2242,11 +2258,18 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
+    if (!EnqueuableItem(build_type, name, location)) {
+        Logger().debugStream() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue";
+        return;
+    }
+
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
+        Logger().debugStream() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
+        return;
+    }
+
     if (!ProducibleItem(build_type, name, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
-
-    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
-        return;
 
     ProductionQueue::Element build(build_type, name, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
