@@ -11,7 +11,7 @@ import PriorityAI
 import ProductionAI
 import ColonisationAI
 
-MinThreat = 10 # the minimum threat level that will be ascribed to an unkown threat capable of killing scouts
+MinThreat = 10 # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 MilitaryAllocations = []
 minMilAllocations = {}
 totMilRating=0
@@ -33,7 +33,7 @@ def ratingNeeded(target,  current=0):
         return target + current - (4*target*current)**0.5
         
 def avail_mil_needing_repair(milFleetIDs,  split_ships=False,  on_mission=False):
-    "returns tuple of lists-- ( ids_needing_repair,  ids_not )"
+    """returns tuple of lists-- ( ids_needing_repair,  ids_not )"""
     fleet_buckets = [[],  []]
     universe = fo.getUniverse()
     cutoff = [0.70,  0.25][ on_mission ]
@@ -59,14 +59,14 @@ def avail_mil_needing_repair(milFleetIDs,  split_ships=False,  on_mission=False)
     return fleet_buckets
 
 def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
-    "get armed military fleets"
+    """get armed military fleets"""
     global MilitaryAllocations, totMilRating,  num_milships
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitalID = PlanetUtilsAI.getCapital()
-    if capitalID == None:
+    if capitalID is None:
         homeworld=None
     else:
         homeworld = universe.getPlanet(capitalID)
@@ -75,7 +75,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     else:
         homeSystemID=-1
 
-    if milFleetIDs !=None:
+    if milFleetIDs is not None:
         allMilitaryFleetIDs = milFleetIDs
     else:
         allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
@@ -105,7 +105,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     allocations = []
     allocationGroups={}
 
-    if milFleetIDs == []:
+    if not milFleetIDs:
         if "Main" in thisround:
             MilitaryAllocations = []
         return []
@@ -137,7 +137,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
 
     # get systems to defend
     capitalID = PlanetUtilsAI.getCapital()
-    if capitalID != None:
+    if capitalID is not None:
         capitalPlanet = universe.getPlanet(capitalID)
     else:
         capitalPlanet=None
@@ -193,7 +193,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     neededRating = ratingNeeded(1.4*capitalThreat,  alreadyAssignedRating[capitalSysID])
     newAlloc=0
     if tryReset:
-        if (neededRating > 0.5*availMilRating) :
+        if neededRating > 0.5*availMilRating:
             tryAgain(allMilitaryFleetIDs)
             return
     if neededRating > 0:
@@ -225,7 +225,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         for sid,  thrt in ocSysTotThreat:
             curAlloc=alreadyAssignedRating[sid]
             neededRating = ratingNeeded( 1.3*thrt,  curAlloc)
-            if (neededRating > 0.8*(remainingMilRating )) and tryReset:
+            if (neededRating > 0.8* remainingMilRating) and tryReset:
                 tryAgain(allMilitaryFleetIDs)
                 return
             thisAlloc=0
@@ -402,7 +402,8 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     currentMilSystems = [sid for sid, alloc, takeAny, mm  in allocations ]
     interiorIDs = list( foAI.foAIstate.expInteriorSystemIDs)
     interiorTargets1 =   (targetableIDs.union(interiorIDs)).difference( currentMilSystems )
-    interiorTargets = [sid for sid in interiorTargets1 if ( (threatBias + foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0) >0.8*alreadyAssignedRating[sid] ) ) ]
+    interiorTargets = [sid for sid in interiorTargets1 if (
+		      threatBias + foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0) >0.8*alreadyAssignedRating[sid] ) ]
     if "Main" in thisround:
         if verboseMilReporting:
             print ""
@@ -489,8 +490,8 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
     accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
     currentMilSystems = [sid for sid, alloc,  takeAny,  multiplier  in allocations if alloc > 0 ]
-    borderTargets1 = [sid for sid in accessibleSystemIDs  if (  ( sid not in currentMilSystems )) ]
-    borderTargets = [sid for sid in borderTargets1 if ( ( threatBias +foAI.foAIstate.systemStatus.get(sid, {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(sid, {}).get('planetThreat', 0) > 0.8*alreadyAssignedRating[sid] )) ]
+    borderTargets1 = [sid for sid in accessibleSystemIDs  if (  sid not in currentMilSystems) ]
+    borderTargets = [sid for sid in borderTargets1 if (threatBias +foAI.foAIstate.systemStatus.get(sid, {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(sid, {}).get('planetThreat', 0) > 0.8*alreadyAssignedRating[sid]) ]
     if "Main" in thisround:
         if verboseMilReporting:
             print ""
@@ -597,7 +598,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     return newAllocations
 
 def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
-    "return list of military targeted systems"
+    """return list of military targeted systems"""
 
     universe = fo.getUniverse()
     militaryAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
@@ -615,7 +616,7 @@ def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
     return targetedSystems
 
 def assignMilitaryValues(systemIDs, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
-    "creates a dictionary that takes systemIDs as key and their military score as value"
+    """creates a dictionary that takes systemIDs as key and their military score as value"""
 
     systemValues = {}
 
@@ -625,11 +626,11 @@ def assignMilitaryValues(systemIDs, missionType, empireProvinceSystemIDs, otherT
     return systemValues
 
 def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
-    "return the military value of a system"
+    """return the military value of a system"""
 
     universe = fo.getUniverse()
     system = universe.getSystem(systemID)
-    if (system == None): return 0
+    if system is None: return 0
 
     # give preference to home system then closest systems
     empireID = empire.empireID
@@ -679,7 +680,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
 
         allMilitaryFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
         AIstate.militaryFleetIDs = allMilitaryFleetIDs
-        if allMilitaryFleetIDs == []:
+        if not allMilitaryFleetIDs:
             MilitaryAllocations = []
             return
         availMilFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs) )
@@ -712,7 +713,7 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
                                                             fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
         except:
             continue
-        if theseFleets == []:
+        if not theseFleets:
             if foundFleets==[]  or  not ( FleetUtilsAI.statsMeetReqs( foundStats,  {'rating':minalloc}) or takeAny):
                 if doingMain:
                     if verboseMilReporting:

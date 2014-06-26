@@ -20,7 +20,7 @@ def get_research_index():
     return research_index
 
 def generateResearchOrders():
-    "generate research orders"
+    """generate research orders"""
 
     universe=fo.getUniverse()
     empire = fo.getEmpire()
@@ -71,7 +71,7 @@ def generateResearchOrders():
         techBase = set(completedTechs+researchQueueList)
         techsToAdd=[]
         for tech in pLTsToEnqueue:
-            if (tech not in  techBase):
+            if tech not in  techBase:
                 thisTech=fo.getTech(tech)
                 if thisTech is None:
                     print "Error: desired tech '%s' appears to not exist"%tech
@@ -161,20 +161,22 @@ def generateResearchOrders():
         needImprovedScouting = ( bestColonySiteScore <150  or   bestOutpostSiteScore < 200 )
 
         if needImprovedScouting:
-            if (empire.getTechStatus("CON_ORBITAL_CON") != fo.techStatus.complete):
+            if empire.getTechStatus("CON_ORBITAL_CON") != fo.techStatus.complete:
                 if  ( "CON_ORBITAL_CON" not in researchQueueList[:1 + num_techs_accelerated]  ) and  (
                                 (empire.getTechStatus("PRO_FUSION_GEN") == fo.techStatus.complete) or ( "PRO_FUSION_GEN"  in researchQueueList[:1+num_techs_accelerated]  )):
                     res=fo.issueEnqueueTechOrder("CON_ORBITAL_CON", num_techs_accelerated)
                     num_techs_accelerated += 1
                     print "Empire has poor colony/outpost prospects,  so attempted to fast-track %s,  got result %d"%("CON_ORBITAL_CON", res)
-            elif (empire.getTechStatus("CON_CONTGRAV_ARCH") != fo.techStatus.complete):
-                if  ( "CON_CONTGRAV_ARCH" not in researchQueueList[:1+num_techs_accelerated]  ) and  ((empire.getTechStatus("CON_METRO_INFRA") == fo.techStatus.complete)):
+            elif empire.getTechStatus("CON_CONTGRAV_ARCH") != fo.techStatus.complete:
+                if  ( "CON_CONTGRAV_ARCH" not in researchQueueList[:1+num_techs_accelerated]  ) and  (
+                    empire.getTechStatus("CON_METRO_INFRA") == fo.techStatus.complete):
                     for supply_tech in [_s_tech for _s_tech in ["CON_ARCH_MONOFILS",  "CON_CONTGRAV_ARCH"] if  (empire.getTechStatus(_s_tech) != fo.techStatus.complete)]:
                         res=fo.issueEnqueueTechOrder(supply_tech, num_techs_accelerated)
                         num_techs_accelerated += 1
                         print "Empire has poor colony/outpost prospects,  so attempted to fast-track %s,  got result %d"%(supply_tech, res)
-            elif (empire.getTechStatus("CON_GAL_INFRA") != fo.techStatus.complete):
-                if  ( "CON_GAL_INFRA" not in researchQueueList[:1+num_techs_accelerated]  ) and  ((empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete)):
+            elif empire.getTechStatus("CON_GAL_INFRA") != fo.techStatus.complete:
+                if  ( "CON_GAL_INFRA" not in researchQueueList[:1+num_techs_accelerated]  ) and  (
+                    empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete):
                     res=fo.issueEnqueueTechOrder("CON_GAL_INFRA", num_techs_accelerated)
                     num_techs_accelerated += 1
                     print "Empire has poor colony/outpost prospects,  so attempted to fast-track %s,  got result %d"%("CON_GAL_INFRA", res)
@@ -185,7 +187,7 @@ def generateResearchOrders():
             
             if False and (empire.getTechStatus("SPY_DETECT_2") != fo.techStatus.complete): #disabled for now, detect2
                 if  ( "SPY_DETECT_2" not in researchQueueList[:2+num_techs_accelerated]  ) and  (empire.getTechStatus("PRO_FUSION_GEN") == fo.techStatus.complete) :
-                    if  ( "CON_ORBITAL_CON" not in researchQueueList[:1+num_techs_accelerated]  ):
+                    if "CON_ORBITAL_CON" not in researchQueueList[:1+num_techs_accelerated]:
                         res=fo.issueEnqueueTechOrder("SPY_DETECT_2", num_techs_accelerated)
                     else:
                         CO_idx = researchQueueList.index( "CON_ORBITAL_CON")
@@ -217,7 +219,7 @@ def generateResearchOrders():
     if True: #just to help with cold-folding /  organization
         if ColonisationAI.gotAst and empire.getTechStatus("SHP_ASTEROID_HULLS") != fo.techStatus.complete and (
                         ("SHP_ASTEROID_HULLS" not in researchQueueList[num_techs_accelerated])): #if needed but not top item, will block acceleration of pro_orb_gen
-            if ("SHP_ASTEROID_HULLS" not in researchQueueList[:2+num_techs_accelerated]):
+            if "SHP_ASTEROID_HULLS" not in researchQueueList[:2+num_techs_accelerated]:
                 if "GRO_SYMBIOTIC_BIO" in researchQueueList:
                     insert_idx = 1+ researchQueueList.index("GRO_SYMBIOTIC_BIO")
                 else:
@@ -263,14 +265,14 @@ def generateResearchOrders():
     #
     # check to accelerate distrib thought
     if True: #just to help with cold-folding /  organization
-        if (empire.getTechStatus("LRN_DISTRIB_THOUGHT") != fo.techStatus.complete):
+        if empire.getTechStatus("LRN_DISTRIB_THOUGHT") != fo.techStatus.complete:
             got_telepathy = False
             for specName in ColonisationAI.empireSpecies:
                 thisSpec=fo.getSpecies(specName)
                 if thisSpec and ("TELEPATHIC" in list(thisSpec.tags)):
                     got_telepathy = True
                     break
-            if ((foAI.foAIstate.aggression > fo.aggression.cautious) and (empire.population() > ([300, 100][got_telepathy]))):
+            if (foAI.foAIstate.aggression > fo.aggression.cautious) and (empire.population() > ([300, 100][got_telepathy])):
                 insert_idx = num_techs_accelerated
                 for dt_ech in [ "LRN_DISTRIB_THOUGHT", "LRN_PSIONICS", "LRN_TRANSLING_THT",  "LRN_PHYS_BRAIN" ]:
                     if   dt_ech not in researchQueueList[:4+num_techs_accelerated]  and  empire.getTechStatus(dt_ech) != fo.techStatus.complete:
@@ -284,7 +286,7 @@ def generateResearchOrders():
     # check to accelerate quant net
     if True: #just to help with cold-folding /  organization
         if (foAI.foAIstate.aggression > fo.aggression.cautious) and( ColonisationAI.empire_status.get('researchers', 0) >= 40 ):
-            if (empire.getTechStatus("LRN_QUANT_NET") != fo.techStatus.complete):
+            if empire.getTechStatus("LRN_QUANT_NET") != fo.techStatus.complete:
                 insert_idx = num_techs_accelerated
                 for qnTech in [ "LRN_NDIM_SUBSPACE", "LRN_QUANT_NET" ]:
                     if   qnTech not in researchQueueList[:2+num_techs_accelerated]  and  empire.getTechStatus(qnTech) != fo.techStatus.complete:
@@ -303,7 +305,7 @@ def generateResearchOrders():
             sing_tech_list =  [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empireID) if (empire.getTechStatus(pre_req) != fo.techStatus.complete) ]
             sing_tech_list += [ AIDependencies.sing_tech_name ]
             for singTech in sing_tech_list:
-                if (  singTech  not in researchQueueList[:num_techs_accelerated+1  ])  :
+                if singTech  not in researchQueueList[:num_techs_accelerated+1  ]:
                     res=fo.issueEnqueueTechOrder(singTech,num_techs_accelerated)
                     num_techs_accelerated += 1
                     print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%(singTech, res)
@@ -326,7 +328,7 @@ def generateResearchOrders():
             researchQueueList = getResearchQueueTechs()
 
 def generateDefaultResearchOrders():
-    "generate default research orders"
+    """generate default research orders"""
 
     empire = fo.getEmpire()
     totalRP = empire.resourceProduction(fo.resourceType.research)
@@ -361,7 +363,7 @@ def generateDefaultResearchOrders():
     print ""
 
 def getPossibleProjects():
-    "get possible projects"
+    """get possible projects"""
 
     preliminaryProjects = []
     technames = fo.techs() # returns names of all techs
@@ -376,13 +378,13 @@ def getPossibleProjects():
     return possibleProjects
 
 def spentRP():
-    "calculate RPs spent this turn so far"
+    """calculate RPs spent this turn so far"""
 
     queue = fo.getEmpire().researchQueue
     return queue.totalSpent
 
 def getCompletedTechs():
-    "get completed and available for use techs"
+    """get completed and available for use techs"""
 
     completedTechs = []
     technames = fo.techs() # returns names of all techs
@@ -394,7 +396,7 @@ def getCompletedTechs():
     return completedTechs
 
 def getResearchQueueTechs():
-    "get list of techs in research queue"
+    """get list of techs in research queue"""
 
     empire = fo.getEmpire()
     researchQueue = empire.researchQueue

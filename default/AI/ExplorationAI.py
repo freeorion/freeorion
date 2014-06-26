@@ -24,7 +24,7 @@ def updateScoutFleets():
     currentScoutFleetIDs.extend( FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION) )
 
 def getCurrentExplorationInfo(verbose=True):
-    "returns ( [current target list] ,  [available scout list] ) "
+    """returns ( [current target list] ,  [available scout list] ) """
     fleetIDs = list( currentScoutFleetIDs )
     availableScouts=[]
     alreadyCovered=set()
@@ -40,7 +40,7 @@ def getCurrentExplorationInfo(verbose=True):
                 else:
                     print "found existing exploration targets: %s"%targets
             alreadyCovered.update( targets )
-    return ( list(alreadyCovered),  availableScouts )
+    return list(alreadyCovered),  availableScouts
 
 def assignScoutsToExploreSystems():
     # TODO: use Graph Theory to explore closest systems
@@ -73,13 +73,13 @@ def assignScoutsToExploreSystems():
     sentList=[]
     while (len(availableScouts) > 0 ) and ( len(needsCoverage) >0):
         thisSysID = needsCoverage.pop(0)
-        if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000*(foAI.foAIstate.aggression) ) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
+        if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000* foAI.foAIstate.aggression ) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
             print "Skipping exploration of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             continue
         foundFleets=[]
         thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[],
                                                      fleetPoolSet = availableScouts,   fleetList=foundFleets,  verbose=False)
-        if thisFleetList==[]:
+        if not thisFleetList:
             print "seem to have run out of scouts while trying to cover sysID %d"%thisSysID
             break #must have ran out of scouts
         fleetID = thisFleetList[0]
@@ -120,7 +120,7 @@ def assignScoutsToExploreSystems():
     """
 
 def getHomeSystemID():
-    "returns the systemID of the home world"
+    """returns the systemID of the home world"""
 
     empire = fo.getEmpire()
     universe = fo.getUniverse()
@@ -137,7 +137,7 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
     empireID = foAI.foAIstate.empireID
     empire = fo.getEmpire()
     explorationList=[  startSystemID ]
-    while explorationList !=[]:
+    while explorationList:
         curSystemID = explorationList.pop(0)
         if curSystemID in graphFlags:
             continue
@@ -197,7 +197,7 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
             if len(neighbors)>0:
                 statusStr += " -- has neighbors %s "%neighbors
                 for sysID in neighbors:#.keys() :
-                    if (sysID not in foAI.foAIstate.exploredSystemIDs):
+                    if sysID not in foAI.foAIstate.exploredSystemIDs:
                         foAI.foAIstate.unexploredSystemIDs[sysID] = 1
                     if  (sysID not in graphFlags) and (sysID not in foAI.foAIstate.visInteriorSystemIDs ):
                         foAI.foAIstate.visBorderSystemIDs[sysID] = 1
@@ -221,7 +221,7 @@ def updateExploredSystems():
     newlyExplored=[]
     stillUnexplored=[]
     for sysID in list(foAI.foAIstate.unexploredSystemIDs):
-        if  (empire.hasExploredSystem(sysID)):  #consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
+        if empire.hasExploredSystem(sysID):  #consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
             del foAI.foAIstate.unexploredSystemIDs[sysID]
             foAI.foAIstate.exploredSystemIDs[sysID] = 1
             sys=universe.getSystem(sysID)
@@ -245,7 +245,7 @@ def updateExploredSystems():
                     nextList.append(neighborID)
             if allExplored:
                 interiorExploredSystemIDs[sysID] = 1
-                if (sysID  in borderExploredSystemIDs) :
+                if sysID  in borderExploredSystemIDs:
                     del borderExploredSystemIDs[sysID]
             else:
                 borderExploredSystemIDs[sysID] = 1

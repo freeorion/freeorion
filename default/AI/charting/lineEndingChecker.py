@@ -24,7 +24,7 @@ def checkLineEndings(filename,  fix=False):
     CRLF=0
     CR=0
     nextlines=thisFile.readlines(8192)
-    while nextlines!=[]:
+    while nextlines:
         for thisline in nextlines:
             if thisline[-2:]=='\r\n':
                 CRLF+=1

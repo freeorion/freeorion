@@ -25,7 +25,7 @@ scoutsNeeded = 0
 unmetThreat = 0
 
 def calculatePriorities():
-    "calculates the priorities of the AI player"
+    """calculates the priorities of the AI player"""
     print("checking statuses")
     # Industry, Research, Colony, Invasion, Military
     times=[]
@@ -90,7 +90,7 @@ def calculatePriorities():
     # foAI.foAIstate.printPriorities()
 
 def calculateFoodPriority():
-    "calculates the AI's need for food"
+    """calculates the AI's need for food"""
     # attempts to sustain a food stockpile whose size depends on the AI empires population
     # foodStockpile == 0 => returns 100, foodStockpile == foodTarget => returns 0
 
@@ -100,7 +100,7 @@ def calculateFoodPriority():
     #foodTarget = 10 * empire.population() * AIstate.foodStockpileSize
     foodTarget=0
 
-    if (foodTarget == 0):
+    if foodTarget == 0:
         return 0
 
     foodPriority = (foodTarget - foodStockpile) / foodTarget * 115
@@ -117,7 +117,7 @@ def calculateFoodPriority():
     return foodPriority
 
 def calculateIndustryPriority(): #currently only used to print status
-    "calculates the demand for industry"
+    """calculates the demand for industry"""
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -137,7 +137,7 @@ def calculateIndustryPriority(): #currently only used to print status
     return industryPriority
 
 def calculateResearchPriority():
-    "calculates the AI empire's demand for research"
+    """calculates the AI empire's demand for research"""
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -159,7 +159,7 @@ def calculateResearchPriority():
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge =  ((foAI.foAIstate.aggression > fo.aggression.cautious) and  
-                              ( (totalPP + 1.6 * totalRP) <(60*(foAI.foAIstate.aggression))  )  and 
+                              ( (totalPP + 1.6 * totalRP) <(60* foAI.foAIstate.aggression)  )  and
                               ((orbGenTech  in researchQueueList[:3]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete) and ColonisationAI.gotGG ) and
                               ( not     (
                                             (len(AIstate.popCtrIDs) >= 8 )))) # previously (empire.getTechStatus(AIDependencies.prod_auto_name) == fo.techStatus.complete) and   
@@ -180,9 +180,9 @@ def calculateResearchPriority():
         researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
     elif (not got_orb_gen) or (fo.currentTurn() < cutoffs[1]) :
         researchPriority = settings[1] * industryPriority# med-high research
-    elif (fo.currentTurn() < cutoffs[2]):
+    elif fo.currentTurn() < cutoffs[2]:
         researchPriority = settings[2] * industryPriority # med-high  industry
-    elif (fo.currentTurn() < cutoffs[3]):
+    elif fo.currentTurn() < cutoffs[3]:
         researchPriority = settings[3] * industryPriority # med-high  industry
     else:
         researchQueue = list(empire.researchQueue)
@@ -194,7 +194,7 @@ def calculateResearchPriority():
         elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
             researchPriority = (4+ 2*len(researchQueue)) * 0.01 * industryPriority  # almost done with research
         elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
-            researchPriority = 0.7 * researchPriority # closing in on end of research
+            researchPriority *= 0.7  # closing in on end of research
     if industrySurge:
         researchPriority *= 0.6
                 
@@ -215,7 +215,7 @@ def calculateResearchPriority():
     return researchPriority
 
 def calculateExplorationPriority():
-    "calculates the demand for scouts by unexplored systems"
+    """calculates the demand for scouts by unexplored systems"""
 
     global scoutsNeeded
 
@@ -244,7 +244,7 @@ def calculateExplorationPriority():
     return explorationPriority
 
 def calculateColonisationPriority():
-    "calculates the demand for colony ships by colonisable planets"
+    """calculates the demand for colony ships by colonisable planets"""
     global allottedColonyTargets, colonyGrowthBarrier
     totalPP=fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
@@ -258,17 +258,17 @@ def calculateColonisationPriority():
     #if ( foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) 
     #        > 2 * foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     #    allottedPortion *= 1.5
-    if ( mil_prio < 100 ):
+    if mil_prio < 100:
         allottedPortion *= 2
-    elif ( mil_prio < 200 ):
+    elif mil_prio < 200:
         allottedPortion *= 1.5
-    elif (fo.currentTurn() > 100):
+    elif fo.currentTurn() > 100:
         allottedPortion *= 0.75**(num_colonies/10.0)
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
     numColonisablePlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisablePlanetIDs if score > 60 ][:allottedColonyTargets+2] )
-    if (numColonisablePlanetIDs == 0): return 1
+    if numColonisablePlanetIDs == 0: return 1
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
@@ -284,7 +284,7 @@ def calculateColonisationPriority():
     return colonisationPriority
 
 def calculateOutpostPriority():
-    "calculates the demand for outpost ships by colonisable planets"
+    """calculates the demand for outpost ships by colonisable planets"""
     baseOutpostCost=80
 
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
@@ -307,7 +307,7 @@ def calculateOutpostPriority():
     return outpostPriority
 
 def calculateInvasionPriority():
-    "calculates the demand for troop ships by opponent planets"
+    """calculates the demand for troop ships by opponent planets"""
     global allottedInvasionTargets
     troopsPerPod=2
     empire=fo.getEmpire()
@@ -361,8 +361,8 @@ def calculateInvasionPriority():
 
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
     invasionPriority = multiplier * (30+ 150*max(0,  troopShipsNeeded ))
-    if ColonisationAI.colony_status.get('colonies_under_attack',  []) ==[]:
-        if ColonisationAI.colony_status.get('colonies_under_threat',  []) ==[]:
+    if not ColonisationAI.colony_status.get('colonies_under_attack', []):
+        if not ColonisationAI.colony_status.get('colonies_under_threat', []):
             invasionPriority *= 2.0
         else:
             invasionPriority *= 1.5
@@ -375,7 +375,7 @@ def calculateInvasionPriority():
         return invasionPriority
 
 def calculateMilitaryPriority():
-    "calculates the demand for military ships by military targeted systems"
+    """calculates the demand for military ships by military targeted systems"""
     global unmetThreat
 
     universe = fo.getUniverse()
@@ -439,7 +439,7 @@ def calculateMilitaryPriority():
     return max( militaryPriority,  0)
 
 def calculateTopProductionQueuePriority():
-    "calculates the top production queue priority"
+    """calculates the top production queue priority"""
 
     productionQueuePriorities = {}
     for priorityType in EnumsAI.getAIPriorityProductionTypes():
@@ -455,7 +455,7 @@ def calculateTopProductionQueuePriority():
     return topProductionQueuePriority
 
 def calculateLearningPriority():
-    "calculates the demand for techs learning category"
+    """calculates the demand for techs learning category"""
 
     currentturn = fo.currentTurn()
     if currentturn == 1:
@@ -464,7 +464,7 @@ def calculateLearningPriority():
         return 0
 
 def calculateGrowthPriority():
-    "calculates the demand for techs growth category"
+    """calculates the demand for techs growth category"""
 
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 8:
@@ -473,7 +473,7 @@ def calculateGrowthPriority():
         return 0
 
 def calculateTechsProductionPriority():
-    "calculates the demand for techs production category"
+    """calculates the demand for techs production category"""
 
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 7 or productionPriority == 9:
@@ -482,7 +482,7 @@ def calculateTechsProductionPriority():
         return 0
 
 def calculateConstructionPriority():
-    "calculates the demand for techs construction category"
+    """calculates the demand for techs construction category"""
 
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 6 or productionPriority == 11:
@@ -491,7 +491,7 @@ def calculateConstructionPriority():
         return 30
 
 def calculateShipsPriority():
-    "calculates the demand for techs ships category"
+    """calculates the demand for techs ships category"""
 
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 10:

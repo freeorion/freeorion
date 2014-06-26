@@ -5,16 +5,16 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 AI_TARGET_TYPE_NAMES = AITargetType()
 
 class AITarget(object):
-    "stores information about AI target - its id and type"
+    """stores information about AI target - its id and type"""
 
     def __init__(self, target_type, target_id):
-        "constructor"
+        """constructor"""
 
         self.target_type = target_type
         self.target_id = target_id
 
     def __cmp__(self, other):
-        "compares AITargets"
+        """compares AITargets"""
 
         if self.target_id < other.target_id:
             return - 1
@@ -27,16 +27,16 @@ class AITarget(object):
         return 1
 
     def __eq__(self, other):
-        "returns equal to other object"
+        """returns equal to other object"""
 
-        if other == None:
+        if other is None:
             return False
         if isinstance(other, AITarget):
             return self.__cmp__(other) == 0
         return NotImplemented
 
     def __ne__(self, other):
-        "returns not equal to other object"
+        """returns not equal to other object"""
 
         result = self.__eq__(other)
         if result is NotImplemented:
@@ -44,7 +44,7 @@ class AITarget(object):
         return not result
 
     def __str__(self):
-        "returns describing string"
+        """returns describing string"""
         target = self.target_obj
         if target is None:
             target_name = "%4d" % self.target_id
@@ -75,9 +75,9 @@ class AITarget(object):
         return target
 
     def valid(self):
-        "returns if this object is valid"
+        """returns if this object is valid"""
 
-        if self.target_id == None or self.target_type == None or \
+        if self.target_id is None or self.target_type is None or \
                 EnumsAI.checkValidity(self.target_id) == False:
             return False
 
@@ -89,7 +89,7 @@ class AITarget(object):
         return False
 
     def get_required_system_ai_targets(self):
-        "returns all system AITargets required to visit in this object"
+        """returns all system AITargets required to visit in this object"""
 
         # TODO: add parameter turn
 
@@ -110,7 +110,7 @@ class AITarget(object):
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.target_id)
             system_id = fleet.nextSystemID
-            if (system_id == -1):
+            if system_id == -1:
                 system_id = fleet.systemID
             ai_target = AITarget(AITargetType.TARGET_SYSTEM, system_id)
 

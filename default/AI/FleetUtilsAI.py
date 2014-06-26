@@ -63,7 +63,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
     fleetsHere = [ fid for fid in foAI.foAIstate.systemStatus.get(thisSystemID,  {}).get('myFleetsAccessible',  []) if fid in fleetPoolSet]
     if verbose:
         print "found fleetPool Fleets  %s"%fleetsHere
-    while fleetsHere !=[]:
+    while fleetsHere:
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
         if not fleet:
@@ -76,12 +76,12 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             fleetsHere.extend(newFleets)
         meetsSpeciesReq=False
         needsSpecies=False
-        if (species != ""):
+        if species != "":
             needsSpecies=True
         hasSpecies=""
         for shipID in fleet.shipIDs:
             ship = universe.getShip(shipID)
-            if ((foAI.foAIstate.getShipRole(ship.design.id) in [ AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION,  AIShipRoleType.SHIP_ROLE_BASE_COLONISATION]) ):
+            if foAI.foAIstate.getShipRole(ship.design.id) in [ AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION,  AIShipRoleType.SHIP_ROLE_BASE_COLONISATION]:
                 hasSpecies = ship.speciesName
                 if hasSpecies==species:
                     meetsSpeciesReq=True
@@ -125,7 +125,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
 import traceback
 
 def splitFleet(fleetID):
-    "splits a fleet into its ships"
+    """splits a fleet into its ships"""
 
     universe = fo.getUniverse()
     empireID = fo.empireID()
@@ -133,14 +133,14 @@ def splitFleet(fleetID):
     fleet = universe.getFleet(fleetID)
     newfleets = []
 
-    if fleet == None: return []
+    if fleet is None: return []
     if not fleet.ownedBy(empireID): return []
 
     if len(list(fleet.shipIDs)) <= 1:  # fleet with only one ship cannot be split
         return []
     shipIDs = list( fleet.shipIDs )
     for shipID in shipIDs[1:]:
-        newFleetID = fo.issueNewFleetOrder("Fleet %d"%(shipID), shipID)
+        newFleetID = fo.issueNewFleetOrder("Fleet %d"% shipID, shipID)
         if newFleetID:
             newFleet=universe.getFleet(newFleetID)
             if not newFleet:
@@ -158,7 +158,7 @@ def splitFleet(fleetID):
                 print "Error - got no fleet ID back after trying to split ship id (%d) from fleet %d"%(shipID,  fleetID)
     foAI.foAIstate.getFleetRole(fleetID, forceNew=True) #
     foAI.foAIstate.updateFleetRating(fleetID) #
-    if newfleets !=[]:
+    if newfleets:
         foAI.foAIstate.ensureHaveFleetMissions(newfleets)
     return newfleets
 
@@ -178,7 +178,7 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
     BHasMonster=False
     for shipID in fleetB.shipIDs:
         thisShip=universe.getShip(shipID)
-        if (not thisShip):
+        if not thisShip:
             continue
         if  thisShip.isMonster:
             BHasMonster = True
@@ -220,20 +220,20 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
     return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
 
 def fleetHasShipWithRole(fleetID, shipRole):
-    "returns True if a ship with shipRole is in the fleet"
+    """returns True if a ship with shipRole is in the fleet"""
 
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleetID)
 
-    if fleet == None: return False
+    if fleet is None: return False
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
-        if (foAI.foAIstate.getShipRole(ship.design.id) == shipRole):
+        if foAI.foAIstate.getShipRole(ship.design.id) == shipRole:
             return True
     return False
 
 def getShipIDWithRole(fleetID, shipRole,  verbose = True):
-    "returns a ship with the specified role in the fleet"
+    """returns a ship with the specified role in the fleet"""
 
     if not fleetHasShipWithRole(fleetID, shipRole):
         if verbose:
@@ -245,14 +245,14 @@ def getShipIDWithRole(fleetID, shipRole,  verbose = True):
 
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
-        if (foAI.foAIstate.getShipRole(ship.design.id) == shipRole):
+        if foAI.foAIstate.getShipRole(ship.design.id) == shipRole:
             return shipID
 
 def getAllEverVisibleFleetIDs(): #may be only currently visible
     return  fo.getUniverse().fleetIDs
 
 def getEmpireFleetIDs( empireID=None):
-    "returns all fleetIDs of specified empire, defauls to current empire"
+    """returns all fleetIDs of specified empire, defauls to current empire"""
     if empireID is None:
         empireID = foAI.foAIstate.empireID
     universe = fo.getUniverse()
@@ -260,13 +260,13 @@ def getEmpireFleetIDs( empireID=None):
     destroyedObjectIDs = universe.destroyedObjectIDs(empireID)
     for fleetID in set(list(universe.fleetIDs) + list(foAI.foAIstate.newlySplitFleets)):
         fleet = universe.getFleet(fleetID)
-        if (fleet == None): continue
-        if ( fleet.ownedBy(empireID))  and (fleetID not in destroyedObjectIDs) and (not(fleet.empty) )and  (not (len(fleet.shipIDs)==0) ):
+        if fleet is None: continue
+        if ( fleet.ownedBy(empireID))  and (fleetID not in destroyedObjectIDs) and (not fleet.empty )and  (not (len(fleet.shipIDs)==0) ):
             empireFleetIDs.append( fleetID )
     return empireFleetIDs
 
 def getEmpireFleetIDsByRole(fleetRole):
-    "returns a list with fleetIDs that have the specified role"
+    """returns a list with fleetIDs that have the specified role"""
     fleetIDs = getEmpireFleetIDs()
     fleetIDsWithRole = []
     for fleetID in fleetIDs:
@@ -275,7 +275,7 @@ def getEmpireFleetIDsByRole(fleetRole):
     return fleetIDsWithRole
 
 def extractFleetIDsWithoutMissionTypes(fleetIDs):
-    "extracts a list with fleetIDs that have no mission"
+    """extracts a list with fleetIDs that have no mission"""
     fleetIDsWithoutMission = []
     for fleetID in fleetIDs:
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
@@ -284,7 +284,7 @@ def extractFleetIDsWithoutMissionTypes(fleetIDs):
     return fleetIDsWithoutMission
 
 def assessFleetRole(fleetID):
-    "assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole"
+    """assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole"""
     universe = fo.getUniverse()
     shipRoles = {}
     fleet = universe.getFleet(fleetID)
@@ -384,7 +384,7 @@ def assessDesignIDStats(designID):
         return  {'attack':design.attack, 'structure':design.structure, 'shields':design.shields}
 
 def assessShipRole(shipID):
-    "decides which role a ship has"
+    """decides which role a ship has"""
     ship = fo.getUniverse().getShip(shipID)
     if ship:
         return assessShipDesignRole( fo.getShipDesign(ship.designID) )
@@ -392,7 +392,7 @@ def assessShipRole(shipID):
         return AIShipRoleType.SHIP_ROLE_INVALID
 
 def generateAIFleetOrdersForAIFleetMissions():
-    "generates fleet orders from targets"
+    """generates fleet orders from targets"""
     print("Generating fleet orders")
 
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
@@ -496,13 +496,13 @@ def generateAIFleetOrdersForAIFleetMissions():
         aiFleetMission.generateAIFleetOrders()
 
 def issueAIFleetOrdersForAIFleetMissions():
-    "issues fleet orders"
+    """issues fleet orders"""
 
     print ""
     universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     thisround = 0
-    while (thisround <3):
+    while thisround <3:
         thisround += 1
         print "issuing fleet orders Round %d:"%thisround
         for aiFleetMission in aiFleetMissions:

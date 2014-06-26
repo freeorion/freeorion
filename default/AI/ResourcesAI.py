@@ -91,7 +91,7 @@ def getResourceTargetTotals(empirePlanetIDs):#+
     return targetPP,  targetRP
 
 def printResourcesPriority():
-    "calculate top resource priority"
+    """calculate top resource priority"""
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -147,7 +147,7 @@ def tallyStream(curVal,  targetVal,  nTurns,  force=False):
     return tally
 
 def setPlanetResourceFoci(): #+
-    "set resource focus of planets "
+    """set resource focus of planets """
     newFoci = {}
 
     print "\n============================"
@@ -202,7 +202,7 @@ def setPlanetResourceFoci(): #+
                             if cur_focus == GFocus:
                                 pop -=4 #discourage changing current focus to minimize focus-changing penalties
                             rankedPlanets.append(  (pop,  pid,  cur_focus) )
-                    if rankedPlanets == []:
+                    if not rankedPlanets:
                         continue
                     rankedPlanets.sort()
                     print "Considering  Growth Focus choice for  special %s; possible planet pop,  id pairs are %s"%(metab,  rankedPlanets)
@@ -302,13 +302,13 @@ def setPlanetResourceFoci(): #+
                         newFoci[pid] = RFocus
                         id_set.discard(pid)
                     continue
-                if (adj_round == 3): #take research at planets where can do reasonable balance
-                    if (has_force) or (foAI.foAIstate.aggression < fo.aggression.aggressive) or (curTargetRP >= priorityRatio * ctPP0):
+                if adj_round == 3: #take research at planets where can do reasonable balance
+                    if has_force or (foAI.foAIstate.aggression < fo.aggression.aggressive) or (curTargetRP >= priorityRatio * ctPP0):
                         continue
                     pop = planet.currentMeterValue(fo.meterType.population)
                     t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
                     #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
-                    if (pop < t_pop - 5):
+                    if pop < t_pop - 5:
                         continue
                     if  ( CI > II + 8) or (( (RR>II) or ((RR-CR)>=1+2*research_penalty)) and ((RR-IR)>=3) and ( (CR-IR) >= 0.7*((II-CI)*(1+0.1*research_penalty) ) )):
                         curTargetPP += CI -1 - research_penalty#
@@ -400,7 +400,7 @@ def setPlanetResourceFoci(): #+
             resourceTimerFile.flush()
 
 def generateResourcesOrders(): #+
-    "generate resources focus orders"
+    """generate resources focus orders"""
 
     timer= [ time() ]
     ## calculate top resource priority

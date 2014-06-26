@@ -86,7 +86,7 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     return retPath
 
 def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=False):
-    "check if fleet can travel from starting system to wanted system"
+    """check if fleet can travel from starting system to wanted system"""
 
     systemAITargets = []
     if not fromSystemAITarget.target_id == toSystemAITarget.target_id:
@@ -115,7 +115,7 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
     return systemAITargets
 
 def getNearestSuppliedSystem(startSystemID, empireID):
-    "returns systemAITarget of nearest supplied system from starting system startSystemID"
+    """returns systemAITarget of nearest supplied system from starting system startSystemID"""
 
     empire = fo.getEmpire()
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
@@ -136,7 +136,7 @@ def getNearestSuppliedSystem(startSystemID, empireID):
         return AITarget.AITarget(AITargetType.TARGET_SYSTEM, supplySystemID)
 
 def getNearestDrydockSystemID(startSystemID):
-    "returns systemAITarget of nearest supplied system from starting system startSystemID"
+    """returns systemAITarget of nearest supplied system from starting system startSystemID"""
 
     drydock_system_ids = ColonisationAI.empire_dry_docks.keys()
     universe = fo.getUniverse()
@@ -168,7 +168,7 @@ def get_safe_path_leg_to_dest(fleet_id,  start_id,  dest_id):
     return path_ids[0]
 
 def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, resultSystemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget):
-    "returns system AITargets required to visit with fuel to nearest supplied system"
+    """returns system AITargets required to visit with fuel to nearest supplied system"""
 
     result = True
     # try to find if there is possible path to wanted system from system
@@ -187,7 +187,7 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
                     # from supplied system fleet can travel without fuel consumption and also in this system refuels
                     fuel = maxFuel
                 else:
-                    fuel = fuel - 1
+                    fuel -= 1
 
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
@@ -202,7 +202,7 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
         result = False
 
     # if there is path to wanted system, then also if there is path back to supplyable system
-    if result == True:
+    if result:
         # jump from A to B means leastJumpsPath=[A,B], but minJumps=1
         minJumps = len(universe.leastJumpsPath(toSystemAITarget.target_id, supplySystemAITarget.target_id, empireID)) - 1
 
@@ -212,13 +212,13 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
         #else:
             #resultSystemAITargets.append(toSystemAITarget)
 
-    if result == False:
+    if not result:
         return []
     resultSystemAITargets[:] = newTargets
     return resultSystemAITargets
 
 def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):
-    "returns resupply AIFleetOrder to nearest supplied system"
+    """returns resupply AIFleetOrder to nearest supplied system"""
 
     # find nearest supplied system
     empireID = fo.empireID()
@@ -230,7 +230,7 @@ def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):
     return aiFleetOrder
 
 def getRepairAIFleetOrder(fleetAITarget, current_sys_id):
-    "returns repair AIFleetOrder to [nearest safe] drydock"
+    """returns repair AIFleetOrder to [nearest safe] drydock"""
     # find nearest supplied system
     empireID = fo.empireID()
     drydock_sys_id = getNearestDrydockSystemID(current_sys_id)

@@ -16,7 +16,7 @@ def dictFromMap(thismap):
     return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
 
 def getInvasionFleets():
-    "get invasion fleets"
+    """get invasion fleets"""
 
     times=[]
     tasks = []
@@ -113,7 +113,7 @@ def getInvasionFleets():
         sysID = planet.systemID
         sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  empireID)).get(fo.visibility.partial, -9999)
         planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(pid,  empireID)).get(fo.visibility.partial, -9999)
-        if (planetPartialVisTurn < sysPartialVisTurn):
+        if planetPartialVisTurn < sysPartialVisTurn:
             #print "rejecting %s due to stealth"%planet.name
             continue
         for pid2 in ColonisationAI.empireSpeciesSystems.get(sysID,  {}).get('pids', []):
@@ -206,7 +206,7 @@ def getInvasionFleets():
 
 
 def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
-    "return list of being invaded planets"
+    """return list of being invaded planets"""
 
     universe = fo.getUniverse()
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
@@ -224,7 +224,7 @@ def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
     return targetedPlanets
     
 def retaliation_risk_factor(empire_id):
-    "a multiplicative adjustment to planet scores to account for risk of retaliation from planet owner"
+    """a multiplicative adjustment to planet scores to account for risk of retaliation from planet owner"""
     #TODO implement (in militaryAI) actual military risk assessment of other empires
     if empire_id == -1:  # unowned
         return 1.5  # since no risk of retaliation, increase score
@@ -232,7 +232,7 @@ def retaliation_risk_factor(empire_id):
         return 1.0
 
 def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empire):
-    "creates a dictionary that takes planetIDs as key and their invasion score as value"
+    """creates a dictionary that takes planetIDs as key and their invasion score as value"""
 
     planetValues = {}
     neighbor_values = {}
@@ -266,7 +266,7 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
     return planetValues
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions,  verbose=True):
-    "return the invasion value (score, troops) of a planet"
+    """return the invasion value (score, troops) of a planet"""
     detail = []
     buildingValues = {"BLD_IMPERIAL_PALACE":                    1000,
                                             "BLD_CULTURE_ARCHIVES":                 1000,
@@ -297,7 +297,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     empireID = empire.empireID
     maxJumps=8
     planet = universe.getPlanet(planetID)
-    if (planet == None) :  #TODO: exclude planets with stealth higher than empireDetection
+    if planet is None:  #TODO: exclude planets with stealth higher than empireDetection
         print "invasion AI couldn't access any info for planet id %d"%planetID
         return [0, 0]
 
@@ -383,8 +383,8 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         supplyVal =  300
     elif pSysID in ColonisationAI.annexableRing3:
         supplyVal =  400
-    if ( max_path_threat > 0.5 * mil_ship_rating ):
-        if ( max_path_threat < 3 * mil_ship_rating ):
+    if max_path_threat > 0.5 * mil_ship_rating:
+        if max_path_threat < 3 * mil_ship_rating:
             supplyVal *= 0.5
         else:
             supplyVal *= 0.2
@@ -395,7 +395,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         plannedTroops = troops
     else:
         plannedTroops = min(troops+maxJumps+buildTime,  maxTroops)
-    if ( empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete ):
+    if empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
@@ -407,19 +407,19 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     return   invscore
 
 def getPlanetPopulation(planetID):
-    "return planet population"
+    """return planet population"""
 
     universe = fo.getUniverse()
 
     planet = universe.getPlanet(planetID)
     planetPopulation = planet.currentMeterValue(fo.meterType.population)
 
-    if planet == None: return 0
+    if planet is None: return 0
     else:
         return planetPopulation
 
 def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
-    "sends a list of invasion fleets to a list of planet_value_pairs"
+    """sends a list of invasion fleets to a list of planet_value_pairs"""
     universe=fo.getUniverse()
     invasionPool = invasionFleetIDs[:]  #need to make a copy
     bestShip,  bestDesign,  buildChoices = ProductionAI.getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
@@ -442,7 +442,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         minStats= {'rating':0, 'troopPods':podsNeeded}
         targetStats={'rating':10,'troopPods':podsNeeded+1}
         theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPoolSet=invasionPool,   fleetList=foundFleets,  verbose=False)
-        if theseFleets == []:
+        if not theseFleets:
             if not FleetUtilsAI.statsMeetReqs(foundStats,  minStats):
                 print "Insufficient invasion troop  allocation for system %d ( %s ) -- requested  %s , found %s"%(sysID,  universe.getSystem(sysID).name,  minStats,  foundStats)
                 invasionPool.update( foundFleets )

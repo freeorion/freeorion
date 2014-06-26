@@ -3,10 +3,10 @@ import EnumsAI
 from EnumsAI import AIMissionType
 
 class AIAbstractMission(object):
-    ""
+    """"""
 
     def __init__(self, aiMissionType, aiTargetType, aiTargetID):
-        "constructor"
+        """constructor"""
 
         aiTarget = AITarget(aiTargetType, aiTargetID)
         self.__aiTarget = aiTarget
@@ -17,29 +17,29 @@ class AIAbstractMission(object):
             self.__aiMissionTypes[__aiMissionType] = []
 
     def getAITarget(self):
-        "return mission AITarget"
+        """return mission AITarget"""
 
         return self.__aiTarget
 
     @property
     def target_id(self):
-        "return id"
+        """return id"""
 
         return self.getAITarget().target_id
 
     @property
     def target_type(self):
-        "return mission AITargetType"
+        """return mission AITargetType"""
 
         return self.getAITarget().target_type
 
     def getAIMissionType(self):
-        "return AIMissionType"
+        """return AIMissionType"""
 
         return self.__aiMissionType
 
     def getAnyAIMissionTypes(self):
-        "return types of mission"
+        """return types of mission"""
 
         if AIMissionType.FLEET_MISSION == self.getAIMissionType():
             return EnumsAI.getAIFleetMissionTypes()
@@ -75,7 +75,7 @@ class AIAbstractMission(object):
             self.removeAITarget(aiMissionType, aiTarget)
 
     def getAITargets(self, aiMissionType):
-        "getter"
+        """getter"""
 
         return self.__aiMissionTypes.get(aiMissionType,  [])
 
@@ -110,18 +110,18 @@ class AIAbstractMission(object):
         return False
 
     def __cmp__(self, other):
-        "compares AIMissions"
+        """compares AIMissions"""
 
-        if other == None:
+        if other is None:
             return False
         if self.target_id == other.target_id:
             return True
         return False
 
     def __eq__(self, other):
-        "returns equal to other object"
+        """returns equal to other object"""
 
-        if other == None:
+        if other is None:
             return False
         if self.getAIMissionType() == other.getAIMissionType() and self.target_type == self.target_type:
             return self.__cmp__(other) == 0
@@ -130,7 +130,7 @@ class AIAbstractMission(object):
         return NotImplemented
 
     def __ne__(self, other):
-        "returns not equal to other object"
+        """returns not equal to other object"""
 
         result = self.__eq__(other)
         if result is NotImplemented:

@@ -2,14 +2,14 @@ import traceback
 import sys
 
 def checkValidity(value):
-    "checks if value is valid"
+    """checks if value is valid"""
 
-    if (value == None or value < 0):
+    if value is None or value < 0:
         return False
     return True
 
 def __getInterval(low, high):
-    "returns integer numbers from interval <low, high>"
+    """returns integer numbers from interval <low, high>"""
 
     result = []
     # <low, high)

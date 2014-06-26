@@ -128,7 +128,7 @@ for plotType in doPlotTypes:
     turns=[]
     
     pdata = allData.get(playerName,  {}).get(plotType,  []) 
-    if pdata != []:
+    if pdata:
         ymin = min(ymin, min(pdata))
         ymax = max(ymax, max(pdata))
         turns=allData.get(playerName,  {}).get('turnsP',  [])
@@ -137,7 +137,7 @@ for plotType in doPlotTypes:
         if empireName == playerName:
             continue
         adata = data.get(plotType,  [])
-        if adata != []:
+        if adata:
             rankings.append( (adata[-1], empireName) )
             thisMin=min(adata)
             if thisMin>0: 

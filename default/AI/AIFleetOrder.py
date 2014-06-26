@@ -14,10 +14,10 @@ def dictFromMap(thismap):
     return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
 
 class AIFleetOrder(object):
-    "Stores information about orders which can be executed"
+    """Stores information about orders which can be executed"""
 
     def __init__(self, aiFleetOrderType, sourceAITarget, targetAITarget):
-        "constructor"
+        """constructor"""
         self.__aiFleetOrderType = aiFleetOrderType
         self.__sourceAITarget = sourceAITarget
         self.__targetAITarget = targetAITarget
@@ -51,14 +51,14 @@ class AIFleetOrder(object):
         universe = fo.getUniverse()
         fleet = universe.getFleet(fleetID)
         # ship is in fleet
-        if (shipID in fleet.shipIDs):
+        if shipID in fleet.shipIDs:
             return True
         return False
 
     def isValid(self):
-        "check if FleetOrder could be somehow in future issued = is valid"
+        """check if FleetOrder could be somehow in future issued = is valid"""
 
-        if (self.isExecuted() and self.isExecutionCompleted()):
+        if self.isExecuted() and self.isExecutionCompleted():
             return False
         if self.getSourceAITarget().valid and self.getTargetAITarget().valid:
             sourceAITargetTypeValid = False
@@ -167,7 +167,7 @@ class AIFleetOrder(object):
                 if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().target_type:
                     empire = fo.getEmpire()
                     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-                    if (self.getTargetAITarget().target_id in fleetSupplyableSystemIDs):
+                    if self.getTargetAITarget().target_id in fleetSupplyableSystemIDs:
                         targetAITargetTypeValid = True
             # repair
             elif AIFleetOrderType.ORDER_REPAIR == self.getAIFleetOrderType():
@@ -178,7 +178,7 @@ class AIFleetOrder(object):
                 if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().target_type:
                     empire = fo.getEmpire()
                     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-                    if (self.getTargetAITarget().target_id in fleetSupplyableSystemIDs): #TODO: check for drydock still there/owned
+                    if self.getTargetAITarget().target_id in fleetSupplyableSystemIDs: #TODO: check for drydock still there/owned
                         targetAITargetTypeValid = True
             # split fleet
             elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
@@ -212,7 +212,7 @@ class AIFleetOrder(object):
         return False
 
     def canIssueOrder(self,  considerMergers=False,  verbose=False):
-        "if FleetOrder can be issued now"
+        """if FleetOrder can be issued now"""
 
         #for some orders, may need to re-issue if invasion/outposting/colonization was interrupted
         if self.isExecuted()  and self.getAIFleetOrderType() not in [ AIFleetOrderType.ORDER_OUTPOST,  AIFleetOrderType.ORDER_COLONISE,  AIFleetOrderType.ORDER_INVADE   ]:
@@ -253,7 +253,7 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().target_id)
-            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
+            if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canColonize:
                 return True
             return False
         #
@@ -268,7 +268,7 @@ class AIFleetOrder(object):
             planet = universe.getPlanet(self.getTargetAITarget().target_id)
             if ship and not ship.canColonize:
                 print "Error: colonization fleet %d has no colony ship"%fleetID
-            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
+            if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canColonize:
                 return True
             return False
         #
@@ -281,7 +281,7 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().target_id)
-            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0):
+            if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0):
                 return True
             return False
         #
@@ -292,7 +292,7 @@ class AIFleetOrder(object):
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY)
             ship = universe.getShip(shipID)
             system = universe.getSystem(self.getTargetAITarget().target_id)
-            if (ship != None) and (fleet.systemID == system.systemID) and ship.isArmed:
+            if (ship is not None) and (fleet.systemID == system.systemID) and ship.isArmed:
                 return True
             return False
         #
@@ -346,7 +346,7 @@ class AIFleetOrder(object):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
                     return True
-                elif ((threat == p_threat) and ( not fleet.aggressive ) and (myOtherFleetsRating == 0) and (len(target_sys_status.get('localEnemyFleetIDs', [-1]))==0) ) :
+                elif (threat == p_threat) and ( not fleet.aggressive ) and (myOtherFleetsRating == 0) and (len(target_sys_status.get('localEnemyFleetIDs', [-1]))==0):
                     if verbose:
                         print ( "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with planet threat %d because nonaggressive" +
                                " and no other fleets present to trigger combat")%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
@@ -414,7 +414,7 @@ class AIFleetOrder(object):
                     fleet = fo.getUniverse().getFleet(fleetID)
                     for shipID in fleet.shipIDs:
                         ship = universe.getShip(shipID)
-                        if (foAI.foAIstate.getShipRole(ship.design.id) in [AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  AIShipRoleType.SHIP_ROLE_BASE_INVASION]):
+                        if foAI.foAIstate.getShipRole(ship.design.id) in [AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  AIShipRoleType.SHIP_ROLE_BASE_INVASION]:
                             result = fo.issueInvadeOrder(shipID, planetID)  or  result #will track if at least one invasion troops successfully deployed
                             detailStr = ""
                             if result == 0:
@@ -450,7 +450,7 @@ class AIFleetOrder(object):
                 targetSysID = self.getTargetAITarget().target_id
                 fleet = fo.getUniverse().getFleet(fleetID)
                 systemStatus =  foAI.foAIstate.systemStatus.get(targetSysID,  {})
-                if (fleet )and ( fleet.systemID==targetSysID ) and ((systemStatus.get('fleetThreat', 0) + systemStatus.get('planetThreat', 0)+ systemStatus.get('monsterThreat', 0))==0):
+                if fleet and ( fleet.systemID==targetSysID ) and ((systemStatus.get('fleetThreat', 0) + systemStatus.get('planetThreat', 0)+ systemStatus.get('monsterThreat', 0))==0):
                     self.__setExecutionCompleted()
 
             # move or resupply
@@ -485,21 +485,21 @@ class AIFleetOrder(object):
                     fo.issueNewFleetOrder(str(shipID), shipID)
                 self.__setExecutionCompleted()
             # attack
-            elif (AIFleetOrderType.ORDER_ATTACK == self.getAIFleetOrderType()):
+            elif AIFleetOrderType.ORDER_ATTACK == self.getAIFleetOrderType():
                 fleetID = self.getSourceAITarget().target_id
                 systemID = self.getTargetAITarget().get_required_system_ai_targets()[0].target_id
 
                 fo.issueFleetMoveOrder(fleetID, systemID)
 
     def __str__(self):
-        "returns describing string"
+        """returns describing string"""
 
         return "fleet order[%s] source:%26s | target %26s" %(  AIFleetOrderTypeNames.name(self.__aiFleetOrderType),  self.__sourceAITarget,   self.__targetAITarget)
 
     def __cmp__(self, other):
-        "compares AIFleetOrders"
+        """compares AIFleetOrders"""
 
-        if other == None:
+        if other is None:
             return False
         if self.getAIFleetOrderType() < other.getAIFleetOrderType():
             return - 1
@@ -513,16 +513,16 @@ class AIFleetOrder(object):
         return 1
 
     def __eq__(self, other):
-        "returns equal to other object"
+        """returns equal to other object"""
 
-        if other == None:
+        if other is None:
             return False
         if isinstance(other, AIFleetOrder):
             return self.__cmp__(other) == 0
         return NotImplemented
 
     def __ne__(self, other):
-        "returns not equal to other object"
+        """returns not equal to other object"""
 
         result = self.__eq__(other)
         if result is NotImplemented:

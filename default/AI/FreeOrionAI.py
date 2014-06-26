@@ -39,7 +39,7 @@ def UserString(label,  default=None): #this name left with C naming style for co
     table_string = fo.userString(label)
     if default is None:
         return table_string
-    elif ( "ERROR: "+label in table_string):  #implement test for string lookup  not found error
+    elif "ERROR: "+label in table_string:  #implement test for string lookup  not found error
         return default
     else:
         return table_string
@@ -62,14 +62,14 @@ _lastTurnTimestamp = 0
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI(): # pylint: disable=invalid-name
-    "called by client to initialize AI "
+    """called by client to initialize AI """
     print "Initialized FreeOrion Python AI"
     print(sys.path)
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
-    "called by client at start of new game"
+    """called by client at start of new game"""
     global _timerFile,  _lastTurnTimestamp,  _timerBucketFile
     print "New game started, AI Aggression level %d"% aggression
 
@@ -115,7 +115,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
-    "called by client to resume a loaded game"
+    """called by client to resume a loaded game"""
     global foAIstate
     global _timerFile,  _lastTurnTimestamp,  _timerBucketFile
     print "Resuming loaded game"
@@ -158,7 +158,7 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
 # they can be restored if the game is loaded
 def prepareForSave(): # pylint: disable=invalid-name
-    "called by client to preparing for game save by serializing state"
+    """called by client to preparing for game save by serializing state"""
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
@@ -169,16 +169,16 @@ def prepareForSave(): # pylint: disable=invalid-name
 # called when this player receives a chat message.  senderID is the player who sent the message, and
 # messageText is the text of the sent message
 def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
-    "called by client to handle chat messages"
+    """called by client to handle chat messages"""
     print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
 
 # called when this player recives a diplomatic message update from the server, such as if another player
 # declares war, accepts peace, or cancels a proposed peace treaty.
 def handleDiplomaticMessage(message): # pylint: disable=invalid-name
-    "called by client to handle diplomatic messages"
+    """called by client to handle diplomatic messages"""
     print "Received diplomatic " + str(message.type) + " message from empire " + str(message.sender) + " to empire " + str(message.recipient)
     print "my empire id: " + str(fo.empireID())
-    if (message.type == fo.diplomaticMessageType.peaceProposal and message.recipient == fo.empireID()):
+    if message.type == fo.diplomaticMessageType.peaceProposal and message.recipient == fo.empireID():
         replySender = message.recipient
         replyRecipient = message.sender
         proposalSenderPlayer = fo.empirePlayerID(message.sender)
@@ -195,14 +195,14 @@ def handleDiplomaticMessage(message): # pylint: disable=invalid-name
 # called when this player receives and update about the diplomatic status between players, which may
 # or may not include this player.
 def handleDiplomaticStatusUpdate(statusUpdate): # pylint: disable=invalid-name
-    "called by client to handle diplomatic status updates"
+    """called by client to handle diplomatic status updates"""
     print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1) + " and empire " + str(statusUpdate.empire2)
 
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders(): # pylint: disable=invalid-name
-    "called by client to get the AI's orders for the turn"
+    """called by client to get the AI's orders for the turn"""
     global _lastTurnTimestamp
     universe = fo.getUniverse()
     turnStartTime = time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
@@ -332,7 +332,7 @@ def generateOrders(): # pylint: disable=invalid-name
 #The following methods should probably be moved to the AIstate module, to keep this module more focused on implementing required interface
 
 def splitNewFleets(): # pylint: disable=invalid-name
-    "split any new fleets (at new game creation, can have unplanned mix of ship roles)"
+    """split any new fleets (at new game creation, can have unplanned mix of ship roles)"""
 
     print "Review of current Fleet Role/Mission records:"
     print "--------------------"
@@ -368,7 +368,7 @@ def splitNewFleets(): # pylint: disable=invalid-name
             #foAIstate.removeFleetRole(fleetID)  # in current system, orig new fleet will not yet have been assigned a role
 
 def updateShipDesigns(): # pylint: disable=invalid-name
-    "update ship design records"
+    """update ship design records"""
     print ("Updating ship design records")
     universe = fo.getUniverse()
 
@@ -382,14 +382,14 @@ def updateShipDesigns(): # pylint: disable=invalid-name
             # print str(ship.design.id) + ": " + str(shipRole)
 
 def updateFleetsRoles(): # pylint: disable=invalid-name
-    "updating fleet role records"
+    """updating fleet role records"""
     print ("Updating fleet role records")
     # assign roles to fleets
     for fleetID in FleetUtilsAI.getEmpireFleetIDs():
         foAIstate.getFleetRole(fleetID) #force assessment if not previously known
 
 def declareWarOnAll(): # pylint: disable=invalid-name
-    "used to declare war on all other empires (at start of game)"
+    """used to declare war on all other empires (at start of game)"""
     my_emp_id = fo.empireID()
     for emp_id in fo.allEmpireIDs():
         if emp_id != my_emp_id:

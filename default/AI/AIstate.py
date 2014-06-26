@@ -49,13 +49,13 @@ def dictFromMap(this_map):
 
 # AIstate class
 class AIstate(object):
-    "stores AI game state"
+    """stores AI game state"""
 
     # def colonisablePlanets (should be set at start of turn)
     # getColonisablePlanets (deepcopy!)
 
     def __init__(self,  aggression=fo.aggression.typical):
-        "constructor"
+        """constructor"""
         # 'global' (?) variables
         #self.foodStockpileSize =  1    # food stored per population
         self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
@@ -122,7 +122,7 @@ class AIstate(object):
 
 
     def __del__(self): #TODO: confirm if anything about boost interface really requires this
-        "destructor"
+        """destructor"""
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
         del self.__priorityByType
@@ -137,7 +137,7 @@ class AIstate(object):
         del self.qualifyingTroopBaseTargets
 
     def refresh(self):
-        "turn start AIstate cleanup/refresh"
+        """turn start AIstate cleanup/refresh"""
         #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
@@ -282,11 +282,11 @@ class AIstate(object):
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
             #    continue
             fleet = universe.getFleet(fleetID)
-            if (fleet == None): continue
-            if   not(fleet.empty) :
+            if fleet is None: continue
+            if   not fleet.empty:
                 thisSysID = (fleet.nextSystemID!= -1 and fleet.nextSystemID) or fleet.systemID
                 if  fleet.ownedBy(empireID):
-                    if   (fleetID not in destroyedObjIDs):
+                    if fleetID not in destroyedObjIDs:
                         myFleetsBySystem.setdefault( thisSysID,  [] ).append( fleetID )
                         fleetSpotPosition.setdefault( fleet.systemID,  [] ).append( fleetID )
                 else:
@@ -299,7 +299,7 @@ class AIstate(object):
                                 e_f_dict.setdefault( sum_stats,  [0])[0] += count
                     partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(fleetID,  empireID)).get(fo.visibility.partial, -9999)
                     if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
-                        if   (not dead_fleet):
+                        if not dead_fleet:
                             sawEnemiesAtSystem[fleet.systemID] = True
                             enemyFleetIDs.append( fleetID )
                             enemiesBySystem.setdefault( thisSysID,  [] ).append( fleetID )
@@ -354,7 +354,7 @@ class AIstate(object):
             enemyAttack = sum( [rating.get('attack', 0) for rating in enemyRatings])
             enemyHealth = sum( [rating.get('health', 0) for rating in enemyRatings])
             enemyRating =  enemyAttack * enemyHealth
-            if fleetsLostBySystem.get(sysID,  []) != []:
+            if fleetsLostBySystem.get(sysID, []):
                 #print  "     Assessing threats on turn %d ; noting that fleets were just lost in system %d ,  enemy fleets were %s seen as of turn %d, of which %s survived"%(
                 #                currentTurn,  sysID, ["not", ""][sawEnemiesAtSystem.get(sysID, False)],  partialVisTurn,   localEnemyFleetIDs)
                 lostFleetAttack = sum( [rating.get('attack', 0) for rating in fleetsLostBySystem.get(sysID,  {}) ] )
@@ -399,7 +399,7 @@ class AIstate(object):
                 monsterattack,  monsterhealth,  monsterthreat = 0, 0, 0
                 for fleetID in localEnemyFleetIDs:
                     fleet = universe.getFleet(fleetID)
-                    if ( fleet) and  (not fleet.ownedBy(self.empireID)):
+                    if fleet and  (not fleet.ownedBy(self.empireID)):
                         rating=self.rateFleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
                         if fleet.speed==0:
                             monsterattack += rating['attack']
@@ -457,7 +457,7 @@ class AIstate(object):
             #sysStatus['my_jump4_rating'] = myrating
 
     def area_ratings(self,  system_ids):
-        "returns (fleet_threat, max_threat, myFleetRating) compiled over a group of systems"
+        """returns (fleet_threat, max_threat, myFleetRating) compiled over a group of systems"""
         max_threat = 0
         threat=0
         myrating = 0
@@ -468,27 +468,27 @@ class AIstate(object):
                 max_threat = fthreat
             threat += fthreat
             myrating += sys_status.get('myFleetRating', 0)
-        return (threat,  max_threat,  myrating)
+        return threat,  max_threat,  myrating
 
     def afterTurnCleanup(self):
-        "removes not required information to save from AI state after AI complete its turn"
+        """removes not required information to save from AI state after AI complete its turn"""
         # some ships in fleet can be destroyed between turns and then fleet may have have different roles
         #self.__fleetRoleByID = {}
         pass
 
     def __hasAIFleetMission(self, fleetID):
-        "returns True if fleetID has AIFleetMission"
+        """returns True if fleetID has AIFleetMission"""
         return self.__aiMissionsByFleetID.__contains__(fleetID)
 
     def getAIFleetMission(self, fleetID):
-        "returns AIFleetMission with fleetID"
+        """returns AIFleetMission with fleetID"""
         if fleetID in self.__aiMissionsByFleetID:
             return self.__aiMissionsByFleetID[fleetID]
         else:
             return None
 
     def getAllAIFleetMissions(self):
-        "returns all AIFleetMissions"
+        """returns all AIFleetMissions"""
 
         return self.__aiMissionsByFleetID.values()
 
@@ -496,7 +496,7 @@ class AIstate(object):
         return self.__aiMissionsByFleetID
 
     def getAIFleetMissionsWithAnyMissionTypes(self, fleetMissionTypes):
-        "returns all AIFleetMissions which contains any of fleetMissionTypes"
+        """returns all AIFleetMissions which contains any of fleetMissionTypes"""
 
         result = []
 
@@ -507,31 +507,31 @@ class AIstate(object):
         return result
 
     def __addAIFleetMission(self, fleetID):
-        "add new AIFleetMission with fleetID if it already not exists"
+        """add new AIFleetMission with fleetID if it already not exists"""
 
-        if self.getAIFleetMission(fleetID) == None:
+        if self.getAIFleetMission(fleetID) is None:
             aiFleetMission = AIFleetMission.AIFleetMission(fleetID)
             self.__aiMissionsByFleetID[fleetID] = aiFleetMission
 
     def __removeAIFleetMission(self, fleetID):
-        "remove invalid AIFleetMission with fleetID if it exists"
+        """remove invalid AIFleetMission with fleetID if it exists"""
 
         aiFleetMission = self.getAIFleetMission(fleetID)
-        if aiFleetMission != None:
+        if aiFleetMission is not None:
             self.__aiMissionsByFleetID[fleetID] = None
             del aiFleetMission
             del self.__aiMissionsByFleetID[fleetID]
 
     def ensureHaveFleetMissions(self, fleetIDs):
         for fleetID in fleetIDs:
-            if self.getAIFleetMission(fleetID) == None:
+            if self.getAIFleetMission(fleetID) is None:
                 self.__addAIFleetMission(fleetID)
 
     def __cleanAIFleetMissions(self, fleetIDs):
-        "cleanup of AIFleetMissions"
+        """cleanup of AIFleetMissions"""
 
         for fleetID in fleetIDs:
-            if self.getAIFleetMission(fleetID) == None:
+            if self.getAIFleetMission(fleetID) is None:
                 self.__addAIFleetMission(fleetID)
 
         aiFleetMissions = self.getAllAIFleetMissions()
@@ -634,7 +634,7 @@ class AIstate(object):
         return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
     def getRating(self,  fleetID,  forceNew=False,  enemy_stats = None):
-        "returns a dict with various rating info"
+        """returns a dict with various rating info"""
         if (fleetID in self.fleetStatus) and not forceNew and enemy_stats is None:
             return self.fleetStatus[fleetID].get('rating', {} )
         else:
@@ -673,10 +673,10 @@ class AIstate(object):
             elif tag_type == 'SHIELDS':
                 shields_grade = tag_parts[2]
         piloting_grades[species_name] = (weapons_grade,  shields_grade)
-        return (weapons_grade,  shields_grade)
+        return weapons_grade,  shields_grade
 
     def weight_attacks(self,  attacks,  grade):
-        "re-weights attacks based on species piloting grade"
+        """re-weights attacks based on species piloting grade"""
         #TODO: make more accurate based off weapons lists
         weight = {'NO':-1,  'BAD': -0.25,  '':0.0,  'GOOD':0.25,  'GREAT':0.5,  'ULTIMATE':1.0}.get(grade,  0.0)
         newattacks = {}
@@ -685,7 +685,7 @@ class AIstate(object):
         return newattacks
 
     def weight_shields(self,  shields,  grade):
-        "re-weights shields based on species defense bonus"
+        """re-weights shields based on species defense bonus"""
         offset = {'NO':0,  'BAD': 0,  '':0,  'GOOD':1.0,  'GREAT':0,  'ULTIMATE':0}.get(grade,  0)
         return shields + offset
 
@@ -802,14 +802,14 @@ class AIstate(object):
             elif "DT_DETECTOR_1" in parts:
                 detect_bonus = 1
             #stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields,  'attacks':attacks}
-            stats = {'attack':design.attack, 'structure':(design.structure                       ), 'shields':shields,  'attacks':attacks}
+            stats = {'attack':design.attack, 'structure': design.structure, 'shields':shields,  'attacks':attacks}
         else:
             stats = {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
         self.designStats[designID] = stats
         return stats
 
     def getShipRole(self, shipDesignID):
-        "returns ship role for given designID, assesses and adds as needed"
+        """returns ship role for given designID, assesses and adds as needed"""
 
         if shipDesignID in self.__shipRoleByDesignID and self.__shipRoleByDesignID[shipDesignID] != EnumsAI.AIShipRoleType.SHIP_ROLE_INVALID: #if thought was invalid, recheck to be sure
             return self.__shipRoleByDesignID[shipDesignID]
@@ -820,7 +820,7 @@ class AIstate(object):
             return role
 
     def addShipRole(self, shipDesignID, shipRole):
-        "adds a ship designID/role pair"
+        """adds a ship designID/role pair"""
 
         if not (shipRole in EnumsAI.getAIShipRolesTypes()):
             print "Invalid shipRole: " + str(shipRole)
@@ -831,7 +831,7 @@ class AIstate(object):
             self.__shipRoleByDesignID[shipDesignID] = shipRole
 
     def removeShipRole(self, shipDesignID):
-        "removes a ship designID/role pair"
+        """removes a ship designID/role pair"""
 
         if shipDesignID in self.__shipRoleByDesignID:
             print "Removed role for ship design %d named: %s "%(shipDesignID,  fo.getShipDesign(shipDesignID).name)
@@ -844,7 +844,7 @@ class AIstate(object):
         return self.__fleetRoleByID
 
     def getFleetRole(self, fleetID,  forceNew=False):
-        "returns fleet role by ID"
+        """returns fleet role by ID"""
 
         if (not forceNew) and fleetID in self.__fleetRoleByID and self.__fleetRoleByID[fleetID]!=AIFleetMissionType.FLEET_MISSION_INVALID :
             return self.__fleetRoleByID[fleetID]
@@ -865,7 +865,7 @@ class AIstate(object):
             return role
 
     def addFleetRole(self, fleetID, missionType):
-        "adds a fleet ID/role pair"
+        """adds a fleet ID/role pair"""
 
         if not EnumsAI.checkValidity(missionType):
             return
@@ -876,7 +876,7 @@ class AIstate(object):
             self.__fleetRoleByID[fleetID] = missionType
 
     def removeFleetRole(self, fleetID):
-        "removes a fleet ID/role pair"
+        """removes a fleet ID/role pair"""
 
         if fleetID in self.__fleetRoleByID:
             #print "Removed role for fleet ID: " + str(fleetID)
@@ -906,14 +906,14 @@ class AIstate(object):
         #self.reset_invasions()
         
     def reset_invasions(self):
-        "useful when testing changes to invasion planning"
+        """useful when testing changes to invasion planning"""
         invasionAIFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
         for mission in invasionAIFleetMissions:
             mission.clearAIFleetOrders()
             mission.clearAITargets(([-1]+ mission.getAIMissionTypes()[:1])[-1])
 
     def __cleanFleetRoles(self,  justResumed=False):
-        "removes fleetRoles if a fleet has been lost, and update fleet Ratings"
+        """removes fleetRoles if a fleet has been lost, and update fleet Ratings"""
         for sysID in self.systemStatus:
             self.systemStatus[sysID]['myFleetRating']=0
 
@@ -952,8 +952,8 @@ class AIstate(object):
                 shipCount += status['nships']
             else:
                 sysID = oldSysID #can still retrieve a fleet object even if fleet was just destroyed, so shouldn't get here
-            if (fleetID not in okFleets):# or fleet.empty:
-                if not ( (self.__fleetRoleByID.get(fleetID,  -1) ==-1)  ):
+            if fleetID not in okFleets:# or fleet.empty:
+                if not ( self.__fleetRoleByID.get(fleetID,  -1) ==-1  ):
                     if not justResumed:
                         if rating.get('overall', 0) > MinThreat:
                             fleetsLostBySystem.setdefault(oldSysID,  []).append( rating )
@@ -1011,7 +1011,7 @@ class AIstate(object):
         print "------------------------"
 
     def getExplorableSystems(self, explorableSystemsType):
-        "get all explorable systems determined by type "
+        """get all explorable systems determined by type """
 
         #return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
         if explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED:
@@ -1023,12 +1023,12 @@ class AIstate(object):
             return {}
 
     def setPriority(self, priorityType, value):
-        "sets a priority of the specified type"
+        """sets a priority of the specified type"""
 
         self.__priorityByType[priorityType] = value
 
     def getPriority(self, priorityType):
-        "returns the priority value of the specified type"
+        """returns the priority value of the specified type"""
 
         if priorityType in self.__priorityByType:
             return copy.deepcopy(self.__priorityByType[priorityType])
@@ -1036,12 +1036,12 @@ class AIstate(object):
         return 0
 
     def getAllPriorities(self):
-        "returns a dictionary with all priority values"
+        """returns a dictionary with all priority values"""
 
         return copy.deepcopy(self.__priorityByType)
 
     def printPriorities(self):
-        "prints all priorities"
+        """prints all priorities"""
 
         print "all priorities:"
         for priority in self.__priorityByType:
