@@ -130,6 +130,8 @@ Special
             activation = AND [
                 Turn high = 0
                 Random probability = 0.9
+                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
+                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
                 Not WithinStarlaneJumps 1 And [
                     System
                     Contains And [
@@ -212,7 +214,7 @@ Special
                     icon = "icons/specials_large/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
-                        tag = "tech" data = "SHP_WEAPON_4_1"
+                        tag = "tech" data = GalaxySeed
                     ]
                     empire = Source.Owner
                 GenerateSitRepMessage
@@ -318,6 +320,8 @@ Special
             activation = AND [
                 Turn high = 0
                 Random probability = 0.5
+                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
+                ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
                 Not WithinStarlaneJumps 1 And [
                     System
                     Contains And [
@@ -330,7 +334,11 @@ Special
         
         EffectsGroup     
             scope = Source     
-            activation = Turn high = 0
+            activation = And [
+                Turn high = 0
+                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
+                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+            ]                
             effects = CreateShip "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"
@@ -544,7 +552,11 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Turn high = 0
+            activation = And [
+                Turn high = 0
+                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
+                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+            ]
             stackinggroup = "GAIAN_STACK"
             effects = CreateShip "SM_GUARD_2"
 
@@ -580,7 +592,8 @@ Special
     description = "KRAKEN_NEST_SPECIAL_DESC"
     spawnrate = 0.0
     location = And [
-        Planet
+        ValueTest low = 1 testvalue = GalaxyMonsterFrequency    
+        Planet        
         Not Planet type = [Asteroids GasGiant]
         Not WithinStarlaneJumps 2 And [
             System
@@ -679,6 +692,7 @@ Special
     spawnrate = 0.0
     location = And [
         Planet
+        ValueTest low = 1 testvalue = GalaxyMonsterFrequency        
         Not Planet type = [Asteroids GasGiant]
         Not WithinStarlaneJumps 2 And [
             System
@@ -1693,6 +1707,8 @@ CHANCE_OF_GUARD_1
             activation = AND [
                 Turn high = 0
                 Random probability = 0.60
+                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
+                ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
                 Not ContainedBy Contains OR [
                                     Design name = "SM_EXP_OUTPOST"
                                     Building "BLD_EXPERIMENTOR_OUTPOST"
