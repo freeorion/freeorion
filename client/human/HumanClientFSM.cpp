@@ -644,21 +644,17 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(true);
 
-    // observers can't do anything but wait for the next update, and need to
-    // be back in WaitingForTurnData, so posting TurnEnded here has the effect
-    // of keeping observers in the WaitingForTurnData state so they can receive
-    // updates from the server.
     if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        // observers can't do anything but wait for the next update, and need to
+        // be back in WaitingForTurnData, so posting TurnEnded here has the effect
+        // of keeping observers in the WaitingForTurnData state so they can receive
+        // updates from the server.
         post_event(TurnEnded());
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        if (Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled()) {
-            once = false;
-            post_event(AdvanceTurn());
-        }
-
-    } else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
-        if (once) {
+        if ((once && GetOptionsDB().Get<bool>("auto-advance-first-turn")) ||
+            Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled())
+        {
             once = false;
             post_event(AdvanceTurn());
         }
