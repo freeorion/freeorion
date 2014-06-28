@@ -19,6 +19,7 @@ Special
                 SetMaxDefense Value + 10
                 SetMaxShield Value + 10
                 SetMaxTroops Value + 10
+                SetDetection Value + 20
             ]
     ]
     graphic = "icons/tech/categories/learning.png"
@@ -42,6 +43,7 @@ Special
                 SetMaxDefense Value + 30
                 SetMaxShield Value + 30
                 SetMaxTroops Value + 30
+                SetDetection Value + 60
             ]
     ]
     graphic = "icons/tech/categories/learning.png"

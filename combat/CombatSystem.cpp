@@ -540,7 +540,7 @@ namespace {
         float monster_detection = 0.0;
         for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
             TemporaryPtr<const UniverseObject> obj = *it;
-            if (obj->Unowned() && obj->ObjectType() == OBJ_SHIP){
+            if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
                 monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
             }
         }
@@ -850,6 +850,10 @@ namespace {
         combat_state.GiveAttackersShuffled(shuffled_attackers);
         
         int round = 1;
+        
+        // Planets are processed first so that they still have full power as intended,
+        // despite their attack power depending on a thing (defence meter)
+        // processing shots at them may reduce.
         for(std::vector<int>::iterator attacker_it = shuffled_attackers.begin(); attacker_it != shuffled_attackers.end(); ++attacker_it) {
             int attacker_id = *attacker_it;
             
@@ -859,7 +863,33 @@ namespace {
                 Logger().errorStream() << "CombatRound couldn't get object with id " << attacker_id;
                 return;
             }
-            if(!ObjectCanAttack(attacker)){
+            if (attacker->ObjectType() != OBJ_PLANET) {
+                continue;
+            }
+            if (!ObjectCanAttack(attacker)) {
+                Logger().debugStream() << "Planet " << attacker->Name() << " could not attack.";
+                continue;
+            }
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                Logger().debugStream() << "Planet: " << attacker->Name();
+            
+            std::vector<PartAttackInfo> weapons = GetWeapons(attacker);
+            ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
+        }
+        
+        for(std::vector<int>::iterator attacker_it = shuffled_attackers.begin(); attacker_it != shuffled_attackers.end(); ++attacker_it) {
+            int attacker_id = *attacker_it;
+            
+            TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
+            
+            if (!attacker) {
+                Logger().errorStream() << "CombatRound couldn't get object with id " << attacker_id;
+                return;
+            }
+            if (attacker->ObjectType() == OBJ_PLANET) {
+                continue;
+            }
+            if (!ObjectCanAttack(attacker)) {
                 Logger().debugStream() << "Attacker " << attacker->Name() << " could not attack.";
                 continue;
             }
