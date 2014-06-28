@@ -206,6 +206,8 @@ public:
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     const PartTypeStats&    Stats() const           { return m_stats; }             ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
+    const std::vector<ShipSlotType>&
+                            MountableSlotTypes() const  { return m_mountable_slot_types; }
 
     bool                    ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
     float                   ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to produce this part
