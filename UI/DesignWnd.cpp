@@ -69,21 +69,21 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    float getMainStat(ShipPartClass spclass, PartTypeStats spstats)  {
-        switch (spclass) {
+    float GetMainStat(ShipPartClass part_class, PartTypeStats part_stats)  {
+        switch (part_class) {
             case PC_SHORT_RANGE:
             case PC_POINT_DEFENSE: {
-                const DirectFireStats& stats = boost::get<DirectFireStats>(spstats);
+                const DirectFireStats& stats = boost::get<DirectFireStats>(part_stats);
                 return stats.m_damage; //stats.m_ROF stats.m_range
                 break;
             }
             case PC_MISSILES: {
-                const LRStats& stats = boost::get<LRStats>(spstats);
+                const LRStats& stats = boost::get<LRStats>(part_stats);
                 return stats.m_damage; //stats.m_ROF stats.m_range stats.m_speed stats.m_stealth stats.m_structure stats.m_capacity
                 break;
             }
             case PC_FIGHTERS: {
-                const FighterStats& stats = boost::get<FighterStats>(spstats);
+                const FighterStats& stats = boost::get<FighterStats>(part_stats);
                 return stats.m_anti_ship_damage; //stats.m_anti_fighter_damage stats.m_launch_rate stats.m_fighter_weapon_range stats.m_speed stats.m_stealth stats.m_structure stats.m_detection stats.m_capacity
                 break;
             }
@@ -95,7 +95,7 @@ namespace {
             case PC_ARMOUR:
             case PC_BATTLE_SPEED:
             case PC_STARLANE_SPEED:
-                return boost::get<float>(spstats);
+                return boost::get<float>(part_stats);
                 break;
             case PC_GENERAL:
             case PC_BOMBARD:
@@ -103,7 +103,8 @@ namespace {
                 return 0.0f;
         }
     }
-    typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::vector<const PartType* > > partGroupsType;
+    typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
+                     std::vector<const PartType* > >            PartGroupsType;
 }
 
 //////////////////////////////////////////////////
@@ -179,9 +180,8 @@ PartControl::PartControl(const PartType* part) :
 
 void PartControl::Render() {}
 
-void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    ClickedSignal(m_part);
-}
+void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ ClickedSignal(m_part); }
 
 void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
@@ -208,12 +208,14 @@ public:
     const std::set<ShipSlotType>&   GetSlotTypesShown() const;
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
     //@}
+    bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    partGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
-    void            CullSuperfluousParts(std::vector<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id);
+    PartGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
+    void            CullSuperfluousParts(std::vector<const PartType* >& this_group,
+                                         ShipPartClass pclass, int empire_id, int loc_id);
     void            Populate();
 
     void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -221,11 +223,11 @@ public:
     void            HideClass(ShipPartClass part_class, bool refresh_list = true);
     void            HideAllClasses(bool refresh_list = true);
 
-    void            ShowSlotType(ShipSlotType slot_type, bool refresh_list = true);
-    void            HideSlotType(ShipSlotType slot_type, bool refresh_list = true);
-
     void            ShowAvailability(bool available, bool refresh_list = true);
     void            HideAvailability(bool available, bool refresh_list = true);
+
+    void            ShowSuperfluousParts(bool refresh_list = true);
+    void            HideSuperfluousParts(bool refresh_list = true);
     //@}
 
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
@@ -233,8 +235,8 @@ public:
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
-    std::set<ShipSlotType>  m_slot_types_shown;     // which slot types of parts to be shown.  parts must be mountable on at least one of these slot types to be shown
     std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    bool                    m_show_superfluous_parts;
 
     int                     m_previous_num_columns;
 };
@@ -287,17 +289,13 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
 PartsListBox::PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIListBox(x, y, w, h),
     m_part_classes_shown(),
-    m_slot_types_shown(),
     m_availabilities_shown(std::make_pair(false, false)),
+    m_show_superfluous_parts(true),
     m_previous_num_columns(-1)
 { SetStyle(GG::LIST_NOSEL); }
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
 { return m_part_classes_shown; }
-
-const std::set<ShipSlotType>& PartsListBox::GetSlotTypesShown() const {
-    return m_slot_types_shown;
-}
 
 const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const
 { return m_availabilities_shown; }
@@ -318,9 +316,9 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
+PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     const PartTypeManager& manager = GetPartTypeManager();
-    partGroupsType partGroups;
+    PartGroupsType part_groups;
     // loop through all possible parts
     for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
         const PartType* part = part_it->second;
@@ -333,30 +331,39 @@ partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             continue;   // part of this class is not requested to be shown
 
         bool part_available = empire ? empire->ShipPartAvailable(part->Name()) : true;
-        if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.second))
-            continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
-            
-        for (std::set<ShipSlotType>::const_iterator it = m_slot_types_shown.begin(); it != m_slot_types_shown.end(); ++it) {
-            if (part->CanMountInSlotType(*it)) {
-                partGroups[ std::make_pair(part_class, *it) ].push_back( part );
-            }
+        if (!(part_available && m_availabilities_shown.first) &&
+            !(!part_available && m_availabilities_shown.second))
+        {
+            // part is available but available parts shouldn't be shown, or
+            // part isn't available and not available parts shouldn't be shown
+            continue;
         }
+
+        const std::vector<ShipSlotType>& slot_types = part->MountableSlotTypes();
+        for (std::vector<ShipSlotType>::const_iterator it = slot_types.begin();
+             it != slot_types.end(); ++it)
+        { part_groups[std::make_pair(part_class, *it)].push_back(part); }
     }
-    return partGroups;
+    return part_groups;
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& thisGroup,
+void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_group,
                                         ShipPartClass pclass, int empire_id, int loc_id)
 {
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
-    for (std::vector<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
+    for (std::vector<const PartType* >::iterator part_it = this_group.begin();
+         part_it != this_group.end(); ++part_it)
+    {
         const PartType* checkPart = *part_it;
-        for (std::vector<const PartType* >::iterator check_it = thisGroup.begin(); check_it != thisGroup.end(); ++check_it ) {
-            const PartType* refPart = *check_it;
-            if ( (getMainStat(pclass, checkPart->Stats()) < getMainStat(pclass, refPart->Stats()) ) &&
-                ( checkPart->ProductionCost(empire_id, loc_id) >= refPart->ProductionCost(empire_id, loc_id) ) &&
-                ( checkPart->ProductionTime(empire_id, loc_id) >= refPart->ProductionTime(empire_id, loc_id) ) ) {
-                thisGroup.erase(part_it--);
+        for (std::vector<const PartType* >::iterator check_it = this_group.begin();
+             check_it != this_group.end(); ++check_it )
+        {
+            const PartType* ref_part = *check_it;
+            if ((GetMainStat(pclass, checkPart->Stats())      <  GetMainStat(pclass, ref_part->Stats())) &&
+                (checkPart->ProductionCost(empire_id, loc_id) >= ref_part->ProductionCost(empire_id, loc_id)) &&
+                (checkPart->ProductionTime(empire_id, loc_id) >= ref_part->ProductionTime(empire_id, loc_id)))
+            {
+                this_group.erase(part_it--);
                 break;
             }
         }
@@ -377,7 +384,7 @@ void PartsListBox::Populate() {
 
     // remove parts currently in rows of listbox
     Clear();
-    
+
     /** 
      * The Parts are first filtered for availability to this empire and according to the current 
      * selections of which part classes are to be displayed.  Then, in order to eliminate presentation
@@ -398,8 +405,8 @@ void PartsListBox::Populate() {
      */    
 
     /// filter parts by availability and current designation of classes for display; group according to (class, slot)
-    partGroupsType partGroups = GroupAvailableDisplayableParts(empire);
-    
+    PartGroupsType part_groups = GroupAvailableDisplayableParts(empire);
+
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
@@ -407,33 +414,43 @@ void PartsListBox::Populate() {
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 
-    // if the empire id is not ALL_EMPIRES, and unavailable parts are not to be displayed, cull Parts for display
-    if ( empire_id != ALL_EMPIRES && !m_availabilities_shown.second  ) {
-        for (partGroupsType::iterator group_it=partGroups.begin(); group_it != partGroups.end(); group_it++) {
+    // if showing parts for a particular empire, cull redundant parts (if enabled)
+    if (empire) {
+        for (PartGroupsType::iterator group_it=part_groups.begin();
+             group_it != part_groups.end(); group_it++)
+        {
             ShipPartClass pclass = group_it->first.first;
-            // currently, only cull ShortRange Weapons, though the culling code is more broadly applicable. 
-            if ( pclass == PC_SHORT_RANGE )
+            // currently, only cull ShortRange Weapons, though the culling code
+            // is more broadly applicable.
+            if (pclass == PC_SHORT_RANGE && !m_show_superfluous_parts)
                 CullSuperfluousParts(group_it->second, pclass, empire_id, loc_id);
         }
     }
-    
-    // now sort the parts within each group according to main stat, via weak sorting in a multimap
-    // also, if a part was in multiple groups due to being compatible with multiple slot types, ensure it is only displayed once
-    std::set<const PartType* > alreadyAdded;
-    for (partGroupsType::iterator group_it=partGroups.begin(); group_it != partGroups.end(); group_it++) {
-        std::vector<const PartType* > thisGroup = group_it->second;
+
+    // now sort the parts within each group according to main stat, via weak
+    // sorting in a multimap also, if a part was in multiple groups due to being
+    // compatible with multiple slot types, ensure it is only displayed once
+    std::set<const PartType* > already_added;
+    for (PartGroupsType::iterator group_it=part_groups.begin();
+         group_it != part_groups.end(); group_it++)
+    {
+        std::vector<const PartType* > this_group = group_it->second;
         ShipPartClass pclass = group_it->first.first;
-        std::multimap<double, const PartType*> sortedGroup;
-        for (std::vector<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
+        std::multimap<double, const PartType*> sorted_group;
+        for (std::vector<const PartType* >::iterator part_it = this_group.begin();
+             part_it != this_group.end(); ++part_it)
+        {
             const PartType* part = *part_it;
-            if (alreadyAdded.find(part) != alreadyAdded.end())
+            if (already_added.find(part) != already_added.end())
                 continue;
-            alreadyAdded.insert(part);
-            sortedGroup.insert(std::make_pair(getMainStat(pclass, part->Stats()), part));
+            already_added.insert(part);
+            sorted_group.insert(std::make_pair(GetMainStat(pclass, part->Stats()), part));
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
-        for (std::multimap<double, const PartType*>::iterator sorted_it = sortedGroup.begin(); sorted_it != sortedGroup.end(); ++sorted_it) {
+        for (std::multimap<double, const PartType*>::iterator sorted_it = sorted_group.begin();
+             sorted_it != sorted_group.end(); ++sorted_it)
+        {
             const PartType* part = sorted_it->second;
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
@@ -489,23 +506,6 @@ void PartsListBox::HideAllClasses(bool refresh_list) {
         Populate();
 }
 
-void PartsListBox::ShowSlotType(ShipSlotType slot_type, bool refresh_list) {
-    if (m_slot_types_shown.find(slot_type) == m_slot_types_shown.end()) {
-        m_slot_types_shown.insert(slot_type);
-        if (refresh_list)
-            Populate();
-    }
-}
-
-void PartsListBox::HideSlotType(ShipSlotType slot_type, bool refresh_list) {
-    std::set<ShipSlotType>::iterator it = m_slot_types_shown.find(slot_type);
-    if (it != m_slot_types_shown.end()) {
-        m_slot_types_shown.erase(it);
-        if (refresh_list)
-            Populate();
-    }
-}
-
 void PartsListBox::ShowAvailability(bool available, bool refresh_list) {
     if (available) {
         if (!m_availabilities_shown.first) {
@@ -538,6 +538,22 @@ void PartsListBox::HideAvailability(bool available, bool refresh_list) {
     }
 }
 
+void PartsListBox::ShowSuperfluousParts(bool refresh_list) {
+    if (m_show_superfluous_parts)
+        return;
+    m_show_superfluous_parts = true;
+    if (refresh_list)
+        Populate();
+}
+
+void PartsListBox::HideSuperfluousParts(bool refresh_list) {
+    if (!m_show_superfluous_parts)
+        return;
+    m_show_superfluous_parts = false;
+    if (refresh_list)
+        Populate();
+}
+
 
 //////////////////////////////////////////////////
 // DesignWnd::PartPalette                       //
@@ -560,13 +576,13 @@ public:
     void            ToggleClass(ShipPartClass part_class, bool refresh_list = true);
     void            ToggleAllClasses(bool refresh_list = true);
 
-    void            ShowSlotType(ShipSlotType slot_type, bool refresh_list = true);
-    void            HideSlotType(ShipSlotType slot_type, bool refresh_list = true);
-    void            ToggleSlotType(ShipSlotType slot_type, bool refresh_list = true);
-
     void            ShowAvailability(bool available, bool refresh_list = true);
     void            HideAvailability(bool available, bool refresh_list = true);
     void            ToggleAvailability(bool available, bool refresh_list = true);
+
+    void            ShowSuperfluous(bool refresh_list = true);
+    void            HideSuperfluous(bool refresh_list = true);
+    void            ToggleSuperfluous(bool refresh_list = true);
 
     void            Reset();
     //@}
@@ -580,13 +596,15 @@ private:
     PartsListBox*   m_parts_list;
 
     std::map<ShipPartClass, CUIButton*> m_class_buttons;
-    std::map<ShipSlotType, CUIButton*>  m_slot_type_buttons;
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
+    CUIButton*                          m_superfluous_parts_button;
 };
 
 DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
-    m_parts_list(0)
+    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h,
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
+    m_parts_list(0),
+    m_superfluous_parts_button(0)
 {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
@@ -619,33 +637,29 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
-    //// slot type buttons
-    //for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
-    //    m_slot_type_buttons[slot_type] = (new CUIButton(UserString(boost::lexical_cast<std::string>(slot_type)), GG::X(10), GG::Y(10), GG::X(10)));
-    //    AttachChild(m_slot_type_buttons[slot_type]);
-    //    GG::Connect(m_slot_type_buttons[slot_type]->ClickedSignal,
-    //                boost::bind(&DesignWnd::PartPalette::ToggleSlotType, this, slot_type, true));
-    //}
+    // availability buttons
+    CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
+    m_availability_buttons.first = button;
+    AttachChild(button);
+    GG::Connect(button->LeftClickedSignal,
+                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
+    button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
+    m_availability_buttons.second = button;
+    AttachChild(button);
+    GG::Connect(button->LeftClickedSignal,
+                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
-    //// availability buttons
-    //CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    //m_availability_buttons.first = button;
-    //AttachChild(button);
-    //GG::Connect(button->ClickedSignal,
-    //            boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    //button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    //m_availability_buttons.second = button;
-    //AttachChild(button);
-    //GG::Connect(button->ClickedSignal, 
-    //            boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+    // superfluous parts button
+    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::X(10), GG::Y(10), GG::X(10));
+    AttachChild(m_superfluous_parts_button);
+    GG::Connect(m_superfluous_parts_button->LeftClickedSignal,
+                boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
     ShowAllClasses(false);
     ShowAvailability(true, false);
-    for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
-        m_parts_list->ShowSlotType(slot_type, false);
-        //m_slot_type_buttons[slot_type]->MarkSelectedGray();
-    }
+    ShowSuperfluous(false);
+
     DoLayout();
 }
 
@@ -668,14 +682,15 @@ void DesignWnd::PartPalette::DoLayout() {
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
-    const int NUM_SLOT_TYPE_BUTTONS = 0;//std::max(1, static_cast<int>(m_slot_type_buttons.size()));
-    const int NUM_AVAILABILITY_BUTTONS = 0;//2;
-    const int NUM_NON_CLASS_BUTTONS = NUM_SLOT_TYPE_BUTTONS + NUM_AVAILABILITY_BUTTONS;
+    const int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
+    const int NUM_AVAILABILITY_BUTTONS = 2;
+    const int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
-    // determine whether to put non-class buttons (availability and slot type) in one column or two.
-    // -> if class buttons fill up fewer rows than (the non-class buttons in one column), split the
-    //    non-class buttons into two columns
-    int num_non_class_buttons_per_row = 0;//1;
+    // determine whether to put non-class buttons (availability and redundancy)
+    // in one column or two.
+    // -> if class buttons fill up fewer rows than (the non-class buttons in one
+    // column), split the non-class buttons into two columns
+    int num_non_class_buttons_per_row = 1;
     if (NUM_CLASS_BUTTONS < NUM_NON_CLASS_BUTTONS*(MAX_BUTTONS_PER_ROW - num_non_class_buttons_per_row))
         num_non_class_buttons_per_row = 2;
 
@@ -692,8 +707,11 @@ void DesignWnd::PartPalette::DoLayout() {
     const GG::Y ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
     // place class buttons
-    int col = NUM_CLASS_BUTTONS_PER_ROW, row = -1;
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
+    int col = NUM_CLASS_BUTTONS_PER_ROW;
+    int row = -1;
+    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin();
+         it != m_class_buttons.end(); ++it)
+    {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
@@ -704,32 +722,70 @@ void DesignWnd::PartPalette::DoLayout() {
         ++col;
     }
 
+    // place parts list.  note: assuming at least as many rows of class buttons
+    //                          as availability buttons, as should be the case
+    //                          given how num_non_class_buttons_per_row is determined
+    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)),
+                           ClientSize() - GG::Pt(GG::X(2*BUTTON_SEPARATION), GG::Y(2*BUTTON_SEPARATION)));
+
+
     // place parts list.  note: assuming at least as many rows of class buttons as availability buttons, as should
     //                          be the case given how num_non_class_buttons_per_row is determined
     m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
-    //// place slot type buttons
-    //col = NUM_CLASS_BUTTONS_PER_ROW;
-    //row = 0;
-    //for (std::map<ShipSlotType, CUIButton*>::iterator it = m_slot_type_buttons.begin(); it != m_slot_type_buttons.end(); ++it) {
-    //    GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    //    it->second->SizeMove(ul, lr);
-    //    ++row;
-    //}
+    GG::Pt ul, lr;
+
+    // place slot type buttons
+    col = NUM_CLASS_BUTTONS_PER_ROW;
+    row = 0;
+    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_superfluous_parts_button->SizeMove(ul, lr);
+
+    // place availability buttons
+    if (num_non_class_buttons_per_row > 1) {
+        ++col;
+        row = 0;
+    } else {
+        ++row;
+    }
+    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_availability_buttons.first->SizeMove(ul, lr);
+
+    if (row != 0 && num_non_class_buttons_per_row > 2) {
+        ++col;
+        row = 0;
+    } else {
+        ++row;
+    }
+    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_availability_buttons.second->SizeMove(ul, lr);
+
+
+    //GG::Pt ul, lr;
 
     //// place availability buttons
     //if (num_non_class_buttons_per_row > 1) {
     //    ++col;
     //    row = 0;
     //}
-    //GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    //GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     //m_availability_buttons.first->SizeMove(ul, lr);
+
     //++row;
     //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
     //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     //m_availability_buttons.second->SizeMove(ul, lr);
+
+    //// place superfluous culling button
+    //++row;
+    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    //m_superfluous_parts_button->SizeMove(ul, lr);
+
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -783,50 +839,20 @@ void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
         ShowAllClasses(refresh_list);
 }
 
-void DesignWnd::PartPalette::ShowSlotType(ShipSlotType slot_type, bool refresh_list) {
-    if (slot_type >= ShipSlotType(0) && slot_type < NUM_SHIP_SLOT_TYPES) {
-        m_parts_list->ShowSlotType(slot_type, refresh_list);
-        //m_slot_type_buttons[slot_type]->MarkSelectedGray();
-    } else {
-        throw std::invalid_argument("PartPalette::ShowSlotType was passed an invalid ShipSlotType");
-    }
-}
-
-void DesignWnd::PartPalette::HideSlotType(ShipSlotType slot_type, bool refresh_list) {
-    if (slot_type >= ShipSlotType(0) && slot_type < NUM_SHIP_SLOT_TYPES) {
-        m_parts_list->HideSlotType(slot_type, refresh_list);
-        //m_slot_type_buttons[slot_type]->MarkNotSelected();
-    } else {
-        throw std::invalid_argument("PartPalette::HideSlotType was passed an invalid ShipSlotType");
-    }
-}
-
-void DesignWnd::PartPalette::ToggleSlotType(ShipSlotType slot_type, bool refresh_list) {
-    if (slot_type >= ShipSlotType(0) && slot_type < NUM_SHIP_SLOT_TYPES) {
-        const std::set<ShipSlotType>& slot_types_shown = m_parts_list->GetSlotTypesShown();
-        if (slot_types_shown.find(slot_type) == slot_types_shown.end())
-            ShowSlotType(slot_type, refresh_list);
-        else
-            HideSlotType(slot_type, refresh_list);
-    } else {
-        throw std::invalid_argument("PartPalette::ToggleSlotType was passed an invalid ShipSlotType");
-    }
-}
-
 void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
     m_parts_list->ShowAvailability(available, refresh_list);
-    //if (available)
-    //    m_availability_buttons.first->MarkSelectedGray();
-    //else
-    //    m_availability_buttons.second->MarkSelectedGray();
+    if (available)
+        m_availability_buttons.first->MarkSelectedGray();
+    else
+        m_availability_buttons.second->MarkSelectedGray();
 }
 
 void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
     m_parts_list->HideAvailability(available, refresh_list);
-    //if (available)
-    //    m_availability_buttons.first->MarkNotSelected();
-    //else
-    //    m_availability_buttons.second->MarkNotSelected();
+    if (available)
+        m_availability_buttons.first->MarkNotSelected();
+    else
+        m_availability_buttons.second->MarkNotSelected();
 }
 
 void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
@@ -842,6 +868,24 @@ void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_lis
         else
             ShowAvailability(false, refresh_list);
     }
+}
+
+void DesignWnd::PartPalette::ShowSuperfluous(bool refresh_list) {
+    m_parts_list->ShowSuperfluousParts(refresh_list);
+    m_superfluous_parts_button->MarkSelectedGray();
+}
+
+void DesignWnd::PartPalette::HideSuperfluous(bool refresh_list) {
+    m_parts_list->HideSuperfluousParts(refresh_list);
+    m_superfluous_parts_button->MarkNotSelected();
+}
+
+void DesignWnd::PartPalette::ToggleSuperfluous(bool refresh_list) {
+    bool showing_superfluous = m_parts_list->GetShowingSuperfluous();
+    if (showing_superfluous)
+        HideSuperfluous(refresh_list);
+    else
+        ShowSuperfluous(refresh_list);
 }
 
 void DesignWnd::PartPalette::Reset()
