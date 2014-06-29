@@ -37,7 +37,7 @@ namespace {
     const GG::Y SAVE_FILE_DIALOG_HEIGHT ( 400 );
     const GG::X SAVE_FILE_DIALOG_MIN_WIDTH ( 160 );
     const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT ( 100 );
-    
+
     const GG::X PROMT_WIDTH ( 200 );
     const GG::Y PROMPT_HEIGHT ( 75 );
 
@@ -46,25 +46,25 @@ namespace {
     const GG::X SAVE_FILE_BUTTON_MARGIN ( 10 );
     const unsigned int SAVE_FILE_CELL_MARGIN = 2;
     const unsigned int ROW_MARGIN = 2;
-    
+
     const std::string PATH_DELIM_BEGIN = "[";
     const std::string PATH_DELIM_END = "]";
-    
+
     const std::string WIDE_AS = "wide-as";
     const std::string STRETCH = "stretch";
-    
+
     const std::string SERVER_LABEL = "SERVER";
-    
+
     const std::string VALID_PREVIEW_COLUMNS[] = {
         "player", "empire", "turn", "time", "file", "seed", "galaxy_age", "galaxy_size", "galaxy_shape",
         "monster_freq", "native_freq", "planet_freq", "specials_freq", "starlane_freq", "ai_aggression",
         "number_of_empires", "number_of_humans"
     };
-    
+
     const unsigned int VALID_PREVIEW_COLUMN_COUNT = sizeof(VALID_PREVIEW_COLUMNS) / sizeof(std::string);
-    
+
     const int WHEEL_INCREMENT = 80;
-    
+
     // command-line options
     void AddOptions(OptionsDB& db) {
         // List the columns to show, separated by colons.
@@ -81,9 +81,9 @@ namespace {
         db.Add("UI.save-file-dialog.file." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 2.0);
         db.Add<std::string>("UI.save-file-dialog.galaxy_size." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"), "9999");
         db.Add("UI.save-file-dialog.seed." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 0.75);
-        
+
         db.Add("UI.save-file-dialog.default." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
-        
+
         // We give them a custom delay since the general one is a bit quick
         db.Add("UI.save-file-dialog.tooltip-delay", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY"), 800);
     }
@@ -96,26 +96,26 @@ namespace {
     {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
-        GG::Pt extent = font->TextExtent ( string );
-        GG::TextControl* text = new GG::TextControl ( GG::X0, GG::Y0, extent.x, extent.y,
-                                                      string, font, color,
-                                                      GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT );
-        text->ClipText ( true );
-        text->SetChildClippingMode ( GG::Wnd::ClipToClient );
+        GG::Pt extent = font->TextExtent(string);
+        GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, extent.x, extent.y,
+                                                    string, font, color,
+                                                    GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
+        text->ClipText(true);
+        text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
     }
-    
+
     std::string GenericPathString(const fs::path& path) {
-        #ifndef FREEORION_WIN32
+#ifndef FREEORION_WIN32
         return path.generic_string();
-        #else
+#else
         fs::path::string_type native_string = path.generic_wstring();
         std::string retval;
         utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
         return retval;
-        #endif
+#endif
     }
-    
+
     bool Prompt(const std::string& question){
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::ThreeButtonDlg prompt(PROMT_WIDTH, PROMPT_HEIGHT, question, font,
@@ -124,12 +124,12 @@ namespace {
         prompt.Run();
         return prompt.Result() == 0;
     }
-    
+
     /// Returns true if list contains a row with the text str
     bool HasRow(const GG::DropDownList* list, const std::string& str){
-        if (list == NULL) {
+        if (!list)
             return false;
-        }
+
         for (unsigned i = 0; i < list->NumRows(); ++i) {
             const GG::DropDownList::Row& row = list->GetRow(i);
             for (unsigned j = 0; j < row.size(); ++j) {
@@ -147,53 +147,58 @@ namespace {
 }
 
 /** Describes how a column should be set up in the dialog */
-class SaveFileColumn{
+class SaveFileColumn {
 public:
     static std::vector<SaveFileColumn> GetColumns(){
         std::vector<SaveFileColumn> columns;
-        for(unsigned int i = 0; i < VALID_PREVIEW_COLUMN_COUNT; ++i){
+        for (unsigned int i = 0; i < VALID_PREVIEW_COLUMN_COUNT; ++i)
             columns.push_back(GetColumn(VALID_PREVIEW_COLUMNS[i]));
-        }
         return columns;
     }
 
-    static GG::Control* TitleForColumn(const SaveFileColumn& column, GG::Clr color, boost::shared_ptr<GG::Font>& font){
+    static GG::Control* TitleForColumn(const SaveFileColumn& column, GG::Clr color,
+                                       boost::shared_ptr<GG::Font>& font)
+    {
         return new GG::TextControl (GG::X0, GG::Y0, GG::X1, font->Height(),
                                     column.Title(), font, color,
                                     GG::FORMAT_LEFT );
     }
 
-    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full, boost::shared_ptr<GG::Font>& font, GG::Clr color){
+    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full,
+                                      boost::shared_ptr<GG::Font>& font, GG::Clr color)
+    {
         std::string value = ColumnInPreview(full, column.m_name);
-        if( column.m_name == "empire"){
+        if (column.m_name == "empire")
             color = full.preview.main_player_empire_colour;
-        }
-        if( column.m_fixed ){
-            return new GG::TextControl ( GG::X0, GG::Y0, column.FixedWidth(), font->Height(),
-                                         value, font, color,
-                                         GG::FORMAT_LEFT );
-        }else{
+
+        GG::Flags<GG::TextFormat> format_flags = GG::FORMAT_LEFT;
+        if (column.m_name == "turn")
+            format_flags = GG::FORMAT_CENTER;
+
+        if (column.m_fixed) {
+            return new GG::TextControl(GG::X0, GG::Y0, column.FixedWidth(), font->Height(),
+                                       value, font, color,
+                                       format_flags);
+        } else {
             return CreateResizingText(value, font, color);
         }
     }
 
-    bool Fixed() const{
-        return m_fixed;
-    }
+    bool Fixed() const
+    { return m_fixed; }
 
-    GG::X FixedWidth() const{
+    GG::X FixedWidth() const {
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
-        return std::max(font->TextExtent(m_wide_as).x, font->TextExtent(Title()).x) + GG::X(SAVE_FILE_CELL_MARGIN);
+        return std::max(font->TextExtent(m_wide_as).x, font->TextExtent(Title()).x)
+            + GG::X(SAVE_FILE_CELL_MARGIN);
     }
 
-    double Stretch() const{
-        return m_stretch;
-    }
+    double Stretch() const
+    { return m_stretch; }
 
-    const std::string& Name() const{
-        return m_name;
-    }
+    const std::string& Name() const
+    { return m_name; }
 
 private:
     static SaveFileColumn GetColumn(const std::string& name) {
@@ -330,14 +335,16 @@ public:
 
     /// Creates a directory row
     SaveFileRow(const std::string& directory) :
-        m_filename( directory ),
+        m_filename(directory),
         m_type (DIRECTORY)
     {
         SetMargin(ROW_MARGIN);
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr color = ClientUI::TextColor();
-        push_back ( new GG::TextControl(GG::X0, GG::Y0, PATH_DELIM_BEGIN + directory + PATH_DELIM_END, font, color) );
+        push_back(new GG::TextControl(GG::X0, GG::Y0,
+                                      PATH_DELIM_BEGIN + directory + PATH_DELIM_END,
+                                      font, color) );
         GetLayout()->SetColumnStretch(0, 1.0);
     }
 
@@ -388,7 +395,7 @@ public:
         }
     }
 
-    private:
+private:
 
     std::string m_filename;
     RowType     m_type;
@@ -558,12 +565,12 @@ private:
 };
 
 SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
-CUIWnd ( UserString ( "GAME_MENU_SAVE_FILES" ),
-         ( GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH ) / 2,
-         ( GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT ) / 2,
-         SAVE_FILE_DIALOG_WIDTH,
-         SAVE_FILE_DIALOG_HEIGHT,
-         GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE ) {
+    CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
+           (GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2,
+           SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
+{
     m_extension = extension;
     m_load_only = load;
     m_server_previews = false;
@@ -571,12 +578,12 @@ CUIWnd ( UserString ( "GAME_MENU_SAVE_FILES" ),
 }
 
 SaveFileDialog::SaveFileDialog (bool load) :
-CUIWnd ( UserString ( "GAME_MENU_SAVE_FILES" ),
-         ( GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH ) / 2,
-         ( GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT ) / 2,
-         SAVE_FILE_DIALOG_WIDTH,
-         SAVE_FILE_DIALOG_HEIGHT,
-         GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE ) {
+    CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
+           (GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2,
+           SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
+{
     m_load_only = load;
     m_server_previews = true;
     m_extension = MP_SAVE_FILE_EXTENSION;
@@ -585,37 +592,34 @@ CUIWnd ( UserString ( "GAME_MENU_SAVE_FILES" ),
 
 void SaveFileDialog::Init() {
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    SetMinSize ( GG::Pt ( 2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT ) );
-    
-    m_layout = new GG::Layout ( GG::X0, GG::Y0,
+    SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
+
+    m_layout = new GG::Layout( GG::X0, GG::Y0,
                                 SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
                                 SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4 );
-    m_layout->SetCellMargin ( SAVE_FILE_CELL_MARGIN );
+    m_layout->SetCellMargin( SAVE_FILE_CELL_MARGIN );
     m_layout->SetBorderMargin ( SAVE_FILE_CELL_MARGIN*2 );
-    
+
     m_file_list = new SaveFileListBox();
     m_file_list->SetStyle ( GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING );
-    
-    
+
     m_confirm_btn = new CUIButton ( UserString ( "OK" ) );
     CUIButton* cancel_btn = new CUIButton ( UserString ( "CANCEL" ) );
-    
+
     m_name_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, "", font );
     GG::TextControl* filename_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_FILENAME" ), font, ClientUI::TextColor() );
     GG::TextControl* directory_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_DIRECTORY" ), font, ClientUI::TextColor() );
     m_current_dir_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, PathString ( GetSaveDir() ), font );
-    
-    
-    
+
     m_layout->Add ( directory_label,    0, 0 );
-    
+
     if (!m_server_previews) {
         m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 3);
-        
+
         CUIButton* delete_btn = new CUIButton( UserString("DELETE") );
         m_layout->Add( delete_btn, 2, 3 );
         GG::Connect ( delete_btn->LeftClickedSignal, &SaveFileDialog::AskDelete, this );
-        
+
         m_layout->SetMinimumRowHeight ( 2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)) );
         m_layout->SetMinimumColumnWidth ( 2, m_confirm_btn->MinUsableSize().x +
         2*SAVE_FILE_BUTTON_MARGIN );
@@ -628,7 +632,7 @@ void SaveFileDialog::Init() {
         GG::X drop_width = font->TextExtent(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL).x;
         m_layout->SetMinimumColumnWidth ( 2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2) );
         m_layout->SetMinimumColumnWidth ( 3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2) );
-        
+
         GG::Connect ( m_remote_dir_dropdown->SelChangedSignal,   &SaveFileDialog::DirectoryDropdownSelect, this );
     }
 
@@ -706,7 +710,7 @@ void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
 
 void SaveFileDialog::Confirm() {
     Logger().debugStream() << "SaveFileDialog::Confirm: Confirming";
-    
+
     if(!CheckChoiceValidity()){
         Logger().debugStream() << "SaveFileDialog::Confirm: Invalid choice. abort.";
         return;
@@ -741,18 +745,15 @@ void SaveFileDialog::Confirm() {
 }
 
 void SaveFileDialog::AskDelete() {
-    if ( m_server_previews ) {
+    if (m_server_previews)
         return;
-    }
-    
-    
+
     fs::path chosen(Result());
     if (fs::exists (chosen) && fs::is_regular_file (chosen)) {
-    
         std::string filename = m_name_edit->Text();
-        
+
         boost::format templ(UserString("SAVE_REALLY_DELETE"));
-        
+
         std::string question = str(templ % filename);
         if (Prompt (question)) {
             fs::remove(chosen);
@@ -782,9 +783,7 @@ void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row) {
 
 void SaveFileDialog::Cancel() {
     Logger().debugStream() << "SaveFileDialog::Cancel: Dialog Canceled";
-
     m_name_edit->SetText ( "" );
-
     CloseClicked();
 }
 
@@ -800,15 +799,15 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
 }
 
 void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
-    SetDirPath ( newdir );
+    SetDirPath(newdir);
     UpdatePreviewList();
 }
 
 void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
     GG::DropDownList::Row& row = **selection;
-    if(row.size() > 0){
+    if (row.size() > 0) {
         GG::TextControl* control = dynamic_cast<GG::TextControl*>(row[0]);
-        if(control){
+        if (control) {
             UpdateDirectory(control->Text());
         }
     }
@@ -838,8 +837,9 @@ void SaveFileDialog::UpdatePreviewList() {
         row->push_back(SERVER_LABEL, font, color);
         m_remote_dir_dropdown->Insert(row);
 
-        for(std::vector<std::string>::const_iterator it = preview_information.subdirectories.begin();
-            it != preview_information.subdirectories.end(); ++it)
+        for (std::vector<std::string>::const_iterator
+             it = preview_information.subdirectories.begin();
+             it != preview_information.subdirectories.end(); ++it)
         {
             GG::DropDownList::Row* row = new GG::DropDownList::Row();
             if (it->find("/") == 0) {
