@@ -31,17 +31,17 @@ public:
     /// @param extension The extension to enforce on the file name
     /// @param load If set to true, only allow choosing existing files
     /// @param relative Return a relative file name
-    SaveFileDialog (const std::string& extension, bool load = false);
-    
+    SaveFileDialog(const std::string& extension, bool load = false);
+
     /// Contruct for getting the previews from the server
-    SaveFileDialog (bool load = false);
+    SaveFileDialog(bool load = false);
     ~SaveFileDialog(); //!< dtor
     //@}
 
     /** \name Mutators */ //@{
     virtual void ModalInit(); //< Called when dialog is shown. Overrides
-    virtual void KeyPress ( GG::Key key, boost::uint32_t key_code_point,
-                            GG::Flags<GG::ModKey> mod_keys );
+    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point,
+                          GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     /// Get the chosen save files full path
@@ -49,22 +49,22 @@ public:
 
 private:
     void Init();
-        
+
     void Confirm();                         //!< when m_save_btn button is pressed
     void AskDelete();                       //!< when a file is trying to be deleted
-    void DoubleClickRow ( GG::ListBox::iterator row );
+    void DoubleClickRow(GG::ListBox::iterator row);
     void Cancel();                          //!< when m_load_btn button is pressed
-    void SelectionChanged ( const GG::ListBox::SelectionSet& files );   //!< When file selection changes.
-    void UpdateDirectory ( const std::string& newdir );                 //!< Change current directory
-    void DirectoryDropdownSelect(GG::DropDownList::iterator selection);      //!< On remote directory select
+    void SelectionChanged(const GG::ListBox::SelectionSet& files);      //!< When file selection changes.
+    void UpdateDirectory(const std::string& newdir);                    //!< Change current directory
+    void DirectoryDropdownSelect(GG::DropDownList::iterator selection); //!< On remote directory select
 
     void UpdatePreviewList();
-    bool CheckChoiceValidity();             //!< Disables confirm if filename invalid. Returns false if not valid.
-    void FileNameEdited ( const std::string& filename ); //!< Called when the filename changes
-    void DirectoryEdited ( const std::string& filename ); //!< Called when the directory text changes
-    
-    std::string GetDirPath() const;              //!< Gets the current directory path string clean of display decorations
-    void        SetDirPath(const std::string& path); //!< Sets the shown directory path, apllying decorations if applicable
+    bool CheckChoiceValidity();                         //!< Disables confirm if filename invalid. Returns false if not valid.
+    void FileNameEdited(const std::string& filename);   //!< Called when the filename changes
+    void DirectoryEdited(const std::string& filename);  //!< Called when the directory text changes
+
+    std::string GetDirPath() const;         //!< Gets the current directory path string clean of display decorations
+    void        SetDirPath(const std::string& path); //!< Sets the shown directory path, applying decorations if applicable
 
     GG::Layout*         m_layout;           //!< The layout of the dialog
 
@@ -80,8 +80,8 @@ private:
     bool                m_server_previews;  //!< If true, get the previews from the server
 
     /// Remove copy ctor, assign
-    SaveFileDialog ( const SaveFileDialog& );
-    SaveFileDialog& operator= ( const SaveFileDialog& );
+    SaveFileDialog(const SaveFileDialog&);
+    SaveFileDialog& operator=(const SaveFileDialog&);
 };
 
 #endif // _SaveFileDialog_h_
