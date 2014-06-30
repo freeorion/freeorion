@@ -1432,6 +1432,7 @@ Tech
     researchturns = 8
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_SOL_ORB_GEN"
+    graphic = "icons/building/miniature_sun.png"
 
 Tech
     name = "PRO_NEUTRONIUM_EXTRACTION"
@@ -1735,6 +1736,7 @@ Tech
     researchturns = 4
     prerequisites = "CON_ARCH_PSYCH"
     unlock = Item type = Building name = "BLD_CONC_CAMP"
+    graphic = "icons/building/concentration-camp.png"
 
 Tech
     name = "CON_FRC_ENRG_CAMO"
@@ -1917,6 +1919,7 @@ Tech
     researchturns = 4
     prerequisites = "SHP_MIL_ROBO_CONT"
     unlock = Item type = ShipHull name = "SH_SPATIAL_FLUX"
+    graphic = "icons/ship_hulls/spatial_flux_hull_small.png"
 
 Tech
     name = "SHP_CONTGRAV_MAINT"
@@ -1970,6 +1973,20 @@ Tech
     graphic = "icons/ship_hulls/titanic_hull_small.png"
 
 Tech
+    name = "SHP_XENTRONIUM_HULL"
+    description = "SH_XENTRONIUM_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SHP_XENTRONIUM_PLATE"
+    unlock = [
+        Item type = ShipHull name = "SH_XENTRONIUM"
+    ]
+    graphic = "icons/ship_hulls/xentronium_hull_small.png"
+
+Tech
     name = "SHP_TRANSSPACE_DRIVE"
     description = "SHP_TRANSSPACE_DRIVE_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -1982,6 +1999,7 @@ Tech
         Item type = ShipHull name = "SH_TRANSSPATIAL"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
+    graphic = "icons/ship_hulls/trans_spatial_hull_small.png"
 
 Tech
     name = "SHP_MIDCOMB_LOG"
@@ -2002,6 +2020,7 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
+    graphic = "icons/ship_hulls/logistics_facilitator_hull_small.png"
     
 //########################################################
 //#     Asteroid Hulls
@@ -2031,11 +2050,11 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
-    prerequisites = "SHP_ASTEROID_HULLS"
+    prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
         Item type = ShipHull name = "SH_HEAVY_ASTEROID"
     ]
-    graphic = "icons/ship_hulls/asteroid_hull_small.png"
+    graphic = "icons/ship_hulls/heavy_asteroid_hull_small.png"
 
 Tech
     name = "SHP_ASTEROID_REFORM"
@@ -2051,6 +2070,7 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
         Item type = ShipPart name = "AR_ROCK_PLATE"
     ]
+    graphic = "icons/ship_parts/rock_plating.png"
 
 Tech
     name = "SHP_MONOMOLEC_LATTICE"
@@ -2065,6 +2085,7 @@ Tech
         Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
         Item type = ShipPart name = "AR_CRYSTAL_PLATE"
         ]
+    graphic = "icons/ship_parts/crystal_plating.png"
 
 Tech
     name = "SHP_CAMO_AST_HULL"
@@ -2080,6 +2101,7 @@ Tech
         Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
+    graphic = "icons/ship_hulls/camouflage_asteroid_hull_small.png"
 
 Tech
     name = "SHP_MINIAST_SWARM"
@@ -2094,6 +2116,7 @@ Tech
         Item type = ShipHull name = "SH_MINIASTEROID_SWARM"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
+    graphic = "icons/ship_hulls/mini_asteroid_swarm_small.png"
 
 Tech
     name = "SHP_SCAT_AST_HULL"
@@ -2108,6 +2131,7 @@ Tech
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
+    graphic = "icons/ship_hulls/scattered_asteroid_hull_small.png"
 
         
 //########################################################
@@ -2198,6 +2222,7 @@ Tech
         Item type = ShipHull name = "SH_PROTOPLASMIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
+    graphic = "icons/ship_hulls/protoplasmic_hull_small.png"
 
 Tech
     name = "SHP_CONT_SYMB"
@@ -2205,8 +2230,8 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 10 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
+    researchcost = 16 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
     prerequisites = [        
         "SHP_ORG_HULL"
     ]
@@ -2214,6 +2239,7 @@ Tech
         Item type = ShipHull name = "SH_SYMBIOTIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
+    graphic = "icons/ship_hulls/symbiotic_hull_small.png"
 
 Tech
     name = "SHP_BIOADAPTIVE_SPEC"
@@ -2231,6 +2257,7 @@ Tech
         Item type = ShipHull name = "SH_BIOADAPTIVE"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
+    graphic = "icons/ship_hulls/bio_adaptive_hull_small.png"
     
 
 Tech
@@ -2268,6 +2295,7 @@ Tech    name = "SHP_SENT_HULL"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
+    graphic = "icons/ship_hulls/sentient_hull_small.png"
     
 //########################################################
 //#     Energy Hulls
@@ -2289,6 +2317,7 @@ Tech
         Item type = ShipHull name = "SH_COMPRESSED_ENERGY"
         Item type = Building name = "BLD_SHIPYARD_ENRG_COMP"
     ]
+    graphic = "icons/ship_hulls/compressed_energy_hull_small.png"
 
 Tech
     name = "SHP_QUANT_ENRG_MAG"
@@ -2491,6 +2520,21 @@ Tech
     graphic = "icons/ship_parts/antimatter_tank.png"
 
 Tech
+    name = "SHP_ZERO_POINT"
+    description = "SHP_ZERO_POINT_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 175 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = [
+        "SHP_ANTIMATTER_TANK"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = Item type = ShipPart name = "FU_ZERO_FUEL"
+    graphic = "icons/tech/zero_point_energy.png"
+
+Tech
     name = "SHP_NOVA_BOMB"
     description = "SHP_NOVA_BOMB_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -2580,11 +2624,15 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 9999
-    researchturns = 9999
-    Unresearchable
-    prerequisites = "SPY_DIST_MOD"
+    researchcost = 2000
+    researchturns = 10
+    //Unresearchable
+    prerequisites = [
+	    "SHP_PLASMA_SHIELD"
+		"SPY_DIST_MOD"
+	]
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
+    graphic = "icons/ship_parts/multi-spectral.png"
 
 //#
 //#     SHIPS ARMOR

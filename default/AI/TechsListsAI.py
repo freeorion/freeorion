@@ -126,7 +126,6 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SPY_DETECT_3",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
-            "SHP_HEAVY_AST_HULL",
             "SHP_ADV_DAM_CONT",
             "LRN_QUANT_NET",
             "DEF_PLAN_BARRIER_SHLD_1",
@@ -149,7 +148,7 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
     
 def tech_group_3b():  # with SHP_ASTEROID_REFORM
     result = tech_group_3a()
-    result += [ "SHP_ASTEROID_REFORM" ]
+    result += [ "SHP_ASTEROID_REFORM", "SHP_HEAVY_AST_HULL" ]
     return result
     
 def tech_group_4a():  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
@@ -234,25 +233,25 @@ def primary_meta_techs(index = 0):
     if index == 0:
         result =   tech_group_1a()  # early org_hull
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()  # without SHP_ASTEROID_REFORM
+        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
         result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 1:
         result =   tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()  # without SHP_ASTEROID_REFORM
+        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
         result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 2:
         result =   tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()  # without SHP_ASTEROID_REFORM
+        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 3:
         result =   tech_group_1a()  # early org_hull
         result += tech_group_2b()  # prioritizes weapons over growth & defense
-        result += tech_group_3a()  # without SHP_ASTEROID_REFORM
+        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()    # 
     elif index == 4:

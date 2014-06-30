@@ -263,7 +263,7 @@ Hull
     speed = 70
     starlaneSpeed = 80
     fuel = 3
-    stealth = 10
+    stealth = 5
     structure = 30
     slots = [
         Slot type = External position = (0.15, 0.15)
@@ -364,12 +364,12 @@ Hull
     name = "SH_TRANSSPATIAL"
     description = "SH_TRANSSPATIAL_DESC"
     speed = 100
-    starlaneSpeed = 80
+    starlaneSpeed = 120
     fuel = 3
-    stealth = 30
+    stealth = 55
     structure = 9
     slots = Slot type = External position = (0.50, 0.50)
-    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -477,7 +477,7 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
-    buildCost = 5.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Planet
@@ -500,7 +500,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 25
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -522,7 +522,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
-    buildCost = 2.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 6.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -544,7 +544,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 25
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -560,7 +560,7 @@ Hull
     speed = 30
     starlaneSpeed = 60
     fuel = 4
-    stealth = 10
+    stealth = 5
     structure = 50
     slots = [
         Slot type = External position = (0.12, 0.15)
@@ -573,7 +573,7 @@ Hull
         Slot type = Internal position = (0.24, 0.75)
         Slot type = Internal position = (0.36, 0.75)
     ]
-    buildCost = 12.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 30.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -595,7 +595,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 25
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -611,7 +611,7 @@ Hull
     speed = 35
     starlaneSpeed = 60
     fuel = 4
-    stealth = 5
+    stealth = 25
     structure = 40
     slots = [
         Slot type = Internal position = (0.15, 0.40)
@@ -619,7 +619,7 @@ Hull
         Slot type = Internal position = (0.45, 0.40)
         Slot type = Internal position = (0.60, 0.40)
     ]
-    buildCost = 8.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -641,7 +641,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 45
+            effects = SetStealth Value + 40
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -663,7 +663,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
-    buildCost = 3.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 9.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -771,13 +771,13 @@ Hull
     speed = 70
     starlaneSpeed = 60
     fuel = 4
-    stealth = 40
+    stealth = 35
     structure = 11
     slots = [
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
     ]
-    buildCost = 5.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 15.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -822,7 +822,7 @@ Hull
     speed = 10
     starlaneSpeed = 60
     fuel = 4
-    stealth = 1
+    stealth = 5
     structure = 160
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -845,7 +845,7 @@ Hull
         Slot type = Internal position = (0.90, 0.50)
         Slot type = Internal position = (0.10, 0.85)
     ]
-    buildCost = 50.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [
@@ -913,7 +913,7 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
-    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -942,7 +942,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 15
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -958,7 +958,7 @@ Hull
     speed = 50
     starlaneSpeed = 90
     fuel = 2
-    stealth = 10
+    stealth = 15
     structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -966,7 +966,7 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
-    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -1008,7 +1008,7 @@ Hull
     speed = 75
     starlaneSpeed = 100
     fuel = 2
-    stealth = 0
+    stealth = 5
     structure = 16
     slots = [
         Slot type = External position = (0.30, 0.35)
@@ -1017,13 +1017,13 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.60, 0.75)
     ]
-    buildCost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 18 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
     location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
-            OwnedBy TheEmpire Source.Owner
-        ]
+       // Contains And [
+        //    Building "BLD_SHIPYARD_ORG_XENO_FAC"
+        //    OwnedBy TheEmpire Source.Owner
+       // ]
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
@@ -1049,7 +1049,7 @@ Hull
     speed = 50
     starlaneSpeed = 100
     fuel = 2
-    stealth = 0
+    stealth = 5
     structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1059,7 +1059,7 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.80, 0.75)
     ]
-    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 23 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1086,7 +1086,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 15)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1101,7 +1101,7 @@ Hull
     speed = 70
     starlaneSpeed = 100
     fuel = 2
-    stealth = 10
+    stealth = 25
     structure = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1109,13 +1109,13 @@ Hull
         Slot type = Internal position = (0.20, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
     location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-            OwnedBy TheEmpire Source.Owner
-        ]
+        //Contains And [
+         //   Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        //    OwnedBy TheEmpire Source.Owner
+       // ]
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
@@ -1155,7 +1155,7 @@ Hull
     speed = 50
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
+    stealth = 35
     structure = 5
     slots = [
         Slot type = External position = (0.30, 0.50)
@@ -1164,7 +1164,7 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
     ]
-    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1210,7 +1210,7 @@ Hull
     speed = 60
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
+    stealth = 25
     structure = 5
     slots = [
         Slot type = External position = (0.15, 0.15)
@@ -1221,7 +1221,7 @@ Hull
         Slot type = Internal position = (0.75, 0.75)
         Slot type = Internal position = (0.90, 0.75)
     ]
-    buildCost = 11 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1256,7 +1256,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 15)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 15)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1271,7 +1271,7 @@ Hull
     speed = 80
     starlaneSpeed = 100
     fuel = 2
-    stealth = 0
+    stealth = 5
     structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1282,7 +1282,7 @@ Hull
         Slot type = External position = (0.20, 0.75)
         Slot type = External position = (0.40, 0.75)
     ]
-    buildCost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1309,7 +1309,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 20)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 20)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1324,7 +1324,7 @@ Hull
     speed = 80
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
+    stealth = 35
     structure = 15
     slots = [
         Slot type = External position = (0.30, 0.35)
@@ -1334,7 +1334,7 @@ Hull
         Slot type = Internal position = (0.40, 0.65)
         Slot type = Internal position = (0.60, 0.65)
     ]
-    buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 21 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1365,7 +1365,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 25)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1380,7 +1380,7 @@ Hull
     speed = 30
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
+    stealth = 25
     structure = 12
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1393,7 +1393,7 @@ Hull
         Slot type = Internal position = (0.25, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 16 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [
@@ -1444,7 +1444,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 45)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 45)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1459,10 +1459,10 @@ Hull
     speed = 100
     starlaneSpeed = 120
     fuel = 5
-    stealth = 40
+    stealth = 45
     structure = 10
     slots = Slot type = External position = (0.15, 0.40)
-    buildCost = 2.5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -1491,7 +1491,7 @@ Hull
     speed = 50
     starlaneSpeed = 120
     fuel = 5
-    stealth = 0
+    stealth = -5
     structure = 80
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1509,7 +1509,7 @@ Hull
         Slot type = External position = (0.70, 0.85)
         Slot type = External position = (0.90, 0.85)
     ]
-    buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 7
     location = And [
         Contains And [
@@ -1552,7 +1552,7 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
-    buildCost = 7.5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1581,7 +1581,7 @@ Hull
     speed = 5
     starlaneSpeed = 120
     fuel = 5
-    stealth = -60
+    stealth = -55
     structure = 300
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1612,7 +1612,7 @@ Hull
         Slot type = Internal position = (0.80, 0.85)
         Slot type = Internal position = (0.90, 0.85)
     ]
-    buildCost = 30.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 80.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 20
     location = And [
         Contains And [
@@ -1719,7 +1719,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 10
+    stealth = 5
     structure = 5
     slots = Slot type = External position = (0.30, 0.15)
     buildCost = 1
@@ -1766,7 +1766,7 @@ Hull
     speed = 20
     starlaneSpeed = 30
     fuel = 5
-    stealth = 10
+    stealth = 5
     structure = 80
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1794,7 +1794,7 @@ Hull
     speed = 20
     starlaneSpeed = 0
     fuel = 0
-    stealth = 10
+    stealth = 5
     structure = 35
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1846,7 +1846,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 10
+    stealth = 5
     structure = 1000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1982,7 +1982,7 @@ Hull
     speed = 5
     starlaneSpeed = 30
     fuel = 6
-    stealth = 10
+    stealth = 15
     structure = 40
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2082,7 +2082,7 @@ Hull
     speed = 5
     starlaneSpeed = 25
     fuel = 5
-    stealth = 10
+    stealth = 15
     structure = 250
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2183,7 +2183,7 @@ Hull
     speed = 5
     starlaneSpeed = 20
     fuel = 4
-    stealth = 10
+    stealth = 15
     structure = 1000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2233,7 +2233,7 @@ Hull
     speed = 20
     starlaneSpeed = 40
     fuel = 4
-    stealth = 10
+    stealth = 5
     structure = 20
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2296,7 +2296,7 @@ Hull
     speed = 20
     starlaneSpeed = 45
     fuel = 4
-    stealth = 10
+    stealth = 5
     structure = 100
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2344,7 +2344,7 @@ Hull
     speed = 20
     starlaneSpeed = 50
     fuel = 4
-    stealth = 10
+    stealth = 5
     structure = 1000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2436,7 +2436,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 5
-    stealth = 10
+    stealth = 15
     structure = 60
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2484,7 +2484,7 @@ Hull
     speed = 50
     starlaneSpeed = 65
     fuel = 5
-    stealth = 10
+    stealth = 15
     structure = 120
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2512,7 +2512,7 @@ Hull
     speed = 20
     starlaneSpeed = 30
     fuel = 3
-    stealth = 10
+    stealth = 5
     structure = 30
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2575,7 +2575,7 @@ Hull
     speed = 20
     starlaneSpeed = 25
     fuel = 2
-    stealth = 10
+    stealth = 5
     structure = 200
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2625,7 +2625,7 @@ Hull
     speed = 20
     starlaneSpeed = 25
     fuel = 5
-    stealth = 10
+    stealth = 5
     structure = 1000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2739,7 +2739,7 @@ Hull
     speed = 20
     starlaneSpeed = 160
     fuel = 100
-    stealth = 10
+    stealth = 15
     structure = 7000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2769,7 +2769,7 @@ Hull
     speed = 300
     starlaneSpeed = 300
     fuel = 100
-    stealth = 20
+    stealth = 25
     structure = 1800
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2814,7 +2814,7 @@ Hull
     name = "SH_COSMIC_DRAGON_BODY"
     description = "SH_COSMIC_DRAGON_BODY_DESC"
     speed = 140
-    starlaneSpeed = 30
+    starlaneSpeed = 25
     fuel = 100
     stealth = 10
     structure = 50000
@@ -2858,7 +2858,7 @@ Hull
     speed = 50
     starlaneSpeed = 20
     fuel = 1
-    stealth = 40
+    stealth = 45
     structure = 5000
     slots = [
         Slot type = External position = (0.60, 0.45)

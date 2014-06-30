@@ -8120,6 +8120,12 @@ Antimatter Tank
 SHP_ANTIMATTER_TANK_DESC
 Unlocks Antimatter Tank ship part.
 
+SHP_ZERO_POINT
+Zero-Point Fuel Generator
+
+SHP_ZERO_POINT_DESC
+A powerful zero point fuel module that refuels the ship automatically.
+
 SHP_ROOT_ARMOR
 Armor Plating
 
@@ -9381,10 +9387,11 @@ Organic Hull
 
 SH_ORGANIC_DESC
 '''A living hull with three external slots and one internal slot. 
-The base hull is born with 5 structure, but grows an additional 5 structure over 25 turns.
-[[encyclopedia STEALTH_TITLE]] is high and speed is average. 
+Organic Growth: starts with 5 structure, but grows an additional 5 structure over 25 turns.
 
-Living hulls regenerates structure and fuel between combats.
+[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is poor and starlane speed is good. 
+
+Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology developes. Low detection makes it poorly suited in a scouting role but it can make a capable warship. Living hulls regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
 
@@ -9392,18 +9399,26 @@ SH_STATIC_MULTICELLULAR
 Static Multicellular Hull
 
 SH_STATIC_MULTICELLULAR_DESC
-'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots. Structure is average and speed is good, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
+'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is constructed.'''
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high.  
+
+Cheap and versatile hull able to fill many fleet roles without excelling at any. This hull regenerates neither structure nor fuel between combats.
+
+Requires a [[buildingtype BLD_SHIPYARD_BASE]] and a [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is constructed.'''
 
 SH_ENDOMORPHIC
 Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
 '''A half living hull with four external slots and two internal slots. 
-The base hull is born with 5 structure, but grows an additional 15 structure over 75 turns.
+Organic Growth: starts with 5 structure, but grows an additional 15 structure over 30 turns.
 
-Speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
+
+Potentially a capable warship. 
+
+This hull regenerates neither structure nor fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
 
@@ -9412,22 +9427,26 @@ Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
 '''A living hull with two internal and two external slots. Exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed.
-The base hull is born with 10 structure, but grows an additional 10 structure over 50 turns.
+Organic Growth: starts with 10 structure, but grows an additional 10 structure over 50 turns.
+
+[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
+
+Less external slots makes this hull unsuited for a frontline combat role, but the internal slots, detection range and stealth give it potential as a scout or commerce raider.
 
 Living hull regenerates structure and fuel between combats.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
+Requires a [[buildingtype BLD_SHIPYARD_BASE]], and a [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
 
 SH_PROTOPLASMIC
 Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
 '''A living hull with three internal slots and two external slots. 
-The base hull is born with 5 structure, but grows an additional 25 structure over 125 turns.
+Organic Growth: starts with 5 structure, gains an additional 25 over 125 turns.
 
-Speed and [[encyclopedia STEALTH_TITLE]] are good. 
+[[encyclopedia STEALTH_TITLE]] is high, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
 
-Living hull regenerates structure and fuel between combats.
+Less external slots makes this hull unsuited for a frontline combat role, but the internal slots, detection range and stealth give it potential as a scout or commerce raider.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
@@ -9438,9 +9457,9 @@ SH_ENDOSYMBIOTIC_DESC
 '''A living hull with four external slots and three internal slots. 
 The base hull is born with 5 structure, but grows an additional 15 structure over 75 turns.
 
-Speed and [[encyclopedia STEALTH_TITLE]] are good. 
+[[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is high and starlane speed is high. 
 
-Living hull regenerates structure and fuel between combats.
+Living hull regenerates structure and fuel between combats. Potentially a powerful warship, commerce raider or armed scout.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
 
@@ -9451,12 +9470,15 @@ SH_RAVENOUS
 Ravenous Hull
 
 SH_RAVENOUS_DESC
-'''A non-living organic hull with five external slots and two internal slots. <i>This 'zombie' hull has been built from the blood and parts of its brethren.</i>
-The base hull is born with 5 structure, but grows an additional 20 structure over 100 turns.
+'''A non-living organic hull with five external slots and two internal slots.
+Organic Growth: starts with 5 structure, grows an additional 20 structure over 40 turns.
 
-[[encyclopedia STEALTH_TITLE]] is low, but speed is high. 
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is excellent and starlane speed is high. 
 
-This hull does not regenerate structure nor fuel.
+Potentially a powerful and fast warship.
+
+This hull has no bonuses to structure or fuel regeneration.
+<i>This 'zombie' hull has been built from the blood and parts of its brethren.</i>
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.
 '''
@@ -9466,9 +9488,11 @@ Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
 '''A living hull with three external slots and three internal slots. 
-The base hull is born with 15 structure, but grows an additional 25 structure over 125 turns.
+Organic Growth: starts with 15 structure, grows an additional 25 structure over 50 turns.
 
-[[encyclopedia STEALTH_TITLE]] and speed very high. 
+[[encyclopedia STEALTH_TITLE]] is high, [[encyclopedia DETECTION_RANGE_TITLE]] is excellent and starlane speed is high. 
+
+Potentially a powerful and fast commerce raider or scout.
 
 This living hull regenerates structure and fuel completely between combats. <i>It's mind and body in unison, bioadaptives are masters of healing and endurance</i>
 
@@ -9479,7 +9503,12 @@ SH_SENTIENT
 Sentient Hull
 
 SH_SENTIENT_DESC
-'''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
+'''This self-aware organic flagship with powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. 
+Organic Growth: Starts with 12 structure, grows an additional 45 over 90 turns.
+
+[[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
+
+This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
@@ -9536,6 +9565,9 @@ SH_STANDARD_DESC
 '''A large, basic interstellar hull.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
+
+SHP_XENTRONIUM_HULL
+Xentronium Armored Hull
 
 SH_XENTRONIUM
 Xentronium Hull
