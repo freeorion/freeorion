@@ -188,13 +188,13 @@ SD_SCOUT
 Scout
 
 SD_SCOUT_DESC
-Small and cheap unarmed vessel designed for recon and exploration.  Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. 
+Small and cheap unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.
 
 SD_AST_SCOUT
 Scout
 
 SD_AST_SCOUT_DESC
-Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration.  Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.  Asteroid ships can only be built in systems with an asteroid processor.
+Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. Asteroid ships can only be built in systems with an asteroid processor.
 
 SD_ADV_SCOUT
 Advanced Scout
@@ -206,7 +206,7 @@ SD_ENG_SCOUT
 Scout
 
 SD_ENG_SCOUT_DESC
-Small and fast unarmed vessel designed for recon and exploration.  Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.  This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small and fast unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_MARK_1
 Mark I
@@ -286,12 +286,12 @@ Mark VIII B
 SD_ROBOTIC1
 Robotic I
 SD_ROBOTIC1_DESC
-Advanced cruiser with heavy weaponry and shields.  Able to do the dirty work in large groups.  Can only be built at a colony with an orbital drydock and with robotic species.
+Advanced cruiser with heavy weaponry and shields. Able to do the dirty work in large groups. Can only be built at a colony with an orbital drydock and with robotic species.
 
 SD_ROBOTIC2
 Robotic II
 SD_ROBOTIC2_DESC
-Advanced cruiser with heavy weaponry and shields.  Able to do the dirty work in large groups.  Can only be built at a colony with an orbital drydock and with robotic species.
+Advanced cruiser with heavy weaponry and shields. Able to do the dirty work in large groups. Can only be built at a colony with an orbital drydock and with robotic species.
 
 SD_MARK_B_ROBOTIC3
 Robotic III
@@ -326,7 +326,7 @@ Organic hull design with Laser weaponry
 SD_MARK_B_ORGANIC1
 Organic V
 SD_MARK_B_ORGANIC1_DESC
-Organic hull design with preliminary Plasma weaponry. 
+Organic hull design with preliminary Plasma weaponry.
 
 SD_MARK_C_ENDO1
 Endomorphic I
@@ -377,25 +377,25 @@ SD_COLONY_SHIP
 Colony Ship
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard.
+Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard.
+Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_ORG_CRYOCOL_SHIP
 Cryonic Colony Ship
 
 SD_ORG_CRYOCOL_SHIP_DESC
-Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
+Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
 
 SD_AST_CRYOCOL_SHIP
 Cryonic Colony Ship
 
 SD_AST_CRYOCOL_SHIP_DESC
-Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites.  This vessel can only be built at a colony with a population of at least three, with a shipyard, in a system with an asteroid processor.
+Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard, in a system with an asteroid processor.
 
 SD_OUTPOST_SHIP
 Outpost Ship
@@ -407,55 +407,55 @@ SD_COLONY_BASE
 Colony Base
 
 SD_COLONY_BASE_DESC
-Unarmed vessel capable of creating a colony on a habitable planet in the system where it is produced.  This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
+Unarmed vessel capable of creating a colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_CRYONIC_COLONY_BASE
 Cryonic Colony Base
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unarmed vessel capable of creating a large colony on a habitable planet in the system where it is produced.  This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
+Unarmed vessel capable of creating a large colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_OUTPOST_BASE
 Outpost Base
 
 SD_OUTPOST_BASE_DESC
-Unarmed vessel capable of creating an outpost on an uninhabited world in the system where it is produced.  This vessel cannot travel through star lanes.
+Unarmed vessel capable of creating an outpost on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
 
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
 
 SD_SMALL_TROOP_SHIP_DESC
-Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
+Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
 
 SD_TROOP_SHIP
 Troop Ship
 
 SD_TROOP_SHIP_DESC
-Carries 6 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
+Carries six units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
 
 SD_ORG_TROOP_SHIP
 Troop Ship
 
 SD_ORG_TROOP_SHIP_DESC
-Carries 8 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.  Organic vessels can only be build at planets with an orbital incubator.
+Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Organic vessels can only be built at planets with an orbital incubator.
 
 SD_ENG_TROOP_SHIP
 Small Troop Ship
 
 SD_ENG_TROOP_SHIP_DESC
-Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.  This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_ENG1
 Compressed Energy 1
 
 SD_ENG1_DESC
-Small fast combat vessel.  This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small fast combat vessel. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_ENG2
 Compressed Energy 2
 
 SD_ENG2_DESC
-Small fast combat vessel, with improved weaponry.  This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
@@ -484,7 +484,7 @@ SM_KRILL_3_DESC
 SM_KRILL_4
 Plague of Krill
 SM_KRILL_4_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_TREE
 Dyson Forest
@@ -514,12 +514,12 @@ SM_DRONE_DESC
 SM_DRONE_FACTORY
 Drone Factory
 SM_DRONE_FACTORY_DESC
-Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
+Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory still functions, slowly producing new Drone Fighters.
 
 SM_GUARD_1
 Sentry
 SM_GUARD_1_DESC
-Sentries guard cool minor stuff.
+Sentries guard minor cool stuff.
 
 SM_GUARD_2
 Sentinel
@@ -529,12 +529,12 @@ Sentinels guard cool stuff.
 SM_GUARD_3
 Warden
 SM_GUARD_3_DESC
-Wardens guard cool major stuff.
+Wardens guard major cool stuff.
 
 SM_KRAKEN_1
 Larval Kraken
 SM_KRAKEN_1_DESC
-'''In the larval form, a kraken is a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+'''In the larval form, a kraken is a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it helps to keep in check. But a well fed larval kraken may grow into a larger and more dangerous adult form.
 
 Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
 
@@ -613,7 +613,7 @@ Bloated Juggernaut
 SM_BLOATED_JUGGERNAUT_DESC
 '''A massive, sickly-looking space monster.
 
-Bloated Juggernaut are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack planetary buildings, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
+Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack planetary buildings, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
 
 SM_CLOUD
 Space Cloud
@@ -648,7 +648,7 @@ SM_DAMPENING_CLOUD_DESC
 SM_ACIREMA_GUARD
 Acirema Guard Ship
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema guards the system.
+An unmanned armed ship, built by the Acirema, guards the system.
 
 SM_EXP_OUTPOST
 Experimentor Outpost Ship
@@ -682,7 +682,7 @@ FLD_NEBULA_1
 Nebula
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could collapse to form a new star.
+Cloud of hydrogen gas that could coalesce to form a new star.
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
@@ -717,7 +717,7 @@ Monsters
 ##########################
 
 RETURN_TO_INTRO
-Returning to Main Menu
+Returning to Main Menu.
 
 SERVER_WONT_START
 The server could not be started.
@@ -857,7 +857,7 @@ OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
 OPTIONS_DB_STARLANE_CORE
-width multiplier for empire 'core' starlanes.
+Width multiplier for empire 'core' starlanes.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Toggles whether to color starlanes with empire colors if empires can exchange resources along each starlane.
@@ -2408,7 +2408,7 @@ This planet is out of range of your empire's scanners.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
-Latest known stealth is out of date.  Actual stealth exceeds [[DETECTION_TITLE]].
+Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]].
 
 ## Resources Panel ##########
 
@@ -2445,7 +2445,7 @@ TT_CHANGE
 Change
 
 TT_BREAKDOWN_SUMMARY
-%1%: %2% 
+%1%: %2%
 
 TT_TARGETS_BREAKDOWN_SUMMARY
 %1% Modifications: %2%
@@ -2542,7 +2542,7 @@ FW_AUTO_DESC
 Automatically select aggression for new fleet based on whether ships have weapons.
 
 FW_SHIP_CLASS
-Ship Class 
+Ship Class
 
 FW_UNKNOWN_DESIGN_NAME
 Unknown Design
@@ -3079,12 +3079,12 @@ ENC_SPECIES_PLANET_TYPE_SUITABILITY
 %1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
-'''%1% is suitable for colonization by these species.  
+'''%1% is suitable for colonization by these species.
 
 '''
 
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
-'''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off. 
+'''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off.
 
 '''
 
@@ -3322,7 +3322,7 @@ ENC_UNLOCKS
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
-Can mount in:  
+Can mount in: 
 
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1%: %2%
@@ -3428,17 +3428,17 @@ MINING_FOCUS_TITLE
 Mining Focus
 MINING_FOCUS_TEXT
 '''Mining Focus is currently disabled.'''
-#The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a production bonus.
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus
 TRADE_FOCUS_TEXT
-'''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
+'''Trade doesn't do anything, yet. It is just a placeholder to show that more resources are planned.'''
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.'''
+'''The Protection focus represents a planet wholly focused on defending itself. [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.'''
 
 INDUSTRY_TITLE
 Industry
@@ -3447,15 +3447,15 @@ INDUSTRY_TEXT
 
 The Industry of a planet can be used for any production projects of [[encyclopedia SUPPLY_TITLE]] line connected planets. Any un-allocated Industry is lost each turn.
 
-Each project has a minimum number of turns required to build it.  For example, if a project that cost 15 PPs, and had a minimum time of 3 turns, 5 PPs is the maximum that could be put towards its completion per turn.
-The project at the top of the queue is given PPs first.  Any remaining PP are then given to the next project in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+Each project has a minimum number of turns required to build it. For example, if a project that cost 15 PPs, and had a minimum time of 3 turns, 5 PPs is the maximum that could be put towards its completion per turn.
+The project at the top of the queue is given PPs first. Any remaining PP are then given to the next project in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
 '''
 
 RESEARCH_TITLE
 Research
 RESEARCH_TEXT
-'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it.  For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
-The tech at the top of the queue is given RPs first.  Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
+The tech at the top of the queue is given RPs first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
 
 Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
 
@@ -3511,27 +3511,27 @@ Troops
 TROOP_TEXT
 '''The term Troops combines all kinds of military forces capable of operating on a planets surface.
 
-The Troop meter on a planet represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Organic species are more or less, 'life as we know it'. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.'''
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Lithic species are silicon or mineral-based. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.'''
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Robotic species are sapient machines. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.
+'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better. Growth specials do not benefit them.
 
 Population changes:
 Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
@@ -3543,7 +3543,7 @@ Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.''
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
+'''Self-Sustaining species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
 
 TELEPATHIC_TITLE
 Telepathy
@@ -3560,12 +3560,12 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 FUEL_TITLE
 Fuel
 FUEL_TEXT
-'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel. Fuel is not used up at any other time. [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
 
 SUPPLY_TITLE
 Supply
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures. Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
 
 The supply meter on a planet represents the number of star-lanes supply can reach.'''
 
@@ -3579,7 +3579,7 @@ EVACUATION_TITLE
 Evacuation
 EVACUATION_TEXT
 '''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disappears into the vastness of space.
-During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
+During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
 
 AI_LEVELS_TITLE
 AI Aggression Levels
@@ -3608,7 +3608,7 @@ Aggressive:
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
-# Functional list; do not translate.  Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation
 GROWTH_SPECIALS_LIST
 '''CRYSTALS_SPECIAL
 FRUIT_SPECIAL
@@ -4146,7 +4146,7 @@ SITREP_VICTORY_LABEL
 Victory
 
 SITREP_VICTORY_DESTRUCTION
-At last, the mysterious violent threat plaguing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
+At last, the mysterious violent threat plaguing the galaxy has been eliminated. The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
 SITREP_VICTORY_DESTRUCTION_LABEL
 Victory Destruction
 
@@ -4344,7 +4344,7 @@ Environmental Preferences:
 FOCUS_PREFERENCE
 Preferred Focus: 
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_HUMAN
 Human
@@ -4642,7 +4642,7 @@ Prefers Tundra planets.
 '''
 
 SP_GEORGE_DESC
-'''George is a single telepathic entity that consists of multiple mobile telepathic units. 
+'''George is a single telepathic entity that consists of multiple mobile telepathic units.
 
 Description:
 The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
@@ -4728,10 +4728,10 @@ SP_CYNOS_DESC
 '''Description:
 The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
 
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. 
+A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant.
 
 Social Structure:
-Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods. 
+Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
 
 Reason for Staying:
 Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
@@ -4787,7 +4787,7 @@ Social Structure:
 Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
 
 Homeworld:
-A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.  
+A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface. 
 '''
 
 SP_SSLITH
@@ -4929,16 +4929,16 @@ Prefer Terran planets.
 '''
 
 SP_RAAAGH_DESC
-'''The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+'''The Raaagh are 1.5 meter tall stripe-furred bipeds. The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance. The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin. After three years usually only one is left, and the surviving young begin to learn to speak. This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
 Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
+Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture. Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
 
 Homeworld:
-The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
+The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface. The many small continents and large islands encourage a territorial attitude.
 
 Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
+There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
 
 
@@ -4958,7 +4958,7 @@ Prefers Radiated planets.
 '''
 
 SP_BEIGEGOO_DESC
-'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core. These Nanites are very efficient assemblers, and are eager to do so if provided raw materials. However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
 
 SP_SILEXIAN
@@ -5060,7 +5060,7 @@ Prefer Toxic planets.
 '''
 
 SP_GISGUFGTHRIM_DESC
-'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis life-cycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis life-cycle is also closely tied to the amber expanse. The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
 SP_HIDDENGARDENER
@@ -5162,17 +5162,17 @@ Prefer Ocean planets.
 
 SP_OURBOOLS_DESC
 '''Biology:
-A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
+A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head. This houses the gravi-sensory organs. Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment. Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives. Ourbools live long so
 
 Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichthyoids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
+Ourbools are inclined to a nomadic life, hunting or herding their prey ichthyoids. Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
 A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
 
 Homeworld:
 The homeworld, Oolur is orbited by 23 moons.
 
 Reason for Staying:
-The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
+The Ourbools find their sense of position via the regular movements of the 23 moons. Everything is perceived against that gravitational background. To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler. He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
 '''
 
 SP_VOLP
@@ -5223,13 +5223,13 @@ Prefer Tundra planets.
 
 SP_FURTHEST_DESC
 '''Biology:
-The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
+The Furthest are furry, 1.5 m tall creatures. Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects. This allows the creature too keep watch in most directions at once. The actual brain is in the center of the body.
 
 Name:
 The Furthest believe that sapience is measured by the distance that a being can separate itself from danger. Thus the name " Furthest" describes their species as the most advanced of beings.
 
 Personality: 
-The Furthest report that their homeworld was once full of the deadliest predators imaginable.  They survived by developing caution to the utmost level.  Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
+The Furthest report that their homeworld was once full of the deadliest predators imaginable. They survived by developing caution to the utmost level. Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
 
 Reason for Staying:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
@@ -5272,7 +5272,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''
 
 SP_EXPERIMENTOR_DESC
-'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
+'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge. Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
 
 
 SP_SUPER_TEST
@@ -5426,7 +5426,7 @@ There may no longer be [[buildingtype BLD_CONC_CAMP]] operating on this planet t
 CLOUD_COVER_MASTER_SPECIAL
 Cloud Spawns
 CLOUD_COVER_MASTER_SPECIAL_DESC
-This planet is populated with aerial creatures that emit humidity, causing high cloud cover.  Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
+This planet is populated with aerial creatures that emit humidity, causing high cloud cover. Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
@@ -5436,7 +5436,7 @@ This planet has unusually dense cloud cover, increasing its [[encyclopedia STEAL
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphosis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
+This planet has monsters burrowing around in its core causing high volcanic activity. These burrowers are undergoing metamorphosis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
 
 VOLCANIC_ACTIVITY_SPECIAL
 High Volcanic Activity
@@ -5451,7 +5451,7 @@ This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
 DIM_RIFT_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing dimensional tears in and around the planet.  Later on, these monsters will mature and begin dragging the planet into the void.
+This planet has monsters burrowing around in its core causing dimensional tears in and around the planet. Later on, these monsters will mature and begin dragging the planet into the void.
 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
@@ -5461,7 +5461,7 @@ This planet is partially concealed by a dimensional rift, increasing its [[encyc
 VOID_MASTER_SPECIAL
 Void Monsters
 VOID_MASTER_SPECIAL_DESC
-Monsters inside the core of this planet are dragging it into the void.  There should perhaps be some impending doom associated with this special.
+Monsters inside the core of this planet are dragging it into the void. There should perhaps be some impending doom associated with this special.
 
 VOID_SLAVE_SPECIAL
 Void Metamorphosis
@@ -7152,7 +7152,7 @@ Zero-Point Generation
 PRO_ZERO_GEN_DESC
 '''Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency. By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available. The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
 
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon. Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two. Transmutation and replication, at limited scales, become possible.  However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
+At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon. Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two. Transmutation and replication, at limited scales, become possible. However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
 
 Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter. None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals. By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.'''
 
@@ -7352,7 +7352,7 @@ SHP_ENDOCRINE_SYSTEMS
 Mega-Fauna Endocrine Systems
 
 SHP_ENDOCRINE_SYSTEMS_DESC
-The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
+The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.
 
 SHP_HAB_MEGAFAUN
 Habitable Mega-Fauna
@@ -8299,7 +8299,7 @@ BLD_EVACUATION
 Evacuation
 
 BLD_EVACUATION_DESC
-Remove population from this planet over several turns.  If a suitable alternate planets are available, with the same species and sufficient extra capacity, population will move there.
+Remove population from this planet over several turns. If a suitable alternate planets are available, with the same species and sufficient extra capacity, population will move there.
 
 BLD_OBSERVATORY
 Observatory
@@ -8328,7 +8328,7 @@ Represents imperial power and prestige and functions as a center of control for 
 BLD_SUPER_TESTERS
 Super-Tester Takeover
 BLD_SUPER_TESTERS_DESC
-'''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
+'''Switches the species of the planet to Super-Testers. For Official Testing Purposes, or for cheating.'''
 
 BLD_SHIPYARD_BASE
 Basic Shipyard
@@ -8372,7 +8372,7 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.  It may be built at an outpost.
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. It may be built at an outpost.
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
 
@@ -8465,7 +8465,7 @@ BLD_INDUSTRY_CENTER_DESC
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
 BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
+'''Constructing the first group of exobots is a major production. However, once established on their own planet, they will be able to build themselves.'''
 
 BLD_MEGALITH
 Megalith
@@ -8714,7 +8714,7 @@ Creates a Colony Base ship which can be used to colonize another planet in the s
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
 BLD_EXPERIMENTOR_OUTPOST_DESC
-The outpost of the Experimentors, used for carrying out highly advanced experiments.  This structure also acts as a cloak to prevent anyone from interfering with their work.
+The outpost of the Experimentors, used for carrying out highly advanced experiments. This structure also acts as a cloak to prevent anyone from interfering with their work.
 
 BLD_NOVA_BOMB_ACTIVATOR
 Nova Bomb Activator
@@ -8928,7 +8928,7 @@ FI_BIOBOMBER
 Bio-Bomber
 
 FI_BIOBOMBER_DESC
-Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers.  This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
 
 LR_NUCLEAR_MISSILE
 Nuclear Missile
@@ -9178,7 +9178,7 @@ CO_COLONY_POD
 Colony Pod
 
 CO_COLONY_POD_DESC
-'''Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+'''Basic facilities for colonists to survive journey to a new planet. Allows ship to colonize new worlds.
 
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
@@ -9200,7 +9200,7 @@ GT_TROOP_POD
 Ground Troop Pod
 
 GT_TROOP_POD_DESC
-Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.  The troops can only be used for one invasion.
+Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. The troops can only be used for one invasion.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator
@@ -9236,7 +9236,7 @@ SP_NOVA_BOMB
 Nova Bomb
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it receives the signal from a Nova Bomb Activator not more than one starlane jump away.
+A weapon of tremendous power capable of destroying an entire system. The weapon will activate when it receives the signal from a Nova Bomb Activator not more than one starlane jump away.
 
 SP_KRILL_SPAWNER
 Krill Spawner
@@ -10011,7 +10011,7 @@ Preferred Focus Selected
 ## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
 ## in Census pop-up, and specifies order in which they will be displayed.
 ## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.  
+## since those won't be displayed in the census anyway.
 
 ## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
 CENSUS_TAG_ORDER
