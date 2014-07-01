@@ -36,7 +36,7 @@ namespace {
         default_columns_widths.push_back(std::make_pair("OBJECT_TYPE",  5*12));
         default_columns_widths.push_back(std::make_pair("OWNER",        10*12));
         default_columns_widths.push_back(std::make_pair("SPECIES",      8*12));
-        for (int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
+        for (unsigned int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
             default_columns_widths.push_back(std::make_pair("", 8*12));   // arbitrary default width
 
         for (unsigned int i = 0; i < default_columns_widths.size(); ++i) {
@@ -1165,7 +1165,6 @@ public:
         if (!m_initialized)
             return;
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr clr = ClientUI::TextColor();
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
@@ -1304,7 +1303,6 @@ private:
         RefreshCache();
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
-            const ValueRef::ValueRefBase<std::string>* ref = GetColumnValueRef(static_cast<int>(i));
             std::string col_val = m_column_val_cache[i];
             GG::Control* control = new GG::TextControl(GG::X0, GG::Y0, GG::X(GetColumnWidth(i)),
                                                        ClientHeight(), col_val, font,
@@ -1418,7 +1416,6 @@ public:
 
     void            Refresh() {
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr clr = ClientUI::TextColor();
 
         for (std::vector<GG::Button*>::iterator it = m_controls.begin();
              it != m_controls.end(); ++it)

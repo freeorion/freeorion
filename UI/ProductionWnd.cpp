@@ -283,7 +283,7 @@ namespace {
         std::string main_text;
         std::string item_name;
 
-        int min_turns = 1;
+        //int min_turns = 1;
         float total_cost = 0.0f;
         float max_allocation = 0.0f;
         boost::shared_ptr<GG::Texture> icon;
@@ -301,7 +301,7 @@ namespace {
             item_name = UserString(elem.item.name);
             //available = empire->BuildingTypeAvailable(elem.item.name);
             location_ok = building_type->ProductionLocation(elem.empire_id, elem.location);
-            min_turns = building_type->ProductionTime(elem.empire_id, elem.location);
+            //min_turns = building_type->ProductionTime(elem.empire_id, elem.location);
             total_cost = building_type->ProductionCost(elem.empire_id, elem.location);
             max_allocation = building_type->PerTurnCost(elem.empire_id, elem.location);
             icon = ClientUI::BuildingIcon(elem.item.name);
@@ -317,7 +317,7 @@ namespace {
             item_name = design->Name(true);
             //available = empire->ShipDesignAvailable(elem.item.design_id);
             location_ok = design->ProductionLocation(elem.empire_id, elem.location);
-            min_turns = design->ProductionTime(elem.empire_id, elem.location);
+            //min_turns = design->ProductionTime(elem.empire_id, elem.location);
             total_cost = design->ProductionCost(elem.empire_id, elem.location) * elem.blocksize;
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location) * elem.blocksize;
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
