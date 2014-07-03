@@ -55,6 +55,8 @@ public:
     virtual void shutdown();
     virtual void uninstall();
 
+    OIS::Mouse* GetMouse() { return m_mouse; }
+
 private:
     virtual void HandleSystemEvents();
     virtual void HandleWindowResize(GG::X width, GG::Y height);

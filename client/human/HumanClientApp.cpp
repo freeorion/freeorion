@@ -36,9 +36,12 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
+#include <GG/Ogre/Plugins/OISInput.h>
 
 #include <OgreRenderWindow.h>
 #include <OgreRoot.h>
+
+#include <OIS/OISMouse.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -974,6 +977,27 @@ void HumanClientApp::HandleWindowClose() {
 
 void HumanClientApp::HandleFocusChange() {
     Logger().debugStream() << "HumanClientApp::HandleFocusChange()";
+    const Ogre::Root::PluginInstanceList& ogre_plugins_list = m_root->getInstalledPlugins();
+
+    // get OIS plugin
+    OISInput* ois;
+    for (Ogre::Root::PluginInstanceList::const_iterator it = ogre_plugins_list.begin();
+         it != ogre_plugins_list.end(); ++it)
+    {
+        if (ois = dynamic_cast<OISInput*>(*it))
+            break;
+    }
+    OIS::Mouse* mouse = 0;
+    if (ois)
+        mouse = ois->GetMouse();
+    if (ois && mouse) {
+        OIS::MouseState mouse_state = mouse->getMouseState();
+        OIS::MouseEvent mouse_event(mouse, mouse_state);
+        OIS::MouseListener* ml = ois;
+        for (OIS::MouseButtonID id = OIS::MB_Left; id <= OIS::MB_Button7; id = OIS::MouseButtonID(id + 1))
+            ml->mouseReleased(mouse_event, id);
+    }
+
     CancelDragDrop();
     ClearEventState();
 }
