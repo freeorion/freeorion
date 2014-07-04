@@ -90,7 +90,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
 
     def __getAIFleetOrderFromAITarget(self, aiFleetMissionType, aiTarget):
         fleetAITarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_FLEET, self.target_id)
-        orderType = EnumsAI.getFleetOrderTypeForMission(aiFleetMissionType,  option=None)
+        orderType = EnumsAI.getFleetOrderTypeForMission(aiFleetMissionType)
         result = AIFleetOrder.AIFleetOrder(orderType, fleetAITarget, aiTarget)
         return result
 
