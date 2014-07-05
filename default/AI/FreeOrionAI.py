@@ -9,6 +9,7 @@ import sys
 import traceback
 from time import time
 import random
+from timing import main_timer, bucket_timer, resource_timer, init_timers
 
 
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
@@ -50,14 +51,8 @@ _capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
-timerEntries  = ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",
-                        "ResearchAI",  "ProductionAI",  "ResourcesAI",  "Cleanup"]
-_timerBucketEntries = ["Server_Processing",  "AI_Planning"]
 
-_timerFile = None
-_timerBucketFile = None
-_timerFileFmt = "%8d"+ (len(timerEntries )*"\t %8d")
-_timerBucketFileFmt = "%8d"+ (len(_timerBucketEntries)*"\t %8d")
+
 _lastTurnTimestamp = 0
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
@@ -70,7 +65,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
 # and set up whatever is needed for AI to generate orders
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
     """called by client at start of new game"""
-    global _timerFile,  _lastTurnTimestamp,  _timerBucketFile
+    init_timers()
     print "New game started, AI Aggression level %d"% aggression
 
     # initialize AIstate
@@ -88,36 +83,13 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
         print "This Capitol New name is ",  new_name
         res = fo.issueRenameOrder(planet_id,  new_name)
         print "Capitol Rename attempt result: %d; planet now named %s"% (res,  planet.name)
-    if _timerFile:
-        _timerFile.close()
-    if ResourcesAI.resourceTimerFile:
-        ResourcesAI.resourceTimerFile.close()
-    empire_id = fo.getEmpire().empireID
-    try:
-        if os.path.exists("timers") and os.path.isdir("timers"):
-            timerpath = "timers"+os.path.sep+"timer_%02d.dat"% (empire_id-1)
-            _timerFile = open(timerpath,  'w')
-            _timerFile.write("Turn\t" + "\t".join(timerEntries ) +'\n')
-            timerbucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
-            _timerBucketFile = open(timerbucketpath,  'w')
-            _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
-            _lastTurnTimestamp = time()
-            if ResourcesAI.doResourceTiming:
-                ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empire_id-1),  'w')
-                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timer_entries)+"\n")
-            print "timer file saved at " + timerpath
-    except:
-        _timerFile = None
-        ResourcesAI.resourceTimerFile  = None
-        ResourcesAI.doResourceTiming = False
-        print "Error: exception caught starting timing:  ",  traceback.format_exc()
-        print "won't record timing info"
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
     """called by client to resume a loaded game"""
+    init_timers()
+
     global foAIstate
-    global _timerFile,  _lastTurnTimestamp,  _timerBucketFile
     print "Resuming loaded game"
     try:
         #loading saved state
@@ -129,30 +101,6 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
         foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
         foAIstate.sessionStartCleanup()
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    if _timerFile:
-        _timerFile.close()
-    if ResourcesAI.resourceTimerFile:
-        ResourcesAI.resourceTimerFile.close()
-    empire_id = fo.getEmpire().empireID
-    try:
-        if os.path.exists("timers") and os.path.isdir("timers"):
-            timerpath = "timers"+os.path.sep+"timer_%02d.dat"% (empire_id-1)
-            _timerFile = open(timerpath,  'w')
-            _timerFile.write("Turn\t" + "\t".join(timerEntries ) +'\n')
-            timerBucketpath = "timers"+os.path.sep+"timer_bucket_%02d.dat"% (empire_id-1)
-            _timerBucketFile = open(timerBucketpath,  'w')
-            _timerBucketFile.write("Turn\t" + "\t".join(_timerBucketEntries) +'\n')
-            _lastTurnTimestamp = time()
-            if ResourcesAI.doResourceTiming:
-                ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"% (empire_id-1),  'w')
-                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timer_entries)+"\n")
-            print "timer file saved at "+timerpath
-    except:
-        _timerFile = None
-        ResourcesAI.resourceTimerFile  = None
-        ResourcesAI.doResourceTiming = False
-        print "Error: exception caught starting timing:  ",  traceback.format_exc()
-        print "won't record timing info"
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
@@ -302,19 +250,10 @@ def generateOrders(): # pylint: disable=invalid-name
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
-    times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
+    times = [timer[i] - timer[i-1] for i in range(1,  len(timer))]
     turnEndTime = time()
-    timeFmt = "%30s: %8d msec  "
-    print "AI Module Time Requirements:"
-    for mod,  modTime in zip(timerEntries ,  times):
-        print timeFmt % ((30*' '+mod)[-30:],  int(1000*modTime))
-    if _timerFile:
-        _timerFile.write(  _timerFileFmt% tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
-        _timerFile.flush()
-    if _timerBucketFile:
-        _timerBucketFile.write(  _timerBucketFileFmt% tuple( [ fo.currentTurn(),  (turnStartTime-_lastTurnTimestamp)*1000, (turnEndTime-turnStartTime)*1000   ]) +'\n')
-        _timerBucketFile.flush()
-        _lastTurnTimestamp = time()
+    main_timer.add_time(fo.currentTurn(), times)
+    bucket_timer.add_time(fo.currentTurn(), (turnStartTime - _lastTurnTimestamp, turnEndTime-turnStartTime))
 
     try:
         fo.doneTurn()
