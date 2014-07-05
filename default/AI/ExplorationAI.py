@@ -6,6 +6,7 @@ import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
 from random import shuffle
+from tools import dict_from_map
 
 graphFlags={}
 interiorExploredSystemIDs = {} # explored systems whose neighbors are also all
@@ -13,8 +14,6 @@ borderExploredSystemIDs = {}
 borderUnexploredSystemIDs = {}
 currentScoutFleetIDs = []
 
-def dictFromMap(this_map):
-    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 
 def getBorderExploredSystemIDs():
     return list( borderExploredSystemIDs )
@@ -168,7 +167,7 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
             if curSystemID in foAI.foAIstate.visBorderSystemIDs:
                 del foAI.foAIstate.visBorderSystemIDs[curSystemID]
             #neighbors= dict( [(el.key(), el.data()) for el in  universe.getSystemNeighborsMap(curSystemID,  empireID)] )  #
-            neighbors = set(dictFromMap( universe.getSystemNeighborsMap(curSystemID,  empireID) ).keys())
+            neighbors = set(dict_from_map(universe.getSystemNeighborsMap(curSystemID, empireID)).keys())
             sysStatus.setdefault('neighbors', set()).update(neighbors)
             sysPlanets=sysStatus.setdefault('planets', {})
             if fo.currentTurn() < 50:

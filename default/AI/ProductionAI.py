@@ -13,6 +13,7 @@ import PriorityAI
 import ColonisationAI
 import EnumsAI
 import MilitaryAI
+from tools import dict_from_map
 
 bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
 design_cost_cache = { 0: { (-1, -1):0 } } #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -33,9 +34,7 @@ hullStats = {
 
 doDoubleShields=False
 
-def dictFromMap(this_map):
-    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
-    
+
 def get_design_cost(cur_turn,  design,  pid):
     if cur_turn in design_cost_cache:
         cost_cache = design_cost_cache[cur_turn]
@@ -598,8 +597,8 @@ def generateProductionOrders():
     productionQueue = empire.productionQueue
     totalPP = empire.productionPoints
     #prodResPool = empire.getResourcePool(fo.resourceType.industry)
-    #availablePP = dictFromMap( productionQueue.availablePP(prodResPool))
-    #allocatedPP = dictFromMap(productionQueue.allocatedPP)
+    #availablePP = dict_from_map(productionQueue.availablePP(prodResPool))
+    #allocatedPP = dict_from_map(productionQueue.allocatedPP)
     #objectsWithWastedPP = productionQueue.objectsWithWastedPP(prodResPool)
     
     # set the random seed (based on galaxy seed, empire ID and current turn)
@@ -1406,7 +1405,7 @@ def generateProductionOrders():
             if sysID in scannerLocs:
                 continue
             needScanner=False
-            for nSys in dictFromMap( universe.getSystemNeighborsMap(sysID,  empire.empireID) ):
+            for nSys in dict_from_map(universe.getSystemNeighborsMap(sysID, empire.empireID)):
                 if universe.getVisibility(nSys,  empire.empireID) < fo.visibility.partial:
                     needScanner=True
                     break
@@ -1443,7 +1442,7 @@ def generateProductionOrders():
                                                (covered_drydoc_locs,  covered_drydoc_locs) ]:  #coverage of neighbors up to 2 jumps away from a drydock
             for dd_sys_id in start_set.copy():
                 dest_set.add(dd_sys_id)
-                dd_neighbors = dictFromMap( universe.getSystemNeighborsMap(dd_sys_id,  empire.empireID) )
+                dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(dd_sys_id, empire.empireID))
                 dest_set.update( dd_neighbors.keys() )
             
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
@@ -1471,7 +1470,7 @@ def generateProductionOrders():
                 if res:
                     queued_locs.append( planet.systemID )
                     covered_drydoc_locs.add( planet.systemID )
-                    dd_neighbors = dictFromMap( universe.getSystemNeighborsMap(planet.systemID,  empire.empireID) )
+                    dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(planet.systemID, empire.empireID))
                     covered_drydoc_locs.update( dd_neighbors.keys() )
                     if max_dock_builds >= 2:
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front

@@ -13,6 +13,7 @@ from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AI
 import EnumsAI
 from time import time
 import math
+from tools import dict_from_map
 
 
 empireSpecies = {}
@@ -69,9 +70,7 @@ nestValMap = {
               "JUGGERNAUT_NEST_SPECIAL":80,
               }
 
-def dictFromMap(this_map):
-    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
-    
+
 def resetCAIGlobals():
     global curBestMilShipRating
     empireSpecies.clear()
@@ -194,7 +193,7 @@ def check_supply():
     new_time = time()
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
-    print "Base Supply:", dictFromMap(empire.systemSupplyRanges)
+    print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     for el in new_supply_map:
         #print PlanetUtilsAI.sysNameIDs([el.key()]), ' -- ', el.data()
         systems_by_supply_tier.setdefault(min(0, el.data()), []).append(el.key())
@@ -795,7 +794,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     
     empireResearchList = [element.tech for element in empire.researchQueue]
     if planet is None:
-        VisMap = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empire.empireID))
+        VisMap = dict_from_map(universe.getVisibilityTurnsMap(planetID, empire.empireID))
         print "Planet %d object not available; visMap: %s"%(planetID,  VisMap)
         return 0
     detail.append("%s : "%planet.name )
@@ -835,8 +834,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         thrtFactor = 0.8
 
 
-    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(this_sysid,  empire.empireID)).get(fo.visibility.partial, -9999)
-    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empire.empireID)).get(fo.visibility.partial, -9999)
+    sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(this_sysid, empire.empireID)).get(fo.visibility.partial, -9999)
+    planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planetID, empire.empireID)).get(fo.visibility.partial, -9999)
 
     if planetPartialVisTurn < sysPartialVisTurn:
         print "Colonization AI couldn't get current info on planet id %d (was stealthed at last sighting)"%planetID

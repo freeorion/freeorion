@@ -13,12 +13,11 @@ import MilitaryAI
 import InvasionAI
 import PlanetUtilsAI
 import math
+from tools import dict_from_map
 
 AIFleetMissionTypeNames = EnumsAI.AIFleetMissionType()
 AIShipRoleTypeNames = EnumsAI.AIShipRoleType()
 
-def dictFromMap(thismap):
-    return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
 
 class AIFleetMission(AIAbstractMission.AIAbstractMission):
     """
@@ -406,8 +405,8 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_COLONISE:
                     planet = universe.getPlanet(lastOrder.getTargetAITarget().target_id)
                     system = universe.getSystem(planet.systemID)
-                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
-                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
                     pop=planet.currentMeterValue(fo.meterType.population)
                     if (planetPartialVisTurn == sysPartialVisTurn) and pop==0:
                         print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population."% self.target_id

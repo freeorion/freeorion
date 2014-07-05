@@ -12,6 +12,7 @@ import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
+from tools import dict_from_map
 
 
 ##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
@@ -44,8 +45,6 @@ outpostIDs=[]
 outpostSystemIDs=[]
 piloting_grades = {}
 
-def dictFromMap(this_map):
-    return dict(  [  (el.key(),  el.data() ) for el in this_map ] )
 
 # AIstate class
 class AIstate(object):
@@ -297,7 +296,7 @@ class AIstate(object):
                         for count, sum_stats in e_rating['summary']:
                             if sum_stats[0] > 0:
                                 e_f_dict.setdefault( sum_stats,  [0])[0] += count
-                    partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(fleetID,  empireID)).get(fo.visibility.partial, -9999)
+                    partialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(fleetID, empireID)).get(fo.visibility.partial, -9999)
                     if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
                         if not dead_fleet:
                             sawEnemiesAtSystem[fleet.systemID] = True
@@ -328,7 +327,7 @@ class AIstate(object):
                         continue
 
             #update threats
-            sysVisDict = dictFromMap(universe.getVisibilityTurnsMap(sysID,  fo.empireID()))
+            sysVisDict = dict_from_map(universe.getVisibilityTurnsMap(sysID, fo.empireID()))
             partialVisTurn = sysVisDict.get(fo.visibility.partial, -9999)
             enemyRatings=[]
             enemyRating=0
@@ -423,7 +422,7 @@ class AIstate(object):
                 sysStatus['myFleetRating'] = myattack * myhealth
 
             system = universe.getSystem(sysID)
-            neighborDict = dictFromMap( universe.getSystemNeighborsMap(sysID,  self.empireID) )
+            neighborDict = dict_from_map(universe.getSystemNeighborsMap(sysID, self.empireID))
             neighbors = set(neighborDict.keys())
             sysStatus['neighbors'] = neighbors
             

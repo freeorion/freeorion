@@ -4,14 +4,13 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import MoveUtilsAI
 import PlanetUtilsAI
+from tools import dict_from_map
 
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()
 
 dumpTurn=0
 
-def dictFromMap(thismap):
-    return dict(  [  (el.key(),  el.data() ) for el in thismap ] )
 
 class AIFleetOrder(object):
     """Stores information about orders which can be executed"""
@@ -81,8 +80,8 @@ class AIFleetOrder(object):
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().target_type:
                     planet = universe.getPlanet(self.getTargetAITarget().target_id)
                     system = universe.getSystem(planet.systemID)
-                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
-                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
                     if (planetPartialVisTurn == sysPartialVisTurn) and planet.unowned:
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
@@ -105,8 +104,8 @@ class AIFleetOrder(object):
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().target_type:
                     planet = universe.getPlanet(self.getTargetAITarget().target_id)
                     system = universe.getSystem(planet.systemID)
-                    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  fo.empireID())).get(fo.visibility.partial, -9999)
-                    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.id,  fo.empireID())).get(fo.visibility.partial, -9999)
+                    sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
+                    planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
 
                     if (planetPartialVisTurn == sysPartialVisTurn) and ( planet.unowned or  (planet.ownedBy(fo.empireID()) and   planet.currentMeterValue(fo.meterType.population)==0 )):
                         targetAITargetTypeValid = True
