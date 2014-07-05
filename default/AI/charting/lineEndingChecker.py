@@ -2,7 +2,7 @@ import os
 import glob
 
 # adjust this to point to your main FreeOrion directory
-FOHome = os.path.expanduser('~/programs/freeorion_dev1/')
+FOHome = os.path.expanduser('~/programs/freeorion_test/')
 
 #if testAll is true the script will crawl through all FO files, skipping any folders in dirs_to_skip
 # checking files but not fixing
@@ -12,7 +12,7 @@ dirs_to_skip = ['GG', 'OIS']
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
 # use "default/buildings.txt", NOT "/default/buildings.txt"
-file_list = "planet-panel-4.patch"
+file_list = "default/AI"
 
 # if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
 fixfiles = True
@@ -69,7 +69,14 @@ if testAll:
 
 if not testAll:
     print
+    files_to_check = []
     for fname in file_list.split():
+        if not os.path.isdir(fname):
+            files_to_check.append(fname)
+        else:
+            for path_ext in [".py",".txt",".h",".c",".cpp"]:
+                files_to_check.extend(glob.glob(fname+os.sep+'*'+path_ext))
+    for fname in files_to_check:
         results1=checkLineEndings(fname,  fix=fixfiles)
         if fixfiles and results1.keys()!=['LF']:
             results2=checkLineEndings(fname,  fix=False)
