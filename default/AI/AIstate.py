@@ -119,7 +119,6 @@ class AIstate(object):
             if std_attrib not in state_dict:
                 self.__dict__[std_attrib] = (4,  ((4, 1),), 0.0, 10.0)
 
-
     def __del__(self): #TODO: confirm if anything about boost interface really requires this
         """destructor"""
         del self.__shipRoleByDesignID

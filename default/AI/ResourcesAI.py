@@ -26,6 +26,7 @@ limitAssessments = True
 
 lastFociCheck=[0]
 
+
 def getResourceTargetTotals(empirePlanetIDs):#+
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -84,9 +85,9 @@ def getResourceTargetTotals(empirePlanetIDs):#+
     universe.updateMeterEstimates(empirePlanetIDs)
     return targetPP,  targetRP
 
+
 def printResourcesPriority():
     """calculate top resource priority"""
-
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -139,6 +140,7 @@ def tallyStream(curVal,  targetVal,  nTurns,  force=False):
     for turn in range(nTurns):
         tally += mycomp(targetVal,  curVal+turn*delta)
     return tally
+
 
 def setPlanetResourceFoci(): #+
     """set resource focus of planets """
@@ -386,8 +388,10 @@ def setPlanetResourceFoci(): #+
     print "ResourcesAI Time Requirements:"
     resource_timer.add_time(fo.currentTurn(), times)
 
+
 def generateResourcesOrders(): #+
     """generate resources focus orders"""
+
 
 def generateResourcesOrders():
     """generate resources focus orders"""

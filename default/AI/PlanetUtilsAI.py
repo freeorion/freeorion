@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import ColonisationAI
 
+
 def sysNameIDs(sysIDs):
     universe = fo.getUniverse()
     res=[]
@@ -13,6 +14,7 @@ def sysNameIDs(sysIDs):
             res.append("unknown:%d"%sysID )
     return res
 
+
 def planetNameIDs(planetIDs):
     universe = fo.getUniverse()
     res=[]
@@ -23,6 +25,7 @@ def planetNameIDs(planetIDs):
         else:
             res.append("unknown:%d"%pid )
     return res
+
 
 def getCapital(): # if no current capital returns planet with biggest pop
     universe = fo.getUniverse()
@@ -61,7 +64,8 @@ def getCapital(): # if no current capital returns planet with biggest pop
     except:
         pass
     return -1 #shouldn't ever reach here
-    
+
+
 def getCapitalSysID():
     capID = getCapital()
     if capID is None or capID==-1:
@@ -84,6 +88,7 @@ def getPlanetsInSystemsIDs(systemIDs):
         planetIDs.extend(list(thesePlanets)) # added list
 
     return planetIDs
+
 
 def getOwnedPlanetsByEmpire(planetIDs, empireID):
     """return list of planets owned by empireID"""
@@ -117,9 +122,9 @@ def getTypePlanetEmpireOwned(planetType):
 
     return ownedTypePlanetIDs
 
+
 def getAllOwnedPlanetIDs(planetIDs):
     """return list of all owned and populated planetIDs"""
-
     universe = fo.getUniverse()
     allOwnedPlanetIDs = []
 
@@ -132,6 +137,7 @@ def getAllOwnedPlanetIDs(planetIDs):
 
     return allOwnedPlanetIDs
 
+
 def getPopulatedPlanetIDs(planetIDs):
     universe = fo.getUniverse()
     pops=[]
@@ -141,24 +147,22 @@ def getPopulatedPlanetIDs(planetIDs):
             pops.append(planetID)
     return pops
 
+
 def getAllPopulatedSystemIDs(planetIDs):
     """return list of all populated systemIDs"""
-
     universe = fo.getUniverse()
     allPopulatedSystemIDs = []
     popPlanets=getPopulatedPlanetIDs(planetIDs)
     return [universe.getPlanet(planetID).systemID for planetID in popPlanets ]
 
+
 def getSystems(planetIDs):
     """return list of systems containing planetIDs"""
-
     universe = fo.getUniverse()
     systemIDs = []
 
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
         systemID = planet.systemID
-
         systemIDs.append(systemID)
-
     return systemIDs

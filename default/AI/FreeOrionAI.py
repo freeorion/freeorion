@@ -35,6 +35,7 @@ try:
 except:
     pass
 
+
 def UserString(label,  default=None): #this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
     """ a translation assistance tool is intended to search for this method to identify translatable strings"""
     table_string = fo.userString(label)
@@ -51,15 +52,15 @@ _capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
-
-
 _lastTurnTimestamp = 0
+
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI(): # pylint: disable=invalid-name
     """called by client to initialize AI """
     print "Initialized FreeOrion Python AI"
     print(sys.path)
+
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
@@ -84,6 +85,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
         res = fo.issueRenameOrder(planet_id,  new_name)
         print "Capitol Rename attempt result: %d; planet now named %s"% (res,  planet.name)
 
+
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
     """called by client to resume a loaded game"""
@@ -102,6 +104,7 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
         foAIstate.sessionStartCleanup()
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
+
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
 # they can be restored if the game is loaded
@@ -114,11 +117,13 @@ def prepareForSave(): # pylint: disable=invalid-name
     print "foAIstate pickled to string,  about to send to server"
     fo.setSaveStateString(dumpStr)
 
+
 # called when this player receives a chat message.  senderID is the player who sent the message, and
 # messageText is the text of the sent message
 def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
     """called by client to handle chat messages"""
     print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
+
 
 # called when this player recives a diplomatic message update from the server, such as if another player
 # declares war, accepts peace, or cancels a proposed peace treaty.
@@ -140,11 +145,13 @@ def handleDiplomaticMessage(message): # pylint: disable=invalid-name
         else:
             fo.sendChatMessage(proposalSenderPlayer,  "Maybe later.  We are currently getting busy  with Experimental Test Subject yo-Ma-ma.")
 
+
 # called when this player receives and update about the diplomatic status between players, which may
 # or may not include this player.
 def handleDiplomaticStatusUpdate(statusUpdate): # pylint: disable=invalid-name
     """called by client to handle diplomatic status updates"""
     print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1) + " and empire " + str(statusUpdate.empire2)
+
 
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
@@ -270,6 +277,7 @@ def generateOrders(): # pylint: disable=invalid-name
 #
 #The following methods should probably be moved to the AIstate module, to keep this module more focused on implementing required interface
 
+
 def splitNewFleets(): # pylint: disable=invalid-name
     """split any new fleets (at new game creation, can have unplanned mix of ship roles)"""
 
@@ -306,6 +314,7 @@ def splitNewFleets(): # pylint: disable=invalid-name
             # old fleet may have different role after split, later will be again identified
             #foAIstate.removeFleetRole(fleetID)  # in current system, orig new fleet will not yet have been assigned a role
 
+
 def updateShipDesigns(): # pylint: disable=invalid-name
     """update ship design records"""
     print ("Updating ship design records")
@@ -320,12 +329,14 @@ def updateShipDesigns(): # pylint: disable=invalid-name
                     foAIstate.getShipRole(ship.design.id)
             # print str(ship.design.id) + ": " + str(shipRole)
 
+
 def updateFleetsRoles(): # pylint: disable=invalid-name
     """updating fleet role records"""
     print ("Updating fleet role records")
     # assign roles to fleets
     for fleetID in FleetUtilsAI.getEmpireFleetIDs():
         foAIstate.getFleetRole(fleetID) #force assessment if not previously known
+
 
 def declareWarOnAll(): # pylint: disable=invalid-name
     """used to declare war on all other empires (at start of game)"""
@@ -334,5 +345,3 @@ def declareWarOnAll(): # pylint: disable=invalid-name
         if emp_id != my_emp_id:
             msg = fo.diplomaticMessage(my_emp_id, emp_id, fo.diplomaticMessageType.warDeclaration)
             fo.sendDiplomaticMessage(msg)
-
-

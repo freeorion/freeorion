@@ -16,7 +16,6 @@ from tools import dict_from_map
 
 def getInvasionFleets():
     """get invasion fleets"""
-
     times=[]
     tasks = []
     times.append( time() )
@@ -206,7 +205,6 @@ def getInvasionFleets():
 
 def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
     """return list of being invaded planets"""
-
     universe = fo.getUniverse()
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
 
@@ -221,7 +219,8 @@ def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
                 targetedPlanets.append(planetID)
 
     return targetedPlanets
-    
+
+
 def retaliation_risk_factor(empire_id):
     """a multiplicative adjustment to planet scores to account for risk of retaliation from planet owner"""
     #TODO implement (in militaryAI) actual military risk assessment of other empires
@@ -230,9 +229,9 @@ def retaliation_risk_factor(empire_id):
     else:
         return 1.0
 
+
 def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empire):
     """creates a dictionary that takes planetIDs as key and their invasion score as value"""
-
     planetValues = {}
     neighbor_values = {}
     neighbor_val_ratio = .95
@@ -263,6 +262,7 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
                 if planet2 and (planet2.owner != empire.empireID) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)): #TODO check for allies
                     planetValues[planetID][0] += industry_ratio * neighbor_val_ratio * (neighbor_values.setdefault( pid2, evaluateInvasionPlanet(pid2, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions))[0])
     return planetValues
+
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire,  secureAIFleetMissions,  verbose=True):
     """return the invasion value (score, troops) of a planet"""
@@ -405,6 +405,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     print invscore, "projected Troop Cost:",  troopCost,  ", threatFactor: ", threatFactor,  ", planet detail ",   detail, "popval,  supplyval,  bldval,  enemyval",   popVal,  supplyVal,  bldTally,  enemyVal
     return   invscore
 
+
 def getPlanetPopulation(planetID):
     """return planet population"""
 
@@ -416,6 +417,7 @@ def getPlanetPopulation(planetID):
     if planet is None: return 0
     else:
         return planetPopulation
+
 
 def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
     """sends a list of invasion fleets to a list of planet_value_pairs"""
@@ -456,6 +458,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
             aiFleetMission.clearAIFleetOrders()
             aiFleetMission.clearAITargets( (aiFleetMission.getAIMissionTypes() + [-1])[0] )
             aiFleetMission.addAITarget(missionType, aiTarget)
+
 
 def assignInvasionFleetsToInvade():
     # assign fleet targets to invadable planets
@@ -525,4 +528,3 @@ def assignInvasionFleetsToInvade():
     for fid in  FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allInvasionFleetIDs):
         thisMission = foAI.foAIstate.getAIFleetMission(fid)
         thisMission.checkMergers(context="Post-send consolidation of unassigned troops")
-

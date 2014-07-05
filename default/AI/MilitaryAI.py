@@ -18,6 +18,7 @@ totMilRating=0
 num_milships=0
 verboseMilReporting=False
 
+
 def tryAgain(milFleetIDs,  tryReset=False,  thisround=""):
     for fid in milFleetIDs:
         thisMission=foAI.foAIstate.getAIFleetMission(fid)
@@ -26,12 +27,14 @@ def tryAgain(milFleetIDs,  tryReset=False,  thisround=""):
     getMilitaryFleets(tryReset=tryReset,  thisround=thisround)
     return
 
+
 def ratingNeeded(target,  current=0):
     if current >= target:
         return 0
     else:
         return target + current - (4*target*current)**0.5
-        
+
+
 def avail_mil_needing_repair(milFleetIDs,  split_ships=False,  on_mission=False):
     """returns tuple of lists-- ( ids_needing_repair,  ids_not )"""
     fleet_buckets = [[],  []]
@@ -57,6 +60,7 @@ def avail_mil_needing_repair(milFleetIDs,  split_ships=False,  on_mission=False)
             print "Selecting fleet %d at %s for repair"%(fleet_id,  PlanetUtilsAI.sysNameIDs( [fleet.systemID] ))
         fleet_buckets[fleet_ok].append(fleet_id)
     return fleet_buckets
+
 
 def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     """get armed military fleets"""
@@ -597,6 +601,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
         AIstate.militarySystemIDs = list( set([sid for sid, alloc,  minalloc,  takeAny  in newAllocations]).union( AIstate.militarySystemIDs) )
     return newAllocations
 
+
 def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
     """return list of military targeted systems"""
 
@@ -615,6 +620,7 @@ def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
 
     return targetedSystems
 
+
 def assignMilitaryValues(systemIDs, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
     """creates a dictionary that takes systemIDs as key and their military score as value"""
 
@@ -624,6 +630,7 @@ def assignMilitaryValues(systemIDs, missionType, empireProvinceSystemIDs, otherT
         systemValues[systemID] = evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire)
 
     return systemValues
+
 
 def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
     """return the military value of a system"""
@@ -654,6 +661,7 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
         return 2 + distanceFactor
     else:
         return 1 + .25 * distanceFactor
+
 
 def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
     # assign military fleets to military theater systems
@@ -750,4 +758,3 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
 
     if doingMain:
         print "---------------------------------"
-

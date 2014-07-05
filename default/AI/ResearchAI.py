@@ -10,6 +10,7 @@ import ColonisationAI
 
 inProgressTechs={}
 
+
 def get_research_index():
     empireID = fo.empireID()
     research_index = empireID % 2
@@ -19,9 +20,9 @@ def get_research_index():
         research_index += 1
     return research_index
 
+
 def generateResearchOrders():
     """generate research orders"""
-
     universe=fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -327,6 +328,7 @@ def generateResearchOrders():
                         res=fo.issueEnqueueTechOrder("SHP_WEAPON_4_2",  max(0,  idx-15) )
             researchQueueList = getResearchQueueTechs()
 
+
 def generateDefaultResearchOrders():
     """generate default research orders"""
 
@@ -362,9 +364,9 @@ def generateDefaultResearchOrders():
         print "    enqueued tech " + name + "  :  cost: " + str(cost) + "RP"
     print ""
 
+
 def getPossibleProjects():
     """get possible projects"""
-
     preliminaryProjects = []
     technames = fo.techs() # returns names of all techs
     empire = fo.getEmpire()
@@ -374,18 +376,17 @@ def getPossibleProjects():
 
     unusableTechs = TechsListsAI.unusable_techs()
     possibleProjects = (set(preliminaryProjects)-set(unusableTechs))
-
     return possibleProjects
+
 
 def spentRP():
     """calculate RPs spent this turn so far"""
-
     queue = fo.getEmpire().researchQueue
     return queue.totalSpent
 
+
 def getCompletedTechs():
     """get completed and available for use techs"""
-
     completedTechs = []
     technames = fo.techs() # returns names of all techs
     empire = fo.getEmpire()
@@ -395,6 +396,7 @@ def getCompletedTechs():
 
     return completedTechs
 
+
 def getResearchQueueTechs():
     """get list of techs in research queue"""
 
@@ -403,5 +405,4 @@ def getResearchQueueTechs():
     researchQueueList = []
     for element in researchQueue:
         researchQueueList.append(element.tech)
-
     return researchQueueList

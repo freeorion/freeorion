@@ -1,10 +1,7 @@
 import math
 import traceback
 import random
-
 import freeOrionAIInterface as fo # pylint: disable=import-error
-
-
 import AIstate
 import FleetUtilsAI
 import FreeOrionAI as foAI
@@ -29,7 +26,6 @@ shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   Enum
 
 #TODO: dynamic lookup of hull stats
 hullStats = {
-
              }
 
 doDoubleShields=False
@@ -48,6 +44,7 @@ def get_design_cost(cur_turn,  design,  pid):
     else:
         loc = pid
     return float( cost_cache.setdefault( (design.id, loc),  design.productionCost(fo.empireID(), pid) ) )# float() so as to not return actual reference
+
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
 def curBestMilShipRating():
@@ -70,14 +67,16 @@ def curBestMilShipRating():
         cost = bestDesign.productionCost(fo.empireID(),  buildChoices[0])
         bestMilRatingsHistory[ fo.currentTurn() ] = ( stats['attack'] * stats['structure'],  cost )
     return bestMilRatingsHistory[ fo.currentTurn() ][0]
-    
+
+
 def curBestMilShipCost():
     if (fo.currentTurn()+1) in bestMilRatingsHistory:
         bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
         _ = curBestMilShipRating()
     return bestMilRatingsHistory[ fo.currentTurn() ][1]
-    
+
+
 def getBestShipInfo(priority,  loc=None):
     """returns designID,  design,  buildLocList"""
     empire = fo.getEmpire()
@@ -114,6 +113,7 @@ def getBestShipInfo(priority,  loc=None):
         if validLocs:
             return shipDesignID,  shipDesign, validLocs
     return None,  None,  None #must be missing a Shipyard or other orbital (or missing tech)
+
 
 def getBestShipRatings(loc=None,  verbose = False):
     """returns list of [partition, pid, designID, design] sublists"""
@@ -202,6 +202,7 @@ def getBestShipRatings(loc=None,  verbose = False):
         detail[0] /= tally
     return locDetail
 
+
 def addDesigns(shipType,  newDesigns,  shipProdPriority):
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     empire = fo.getEmpire()
@@ -237,6 +238,7 @@ def addDesigns(shipType,  newDesigns,  shipProdPriority):
         print "Best %s  buildable is %s"%(shipType,  bestDesign.name(False))
     else:
         print "%s apparently unbuildable at present,  ruh-roh"%shipType
+
 
 def addBaseTroopDesigns():
     shipType,  shipProdPriority ="BaseTroopers",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION
@@ -277,6 +279,7 @@ def addTroopDesigns():
         #newTroopDesigns += [ (nb%(ari,  iw+3),  desc,  hull,  [srb%iw,  arL[ari]]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
     addDesigns(shipType,   newTroopDesigns,  shipProdPriority)
 
+
 def addScoutDesigns():
     shipType,  shipProdPriority ="Scout",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
@@ -297,6 +300,7 @@ def addScoutDesigns():
     #    newScoutDesigns += [ (nb%(d_id, iw),  desc,  hull,  [ db%d_id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
     addDesigns(shipType,   newScoutDesigns,  shipProdPriority)
 
+
 def addOrbitalDefenseDesigns():
     shipType,  shipProdPriority ="OrbitalDefense",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
@@ -311,6 +315,7 @@ def addOrbitalDefenseDesigns():
         newDesigns += [ (designNameBases[3],  desc,  hull,  [is3],  "",  model) ]
 
     addDesigns(shipType,   newDesigns,  shipProdPriority)
+
 
 def addMarkDesigns():
     addOrbitalDefenseDesigns()
@@ -543,6 +548,7 @@ def addMarkDesigns():
     addDesigns(shipType,   newMarkDesigns,  shipProdPriority)
     #TODO: add more advanced designs
 
+
 def addOutpostDesigns():
     shipType,  shipProdPriority ="Outpost Ships",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
@@ -557,6 +563,7 @@ def addOutpostDesigns():
     for p_id in [1, 2]:
         newOutpostDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, "",  op],  "",  model)    for iw in [2, 3, 4] ]
     addDesigns(shipType,   newOutpostDesigns,  shipProdPriority)
+
 
 def addColonyDesigns():
     shipType,  shipProdPriority ="Colony Ships",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION
@@ -577,6 +584,7 @@ def addColonyDesigns():
     for p_id in [1, 2, 3]:
         newColonyDesigns += [ (nb%(p_id, iw),  desc,  hull,  [ srb%iw, db%p_id, ar2,  cp2],  "",  model)    for iw in [3.4]  ]
     addDesigns(shipType,   newColonyDesigns,  shipProdPriority)
+
 
 def generateProductionOrders():
     """generate production orders"""
@@ -1795,6 +1803,7 @@ def generateProductionOrders():
         print ""
     fo.updateProductionQueue()
 
+
 def getAvailableBuildLocations(shipDesignID):
     """returns locations where shipDesign can be built"""
     result = []
@@ -1811,10 +1820,8 @@ def getAvailableBuildLocations(shipDesignID):
             result.append(planetID)
     return result
 
+
 def spentPP():
     """calculate PPs spent this turn so far"""
-
     queue = fo.getEmpire().productionQueue
     return queue.totalSpent
-
-

@@ -7,13 +7,16 @@ __designStats={}
 __AIShipRoleTypeNames = AIShipRoleType()
 __AIFleetMissionTypeNames = AIFleetMissionType()
 
+
 def clearShipDesignInfo():
     __designStats.clear()
+
 
 def statsMeetReq(stats,  reqs,  reqName):
     if stats.get(reqName,  0) < reqs.get(reqName, 0):
         return False
     return True
+
 
 def statsMeetReqs(stats,  reqs):
     try:
@@ -24,6 +27,7 @@ def statsMeetReqs(stats,  reqs):
         return True
     except:
         return False
+
 
 def countPartsFleetwide(fleetID,  partsList):
     tally=0
@@ -42,6 +46,7 @@ def countPartsFleetwide(fleetID,  partsList):
             if part in partsList:
                 tally += 1
     return tally
+
 
 def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList,
                                                             takeAny=False,  extendSearch=True,  triedFleets=None,  verbose=False,  depth=0): #implements breadth-first search through systems
@@ -124,6 +129,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         return []
 import traceback
 
+
 def splitFleet(fleetID):
     """splits a fleet into its ships"""
 
@@ -161,6 +167,7 @@ def splitFleet(fleetID):
     if newfleets:
         foAI.foAIstate.ensureHaveFleetMissions(newfleets)
     return newfleets
+
 
 def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  context=""):
     universe = fo.getUniverse()
@@ -219,6 +226,7 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
     foAI.foAIstate.updateFleetRating(fleetB_ID)
     return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
 
+
 def fleetHasShipWithRole(fleetID, shipRole):
     """returns True if a ship with shipRole is in the fleet"""
 
@@ -231,6 +239,7 @@ def fleetHasShipWithRole(fleetID, shipRole):
         if foAI.foAIstate.getShipRole(ship.design.id) == shipRole:
             return True
     return False
+
 
 def getShipIDWithRole(fleetID, shipRole,  verbose = True):
     """returns a ship with the specified role in the fleet"""
@@ -248,8 +257,10 @@ def getShipIDWithRole(fleetID, shipRole,  verbose = True):
         if foAI.foAIstate.getShipRole(ship.design.id) == shipRole:
             return shipID
 
+
 def getAllEverVisibleFleetIDs(): #may be only currently visible
     return  fo.getUniverse().fleetIDs
+
 
 def getEmpireFleetIDs( empireID=None):
     """returns all fleetIDs of specified empire, defauls to current empire"""
@@ -265,6 +276,7 @@ def getEmpireFleetIDs( empireID=None):
             empireFleetIDs.append( fleetID )
     return empireFleetIDs
 
+
 def getEmpireFleetIDsByRole(fleetRole):
     """returns a list with fleetIDs that have the specified role"""
     fleetIDs = getEmpireFleetIDs()
@@ -274,6 +286,7 @@ def getEmpireFleetIDsByRole(fleetRole):
         fleetIDsWithRole.append(fleetID)
     return fleetIDsWithRole
 
+
 def extractFleetIDsWithoutMissionTypes(fleetIDs):
     """extracts a list with fleetIDs that have no mission"""
     fleetIDsWithoutMission = []
@@ -282,6 +295,7 @@ def extractFleetIDsWithoutMissionTypes(fleetIDs):
         if not aiFleetMission.hasAnyAIMissionTypes():
             fleetIDsWithoutMission.append(fleetID)
     return fleetIDsWithoutMission
+
 
 def assessFleetRole(fleetID):
     """assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole"""
@@ -336,6 +350,7 @@ def assessFleetRole(fleetID):
     #                                                                           shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
     return selectedRole
 
+
 def assessShipDesignRole(design):
     if design.parts.__contains__("CO_OUTPOST_POD"):
         if design.starlaneSpeed > 0:
@@ -376,12 +391,14 @@ def assessShipDesignRole(design):
     else:
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  #let this be the default since even without detection part a ship has some inherent
 
+
 def assessDesignIDStats(designID):
     design = fo.getShipDesign(designID)
     if design is None:
         return  {'attack':0, 'structure':0, 'shields':0}
     else:
         return  {'attack':design.attack, 'structure':design.structure, 'shields':design.shields}
+
 
 def assessShipRole(shipID):
     """decides which role a ship has"""
@@ -390,6 +407,7 @@ def assessShipRole(shipID):
         return assessShipDesignRole( fo.getShipDesign(ship.designID) )
     else:
         return AIShipRoleType.SHIP_ROLE_INVALID
+
 
 def generateAIFleetOrdersForAIFleetMissions():
     """generates fleet orders from targets"""
@@ -495,9 +513,9 @@ def generateAIFleetOrdersForAIFleetMissions():
     for aiFleetMission in aiFleetMissions:
         aiFleetMission.generateAIFleetOrders()
 
+
 def issueAIFleetOrdersForAIFleetMissions():
     """issues fleet orders"""
-
     print ""
     universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
@@ -515,6 +533,7 @@ def issueAIFleetOrdersForAIFleetMissions():
         foAI.foAIstate.misc['ReassignedFleetMissions']=[]
     print ""
 
+
 def printSystems(systemIDs):
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -530,4 +549,3 @@ def printSystems(systemIDs):
             print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem
         else:
             print "    name:??? id:" + str(systemID) + suppliedSystem
-

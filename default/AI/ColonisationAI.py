@@ -93,6 +93,7 @@ def resetCAIGlobals():
     systems_by_supply_tier.clear()
     system_supply.clear()
 
+
 def ratePilotingTag(tagList):
     grade = 2.0
     grades = {'NO':1e-8, 'BAD':0.75, 'GOOD':4.0,  'GREAT':6.0,  'ULTIMATE':12.0 }
@@ -101,6 +102,7 @@ def ratePilotingTag(tagList):
         tagType = tagParts[3]
         grade = grades.get(tagParts[2],  1.0)
     return grade
+
 
 def ratePlanetaryPiloting(pid):
     universe = fo.getUniverse()
@@ -111,6 +113,7 @@ def ratePlanetaryPiloting(pid):
     if not thisSpec:
         return 0.0
     return ratePilotingTag(thisSpec.tags)
+
 
 def check_supply():
     # get suppliable systems and planets
@@ -214,6 +217,7 @@ def check_supply():
     for jumps in range(0, -1-supply_distance, -1):
         annexableSystemIDs.update(systems_by_supply_tier.get(jumps, []))
     return supp_timing, fleetSupplyablePlanetIDs
+
 
 def survey_universe():
     global  gotRuins, gotAst,  gotGG,  curBestPilotRating, curMidPilotRating
@@ -416,7 +420,8 @@ def survey_universe():
          
         
     return u_timing, univ_stats
-    
+
+
 def getColonyFleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     global  curBestMilShipRating
@@ -656,6 +661,7 @@ def getColonyTargetedPlanetIDs(planetIDs, missionType, empireID):
 
     return colonyTargetedPlanets
 
+
 def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
     """return list being settled with outposts planets"""
 
@@ -673,6 +679,7 @@ def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
                 outpostTargetedPlanets.append(planetID)
 
     return outpostTargetedPlanets
+
 
 def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=None,  returnAll=False): #TODO: clean up supplyable versus annexable
     """creates a dictionary that takes planetIDs as key and their colonisation score as value"""
@@ -708,7 +715,8 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
                 planetValues[planetID] = best[0][:2]
                 #print best[0][2]
     return planetValues
-    
+
+
 def next_turn_pop_change(cur_pop,  target_pop):
     """population change calc taken from PopCenter.cpp"""
     pop_change = 0
@@ -719,6 +727,7 @@ def next_turn_pop_change(cur_pop,  target_pop):
         pop_change = -(cur_pop - target_pop) / 10
         pop_change = max(pop_change, target_pop - cur_pop)
     return pop_change
+
 
 def project_ind_val(init_pop,  max_pop_size,  init_industry,  max_ind_factor,  flat_industry,  discountMultiplier):
     """returns a discouted value for a projected industry stream over time with changing population"""
@@ -735,6 +744,7 @@ def project_ind_val(init_pop,  max_pop_size,  init_industry,  max_ind_factor,  f
         val_factor *= discount_factor
         ind_val += val_factor * cur_ind
     return ind_val
+
 
 def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = None):
     """returns the colonisation value of a planet"""
@@ -1267,9 +1277,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
 
     return retval
 
+
 def removeLowValuePlanets(evaluatedPlanets):
     """removes all planets with a colonisation value < minimalColoniseValue"""
-
     removeIDs = []
     minVal = AIstate.minimalColoniseValue
     if foAI.foAIstate.aggression <fo.aggression.typical:
@@ -1283,8 +1293,8 @@ def removeLowValuePlanets(evaluatedPlanets):
     #print "removing ",  removeIDs
     for ID in removeIDs: del evaluatedPlanets[ID]
 
-def assignColonyFleetsToColonise():
 
+def assignColonyFleetsToColonise():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID

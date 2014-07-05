@@ -18,9 +18,11 @@ currentScoutFleetIDs = []
 def getBorderExploredSystemIDs():
     return list( borderExploredSystemIDs )
 
+
 def updateScoutFleets():
     currentScoutFleetIDs[:] = []
     currentScoutFleetIDs.extend( FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION) )
+
 
 def getCurrentExplorationInfo(verbose=True):
     """returns ( [current target list] ,  [available scout list] ) """
@@ -40,6 +42,7 @@ def getCurrentExplorationInfo(verbose=True):
                     print "found existing exploration targets: %s"%targets
             alreadyCovered.update( targets )
     return list(alreadyCovered),  availableScouts
+
 
 def assignScoutsToExploreSystems():
     # TODO: use Graph Theory to explore closest systems
@@ -118,17 +121,17 @@ def assignScoutsToExploreSystems():
     print "sent scouting fleets to sysIDs : %s"%sentList
     """
 
+
 def getHomeSystemID():
     """returns the systemID of the home world"""
-
     empire = fo.getEmpire()
     universe = fo.getUniverse()
     homeworld = universe.getPlanet(PlanetUtilsAI.getCapital())
 
     if homeworld:
         return homeworld.systemID
-
     return -1
+
 
 def followVisSystemConnections(startSystemID,  homeSystemID):
     universe = fo.getUniverse()

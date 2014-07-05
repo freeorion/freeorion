@@ -12,11 +12,13 @@ researched next.
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
+
 def unusable_techs():
     """
     Returns a list of technologies that shouldn't be researched by the AI.
     """
     return []
+
 
 def defense_techs_1():
     """
@@ -28,6 +30,7 @@ def defense_techs_1():
         "DEF_GARRISON_1"
     ]
 
+
 def defense_techs_2():
     """
     Returns a list of technologies that implement additional planetary defensive
@@ -35,6 +38,7 @@ def defense_techs_2():
     are provided by defense_techs_1().
     """
     return []
+
 
 def tech_group_1a(): # early org_hull
     result = [
@@ -52,6 +56,7 @@ def tech_group_1a(): # early org_hull
     ]
     return result
 
+
 def tech_group_1b():  # early _lrn_artif_minds
     result = [
             "LRN_ALGO_ELEGANCE",
@@ -66,7 +71,8 @@ def tech_group_1b():  # early _lrn_artif_minds
             "SHP_WEAPON_1_4",
     ]
     return result
-    
+
+
 def tech_group_2a():  # prioritizes growth & defense over weapons
     result = [
             "SHP_ZORTRIUM_PLATE",
@@ -84,7 +90,8 @@ def tech_group_2a():  # prioritizes growth & defense over weapons
             "SHP_WEAPON_2_4",
     ]
     return result
-    
+
+
 def tech_group_2b():  # prioritizes weapons over growth & defense
     result = [
             "SHP_ZORTRIUM_PLATE",
@@ -102,7 +109,8 @@ def tech_group_2b():  # prioritizes weapons over growth & defense
             "LRN_FORCE_FIELD",
     ]
     return result
-    
+
+
 def tech_group_3a(): # without SHP_ASTEROID_REFORM
     result = [
             "GRO_GENETIC_ENG",
@@ -145,12 +153,14 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SPY_STEALTH_1",
     ]
     return result
-    
+
+
 def tech_group_3b():  # with SHP_ASTEROID_REFORM
     result = tech_group_3a()
     result += [ "SHP_ASTEROID_REFORM", "SHP_HEAVY_AST_HULL" ]
     return result
-    
+
+
 def tech_group_4a():  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
     result = [
             "SHP_DIAMOND_PLATE",
@@ -161,7 +171,8 @@ def tech_group_4a():  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
             "SHP_WEAPON_3_4",
     ]
     return result
-    
+
+
 def tech_group_4b():  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
     result = [
             "SHP_WEAPON_3_1",
@@ -174,6 +185,7 @@ def tech_group_4b():  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
             "SHP_ENRG_BOUND_MAN",
     ]
     return result
+
 
 def tech_group_5():
     result = [
@@ -219,7 +231,6 @@ def tech_group_5():
             "SHP_SOLAR_CONT",
     ]
     return result
-
 
 
 def primary_meta_techs(index = 0):

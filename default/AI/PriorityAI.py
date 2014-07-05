@@ -24,6 +24,7 @@ colonyGrowthBarrier = 2
 scoutsNeeded = 0
 unmetThreat = 0
 
+
 def calculatePriorities():
     """calculates the priorities of the AI player"""
     print("checking statuses")
@@ -89,6 +90,7 @@ def calculatePriorities():
 
     # foAI.foAIstate.printPriorities()
 
+
 def calculateFoodPriority():
     """calculates the AI's need for food"""
     # attempts to sustain a food stockpile whose size depends on the AI empires population
@@ -116,9 +118,9 @@ def calculateFoodPriority():
 
     return foodPriority
 
+
 def calculateIndustryPriority(): #currently only used to print status
     """calculates the demand for industry"""
-
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -136,9 +138,9 @@ def calculateIndustryPriority(): #currently only used to print status
 
     return industryPriority
 
+
 def calculateResearchPriority():
     """calculates the AI empire's demand for research"""
-
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -214,9 +216,9 @@ def calculateResearchPriority():
 
     return researchPriority
 
+
 def calculateExplorationPriority():
     """calculates the demand for scouts by unexplored systems"""
-
     global scoutsNeeded
 
     universe = fo.getUniverse()
@@ -242,6 +244,7 @@ def calculateExplorationPriority():
     print "Priority for scouts         : " + str(explorationPriority)
 
     return explorationPriority
+
 
 def calculateColonisationPriority():
     """calculates the demand for colony ships by colonisable planets"""
@@ -280,8 +283,8 @@ def calculateColonisationPriority():
     # print "Priority for colony ships     : " + str(colonisationPriority)
 
     if colonisationPriority < 1: return 1
-
     return colonisationPriority
+
 
 def calculateOutpostPriority():
     """calculates the demand for outpost ships by colonisable planets"""
@@ -305,6 +308,7 @@ def calculateOutpostPriority():
     if outpostPriority < 1: return 1
 
     return outpostPriority
+
 
 def calculateInvasionPriority():
     """calculates the demand for troop ships by opponent planets"""
@@ -374,6 +378,7 @@ def calculateInvasionPriority():
     else:
         return invasionPriority
 
+
 def calculateMilitaryPriority():
     """calculates the demand for military ships by military targeted systems"""
     global unmetThreat
@@ -438,9 +443,9 @@ def calculateMilitaryPriority():
     print "Calculating Military Priority:  40 + 75 * shipsNeeded \n\t  Priority: %d   \t shipsNeeded %d   \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority, shipsNeeded,   unmetThreat,  curShipRating)
     return max( militaryPriority,  0)
 
+
 def calculateTopProductionQueuePriority():
     """calculates the top production queue priority"""
-
     productionQueuePriorities = {}
     for priorityType in EnumsAI.getAIPriorityProductionTypes():
         productionQueuePriorities[priorityType] = foAI.foAIstate.getPriority(priorityType)
@@ -454,49 +459,47 @@ def calculateTopProductionQueuePriority():
 
     return topProductionQueuePriority
 
+
 def calculateLearningPriority():
     """calculates the demand for techs learning category"""
-
     currentturn = fo.currentTurn()
     if currentturn == 1:
         return 100
     elif currentturn > 1:
         return 0
 
+
 def calculateGrowthPriority():
     """calculates the demand for techs growth category"""
-
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 8:
         return 70
     elif productionPriority != 8:
         return 0
 
+
 def calculateTechsProductionPriority():
     """calculates the demand for techs production category"""
-
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 7 or productionPriority == 9:
         return 60
     elif productionPriority != 7 or productionPriority != 9:
         return 0
 
+
 def calculateConstructionPriority():
     """calculates the demand for techs construction category"""
-
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 6 or productionPriority == 11:
         return 80
     elif productionPriority != 6 or productionPriority != 11:
         return 30
 
+
 def calculateShipsPriority():
     """calculates the demand for techs ships category"""
-
     productionPriority = calculateTopProductionQueuePriority()
     if productionPriority == 10:
         return 90
     elif productionPriority != 10:
         return 0
-
-

@@ -4,6 +4,7 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 
 AI_TARGET_TYPE_NAMES = AITargetType()
 
+
 class AITarget(object):
     """stores information about AI target - its id and type"""
 
