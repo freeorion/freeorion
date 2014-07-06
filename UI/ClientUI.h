@@ -28,7 +28,6 @@ class SitRepEntry;
 struct SaveGameUIData;
 class System;
 class Tech;
-class TurnProgressWnd;
 class BuildingType;
 template <class T> class TemporaryPtr;
 namespace GG {

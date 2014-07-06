@@ -23,7 +23,6 @@
 #include "SitRepPanel.h"
 #include "SystemIcon.h"
 #include "FieldIcon.h"
-#include "TurnProgressWnd.h"
 #include "ShaderProgram.h"
 #include "Hotkeys.h"
 #include "Sound.h"

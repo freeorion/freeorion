@@ -270,7 +270,6 @@
 		471D5E2A0A98A9D900DA9C21 /* SitRepPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CD80A98A3F900DA9C21 /* SitRepPanel.cpp */; };
 		471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */; };
 		471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */; };
-		471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */; };
 		471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */; };
 		471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5C0A98A3F900DA9C21 /* camain.cpp */; };
 		478417700CF0581A00BE4710 /* freeorioncommon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* freeorioncommon.dylib */; };
@@ -991,8 +990,6 @@
 		471D5CDF0A98A3F900DA9C21 /* SystemIcon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SystemIcon.h; sourceTree = "<group>"; };
 		471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeWnd.cpp; sourceTree = "<group>"; };
 		471D5CE10A98A3F900DA9C21 /* TechTreeWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TechTreeWnd.h; sourceTree = "<group>"; };
-		471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TurnProgressWnd.cpp; sourceTree = "<group>"; };
-		471D5CE30A98A3F900DA9C21 /* TurnProgressWnd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TurnProgressWnd.h; sourceTree = "<group>"; };
 		471D5CE50A98A3F900DA9C21 /* Building.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Building.cpp; sourceTree = "<group>"; };
 		471D5CE60A98A3F900DA9C21 /* Building.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Building.h; sourceTree = "<group>"; };
 		471D5CE70A98A3F900DA9C21 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
@@ -2241,8 +2238,6 @@
 				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
 				471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */,
 				471D5CE10A98A3F900DA9C21 /* TechTreeWnd.h */,
-				471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */,
-				471D5CE30A98A3F900DA9C21 /* TurnProgressWnd.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3492,7 +3487,6 @@
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
 				3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */,
-				471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */,
 				3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */,
 				3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */,
 			);

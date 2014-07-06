@@ -99,7 +99,6 @@ set(freeorion_HEADER
     ../../UI/SystemIcon.h
     ../../UI/TechTreeLayout.h
     ../../UI/TechTreeWnd.h
-    ../../UI/TurnProgressWnd.h
 )
 
 set(freeorion_SOURCES
@@ -154,7 +153,6 @@ set(freeorion_SOURCES
     ../../UI/SystemIcon.cpp
     ../../UI/TechTreeLayout.cpp
     ../../UI/TechTreeWnd.cpp
-    ../../UI/TurnProgressWnd.cpp
 )
 
 set(freeorion_LINK_LIBS
