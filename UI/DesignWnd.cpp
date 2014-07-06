@@ -1548,8 +1548,6 @@ void DesignWnd::BaseSelector::DoLayout() {
     left = LEFT_PAD;
     top = top + BUTTON_HEIGHT + BUTTON_SEPARATION;
 
-    if (!m_tabs)
-        return;
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
@@ -1979,17 +1977,11 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 }
 
 const std::string& DesignWnd::MainPanel::DesignName() const {
-    if (m_design_name)
-        return m_design_name->Text();
-    else
-        return EMPTY_STRING;
+    return m_design_name->Text();
 }
 
 const std::string& DesignWnd::MainPanel::DesignDescription() const {
-    if (m_design_description)
-        return m_design_description->Text();
-    else
-        return EMPTY_STRING;
+    return m_design_description->Text();
 }
 
 boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() const {
@@ -2257,62 +2249,41 @@ void DesignWnd::MainPanel::DoLayout() {
     const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 
     GG::X edit_right = ClientWidth();
-    GG::Y edit_height = BUTTON_HEIGHT;
     GG::X confirm_right = ClientWidth() - PAD;
 
-    if (m_confirm_button) {
-        GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(GG::X0, GG::Y(PAD));
-        GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        m_confirm_button->SizeMove(ul, lr);
-        edit_right = ul.x - PAD;
-    }
-    if (m_clear_button) {
-        GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
-        GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        m_clear_button->SizeMove(ul, lr);
-    }
+    GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(GG::X0, GG::Y(PAD));
+    GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_confirm_button->SizeMove(ul, lr);
+    edit_right = ul.x - PAD;
 
-    if (m_design_name)
-        edit_height = m_design_name->Height();
+    lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
+    ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_clear_button->SizeMove(ul, lr);
 
-    GG::X x(PAD);
-    GG::Y y(PAD);
-    if (m_design_name_label) {
-        GG::Pt ul = GG::Pt(x, y);
-        GG::Pt lr = ul + GG::Pt(LABEL_WIDTH, edit_height);
-        m_design_name_label->SizeMove(ul, lr);
-        x = lr.x + PAD;
-    }
-    if (m_design_name) {
-        GG::Pt ul = GG::Pt(x, y);
-        GG::Pt lr = GG::Pt(edit_right, y + edit_height);
-        m_design_name->SizeMove(ul, lr);
-        x = lr.x + PAD;
-    }
+    ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
+    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->Height());
+    m_design_name_label->SizeMove(ul, lr);
 
-    x = GG::X(PAD);
-    y += (edit_height + PAD);
+    ul.x += lr.x;
+    lr.x = edit_right;
+    m_design_name->SizeMove(ul, lr);
 
-    if (m_design_description_label) {
-        GG::Pt ul = GG::Pt(x, y);
-        GG::Pt lr = ul + GG::Pt(LABEL_WIDTH, edit_height);
-        m_design_description_label->SizeMove(ul, lr);
-        x = lr.x + PAD;
-    }
-    if (m_design_description) {
-        GG::Pt ul = GG::Pt(x, y);
-        GG::Pt lr = GG::Pt(confirm_right, y + edit_height);
-        m_design_description->SizeMove(ul, lr);
-        x = lr.x + PAD;
-    }
+    ul.x = GG::X(PAD);
+    ul.y += (m_design_name->Height() + PAD);
+    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->Height());
+    m_design_description_label->SizeMove(ul, lr);
 
-    y += (edit_height);
+    ul.x = lr.x + PAD;
+    lr.x = confirm_right;
+    m_design_description->SizeMove(ul, lr);
 
     // place background image of hull
-    GG::Rect background_rect = GG::Rect(GG::Pt(GG::X0, y), ClientLowerRight());
+    ul.x = GG::X0;
+    ul.y += m_design_name->Height();
+    GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
     if (m_background_image) {
-        GG::Pt ul = GG::Pt(GG::X0, y);
+        GG::Pt ul = background_rect.UpperLeft();
         GG::Pt lr = ClientSize();
         m_background_image->SizeMove(ul, lr);
         background_rect = m_background_image->RenderedArea();
