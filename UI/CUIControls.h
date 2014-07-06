@@ -34,6 +34,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual GG::Pt MinUsableSize() const;
+
     GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
     int          BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
 

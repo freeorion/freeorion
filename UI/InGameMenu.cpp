@@ -68,10 +68,8 @@ void InGameMenu::DoLayout() {
     //size calculation consts and variables
     const GG::X MIN_BUTTON_WIDTH(160);
     const GG::Y MIN_BUTTON_HEIGHT(40);
-    const GG::X H_BUTTON_MARGIN(16);    //horizontal empty space
-    const GG::Y V_BUTTON_MARGIN(16);    //vertical empty space
     GG::X button_width(0);              //width of the buttons
-    GG::Y button_height(0);             //height of the buttons
+    GG::Y button_cell_height(0);        //height of the buttons
     const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
     const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
     GG::X mainmenu_width(0);            //width of the mainmenu
@@ -79,38 +77,37 @@ void InGameMenu::DoLayout() {
 
     //calculate necessary button width
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    button_width = std::max(button_width, font->TextExtent(m_save_btn->Text()).x);
-    button_width = std::max(button_width, font->TextExtent(m_load_btn->Text()).x);
-    button_width = std::max(button_width, font->TextExtent(m_options_btn->Text()).x);
-    button_width = std::max(button_width, font->TextExtent(m_exit_btn->Text()).x);
-    button_width = std::max(button_width, font->TextExtent(m_done_btn->Text()).x);
-    button_width += H_BUTTON_MARGIN;
+    button_width = std::max(button_width, m_save_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_load_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_options_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_exit_btn->MinUsableSize().x);
+    button_width = std::max(button_width, m_done_btn->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
 
     //calculate  necessary button height
-    button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
+    button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
     //culate window width and height
     mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 5.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+    mainmenu_height = 5.75 * button_cell_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
-    GG::Pt button_lr(button_width, ClientUI::GetFont()->Lineskip() + 6);
+    GG::Pt button_lr(button_width, m_done_btn->MinUsableSize().y);
 
     button_lr += button_ul;
 
     m_save_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
     m_load_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
     m_options_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height);
-    button_lr.y += GG::Y(button_height);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
     m_exit_btn->SizeMove(button_ul, button_lr);
-    button_ul.y += GG::Y(button_height) * 1.75;
-    button_lr.y += GG::Y(button_height) * 1.75;
+    button_ul.y += GG::Y(button_cell_height) * 1.75;
+    button_lr.y += GG::Y(button_cell_height) * 1.75;
     m_done_btn->SizeMove(button_ul, button_lr);
 
     // position menu window

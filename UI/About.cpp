@@ -69,21 +69,25 @@ void About::OnVision()
 void About::DoLayout(void) {
     const GG::X HORIZONTAL_SPACING(5);
     const GG::Y VERTICAL_SPACING(5);
-    const GG::X BUTTON_WIDTH(95);
-    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
+
+    GG::Pt BUTTON_SIZE = m_vision->MinUsableSize();
+    BUTTON_SIZE.x = std::max(BUTTON_SIZE.x, m_license->MinUsableSize().x);
+    BUTTON_SIZE.x = std::max(BUTTON_SIZE.x, m_done_btn->MinUsableSize().x);
+    BUTTON_SIZE.y = std::max(BUTTON_SIZE.y, m_license->MinUsableSize().y);
+    BUTTON_SIZE.y = std::max(BUTTON_SIZE.y, m_done_btn->MinUsableSize().y);
 
     GG::Pt buttons_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING);
-    GG::Pt buttons_ul = buttons_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    GG::Pt buttons_ul = buttons_lr - BUTTON_SIZE;
     m_done_btn->SizeMove(buttons_ul, buttons_lr);
 
-    buttons_lr.x -= BUTTON_WIDTH + HORIZONTAL_SPACING;
-    buttons_ul.x -= BUTTON_WIDTH + HORIZONTAL_SPACING;
+    buttons_lr.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
+    buttons_ul.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
     m_vision->SizeMove(buttons_ul, buttons_lr);
 
-    buttons_lr.x -= BUTTON_WIDTH + HORIZONTAL_SPACING;
-    buttons_ul.x -= BUTTON_WIDTH + HORIZONTAL_SPACING;
+    buttons_lr.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
+    buttons_ul.x -= BUTTON_SIZE.x + HORIZONTAL_SPACING;
     m_license->SizeMove(buttons_ul, buttons_lr);
 
-    GG::Pt text_area_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING + BUTTON_HEIGHT + VERTICAL_SPACING);
+    GG::Pt text_area_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING + BUTTON_SIZE.y + VERTICAL_SPACING);
     m_info->SizeMove(GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING), text_area_lr);
 }

@@ -80,6 +80,17 @@ void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
+GG::Pt CUIButton::MinUsableSize() const {
+    GG::Pt result = GG::Button::MinUsableSize();
+    const int CUIBUTTON_HPADDING = 10;
+    const int CUIBUTTON_VPADDING = 3;
+
+    result.x += CUIBUTTON_HPADDING * 2;
+    result.y += CUIBUTTON_VPADDING * 2;
+
+    return result;
+}
+
 void CUIButton::SetBorderColor(GG::Clr clr)
 { m_border_color = clr; }
 
