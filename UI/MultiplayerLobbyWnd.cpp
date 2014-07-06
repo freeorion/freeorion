@@ -207,7 +207,7 @@ namespace {
 
             // empire name editable text
             CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
-                                        ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
+                                        GG::CLR_ZERO, GG::CLR_ZERO);
             push_back(edit);
             if (disabled)
                 edit->Disable();

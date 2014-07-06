@@ -606,10 +606,10 @@ void SaveFileDialog::Init() {
     m_confirm_btn = new CUIButton ( UserString ( "OK" ) );
     CUIButton* cancel_btn = new CUIButton ( UserString ( "CANCEL" ) );
 
-    m_name_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, "", font );
+    m_name_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, "" );
     GG::TextControl* filename_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_FILENAME" ), font, ClientUI::TextColor() );
     GG::TextControl* directory_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_DIRECTORY" ), font, ClientUI::TextColor() );
-    m_current_dir_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, PathString ( GetSaveDir() ), font );
+    m_current_dir_edit = new CUIEdit ( GG::X0, GG::Y0, GG::X1, PathString ( GetSaveDir() ) );
 
     m_layout->Add ( directory_label,    0, 0 );
 

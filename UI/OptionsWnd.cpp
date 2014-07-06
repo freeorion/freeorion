@@ -415,8 +415,7 @@ OptionsWnd::OptionsWnd():
     // flush stringtable button
     std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
     GG::Button* flush_button = new CUIButton(flush_button_text,
-                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
-                                             ClientUI::GetFont());
+                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20));
     GG::ListBox::Row* row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, m_indentation_level));
@@ -1022,8 +1021,7 @@ void OptionsWnd::ResolutionOption() {
     // apply button, sized to fit text
     std::string apply_button_text = UserString("OPTIONS_APPLY");
     GG::Button* apply_button = new CUIButton(apply_button_text,
-                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
-                                             ClientUI::GetFont());
+                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20));
     row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));

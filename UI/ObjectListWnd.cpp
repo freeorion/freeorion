@@ -852,21 +852,20 @@ private:
         m_filters_layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
         m_filters_layout->SetColumnStretch(0, 0.0);
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::X button_width = GG::X(ClientUI::Pts()*8);
         GG::Button* label = 0;
 
-        label = new CUIButton(UserString("VISIBLE"), GG::X0, GG::Y0, button_width, font);
+        label = new CUIButton(UserString("VISIBLE"), GG::X0, GG::Y0, button_width);
         m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
 
-        label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"), GG::X0, GG::Y0, button_width, font);
+        label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"), GG::X0, GG::Y0, button_width);
         m_filters_layout->Add(label, 2, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_PREVIOUSLY_VISIBLE));
 
-        label = new CUIButton(UserString("DESTROYED"), GG::X0, GG::Y0, button_width, font);
+        label = new CUIButton(UserString("DESTROYED"), GG::X0, GG::Y0, button_width);
         m_filters_layout->Add(label, 3, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
@@ -881,7 +880,7 @@ private:
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
-            label = new CUIButton(uot_label, GG::X0, GG::Y0, GG::X1, font);
+            label = new CUIButton(uot_label, GG::X0, GG::Y0, GG::X1);
             m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
@@ -910,11 +909,11 @@ private:
         m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
         AttachChild(m_condition_widget);
 
-        m_cancel_button = new CUIButton(UserString("CANCEL"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), font);
+        m_cancel_button = new CUIButton(UserString("CANCEL"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8));
         AttachChild(m_cancel_button);
         GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
 
-        m_apply_button = new CUIButton(UserString("APPLY"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), font);
+        m_apply_button = new CUIButton(UserString("APPLY"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8));
         AttachChild(m_apply_button);
         GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
 
@@ -1415,8 +1414,6 @@ public:
     {}
 
     void            Refresh() {
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-
         for (std::vector<GG::Button*>::iterator it = m_controls.begin();
              it != m_controls.end(); ++it)
         { DeleteChild(*it); }
@@ -1523,10 +1520,9 @@ private:
 
     std::vector<GG::Button*>    GetControls() {
         std::vector<GG::Button*> retval;
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         GG::Button* control = new CUIButton("-", GG::X0, GG::Y0,
-                                            GG::X(GetColumnWidth(-1)), font);
+                                            GG::X(GetColumnWidth(-1)));
         retval.push_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
@@ -1535,8 +1531,7 @@ private:
             if (!header_name.empty())
                 text = UserString(header_name);
             control = new CUIButton(text, GG::X0, GG::Y0,
-                                    GG::X(GetColumnWidth(static_cast<int>(i))),
-                                    font);
+                                    GG::X(GetColumnWidth(static_cast<int>(i))));
             retval.push_back(control);
         }
 

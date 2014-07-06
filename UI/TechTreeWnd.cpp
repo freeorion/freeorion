@@ -832,8 +832,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 
     const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
 
-    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, ClientUI::GetFont(), ClientUI::WndColor());
-    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, ClientUI::GetFont(), ClientUI::WndColor());
+    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, ClientUI::WndColor());
+    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, ClientUI::WndColor());
 
     DoLayout();
 

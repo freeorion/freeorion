@@ -181,8 +181,8 @@ namespace {
         }
 
         QuantitySelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/,
-            GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5),GG::NO_WND_FLAGS),
+            GG::Clr interior/* = ClientUI::WndColor()*/) :
+            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
             quantity(0),
             prevQuant(0),
             blocksize(1),
