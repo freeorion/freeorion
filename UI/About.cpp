@@ -67,10 +67,10 @@ void About::OnVision()
 { m_info->SetText(UserString("FREEORION_VISION")); }
 
 void About::DoLayout(void) {
-    GG::X HORIZONTAL_SPACING(5);
-    GG::Y VERTICAL_SPACING(5);
-    GG::X BUTTON_WIDTH(95);
-    GG::Y BUTTON_HEIGHT(20);
+    const GG::X HORIZONTAL_SPACING(5);
+    const GG::Y VERTICAL_SPACING(5);
+    const GG::X BUTTON_WIDTH(95);
+    const GG::Y BUTTON_HEIGHT(20);
 
     GG::Pt buttons_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING);
     GG::Pt buttons_ul = buttons_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
