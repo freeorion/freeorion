@@ -26,10 +26,14 @@ public:
     //! \name Mutators
     //!@{
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //!@}
 
 private:
     typedef void (OptionsWnd::* VolumeSliderHandler)(int, int, int);
+
+    void                DoLayout(void);
 
     void                BeginPage(const std::string& name);
     void                EndPage();
@@ -53,7 +57,6 @@ private:
     void                FontOption(const std::string& option_name, const std::string& text);
     void                ResolutionOption();
 
-    void                Init();
     void                DoneClicked();
     void                MusicClicked(bool checked);
     void                MusicVolumeSlid(int pos, int low, int high);

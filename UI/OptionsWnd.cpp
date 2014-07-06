@@ -74,7 +74,7 @@ namespace {
     const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
     const GG::X COLOR_SELECTOR_WIDTH(75);
     const GG::X SPIN_WIDTH(65);
-    const int LAYOUT_MARGIN = 3;
+    const int LAYOUT_MARGIN = 5;
 
     const std::string STRINGTABLE_FILE_SUFFIX = ".txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
@@ -336,9 +336,256 @@ OptionsWnd::OptionsWnd():
 {
     SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
-    m_done_button = new CUIButton(UserString("DONE"), GG::X(15), PAGE_HEIGHT + 17, GG::X(75));
-    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), PAGE_WIDTH, PAGE_HEIGHT + 20, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
-    Init();
+
+    m_done_button = new CUIButton(UserString("DONE"));
+    // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
+    // The placement of the tab register buttons assumes that the whole TabWnd is at least
+    // wider than the first tab button.
+    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+
+    AttachChild(m_done_button);
+    AttachChild(m_tabs);
+
+    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
+
+    Sound::TempUISoundDisabler sound_disabler;
+
+    // Video settings tab
+    BeginPage(UserString("OPTIONS_PAGE_VIDEO"));
+    ResolutionOption();
+    EndPage();
+
+    // Audio settings tab
+    BeginPage(UserString("OPTIONS_PAGE_AUDIO"));
+    BeginSection(UserString("OPTIONS_VOLUME_AND_MUSIC"));
+    MusicVolumeOption();
+    VolumeOption("UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), &OptionsWnd::UISoundsVolumeSlid, UI_sound_enabled);
+    FileOption("UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+               std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
+               ValidMusicFile);
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUNDS"));
+    BeginSection(UserString("OPTIONS_UI_SOUNDS"));
+    SoundFileOption("UI.sound.alert",           UserString("OPTIONS_SOUND_ALERT"));
+    SoundFileOption("UI.sound.text-typing",     UserString("OPTIONS_SOUND_TYPING"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_WINDOW"));
+    SoundFileOption("UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
+    SoundFileOption("UI.sound.window-maximize", UserString("OPTIONS_SOUND_MAXIMIZE"));
+    SoundFileOption("UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
+    SoundFileOption("UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_LIST"));
+    SoundFileOption("UI.sound.item-drop",       UserString("OPTIONS_SOUND_DROP"));
+    SoundFileOption("UI.sound.list-pulldown",   UserString("OPTIONS_SOUND_PULLDOWN"));
+    SoundFileOption("UI.sound.list-select",     UserString("OPTIONS_SOUND_SELECT"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_BUTTON"));
+    SoundFileOption("UI.sound.button-click",            UserString("OPTIONS_SOUND_CLICK"));
+    SoundFileOption("UI.sound.button-rollover",         UserString("OPTIONS_SOUND_ROLLOVER"));
+    SoundFileOption("UI.sound.fleet-button-click",      UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption("UI.sound.fleet-button-rollover",   UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption("UI.sound.system-icon-rollover",    UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
+    SoundFileOption("UI.sound.turn-button-click",       UserString("OPTIONS_SOUND_TURN"));
+    SoundFileOption("UI.sound.planet-button-click",     UserString("OPTIONS_SOUND_PLANET"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_FOCUS"));
+    SoundFileOption("UI.sound.balanced-focus",  UserString("OPTIONS_SOUND_BALANCED"));
+    SoundFileOption("UI.sound.farming-focus",   UserString("OPTIONS_SOUND_FARMING"));
+    SoundFileOption("UI.sound.industry-focus",  UserString("OPTIONS_SOUND_INDUSTRY"));
+    SoundFileOption("UI.sound.mining-focus",    UserString("OPTIONS_SOUND_MINING"));
+    SoundFileOption("UI.sound.research-focus",  UserString("OPTIONS_SOUND_RESEARCH"));
+    EndSection();
+    EndSection();
+    EndPage();
+
+    // UI settings tab
+    BeginPage(UserString("OPTIONS_PAGE_UI"));
+    BeginSection(UserString("OPTIONS_MISC_UI"));
+    BoolOption("UI.swap-mouse-lr",              UserString("OPTIONS_SWAP_MOUSE_LR"));
+    BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
+    BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
+    BoolOption("UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
+               GetRootDataDir() / "default" / "stringtables",
+               std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
+               "*" + STRINGTABLE_FILE_SUFFIX),
+               &ValidStringtableFile);
+
+    // flush stringtable button
+    std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
+    GG::Button* flush_button = new CUIButton(flush_button_text,
+                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
+                                             ClientUI::GetFont());
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, m_indentation_level));
+    m_current_option_list->Insert(row);
+    GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
+
+    IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
+    IntOption("UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
+    IntOption("UI.keypress-repeat-interval",    UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
+    IntOption("UI.mouse-click-repeat-delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
+    IntOption("UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FONTS"));
+    FontOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"));
+    FontOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FONT_SIZES"));
+    IntOption("UI.font-size",                   UserString("OPTIONS_FONT_TEXT"));
+    IntOption("UI.title-font-size",             UserString("OPTIONS_FONT_TITLE"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_SPACING"));
+    DoubleOption("UI.tech-layout-horz-spacing", UserString("OPTIONS_HORIZONTAL"));
+    DoubleOption("UI.tech-layout-vert-spacing", UserString("OPTIONS_VERTICAL"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_QUEUES"));
+    IntOption("UI.queue-width",                         UserString("OPTIONS_UI_QUEUE_WIDTH"));
+    BoolOption("UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_DESCRIPTIONS"));
+    BoolOption("UI.autogenerated-effects-descriptions", UserString("OPTIONS_AUTO_EFFECT_DESC"));
+    BoolOption("verbose-logging",                       UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
+    BoolOption("verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    EndSection();
+    EndPage();
+
+    // Galaxy Map Page
+    BeginPage(UserString("OPTIONS_GALAXY_MAP"));
+    BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
+    IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption("UI.system-circle-size",               UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption("UI.system-selection-indicator-fps",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption("UI.system-tiny-icon-size-threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
+    ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption("UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption("UI.system-fog-of-war-spacing",        UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FLEET_ICONS"));
+    DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.medium-fleet-button-minimum-zoom", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.fleet-selection-indicator-size",   UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_STARLANES"));
+    DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption("UI.starlane-core-multiplier",         UserString("OPTIONS_DB_STARLANE_CORE"));
+    BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption("UI.fleet-supply-line-dot-spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    DoubleOption("UI.fleet-supply-line-dot-rate",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
+    ColorOption("UI.unowned-starlane-colour",           UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
+    BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption("UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
+    BoolOption("UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
+    BoolOption("UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    IntOption("UI.detection-range-opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
+    BoolOption("UI.map-right-click-popup-menu",         UserString("OPTIONS_GALAXY_MAP_POPUP"));
+    EndSection();
+    EndPage();
+
+    // Colors tab
+    BeginPage(UserString("OPTIONS_PAGE_COLORS"));
+    BeginSection(UserString("OPTIONS_GENERAL_COLORS"));
+    ColorOption("UI.text-color",                    UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption("UI.default-link-color",            UserString("OPTIONS_DEFAULT_LINK_COLOR"));
+    ColorOption("UI.rollover-link-color",           UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_WINDOW_COLORS"));
+    ColorOption("UI.wnd-color",                     UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.wnd-inner-border-color",        UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption("UI.wnd-outer-border-color",        UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_CONTROL_COLORS"));
+    ColorOption("UI.ctrl-color",                    UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.ctrl-border-color",             UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption("UI.edit-hilite",                   UserString("OPTIONS_HIGHLIGHT_COLOR"));
+    ColorOption("UI.dropdownlist-arrow-color",      UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
+    ColorOption("UI.state-button-color",            UserString("OPTIONS_STATE_BUTTON_COLOR"));
+    ColorOption("UI.stat-increase-color",           UserString("OPTIONS_STAT_INCREASE_COLOR"));
+    ColorOption("UI.stat-decrease-color",           UserString("OPTIONS_STAT_DECREASE_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_COLORS"));
+    BeginSection(UserString("OPTIONS_KNOWN_TECH_COLORS"));
+    ColorOption("UI.known-tech",                    UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.known-tech-border",             UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
+    ColorOption("UI.researchable-tech",             UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.researchable-tech-border",      UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
+    ColorOption("UI.unresearchable-tech",           UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.unresearchable-tech-border",    UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_PROGRESS_COLORS"));
+    ColorOption("UI.tech-progress",                 UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption("UI.tech-progress-background",      UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    EndSection();
+    EndSection();
+    EndPage();
+
+    // combat settings tab
+    BeginPage(UserString("OPTIONS_PAGE_COMBAT"));
+    BoolOption("combat.enable-glow",                UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
+    BoolOption("combat.enable-skybox",              UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
+    BoolOption("combat.enable-lens-flare",          UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
+    BoolOption("combat.filled-selection",           UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
+    EndPage();
+
+    // Ausosave settings tab
+    BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
+    BoolOption("autosave.single-player",            UserString("OPTIONS_SINGLEPLAYER"));
+    BoolOption("autosave.multiplayer",              UserString("OPTIONS_MULTIPLAYER"));
+    IntOption("autosave.turns",                     UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    IntOption("autosave.limit",                     UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    EndPage();
+
+    // Keyboard shortcuts tab
+    HotkeysPage();
+
+    // Directories tab
+    BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
+    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
+    DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetUserDir());
+    EndPage();
+
+    // Misc
+    BeginPage(UserString("OPTIONS_PAGE_MISC"));
+    IntOption("effects-threads",                    UserString("OPTIONS_EFFECTS_THREADS"));
+    EndPage();
+
+    DoLayout();
+
+    // Connect the done and cancel button
+    GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
+}
+
+void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    CUIWnd::SizeMove(ul, lr);
+    DoLayout();
+}
+
+void OptionsWnd::DoLayout(void) {
+    const GG::X BUTTON_WIDTH(75);
+    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
+
+    GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));
+    GG::Pt done_button_ul = done_button_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+
+    m_done_button->SizeMove(done_button_ul, done_button_lr);
+
+    GG::Pt tabs_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN + BUTTON_HEIGHT + LAYOUT_MARGIN));
+    m_tabs->SizeMove(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)), tabs_lr);
 }
 
 void OptionsWnd::BeginPage(const std::string& name) {
@@ -784,238 +1031,6 @@ void OptionsWnd::ResolutionOption() {
     GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
-}
-
-void OptionsWnd::Init() {
-    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
-
-    Sound::TempUISoundDisabler sound_disabler;
-
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, LAYOUT_MARGIN, LAYOUT_MARGIN);
-    layout->SetMinimumColumnWidth(0, m_done_button->Width() + LAYOUT_MARGIN);
-    layout->SetColumnStretch(1, 1.0);
-    layout->SetRowStretch(0, 1.0);
-    layout->SetMinimumRowHeight(1, m_done_button->Height() + LAYOUT_MARGIN);
-    layout->Add(m_tabs, 0, 0, 1, 2);
-    layout->Add(m_done_button, 1, 0);
-    SetLayout(layout);
-
-    // Video settings tab
-    BeginPage(UserString("OPTIONS_PAGE_VIDEO"));
-    ResolutionOption();
-    EndPage();
-
-    // Audio settings tab
-    BeginPage(UserString("OPTIONS_PAGE_AUDIO"));
-    BeginSection(UserString("OPTIONS_VOLUME_AND_MUSIC"));
-    MusicVolumeOption();
-    VolumeOption("UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), &OptionsWnd::UISoundsVolumeSlid, UI_sound_enabled);
-    FileOption("UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
-               std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
-               ValidMusicFile);
-    EndSection();
-    BeginSection(UserString("OPTIONS_SOUNDS"));
-    BeginSection(UserString("OPTIONS_UI_SOUNDS"));
-    SoundFileOption("UI.sound.alert",           UserString("OPTIONS_SOUND_ALERT"));
-    SoundFileOption("UI.sound.text-typing",     UserString("OPTIONS_SOUND_TYPING"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_SOUND_WINDOW"));
-    SoundFileOption("UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
-    SoundFileOption("UI.sound.window-maximize", UserString("OPTIONS_SOUND_MAXIMIZE"));
-    SoundFileOption("UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
-    SoundFileOption("UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_SOUND_LIST"));
-    SoundFileOption("UI.sound.item-drop",       UserString("OPTIONS_SOUND_DROP"));
-    SoundFileOption("UI.sound.list-pulldown",   UserString("OPTIONS_SOUND_PULLDOWN"));
-    SoundFileOption("UI.sound.list-select",     UserString("OPTIONS_SOUND_SELECT"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_SOUND_BUTTON"));
-    SoundFileOption("UI.sound.button-click",            UserString("OPTIONS_SOUND_CLICK"));
-    SoundFileOption("UI.sound.button-rollover",         UserString("OPTIONS_SOUND_ROLLOVER"));
-    SoundFileOption("UI.sound.fleet-button-click",      UserString("OPTIONS_SOUND_FLEET_CLICK"));
-    SoundFileOption("UI.sound.fleet-button-rollover",   UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
-    SoundFileOption("UI.sound.system-icon-rollover",    UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
-    SoundFileOption("UI.sound.turn-button-click",       UserString("OPTIONS_SOUND_TURN"));
-    SoundFileOption("UI.sound.planet-button-click",     UserString("OPTIONS_SOUND_PLANET"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_SOUND_FOCUS"));
-    SoundFileOption("UI.sound.balanced-focus",  UserString("OPTIONS_SOUND_BALANCED"));
-    SoundFileOption("UI.sound.farming-focus",   UserString("OPTIONS_SOUND_FARMING"));
-    SoundFileOption("UI.sound.industry-focus",  UserString("OPTIONS_SOUND_INDUSTRY"));
-    SoundFileOption("UI.sound.mining-focus",    UserString("OPTIONS_SOUND_MINING"));
-    SoundFileOption("UI.sound.research-focus",  UserString("OPTIONS_SOUND_RESEARCH"));
-    EndSection();
-    EndSection();
-    EndPage();
-
-    // UI settings tab
-    BeginPage(UserString("OPTIONS_PAGE_UI"));
-    BeginSection(UserString("OPTIONS_MISC_UI"));
-    BoolOption("UI.swap-mouse-lr",              UserString("OPTIONS_SWAP_MOUSE_LR"));
-    BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
-    BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    BoolOption("UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
-    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
-               GetRootDataDir() / "default" / "stringtables",
-               std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
-               "*" + STRINGTABLE_FILE_SUFFIX),
-               &ValidStringtableFile);
-
-    // flush stringtable button
-    std::string flush_button_text = UserString("OPTIONS_FLUSH_STRINGTABLE");
-    GG::Button* flush_button = new CUIButton(flush_button_text,
-                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
-                                             ClientUI::GetFont());
-    GG::ListBox::Row* row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, m_indentation_level));
-    m_current_option_list->Insert(row);
-    GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
-
-    IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
-    IntOption("UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
-    IntOption("UI.keypress-repeat-interval",    UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
-    IntOption("UI.mouse-click-repeat-delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
-    IntOption("UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_FONTS"));
-    FontOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"));
-    FontOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_FONT_SIZES"));
-    IntOption("UI.font-size",                   UserString("OPTIONS_FONT_TEXT"));
-    IntOption("UI.title-font-size",             UserString("OPTIONS_FONT_TITLE"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_TECH_SPACING"));
-    DoubleOption("UI.tech-layout-horz-spacing", UserString("OPTIONS_HORIZONTAL"));
-    DoubleOption("UI.tech-layout-vert-spacing", UserString("OPTIONS_VERTICAL"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_QUEUES"));
-    IntOption("UI.queue-width",                         UserString("OPTIONS_UI_QUEUE_WIDTH"));
-    BoolOption("UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_DESCRIPTIONS"));
-    BoolOption("UI.autogenerated-effects-descriptions", UserString("OPTIONS_AUTO_EFFECT_DESC"));
-    BoolOption("verbose-logging",                       UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
-    BoolOption("verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    EndSection();
-    EndPage();
-
-    // Galaxy Map Page
-    BeginPage(UserString("OPTIONS_GALAXY_MAP"));
-    BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption("UI.system-circle-size",               UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
-    DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption("UI.system-selection-indicator-fps",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
-    IntOption("UI.system-tiny-icon-size-threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption("UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption("UI.system-fog-of-war-spacing",        UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
-    BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_FLEET_ICONS"));
-    DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption("UI.medium-fleet-button-minimum-zoom", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption("UI.fleet-selection-indicator-size",   UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_STARLANES"));
-    DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    DoubleOption("UI.starlane-core-multiplier",         UserString("OPTIONS_DB_STARLANE_CORE"));
-    BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption("UI.fleet-supply-line-dot-spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
-    DoubleOption("UI.fleet-supply-line-dot-rate",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
-    ColorOption("UI.unowned-starlane-colour",           UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
-    BoolOption("UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
-    BoolOption("UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
-    BoolOption("UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
-    IntOption("UI.detection-range-opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
-    BoolOption("UI.map-right-click-popup-menu",         UserString("OPTIONS_GALAXY_MAP_POPUP"));
-    EndSection();
-    EndPage();
-
-    // Colors tab
-    BeginPage(UserString("OPTIONS_PAGE_COLORS"));
-    BeginSection(UserString("OPTIONS_GENERAL_COLORS"));
-    ColorOption("UI.text-color",                    UserString("OPTIONS_TEXT_COLOR"));
-    ColorOption("UI.default-link-color",            UserString("OPTIONS_DEFAULT_LINK_COLOR"));
-    ColorOption("UI.rollover-link-color",           UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption("UI.wnd-color",                     UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.wnd-inner-border-color",        UserString("OPTIONS_INNER_BORDER_COLOR"));
-    ColorOption("UI.wnd-outer-border-color",        UserString("OPTIONS_OUTER_BORDER_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_CONTROL_COLORS"));
-    ColorOption("UI.ctrl-color",                    UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.ctrl-border-color",             UserString("OPTIONS_BORDER_COLOR"));
-    ColorOption("UI.edit-hilite",                   UserString("OPTIONS_HIGHLIGHT_COLOR"));
-    ColorOption("UI.dropdownlist-arrow-color",      UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
-    ColorOption("UI.state-button-color",            UserString("OPTIONS_STATE_BUTTON_COLOR"));
-    ColorOption("UI.stat-increase-color",           UserString("OPTIONS_STAT_INCREASE_COLOR"));
-    ColorOption("UI.stat-decrease-color",           UserString("OPTIONS_STAT_DECREASE_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_TECH_COLORS"));
-    BeginSection(UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption("UI.known-tech",                    UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.known-tech-border",             UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption("UI.researchable-tech",             UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.researchable-tech-border",      UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption("UI.unresearchable-tech",           UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.unresearchable-tech-border",    UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
-    EndSection();
-    BeginSection(UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption("UI.tech-progress",                 UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption("UI.tech-progress-background",      UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
-    EndSection();
-    EndSection();
-    EndPage();
-
-    // combat settings tab
-    BeginPage(UserString("OPTIONS_PAGE_COMBAT"));
-    BoolOption("combat.enable-glow",                UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
-    BoolOption("combat.enable-skybox",              UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
-    BoolOption("combat.enable-lens-flare",          UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
-    BoolOption("combat.filled-selection",           UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
-    EndPage();
-
-    // Ausosave settings tab
-    BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption("autosave.single-player",            UserString("OPTIONS_SINGLEPLAYER"));
-    BoolOption("autosave.multiplayer",              UserString("OPTIONS_MULTIPLAYER"));
-    IntOption("autosave.turns",                     UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
-    IntOption("autosave.limit",                     UserString("OPTIONS_AUTOSAVE_LIMIT"));
-    EndPage();
-
-    // Keyboard shortcuts tab
-    HotkeysPage();
-
-    // Directories tab
-    BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
-    DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetUserDir());
-    EndPage();
-
-    // Misc
-    BeginPage(UserString("OPTIONS_PAGE_MISC"));
-    IntOption("effects-threads",                    UserString("OPTIONS_EFFECTS_THREADS"));
-    EndPage();
-
-    // Connect the done and cancel button
-    GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
 }
 
 void OptionsWnd::HotkeysPage()
