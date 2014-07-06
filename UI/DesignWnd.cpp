@@ -631,26 +631,24 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = (new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::X(10), GG::Y(10), GG::X(10)));
+        m_class_buttons[part_class] = new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)));
         AttachChild(m_class_buttons[part_class]);
         GG::Connect(m_class_buttons[part_class]->LeftClickedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
-    CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    m_availability_buttons.first = button;
-    AttachChild(button);
-    GG::Connect(button->LeftClickedSignal,
+    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    AttachChild(m_availability_buttons.first);
+    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    m_availability_buttons.second = button;
-    AttachChild(button);
-    GG::Connect(button->LeftClickedSignal,
+    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    AttachChild(m_availability_buttons.second);
+    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
-    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::X(10), GG::Y(10), GG::X(10));
+    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"));
     AttachChild(m_superfluous_parts_button);
     GG::Connect(m_superfluous_parts_button->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
@@ -1420,16 +1418,14 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_hulls_list(0),
     m_designs_list(0)
 {
-    CUIButton* button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    m_availability_buttons.first = button;
-    AttachChild(button);
-    GG::Connect(button->LeftClickedSignal,
+    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    AttachChild(m_availability_buttons.first);
+    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    button = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::X(10), GG::Y(10), GG::X(10));
-    m_availability_buttons.second = button;
-    AttachChild(button);
-    GG::Connect(button->LeftClickedSignal,
+    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    AttachChild(m_availability_buttons.second);
+    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::INTERACTIVE);
@@ -1943,18 +1939,19 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"));
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"), GG::X0, GG::Y0, GG::X(10));
+    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"));
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"), GG::X0, GG::Y0, GG::X(10));
+    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
 
 
     GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
     DesignChanged(); // Initialize components that rely on the current state of the design.
+    DoLayout();
 }
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {

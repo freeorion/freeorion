@@ -219,31 +219,31 @@ TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     for (unsigned int i = 0; i < cats.size(); ++i) {
-        m_category_buttons.push_back(new CUIButton(UserString(cats[i]), GG::X0, GG::Y0, GG::X(20)));
+        m_category_buttons.push_back(new CUIButton(UserString(cats[i])));
         AttachChild(m_category_buttons.back());
         m_category_buttons.back()->MarkNotSelected();
     }
     // and one for "ALL"
-    m_category_buttons.push_back(new CUIButton(UserString("ALL"), GG::X0, GG::Y0, GG::X(20)));
+    m_category_buttons.push_back(new CUIButton(UserString("ALL")));
     AttachChild(m_category_buttons.back());
     m_category_buttons.back()->MarkNotSelected();
 
     // create a button for each tech status
-    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"), GG::X0, GG::Y0, GG::X(20));
+    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"));
     AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
-    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"), GG::X0, GG::Y0, GG::X(20));
+    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"));
     AttachChild(m_tech_status_buttons[TS_RESEARCHABLE]);
-    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"), GG::X0, GG::Y0, GG::X(20));
+    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"));
     AttachChild(m_tech_status_buttons[TS_COMPLETE]);
     // colour
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
         it->second->MarkNotSelected();
 
     // create buttons to switch between tree and list views
-    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"), GG::X0, GG::Y0, GG::X(80));
+    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"));
     m_list_view_button->MarkNotSelected();
     AttachChild(m_list_view_button);
-    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"), GG::X0, GG::Y(30), GG::X(80));
+    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"));
     m_tree_view_button->MarkNotSelected();
     AttachChild(m_tree_view_button);
 

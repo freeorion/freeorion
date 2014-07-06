@@ -262,13 +262,13 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     AttachChild(m_sitreps_lb);
 
-    m_prev_turn_button = new CUIButton(UserString("BACK"), GG::X0, GG::Y0, GG::X(20));
+    m_prev_turn_button = new CUIButton(UserString("BACK"));
     AttachChild(m_prev_turn_button);
-    m_next_turn_button = new CUIButton(UserString("NEXT"), GG::X0, GG::Y0, GG::X(20));
+    m_next_turn_button = new CUIButton(UserString("NEXT"));
     AttachChild(m_next_turn_button);
-    m_last_turn_button = new CUIButton(UserString("LAST"), GG::X0, GG::Y0, GG::X(20));
+    m_last_turn_button = new CUIButton(UserString("LAST"));
     AttachChild(m_last_turn_button);
-    m_filter_button = new CUIButton(UserString("FILTERS"), GG::X0, GG::Y0, GG::X(30));
+    m_filter_button = new CUIButton(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
     GG::Connect(m_prev_turn_button->LeftClickedSignal,  &SitRepPanel::PrevClicked,          this);
