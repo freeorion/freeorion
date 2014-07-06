@@ -70,7 +70,7 @@ void About::DoLayout(void) {
     const GG::X HORIZONTAL_SPACING(5);
     const GG::Y VERTICAL_SPACING(5);
     const GG::X BUTTON_WIDTH(95);
-    const GG::Y BUTTON_HEIGHT(20);
+    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
 
     GG::Pt buttons_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(HORIZONTAL_SPACING, VERTICAL_SPACING);
     GG::Pt buttons_ul = buttons_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
