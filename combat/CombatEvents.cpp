@@ -28,12 +28,17 @@ std::string BoutBeginEvent::DebugString() const {
 }
 
 template <class Archive>
-    void BoutBeginEvent::serialize ( Archive& ar, const unsigned int version ) {
-    ar  & boost::serialization::make_nvp ( "Base", boost::serialization::base_object<CombatEvent> ( *this ) );
+void BoutBeginEvent::serialize ( Archive& ar, const unsigned int version ) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP ( bout );
 }
 
-BOOST_CLASS_EXPORT_IMPLEMENT ( BoutBeginEvent )
+BOOST_CLASS_EXPORT ( BoutBeginEvent )
+
+template
+void BoutBeginEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+template
+void BoutBeginEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );
 
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
@@ -66,8 +71,8 @@ std::string AttackEvent::DebugString() const {
 }
 
 template <class Archive>
-    void AttackEvent::serialize ( Archive& ar, const unsigned int version ) {
-    ar  & boost::serialization::make_nvp ( "Base", boost::serialization::base_object<CombatEvent> ( *this ) );
+void AttackEvent::serialize ( Archive& ar, const unsigned int version ) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP ( bout )
     & BOOST_SERIALIZATION_NVP ( round )
     & BOOST_SERIALIZATION_NVP ( attacker_id )
@@ -80,7 +85,12 @@ template <class Archive>
 }
 
 BOOST_CLASS_VERSION ( AttackEvent, 3 )
-BOOST_CLASS_EXPORT_IMPLEMENT ( AttackEvent )
+BOOST_CLASS_EXPORT ( AttackEvent )
+
+template
+void AttackEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+template
+void AttackEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );
 
 //////////////////////////////////////////
 ///////// IncapacitationEvent////////////////////
@@ -103,10 +113,15 @@ std::string IncapacitationEvent::DebugString() const {
 }
 
 template <class Archive>
-    void IncapacitationEvent::serialize ( Archive& ar, const unsigned int version ) {
-    ar  & boost::serialization::make_nvp ( "Base", boost::serialization::base_object<CombatEvent> ( *this ) );
+void IncapacitationEvent::serialize ( Archive& ar, const unsigned int version ) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP ( bout )
     & BOOST_SERIALIZATION_NVP ( object_id );
 }
 
-BOOST_CLASS_EXPORT_IMPLEMENT ( IncapacitationEvent )
+BOOST_CLASS_EXPORT ( IncapacitationEvent )
+
+template
+void IncapacitationEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+template
+void IncapacitationEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );

@@ -27,8 +27,6 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
     void serialize ( Archive& ar, const unsigned int version );
 };
 
-BOOST_CLASS_EXPORT_KEY ( BoutBeginEvent )
-
 /// An event that describes a single attack by one ship against another ship
 struct FO_COMMON_API AttackEvent : public CombatEvent {
     AttackEvent();
@@ -50,8 +48,6 @@ struct FO_COMMON_API AttackEvent : public CombatEvent {
     void serialize ( Archive& ar, const unsigned int version );
 };
 
-BOOST_CLASS_EXPORT_KEY ( AttackEvent )
-
 /// Created when an object becomes unable to fight anymore,
 /// eg. a ship is destroyed or a planet loses all defence
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
@@ -69,6 +65,4 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     template <class Archive>
     void serialize ( Archive& ar, const unsigned int version );
 };
-
-BOOST_CLASS_EXPORT_KEY ( IncapacitationEvent )
 #endif // COMBATEVENT_H
