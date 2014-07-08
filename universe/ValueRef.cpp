@@ -722,6 +722,11 @@ namespace ValueRef {
                 return system->LastTurnBattleHere();
             else
                 return INVALID_GAME_TURN;
+        } else if (property_name == "LastTurnActiveInBattle") {
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+                return ship->LastTurnActiveInCombat();
+            else
+                return INVALID_GAME_TURN;
         } else if (property_name == "Orbit") {
             if (TemporaryPtr<const System> system = GetSystem(object->SystemID()))
                 return system->OrbitOfPlanet(object->ID());

@@ -31,6 +31,7 @@ namespace {
                 |   tok.PreviousSystemID_
                 |   tok.NumShips_
                 |   tok.LastTurnBattleHere_
+                |   tok.LastTurnActiveInBattle_
                 |   tok.Orbit_
                 |   tok.Species_
                 |   tok.TurnsSinceFocusChange_

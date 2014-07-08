@@ -160,6 +160,7 @@
     (Label)                                     \
     (Large)                                     \
     (LastTurnBattleHere)                        \
+    (LastTurnActiveInBattle)                    \
     (LaunchRate)                                \
     (LocalCandidate)                            \
     (Location)                                  \
