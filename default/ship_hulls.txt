@@ -2436,7 +2436,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 5
-    stealth = 15
+    stealth = 5
     structure = 60
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2484,7 +2484,7 @@ Hull
     speed = 50
     starlaneSpeed = 65
     fuel = 5
-    stealth = 15
+    stealth = 5
     structure = 120
     slots = [
         Slot type = External position = (0.20, 0.15)
