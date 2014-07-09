@@ -2274,7 +2274,7 @@ XENOPHOBIC_OTHER_BEGIN
 
 XENOPHOBIC_OTHER_END
 '''
-            effects = SetTargetIndustry Value*0.2 - 1
+            effects = SetTargetIndustry Value - Target.Population * 0.1
 '''
 
 /*
