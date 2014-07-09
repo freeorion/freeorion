@@ -25,6 +25,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
+from debug_tools import chat_on_error
+
 
 using_statprof = False
 try:
@@ -63,6 +65,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
+@chat_on_error
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
     """called by client at start of new game"""
     init_timers()
@@ -86,6 +89,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
 
 
 # called when client receives a load game message
+@chat_on_error
 def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
     """called by client to resume a loaded game"""
     init_timers()
@@ -107,6 +111,7 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
 # they can be restored if the game is loaded
+@chat_on_error
 def prepareForSave(): # pylint: disable=invalid-name
     """called by client to preparing for game save by serializing state"""
     print "Preparing for game save by serializing state"
@@ -119,6 +124,7 @@ def prepareForSave(): # pylint: disable=invalid-name
 
 # called when this player receives a chat message.  senderID is the player who sent the message, and
 # messageText is the text of the sent message
+@chat_on_error
 def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
     """called by client to handle chat messages"""
     print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
@@ -126,6 +132,7 @@ def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
 
 # called when this player recives a diplomatic message update from the server, such as if another player
 # declares war, accepts peace, or cancels a proposed peace treaty.
+@chat_on_error
 def handleDiplomaticMessage(message): # pylint: disable=invalid-name
     """called by client to handle diplomatic messages"""
     print "Received diplomatic " + str(message.type) + " message from empire " + str(message.sender) + " to empire " + str(message.recipient)
@@ -147,6 +154,7 @@ def handleDiplomaticMessage(message): # pylint: disable=invalid-name
 
 # called when this player receives and update about the diplomatic status between players, which may
 # or may not include this player.
+@chat_on_error
 def handleDiplomaticStatusUpdate(statusUpdate): # pylint: disable=invalid-name
     """called by client to handle diplomatic status updates"""
     print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1) + " and empire " + str(statusUpdate.empire2)
@@ -155,6 +163,7 @@ def handleDiplomaticStatusUpdate(statusUpdate): # pylint: disable=invalid-name
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
+@chat_on_error
 def generateOrders(): # pylint: disable=invalid-name
     """called by client to get the AI's orders for the turn"""
     global _lastTurnTimestamp
