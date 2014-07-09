@@ -11,5 +11,6 @@ def chat_on_error(callable):
             recipient_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
             message = '%s in "%s" : "%s"' % (fo.userString('AI_ERROR_MSG'), callable.__name__, e)
             fo.sendChatMessage(recipient_id, message)
+            print "\n%s\n"%message
             raise
     return wrapper
