@@ -1,11 +1,9 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import TechsListsAI
-from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
 import AIDependencies
 import AIstate
 import traceback
-import sys
 import ColonisationAI
 
 inProgressTechs={}
@@ -59,7 +57,7 @@ def generateResearchOrders():
                 print "    %25s  allocated %6.2f RP -- unlockable items: %s "%(element.tech,  element.allocation,  unlockedItems)
             else:
                 print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
-        print ""
+        print
     #
     # set starting techs, or after turn 100 add any additional default techs
     #
@@ -345,7 +343,7 @@ def generateDefaultResearchOrders():
     print "Techs in possibleResearchProjects list after enqueues to Research Queue:"
     for techname in possibleResearchProjects:
         print "    " + techname
-    print ""
+    print
 
     # store projects mapped to their costs, so they can be sorted by that cost
     projectsDict = dict()
@@ -362,7 +360,7 @@ def generateDefaultResearchOrders():
         # add tech to queue
         fo.issueEnqueueTechOrder(name, -1)
         print "    enqueued tech " + name + "  :  cost: " + str(cost) + "RP"
-    print ""
+    print
 
 
 def getPossibleProjects():
@@ -375,14 +373,12 @@ def getPossibleProjects():
             preliminaryProjects.append(techname)
 
     unusableTechs = TechsListsAI.unusable_techs()
-    possibleProjects = (set(preliminaryProjects)-set(unusableTechs))
-    return possibleProjects
+    return set(preliminaryProjects)-set(unusableTechs)
 
 
 def spentRP():
     """calculate RPs spent this turn so far"""
-    queue = fo.getEmpire().researchQueue
-    return queue.totalSpent
+    return fo.getEmpire().researchQueue.totalSpent
 
 
 def getCompletedTechs():

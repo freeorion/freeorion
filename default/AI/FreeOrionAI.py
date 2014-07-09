@@ -3,13 +3,12 @@
 """ The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code"""
 
-import os
 import pickle                       # Python object serialization library
 import sys
 import traceback
 from time import time
 import random
-from timing import main_timer, bucket_timer, resource_timer, init_timers
+from timing import main_timer, bucket_timer, init_timers
 
 
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
@@ -79,7 +78,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
-        new_name = random.choice(_capitols.get(aggression,  [""]).split('\n')).strip() + " " + planet.name
+        new_name = random.choice(_capitols.get(aggression,  "").split('\n')).strip() + " " + planet.name
         print "Capitol City Names are: ",  _capitols
         print "This Capitol New name is ",  new_name
         res = fo.issueRenameOrder(planet_id,  new_name)

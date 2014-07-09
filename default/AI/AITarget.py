@@ -9,14 +9,10 @@ class AITarget(object):
     """stores information about AI target - its id and type"""
 
     def __init__(self, target_type, target_id):
-        """constructor"""
-
         self.target_type = target_type
         self.target_id = target_id
 
     def __cmp__(self, other):
-        """compares AITargets"""
-
         if self.target_id < other.target_id:
             return - 1
         elif self.target_id == other.target_id:
@@ -28,8 +24,6 @@ class AITarget(object):
         return 1
 
     def __eq__(self, other):
-        """returns equal to other object"""
-
         if other is None:
             return False
         if isinstance(other, AITarget):
@@ -37,15 +31,12 @@ class AITarget(object):
         return NotImplemented
 
     def __ne__(self, other):
-        """returns not equal to other object"""
-
         result = self.__eq__(other)
         if result is NotImplemented:
             return result
         return not result
 
     def __str__(self):
-        """returns describing string"""
         target = self.target_obj
         if target is None:
             target_name = "%4d" % self.target_id
@@ -86,8 +77,6 @@ class AITarget(object):
             return self.target_id in fo.AllEmpireIDs()
         else:
             return None != self.target_obj
-
-        return False
 
     def get_required_system_ai_targets(self):
         """returns all system AITargets required to visit in this object"""

@@ -616,7 +616,7 @@ def generateProductionOrders():
 
 
     currentTurn = fo.currentTurn()
-    print ""
+    print
     print "  Total Available Production Points: " + str(totalPP)
 
     if empire.productionPoints <100:
@@ -700,7 +700,7 @@ def generateProductionOrders():
 
             possibleBuildingTypes = [fo.getBuildingType(buildingTypeID) and  fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ] #makes sure is not None before getting name
 
-            print ""
+            print
             print "Buildings already in Production Queue:"
             capitolQueuedBldgs=[]
             for element in [e for e in productionQueue if (e.buildType == EnumsAI.AIEmpireProductionTypes.BT_BUILDING)]:
@@ -1505,7 +1505,7 @@ def generateProductionOrders():
     print "  Wasted Production Points:          " + str(wastedPP)#TODO: add resource group analysis
     availPP = totalPP - totalPPSpent - 0.0001
 
-    print ""
+    print
     if False:
         print "Possible ship designs to build:"
         if homeworld:
@@ -1513,7 +1513,7 @@ def generateProductionOrders():
                 shipDesign = fo.getShipDesign(shipDesignID)
                 print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
 
-    print ""
+    print
     print "Projects already in Production Queue:"
     productionQueue = empire.productionQueue
     print "production summary: %s"%[elem.name for elem in productionQueue]
@@ -1580,15 +1580,15 @@ def generateProductionOrders():
                 retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
                 if retval !=0:
                     print "forcing %d new ship(s) to production queue:  %s; per turn production cost %.1f"%(numShips,  bestDesign.name(True),  numShips*perTurnCost)
-                    print ""
+                    print
                     if numShips>1:
                         fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  numShips)
                     availPP -=  numShips*perTurnCost
                     res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                     fo.updateProductionQueue()
-        print ""
+        print
 
-    print ""
+    print
     # get the highest production priorities
     productionPriorities = {}
     for priorityType in EnumsAI.getAIPriorityProductionTypes():
@@ -1715,7 +1715,7 @@ def generateProductionOrders():
             if thisPriority ==  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
                 if totColonyFleets >=  maxColonyFleets:
                     print "Already sufficient colony ships in queue,  trying next priority choice"
-                    print ""
+                    print
                     for i in range( len(priorityChoices)-1,  -1,  -1):
                         if priorityChoices[i]==EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
                             del priorityChoices[i]
@@ -1730,7 +1730,7 @@ def generateProductionOrders():
             if thisPriority ==  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:
                 if totOutpostFleets >=  maxOutpostFleets:
                     print "Already sufficient outpost ships in queue,  trying next priority choice"
-                    print ""
+                    print
                     for i in range( len(priorityChoices)-1,  -1,  -1):
                         if priorityChoices[i]==EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:
                             del priorityChoices[i]
@@ -1776,7 +1776,7 @@ def generateProductionOrders():
             if retval !=0:
                 prioritized = False
                 print "adding %d new ship(s) at location %s to production queue:  %s; per turn production cost %.1f"%(numShips,  PlanetUtilsAI.planetNameIDs([loc]),   bestDesign.name(True),  perTurnCost)
-                print ""
+                print
                 if numShips>1:
                     fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  numShips)
                 availPP -=  perTurnCost
@@ -1800,7 +1800,7 @@ def generateProductionOrders():
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                 if (not prioritized) and (priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION):
                     res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-        print ""
+        print
     fo.updateProductionQueue()
 
 
@@ -1823,5 +1823,4 @@ def getAvailableBuildLocations(shipDesignID):
 
 def spentPP():
     """calculate PPs spent this turn so far"""
-    queue = fo.getEmpire().productionQueue
-    return queue.totalSpent
+    return fo.getEmpire().productionQueue.totalSpent

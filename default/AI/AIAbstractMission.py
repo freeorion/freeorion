@@ -2,12 +2,9 @@ from AITarget import AITarget
 import EnumsAI
 from EnumsAI import AIMissionType
 
+
 class AIAbstractMission(object):
-    """"""
-
     def __init__(self, aiMissionType, aiTargetType, aiTargetID):
-        """constructor"""
-
         aiTarget = AITarget(aiTargetType, aiTargetID)
         self.__aiTarget = aiTarget
         self.__aiMissionType = aiMissionType
@@ -75,8 +72,6 @@ class AIAbstractMission(object):
             self.removeAITarget(aiMissionType, aiTarget)
 
     def getAITargets(self, aiMissionType):
-        """getter"""
-
         return self.__aiMissionTypes.get(aiMissionType,  [])
 
     def hasTarget(self, aiMissionType, aiTarget):

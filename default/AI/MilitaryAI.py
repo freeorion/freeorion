@@ -5,10 +5,7 @@ import AITarget
 from EnumsAI import AIFleetMissionType, AITargetType
 import FleetUtilsAI
 import PlanetUtilsAI
-from random import choice,  random
-import ExplorationAI
 import PriorityAI
-import ProductionAI
 import ColonisationAI
 
 MinThreat = 10 # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -213,7 +210,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     #================================
     #--------Empire Occupied Systems ----------
     empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    empireOccupiedSystemIDs = list( set(PlanetUtilsAI.getSystems(empirePlanetIDs))  - set([capitalSysID] )  )
+    empireOccupiedSystemIDs = list(set(PlanetUtilsAI.getSystems(empirePlanetIDs)) - {capitalSysID})
     if "Main" in thisround:
         if verboseMilReporting:
             print "Empire-Occupied  Systems:  %s"%(   [ "| %d %s |"%(eoSysID,  universe.getSystem(eoSysID).name)  for eoSysID in empireOccupiedSystemIDs  ]  )
@@ -410,7 +407,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
 		      threatBias + foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0) >0.8*alreadyAssignedRating[sid] ) ]
     if "Main" in thisround:
         if verboseMilReporting:
-            print ""
+            print
             print "Other Empire-Proximal Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in interiorTargets1  ]  )
             print "-----------------"
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
@@ -454,7 +451,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     exploTargetIDs=[]
     if "Main" in thisround:
         if verboseMilReporting:
-            print ""
+            print
             print "Exploration-targeted Systems:  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in exploTargetIDs  ]  )
             print "-----------------"
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
@@ -498,7 +495,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     borderTargets = [sid for sid in borderTargets1 if (threatBias +foAI.foAIstate.systemStatus.get(sid, {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(sid, {}).get('planetThreat', 0) > 0.8*alreadyAssignedRating[sid]) ]
     if "Main" in thisround:
         if verboseMilReporting:
-            print ""
+            print
             print "Empire-Accessible Systems not yet allocated military:  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID) and universe.getSystem(sysID).name)  for sysID in borderTargets1  ]  )
             print "-----------------"
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
@@ -539,7 +536,7 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     #monster den treatment probably unnecessary now
     if "Main" in thisround:
         if verboseMilReporting:
-            print ""
+            print
             print "Big-Monster Dens:  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in monsterDens  ]  )
             print "-----------------"
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety

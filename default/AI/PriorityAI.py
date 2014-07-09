@@ -1,8 +1,5 @@
 import math
-import random
-
 import freeOrionAIInterface as fo # pylint: disable=import-error
-
 import AIstate
 import ColonisationAI
 import ExplorationAI
@@ -15,7 +12,6 @@ import EnumsAI
 import ProductionAI
 import ResearchAI
 from time import time
-import AIDependencies
 
 
 allottedInvasionTargets=0
@@ -107,7 +103,7 @@ def calculateFoodPriority():
 
     foodPriority = (foodTarget - foodStockpile) / foodTarget * 115
 
-    print ""
+    print
     print "Food Production:        " + str(foodProduction)
     print "Size of Food Stockpile: " + str(foodStockpile)
     print "Target Food Stockpile : " + str (foodTarget)
@@ -132,7 +128,7 @@ def calculateIndustryPriority(): #currently only used to print status
 
     industryPriority = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
-    print ""
+    print
     print "Industry Production (current/target) : ( %.1f / %.1f )  at turn %s"%(industryProduction,  targetPP,  fo.currentTurn())
     print "Priority for Industry: " + str(industryPriority)
 
@@ -237,7 +233,7 @@ def calculateExplorationPriority():
     scoutsNeeded = max(0,  min( 4+int(milShips/5),    4+int(fo.currentTurn()/50) ,  2+ numUnexploredSystems**0.5 ) - numScouts - queuedScoutShips )
     explorationPriority = int(40*scoutsNeeded)
 
-    print ""
+    print
     print "Number of Scouts            : " + str(numScouts)
     print "Number of Unexplored systems: " + str(numUnexploredSystems)
     print "military size: ",  milShips
@@ -277,7 +273,7 @@ def calculateColonisationPriority():
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
     colonisationPriority = 121 * (1+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
 
-    # print ""
+    # print
     # print "Number of Colony Ships        : " + str(numColonyships)
     # print "Number of Colonisable planets : " + str(numColonisablePlanetIDs)
     # print "Priority for colony ships     : " + str(colonisationPriority)
@@ -300,7 +296,7 @@ def calculateOutpostPriority():
     numOutpostShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(outpostShipIDs))
     outpostPriority = 102 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
 
-    # print ""
+    # print
     # print "Number of Outpost Ships       : " + str(numOutpostShips)
     # print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
     print "Priority for outpost ships    : " + str(outpostPriority)

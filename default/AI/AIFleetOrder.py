@@ -16,7 +16,6 @@ class AIFleetOrder(object):
     """Stores information about orders which can be executed"""
 
     def __init__(self, aiFleetOrderType, sourceAITarget, targetAITarget):
-        """constructor"""
         self.__aiFleetOrderType = aiFleetOrderType
         self.__sourceAITarget = sourceAITarget
         self.__targetAITarget = targetAITarget
@@ -491,8 +490,6 @@ class AIFleetOrder(object):
                 fo.issueFleetMoveOrder(fleetID, systemID)
 
     def __str__(self):
-        """returns describing string"""
-
         return "fleet order[%s] source:%26s | target %26s" %(  AIFleetOrderTypeNames.name(self.__aiFleetOrderType),  self.__sourceAITarget,   self.__targetAITarget)
 
     def __cmp__(self, other):
@@ -505,8 +502,7 @@ class AIFleetOrder(object):
         elif self.getAIFleetOrderType() == other.getAIFleetOrderType():
             result = self.getSourceAITarget().__cmp__(other.getSourceAITarget())
             if result == 0:
-                result = self.getTargetAITarget().__cmp__(other.getTargetAITarget())
-                return result
+                return self.getTargetAITarget().__cmp__(other.getTargetAITarget())
             else:
                 return result
         return 1

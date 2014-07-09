@@ -77,7 +77,7 @@ def getInvasionFleets():
     invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allOwnedPlanetIDs).union(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
     print "Prime Invadable PlanetIDs:              ",  ", ".join(PlanetUtilsAI.planetNameIDs(invadablePlanetIDs))
 
-    print ""
+    print
     print "Current Invasion Targeted SystemIDs:       ",  ", ".join(PlanetUtilsAI.sysNameIDs(AIstate.invasionTargetedSystemIDs))
     invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
     invasionTargetedPlanetIDs.extend( getInvasionTargetedPlanetIDs(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, empireID))
@@ -177,7 +177,7 @@ def getInvasionFleets():
     times.append( time() )
     tasks.append( "evaluating %d target planets"%(len(evaluatedPlanetIDs)) )
 
-    print ""
+    print
     if sortedPlanets:
         print "Invadable planets\nIDs,    ID | Score | Name           | Race             | Troops"
         for pid,  pscore,  ptroops in sortedPlanets:

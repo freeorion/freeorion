@@ -12,7 +12,6 @@ import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AIFocusType
 import EnumsAI
 from time import time
-import math
 from tools import dict_from_map
 
 
@@ -101,7 +100,7 @@ def ratePilotingTag(tagList):
         tagParts = tag.split('_')
         tagType = tagParts[3]
         grade = grades.get(tagParts[2],  1.0)
-    return grade
+    return grade  # TODO check this code, it iterates by all possible values and return last. May be we need return on first match?
 
 
 def ratePlanetaryPiloting(pid):
@@ -137,10 +136,10 @@ def check_supply():
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
-    print ""
+    print
     print "    fleetSupplyableSystemIDs: " + str(list(fleetSupplyableSystemIDs))
     print "    fleetSupplyablePlanetIDs: " + str(fleetSupplyablePlanetIDs)
-    print ""
+    print
 
     print "-------\nEmpire Obstructed Starlanes:"
     print  list(empire.obstructedStarlanes())
@@ -241,7 +240,7 @@ def survey_universe():
 
     exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
     print "Explored PlanetIDs: " + str(exploredPlanetIDs)
-    print ""
+    print
 
     #visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
     #visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
@@ -473,7 +472,7 @@ def getColonyFleets():
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
     allColonyTargetedSystemIDs = PlanetUtilsAI.getSystems(colonyTargetedPlanetIDs)
     AIstate.colonyTargetedSystemIDs = allColonyTargetedSystemIDs
-    print ""
+    print
     print "Colony Targeted SystemIDs:         " + str(AIstate.colonyTargetedSystemIDs)
     print "Colony Targeted PlanetIDs:         " + str(colonyTargetedPlanetIDs)
 
@@ -494,7 +493,7 @@ def getColonyFleets():
 
     # export outpost targeted systems for other AI modules
     AIstate.outpostTargetedSystemIDs = allOutpostTargetedSystemIDs
-    print ""
+    print
     print "Outpost Targeted SystemIDs:        " + str(AIstate.outpostTargetedSystemIDs)
     print "Outpost Targeted PlanetIDs:        " + str(outpostTargetedPlanetIDs)
 
@@ -605,12 +604,12 @@ def getColonyFleets():
     sortedPlanets = evaluatedColonyPlanets.items()
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
-    print ""
+    print
     print "Settleable Colony Planets (score,species) | ID | Name | Specials:"
     for ID, score in sortedPlanets:
         if score > 0.5:
             print "   %15s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials))
-    print ""
+    print
 
     sortedPlanets = [(ID, score) for ID, score in sortedPlanets if score[0] > 0]
     # export planets for other AI modules
@@ -632,7 +631,7 @@ def getColonyFleets():
     for ID, score in sortedOutposts:
         if score > 0.5:
             print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials))
-    print ""
+    print
 
     sortedOutposts = [(ID, score) for ID, score in sortedOutposts if score[0] > 0]
     # export outposts for other AI modules

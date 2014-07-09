@@ -1,6 +1,5 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
-import EnumsAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AIShipDesignTypes
 
 __designStats={}
@@ -117,8 +116,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             if neighborID not in systemsChecked  and neighborID not in systemsToCheck   and neighborID in foAI.foAIstate.exploredSystemIDs:
                 systemsToCheck.append(neighborID)
     try:
-        resList = getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  extendSearch,  verbose,  depth=depth+1)
-        return resList
+        return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  extendSearch,  verbose,  depth=depth+1)
     except:
         s1=len(systemsToCheck)
         s2=len(systemsChecked)
@@ -429,12 +427,12 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Unclassifyable Fleets  : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVALID))
 
     if fo.currentTurn() <50:
-        print ""
+        print
         print "Explored systems  :"
         printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
         print "Unexplored systems:"
         printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
-        print ""
+        print
 
     explorationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
     if len( explorationAIFleetMissions) >0:
@@ -516,7 +514,7 @@ def generateAIFleetOrdersForAIFleetMissions():
 
 def issueAIFleetOrdersForAIFleetMissions():
     """issues fleet orders"""
-    print ""
+    print
     universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     thisround = 0
@@ -531,7 +529,7 @@ def issueAIFleetOrdersForAIFleetMissions():
             aiFleetMission.issueAIFleetOrders()
         aiFleetMissions = foAI.foAIstate.misc.get('ReassignedFleetMissions',  [])
         foAI.foAIstate.misc['ReassignedFleetMissions']=[]
-    print ""
+    print
 
 
 def printSystems(systemIDs):

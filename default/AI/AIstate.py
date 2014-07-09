@@ -1,5 +1,4 @@
 import copy
-import math
 
 import freeOrionAIInterface as fo # pylint: disable=import-error
 
@@ -54,7 +53,6 @@ class AIstate(object):
     # getColonisablePlanets (deepcopy!)
 
     def __init__(self,  aggression=fo.aggression.typical):
-        """constructor"""
         # 'global' (?) variables
         #self.foodStockpileSize =  1    # food stored per population
         self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
@@ -434,7 +432,7 @@ class AIstate(object):
             for seta,  setb in [(neighbors,  jumps2),  (jumps2, jumps3),  (jumps3, jumps4)]:
                 for sys2id in seta:
                     setb.update( self.systemStatus.get(sys2id,  {}).get('neighbors',  set()) )
-            jump2ring = jumps2 - neighbors - set([sysID])
+            jump2ring = jumps2 - neighbors - {sysID}
             jump3ring = jumps3 - jumps2
             jump4ring = jumps4 - jumps3
             sysStatus['2jump_ring'] = jump2ring
@@ -551,11 +549,6 @@ class AIstate(object):
                 return True
         return False
 
-        aiFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([aiFleetMissionType])
-        for mission in aiFleetMissions:
-            if mission.hasTarget(aiFleetMissionType, aiTarget):
-                return True
-        return False
         
     def rate_psuedo_fleet(self,  ship_info):
         return self.rateFleet(-1, enemy_stats=self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
@@ -1044,4 +1037,4 @@ class AIstate(object):
         print "all priorities:"
         for priority in self.__priorityByType:
             print "    " + str(priority) + ": " + str(self.__priorityByType[priority])
-        print ""
+        print

@@ -1,11 +1,10 @@
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+from EnumsAI import AIFleetMissionType, AITargetType
 import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
-from random import shuffle
 from tools import dict_from_map
 
 graphFlags={}

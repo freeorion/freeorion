@@ -25,14 +25,10 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
     """
 
     def __init__(self, fleetID):
-        """constructor"""
-
         AIAbstractMission.AIAbstractMission.__init__(self, EnumsAI.AIMissionType.FLEET_MISSION, EnumsAI.AITargetType.TARGET_FLEET, fleetID)
         self.__aiFleetOrders = []
 
     def __str__(self):
-        """returns describing string"""
-
         missionStrings=[]
         for aiFleetMissionType in self.getAIMissionTypes():
             universe = fo.getUniverse()
@@ -90,8 +86,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
     def __getAIFleetOrderFromAITarget(self, aiFleetMissionType, aiTarget):
         fleetAITarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_FLEET, self.target_id)
         orderType = EnumsAI.getFleetOrderTypeForMission(aiFleetMissionType)
-        result = AIFleetOrder.AIFleetOrder(orderType, fleetAITarget, aiTarget)
-        return result
+        return AIFleetOrder.AIFleetOrder(orderType, fleetAITarget, aiTarget)
 
     def checkMergers(self,  fleetID=None,  context=""):
         if fleetID is None:

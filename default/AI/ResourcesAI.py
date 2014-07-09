@@ -1,6 +1,5 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
-import AIstate
 from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
 import PlanetUtilsAI
 import random
@@ -93,7 +92,7 @@ def printResourcesPriority():
     empireID = empire.empireID
     empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     print "Resource Management:"
-    print ""
+    print
     print "Resource Priorities:"
     resourcePriorities = {}
     for priorityType in getAIPriorityResourceTypes():
@@ -108,7 +107,7 @@ def printResourcesPriority():
         print "    ResourcePriority |Score: %s  | %s "%(AIPriorityTypeNames.name(evaluationPair[0]),  evaluationPair[1])
 
     # what is the focus of available resource centers?
-    print ""
+    print
     warnings={}
     print "Planet Resources Foci:"
     for planetID in empirePlanetIDs:
@@ -125,7 +124,7 @@ def printResourcesPriority():
         for pname in warnings:
             mp, cp = warnings[pname]
             print "Population Warning! -- %s has unsustainable current pop %d  -- target  %d"%(pname, cp,  mp )
-        print ""
+        print
     warnings.clear()
 
 
@@ -387,10 +386,6 @@ def setPlanetResourceFoci(): #+
     times = [timer[i] - timer[i-1] for i in range(1, len(timer))]
     print "ResourcesAI Time Requirements:"
     resource_timer.add_time(fo.currentTurn(), times)
-
-
-def generateResourcesOrders(): #+
-    """generate resources focus orders"""
 
 
 def generateResourcesOrders():
