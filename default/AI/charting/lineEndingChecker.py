@@ -6,8 +6,8 @@ FOHome = os.path.expanduser('~/programs/freeorion_test/')
 
 #if testAll is true the script will crawl through all FO files, skipping any folders in dirs_to_skip
 # checking files but not fixing
-testAll = False
-dirs_to_skip = ['GG', 'OIS']
+testAll = True
+dirs_to_skip = ['GG', 'OIS', 'PagedGeometry']
 
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
@@ -58,12 +58,15 @@ if testAll:
             if skipdir in dirnames:
                 dirnames.remove(skipdir)
         for fname in filenames:
-            for ext in ['.h', '.cpp', '.py']:
+            for ext in [".py",".txt",".h",".c",".cpp"]:
                 if fname[-len(ext):]==ext:
                     fullpath=os.path.join(dirpath,  fname)
-                    results=checkLineEndings(fullpath,  fix=False)
-                    if results.keys()!=['LF']:
-                        print fullpath,  ':',  results
+                    results=checkLineEndings(fullpath,  fix=fixfiles)
+                    results2 = ""
+                    if results.keys() not in [[], ['LF']]:
+                        if fixfiles:
+                            results2=", now are %s"%checkLineEndings(fullpath,  fix=False)
+                        print fullpath,  ':',  results, results2
     #print "lastpath",  fullpath,  ':',  results
 
 
