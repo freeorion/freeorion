@@ -128,19 +128,6 @@ def printResourcesPriority():
     warnings.clear()
 
 
-def tallyStream(curVal,  targetVal,  nTurns,  force=False):
-    tally=0
-    if curVal <= targetVal:
-        delta = [1, 3][force]
-        mycomp=min
-    else:
-        delta = [-1, -5][force]
-        mycomp=max
-    for turn in range(nTurns):
-        tally += mycomp(targetVal,  curVal+turn*delta)
-    return tally
-
-
 def setPlanetResourceFoci(): #+
     """set resource focus of planets """
     newFoci = {}

@@ -14,10 +14,6 @@ borderUnexploredSystemIDs = {}
 currentScoutFleetIDs = []
 
 
-def getBorderExploredSystemIDs():
-    return list( borderExploredSystemIDs )
-
-
 def updateScoutFleets():
     currentScoutFleetIDs[:] = []
     currentScoutFleetIDs.extend( FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION) )
@@ -119,17 +115,6 @@ def assignScoutsToExploreSystems():
                 break
     print "sent scouting fleets to sysIDs : %s"%sentList
     """
-
-
-def getHomeSystemID():
-    """returns the systemID of the home world"""
-    empire = fo.getEmpire()
-    universe = fo.getUniverse()
-    homeworld = universe.getPlanet(PlanetUtilsAI.getCapital())
-
-    if homeworld:
-        return homeworld.systemID
-    return -1
 
 
 def followVisSystemConnections(startSystemID,  homeSystemID):

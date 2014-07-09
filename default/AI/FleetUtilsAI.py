@@ -7,16 +7,6 @@ __AIShipRoleTypeNames = AIShipRoleType()
 __AIFleetMissionTypeNames = AIFleetMissionType()
 
 
-def clearShipDesignInfo():
-    __designStats.clear()
-
-
-def statsMeetReq(stats,  reqs,  reqName):
-    if stats.get(reqName,  0) < reqs.get(reqName, 0):
-        return False
-    return True
-
-
 def statsMeetReqs(stats,  reqs):
     try:
         for key in reqs:
@@ -256,10 +246,6 @@ def getShipIDWithRole(fleetID, shipRole,  verbose = True):
             return shipID
 
 
-def getAllEverVisibleFleetIDs(): #may be only currently visible
-    return  fo.getUniverse().fleetIDs
-
-
 def getEmpireFleetIDs( empireID=None):
     """returns all fleetIDs of specified empire, defauls to current empire"""
     if empireID is None:
@@ -388,23 +374,6 @@ def assessShipDesignRole(design):
         return AIShipRoleType.SHIP_ROLE_MILITARY
     else:
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  #let this be the default since even without detection part a ship has some inherent
-
-
-def assessDesignIDStats(designID):
-    design = fo.getShipDesign(designID)
-    if design is None:
-        return  {'attack':0, 'structure':0, 'shields':0}
-    else:
-        return  {'attack':design.attack, 'structure':design.structure, 'shields':design.shields}
-
-
-def assessShipRole(shipID):
-    """decides which role a ship has"""
-    ship = fo.getUniverse().getShip(shipID)
-    if ship:
-        return assessShipDesignRole( fo.getShipDesign(ship.designID) )
-    else:
-        return AIShipRoleType.SHIP_ROLE_INVALID
 
 
 def generateAIFleetOrdersForAIFleetMissions():

@@ -406,19 +406,6 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     return   invscore
 
 
-def getPlanetPopulation(planetID):
-    """return planet population"""
-
-    universe = fo.getUniverse()
-
-    planet = universe.getPlanet(planetID)
-    planetPopulation = planet.currentMeterValue(fo.meterType.population)
-
-    if planet is None: return 0
-    else:
-        return planetPopulation
-
-
 def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
     """sends a list of invasion fleets to a list of planet_value_pairs"""
     universe=fo.getUniverse()

@@ -87,34 +87,6 @@ def calculatePriorities():
     # foAI.foAIstate.printPriorities()
 
 
-def calculateFoodPriority():
-    """calculates the AI's need for food"""
-    # attempts to sustain a food stockpile whose size depends on the AI empires population
-    # foodStockpile == 0 => returns 100, foodStockpile == foodTarget => returns 0
-
-    empire = fo.getEmpire()
-    foodProduction = empire.resourceProduction(fo.resourceType.food)
-    foodStockpile = empire.resourceStockpile(fo.resourceType.food)
-    #foodTarget = 10 * empire.population() * AIstate.foodStockpileSize
-    foodTarget=0
-
-    if foodTarget == 0:
-        return 0
-
-    foodPriority = (foodTarget - foodStockpile) / foodTarget * 115
-
-    print
-    print "Food Production:        " + str(foodProduction)
-    print "Size of Food Stockpile: " + str(foodStockpile)
-    print "Target Food Stockpile : " + str (foodTarget)
-    print "Priority for Food     : " + str(foodPriority)
-
-    if foodPriority < 0:
-        return 0
-
-    return foodPriority
-
-
 def calculateIndustryPriority(): #currently only used to print status
     """calculates the demand for industry"""
     universe = fo.getUniverse()

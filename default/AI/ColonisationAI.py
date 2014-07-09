@@ -70,29 +70,6 @@ nestValMap = {
               }
 
 
-def resetCAIGlobals():
-    global curBestMilShipRating
-    empireSpecies.clear()
-    empireSpeciesByPlanet.clear()
-    empireSpeciesSystems.clear()
-    empireColonizers.clear()
-    empireShipBuilders.clear()
-    empireShipyards.clear()
-    empire_dry_docks.clear()
-    activeGrowthSpecials.clear()
-    annexableSystemIDs.clear()
-    annexableRing1.clear()
-    annexableRing2.clear()
-    annexableRing3.clear()
-    annexablePlanetIDs.clear()
-    curBestMilShipRating = 20
-    allColonyOpportunities.clear()
-    unowned_empty_planet_ids.clear()
-    empireOutpostIDs.clear()
-    systems_by_supply_tier.clear()
-    system_supply.clear()
-
-
 def ratePilotingTag(tagList):
     grade = 2.0
     grades = {'NO':1e-8, 'BAD':0.75, 'GOOD':4.0,  'GREAT':6.0,  'ULTIMATE':12.0 }
@@ -620,7 +597,6 @@ def getColonyFleets():
     AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
 
     evaluatedOutpostPlanets = assignColonisationValues(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire)
-    #removeLowValuePlanets(evaluatedOutpostPlanets)
     times.append( time() )
     tasks.append( "Evaluate Outpost Opportunities" )
 
@@ -1275,22 +1251,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
             retval *=1.5
 
     return retval
-
-
-def removeLowValuePlanets(evaluatedPlanets):
-    """removes all planets with a colonisation value < minimalColoniseValue"""
-    removeIDs = []
-    minVal = AIstate.minimalColoniseValue
-    if foAI.foAIstate.aggression <fo.aggression.typical:
-        minVal *= 3
-
-    # print ":: min:" + str(AIstate.minimalColoniseValue)
-    for planetID in evaluatedPlanets.iterkeys():
-        #print ":: eval:" + str(planetID) + " val:" + str(evaluatedPlanets[planetID])
-        if evaluatedPlanets[planetID][0] < minVal:
-            removeIDs.append(planetID)
-    #print "removing ",  removeIDs
-    for ID in removeIDs: del evaluatedPlanets[ID]
 
 
 def assignColonyFleetsToColonise():

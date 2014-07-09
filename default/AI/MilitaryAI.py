@@ -599,66 +599,6 @@ def getMilitaryFleets(milFleetIDs=None,  tryReset=True,  thisround="Main"):
     return newAllocations
 
 
-def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
-    """return list of military targeted systems"""
-
-    universe = fo.getUniverse()
-    militaryAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
-
-    targetedSystems = []
-
-    for systemID in systemIDs:
-        system = universe.getSystem(systemID)
-        # add systems that are target of a mission
-        for militaryAIFleetMission in militaryAIFleetMissions:
-            aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
-            if militaryAIFleetMission.hasTarget(missionType, aiTarget):
-                targetedSystems.append(systemID)
-
-    return targetedSystems
-
-
-def assignMilitaryValues(systemIDs, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
-    """creates a dictionary that takes systemIDs as key and their military score as value"""
-
-    systemValues = {}
-
-    for systemID in systemIDs:
-        systemValues[systemID] = evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire)
-
-    return systemValues
-
-
-def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargetedSystemIDs, empire):
-    """return the military value of a system"""
-
-    universe = fo.getUniverse()
-    system = universe.getSystem(systemID)
-    if system is None: return 0
-
-    # give preference to home system then closest systems
-    empireID = empire.empireID
-    capitalID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitalID)
-    distanceFactor=0
-    if homeworld:
-        homeSystemID = homeworld.systemID
-        evalSystemID = system.systemID
-        if (homeSystemID != -1) and (evalSystemID != -1):
-            leastJumps = universe.jumpDistance(homeSystemID, evalSystemID)
-            distanceFactor = 1.001/(leastJumps + 1)
-    else:
-        homeSystemID=-1
-
-    if systemID == homeSystemID:
-        return 10
-    elif systemID in empireProvinceSystemIDs:
-        return 4 + distanceFactor
-    elif systemID in otherTargetedSystemIDs:
-        return 2 + distanceFactor
-    else:
-        return 1 + .25 * distanceFactor
-
 
 def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=None):
     # assign military fleets to military theater systems
