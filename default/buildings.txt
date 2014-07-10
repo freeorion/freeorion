@@ -1416,7 +1416,7 @@ BuildingType
         Not Contains Building "BLD_STARGATE"
         OwnedBy TheEmpire Source.Owner
     ]
-    icon = ""
+    icon = "icons/building/stargate.png"
 
 BuildingType
     name = "BLD_GAS_GIANT_GEN"
