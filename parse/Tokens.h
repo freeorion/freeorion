@@ -147,6 +147,7 @@
     (ID)                                        \
     (If)                                        \
     (Industry)                                  \
+    (IndustryGeneration)                        \
     (Inferno)                                   \
     (InSystem)                                  \
     (Interceptor)                               \
@@ -251,6 +252,7 @@
     (Producible)                                \
     (Product)                                   \
     (ProductionCenter)                          \
+    (ProductionLocation)                        \
     (Progress)                                  \
     (Property)
 
@@ -268,6 +270,7 @@
     (Research)                                  \
     (Researchable)                              \
     (ResearchCost)                              \
+    (ResearchGeneration)                        \
     (ResearchTurns)                             \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \

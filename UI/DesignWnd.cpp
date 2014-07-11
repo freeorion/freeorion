@@ -95,10 +95,13 @@ namespace {
             case PC_ARMOUR:
             case PC_BATTLE_SPEED:
             case PC_STARLANE_SPEED:
+            case PC_RESEARCH:
+            case PC_INDUSTRY:
                 return boost::get<float>(part_stats);
                 break;
             case PC_GENERAL:
             case PC_BOMBARD:
+            case PC_PRODICTION_LOCATION:
             default:
                 return 0.0f;
         }

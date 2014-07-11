@@ -387,6 +387,12 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
     case PC_STARLANE_SPEED:
         if (boost::get<float>(m_stats) != 0)
             m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<float>(m_stats)));
+    case PC_RESEARCH:
+        //if (boost::get<float>(m_stats) != 0)
+        //    m_effects.push_back(IncreaseMeter(METER_RESEARCH,       boost::get<float>(m_stats)));
+    case PC_INDUSTRY:
+        //if (boost::get<float>(m_stats) != 0)
+        //    m_effects.push_back(IncreaseMeter(METER_INDUSTRY,       boost::get<float>(m_stats)));
     default:
         break;
     }
@@ -621,6 +627,9 @@ ShipDesign::ShipDesign() :
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
+    m_research_generation(0.0),
+    m_industry_generation(0.0),
+    m_is_production_location(false),
     m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(FLT_MAX),
@@ -660,6 +669,9 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
+    m_research_generation(0.0),
+    m_industry_generation(0.0),
+    m_is_production_location(false),
     m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(FLT_MAX),
@@ -1034,6 +1046,16 @@ void ShipDesign::BuildStatCaches() {
             break;
         case PC_BOMBARD:
             m_can_bombard = true;
+            break;
+        case PC_RESEARCH:
+            m_research_generation += boost::get<float>(part->Stats());
+            break;
+        case PC_INDUSTRY:
+            m_industry_generation += boost::get<float>(part->Stats());
+            break;
+        case PC_PRODICTION_LOCATION:
+            m_is_production_location = true;
+            break;
         default:
             break;
         }

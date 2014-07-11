@@ -238,6 +238,9 @@ namespace parse {
             |    tok.StarlaneSpeed_ [ _val = PC_STARLANE_SPEED ]
             |    tok.General_ [ _val = PC_GENERAL ]
             |    tok.Bombard_ [ _val = PC_BOMBARD ]
+            |    tok.ResearchGeneration_ [ _val = PC_RESEARCH ]
+            |    tok.IndustryGeneration_ [ _val = PC_INDUSTRY ]
+            |    tok.ProductionLocation_ [ _val = PC_PRODICTION_LOCATION ]
             ;
         static bool once = true;
         if (once) {

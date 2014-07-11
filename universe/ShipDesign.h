@@ -544,6 +544,10 @@ public:
     float                           TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
     float                           Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
 
+    float                           IndustryGeneration() const { return m_industry_generation; }///< returns the industry output from this ship design
+    float                           ResearchGeneration() const { return m_research_generation; }///< returns the research output from this ship design
+    bool                            IsProductionLocation() const { return m_is_production_location;}///< returns true if this ship design can be a production location
+
     bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            CanBombard() const      { return m_can_bombard; }
@@ -643,6 +647,10 @@ private:
     float   m_structure;
     float   m_battle_speed;
     float   m_starlane_speed;
+    float   m_research_generation;
+    float   m_industry_generation;
+    bool    m_is_production_location;
+
     bool    m_producible;
     std::multimap<float, const PartType*>  m_SR_weapons;
     std::multimap<float, const PartType*>  m_LR_weapons;
