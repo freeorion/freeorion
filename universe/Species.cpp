@@ -10,6 +10,8 @@
 
 #include <boost/filesystem/fstream.hpp>
 
+TemporaryPtr<UniverseObject> GetUniverseObject(int object_id);
+
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////
