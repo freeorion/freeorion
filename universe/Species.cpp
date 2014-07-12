@@ -7,6 +7,7 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/Random.h"
+#include "../util/AppInterface.h"
 
 #include <boost/filesystem/fstream.hpp>
 
