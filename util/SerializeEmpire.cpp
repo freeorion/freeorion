@@ -4,6 +4,8 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 #include "../universe/Universe.h"
+#include "../util/AppInterface.h"
+#include "../util/SitRepEntry.h"
 
 #include "Serialize.ipp"
 

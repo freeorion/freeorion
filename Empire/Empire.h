@@ -2,19 +2,19 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
-#include <GG/Clr.h>
-#include "../util/Export.h"
-#include "../util/AppInterface.h"
-#include "../util/SitRepEntry.h"
 #include "ResourcePool.h"
+#include "../util/Export.h"
 #include "../universe/Meter.h"
+
+#include <GG/Clr.h>
 
 #include <deque>
 #include <string>
 
 struct ItemSpec;
 class ShipDesign;
-class Empire;
+class SitRepEntry;
+extern const int INVALID_GAME_TURN;
 
 class Alignment {
 public:
@@ -315,8 +315,10 @@ public:
     std::map<std::string, Meter>::const_iterator    meter_begin() const { return m_meters.begin(); }
     std::map<std::string, Meter>::const_iterator    meter_end() const   { return m_meters.end(); }
 
+    const ResearchQueue&    GetResearchQueue() const;                   ///< Returns the queue of techs being or queued to be researched.
+    const ProductionQueue&  GetProductionQueue() const;                 ///< Returns the queue of items being or queued to be produced.
+
     bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
-    const       ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
     float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
     TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
@@ -327,7 +329,6 @@ public:
     bool        ShipPartAvailable(const std::string& name) const;       ///< Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
     bool        ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
 
-    const       ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
     float       ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
     /** Returns the total cost per item (blocksize 1) and the minimum number of turns

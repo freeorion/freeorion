@@ -3,6 +3,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
+#include "../util/AppInterface.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"

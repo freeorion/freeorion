@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "InfoPanels.h"

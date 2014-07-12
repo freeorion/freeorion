@@ -1,10 +1,10 @@
 #include "EmpireManager.h"
 
 #include "Empire.h"
-#include "../universe/Planet.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/filesystem/fstream.hpp>
 

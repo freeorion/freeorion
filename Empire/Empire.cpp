@@ -8,6 +8,7 @@
 #include "../util/Random.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/SitRepEntry.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"

@@ -3,6 +3,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Random.h"
+#include "../util/AppInterface.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"

@@ -18,6 +18,7 @@
 #include "../util/OrderSet.h"
 
 #include <boost/timer.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <stdexcept>
 #include <string>

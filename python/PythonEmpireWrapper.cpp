@@ -4,8 +4,9 @@
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Planet.h"
-
 #include "../universe/Tech.h"
+#include "../util/SitRepEntry.h"
+#include "../util/AppInterface.h"
 
 #include <GG/Clr.h>
 
