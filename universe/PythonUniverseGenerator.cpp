@@ -365,6 +365,24 @@ namespace {
         obj->Rename(name);
     }
 
+    double GetX(int object_id) {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetX: Couldn't get object with ID " << object_id;
+            return UniverseObject::INVALID_POSITION;
+        }
+        return obj->X();
+    }
+
+    double GetY(int object_id) {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetY: Couldn't get object with ID " << object_id;
+            return UniverseObject::INVALID_POSITION;
+        }
+        return obj->Y();
+    }
+
     int GetOwner(int object_id) {
         TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
@@ -863,6 +881,8 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
 
     def("get_name",                             GetName);
     def("set_name",                             SetName);
+    def("get_x",                                GetX);
+    def("get_y",                                GetY);
     def("get_owner",                            GetOwner);
 
     def("get_universe_width",                   GetUniverseWidth);

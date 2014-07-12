@@ -50,7 +50,6 @@
 		3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */; };
 		3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */; };
 		3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */; };
-		3402E2690F5A31B700DF6FE7 /* default in Resources */ = {isa = PBXBuildFile; fileRef = 479036420B04CA23001FEF7B /* default */; };
 		3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */ = {isa = PBXBuildFile; fileRef = 471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */; };
 		3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
 		3402E5370F5A339900DF6FE7 /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
@@ -350,6 +349,7 @@
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
+		825E7259196EC28A00F8114D /* default in Resources */ = {isa = PBXBuildFile; fileRef = 825E7258196EC28A00F8114D /* default */; };
 		825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */; };
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
@@ -1063,7 +1063,6 @@
 		471FEFD70A9A629800C36AA3 /* freeorionca */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeorionca; sourceTree = BUILT_PRODUCTS_DIR; };
 		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		478417B10CF0592E00BE4710 /* libClientCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libClientCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		479036420B04CA23001FEF7B /* default */ = {isa = PBXFileReference; explicitFileType = folder; name = default; path = ../default; sourceTree = SOURCE_ROOT; };
 		8201E5F215E2C0770037D453 /* EffectParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser1.cpp; sourceTree = "<group>"; };
 		8201E5F315E2C0770037D453 /* EffectParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser2.cpp; sourceTree = "<group>"; };
 		8201E5F415E2C0770037D453 /* EffectParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParserImpl.h; sourceTree = "<group>"; };
@@ -1345,6 +1344,7 @@
 		8259376A147E3B1C00B840A5 /* UniverseObjectTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseObjectTypeValueRefParser.cpp; sourceTree = "<group>"; };
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
+		825E7258196EC28A00F8114D /* default */ = {isa = PBXFileReference; lastKnownFileType = folder; name = default; path = ../default; sourceTree = "<group>"; };
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
@@ -1600,11 +1600,11 @@
 			isa = PBXGroup;
 			children = (
 				8273F49415DD7724000F6A09 /* changelog.txt */,
-				9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */,
-				34DD943911360BFA00265AF9 /* main.nib */,
+				825E7258196EC28A00F8114D /* default */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
-				479036420B04CA23001FEF7B /* default */,
+				34DD943911360BFA00265AF9 /* main.nib */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
+				9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -3078,9 +3078,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				825E7259196EC28A00F8114D /* default in Resources */,
 				34DD943A11360C0000265AF9 /* main.nib in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
-				3402E2690F5A31B700DF6FE7 /* default in Resources */,
 				8273F49515DD774C000F6A09 /* changelog.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
