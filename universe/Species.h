@@ -3,6 +3,8 @@
 #define _Species_h_
 
 #include "Enums.h"
+
+#include "../util/AppInterface.h"
 #include "../util/Export.h"
 
 #include <boost/shared_ptr.hpp>
