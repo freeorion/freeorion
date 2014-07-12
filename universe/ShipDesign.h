@@ -546,6 +546,7 @@ public:
 
     float                           IndustryGeneration() const { return m_industry_generation; }///< returns the industry output from this ship design
     float                           ResearchGeneration() const { return m_research_generation; }///< returns the research output from this ship design
+    float                           TradeGeneration() const    { return m_trade_generation; }   ///< returns the trade output from this ship design
     bool                            IsProductionLocation() const { return m_is_production_location;}///< returns true if this ship design can be a production location
 
     bool                            CanColonize() const;
@@ -649,13 +650,14 @@ private:
     float   m_starlane_speed;
     float   m_research_generation;
     float   m_industry_generation;
+    float   m_trade_generation;
     bool    m_is_production_location;
 
     bool    m_producible;
     std::multimap<float, const PartType*>  m_SR_weapons;
     std::multimap<float, const PartType*>  m_LR_weapons;
     std::multimap<float, const PartType*>  m_PD_weapons;
-    std::vector<const PartType*>            m_F_weapons;
+    std::vector<const PartType*>           m_F_weapons;
     float   m_min_SR_range;
     float   m_max_SR_range;
     float   m_min_LR_range;

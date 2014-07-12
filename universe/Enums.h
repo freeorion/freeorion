@@ -269,8 +269,9 @@ GG_ENUM(ShipPartClass,
     PC_STARLANE_SPEED,      ///< affects ship speed on starlanes
     PC_GENERAL,             ///< special purpose parts that don't fall into another class
     PC_BOMBARD,             ///< permit orbital bombardment by ships against planets
-    PC_RESEARCH,            ///< generates research points for owner
     PC_INDUSTRY,            ///< generates production points for owner at its location
+    PC_RESEARCH,            ///< generates research points for owner
+    PC_TRADE,               ///< generates trade points for owner
     PC_PRODICTION_LOCATION, ///< allows production items to be produced at its location
     NUM_SHIP_PART_CLASSES
 )

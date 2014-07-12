@@ -2985,16 +2985,28 @@ void Empire::SetPlayerName(const std::string& player_name)
 { m_player_name = player_name; }
 
 void Empire::InitResourcePools() {
-    // get this empire's owned resource and population centres
+    // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
     res_centers.reserve(Objects().NumExistingResourceCenters());
     for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingResourceCentersBegin();
          it != Objects().ExistingResourceCentersEnd(); ++it)
     {
-        if (it->second->OwnedBy(m_id))
-            res_centers.push_back(it->first);
+        if (!it->second->OwnedBy(m_id))
+            continue;
+        res_centers.push_back(it->first);
     }
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingShipsBegin();
+         it != Objects().ExistingShipsEnd(); ++it)
+    {
+        if (!it->second->OwnedBy(m_id))
+            continue;
+        res_centers.push_back(it->first);
+    }
+    m_resource_pools[RE_RESEARCH]->SetObjects(res_centers);
+    m_resource_pools[RE_INDUSTRY]->SetObjects(res_centers);
+    m_resource_pools[RE_TRADE]->SetObjects(res_centers);
 
+    // get this empire's owned population centers
     std::vector<int> pop_centers;
     pop_centers.reserve(Objects().NumExistingPopCenters());
     for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingPopCentersBegin();
@@ -3003,14 +3015,7 @@ void Empire::InitResourcePools() {
         if (it->second->OwnedBy(m_id))
             pop_centers.push_back(it->first);
     }
-
     m_population_pool.SetPopCenters(pop_centers);
-
-    // determine if each object owned by this empire is a ResourceCenter, and
-    // store ids of ResourceCenters and objects in appropriate vectors
-    m_resource_pools[RE_RESEARCH]->SetObjects(res_centers);
-    m_resource_pools[RE_INDUSTRY]->SetObjects(res_centers);
-    m_resource_pools[RE_TRADE]->SetObjects(res_centers);
 
 
     // inform the blockadeable resource pools about systems that can share
@@ -3048,9 +3053,9 @@ void Empire::InitResourcePools() {
 }
 
 void Empire::UpdateResourcePools() {
-    // updating queues, allocated_rp, distribution and growth each update their respective pools,
-    // (as well as the ways in which the resources are used, which needs to be done
-    // simultaneously to keep things consistent)
+    // updating queues, allocated_rp, distribution and growth each update their
+    // respective pools, (as well as the ways in which the resources are used,
+    // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue();
     UpdateProductionQueue();
     UpdateTradeSpending();

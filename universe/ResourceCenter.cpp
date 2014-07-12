@@ -91,9 +91,8 @@ std::string ResourceCenter::Dump() const {
 
 float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
-    if (!meter) {
+    if (!meter)
         throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
-    }
     float current_meter_value = meter->Current();
 
     MeterType target_meter_type = INVALID_METER_TYPE;
@@ -114,12 +113,11 @@ float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     }
 
     const Meter* target_meter = GetMeter(target_meter_type);
-    if (!target_meter) {
+    if (!target_meter)
         throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
-    }
     float target_meter_value = target_meter->Current();
 
-    // currently meter growth is one per turn.
+    // meter growth or decay towards target is one per turn.
     if (target_meter_value > current_meter_value)
         return std::min(current_meter_value + 1.0f, target_meter_value);
     else if (target_meter_value < current_meter_value)

@@ -97,6 +97,7 @@ namespace {
             case PC_STARLANE_SPEED:
             case PC_RESEARCH:
             case PC_INDUSTRY:
+            case PC_TRADE:
                 return boost::get<float>(part_stats);
                 break;
             case PC_GENERAL:
@@ -2437,7 +2438,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
                                                                             m_detail_panel,
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));
-    GG::Connect(m_main_panel->DesignNameChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
+    GG::Connect(m_main_panel->DesignNameChangedSignal,          boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
                                                                             m_detail_panel,
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));

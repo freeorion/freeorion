@@ -56,6 +56,12 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_MAX_STRUCTURE);
     AddMeter(METER_BATTLE_SPEED);
     AddMeter(METER_STARLANE_SPEED);
+    AddMeter(METER_TARGET_INDUSTRY);
+    AddMeter(METER_INDUSTRY);
+    AddMeter(METER_TARGET_RESEARCH);
+    AddMeter(METER_RESEARCH);
+    AddMeter(METER_TARGET_TRADE);
+    AddMeter(METER_TRADE);
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
@@ -338,22 +344,54 @@ TemporaryPtr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) 
 { return visitor.Visit(boost::const_pointer_cast<Ship>(boost::static_pointer_cast<const Ship>(TemporaryFromThis()))); }
 
 float Ship::NextTurnCurrentMeterValue(MeterType type) const {
+    const Meter* meter = UniverseObject::GetMeter(type);
+    if (!meter)
+        throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have.");
+    float current_meter_value = meter->Current();
+
     //if (type == METER_FUEL) {
     //    // todo: consider fleet movement or being stationary, which may partly replenish fuel
     //    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
-    //} else if (type == METER_SUPPLY) {
-    //    // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
     //}
+
     if (type == METER_SHIELD) {
         if (m_last_turn_active_in_combat >= CurrentTurn())
-            return std::max(0.0f,
-                            std::min(UniverseObject::GetMeter(METER_SHIELD)->Current(),
+            return std::max(0.0f,   // battle just happened. shields limited to max shield, but don't regen
+                            std::min(current_meter_value,
                                      UniverseObject::GetMeter(METER_MAX_SHIELD)->Current()));
-        else
+        else                        // shields regneerate to max shield
             return UniverseObject::GetMeter(METER_MAX_SHIELD)->Current();
     }
 
-    return UniverseObject::NextTurnCurrentMeterValue(type);
+
+    // ResourceCenter-like resource meter growth...
+
+    MeterType target_meter_type = INVALID_METER_TYPE;
+    switch (type) {
+    case METER_TARGET_INDUSTRY:
+    case METER_TARGET_RESEARCH:
+    case METER_TARGET_TRADE:
+        return current_meter_value;
+        break;
+    case METER_INDUSTRY:    target_meter_type = METER_TARGET_INDUSTRY;      break;
+    case METER_RESEARCH:    target_meter_type = METER_TARGET_RESEARCH;      break;
+    case METER_TRADE:       target_meter_type = METER_TARGET_TRADE;         break;
+    default:
+        return UniverseObject::NextTurnCurrentMeterValue(type);
+    }
+
+    const Meter* target_meter = UniverseObject::GetMeter(target_meter_type);
+    if (!target_meter)
+        throw std::runtime_error("Ship::NextTurnCurrentMeterValue dealing with invalid meter type");
+    float target_meter_value = target_meter->Current();
+
+    // meter growth or decay towards target is one per turn.
+    if (target_meter_value > current_meter_value)
+        return std::min(current_meter_value + 1.0f, target_meter_value);
+    else if (target_meter_value < current_meter_value)
+        return std::max(target_meter_value, current_meter_value - 1.0f);
+    else
+        return current_meter_value;
 }
 
 const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) const
@@ -520,19 +558,25 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
     UniverseObject::GetMeter(METER_MAX_SHIELD)->ResetCurrent();
     UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
+    UniverseObject::GetMeter(METER_TARGET_INDUSTRY)->ResetCurrent();
+    UniverseObject::GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
+    UniverseObject::GetMeter(METER_TARGET_TRADE)->ResetCurrent();
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
     UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
-        it->second.ResetCurrent();
+    { it->second.ResetCurrent(); }
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
     UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_SHIELD));
+    UniverseObject::GetMeter(METER_INDUSTRY)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_INDUSTRY));
+    UniverseObject::GetMeter(METER_RESEARCH)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_RESEARCH));
+    UniverseObject::GetMeter(METER_TRADE)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_TRADE));
 
     StateChangedSignal();
 }
@@ -546,6 +590,12 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
     UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_STRUCTURE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_STRUCTURE)->Current());
+    UniverseObject::GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_RESEARCH)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_TRADE)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
@@ -555,8 +605,8 @@ void Ship::ClampMeters() {
         it->second.ClampCurrentToRange();
 }
 
-  ////////////////////
- // Free Functions //
+////////////////////
+// Free Functions //
 ////////////////////
 std::string NewMonsterName() {
     static std::vector<std::string> monster_names;

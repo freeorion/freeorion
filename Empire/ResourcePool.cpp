@@ -188,7 +188,7 @@ void ResourcePool::Update() {
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
     for (std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > >::const_iterator
-             object_group_it = system_groups_to_object_groups.begin();
+         object_group_it = system_groups_to_object_groups.begin();
          object_group_it != system_groups_to_object_groups.end(); ++object_group_it)
     {
         const std::set<TemporaryPtr<const UniverseObject> >& object_group = object_group_it->second;

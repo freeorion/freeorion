@@ -387,18 +387,25 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
     case PC_STARLANE_SPEED:
         if (boost::get<float>(m_stats) != 0)
             m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<float>(m_stats)));
+        break;
     case PC_RESEARCH:
-        //if (boost::get<float>(m_stats) != 0)
-        //    m_effects.push_back(IncreaseMeter(METER_RESEARCH,       boost::get<float>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,boost::get<float>(m_stats)));
+        break;
     case PC_INDUSTRY:
-        //if (boost::get<float>(m_stats) != 0)
-        //    m_effects.push_back(IncreaseMeter(METER_INDUSTRY,       boost::get<float>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_TARGET_INDUSTRY,boost::get<float>(m_stats)));
+        break;
+    case PC_TRADE:
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_TARGET_TRADE,   boost::get<float>(m_stats)));
+        break;
     default:
         break;
     }
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
-         it != effects.end(); ++it)
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator
+         it = effects.begin(); it != effects.end(); ++it)
     { m_effects.push_back(*it); }
 }
 
@@ -629,6 +636,7 @@ ShipDesign::ShipDesign() :
     m_starlane_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
+    m_trade_generation(0.0),
     m_is_production_location(false),
     m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
@@ -671,6 +679,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_starlane_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
+    m_trade_generation(0.0),
     m_is_production_location(false),
     m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
@@ -1052,6 +1061,9 @@ void ShipDesign::BuildStatCaches() {
             break;
         case PC_INDUSTRY:
             m_industry_generation += boost::get<float>(part->Stats());
+            break;
+        case PC_TRADE:
+            m_trade_generation += boost::get<float>(part->Stats());
             break;
         case PC_PRODICTION_LOCATION:
             m_is_production_location = true;

@@ -5986,6 +5986,14 @@ PC_GENERAL
 General
 PC_BOMBARD
 Bombardment
+PC_INDUSTRY
+Industry
+PC_RESEARCH
+Research
+PC_TRADE
+Trade
+PC_PRODICTION_LOCATION
+Production
 
 
 #############################################################
@@ -9170,13 +9178,10 @@ SH_MULTISPEC_DESC
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
-ROBOTIC_INTERFACE_EFFECT
-Robotic crew network
-
-ROBOTIC_INTERFACE_SHIELDS
+SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
-ROBOTIC_INTERFACE_SHIELDS_DESC
+SH_ROBOTIC_INTERFACE_SHIELDS_DESC
 '''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in hull types that have Robotic Hulls as a prerequisite.
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
@@ -9251,6 +9256,25 @@ Krill Spawner
 
 SP_KRILL_SPAWNER_DESC
 Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
+
+RS_AUTOLAB
+Autolab
+
+RS_AUTOLAB_DESC
+Generates research for owner.
+
+RS_AUTOFACTORY
+Autofactory
+
+RS_AUTOFACTORY_DESC
+Generates industry for owner.
+
+RS_AUTOTRADER
+Autotrader
+
+RS_AUTOTRADER_DESC
+Generates trade for owner.
+
 
 #############################################################
 ####                 S H I P   H U L L S                 ####
@@ -10038,6 +10062,10 @@ General Contentedness
 
 FOCUS_PREFERENCE_LABEL
 Preferred Focus Selected
+
+ROBOTIC_INTERFACE_EFFECT
+Robotic crew network
+
 
 #############################################################
 ####                       T A G S                       ####

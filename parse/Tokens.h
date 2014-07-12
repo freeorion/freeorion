@@ -147,7 +147,6 @@
     (ID)                                        \
     (If)                                        \
     (Industry)                                  \
-    (IndustryGeneration)                        \
     (Inferno)                                   \
     (InSystem)                                  \
     (Interceptor)                               \
@@ -270,7 +269,6 @@
     (Research)                                  \
     (Researchable)                              \
     (ResearchCost)                              \
-    (ResearchGeneration)                        \
     (ResearchTurns)                             \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \

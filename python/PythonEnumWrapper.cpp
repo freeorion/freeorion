@@ -157,6 +157,7 @@ namespace FreeOrionPython {
             .value("bombard",           PC_BOMBARD)
             .value("reserach",          PC_RESEARCH)
             .value("industry",          PC_INDUSTRY)
+            .value("trade",             PC_TRADE)
             .value("productionLocation",PC_PRODICTION_LOCATION)
         ;
         enum_<UnlockableItemType>("unlockableItemType")
