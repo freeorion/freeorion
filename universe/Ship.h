@@ -7,8 +7,6 @@
 
 #include "../util/Export.h"
 
-class Fighter;
-class Fleet;
 class ShipDesign;
 
 /** a class representing a single FreeOrion ship */
@@ -104,7 +102,7 @@ protected:
     Ship();                                         ///< default ctor
     Ship(int empire_id, int design_id, const std::string& species_name,
          int produced_by_empire_id = ALL_EMPIRES);  ///< general ctor taking ship's empire and design id, species name and production empire id.
-    
+
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
     ~Ship() {}
