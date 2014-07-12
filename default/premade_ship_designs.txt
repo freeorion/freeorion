@@ -198,7 +198,7 @@ ShipDesign
         "SR_WEAPON_1_1"
         "SR_WEAPON_1_1"
         "SR_WEAPON_1_1"
-        "ROBOTIC_INTERFACE_SHIELDS"
+        "SH_ROBOTIC_INTERFACE_SHIELDS"
     ]
     model = "mark1"
 
@@ -211,7 +211,7 @@ ShipDesign
         "SR_WEAPON_2_1"
         "SR_WEAPON_2_1"
         "SR_WEAPON_2_1"
-        "ROBOTIC_INTERFACE_SHIELDS"
+        "SH_ROBOTIC_INTERFACE_SHIELDS"
     ]
     model = "mark1"
 
