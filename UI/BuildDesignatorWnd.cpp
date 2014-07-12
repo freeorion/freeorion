@@ -433,11 +433,14 @@ private:
       * filter settings. */
     void    PopulateList();
 
-    /** respond to the user single-click to select item on the queue */
-    void    BuildItemClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    /** respond to the user single-clicking a producible item in the build selector */
+    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
-    /** respond to the user double-clicking an item on the queue */
+    /** respond to the user double-clicking a producible item in the build selector */
     void    BuildItemDoubleClicked(GG::ListBox::iterator it);
+
+    /** respond to the user right-clicking a producible item in the build selector */
+    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
     std::map<BuildType, CUIButton*>         m_build_type_buttons;
     std::vector<CUIButton*>                 m_availability_buttons;
@@ -480,9 +483,11 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     // selectable list of buildable items
     AttachChild(m_buildable_items);
     GG::Connect(m_buildable_items->LeftClickedSignal,
-                &BuildDesignatorWnd::BuildSelector::BuildItemClicked, this);
+                &BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this);
     GG::Connect(m_buildable_items->DoubleClickedSignal,
                 &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
+    GG::Connect(m_buildable_items->RightClickedSignal,
+                &BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this);
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
     //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -650,7 +655,9 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     }
 }
 
-bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, const std::string& name) {
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type,
+                                                             const std::string& name)
+{
     if (build_type != BT_BUILDING)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with a name");
 
@@ -803,8 +810,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //Logger().debugStream() << "Done";
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
-
+void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
+                                                         const GG::Pt& pt)
+{
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
     if (!item_row)
         return;
@@ -843,6 +851,30 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
         RequestNamedBuildItemSignal(BT_BUILDING, item.name, 1);
     else if (item.build_type == BT_SHIP)
         RequestIDedBuildItemSignal(BT_SHIP, item.design_id, 1);
+}
+
+void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
+                                                              const GG::Pt& pt)
+{
+    if ((*it)->Disabled())
+        return;
+
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // move item to top
+            BuildItemDoubleClicked(it);
+            break;
+        }
+        default:
+            break;
+        }
+    }
 }
 
 //////////////////////////////////////////////////
