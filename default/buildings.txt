@@ -813,7 +813,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/specials_large/gaia.png"
     
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
@@ -1302,7 +1302,7 @@ BuildingType
             ]
             activation = Source
             effects = AddSpecial "RESONANT_MOON_SPECIAL"
-    icon = ""
+    icon = "icons/specials_huge/resonant_moon.png"
 
 BuildingType
     name = "BLD_TRANSFORMER"
@@ -1470,7 +1470,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/ship_hulls/colony_base_hull_small.png"
 
 BuildingType
     name = "BLD_EXPERIMENTOR_OUTPOST"
