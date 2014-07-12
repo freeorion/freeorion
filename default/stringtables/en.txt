@@ -3770,7 +3770,7 @@ NAME
 Name
 
 OWNER
-%1% ▽
+Owner
 
 SPECIES
 Species
@@ -5991,7 +5991,6 @@ Bombardment
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
-
 
 # ValueRef
 
@@ -9249,6 +9248,7 @@ A weapon of tremendous power capable of destroying an entire system. The weapon 
 
 SP_KRILL_SPAWNER
 Krill Spawner
+
 SP_KRILL_SPAWNER_DESC
 Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
 
