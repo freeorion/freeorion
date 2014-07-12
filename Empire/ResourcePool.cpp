@@ -154,18 +154,19 @@ void ResourcePool::Update() {
         TemporaryPtr<const UniverseObject> obj = *it;
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
+        // can't generate resources when not in a system
+        if (object_system_id == INVALID_OBJECT_ID)
+            continue;
 
         // is object's system in a system group?
         std::set<int> object_system_group;
-        if (object_system_id != INVALID_OBJECT_ID) {
-            for (std::set<std::set<int> >::const_iterator groups_it = m_connected_system_groups.begin();
-                 groups_it != m_connected_system_groups.end(); ++groups_it)
-            {
-                const std::set<int> sys_group = *groups_it;
-                if (sys_group.find(object_system_id) != sys_group.end()) {
-                    object_system_group = sys_group;
-                    break;
-                }
+        for (std::set<std::set<int> >::const_iterator groups_it = m_connected_system_groups.begin();
+                groups_it != m_connected_system_groups.end(); ++groups_it)
+        {
+            const std::set<int> sys_group = *groups_it;
+            if (sys_group.find(object_system_id) != sys_group.end()) {
+                object_system_group = sys_group;
+                break;
             }
         }
 
