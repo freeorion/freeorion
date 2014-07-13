@@ -1191,6 +1191,8 @@ void MapWnd::Render() {
     // save CPU / GPU activity by skipping rendering when it's not needed
     if (m_design_wnd->Visible())
         return; // as of this writing, the design screen has a fully opaque background
+    if (m_research_wnd->Visible())
+        return;
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 
