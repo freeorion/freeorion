@@ -118,7 +118,7 @@ def name_star_systems(system_list):
     position_list = []
     for system in system_list:
         star_type = fo.sys_get_star_type(system)
-        systemxy = (fo.get_x(system), fo.get_y(system))
+        systemxy = fo.get_pos(system)
         star_type_assignments[systemxy] = star_type
         planet_assignments[systemxy] = fo.sys_get_planets(system)
         position_list.append(systemxy)
@@ -237,4 +237,4 @@ def name_star_systems(system_list):
 
     # assign names from star_name_map to star systems
     for system in system_list:
-        fo.set_name(system, star_name_map.get((fo.get_x(system), fo.get_y(system)), "") or random_star_name())
+        fo.set_name(system, star_name_map.get(fo.get_pos(system), "") or random_star_name())

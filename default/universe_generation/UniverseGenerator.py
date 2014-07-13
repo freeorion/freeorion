@@ -70,9 +70,9 @@ def create_universe():
         home_system = home_systems.pop()
         empires.setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name)
 
-    # assign name to all star systems and their planets
+    # assign names to all star systems and their planets
     # this needs to be done after all systems have been generated and empire home systems have been set, as
-    # only after all that is finished star type as well as planet sizes and types are fixed, and the naming
+    # only after all that is finished star types as well as planet sizes and types are fixed, and the naming
     # process depends on that
     print "Assign star system names"
     starnames.name_star_systems(systems)
@@ -85,6 +85,9 @@ def create_universe():
     print "##############################"
     print "Universe generation statistics"
     print "##############################"
+    print
     statistics.log_planet_count_dist(systems)
+    print
     statistics.log_planet_type_summary(systems)
+    print
     print "Python Universe Generator completed"

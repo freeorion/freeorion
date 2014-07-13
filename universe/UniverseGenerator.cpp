@@ -1751,7 +1751,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         return false;
     }
 
-    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->Name()
+    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->ID()
                            << " (planet " <<  home_planet->ID()
                            << ") to be home system for empire " << empire->EmpireID();
 

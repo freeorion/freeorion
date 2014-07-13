@@ -59,7 +59,7 @@ def generate_home_system_list(num_home_systems, systems):
     # loop and get a new home systems until we have the requested number
     while len(home_systems) < num_home_systems:
 
-        # try to choose a system until too many attempty failed or a system has been found
+        # try to choose a system until too many attempts failed or a system has been found
         attempts = 0
         found = False
         while (attempts < 100) and not found:

@@ -32,6 +32,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/list.hpp>
+#include <boost/python/tuple.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
@@ -59,6 +60,8 @@ using boost::python::error_already_set;
 using boost::python::exec;
 using boost::python::dict;
 using boost::python::list;
+using boost::python::tuple;
+using boost::python::make_tuple;
 using boost::python::extract;
 using boost::python::len;
 
@@ -381,6 +384,15 @@ namespace {
             return UniverseObject::INVALID_POSITION;
         }
         return obj->Y();
+    }
+
+    tuple GetPos(int object_id) {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::GetPos: Couldn't get object with ID " << object_id;
+            return make_tuple(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        }
+        return make_tuple(obj->X(), obj->Y());
     }
 
     int GetOwner(int object_id) {
@@ -883,6 +895,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("set_name",                             SetName);
     def("get_x",                                GetX);
     def("get_y",                                GetY);
+    def("get_pos",                              GetPos);
     def("get_owner",                            GetOwner);
 
     def("get_universe_width",                   GetUniverseWidth);
