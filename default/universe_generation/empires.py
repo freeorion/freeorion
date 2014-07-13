@@ -32,7 +32,6 @@ def is_too_close_to_other_home_systems(system, home_systems):
     Home systems should be at least 200 units (linear distance)
     and 2 jumps apart
     """
-
     for home_system in home_systems:
         if fo.linear_distance(system, home_system) < 200:
             return True
