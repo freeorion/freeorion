@@ -40,12 +40,12 @@ namespace {
     GG::Y   TechPanelHeight()
     { return GG::Y(ClientUI::Pts()*6); }
 
-
-
     const double ZOOM_STEP_SIZE = 1.12;
     const double MIN_SCALE = std::pow(ZOOM_STEP_SIZE, -25.0);
     const double MAX_SCALE = std::pow(ZOOM_STEP_SIZE, 10.0);
     const double INITIAL_SCALE = std::pow(ZOOM_STEP_SIZE, -5.0);
+
+    const double PI = 3.1415926535897932384626433;
 
     struct ToggleCategoryFunctor {
         ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
@@ -697,9 +697,9 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
 
         glColor(GG::CLR_BLACK);
-        CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
         glColor(border_colour);
-        CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
 
