@@ -632,7 +632,6 @@ namespace {
     }
 
     void SystemSetStarType(int system_id, StarType star_type) {
-
         // Check if star type is set to valid value
         if ((star_type == INVALID_STAR_TYPE) || (star_type == NUM_STAR_TYPES)) {
             Logger().errorStream() << "PythonUniverseGenerator::SystemSetStarType : Can't create a system with a star of type " << star_type;
@@ -669,6 +668,63 @@ namespace {
              it != planets.end(); ++it)
         { py_planets.append(*it); }
         return py_planets;
+    }
+
+    list SystemGetStarlanes(int system_id) {
+        list py_starlanes;
+        // get source system
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            Logger().errorStream() << "PythonUniverseGenerator::SystemGetStarlanes : Couldn't get system with ID " << system_id;
+            return py_starlanes;
+        }
+        // get list of systems the source system has starlanes to
+        // we actually get a map of ids and a bool indicating if the entry is a starlane (false) or wormhole (true)
+        const std::map<int, bool>& starlanes = system->StarlanesWormholes();
+        // iterate over the map we got, only copy starlanes to the python list object we are going to return
+        for (std::map<int, bool>::const_iterator it = starlanes.begin();
+             it != starlanes.end(); ++it) {
+            // if the bool value is false, we have a starlane
+            // in this case copy the destination system id to our starlane list
+            if (!(it->second)) {
+                py_starlanes.append(it->first);
+            }
+        }
+        return py_starlanes;
+    }
+
+    void SystemAddStarlane(int from_sys_id, int to_sys_id) {
+        // get source and destination system, check that both exist
+        TemporaryPtr<System> from_sys = GetSystem(from_sys_id);
+        if (!from_sys) {
+            Logger().errorStream() << "PythonUniverseGenerator::SystemAddStarlane : Couldn't find system with ID " << from_sys_id;
+            return;
+        }
+        TemporaryPtr<System> to_sys = GetSystem(to_sys_id);
+        if (!to_sys) {
+            Logger().errorStream() << "PythonUniverseGenerator::SystemAddStarlane : Couldn't find system with ID " << to_sys_id;
+            return;
+        }
+        // add the starlane on both ends
+        from_sys->AddStarlane(to_sys_id);
+        to_sys->AddStarlane(from_sys_id);
+    }
+
+    void SystemRemoveStarlane(int from_sys_id, int to_sys_id) {
+        // get source and destination system, check that both exist
+        TemporaryPtr<System> from_sys = GetSystem(from_sys_id);
+        if (!from_sys) {
+            Logger().errorStream() << "PythonUniverseGenerator::SystemRemoveStarlane : Couldn't find system with ID " << from_sys_id;
+            return;
+        }
+        TemporaryPtr<System> to_sys = GetSystem(to_sys_id);
+        if (!to_sys) {
+            Logger().errorStream() << "PythonUniverseGenerator::SystemRemoveStarlane : Couldn't find system with ID " << to_sys_id;
+            return;
+        }
+        // remove the starlane from both ends
+        from_sys->RemoveStarlane(to_sys_id);
+        to_sys->RemoveStarlane(from_sys_id);
     }
 
     // Wrapper for Planet class member functions
@@ -912,6 +968,9 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("sys_set_star_type",                    SystemSetStarType);
     def("sys_get_num_orbits",                   SystemGetNumOrbits);
     def("sys_get_planets",                      SystemGetPlanets);
+    def("sys_get_starlanes",                    SystemGetStarlanes);
+    def("sys_add_starlane",                     SystemAddStarlane);
+    def("sys_remove_starlane",                  SystemRemoveStarlane);
 
     def("planet_get_type",                      PlanetGetType);
     def("planet_set_type",                      PlanetSetType);
