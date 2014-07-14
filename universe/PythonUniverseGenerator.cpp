@@ -93,6 +93,9 @@ namespace {
     float   LargeMeterValue()
     { return Meter::LARGE_VALUE; }
 
+    double  InvalidPosition()
+    { return UniverseObject::INVALID_POSITION; }
+
     // Universe tables
     const std::vector<int>&                 g_base_star_type_dist                   = UniverseDataTables()["BaseStarTypeDist"][0];
     const std::vector<std::vector<int> >&   g_universe_age_mod_to_star_type_dist    = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
@@ -103,6 +106,7 @@ namespace {
     const std::vector<std::vector<int> >&   g_planet_size_mod_to_planet_type_dist   = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
     const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_type_dist         = UniverseDataTables()["OrbitModToPlanetTypeDist"];
     const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_type_dist     = UniverseDataTables()["StarTypeModToPlanetTypeDist"];
+    const std::vector<int>&                 g_native_frequency                      = UniverseDataTables()["NativeFrequency"][0];
 
     // Functions exposed to Python to access the universe tables
     int BaseStarTypeDist(StarType star_type)
@@ -132,8 +136,10 @@ namespace {
     int StarTypeModToPlanetTypeDist(StarType star_type, PlanetType planet_type)
     { return g_star_type_mod_to_planet_type_dist[star_type][planet_type]; }
 
-    // Wrappers for Species / SpeciesManager class (member) functions
+    int NativeFrequency(GalaxySetupOption freq)
+    { return g_native_frequency[freq]; }
 
+    // Wrappers for Species / SpeciesManager class (member) functions
     object SpeciesPreferredFocus(const std::string& species_name) {
         const Species* species = GetSpecies(species_name);
         if (!species) {
@@ -141,6 +147,33 @@ namespace {
             return object("");
         }
         return object(species->PreferredFocus());
+    }
+
+    PlanetEnvironment SpeciesGetPlanetEnvironment(const std::string& species_name, PlanetType planet_type) {
+        const Species* species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpeciesGetPlanetEnvironment: couldn't get species " << species_name;
+            return INVALID_PLANET_ENVIRONMENT;
+        }
+        return species->GetPlanetEnvironment(planet_type);
+    }
+
+    void SpeciesAddHomeworld(const std::string& species_name, int homeworld_id) {
+        Species* species = SpeciesManager::GetSpeciesManager().GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpeciesAddHomeworld: couldn't get species " << species_name;
+            return;
+        }
+        species->AddHomeworld(homeworld_id);
+    }
+
+    void SpeciesRemoveHomeworld(const std::string& species_name, int homeworld_id) {
+        Species* species = SpeciesManager::GetSpeciesManager().GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpeciesAddHomeworld: couldn't get species " << species_name;
+            return;
+        }
+        species->RemoveHomeworld(homeworld_id);
     }
 
     list GetAllSpecies() {
@@ -911,6 +944,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("invalid_object",                       InvalidObjectID);
     def("min_system_separation",                MinSystemSeparation);
     def("large_meter_value",                    LargeMeterValue);
+    def("invalid_position",                     InvalidPosition);
 
     def("base_star_type_dist",                  BaseStarTypeDist);
     def("universe_age_mod_to_star_type_dist",   UniverseAgeModToStarTypeDist);
@@ -921,6 +955,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("planet_size_mod_to_planet_type_dist",  PlanetSizeModToPlanetTypeDist);
     def("orbit_mod_to_planet_type_dist",        OrbitModToPlanetTypeDist);
     def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
+    def("native_frequency",                     NativeFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
     def("spiral_galaxy_calc_positions",         SpiralGalaxyCalcPositions);
@@ -931,6 +966,9 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("generate_starlanes",                   GenerateStarlanes);
 
     def("species_preferred_focus",              SpeciesPreferredFocus);
+    def("species_get_planet_environment",       SpeciesGetPlanetEnvironment);
+    def("species_add_homeworld",                SpeciesAddHomeworld);
+    def("species_remove_homeworld",             SpeciesRemoveHomeworld);
     def("get_all_species",                      GetAllSpecies);
     def("get_playable_species",                 GetPlayableSpecies);
     def("get_native_species",                   GetNativeSpecies);
@@ -1175,8 +1213,8 @@ void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) 
 
     // TEMPORARY: Use legacy universe generation funtions for
     // all the stuff that hasn't been ported to Python yet
-    Logger().debugStream() << "Generating Natives";
-    GenerateNatives(universe, GetGalaxySetupData().m_native_freq);
+    // Logger().debugStream() << "Generating Natives";
+    // GenerateNatives(universe, GetGalaxySetupData().m_native_freq);
     Logger().debugStream() << "Generating Space Monsters";
     GenerateSpaceMonsters(universe, GetGalaxySetupData().m_monster_freq);
     Logger().debugStream() << "Adding Starting Specials";

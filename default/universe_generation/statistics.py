@@ -2,6 +2,9 @@ import foUniverseGenerator as fo
 import planets
 
 
+species_summary = {species: 0 for species in fo.get_native_species()}
+
+
 def log_planet_count_dist(sys_list):
     planet_count_dist = {}
     for system in sys_list:
@@ -24,3 +27,10 @@ def log_planet_type_summary(sys_list):
     print "Planet Type Summary for a total of %d placed planets" % planet_total
     for planet_type, planet_count in planet_type_summary.items():
         print "%-12s %.1f%%" % (planet_type.name, 100.0 * planet_count / planet_total)
+
+
+def log_species_summary():
+    print "Natives Placement Summary"
+    for species in species_summary:
+        if species_summary[species] > 0:
+            print "... settled natives", species, "with", species_summary[species], "planets"

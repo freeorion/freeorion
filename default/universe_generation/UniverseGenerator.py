@@ -6,6 +6,7 @@ import starnames
 import galaxy
 import starsystems
 import empires
+import natives
 import statistics
 
 
@@ -64,10 +65,11 @@ def create_universe():
     print "...systems choosen:", home_systems
 
     # set up empires for each player
+    home_systems_copy = list(home_systems)  # use a copy of the home system list, as we need this list unaltered later
     for psd_entry in psd_list:
         empire = psd_entry.key()
         psd = psd_entry.data()
-        home_system = home_systems.pop()
+        home_system = home_systems_copy.pop()
         empires.setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name)
 
     # assign names to all star systems and their planets
@@ -80,6 +82,9 @@ def create_universe():
     for system in systems:
         starsystems.name_planets(system)
 
+    print "Generating Natives"
+    natives.generate_natives(gsd.nativeFrequency, systems, home_systems)
+
     # finally, write some statistics to the log file
     print
     print "##############################"
@@ -89,5 +94,7 @@ def create_universe():
     statistics.log_planet_count_dist(systems)
     print
     statistics.log_planet_type_summary(systems)
+    print
+    statistics.log_species_summary()
     print
     print "Python Universe Generator completed"
