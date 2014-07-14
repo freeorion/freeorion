@@ -42,13 +42,8 @@ def create_universe():
         print "Too few systems for the requested number of players, number of systems adjusted accordingly"
     print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
 
-    # get typical width for universe based on number of systems
-    width = fo.calc_typical_universe_width(gsd.size)
-    fo.set_universe_width(width)
-    print "Set universe width to", width
-
     # calculate star system positions
-    system_positions = galaxy.calc_star_system_positions(gsd.shape, gsd.size, width)
+    system_positions = galaxy.calc_star_system_positions(gsd.shape, gsd.size)
     gsd.size = len(system_positions)
     print gsd.shape, "Star system positions calculated, final number of systems:", gsd.size
 
