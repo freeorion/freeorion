@@ -55,34 +55,31 @@ def test_galaxy_calc_positions(positions, size, width):
     Calculate positions for the 'Python Test' galaxy shape
     """
     adjacency_grid = AdjacencyGrid(width)
-    max_dist = max(min(200.0, width / 10.0), adjacency_grid.min_dist * 2.0)
-    print "test galaxy shape: max distance =", max_dist
+    max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
+    print "test galaxy shape: max delta distance =", max_delta
     origin_x, origin_y = width / 2.0, width / 2.0
     prev_x, prev_y = origin_x, origin_y
     reset_to_origin = 0
-    x_positions = []
-    y_positions = []
     for n in range(size):
         attempts = 100
         found = False
         while (attempts > 0) and not found:
             attempts -= 1
-            x = prev_x + random.uniform(-max_dist, max_dist)
-            y = prev_y + random.uniform(-max_dist, max_dist)
+            x = prev_x + random.uniform(-max_delta, max_delta)
+            y = prev_y + random.uniform(-max_delta, max_delta)
             if util.distance(x, y, origin_x, origin_y) > width * 0.45:
                 prev_x, prev_y = origin_x, origin_y
                 reset_to_origin += 1
                 continue
             found = not adjacency_grid.too_close_to_other_positions(x, y)
-            prev_x, prev_y = x, y
+            if attempts % 10:
+                prev_x, prev_y = x, y
         if found:
             pos = fo.SystemPosition(x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
-            x_positions.append(x)
-            y_positions.append(y)
+        prev_x, prev_y = x, y
     print "Reset to origin", reset_to_origin, "times"
-    print "Upper left:", (min(x_positions), min(y_positions)), "/ lower right:", (max(x_positions), max(y_positions))
 
 
 def calc_star_system_positions(shape, size):

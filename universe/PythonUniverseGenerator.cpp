@@ -139,6 +139,9 @@ namespace {
     int NativeFrequency(GalaxySetupOption freq)
     { return g_native_frequency[freq]; }
 
+    int MaxStarlaneLength()
+    { return UniverseDataTables()["MaxStarlaneLength"][0][0]; }
+
     // Wrappers for Species / SpeciesManager class (member) functions
     object SpeciesPreferredFocus(const std::string& species_name) {
         const Species* species = GetSpecies(species_name);
@@ -956,6 +959,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("orbit_mod_to_planet_type_dist",        OrbitModToPlanetTypeDist);
     def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
     def("native_frequency",                     NativeFrequency);
+    def("max_starlane_length",                  MaxStarlaneLength);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
     def("spiral_galaxy_calc_positions",         SpiralGalaxyCalcPositions);
