@@ -294,7 +294,7 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
+            activation = Turn low = Source.CreationTurn + 1
             effects = SetStructure Target.MaxStructure
 
         [[REGULAR_HULL_DETECTION]]
@@ -311,7 +311,7 @@ Hull
     speed = 10
     starlaneSpeed = 80
     fuel = 3
-    stealth = -30
+    stealth = -35
     structure = 160
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -333,6 +333,7 @@ Hull
         Slot type = Internal position = (0.10, 0.85)
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
+        Slot type = Core     position = (0.50, 0.85)
     ]
     buildCost = 180 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
@@ -364,12 +365,15 @@ Hull
     name = "SH_TRANSSPATIAL"
     description = "SH_TRANSSPATIAL_DESC"
     speed = 100
-    starlaneSpeed = 120
+    starlaneSpeed = 80
     fuel = 3
-    stealth = 55
+    stealth = 15
     structure = 9
-    slots = Slot type = External position = (0.50, 0.50)
-    buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    slots = [
+        Slot type = External position = (0.40, 0.50)
+        Slot type = Core     position = (0.60, 0.50)
+        ]
+    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -413,6 +417,7 @@ Hull
         Slot type = External position = (0.82, 0.15)
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
+        Slot type = Core     position = (0.50, 0.50)
     ]
     buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
@@ -449,7 +454,7 @@ Hull
                     OwnedBy AllyOf Source.Owner
                 ]
             ]
-            activation = Source
+            activation = Turn low = Source.CreationTurn + 1
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             effects = SetStructure Target.MaxStructure
 
@@ -840,10 +845,11 @@ Hull
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.50, 0.50)
         Slot type = External position = (0.60, 0.50)
-        Slot type = Internal position = (0.70, 0.50)
-        Slot type = Internal position = (0.80, 0.50)
-        Slot type = Internal position = (0.90, 0.50)
+        Slot type = Internal position = (0.40, 0.85)
+        Slot type = Internal position = (0.20, 0.85)
+        Slot type = Internal position = (0.30, 0.85)
         Slot type = Internal position = (0.10, 0.85)
+        Slot type = Core     position = (0.90, 0.50)
     ]
     buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
@@ -1354,7 +1360,7 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
+            activation = Turn low = Source.CreationTurn + 1
             effects = [
                 SetStructure Target.MaxStructure
                 SetFuel Value + 0.2
@@ -1392,6 +1398,7 @@ Hull
         Slot type = Internal position = (0.10, 0.75)
         Slot type = Internal position = (0.25, 0.75)
         Slot type = Internal position = (0.40, 0.75)
+        Slot type = Core     position = (0.50, 0.50)
     ]
     buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
@@ -1610,7 +1617,7 @@ Hull
         Slot type = Internal position = (0.60, 0.85)
         Slot type = Internal position = (0.70, 0.85)
         Slot type = Internal position = (0.80, 0.85)
-        Slot type = Internal position = (0.90, 0.85)
+        Slot type = Core     position = (0.90, 0.85)
     ]
     buildCost = 80.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 20

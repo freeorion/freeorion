@@ -523,7 +523,7 @@ Part
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 15
+            effects = SetStarlaneSpeed Value + 20
     icon = "icons/ship_parts/engine-2.png"
     
 Part
@@ -538,7 +538,31 @@ Part
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 20
+            effects = SetStarlaneSpeed Value + 30
+    icon = "icons/ship_parts/engine-3.png"
+    
+Part
+    name = "FU_TRANSPATIAL_DRIVE"
+    description = "FU_TRANSPATIAL_DRIVE_DESC"
+    class = General
+    mountableSlotTypes = Core
+    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 8
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+        ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 40
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value + 40
+    ]
     icon = "icons/ship_parts/engine-3.png"
     
 Part

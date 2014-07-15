@@ -9018,7 +9018,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Starlane speed by 15. 
+'''Increases Starlane speed by 20. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
@@ -9026,7 +9026,13 @@ FU_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30. 
+
+FU_TRANSPATIAL_DRIVE
+Trans-spatial Drive
+
+FU_TRANSPATIAL_DRIVE_DESC
+An incredibly powerful drive that bends spacetime itself, increasing both starlane speed and stealth by 40. Can only be mounted in a Core slot. Stealth boost does not stack with other part bonuses.
 
 FU_BASIC_TANK
 Extra Fuel Tank
@@ -9285,7 +9291,9 @@ SH_ROBOTIC
 Robotic Hull
 
 SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
+'''This hull is completely automated and functions under the principals of Military Robotic Control. It has four external slots and one internal slot, and repairs 2 points of structure each turn.
+
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average. 
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
 
@@ -9293,7 +9301,9 @@ SH_SPATIAL_FLUX
 Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. [[encyclopedia STEALTH_TITLE]] is fairly high, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map.
+'''This tiny hull is capable of decent speed over long distances due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. 
+
+[[encyclopedia STEALTH_TITLE]] is moderate, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
 
@@ -9301,7 +9311,9 @@ SH_SELF_GRAVITATING
 Self-Gravitating Hull
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_TITLE]] and speed are fairly low.
+'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is also fairly sturdy, having a high max structure.
+
+[[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
 
@@ -9309,7 +9321,9 @@ SH_NANOROBOTIC
 Nano-Robotic Hull
 
 SH_NANOROBOTIC_DESC
-'''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low [[encyclopedia STEALTH_TITLE]] and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
+'''This automated hull is large and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, and restores structure completely between combats. 
+
+[[encyclopedia STEALTH_TITLE]] and is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
 
@@ -9317,7 +9331,9 @@ SH_TITANIC
 Titanic Hull
 
 SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and [[encyclopedia STEALTH_TITLE]].
+'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots, three internal slots and a core slot, and its max structure is very high. Its immense size makes it almost impossible to hide, even with advanced stealth technology.
+
+[[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 Requires a Basic [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] at the planet where it is constructed.'''
 
@@ -9325,7 +9341,9 @@ SH_TRANSSPATIAL
 Trans-Spatial Hull
 
 SH_TRANSSPATIAL_DESC
-'''This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
+'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max structure is extremely low. It was designed alongside the [[encyclopedia FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
+
+[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
@@ -9333,7 +9351,9 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to completely restore structure between combats.
+
+[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
@@ -9567,7 +9587,7 @@ SH_SOLAR
 Solar Hull
 
 SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
+'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots—a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
 

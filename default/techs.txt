@@ -1963,7 +1963,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 1000 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 800 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "SHP_CONTGRAV_MAINT"
     unlock = [
@@ -1992,11 +1992,12 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 850 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 4
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
     prerequisites = "SHP_NANOROBO_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_TRANSSPATIAL"
+        Item type = ShipPart name = "FU_TRANSPATIAL_DRIVE"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
     graphic = "icons/ship_hulls/trans_spatial_hull_small.png"
@@ -2010,7 +2011,7 @@ Tech
     researchcost = 800 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = [
-	    "SHP_MASSPROP_SPEC"
+        "SHP_MASSPROP_SPEC"
         "SHP_TRANSSPACE_DRIVE"
         "CON_GAL_INFRA"
     ]
@@ -2628,9 +2629,9 @@ Tech
     researchturns = 10
     //Unresearchable
     prerequisites = [
-	    "SHP_PLASMA_SHIELD"
-		"SPY_DIST_MOD"
-	]
+        "SHP_PLASMA_SHIELD"
+        "SPY_DIST_MOD"
+    ]
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
     graphic = "icons/ship_parts/multi-spectral.png"
 
