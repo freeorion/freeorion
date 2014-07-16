@@ -2,17 +2,17 @@ import os
 import glob
 
 # adjust this to point to your main FreeOrion directory
-FOHome = os.path.expanduser('~/programs/freeorion_main/')
+FOHome = os.path.expanduser('~/programs/freeorion_test/')
 
 #if testAll is true the script will crawl through all FO files, skipping any folders in dirs_to_skip
 # checking files but not fixing
 testAll = True
 
 # if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
-fixfiles = False
+fixfiles = True
 
 dirs_to_skip = ['GG', 'OIS', 'PagedGeometry']
-exts_to_check = [".py", ".py.*", ".txt",".h",".c",".cpp"]
+exts_to_check = [".py", ".py.*", ".txt",".h",".c",".cpp", ".patch"]
 
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
@@ -39,7 +39,7 @@ def checkLineEndings(filename,  fix=False):
     if LF: results['LF']=LF
     if CRLF: results['CRLF']=CRLF
     if ( CRLF or CR ) and fix:
-        thisFile = open(filename, 'r')[".py",".txt",".h",".c",".cpp"]
+        thisFile = open(filename, 'r')
         theselines=thisFile.readlines()
         thisFile.close()
         thisFile = open(filename, 'w')
