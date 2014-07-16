@@ -2,20 +2,22 @@ import os
 import glob
 
 # adjust this to point to your main FreeOrion directory
-FOHome = os.path.expanduser('~/programs/freeorion_test/')
+FOHome = os.path.expanduser('~/programs/freeorion_main/')
 
 #if testAll is true the script will crawl through all FO files, skipping any folders in dirs_to_skip
 # checking files but not fixing
 testAll = True
+
+# if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
+fixfiles = False
+
 dirs_to_skip = ['GG', 'OIS', 'PagedGeometry']
+exts_to_check = [".py", ".py.*", ".txt",".h",".c",".cpp"]
 
 # file_list is a whitespace-separated list of file pathnames (relative to FOHome) to check (and possibly fix) if testAll is false
 # the pathnames should NOT have leading slash: for example, 
 # use "default/buildings.txt", NOT "/default/buildings.txt"
 file_list = "default/AI"
-
-# if testAll is false, therefore using file_list, fixfiles controls whether CRLF's will be converted to LF's
-fixfiles = True
 
 def checkLineEndings(filename,  fix=False):
     thisFile = open(filename, 'r')
@@ -37,7 +39,7 @@ def checkLineEndings(filename,  fix=False):
     if LF: results['LF']=LF
     if CRLF: results['CRLF']=CRLF
     if ( CRLF or CR ) and fix:
-        thisFile = open(filename, 'r')
+        thisFile = open(filename, 'r')[".py",".txt",".h",".c",".cpp"]
         theselines=thisFile.readlines()
         thisFile.close()
         thisFile = open(filename, 'w')
@@ -52,14 +54,16 @@ def checkLineEndings(filename,  fix=False):
 
 
 os.chdir(FOHome)
+num_files_checked = 0
 if testAll:
     for dirpath, dirnames, filenames in os.walk('.'):
         for skipdir in dirs_to_skip:
             if skipdir in dirnames:
                 dirnames.remove(skipdir)
         for fname in filenames:
-            for ext in [".py",".txt",".h",".c",".cpp"]:
+            for ext in exts_to_check:
                 if fname[-len(ext):]==ext:
+                    num_files_checked += 1
                     fullpath=os.path.join(dirpath,  fname)
                     results=checkLineEndings(fullpath,  fix=fixfiles)
                     results2 = ""
@@ -77,12 +81,15 @@ if not testAll:
         if not os.path.isdir(fname):
             files_to_check.append(fname)
         else:
-            for path_ext in [".py",".txt",".h",".c",".cpp"]:
+            for path_ext in exts_to_check:
                 files_to_check.extend(glob.glob(fname+os.sep+'*'+path_ext))
     for fname in files_to_check:
+        num_files_checked += 1
         results1=checkLineEndings(fname,  fix=fixfiles)
         if fixfiles and results1.keys()!=['LF']:
             results2=checkLineEndings(fname,  fix=False)
             print fname,  "line endings were",  results1,  "now are",  results2
         else:
             print fname,  "line endings are",  results1
+
+print "Done.  Total of %d files checked."%num_files_checked
