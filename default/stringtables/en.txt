@@ -3609,7 +3609,7 @@ Maniacal:
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
 AI_ERROR_MSG
-AI_Error: AI script error in
+AI_Error: AI script error
 
 # Functional list; do not translate. Used for logging during universe creation
 GROWTH_SPECIALS_LIST

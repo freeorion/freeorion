@@ -1,6 +1,7 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AIShipDesignTypes
+import traceback
 
 __designStats={}
 __AIShipRoleTypeNames = AIShipRoleType()
@@ -115,7 +116,6 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         #print ("Error: call parameters were targetStats: %s,  curStats: %s,  species: '%s',  systemsToCheck: %s,  systemsChecked: %s,  fleetPoolSet: %s,  fleetList: %s"%(
         #                            targetStats,  curStats,  species,  systemsToCheck,  systemsChecked,  fleetPoolSet,  fleetList))
         return []
-import traceback
 
 
 def splitFleet(fleetID):

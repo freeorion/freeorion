@@ -5,7 +5,6 @@ these methods in turn activate other portions of the python AI code"""
 
 import pickle                       # Python object serialization library
 import sys
-import traceback
 import random
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
 #pylint: disable=relative-import
@@ -20,7 +19,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from debug_tools import chat_on_error
+from tools import UserString
+from debug_tools import chat_on_error, print_error
 from timing import Timer
 
 main_timer = Timer('timer', write_log=True)
@@ -35,22 +35,13 @@ except:
     pass
 
 
-def UserString(label,  default=None): #this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
-    """ a translation assistance tool is intended to search for this method to identify translatable strings"""
-    table_string = fo.userString(label)
-    if default is None:
-        return table_string
-    elif "ERROR: "+label in table_string:  #implement test for string lookup  not found error
-        return default
-    else:
-        return table_string
-
 _aggressions = {fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",
              fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
 _capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),  fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
+
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI(): # pylint: disable=invalid-name
@@ -101,7 +92,7 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
         #assigning new state
         foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
         foAIstate.sessionStartCleanup()
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
+        print_error("Fail to load aiState form saved game")
 
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
@@ -197,74 +188,36 @@ def generateOrders(): # pylint: disable=invalid-name
     foAIstate.reportSystemThreats()
     # ...missions
     # ...demands/priorities
-
     print("Calling AI Modules")
-
     # call AI modules
-    main_timer.start("PriorityAI")
-    try:
-        PriorityAI.calculatePriorities()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc() # try traceback.print_exc()
-    main_timer.start("ExplorationAI")
-    try:
-        ExplorationAI.assignScoutsToExploreSystems()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("ColonisationAI")
-    try:
-        ColonisationAI.assignColonyFleetsToColonise()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("InvasionAI")
-    try:
-        InvasionAI.assignInvasionFleetsToInvade()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("MilitaryAI")
-    try:
-        MilitaryAI.assignMilitaryFleetsToSystems()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("Gen_Fleet_Orders")
-    try:
-        FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("Issue_Fleet_Orders")
-    try:
-        FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("ResearchAI")
-    try:
-        ResearchAI.generateResearchOrders()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("ProductionAI")
-    try:
-        ProductionAI.generateProductionOrders()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("ResourcesAI")
-    try:
-        ResourcesAI.generateResourcesOrders()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    main_timer.start("Cleanup")
-    try:
-        foAIstate.afterTurnCleanup()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
+    action_list = [PriorityAI.calculatePriorities,
+                   ExplorationAI.assignScoutsToExploreSystems,
+                   ColonisationAI.assignColonyFleetsToColonise,
+                   InvasionAI.assignInvasionFleetsToInvade,
+                   MilitaryAI.assignMilitaryFleetsToSystems,
+                   FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions,
+                   FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions,
+                   ResearchAI.generateResearchOrders,
+                   ProductionAI.generateProductionOrders,
+                   ResourcesAI.generateResourcesOrders,
+                   foAIstate.afterTurnCleanup,
+                   ]
 
+    for action in action_list:
+        try:
+            main_timer.start(action.__name__)
+            action()
+            main_timer.stop()
+        except Exception as e:
+            print_error(e, location=action.__name__)
     main_timer.end()
     turn_timer.end()
     turn_timer.start("Server_Processing")
 
     try:
         fo.doneTurn()
-    except:
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
+    except Exception as e:
+        print_error(e)  # TODO move it to cycle above
 
     if using_statprof:
         try:
