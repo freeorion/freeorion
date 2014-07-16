@@ -11,9 +11,10 @@ import ProductionAI
 import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AIFocusType
 import EnumsAI
-from time import time
 from tools import dict_from_map
+from timing import Timer
 
+colonization_timer = Timer('getColonyFleets()')
 
 empireSpecies = {}
 empireSpeciesByPlanet = {}
@@ -93,7 +94,7 @@ def ratePlanetaryPiloting(pid):
 
 def check_supply():
     # get suppliable systems and planets
-    supp_timing = [ [], [] ]
+    colonization_timer.start('Getting Empire Supply Info')
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -120,8 +121,7 @@ def check_supply():
 
     print "-------\nEmpire Obstructed Starlanes:"
     print  list(empire.obstructedStarlanes())
-    supp_timing[0].append( time() )
-    supp_timing[1].append( "getting Empire Supply Info" )
+    colonization_timer.start('Determining Annexable Systems')
 
     annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexableRing1.clear()
@@ -161,15 +161,12 @@ def check_supply():
         annexableRing3.difference_update(annexableSystemIDs)
         annexableSystemIDs.update(annexableRing3)
     annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
-    supp_timing[0].append( time() )
-    supp_timing[1].append( "Determining Annexable Systems" )
     print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
     print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
     print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
-    print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
+    # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
     print
     new_supply_map = empire.supplyProjections(-3, False)
-    new_time = time()
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
@@ -181,7 +178,7 @@ def check_supply():
     print "New First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-1, []))
     print "New Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-2, []))
     print "New Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-3, []))
-    print "new supply calc took ", new_time-supp_timing[0][-1]
+    # print "new supply calc took ", new_time-supp_timing[0][-1]
     annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexableRing1.clear()
     annexableRing2.clear()
@@ -192,18 +189,16 @@ def check_supply():
     #annexableSystemIDs.update(systems_by_supply_tier.get(0, []), annexableRing1, annexableRing2, annexableRing3)
     for jumps in range(0, -1-supply_distance, -1):
         annexableSystemIDs.update(systems_by_supply_tier.get(jumps, []))
-    return supp_timing, fleetSupplyablePlanetIDs
+    colonization_timer.stop()
+    return fleetSupplyablePlanetIDs
 
 
 def survey_universe():
     global  gotRuins, gotAst,  gotGG,  curBestPilotRating, curMidPilotRating
-    u_timing = [ [], [] ]
     univ_stats = {}
-    supp_timing, fleetSupplyablePlanetIDs = check_supply()
+    fleetSupplyablePlanetIDs = check_supply()
+    colonization_timer.start("Categorizing Visible Planets")
     univ_stats['fleetSupplyablePlanetIDs'] = fleetSupplyablePlanetIDs
-    for timing_index in [0,1]:
-        u_timing[timing_index].extend(supp_timing[timing_index])
-        
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empire_id = empire.empireID
@@ -389,32 +384,20 @@ def survey_universe():
         #if not tSys: continue
         #claimedStars.setdefault( tSys.starType, []).append(sysID)
     #foAI.foAIstate.misc['claimedStars'] = claimedStars
-
-
-    u_timing[0].append( time() )
-    u_timing[1].append( "Categorizing Visible Planets" )
-         
-        
-    return u_timing, univ_stats
+    colonization_timer.stop()
+    return univ_stats
 
 
 def getColonyFleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     global  curBestMilShipRating
-    times=[]
-    tasks = []
-    times.append( time() )
-    tasks.append("init")
+    colonization_timer.start("Getting best milship rating")
 
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
-    times.append( time() )
-    tasks.append( "getting best milship rating" )
-
+    colonization_timer.start('Getting avail colony fleets')
 
     allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     AIstate.colonyFleetIDs[:] = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allColonyFleetIDs)
-    times.append( time() )
-    tasks.append( "getting avail colony fleets" )
 
     # get suppliable systems and planets
     universe = fo.getUniverse()
@@ -439,11 +422,10 @@ def getColonyFleets():
     #
     ## survey universe -----------------------------------------------------------
     #
-    u_timing, univ_stats = survey_universe()
+    univ_stats = survey_universe()
+
     fleetSupplyablePlanetIDs = univ_stats['fleetSupplyablePlanetIDs']
-    times.extend( u_timing[0] )
-    tasks.extend( u_timing[1] )
-    print
+    colonization_timer.start('Identify Existing colony/outpost targets')
 
     # export colony targeted systems for other AI modules
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
@@ -482,8 +464,7 @@ def getColonyFleets():
 
     numOutpostFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(outpostFleetIDs))
     print "Outpost Fleets Without Missions:     " + str(numOutpostFleets)
-    times.append( time() )
-    tasks.append( "Identify Existing colony/outpost targets" )
+    colonization_timer.start('Identify colony base targets')
 
     availablePP = dict(  [ (tuple(el.key()),  el.data() ) for el in  empire.planetsWithAvailablePP ])  #keys are sets of ints; data is doubles
     availPP_BySys={}
@@ -527,8 +508,7 @@ def getColonyFleets():
                     foAI.foAIstate.qualifyingColonyBaseTargets.setdefault(pid,  [pid2,  -1])#TODO: enable actual building, remove from outpostbases, check other local colonizers for better score
 
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
-    times.append( time() )
-    tasks.append( "identify colony base targets" )
+    colonization_timer.start('Initiate outpost base construction')
 
     reserved_outpost_base_targets = foAI.foAIstate.qualifyingOutpostBaseTargets.keys()
     max_queued_outpost_bases = max(1,  int(2*empire.productionPoints / outpostCost))
@@ -563,20 +543,18 @@ def getColonyFleets():
                 foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] = loc
                 queued_outpost_bases.append((planet and planet.systemID) or -1)
                 #res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) #TODO: evaluate move to front
-    times.append( time() )
-    tasks.append( "initiate outpost base construction" )
+    colonization_timer.start('Evaluate Primary Colony Opportunities')
 
     evaluatedOutpostPlanetIDs = list(unowned_empty_planet_ids - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reserved_outpost_base_targets))
 
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
     evaluatedColonyPlanets = assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire)
-    times.append( time() )
-    tasks.append( "Evaluate %d Primary Colony Opportunities"%(len( evaluatedOutpostPlanetIDs )) )
+    colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluatedOutpostPlanetIDs)))
+    colonization_timer.start('Evaluate All Colony Opportunities')
     allColonyOpportunities.clear()
     allColonyOpportunities.update(assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire,  [], True))
-    times.append( time() )
-    tasks.append( "Evaluate All Colony Opportunities" )
+    colonization_timer.start('Evaluate Outpost Opportunities')
 
     sortedPlanets = evaluatedColonyPlanets.items()
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -597,8 +575,7 @@ def getColonyFleets():
     AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
 
     evaluatedOutpostPlanets = assignColonisationValues(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire)
-    times.append( time() )
-    tasks.append( "Evaluate Outpost Opportunities" )
+    colonization_timer.stop()
 
     sortedOutposts = evaluatedOutpostPlanets.items()
     sortedOutposts.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -612,11 +589,7 @@ def getColonyFleets():
     sortedOutposts = [(ID, score) for ID, score in sortedOutposts if score[0] > 0]
     # export outposts for other AI modules
     foAI.foAIstate.colonisableOutpostIDs = sortedOutposts
-    times.append( time() )
-    tasks.append( "total processing" )
-    for t_index in range(1, len(times)-1):
-        print "getColonyFleets(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[t_index]-times[t_index-1])))
-    print "getColonyFleets(): %40s took %d msec"%(tasks[-1],  int(1000*(times[-1]-times[0])))
+    colonization_timer.end()
 
 def getColonyTargetedPlanetIDs(planetIDs, missionType, empireID):
     """return list being settled with colony planets"""

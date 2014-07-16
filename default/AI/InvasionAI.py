@@ -10,16 +10,16 @@ import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
-from time import time
 from tools import dict_from_map
 
 
+from timing import Timer
+
+invasion_timer = Timer('getInvasionFleets()', write_log=False)
+
 def getInvasionFleets():
     """get invasion fleets"""
-    times=[]
-    tasks = []
-    times.append( time() )
-    tasks.append("init")
+    invasion_timer.start("gathering initial info")
 
     allInvasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
     AIstate.invasionFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allInvasionFleetIDs)
@@ -93,8 +93,7 @@ def getInvasionFleets():
 
     numInvasionFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(invasionFleetIDs))
     print "Invasion Fleets Without Missions:    " + str(numInvasionFleets)
-    times.append( time() )
-    tasks.append( "gathering initial info" )
+    invasion_timer.start("planning troop base production")
     
     availablePP = {}
     for el in  empire.planetsWithAvailablePP:  #keys are sets of ints; data is doubles
@@ -162,8 +161,7 @@ def getInvasionFleets():
             foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] = loc
             fo.issueChangeProductionQuantityOrder(empire.productionQueue.size -1,  1,  int(n_bases))
             res=fo.issueRequeueProductionOrder(empire.productionQueue.size -1,  0) 
-    times.append( time() )
-    tasks.append( "planning troop base production" )
+    invasion_timer.start("evaluating target planets")
 
     #TODO: check if any invasionTargetedPlanetIDs need more troops assigned
     evaluatedPlanetIDs = list(set(invadablePlanetIDs) - set(invasionTargetedPlanetIDs) - set(reserved_troop_base_targets)  ) 
@@ -174,8 +172,6 @@ def getInvasionFleets():
     sortedPlanets = [(pid,  pscore,  ptroops) for (pid,  (pscore, ptroops)) in evaluatedPlanets.items() ]
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
     sortedPlanets = [(pid,  pscore%10000,  ptroops) for (pid,  pscore, ptroops) in sortedPlanets ]
-    times.append( time() )
-    tasks.append( "evaluating %d target planets"%(len(evaluatedPlanetIDs)) )
 
     print
     if sortedPlanets:
@@ -196,11 +192,8 @@ def getInvasionFleets():
 
     # export invasion targeted systems for other AI modules
     AIstate.invasionTargetedSystemIDs = list(allInvasionTargetedSystemIDs)
-    times.append( time() )
-    tasks.append( "total processing" )
-    for t_index in range(1, len(times)-1):
-        print "getInvasionFleets(): %40s took %d msec"%(tasks[t_index],  int(1000*(times[t_index]-times[t_index-1])))
-    print "getInvasionFleets(): %40s took %d msec"%(tasks[-1],  int(1000*(times[-1]-times[0])))
+    invasion_timer.stop(section_name="evaluating %d target planets" % (len(evaluatedPlanetIDs)))
+    invasion_timer.end()
 
 
 def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):

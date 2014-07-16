@@ -6,13 +6,8 @@ these methods in turn activate other portions of the python AI code"""
 import pickle                       # Python object serialization library
 import sys
 import traceback
-from time import time
 import random
-from timing import main_timer, bucket_timer, init_timers
-
-
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
-
 #pylint: disable=relative-import
 import AIstate
 import ColonisationAI
@@ -26,7 +21,10 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 from debug_tools import chat_on_error
+from timing import Timer
 
+main_timer = Timer('timer', write_log=True)
+turn_timer = Timer('bucket', write_log=True)
 
 using_statprof = False
 try:
@@ -53,8 +51,6 @@ _capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
                     fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
-_lastTurnTimestamp = 0
-
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI(): # pylint: disable=invalid-name
@@ -68,7 +64,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
 @chat_on_error
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
     """called by client at start of new game"""
-    init_timers()
+    turn_timer.start("Server Processing")
     print "New game started, AI Aggression level %d"% aggression
 
     # initialize AIstate
@@ -92,7 +88,7 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
 @chat_on_error
 def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
     """called by client to resume a loaded game"""
-    init_timers()
+    turn_timer.start("Server Processing")
 
     global foAIstate
     print "Resuming loaded game"
@@ -166,9 +162,8 @@ def handleDiplomaticStatusUpdate(statusUpdate): # pylint: disable=invalid-name
 @chat_on_error
 def generateOrders(): # pylint: disable=invalid-name
     """called by client to get the AI's orders for the turn"""
-    global _lastTurnTimestamp
+    turn_timer.start("AI planning")
     universe = fo.getUniverse()
-    turnStartTime = time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
     # set the random seed (based on galaxy seed, empire ID and current turn)
@@ -196,10 +191,7 @@ def generateOrders(): # pylint: disable=invalid-name
         declareWarOnAll()
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
-    splitNewFleets()
-
-    #updateShipDesigns()   #should not be needed anymore;
-    #updateFleetsRoles()
+    foAIstate.splitNewFleets()
 
     foAIstate.refresh() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
     foAIstate.reportSystemThreats()
@@ -209,66 +201,65 @@ def generateOrders(): # pylint: disable=invalid-name
     print("Calling AI Modules")
 
     # call AI modules
-    timer = [time()]
+    main_timer.start("PriorityAI")
     try:
         PriorityAI.calculatePriorities()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc() # try traceback.print_exc()
-    timer.append( time()  )
+    main_timer.start("ExplorationAI")
     try:
         ExplorationAI.assignScoutsToExploreSystems()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("ColonisationAI")
     try:
         ColonisationAI.assignColonyFleetsToColonise()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("InvasionAI")
     try:
         InvasionAI.assignInvasionFleetsToInvade()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("MilitaryAI")
     try:
         MilitaryAI.assignMilitaryFleetsToSystems()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("Gen_Fleet_Orders")
     try:
         FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("Issue_Fleet_Orders")
     try:
         FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("ResearchAI")
     try:
         ResearchAI.generateResearchOrders()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("ProductionAI")
     try:
         ProductionAI.generateProductionOrders()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("ResourcesAI")
     try:
         ResourcesAI.generateResourcesOrders()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
+    main_timer.start("Cleanup")
     try:
         foAIstate.afterTurnCleanup()
     except:
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    timer.append( time()  )
-    times = [timer[i] - timer[i-1] for i in range(1,  len(timer))]
-    turnEndTime = time()
-    main_timer.add_time(fo.currentTurn(), times)
-    bucket_timer.add_time(fo.currentTurn(), (turnStartTime - _lastTurnTimestamp, turnEndTime-turnStartTime))
+
+    main_timer.end()
+    turn_timer.end()
+    turn_timer.start("Server_Processing")
 
     try:
         fo.doneTurn()
@@ -282,70 +273,9 @@ def generateOrders(): # pylint: disable=invalid-name
             statprof.start()
         except:
             pass
-#
+
+
 #The following methods should probably be moved to the AIstate module, to keep this module more focused on implementing required interface
-
-
-def splitNewFleets(): # pylint: disable=invalid-name
-    """split any new fleets (at new game creation, can have unplanned mix of ship roles)"""
-
-    print "Review of current Fleet Role/Mission records:"
-    print "--------------------"
-    print "Map of Roles keyed by Fleet ID: %s"% foAIstate.getFleetRolesMap()
-    print "--------------------"
-    print "Map of Missions  keyed by ID:"
-    for item in  foAIstate.getFleetMissionsMap().items():
-        print " %4d : %s "% item
-    print "--------------------"
-    # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
-    knownFleets = foAIstate.getFleetRolesMap().keys()
-    foAIstate.newlySplitFleets.clear()
-    splitableFleets = []
-    for fleetID in FleetUtilsAI.getEmpireFleetIDs():
-        if fleetID  in  knownFleets: #not a new fleet
-            continue
-        else:
-            splitableFleets.append(fleetID)
-    if splitableFleets:
-        universe = fo.getUniverse()
-        print ("splitting new fleets")
-        for fleetID in splitableFleets:
-            fleet = universe.getFleet(fleetID)
-            if not fleet:
-                print "Error splittting new fleets; resulting fleet ID %d  appears to not exist"% fleetID
-                continue
-            fleetLen = len(list(fleet.shipIDs))
-            if fleetLen == 1:
-                continue
-            newFleets = FleetUtilsAI.splitFleet(fleetID) # try splitting fleet
-            print "\t from splitting fleet ID %4d  with %d ships, got %d new fleets:"% (fleetID,  fleetLen,  len(newFleets))
-            # old fleet may have different role after split, later will be again identified
-            #foAIstate.removeFleetRole(fleetID)  # in current system, orig new fleet will not yet have been assigned a role
-
-
-def updateShipDesigns(): # pylint: disable=invalid-name
-    """update ship design records"""
-    print ("Updating ship design records")
-    universe = fo.getUniverse()
-
-    for fleetID in universe.fleetIDs:
-        fleet = universe.getFleet(fleetID)
-        if fleet:
-            for shipID in fleet.shipIDs:
-                ship = universe.getShip(shipID)
-                if ship and ship.design:
-                    foAIstate.getShipRole(ship.design.id)
-            # print str(ship.design.id) + ": " + str(shipRole)
-
-
-def updateFleetsRoles(): # pylint: disable=invalid-name
-    """updating fleet role records"""
-    print ("Updating fleet role records")
-    # assign roles to fleets
-    for fleetID in FleetUtilsAI.getEmpireFleetIDs():
-        foAIstate.getFleetRole(fleetID) #force assessment if not previously known
-
-
 def declareWarOnAll(): # pylint: disable=invalid-name
     """used to declare war on all other empires (at start of game)"""
     my_emp_id = fo.empireID()

@@ -3,13 +3,13 @@ import FreeOrionAI as foAI
 from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
 import PlanetUtilsAI
 import random
-from time import time
 import ColonisationAI
 import AIDependencies
-from timing import resource_timer  # , resource_generate_timer
+from timing import Timer
+
+resource_timer = Timer('timer_bucket')
 
 AIPriorityTypeNames=AIPriorityType()
-
 oldTargets={}
 newTargets={}
 currentFocus = {}
@@ -143,25 +143,23 @@ def setPlanetResourceFoci(): #+
     random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn()) + "Resources"
     random.seed(random_seed)
 
-    freq = min(3,  ( max(5,  currentTurn-80)   )/4.0)**(1.0/3)
-    if  limitAssessments and ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random.random() < 1.0/freq ) :
-        timer = 6*[time()]
-    else:
+    freq = min(3, (max(5, currentTurn-80))/4.0)**(1.0/3)
+    if not (limitAssessments and (abs(currentTurn - lastFociCheck[0]) < 1.5*freq) and (random.random() < 1.0/freq)):
         lastFociCheck[0]=currentTurn
-        timer= [ time() ] # getPlanets
+        resource_timer.start("getPlanets")
         empirePlanetIDs = list( PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID) )
-        timer.append( time() ) #filter
-        timer.append( time() ) #Priority
+        resource_timer.start("Filter")
+        resource_timer.start("Priority")
         #TODO: take into acct splintering of resource groups
         #fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
         #fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
         ppPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
         rpPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
         priorityRatio = float(rpPrio)/(ppPrio+0.0001)
-        timer.append( time() ) # shuffle
+        resource_timer.start("Shuffle")
         # not supporting Growth for general planets until also adding code to make sure would actually benefit
         #shuffle(generalPlanetIDs)
-        timer.append( time() ) # targets
+        resource_timer.start("Targets")
         planets = map(universe.getPlanet,  empirePlanetIDs)
         planetMap.clear()
         planetMap.update( zip( empirePlanetIDs,  planets))
@@ -249,7 +247,7 @@ def setPlanetResourceFoci(): #+
         # include a bias to slightly discourage changing foci
         curTargetPP = 0.001
         curTargetRP = 0.001
-        timer.append( time() ) #loop
+        resource_timer.start("Loop") #loop
         has_force = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
         preset_ids = set(planetMap.keys()) - set(empirePlanetIDs)
         ctPP0,  ctRP0 = 0, 0
@@ -365,37 +363,29 @@ def setPlanetResourceFoci(): #+
                 print "pID (%3d)  %22s |  c:  %5.1f / %5.1f |   cT:  %5.1f / %5.1f  |  cF: %8s |  nF: %8s  | cT:  %5.1f / %5.1f "%(pid,  planetMap[pid].name, cRP, cPP,   otRP, otPP,  fociMap.get(oldFocus, 'unknown'),  fociMap[newFocus] , ntRP, ntPP )
             print "-------------------------------------"
         print "-------------------------------------\nFinal Ratio Target (turn %4d) RP/PP : %.2f  ( %.1f / %.1f )  after %d Focus changes"%( fo.currentTurn(), curTargetRP/ (curTargetPP + 0.0001), curTargetRP,  curTargetPP ,  totalChanged)
-
+        resource_timer.end()
     aPP, aRP = empire.productionPoints,  empire.resourceProduction(fo.resourceType.research)
     print "Current Output (turn %4d) RP/PP : %.2f  ( %.1f / %.1f )"%(fo.currentTurn(),  aRP/ (aPP + 0.0001), aRP,  aPP ), "\n------------------------"
-
-    timer.append(time())  # end
-    times = [timer[i] - timer[i-1] for i in range(1, len(timer))]
     print "ResourcesAI Time Requirements:"
-    resource_timer.add_time(fo.currentTurn(), times)
 
 
 def generateResourcesOrders():
     """generate resources focus orders"""
-    timer= [time()]
+
     ## calculate top resource priority
     ##topResourcePriority()
-    timer.append(time())
+
     ## set resource foci of planets
     ##setCapitalIDResourceFocus()
-    timer.append(time())
+
     #------------------------------
     ##setGeneralPlanetResourceFocus()
     setPlanetResourceFoci()
-    timer.append(time())
+
     #-------------------------------
     ##setAsteroidsResourceFocus()
-    timer.append(time())
+
     ##setGasGiantsResourceFocus()
-    timer.append(time())
 
     printResourcesPriority()
-    # timer.append( time() )
-    # times = [timer[i] - timer[i-1] for i in range(1,  len(timer))]
     # print "ResourcesAI Time Requirements:"
-    # resource_generate_timer.add_time(fo.currentTurn(), times)

@@ -1,5 +1,6 @@
 import os
 import freeOrionAIInterface as fo
+from time import time
 
 TIMERS_DIR = 'timers'
 DUMP_TO_FILE = os.path.isdir(TIMERS_DIR)
@@ -8,53 +9,79 @@ DUMP_TO_FILE = os.path.isdir(TIMERS_DIR)
 def make_header(*args):
     return ['%-8s  ' % x for x in args]
 
-MAIN_HEADER = make_header('Turn', "PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",
-                          "Gen_Fleet_Orders", "Issue_Fleet_Orders", "ResearchAI", "ProductionAI",  "ResourcesAI",
-                          "Cleanup")
 
-BUCKET_HEADER = make_header('Turn', "Server_Processing",  "AI_Planning")
+class Timer(object):
+    def __init__(self, timer_name, write_log=False):
+        """
+        Creates timer. Timer name is name that will be in logs header and part of filename if write_log=True
+        If write_log true and timers logging enabled (DUMP_TO_FILE=True) save timer info to file.
 
-RESOURCE_GENERATE_HEADER = make_header('Turn', "TopResources",  "SetCapital",  "SetPlanets",  "SetAsteroids",
-                                       "SetGiants",  "PrintResources")
-RESOURCE_HEADER = make_header('Turn', "getPlanets",  "Filter",  "Priority",  "Shuffle",  "Targets",  "Loop")
-
-
-class TimeLogger(object):
-    def __init__(self, name, headers, write_log=False):
-        self.name = name
-        self.log_name = None
-        self.headers = headers
+        """
+        self.timer_name = timer_name
+        self.start_time = None
+        self.section_name = None
+        self.timers = []
         self.write_log = write_log
+        self.headers = None
+        self.log_name = None
 
-    def _write(self, text, mode):
+    def stop(self, section_name=''):
+        """
+        Stop timer if running. Specify section_name if want to override its name.
+        """
+        if self.start_time:
+            self.end_time = time()
+            section_name = section_name or self.section_name
+            self.timers.append((section_name, (self.end_time - self.start_time) * 1000.0))
+        self.start_time = None
+        self.section_name = None
+
+    def start(self, section_name):
+        """
+        Stop prev timer if present and starts new.
+        """
+        self.stop()
+        self.section_name = section_name
+        self.start_time = time()
+
+    def _write(self, text):
+        if not self.log_name:
+            empaire_id = fo.getEmpire().empireID - 1
+            self.log_name = os.path.join(TIMERS_DIR, '%s-%02d.txt' % (self.timer_name, empaire_id))
+            mode = 'w'  # empty file
+        else:
+            mode = 'a'
         with open(self.log_name, mode) as f:
             f.write(text)
             f.write('\n')
 
-    def init(self):
-        if DUMP_TO_FILE:
-            self.log_name = os.path.join(TIMERS_DIR, '%s-%02d.txt' % (self.name, fo.getEmpire().empireID - 1))
-            self._write(''.join(self.headers) + '\n' + ''.join(['-' * (len(x) - 2) + '  ' for x in self.headers]), 'w')
+    def end(self):
+        """
+        Stop timer, output result, clear checks.
+        If dumping to file, if headers are not match to prev, new header line will be added.
+        """
+        turn = fo.currentTurn()
+        self.stop()
+        if not self.timers:
+            return
+        max_header = max(len(x[0]) for x in self.timers)
+        line_max_size = max_header + 14
+        print
+        print ('Timing for %s:' % self.timer_name)
+        print '=' * line_max_size
+        for name, val in self.timers:
+            print "%-*s %8d msec" % (max_header, name, val)
+        print '-' * line_max_size
+        print ("Total: %8d msec" % sum(x[1] for x in self.timers)).rjust(line_max_size)
 
-    def add_time(self, turn, times):
-        if self.write_log:
-            for mod,  modTime in zip(self.headers,  times):
-                print "%-*s%8d msec" % (len(max(self.headers, key=len)), mod,  1000 * modTime)
+        if self.write_log and DUMP_TO_FILE:
+            headers = make_header('Turn', *[x[0] for x in self.timers])
+            if self.headers != headers:
+                self._write(''.join(headers) + '\n' + ''.join(['-' * (len(x) - 2) + '  ' for x in headers]))
+                self.headers = headers
 
-        if DUMP_TO_FILE:
             row = []
-            for header, val in zip(self.headers, [turn] + [int(x * 1000) for x in times]):
-                row.append('%*s  ' % (len(header) - 2, val))
-            self._write(''.join(row), 'a')
-
-main_timer = TimeLogger('timer', MAIN_HEADER, write_log=True)
-bucket_timer = TimeLogger("timer_bucket", BUCKET_HEADER, write_log=False)
-# resource_generate_timer = TimeLogger('resource_generate', RESOURCE_GENERATE_HEADER, write_log=True)
-resource_timer = TimeLogger('resource', RESOURCE_HEADER, write_log=True)
-
-
-def init_timers():
-    main_timer.init()
-    bucket_timer.init()
-    resource_timer.init()
-    # resource_generate_timer.start()  # currently disabled
+            for header, val in zip(self.headers, [turn] + [x[1] for x in self.timers]):
+                row.append('%*s  ' % (len(header) - 2, int(val)))
+            self._write(''.join(row))
+        self.timers = []  # clear times

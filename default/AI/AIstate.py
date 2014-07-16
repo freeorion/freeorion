@@ -1031,6 +1031,7 @@ class AIstate(object):
 
         return copy.deepcopy(self.__priorityByType)
 
+
     def printPriorities(self):
         """prints all priorities"""
 
@@ -1038,3 +1039,37 @@ class AIstate(object):
         for priority in self.__priorityByType:
             print "    " + str(priority) + ": " + str(self.__priorityByType[priority])
         print
+
+
+    def splitNewFleets(self): # pylint: disable=invalid-name
+        """split any new fleets (at new game creation, can have unplanned mix of ship roles)"""
+
+        print "Review of current Fleet Role/Mission records:"
+        print "--------------------"
+        print "Map of Roles keyed by Fleet ID: %s" % self.getFleetRolesMap()
+        print "--------------------"
+        print "Map of Missions  keyed by ID:"
+        for item in self.getFleetMissionsMap().items():
+            print " %4d : %s " % item
+        print "--------------------"
+        # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
+        known_fleets = self.getFleetRolesMap()
+        self.newlySplitFleets.clear()
+
+        fleets_to_split = [fleet_id for fleet_id in FleetUtilsAI.getEmpireFleetIDs() if not fleet_id in known_fleets]
+
+        if fleets_to_split:
+            universe = fo.getUniverse()
+            print "splitting new fleets"
+            for fleet_id in fleets_to_split:
+                fleet = universe.getFleet(fleet_id)
+                if not fleet:
+                    print "Error splitting new fleets; resulting fleet ID %d appears to not exist" % fleet_id
+                    continue
+                fleet_len = len(list(fleet.shipIDs))
+                if fleet_len == 1:
+                    continue
+                new_fleets = FleetUtilsAI.splitFleet(fleet_id)  # try splitting fleet
+                print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (fleet_id, fleet_len, len(new_fleets))
+                # old fleet may have different role after split, later will be again identified
+                #self.removeFleetRole(fleet_id)  # in current system, orig new fleet will not yet have been assigned a role
