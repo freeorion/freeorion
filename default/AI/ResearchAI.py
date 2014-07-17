@@ -117,7 +117,7 @@ def generateResearchOrders():
 
         print""
 
-        generateDefaultResearchOrders()
+        generate_default_research_order()
         print "\n\nAll techs:"
         alltechs = fo.techs() # returns names of all techs
         for tname in alltechs:
@@ -128,7 +128,7 @@ def generateResearchOrders():
             print tname
 
     elif fo.currentTurn() >100:
-        generateDefaultResearchOrders()
+        generate_default_research_order()
 
     researchQueueList = getResearchQueueTechs()
     num_techs_accelerated = 1 # will ensure leading tech doesn't get dislodged
@@ -327,37 +327,44 @@ def generateResearchOrders():
             researchQueueList = getResearchQueueTechs()
 
 
-def generateDefaultResearchOrders():
-    """generate default research orders"""
+def generate_default_research_order():
+    """
+    Generate default research orders.
+    Add cheapest technology from possible researches
+    until current turn point totally spent.
+    """
 
     empire = fo.getEmpire()
-    totalRP = empire.resourceProduction(fo.resourceType.research)
+    total_rp = empire.resourceProduction(fo.resourceType.research)
 
     # get all usable researchable techs not already completed or queued for research
-    completedTechs = getCompletedTechs()
-    possibleProjects = getPossibleProjects()
-    researchQueue = empire.researchQueue
-    researchQueueList = getResearchQueueTechs ()
-    possibleResearchProjects = (set(possibleProjects)-(set(completedTechs)|set(researchQueueList)))
 
-    print "Techs in possibleResearchProjects list after enqueues to Research Queue:"
-    for techname in possibleResearchProjects:
-        print "    " + techname
+    excluded_techs = TechsListsAI.unusable_techs()
+    queued_techs = getResearchQueueTechs()
+
+    def is_possible(tech_name):
+        return all([empire.getTechStatus(tech_name) == fo.techStatus.researchable,
+                   empire.getTechStatus(tech_name) != fo.techStatus.complete,
+                   tech_name not in excluded_techs,
+                   tech_name not in queued_techs])
+
+    # (cost, name) for all tech that possible to add to queue, cheapest last
+    possible = sorted(
+        [(fo.getTech(tech).researchCost(empire.empireID), tech) for tech in fo.techs() if is_possible(tech)],
+        reverse=True)
+
+    print "Techs in possible list after enqueues to Research Queue:"
+    for _, tech in possible:
+        print "    " + tech
     print
 
-    # store projects mapped to their costs, so they can be sorted by that cost
-    projectsDict = dict()
-    for name in possibleResearchProjects:
-        projectsDict[name] = fo.getTech(name).researchCost(empire.empireID)
-
     # iterate through techs in order of cost
-    print "enqueuing techs.  already spent RP: " + str(spentRP()) + "  total RP: " + str(totalRP)
-    for name, cost in sorted(projectsDict.items(), key=lambda(k, v):(v, k)):
-        # abort if no RP left
-        if spentRP() >= totalRP:
-            break
+    total_spent = fo.getEmpire().researchQueue.totalSpent
+    print "enqueuing techs.  already spent RP: %s total RP: %s" % (total_spent, total_rp)
 
-        # add tech to queue
+    while total_rp > 0 and possible:
+        cost, name = possible.pop()  # get chipest
+        total_rp -= cost
         fo.issueEnqueueTechOrder(name, -1)
         print "    enqueued tech " + name + "  :  cost: " + str(cost) + "RP"
     print
@@ -376,29 +383,13 @@ def getPossibleProjects():
     return set(preliminaryProjects)-set(unusableTechs)
 
 
-def spentRP():
-    """calculate RPs spent this turn so far"""
-    return fo.getEmpire().researchQueue.totalSpent
-
-
 def getCompletedTechs():
     """get completed and available for use techs"""
-    completedTechs = []
-    technames = fo.techs() # returns names of all techs
     empire = fo.getEmpire()
-    for techname in technames:
-        if empire.getTechStatus(techname) == fo.techStatus.complete:
-            completedTechs.append(techname)
-
-    return completedTechs
+    return [tech for tech in fo.techs() if empire.getTechStatus(tech) == fo.techStatus.complete]
 
 
 def getResearchQueueTechs():
-    """get list of techs in research queue"""
+    """ Get list of techs in research queue."""
+    return [element.tech for element in fo.getEmpire().researchQueue]
 
-    empire = fo.getEmpire()
-    researchQueue = empire.researchQueue
-    researchQueueList = []
-    for element in researchQueue:
-        researchQueueList.append(element.tech)
-    return researchQueueList

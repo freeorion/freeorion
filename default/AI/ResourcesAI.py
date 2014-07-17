@@ -10,7 +10,6 @@ from timing import Timer
 resource_timer = Timer('timer_bucket')
 
 AIPriorityTypeNames=AIPriorityType()
-oldTargets={}
 newTargets={}
 currentFocus = {}
 currentOutput={}
@@ -26,63 +25,53 @@ limitAssessments = True
 lastFociCheck=[0]
 
 
-def getResourceTargetTotals(empirePlanetIDs):#+
+def _fill_data_dicts(planet_ids):
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
-    empireID = empire.empireID
-    #empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    capitalID = PlanetUtilsAI.getCapital()
-    oldTargets.clear()
-    oldTargets.update(newTargets)
     newTargets.clear()
     currentFocus.clear()
     currentOutput.clear()
-
-    targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry),  planetMap.values()) )
-    targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planetMap.values()) )
-
-    newFocus= IFocus
-    for pid in empirePlanetIDs:
-        planet=planetMap[pid]
-        #canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
+    planets = [(pid, planetMap[pid]) for pid in planet_ids]
+    for pid, planet in planets:
         currentFocus[pid] = planet.focus
-        #if  currentFocus[pid] == MFocus:
-        #    mtarget=planetMap[pid].currentMeterValue(fo.meterType.targetIndustry)
-        currentOutput.setdefault(pid,  {} )[ IFocus] =  planet.currentMeterValue(fo.meterType.industry)
-        currentOutput[pid][ RFocus] =  planet.currentMeterValue(fo.meterType.research)
+        currentOutput.setdefault(pid, {})[IFocus] = planet.currentMeterValue(fo.meterType.industry)
+        currentOutput[pid][RFocus] = planet.currentMeterValue(fo.meterType.research)
         if IFocus in planet.availableFoci and planet.focus !=IFocus:
-            fo.issueChangeFocusOrder(pid, IFocus) #may not be able to take, but try
-    universe.updateMeterEstimates(empirePlanetIDs)
-    for pid in empirePlanetIDs:
-        planet=planetMap[pid]
-        itarget=planet.currentMeterValue(fo.meterType.targetIndustry)
-        rtarget=planet.currentMeterValue(fo.meterType.targetResearch)
+            fo.issueChangeFocusOrder(pid, IFocus)  # may not be able to take, but try
+    universe.updateMeterEstimates(planet_ids)
+    for pid, planet in planets:
+        itarget = planet.currentMeterValue(fo.meterType.targetIndustry)
+        rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
         if planet.focus == IFocus:
-            newTargets.setdefault(pid,  {})[IFocus] = ( itarget,  rtarget )
+            newTargets.setdefault(pid,  {})[IFocus] = (itarget, rtarget)
             newTargets.setdefault(pid,  {})[GFocus] = [0,  rtarget]
         else:
-            newTargets.setdefault(pid,  {})[IFocus] = ( 0, 0)
+            newTargets.setdefault(pid,  {})[IFocus] = (0, 0)
             newTargets.setdefault(pid,  {})[GFocus] = [0, 0]
         #if  currentFocus[pid] == MFocus:
         #    newTargets[pid][MFocus] = ( mtarget,  rtarget )
-        if RFocus in planet.availableFoci and planet.focus!=RFocus:
-            fo.issueChangeFocusOrder(pid, RFocus) #may not be able to take, but try
-    universe.updateMeterEstimates(empirePlanetIDs)
-    for pid in empirePlanetIDs:
-        planet=planetMap[pid]
-        canFocus= planet.currentMeterValue(fo.meterType.targetPopulation) >0
-        itarget=planet.currentMeterValue(fo.meterType.targetIndustry)
-        rtarget=planet.currentMeterValue(fo.meterType.targetResearch)
+        if RFocus in planet.availableFoci and planet.focus != RFocus:
+            fo.issueChangeFocusOrder(pid, RFocus)  #  may not be able to take, but try
+    universe.updateMeterEstimates(planet_ids)
+    for pid, planet in planets:
+        can_focus = planet.currentMeterValue(fo.meterType.targetPopulation) > 0
+        itarget = planet.currentMeterValue(fo.meterType.targetIndustry)
+        rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
         if planet.focus == RFocus:
-            newTargets.setdefault(pid,  {})[RFocus] = ( itarget,  rtarget )
-            newTargets[pid][GFocus][0] = itarget 
+            newTargets.setdefault(pid, {})[RFocus] = (itarget, rtarget)
+            newTargets[pid][GFocus][0] = itarget
         else:
-            newTargets.setdefault(pid,  {})[RFocus] = ( 0,  0 )
-            newTargets[pid][GFocus][0] = 0 
-        if canFocus and currentFocus[pid]  != planet.focus:
-            fo.issueChangeFocusOrder(pid, currentFocus[pid]) #put it back to what it was
-    universe.updateMeterEstimates(empirePlanetIDs)
-    return targetPP,  targetRP
+            newTargets.setdefault(pid,  {})[RFocus] = (0, 0)
+            newTargets[pid][GFocus][0] = 0
+        if can_focus and currentFocus[pid] != planet.focus:
+            fo.issueChangeFocusOrder(pid, currentFocus[pid])  # put it back to what it was
+    universe.updateMeterEstimates(planet_ids)
+
+
+def getResourceTargetTotals(empirePlanetIDs):#+
+    pp = sum(x.currentMeterValue(fo.meterType.targetIndustry) for x in planetMap.values())
+    rp = sum(x.currentMeterValue(fo.meterType.targetResearch) for x in planetMap.values())
+    _fill_data_dicts(empirePlanetIDs)
+    return pp, rp
 
 
 def printResourcesPriority():
