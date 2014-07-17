@@ -338,7 +338,7 @@ namespace {
         FleetPlanWrapper(const FleetPlan& fleet_plan) {
             m_fleet_plan = FleetPlan(fleet_plan.Name(), fleet_plan.ShipDesigns(), false);
         }
-        
+
         FleetPlanWrapper(const std::string& fleet_name, const list& py_designs)
         {
             std::vector<std::string> designs;

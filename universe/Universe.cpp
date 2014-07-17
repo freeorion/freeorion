@@ -3674,7 +3674,7 @@ TemporaryPtr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Building(), id); }
 
 TemporaryPtr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
-                                        int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
+                                                int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Building(empire_id, building_type, produced_by_empire_id), id); }
 
 TemporaryPtr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)

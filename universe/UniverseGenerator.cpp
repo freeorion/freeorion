@@ -1520,7 +1520,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
     // get systems
     std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
     numSys = sys_vec.size();  // (actually = number of systems + 1)
-    
+
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
     if (!triList ||triList->empty()) {

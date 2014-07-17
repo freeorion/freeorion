@@ -628,7 +628,7 @@ float Fleet::MaxFuel() const {
 int Fleet::FinalDestinationID() const {
     if(m_travel_route.empty()){
         return INVALID_OBJECT_ID;
-    }else{
+    } else {
         return m_travel_route.back();
     }
 } 
@@ -738,9 +738,9 @@ void Fleet::SetRoute(const std::list<int>& route) {
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
 
     m_travel_route = route;
-    
+
     // Moving to where we are is not moving at all
-    if(m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()){
+    if (m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()) {
         m_travel_route.clear();
     }
 
@@ -749,7 +749,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
     // route length, or this may itself be the total route length if the fleet is at the first system on the route).
     m_travel_distance = PathLength(m_travel_route.begin(), m_travel_route.end());
-    
+
 
     if (!route.empty()) {
         // if we're already moving, add in the distance from where we are to the first system in the route
@@ -848,16 +848,18 @@ void Fleet::MovementPhase() {
     TemporaryPtr<System> current_system = GetSystem(fleet->SystemID());
     TemporaryPtr<const System> initial_system = current_system;
     std::list<MovePathNode> move_path = fleet->MovePath();
-    
+
     // If the move path cannot lead to our destination,
     // make our route take us as far as it can
-    if(!move_path.empty() && !m_travel_route.empty() && move_path.back().object_id != m_travel_route.back()){
+    if (!move_path.empty() && !m_travel_route.empty() &&
+         move_path.back().object_id != m_travel_route.back())
+    {
         std::list<int> shortened_route = fleet->TravelRoute();
         fleet->ShortenRouteToEndAtSystem(shortened_route, move_path.back().object_id);
         fleet->SetRoute(shortened_route);
         move_path = fleet->MovePath();
     }
-    
+
     std::list<MovePathNode>::const_iterator it = move_path.begin();
     std::list<MovePathNode>::const_iterator next_it = it;
     if (next_it != move_path.end())
@@ -955,11 +957,11 @@ void Fleet::MovementPhase() {
             }
 
             fleet->m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
-            
+
             // reached a system, so remove it from the route
-            if(fleet->m_travel_route.front() == system->ID()){
+            if (fleet->m_travel_route.front() == system->ID()) {
                 m_travel_route.erase(m_travel_route.begin());
-            }else{
+            } else {
                 Logger().errorStream() << "Encountered a system not on our route.";
                 // TODO: Notify the suer with a sitrep?
             }
@@ -1055,7 +1057,6 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
 }
 
 void Fleet::CalculateRouteTo(int target_system_id) {
-
     std::list<int> route;
 
     //Logger().debugStream() << "Fleet::CalculateRoute";
@@ -1063,7 +1064,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         SetRoute(route);
         return; 
     }
-        
+
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
         // if we haven't actually left yet, we have to move from whichever system we are at now
 
@@ -1177,14 +1178,18 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 }
 
 bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
-    /** If a newly arrived fleet joins a non-blockaded fleet of the same empire (perhaps should include allies?)
-     * already at the system, the newly arrived fleet will not be blockaded.  Additionally, 
-     * since fleets are blockade-checked at movement phase and also postcombat, the following tests mean
-     * that post-compbat, this fleet will be blockaded iff it was blockaded pre-combat AND there are armed 
-     * aggressive enemies surviving in system post-combat which can detect this fleet.  Fleets arriving at the
-     * same time do not blockade each other. Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) 
-     * is used as a proxy for order of arrival -- if an enemy has unrestricted l*ane access and you don't, 
-     * they must have arrived before you, or be in cahoots with someone who did. */
+    /** If a newly arrived fleet joins a non-blockaded fleet of the same empire
+      * (perhaps should include allies?) already at the system, the newly
+      * arrived fleet will not be blockaded.  Additionally, since fleets are
+      * blockade-checked at movement phase and also postcombat, the following
+      * tests mean that post-compbat, this fleet will be blockaded iff it was
+      * blockaded pre-combat AND there are armed aggressive enemies surviving in
+      * system post-combat which can detect this fleet.  Fleets arriving at the
+      * same time do not blockade each other. Unrestricted lane access (i.e,
+      * (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
+      * order of arrival -- if an enemy has unrestricted l*ane access and you
+      * don't, they must have arrived before you, or be in cahoots with someone
+      * who did. */
 
     if (m_arrival_starlane == start_system_id) {
         //Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
@@ -1192,16 +1197,16 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
     bool not_yet_in_system = SystemID() != start_system_id;
 
-    // find which empires have blockading aggressive armed ships in system; fleets that just arrived do not 
-    // blockade by themselves, but may reinforce a preexisting blockade, and may possibly contribute to detection
+    // find which empires have blockading aggressive armed ships in system;
+    // fleets that just arrived do not blockade by themselves, but may
+    // reinforce a preexisting blockade, and may possibly contribute to detection
     TemporaryPtr<System> current_system = GetSystem(start_system_id);
     if (!current_system) {
         Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;
     }
 
-    EmpireManager& manager = Empires();
-    const Empire* empire = manager.Lookup(this->Owner());
+    const Empire* empire = Empires().Lookup(this->Owner());
     if (empire) {  
         std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
         if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
@@ -1259,7 +1264,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
         bool can_see;
         if (!fleet->Unowned()) {
-            can_see = (manager.Lookup(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
+            can_see = (Empires().Lookup(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
         } else {
             can_see = (monsterDetection >= lowestShipStealth);
         }
