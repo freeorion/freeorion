@@ -37,16 +37,16 @@ def create_universe():
 
     # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
-    new_size = adjust_universe_size(gsd.size, total_players)
-    if new_size > gsd.size:
-        # gsd.size = new_size
+    size = adjust_universe_size(gsd.size, total_players)
+    if size > gsd.size:
+        # gsd.size = size
         print "Too few systems for the requested number of players, number of systems adjusted accordingly"
-    print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
+    print "Creating universe with %d systems for %d players" % (size, total_players)
 
     # calculate star system positions
-    system_positions = galaxy.calc_star_system_positions(gsd.shape, gsd.size)
-    # gsd.size = len(system_positions)
-    print gsd.shape, "Star system positions calculated, final number of systems:", gsd.size
+    system_positions = galaxy.calc_star_system_positions(gsd.shape, size)
+    size = len(system_positions)
+    print gsd.shape, "Star system positions calculated, final number of systems:", size
 
     # generate and populate systems
     systems = starsystems.generate_systems(system_positions, gsd)
