@@ -1,6 +1,8 @@
 #include "PythonUniverseGenerator.h"
 
+#include "Condition.h"
 #include "Species.h"
+#include "Special.h"
 #include "System.h"
 #include "Planet.h"
 #include "Building.h"
@@ -96,51 +98,42 @@ namespace {
     double  InvalidPosition()
     { return UniverseObject::INVALID_POSITION; }
 
-    // Universe tables
-    const std::vector<int>&                 g_base_star_type_dist                   = UniverseDataTables()["BaseStarTypeDist"][0];
-    const std::vector<std::vector<int> >&   g_universe_age_mod_to_star_type_dist    = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
-    const std::vector<std::vector<int> >&   g_density_mod_to_planet_size_dist       = UniverseDataTables()["DensityModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_size_dist     = UniverseDataTables()["StarTypeModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >&   g_galaxy_shape_mod_to_planet_size_dist  = UniverseDataTables()["GalaxyShapeModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_size_dist         = UniverseDataTables()["OrbitModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >&   g_planet_size_mod_to_planet_type_dist   = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >&   g_orbit_mod_to_planet_type_dist         = UniverseDataTables()["OrbitModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >&   g_star_type_mod_to_planet_type_dist     = UniverseDataTables()["StarTypeModToPlanetTypeDist"];
-    const std::vector<int>&                 g_native_frequency                      = UniverseDataTables()["NativeFrequency"][0];
-
     // Functions exposed to Python to access the universe tables
     int BaseStarTypeDist(StarType star_type)
-    { return g_base_star_type_dist[star_type]; }
+    { return UniverseDataTables()["BaseStarTypeDist"][0][star_type]; }
 
     int UniverseAgeModToStarTypeDist(GalaxySetupOption age, StarType star_type)
-    { return g_universe_age_mod_to_star_type_dist[age][star_type]; }
+    { return UniverseDataTables()["UniverseAgeModToStarTypeDist"][age][star_type]; }
 
     int DensityModToPlanetSizeDist(GalaxySetupOption density, PlanetSize size)
-    { return g_density_mod_to_planet_size_dist[density][size]; }
+    { return UniverseDataTables()["DensityModToPlanetSizeDist"][density][size]; }
 
     int StarTypeModToPlanetSizeDist(StarType star_type, PlanetSize size)
-    { return g_star_type_mod_to_planet_size_dist[star_type][size]; }
+    { return UniverseDataTables()["StarTypeModToPlanetSizeDist"][star_type][size]; }
 
     int GalaxyShapeModToPlanetSizeDist(Shape shape, PlanetSize size)
-    { return g_galaxy_shape_mod_to_planet_size_dist[shape][size]; }
+    { return UniverseDataTables()["GalaxyShapeModToPlanetSizeDist"][shape][size]; }
 
     int OrbitModToPlanetSizeDist(int orbit, PlanetSize size)
-    { return g_orbit_mod_to_planet_size_dist[orbit][size]; }
+    { return UniverseDataTables()["OrbitModToPlanetSizeDist"][orbit][size]; }
 
     int PlanetSizeModToPlanetTypeDist(PlanetSize size, PlanetType planet_type)
-    { return g_planet_size_mod_to_planet_type_dist[size][planet_type]; }
+    { return UniverseDataTables()["PlanetSizeModToPlanetTypeDist"][size][planet_type]; }
 
     int OrbitModToPlanetTypeDist(int orbit, PlanetType planet_type)
-    { return g_orbit_mod_to_planet_type_dist[orbit][planet_type]; }
+    { return UniverseDataTables()["OrbitModToPlanetTypeDist"][orbit][planet_type]; }
 
     int StarTypeModToPlanetTypeDist(StarType star_type, PlanetType planet_type)
-    { return g_star_type_mod_to_planet_type_dist[star_type][planet_type]; }
-
-    int NativeFrequency(GalaxySetupOption freq)
-    { return g_native_frequency[freq]; }
+    { return UniverseDataTables()["StarTypeModToPlanetTypeDist"][star_type][planet_type]; }
 
     int MaxStarlaneLength()
     { return UniverseDataTables()["MaxStarlaneLength"][0][0]; }
+
+    int NativeFrequency(GalaxySetupOption freq)
+    { return UniverseDataTables()["NativeFrequency"][0][freq]; }
+
+    int SpecialsFrequency(GalaxySetupOption freq)
+    { return UniverseDataTables()["SpecialsFrequency"][0][freq]; }
 
     // Wrappers for Species / SpeciesManager class (member) functions
     object SpeciesPreferredFocus(const std::string& species_name) {
@@ -206,6 +199,64 @@ namespace {
         return species_list;
     }
 
+    // Wrappers for Specials / SpecialManager functions
+    double SpecialSpawnRate(const std::string special_name) {
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpecialSpawnRate: couldn't get special " << special_name;
+            return 0.0;
+        }
+        return special->SpawnRate();
+    }
+
+    int SpecialSpawnLimit(const std::string special_name) {
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpecialSpawnLimit: couldn't get special " << special_name;
+            return 0;
+        }
+        return special->SpawnLimit();
+    }
+
+    bool SpecialLocation(const std::string special_name, int object_id) {
+        // get special and check if it exists
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpecialLocation: couldn't get special " << special_name;
+            return false;
+        }
+
+        // get the universe object to test and check if it exists
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpecialLocation: Couldn't get object with ID " << object_id;
+            return false;
+        }
+
+        // get special location condition and evaluate it with the specified universe object
+        const Condition::ConditionBase* location_test = special->Location();
+        return (location_test && location_test->Eval(obj));
+    }
+    
+    bool SpecialHasLocation(const std::string special_name) {
+        // get special and check if it exists
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpecialHasLocation: couldn't get special " << special_name;
+            return false;
+        }
+        return special->Location();
+    }
+    
+    list GetAllSpecials() {
+        list py_specials;
+        const std::vector<std::string> special_names = SpecialNames();
+        for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it) {
+            py_specials.append(object(*it));
+        }
+        return py_specials;
+    }
+
     // Wrappers for Empire class member functions
     void EmpireSetName(int empire_id, const std::string& name) {
         Empire* empire = Empires().Lookup(empire_id);
@@ -236,7 +287,6 @@ namespace {
     }
 
     void EmpireAddShipDesign(int empire_id, const std::string& design_name) {
-
         Universe& universe = GetUniverse();
 
         Empire* empire = Empires().Lookup(empire_id);
@@ -440,6 +490,36 @@ namespace {
         return obj->Owner();
     }
 
+    void AddSpecial(int object_id, const std::string special_name) {
+        // get the universe object and check if it exists
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::AddSpecial: Couldn't get object with ID " << object_id;
+            return;
+        }
+        // check if the special exists
+        if (!GetSpecial(special_name)) {
+            Logger().errorStream() << "PythonUniverseGenerator::AddSpecial: couldn't get special " << special_name;
+            return;
+        }
+        obj->AddSpecial(special_name);
+    }
+
+    void RemoveSpecial(int object_id, const std::string special_name) {
+        // get the universe object and check if it exists
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        if (!obj) {
+            Logger().errorStream() << "PythonUniverseGenerator::RemoveSpecial: Couldn't get object with ID " << object_id;
+            return;
+        }
+        // check if the special exists
+        if (!GetSpecial(special_name)) {
+            Logger().errorStream() << "PythonUniverseGenerator::RemoveSpecial: couldn't get special " << special_name;
+            return;
+        }
+        obj->RemoveSpecial(special_name);
+    }
+
     // Wrappers for Universe class
     double GetUniverseWidth()
     { return GetUniverse().UniverseWidth(); }
@@ -452,6 +532,15 @@ namespace {
 
     int JumpDistance(int system1_id, int system2_id)
     { return GetUniverse().JumpDistance(system1_id, system2_id); }
+
+    list GetAllObjects() {
+        list py_all_objects;
+        std::vector<int> all_objects = Objects().FindObjectIDs();
+        for (std::vector<int>::iterator it = all_objects.begin(); it != all_objects.end(); ++it) {
+            py_all_objects.append(*it);
+        }
+        return py_all_objects;
+    }
 
     int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
         // Check if star type is set to valid value
@@ -958,8 +1047,9 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("planet_size_mod_to_planet_type_dist",  PlanetSizeModToPlanetTypeDist);
     def("orbit_mod_to_planet_type_dist",        OrbitModToPlanetTypeDist);
     def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
-    def("native_frequency",                     NativeFrequency);
     def("max_starlane_length",                  MaxStarlaneLength);
+    def("native_frequency",                     NativeFrequency);
+    def("specials_frequency",                   SpecialsFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
     def("spiral_galaxy_calc_positions",         SpiralGalaxyCalcPositions);
@@ -976,6 +1066,12 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("get_all_species",                      GetAllSpecies);
     def("get_playable_species",                 GetPlayableSpecies);
     def("get_native_species",                   GetNativeSpecies);
+
+    def("special_spawn_rate",                   SpecialSpawnRate);
+    def("special_spawn_limit",                  SpecialSpawnLimit);
+    def("special_location",                     SpecialLocation);
+    def("special_has_location",                 SpecialHasLocation);
+    def("get_all_specials",                     GetAllSpecials);
 
     def("empire_set_name",                      EmpireSetName);
     def("empire_set_homeworld",                 EmpireSetHomeworld);
@@ -995,11 +1091,14 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("get_y",                                GetY);
     def("get_pos",                              GetPos);
     def("get_owner",                            GetOwner);
+    def("add_special",                          AddSpecial);
+    def("remove_special",                       RemoveSpecial);
 
     def("get_universe_width",                   GetUniverseWidth);
     def("set_universe_width",                   SetUniverseWidth);
     def("linear_distance",                      LinearDistance);
     def("jump_distance",                        JumpDistance);
+    def("get_all_objects",                      GetAllObjects);
     def("create_system",                        CreateSystem);
     def("create_planet",                        CreatePlanet);
     def("create_building",                      CreateBuilding);
@@ -1221,8 +1320,8 @@ void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) 
     // GenerateNatives(universe, GetGalaxySetupData().m_native_freq);
     Logger().debugStream() << "Generating Space Monsters";
     GenerateSpaceMonsters(universe, GetGalaxySetupData().m_monster_freq);
-    Logger().debugStream() << "Adding Starting Specials";
-    AddStartingSpecials(universe, GetGalaxySetupData().m_specials_freq);
+    // Logger().debugStream() << "Adding Starting Specials";
+    // AddStartingSpecials(universe, GetGalaxySetupData().m_specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 

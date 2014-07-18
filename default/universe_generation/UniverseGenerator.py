@@ -7,6 +7,7 @@ import galaxy
 import starsystems
 import empires
 import natives
+import specials
 import statistics
 
 
@@ -38,13 +39,13 @@ def create_universe():
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
     new_size = adjust_universe_size(gsd.size, total_players)
     if new_size > gsd.size:
-        gsd.size = new_size
+        # gsd.size = new_size
         print "Too few systems for the requested number of players, number of systems adjusted accordingly"
     print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
 
     # calculate star system positions
     system_positions = galaxy.calc_star_system_positions(gsd.shape, gsd.size)
-    gsd.size = len(system_positions)
+    # gsd.size = len(system_positions)
     print gsd.shape, "Star system positions calculated, final number of systems:", gsd.size
 
     # generate and populate systems
@@ -80,6 +81,9 @@ def create_universe():
     print "Generating Natives"
     natives.generate_natives(gsd.nativeFrequency, systems, home_systems)
 
+    print "Distributing starting specials"
+    specials.distribute_specials(gsd.specialsFrequency)
+
     # finally, write some statistics to the log file
     print
     print "##############################"
@@ -91,5 +95,7 @@ def create_universe():
     statistics.log_planet_type_summary(systems)
     print
     statistics.log_species_summary()
+    print
+    statistics.log_specials_summary()
     print
     print "Python Universe Generator completed"

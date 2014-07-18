@@ -3,6 +3,7 @@ import planets
 
 
 species_summary = {species: 0 for species in fo.get_native_species()}
+specials_summary = {specials: 0 for specials in fo.get_all_specials()}
 
 
 def log_planet_count_dist(sys_list):
@@ -34,3 +35,9 @@ def log_species_summary():
     for species in species_summary:
         if species_summary[species] > 0:
             print "... settled natives", species, "with", species_summary[species], "planets"
+
+def log_specials_summary():
+    print "Special Placement Summary"
+    for special in specials_summary:
+        if specials_summary[special] > 0:
+            print "... placed special", special, specials_summary[special], "times"
