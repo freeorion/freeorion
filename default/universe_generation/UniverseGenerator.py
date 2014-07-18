@@ -58,7 +58,7 @@ def create_universe():
 
     print "Generate list of home systems..."
     home_systems = empires.generate_home_system_list(total_players, systems)
-    print "...systems choosen:", home_systems
+    print "...systems chosen:", home_systems
 
     # set up empires for each player
     home_systems_copy = list(home_systems)  # use a copy of the home system list, as we need this list unaltered later
