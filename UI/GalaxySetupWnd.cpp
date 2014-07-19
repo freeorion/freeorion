@@ -195,90 +195,6 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_ai_aggression_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_ai_aggression_list->Height()) / 2));
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
-    Init();
-}
-
-namespace {
-    // set of characters from which to generate random seed that excludes some ambiguous letter/number pairs
-    static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-}
-
-void GalaxySetupPanel::RandomClicked() {
-    std::string s;
-    ClockSeed(); // to ensure we don't always get the same sequence of seeds
-    for (int i = 0; i < 8; ++i)
-        s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
-    m_seed_edit->SetText(s);
-    //std::cout << "GalaxySetupPanel::RandomClicked() new seed: " << s << std::endl;
-    SettingChanged_(0);
-}
-
-const std::string& GalaxySetupPanel::GetSeed() const
-{ return m_seed_edit->Text(); }
-
-int GalaxySetupPanel::Systems() const
-{ return m_stars_spin->Value(); }
-
-Shape GalaxySetupPanel::GetShape() const
-{ return Shape(m_galaxy_shapes_list->CurrentItemIndex()); }
-
-GalaxySetupOption GalaxySetupPanel::GetAge() const
-{ return GalaxySetupOption(m_galaxy_ages_list->CurrentItemIndex() + 1); }
-
-GalaxySetupOption GalaxySetupPanel::GetStarlaneFrequency() const
-{ return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1)); }
-
-GalaxySetupOption GalaxySetupPanel::GetPlanetDensity() const
-{ return GalaxySetupOption(m_planet_density_list->CurrentItemIndex() + 1); }
-
-GalaxySetupOption GalaxySetupPanel::GetSpecialsFrequency() const
-{ return GalaxySetupOption(m_specials_freq_list->CurrentItemIndex()); }
-
-GalaxySetupOption GalaxySetupPanel::GetMonsterFrequency() const
-{ return GalaxySetupOption(m_monster_freq_list->CurrentItemIndex()); }
-
-GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
-{ return GalaxySetupOption(m_native_freq_list->CurrentItemIndex()); }
-
-Aggression GalaxySetupPanel::GetAIAggression() const
-{ return Aggression(m_ai_aggression_list->CurrentItemIndex()); }
-
-boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
-{ return m_textures[GetShape()]; }
-
-void GalaxySetupPanel::Disable(bool b/* = true*/) {
-    for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it)
-        static_cast<GG::Control*>(*it)->Disable(b);
-}
-
-void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
-    m_seed_edit->SetText(setup_data.m_seed);
-    m_stars_spin->SetValue(setup_data.m_size);
-    m_galaxy_shapes_list->Select(setup_data.m_shape);
-    ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(setup_data.m_age - 1);
-    m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
-    m_planet_density_list->Select(setup_data.m_planet_density - 1);
-    m_specials_freq_list->Select(setup_data.m_specials_freq);
-    m_monster_freq_list->Select(setup_data.m_monster_freq);
-    m_native_freq_list->Select(setup_data.m_native_freq);
-    m_ai_aggression_list->Select(setup_data.m_ai_aggr);
-}
-
-void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
-    setup_data.m_seed =             GetSeed();
-    setup_data.m_size =             Systems();
-    setup_data.m_shape =            GetShape();
-    setup_data.m_age =              GetAge();
-    setup_data.m_starlane_freq =    GetStarlaneFrequency();
-    setup_data.m_planet_density =   GetPlanetDensity();
-    setup_data.m_specials_freq =    GetSpecialsFrequency();
-    setup_data.m_monster_freq =     GetMonsterFrequency();
-    setup_data.m_native_freq =      GetNativeFrequency();
-    setup_data.m_ai_aggr =          GetAIAggression();
-}
-
-void GalaxySetupPanel::Init() {
     AttachChild(m_seed_edit);
     AttachChild(m_random);
     AttachChild(m_stars_spin);
@@ -378,6 +294,86 @@ void GalaxySetupPanel::Init() {
     m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression"));
 
     SettingsChangedSignal();
+}
+
+namespace {
+    // set of characters from which to generate random seed that excludes some ambiguous letter/number pairs
+    static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+}
+
+void GalaxySetupPanel::RandomClicked() {
+    std::string s;
+    ClockSeed(); // to ensure we don't always get the same sequence of seeds
+    for (int i = 0; i < 8; ++i)
+        s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
+    m_seed_edit->SetText(s);
+    //std::cout << "GalaxySetupPanel::RandomClicked() new seed: " << s << std::endl;
+    SettingChanged_(0);
+}
+
+const std::string& GalaxySetupPanel::GetSeed() const
+{ return m_seed_edit->Text(); }
+
+int GalaxySetupPanel::Systems() const
+{ return m_stars_spin->Value(); }
+
+Shape GalaxySetupPanel::GetShape() const
+{ return Shape(m_galaxy_shapes_list->CurrentItemIndex()); }
+
+GalaxySetupOption GalaxySetupPanel::GetAge() const
+{ return GalaxySetupOption(m_galaxy_ages_list->CurrentItemIndex() + 1); }
+
+GalaxySetupOption GalaxySetupPanel::GetStarlaneFrequency() const
+{ return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1)); }
+
+GalaxySetupOption GalaxySetupPanel::GetPlanetDensity() const
+{ return GalaxySetupOption(m_planet_density_list->CurrentItemIndex() + 1); }
+
+GalaxySetupOption GalaxySetupPanel::GetSpecialsFrequency() const
+{ return GalaxySetupOption(m_specials_freq_list->CurrentItemIndex()); }
+
+GalaxySetupOption GalaxySetupPanel::GetMonsterFrequency() const
+{ return GalaxySetupOption(m_monster_freq_list->CurrentItemIndex()); }
+
+GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
+{ return GalaxySetupOption(m_native_freq_list->CurrentItemIndex()); }
+
+Aggression GalaxySetupPanel::GetAIAggression() const
+{ return Aggression(m_ai_aggression_list->CurrentItemIndex()); }
+
+boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
+{ return m_textures[GetShape()]; }
+
+void GalaxySetupPanel::Disable(bool b/* = true*/) {
+    for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it)
+        static_cast<GG::Control*>(*it)->Disable(b);
+}
+
+void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
+    m_seed_edit->SetText(setup_data.m_seed);
+    m_stars_spin->SetValue(setup_data.m_size);
+    m_galaxy_shapes_list->Select(setup_data.m_shape);
+    ShapeChanged(m_galaxy_shapes_list->CurrentItem());
+    m_galaxy_ages_list->Select(setup_data.m_age - 1);
+    m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(setup_data.m_planet_density - 1);
+    m_specials_freq_list->Select(setup_data.m_specials_freq);
+    m_monster_freq_list->Select(setup_data.m_monster_freq);
+    m_native_freq_list->Select(setup_data.m_native_freq);
+    m_ai_aggression_list->Select(setup_data.m_ai_aggr);
+}
+
+void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
+    setup_data.m_seed =             GetSeed();
+    setup_data.m_size =             Systems();
+    setup_data.m_shape =            GetShape();
+    setup_data.m_age =              GetAge();
+    setup_data.m_starlane_freq =    GetStarlaneFrequency();
+    setup_data.m_planet_density =   GetPlanetDensity();
+    setup_data.m_specials_freq =    GetSpecialsFrequency();
+    setup_data.m_monster_freq =     GetMonsterFrequency();
+    setup_data.m_native_freq =      GetNativeFrequency();
+    setup_data.m_ai_aggr =          GetAIAggression();
 }
 
 void GalaxySetupPanel::SettingChanged_(int) {
@@ -503,7 +499,28 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_ok = new CUIButton(UserString("OK"), GG::X(10), ypos, GG::X(75));
     m_cancel = new CUIButton(UserString("CANCEL"), 10 + m_ok->Size().x + 15, ypos, GG::X(75));
 
-    Init();
+    AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_player_name_label);
+    AttachChild(m_player_name_edit);
+    AttachChild(m_empire_name_label);
+    AttachChild(m_empire_name_edit);
+    AttachChild(m_empire_color_label);
+    AttachChild(m_empire_color_selector);
+    AttachChild(m_starting_species_label);
+    AttachChild(m_starting_secies_selector);
+    AttachChild(m_number_ais_label);
+    AttachChild(m_number_ais_spin);
+    AttachChild(m_preview_image);
+    AttachChild(m_ok);
+    AttachChild(m_cancel);
+
+    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,   &GalaxySetupWnd::PreviewImageChanged, this);
+    GG::Connect(m_player_name_edit->EditedSignal,           &GalaxySetupWnd::PlayerNameChanged, this);
+    GG::Connect(m_empire_name_edit->EditedSignal,           &GalaxySetupWnd::EmpireNameChanged, this);
+    GG::Connect(m_ok->LeftClickedSignal,                    &GalaxySetupWnd::OkClicked, this);
+    GG::Connect(m_cancel->LeftClickedSignal,                &GalaxySetupWnd::CancelClicked, this);
+
+    PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
 
 const std::string& GalaxySetupWnd::EmpireName() const
@@ -532,31 +549,6 @@ void GalaxySetupWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::
         OkClicked();
     else if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
         CancelClicked();
-}
-
-void GalaxySetupWnd::Init() {
-    AttachChild(m_galaxy_setup_panel);
-    AttachChild(m_player_name_label);
-    AttachChild(m_player_name_edit);
-    AttachChild(m_empire_name_label);
-    AttachChild(m_empire_name_edit);
-    AttachChild(m_empire_color_label);
-    AttachChild(m_empire_color_selector);
-    AttachChild(m_starting_species_label);
-    AttachChild(m_starting_secies_selector);
-    AttachChild(m_number_ais_label);
-    AttachChild(m_number_ais_spin);
-    AttachChild(m_preview_image);
-    AttachChild(m_ok);
-    AttachChild(m_cancel);
-
-    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,   &GalaxySetupWnd::PreviewImageChanged, this);
-    GG::Connect(m_player_name_edit->EditedSignal,           &GalaxySetupWnd::PlayerNameChanged, this);
-    GG::Connect(m_empire_name_edit->EditedSignal,           &GalaxySetupWnd::EmpireNameChanged, this);
-    GG::Connect(m_ok->LeftClickedSignal,                    &GalaxySetupWnd::OkClicked, this);
-    GG::Connect(m_cancel->LeftClickedSignal,                &GalaxySetupWnd::CancelClicked, this);
-
-    PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
 
 void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
