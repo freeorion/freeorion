@@ -49,6 +49,7 @@ public:
     //!@}
 
     /** \name Mutators*/ //!@{
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void Render() {}
     virtual void Disable(bool b = true);
 
@@ -57,22 +58,33 @@ public:
     //!@}
 
 private:
+    void DoLayout(void);
     void RandomClicked();
     void SettingChanged_(int);
     void SettingChanged(GG::ListBox::iterator);
     void SeedChanged(const std::string& newseed);
     void ShapeChanged(GG::ListBox::iterator it);
 
+    GG::TextControl*    m_seed_label;
     CUIEdit*            m_seed_edit;            //!< The seed used in the generation of the galaxy
     CUIButton*          m_random;               //!< Random seed button
+    GG::TextControl*    m_stars_label;
     CUISpin<int>*       m_stars_spin;           //!< The number of stars to include in the galaxy
+    GG::TextControl*    m_galaxy_shapes_label;
     CUIDropDownList*    m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
+    GG::TextControl*    m_galaxy_ages_label;
     CUIDropDownList*    m_galaxy_ages_list;     //!< The possible ages for the galaxy
+    GG::TextControl*    m_starlane_freq_label;
     CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
+    GG::TextControl*    m_planet_density_label;
     CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
+    GG::TextControl*    m_specials_freq_label;
     CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
+    GG::TextControl*    m_monster_freq_label;
     CUIDropDownList*    m_monster_freq_list;    //!< The frequency of monsters
+    GG::TextControl*    m_native_freq_label;
     CUIDropDownList*    m_native_freq_list;     //!< The frequency of natives
+    GG::TextControl*    m_ai_aggression_label;
     CUIDropDownList*    m_ai_aggression_list;   //!< The max aggression choices for AI opponents
     
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
@@ -101,9 +113,11 @@ public:
     /** \name Mutators*/ //!@{
     virtual void Render();    //!< drawing code
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //!@}
 
 private:
+    void DoLayout(void);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void EmpireNameChanged(const std::string& name);
     void PlayerNameChanged(const std::string& name);
