@@ -369,7 +369,11 @@ private:
 ////////////////////////////////////////////////////////////
 MapWndPopup::MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
     CUIWnd(t, x, y, w, h, flags)
-{ ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
+{
+    MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (mwnd)
+        mwnd->RegisterPopup(this);
+}
 
 MapWndPopup::~MapWndPopup()
 { ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this); }
@@ -1062,7 +1066,7 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
-
+    // messages and empires windows
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd())
             GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleMessages, this));    // Wnd is manually closed by user
@@ -4074,7 +4078,6 @@ void MapWnd::ReplotProjectedFleetMovement(bool append) {
         }
     }
 }
-
 
 void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
