@@ -31,6 +31,7 @@ public:
     //@}
     
     /** \name Mutators */ //@{
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render();
     virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
@@ -40,7 +41,7 @@ public:
     //@}
 
 private:
-    void            Init();
+    void            DoLayout(void);
     void            NewLoadClicked(std::size_t idx);
     void            GalaxySetupPanelChanged();
     void            SaveGameBrowse();
