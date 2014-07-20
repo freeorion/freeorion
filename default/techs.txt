@@ -1905,7 +1905,7 @@ Tech
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = [
         Item type = ShipHull name = "SH_ROBOTIC"
-        Item type = ShipPart name = "ROBOTIC_INTERFACE_SHIELDS"
+        Item type = ShipPart name = "SH_ROBOTIC_INTERFACE_SHIELDS"
     ]
     graphic = "icons/ship_hulls/robotic_hull_small.png"
 
