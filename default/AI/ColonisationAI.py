@@ -71,7 +71,7 @@ nestValMap = {
               }
 
 
-def ratePilotingTag(tagList):
+def rate_piloting_tag(tagList):
     grade = 2.0
     grades = {'NO':1e-8, 'BAD':0.75, 'GOOD':4.0,  'GREAT':6.0,  'ULTIMATE':12.0 }
     for tag in [tag1 for tag1 in tagList if (("AI_TAG" in tag1) and ("WEAPONS" in tag1)) ]:
@@ -81,7 +81,7 @@ def ratePilotingTag(tagList):
     return grade  # TODO check this code, it iterates by all possible values and return last. May be we need return on first match?
 
 
-def ratePlanetaryPiloting(pid):
+def rate_planetary_piloting(pid):
     universe = fo.getUniverse()
     planet = universe.getPlanet(pid)
     if (not planet) or (not planet.speciesName):
@@ -89,7 +89,7 @@ def ratePlanetaryPiloting(pid):
     thisSpec = fo.getSpecies(planet.speciesName)
     if not thisSpec:
         return 0.0
-    return ratePilotingTag(thisSpec.tags)
+    return rate_piloting_tag(thisSpec.tags)
 
 
 def check_supply():
@@ -98,7 +98,7 @@ def check_supply():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitalID = PlanetUtilsAI.getCapital() # don't just use empire.capitalID since might be -1
+    capitalID = PlanetUtilsAI.get_capital() # don't just use empire.capitalID since might be -1
     
     homeworld=None
     if capitalID:
@@ -113,7 +113,7 @@ def check_supply():
         homeSystemID = -1
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-    fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
+    fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
     print
     print "    fleetSupplyableSystemIDs: " + str(list(fleetSupplyableSystemIDs))
     print "    fleetSupplyablePlanetIDs: " + str(fleetSupplyablePlanetIDs)
@@ -160,10 +160,10 @@ def check_supply():
                 annexableRing3.add(nID)
         annexableRing3.difference_update(annexableSystemIDs)
         annexableSystemIDs.update(annexableRing3)
-    annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
-    print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
-    print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
-    print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
+    annexablePlanetIDs.update( PlanetUtilsAI.get_planets_in__systems_ids(annexableSystemIDs))
+    print "First Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(annexableRing1)
+    print "Second Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(annexableRing2)
+    print "Third Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(annexableRing3)
     # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
     print
     new_supply_map = empire.supplyProjections(-3, False)
@@ -171,13 +171,13 @@ def check_supply():
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     for el in new_supply_map:
-        #print PlanetUtilsAI.sysNameIDs([el.key()]), ' -- ', el.data()
+        #print PlanetUtilsAI.sys_name_ids([el.key()]), ' -- ', el.data()
         systems_by_supply_tier.setdefault(min(0, el.data()), []).append(el.key())
         system_supply[el.key()] = el.data()
-    print "New Supply connected systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(0, []))
-    print "New First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-1, []))
-    print "New Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-2, []))
-    print "New Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(systems_by_supply_tier.get(-3, []))
+    print "New Supply connected systems: ",  PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, []))
+    print "New First Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, []))
+    print "New Second Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, []))
+    print "New Third Ring of annexable systems: ",  PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, []))
     # print "new supply calc took ", new_time-supp_timing[0][-1]
     annexableSystemIDs.clear() #TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexableRing1.clear()
@@ -204,21 +204,21 @@ def survey_universe():
     empire_id = empire.empireID
 
     # get outpost and colonization planets
-    exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    unExSysIDs = list(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+    exploredSystemIDs = foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
+    unExSysIDs = list(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     unExSystems = map(universe.getSystem,  unExSysIDs)
     print "Unexplored Systems: %s " % [(sysID,  (sys and sys.name) or "name unknown") for sysID,  sys in zip( unExSysIDs,  unExSystems)]
     print "Explored SystemIDs: " + str(list(exploredSystemIDs))
 
-    exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
+    exploredPlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(exploredSystemIDs)
     print "Explored PlanetIDs: " + str(exploredPlanetIDs)
     print
 
     #visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
-    #visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
+    #visiblePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(visibleSystemIDs)
     #print "VisiblePlanets: %s "%[ (pid,  (universe.getPlanet(pid) and  universe.getPlanet(pid).name) or "unknown") for pid in  visiblePlanetIDs]
     #accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
-    #acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
+    #acessiblePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(accessibleSystemIDs)
 
     #set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
@@ -230,14 +230,14 @@ def survey_universe():
         empire_status.update( {'industrialists':0,  'researchers':0} )
         AIstate.empireStars.clear()
         
-        #empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+        #empireOwnedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
         #print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
-        ##allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
-        #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(annexablePlanetIDs) #
+        ##allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
+        #allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(annexablePlanetIDs) #
         #print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empireOwnedPlanetIDs))
         ##unowned_empty_planet_ids = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
         #unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-        #print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planetNameIDs(unowned_empty_planet_ids))
+        #print "UnOwned annexable PlanetIDs:             ",  ",  ".join(PlanetUtilsAI.planet_name_ids(unowned_empty_planet_ids))
         empireOwnedPlanetIDs = []
         empirePopCtrs = set()
         empireOutpostIDs.clear()
@@ -305,7 +305,7 @@ def survey_universe():
                         empireMetabolisms[metab] = empireMetabolisms.get(metab,  0.0 ) + planet.size
                     pilotVal = 0.0
                     if thisSpec.canProduceShips:
-                        pilotVal = ratePilotingTag(list(thisSpec.tags) )
+                        pilotVal = rate_piloting_tag(list(thisSpec.tags) )
                         if spec_name == "SP_ACIREMA":
                             pilotVal += 1
                         pilotRatings[pid] = pilotVal
@@ -388,7 +388,7 @@ def survey_universe():
     return univ_stats
 
 
-def getColonyFleets():
+def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
     global  curBestMilShipRating
     colonization_timer.start("Getting best milship rating")
@@ -396,14 +396,14 @@ def getColonyFleets():
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
     colonization_timer.start('Getting avail colony fleets')
 
-    allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
-    AIstate.colonyFleetIDs[:] = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allColonyFleetIDs)
+    allColonyFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    AIstate.colonyFleetIDs[:] = FleetUtilsAI.extract_fleet_ids_without_mission_types(allColonyFleetIDs)
 
     # get suppliable systems and planets
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitalID = PlanetUtilsAI.getCapital()
+    capitalID = PlanetUtilsAI.get_capital()
     #capitalID = empire.capitalID
     
     homeworld=None
@@ -428,27 +428,27 @@ def getColonyFleets():
     colonization_timer.start('Identify Existing colony/outpost targets')
 
     # export colony targeted systems for other AI modules
-    colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
-    allColonyTargetedSystemIDs = PlanetUtilsAI.getSystems(colonyTargetedPlanetIDs)
+    colonyTargetedPlanetIDs = get_colony_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
+    allColonyTargetedSystemIDs = PlanetUtilsAI.get_systems(colonyTargetedPlanetIDs)
     AIstate.colonyTargetedSystemIDs = allColonyTargetedSystemIDs
     print
     print "Colony Targeted SystemIDs:         " + str(AIstate.colonyTargetedSystemIDs)
     print "Colony Targeted PlanetIDs:         " + str(colonyTargetedPlanetIDs)
 
-    colonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    colonyFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     if not colonyFleetIDs:
         print "Available Colony Fleets:             0"
     else:
-        print "Colony FleetIDs:                   " + str(FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
+        print "Colony FleetIDs:                   " + str(FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION))
 
-    numColonyFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyFleetIDs))
+    numColonyFleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colonyFleetIDs))
     print "Colony Fleets Without Missions:      " + str(numColonyFleets)
 
 
 
-    outpostTargetedPlanetIDs = getOutpostTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, empireID)
-    outpostTargetedPlanetIDs.extend( getOutpostTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, empireID))
-    allOutpostTargetedSystemIDs = PlanetUtilsAI.getSystems(outpostTargetedPlanetIDs)
+    outpostTargetedPlanetIDs = get_outpost_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, empireID)
+    outpostTargetedPlanetIDs.extend( get_outpost_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, empireID))
+    allOutpostTargetedSystemIDs = PlanetUtilsAI.get_systems(outpostTargetedPlanetIDs)
 
     # export outpost targeted systems for other AI modules
     AIstate.outpostTargetedSystemIDs = allOutpostTargetedSystemIDs
@@ -456,20 +456,20 @@ def getColonyFleets():
     print "Outpost Targeted SystemIDs:        " + str(AIstate.outpostTargetedSystemIDs)
     print "Outpost Targeted PlanetIDs:        " + str(outpostTargetedPlanetIDs)
 
-    outpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    outpostFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
     if not outpostFleetIDs:
         print "Available Outpost Fleets:            0"
     else:
-        print "Outpost FleetIDs:                  " + str(FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST))
+        print "Outpost FleetIDs:                  " + str(FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST))
 
-    numOutpostFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(outpostFleetIDs))
+    numOutpostFleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpostFleetIDs))
     print "Outpost Fleets Without Missions:     " + str(numOutpostFleets)
     colonization_timer.start('Identify colony base targets')
 
     availablePP = dict(  [ (tuple(el.key()),  el.data() ) for el in  empire.planetsWithAvailablePP ])  #keys are sets of ints; data is doubles
     availPP_BySys={}
     for pSet in availablePP:
-        availPP_BySys.update(  [ (sysID, availablePP[pSet]) for sysID in  set(PlanetUtilsAI.getSystems( pSet))] )
+        availPP_BySys.update(  [ (sysID, availablePP[pSet]) for sysID in  set(PlanetUtilsAI.get_systems( pSet))] )
     colonyCost= AIDependencies.colonyPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
     outpostCost= AIDependencies.outpostPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
     productionQueue = empire.productionQueue
@@ -478,10 +478,10 @@ def getColonyFleets():
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-            if foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ] :
+            if foAI.foAIstate.get_ship_role(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST ] :
                 buildPlanet = universe.getPlanet(element.locationID)
                 queued_outpost_bases.append(buildPlanet.systemID)
-            elif foAI.foAIstate.getShipRole(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION ] :
+            elif foAI.foAIstate.get_ship_role(element.designID) in  [ EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION ] :
                 buildPlanet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(buildPlanet.systemID)
 
@@ -523,7 +523,7 @@ def getColonyFleets():
             if  foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1: 
                 continue  #already building for here
             loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
-            this_score = evaluatePlanet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, [])
+            this_score = evaluate_planet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, [])
             planet = universe.getPlanet(pid)
             if this_score == 0:
                 #print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc,  this_score)
@@ -534,11 +534,11 @@ def getColonyFleets():
                 continue
             bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST,  loc)
             if not bestShip:
-                print "Error: no outpost base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
+                print "Error: no outpost base can be built at ",  PlanetUtilsAI.planet_name_ids([loc])
                 continue
-            #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
+            #print "selecting  ",  PlanetUtilsAI.planet_name_ids([pid]),  " to build Orbital Defenses"
             retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
-            print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planetNameIDs([loc]),  PlanetUtilsAI.planetNameIDs([pid]))
+            print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planet_name_ids([loc]),  PlanetUtilsAI.planet_name_ids([pid]))
             if retval !=0:
                 foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] = loc
                 queued_outpost_bases.append((planet and planet.systemID) or -1)
@@ -549,11 +549,11 @@ def getColonyFleets():
 
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
-    evaluatedColonyPlanets = assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire)
+    evaluatedColonyPlanets = assign_colonisation_values(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluatedOutpostPlanetIDs)))
     colonization_timer.start('Evaluate All Colony Opportunities')
     allColonyOpportunities.clear()
-    allColonyOpportunities.update(assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire,  [], True))
+    allColonyOpportunities.update(assign_colonisation_values(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, None, empire,  [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
     sortedPlanets = evaluatedColonyPlanets.items()
@@ -571,10 +571,10 @@ def getColonyFleets():
     foAI.foAIstate.colonisablePlanetIDs = sortedPlanets
 
     # get outpost fleets
-    allOutpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
+    allOutpostFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    AIstate.outpostFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(allOutpostFleetIDs)
 
-    evaluatedOutpostPlanets = assignColonisationValues(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire)
+    evaluatedOutpostPlanets = assign_colonisation_values(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire)
     colonization_timer.stop()
 
     sortedOutposts = evaluatedOutpostPlanets.items()
@@ -591,11 +591,11 @@ def getColonyFleets():
     foAI.foAIstate.colonisableOutpostIDs = sortedOutposts
     colonization_timer.end()
 
-def getColonyTargetedPlanetIDs(planetIDs, missionType, empireID):
+def get_colony_targeted_planet_ids(planetIDs, missionType, empireID):
     """return list being settled with colony planets"""
 
     universe = fo.getUniverse()
-    colonyAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
+    colonyAIFleetMissions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([missionType])
 
     colonyTargetedPlanets = []
 
@@ -604,17 +604,17 @@ def getColonyTargetedPlanetIDs(planetIDs, missionType, empireID):
         # add planets that are target of a mission
         for colonyAIFleetMission in colonyAIFleetMissions:
             aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, planetID)
-            if colonyAIFleetMission.hasTarget(missionType, aiTarget):
+            if colonyAIFleetMission.has_target(missionType, aiTarget):
                 colonyTargetedPlanets.append(planetID)
 
     return colonyTargetedPlanets
 
 
-def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
+def get_outpost_targeted_planet_ids(planetIDs, missionType, empireID):
     """return list being settled with outposts planets"""
 
     universe = fo.getUniverse()
-    outpostAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
+    outpostAIFleetMissions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([missionType])
 
     outpostTargetedPlanets = []
 
@@ -623,13 +623,13 @@ def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
         # add planets that are target of a mission
         for outpostAIFleetMission in outpostAIFleetMissions:
             aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, planetID)
-            if outpostAIFleetMission.hasTarget(missionType, aiTarget):
+            if outpostAIFleetMission.has_target(missionType, aiTarget):
                 outpostTargetedPlanets.append(planetID)
 
     return outpostTargetedPlanets
 
 
-def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=None,  returnAll=False): #TODO: clean up supplyable versus annexable
+def assign_colonisation_values(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=None,  returnAll=False): #TODO: clean up supplyable versus annexable
     """creates a dictionary that takes planetIDs as key and their colonisation score as value"""
     if detail is None:
         detail = []
@@ -653,7 +653,7 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
         pv = []
         for specName in trySpecies:
             detail = origDetail[:]
-            pv.append( (evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail),  specName,  list(detail)) )
+            pv.append( (evaluate_planet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail),  specName,  list(detail)) )
         allSorted = sorted(pv,  reverse=True)
         best = allSorted[:1]
         if best:
@@ -694,7 +694,7 @@ def project_ind_val(init_pop,  max_pop_size,  init_industry,  max_ind_factor,  f
     return ind_val
 
 
-def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = None):
+def evaluate_planet(planetID, missionType, fleetSupplyablePlanetIDs, specName, empire,  detail = None):
     """returns the colonisation value of a planet"""
     if detail is None:
         detail = []
@@ -703,7 +703,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     species=fo.getSpecies(specName or "") #in case None is passed as specName
     pilotVal = 0
     if species and species.canProduceShips:
-        pilotVal = ratePilotingTag(species.tags)
+        pilotVal = rate_piloting_tag(species.tags)
         if pilotVal > curBestPilotRating:
             pilotVal *= 2
         if pilotVal > 2:
@@ -720,7 +720,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
         backupFactor = min(1.0,  (empire.productionPoints/200.0)**2 )
 
     universe = fo.getUniverse()
-    capitalID = PlanetUtilsAI.getCapital()
+    capitalID = PlanetUtilsAI.get_capital()
     homeworld = universe.getPlanet(capitalID)
     planet = universe.getPlanet(planetID)
     
@@ -1226,15 +1226,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, specName, em
     return retval
 
 
-def assignColonyFleetsToColonise():
+def assign_colony_fleets_to_colonise():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-    fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
+    fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
 
-    allOutpostBaseFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
-    availOutpostBaseFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostBaseFleetIDs)
+    allOutpostBaseFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
+    availOutpostBaseFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(allOutpostBaseFleetIDs)
     for fid in availOutpostBaseFleetIDs:
         fleet = universe.getFleet(fid)
         if not fleet: continue
@@ -1248,24 +1248,24 @@ def assignColonyFleetsToColonise():
 
         targetID=-1
         bestScore=-1
-        for pid,  rating in assignColonisationValues(targets, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire).items():
+        for pid,  rating in assign_colonisation_values(targets, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, None, empire).items():
             if rating[0]>bestScore:
                 bestScore = rating[0]
                 targetID = pid
         if targetID != -1:
             foAI.foAIstate.qualifyingOutpostBaseTargets[targetID][1] = -1 #TODO: should probably delete
             aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, targetID)
-            aiFleetMission = foAI.foAIstate.getAIFleetMission(fid)
-            aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, aiTarget)
+            aiFleetMission = foAI.foAIstate.get_fleet_mission(fid)
+            aiFleetMission.add_target(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, aiTarget)
 
     # assign fleet targets to colonisable planets
-    sendColonyShips(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
 
     # assign fleet targets to colonisable outposts
-    sendColonyShips(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    send_colony_ships(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
 
-def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
+def send_colony_ships(colonyFleetIDs, evaluatedPlanets, missionType):
     """sends a list of colony ships to a list of planet_value_pairs"""
     fleetPool = colonyFleetIDs[:]
     tryAll=False
@@ -1327,14 +1327,14 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
         #print "checking pool %s against target %s  current owner %s  targetSpec %s"%(fleetPool,  thisPlanet.name,  thisPlanet.owner,  thisTarget)
         thisSysID = thisPlanet.systemID
         if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
-            print "Skipping colonization of system %s due to Big Monster,  threat %d"%(PlanetUtilsAI.sysNameIDs([thisSysID]),  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
+            print "Skipping colonization of system %s due to Big Monster,  threat %d"%(PlanetUtilsAI.sys_name_ids([thisSysID]),  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             alreadyTargeted.append( thisPlanetID )
             continue
         thisSpec=thisTarget[1][1]
         foundFleets=[]
         try:
-            thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[],
-                                                         fleetPoolSet = fleetPool,   fleetList=foundFleets,  triedFleets=set([]),  verbose=False)
+            thisFleetList = FleetUtilsAI.get_fleets_for_mission(nships=1,  target_stats={},  min_stats={},  cur_stats={},  species=thisSpec,  systems_to_check=[thisSysID],  systems_checked=[],
+                                                         fleet_pool_set= fleetPool,   fleet_list=foundFleets,  tried_fleets=set([]),  verbose=False)
         except:
             continue
         if not thisFleetList:
@@ -1344,5 +1344,5 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
         alreadyTargeted.append( thisPlanetID )
 
         aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, thisPlanetID)
-        aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
-        aiFleetMission.addAITarget(missionType, aiTarget)
+        aiFleetMission = foAI.foAIstate.get_fleet_mission(fleetID)
+        aiFleetMission.add_target(missionType, aiTarget)

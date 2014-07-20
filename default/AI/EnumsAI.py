@@ -1,4 +1,4 @@
-def checkValidity(value):
+def check_validity(value):
     """checks if value is valid"""
     return value is not None and value >= 0
 
@@ -63,19 +63,19 @@ class AIPriorityType(object):
 AIPriorityNames = AIPriorityType.AIPriorityNames
 
 
-def getAIPriorityResourceTypes():
+def get_priority_resource_types():
     return range(0, 6)
 
 
-def getAIPriorityProductionTypes():
+def get_priority_production_types():
     return range(6, 12)
 
 
-def getAIPriorityResearchTypes():
+def get_priority_research_types():
     return range(12, 19)
 
 
-def getAIPriorityTypes():
+def get_priority_types():
     return range(0, 19)
 
 
@@ -87,7 +87,7 @@ class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_VISIBLE = 3
 
 
-def getAIExplorableSystemTypes():
+def get_explorable_system_types():
     return range(0, 4)
 
 
@@ -111,7 +111,7 @@ class AIFleetMissionType(object):
     FLEET_MISSION_ORBITAL_COLONISATION = 15
     FLEET_MISSION_REPAIR = 16      # though currently, repair will be handled w/o mission, like resupply
 
-    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
+    MissionTypeNames=['explore',  'outpost',  'colonize',  'split_fleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation',  'repair', 'invalid']
 
     def name(self, mtype):
@@ -121,7 +121,7 @@ class AIFleetMissionType(object):
             return "invalidMissionType"
 
 
-def getAIFleetMissionTypes():
+def get_fleet_mission_types():
     return range(0, 17)
 
 
@@ -140,7 +140,7 @@ class AIFleetOrderType(object):
     ORDER_MILITARY = 10
     ORDER_STAGING = 11
     ORDER_REPAIR = 12
-    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "splitFleet",  "mergeFleet",  "outpost",  "colonize",  "attack",  
+    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "split_fleet",  "mergeFleet",  "outpost",  "colonize",  "attack",
                                           "defend",  "invade",  "military",  "staging", "repair", "invalid"]
 
     def name(self, otype):
@@ -150,7 +150,7 @@ class AIFleetOrderType(object):
             return "invalidFleetOrderType"
 
 
-def getAIFleetOrderTypes():
+def get_fleet_order_types():
     return range(0, 13)
 
 
@@ -174,7 +174,7 @@ ORDERS_FOR_MISSION = {
         AIFleetMissionType.FLEET_MISSION_REPAIR: AIFleetOrderType.ORDER_REPAIR}
 
 
-def getFleetOrderTypeForMission(aiFleetMissionType):
+def get_fleet_order_type_for_mission(aiFleetMissionType):
     return ORDERS_FOR_MISSION.get(aiFleetMissionType, AIFleetOrderType.ORDER_INVALID)
 
 
@@ -230,7 +230,7 @@ class AIShipRoleType(object):  #this is also used in determining fleetRoles
             return "invalidRoleType"
 
 
-def getAIShipRolesTypes():
+def get_ship_roles_types():
     return range(0, 9)
 
 
@@ -253,7 +253,7 @@ class AITargetType(object):
             return "invalidTargetType"
 
 
-def getAITargetTypes():
+def get_target_types():
     return range(0, 8)
 
 
@@ -271,7 +271,7 @@ class AIProductionDemandType(object):
     PRODUCTION_DEMAND_BUILDING = 1
 
 
-def getAIProductionDemandTypes():
+def get_production_demand_types():
     return range(0, 2)
 
 
@@ -286,7 +286,7 @@ class AIProductionRequirementType(object):
     PRODUCTION_REQUIREMENT_MINIMUM_SHIPYARDS = 6
 
 
-def getAIProductionRequirementTypes():
+def get_production_requirement_types():
     return range(0, 7)
 
 
@@ -298,7 +298,7 @@ class AIResearchRequirementType(object):
     RESEARCH_REQUIREMENT_RESEARCH_POINTS = 3
 
 
-def getAIResearchRequirementTypes():
+def get_research_requirement_types():
     return range(0, 4)
 
 
@@ -310,7 +310,7 @@ class AIMissionType(object):
     DIPLOMATIC_MISSION = 3
 
 
-def getAIMissionTypes():
+def get_mission_types():
     return range(0, 4)
 
 
@@ -323,7 +323,7 @@ class AIEmpireWarMissionType(object):
     EMPIRE_WAR_MISSION_GET_SYSTEM = 4
 
 
-def getAIEmpireWarMissionTypes():
+def get_empire_war_mission_types():
     return range(0, 5)
 
 
@@ -334,7 +334,7 @@ class AIDemandType(object):
     DEMAND_RESEARCH = 2
 
 
-def getAIDemandTypes():
+def get_demand_types():
     return range(0, 3)
 
 

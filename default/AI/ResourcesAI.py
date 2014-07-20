@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
+from EnumsAI import AIPriorityType, get_priority_resource_types, AIFocusType
 import PlanetUtilsAI
 import random
 import ColonisationAI
@@ -67,25 +67,25 @@ def _fill_data_dicts(planet_ids):
     universe.updateMeterEstimates(planet_ids)
 
 
-def getResourceTargetTotals(empirePlanetIDs):#+
+def get_resource_target_totals(empirePlanetIDs):#+
     pp = sum(x.currentMeterValue(fo.meterType.targetIndustry) for x in planetMap.values())
     rp = sum(x.currentMeterValue(fo.meterType.targetResearch) for x in planetMap.values())
     _fill_data_dicts(empirePlanetIDs)
     return pp, rp
 
 
-def printResourcesPriority():
+def print_resources_priority():
     """calculate top resource priority"""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
     print "Resource Management:"
     print
     print "Resource Priorities:"
     resourcePriorities = {}
-    for priorityType in getAIPriorityResourceTypes():
-        resourcePriorities[priorityType] = foAI.foAIstate.getPriority(priorityType)
+    for priorityType in get_priority_resource_types():
+        resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
 
     sortedPriorities = resourcePriorities.items()
     sortedPriorities.sort(lambda x,y: cmp(x[1], y[1]), reverse=True)
@@ -117,7 +117,7 @@ def printResourcesPriority():
     warnings.clear()
 
 
-def setPlanetResourceFoci(): #+
+def set_planet_resource_foci(): #+
     """set resource focus of planets """
     newFoci = {}
 
@@ -136,14 +136,14 @@ def setPlanetResourceFoci(): #+
     if not (limitAssessments and (abs(currentTurn - lastFociCheck[0]) < 1.5*freq) and (random.random() < 1.0/freq)):
         lastFociCheck[0]=currentTurn
         resource_timer.start("getPlanets")
-        empirePlanetIDs = list( PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID) )
+        empirePlanetIDs = list( PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID) )
         resource_timer.start("Filter")
         resource_timer.start("Priority")
         #TODO: take into acct splintering of resource groups
         #fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-        #fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
-        ppPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
-        rpPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
+        #fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
+        ppPrio = foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
+        rpPrio = foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
         priorityRatio = float(rpPrio)/(ppPrio+0.0001)
         resource_timer.start("Shuffle")
         # not supporting Growth for general planets until also adding code to make sure would actually benefit
@@ -226,8 +226,8 @@ def setPlanetResourceFoci(): #+
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
 
-        #pp, rp = getResourceTargetTotals(empirePlanetIDs,  planetMap)
-        pp, rp = getResourceTargetTotals(planetMap.keys())
+        #pp, rp = get_resource_target_totals(empirePlanetIDs,  planetMap)
+        pp, rp = get_resource_target_totals(planetMap.keys())
         print "\n-----------------------------------------"
         print "Making Planet Focus Change Determinations\n"
 
@@ -358,7 +358,7 @@ def setPlanetResourceFoci(): #+
     print "ResourcesAI Time Requirements:"
 
 
-def generateResourcesOrders():
+def generate_resources_orders():
     """generate resources focus orders"""
 
     ## calculate top resource priority
@@ -369,12 +369,12 @@ def generateResourcesOrders():
 
     #------------------------------
     ##setGeneralPlanetResourceFocus()
-    setPlanetResourceFoci()
+    set_planet_resource_foci()
 
     #-------------------------------
     ##setAsteroidsResourceFocus()
 
     ##setGasGiantsResourceFocus()
 
-    printResourcesPriority()
+    print_resources_priority()
     # print "ResourcesAI Time Requirements:"

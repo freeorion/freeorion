@@ -4,16 +4,16 @@ from EnumsAI import AIMissionType
 
 
 class AIAbstractMission(object):
-    def __init__(self, aiMissionType, aiTargetType, aiTargetID):
-        aiTarget = AITarget(aiTargetType, aiTargetID)
-        self.__aiTarget = aiTarget
-        self.__aiMissionType = aiMissionType
+    def __init__(self, mission_type, target_type, target_id):
+        target = AITarget(target_type, target_id)
+        self.__aiTarget = target
+        self.__aiMissionType = mission_type
 
         self.__aiMissionTypes = {}
-        for __aiMissionType in self.getAnyAIMissionTypes():
+        for __aiMissionType in self.get_any_mission_types():
             self.__aiMissionTypes[__aiMissionType] = []
 
-    def getAITarget(self):
+    def get_target(self):
         """return mission AITarget"""
 
         return self.__aiTarget
@@ -22,85 +22,65 @@ class AIAbstractMission(object):
     def target_id(self):
         """return id"""
 
-        return self.getAITarget().target_id
+        return self.get_target().target_id
 
     @property
     def target_type(self):
         """return mission AITargetType"""
 
-        return self.getAITarget().target_type
+        return self.get_target().target_type
 
-    def getAIMissionType(self):
+    def get_mission_type(self):
         """return AIMissionType"""
 
         return self.__aiMissionType
 
-    def getAnyAIMissionTypes(self):
+    def get_any_mission_types(self):
         """return types of mission"""
 
-        if AIMissionType.FLEET_MISSION == self.getAIMissionType():
-            return EnumsAI.getAIFleetMissionTypes()
-        elif AIMissionType.EMPIRE_WAR_MISSION == self.getAIMissionType():
-            return EnumsAI.getAIEmpireWarMissionTypes()
+        if AIMissionType.FLEET_MISSION == self.get_mission_type():
+            return EnumsAI.get_fleet_mission_types()
+        elif AIMissionType.EMPIRE_WAR_MISSION == self.get_mission_type():
+            return EnumsAI.get_empire_war_mission_types()
 
         return NotImplemented
 
-    def addAITarget(self, aiMissionType, aiTarget):
-        targets = self.getAITargets(aiMissionType)
-        if not targets.__contains__(aiTarget):
-            targets.append(aiTarget)
+    def add_target(self, mission_type, target):
+        targets = self.get_targets(mission_type)
+        if not target in targets:
+            targets.append(target)
 
-    def removeAITarget(self, aiMissionType, aiTarget):
-        targets = self.getAITargets(aiMissionType)
-        if targets.__contains__(aiTarget):
-            result = []
-            for target in targets:
-                if aiTarget.__cmp__(target) != 0:
-                    result.append(target)
-            self.__aiMissionTypes[aiMissionType] = result
+    def remove_target(self, mission_type, target):
+        targets = self.get_targets(mission_type)
+        if target in targets:
+            targets.remove(target)
 
-            del aiTarget
-
-    def clearAITargets(self, aiMissionType):
-        if aiMissionType==-1:
-            aiTargets=[]
-            for aiMissionType in self.getAIMissionTypes():
-                aiTargets.extend( self.getAITargets( aiMissionType  )  )
+    def clear_targets(self, mission_type):
+        if mission_type == -1:
+            targets = []
+            for mission_type in self.get_mission_types():
+                targets.extend(self.get_targets(mission_type))
         else:
-            aiTargets = self.getAITargets(aiMissionType)
-        for aiTarget in aiTargets:
-            self.removeAITarget(aiMissionType, aiTarget)
-
-    def getAITargets(self, aiMissionType):
-        return self.__aiMissionTypes.get(aiMissionType,  [])
-
-    def hasTarget(self, aiMissionType, aiTarget):
-        targets = self.getAITargets(aiMissionType)
+            targets = self.get_targets(mission_type)
         for target in targets:
-            if target.__eq__(aiTarget):
-                return True
-        return False
+            self.remove_target(mission_type, target)
 
-    def getAIMissionTypes(self):
-        result = []
-        for aiMissionType in self.getAnyAIMissionTypes():
-            aiTargets = self.getAITargets(aiMissionType)
-            if len(aiTargets) > 0:
-                result.append(aiMissionType)
+    def get_targets(self, mission_type):
+        return self.__aiMissionTypes.get(mission_type, [])
 
-        return result
+    def has_target(self, mission_type, target):
+        return target in self.get_targets(mission_type)
 
-    def hasAnyAIMissionTypes(self):
-        aiMissionTypes = self.getAIMissionTypes()
-        if len(aiMissionTypes) > 0:
-            return True
-        return False
+    def get_mission_types(self):
+        return [mission_type for mission_type in self.get_any_mission_types() if self.get_targets(mission_type)]
 
-    def hasAnyOfAIMissionTypes(self, wantedAIMissionTypes):
-        aiMissionTypes = self.getAIMissionTypes()
+    def has_any_mission_types(self):
+        return bool(self.get_mission_types())
 
-        for wantedAIMissionType in wantedAIMissionTypes:
-            if wantedAIMissionType in aiMissionTypes:
+    def has_any_of_mission_types(self, wanted_mission_types):
+        mission_types = self.get_mission_types()
+        for wanted_mission_type in wanted_mission_types:
+            if wanted_mission_type in mission_types:
                 return True
         return False
 
@@ -118,7 +98,7 @@ class AIAbstractMission(object):
 
         if other is None:
             return False
-        if self.getAIMissionType() == other.getAIMissionType() and self.target_type == self.target_type:
+        if self.get_mission_type() == other.get_mission_type() and self.target_type == self.target_type:
             return self.__cmp__(other) == 0
 
         print "NOT IMPLEMENTED AIAbstractMission eq\n"

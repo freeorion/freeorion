@@ -28,32 +28,33 @@ def show_only_some(x, pos):
 
 doPlotTypes = ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
 
-def parseFile(fileName, AI =True):
-        print "processing file ",  fileName
+
+def parse_file(file_name, ai=True):
+        print "processing file ",  file_name
         sys.stdout.flush()
-        gotColors=False
-        gotSpecies=False
-        gotName=False
+        got_colors=False
+        got_species=False
+        got_name=False
         data={"PP":[],  "RP":[], "RP_Ratio":[], "ShipCount":[],  "turnsP":[],  "turnPP":[]}
         details={'color':{1, 1, 1, 1},  'name':"",  'species':""}
-        with open(fileName, 'r') as lf:
+        with open(file_name, 'r') as lf:
             while True:
                 line=lf.readline()
                 if not line:
                     break
-                if not gotColors and "EmpireColors:" in line:
+                if not got_colors and "EmpireColors:" in line:
                     colors = line.split("EmpireColors:")[1].split()
                     if len(colors)==4:
-                        gotColors=True
+                        got_colors=True
                         if type(colors[0])==type("0"):
                           details['color'] = tuple(map(lambda x: float(x)/255.0, colors))
                         else:
                           details['color'] = tuple(map(lambda x: float(ord(x[0]))/255.0, colors))
-                if AI and not gotSpecies and "CapitalID:" in line:
-                    gotSpecies = True
+                if ai and not got_species and "CapitalID:" in line:
+                    got_species = True
                     details['species'] = line.split("Species:")[1].strip()
-                if AI and not gotName and "EmpireID:" in line:
-                    gotName=True
+                if ai and not got_name and "EmpireID:" in line:
+                    got_name=True
                     details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
                 if "Current Output (turn" in line:
                     info  = line.split("Current Output (turn")[1]
@@ -83,7 +84,7 @@ if not os.path.exists(dataDir+os.sep+"freeorion.log"):
 elif  A1log and ( A1log[0] in logfiles ) and  (   os.path.getmtime(dataDir+os.sep+"freeorion.log")   <  os.path.getmtime(A1log[0]) -300 ):
     print "freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped"
 else:
-    data,  details = parseFile(dataDir+os.sep+"freeorion.log",  False)
+    data,  details = parse_file(dataDir+os.sep+"freeorion.log",  False)
     if len(data.get('PP', [])) > 0:
         allData[playerName]=data
         empireColors[playerName]=details['color']
@@ -100,7 +101,7 @@ if A1log and A1log[0] in logfiles:
             print "skipping stale logfile ",  path
 for lfile in logfiles:
     try:
-        data,  details = parseFile(lfile,  True)
+        data,  details = parse_file(lfile,  True)
         allData[details['name']]=data
         empireColors[details['name']]=details['color']
         species[details['name']]=details['species']

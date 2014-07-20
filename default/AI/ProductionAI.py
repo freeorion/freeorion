@@ -61,7 +61,7 @@ def curBestMilShipRating():
         if bestDesign is None:
             bestMilRatingsHistory[ fo.currentTurn() ] = (0.00001,  1)
             return 0.00001  #  empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
-        #stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
+        #stats = foAI.foAIstate.get_design_id_stats(bestDesign.id)
         stats = foAI.foAIstate.get_weighted_design_stats(bestDesignID,  ColonisationAI.empireSpeciesByPlanet.get(buildChoices[0],  ''))
         foAI.foAIstate.adjust_stats_vs_enemy(stats)
         cost = bestDesign.productionCost(fo.empireID(),  buildChoices[0])
@@ -81,7 +81,7 @@ def getBestShipInfo(priority,  loc=None):
     """returns designID,  design,  buildLocList"""
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitolID = PlanetUtilsAI.getCapital()
+    capitolID = PlanetUtilsAI.get_capital()
     if loc is None:
         shipyards=set()
         for yardlist in ColonisationAI.empireShipBuilders.values():
@@ -120,7 +120,7 @@ def getBestShipRatings(loc=None,  verbose = False):
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitolID = PlanetUtilsAI.getCapital()
+    capitolID = PlanetUtilsAI.get_capital()
     cur_turn = fo.currentTurn()
     if loc is None:
         planetIDs = ColonisationAI.empireShipyards
@@ -178,7 +178,7 @@ def getBestShipRatings(loc=None,  verbose = False):
                 bestDesign = shipDesign
                 if verbose:
                     print "at planet %s,  new local best design %s with rating %.1f,  costRating %.1f, hull %s  and partslist %s"%(
-                                PlanetUtilsAI.planetNameIDs([pid]),  shipDesign.name(False), design_rating,  costRating, shipDesign.hull,   list(shipDesign.parts))
+                                PlanetUtilsAI.planet_name_ids([pid]),  shipDesign.name(False), design_rating,  costRating, shipDesign.hull,   list(shipDesign.parts))
                 if costRating > bestCostRating:
                     bestCostRating = costRating
         if localBestCostRating > 0.0:
@@ -593,7 +593,7 @@ def generateProductionOrders():
     # next loop over resource groups, adding buildings & ships
     empire = fo.getEmpire()
     universe = fo.getUniverse()
-    capitolID = PlanetUtilsAI.getCapital()
+    capitolID = PlanetUtilsAI.get_capital()
     if capitolID is None or capitolID == -1:
         homeworld=None
         capitolSysID=None
@@ -794,7 +794,7 @@ def generateProductionOrders():
         targetOrbitals=  min(  int( ((currentTurn+4)/( 8.0* aggrIndex **1.5))**0.8) ,  fo.aggression.maniacal - aggrIndex )
         print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
         for element in productionQueue:
-            if ( element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
+            if ( element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) ==  EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
                 bldPlanet = universe.getPlanet(element.locationID)
                 if not bldPlanet:
                     print "Error: Problem getting Planet for build loc %s"%element.locationID
@@ -802,18 +802,18 @@ def generateProductionOrders():
                 sysID = bldPlanet.systemID
                 queuedDefenses[sysID] = queuedDefenses.get( sysID,  0) + element.blocksize*element.remaining
                 defenseAllocation += element.allocation
-        print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
+        print "Queued Defenses:",  [( PlanetUtilsAI.sys_name_ids([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
         for sysID in ColonisationAI.empireSpeciesSystems:
             if foAI.foAIstate.systemStatus.get(sysID,  {}).get('fleetThreat',  1) > 0:
                 continue#don't build  orbital shields if enemy fleet present
             if defenseAllocation > maxDefensePortion * totalPP:
                 break
-            #print "checking ",  PlanetUtilsAI.sysNameIDs([sysID])
+            #print "checking ",  PlanetUtilsAI.sys_name_ids([sysID])
             sysOrbitalDefenses[sysID]=0
             fleetsHere = foAI.foAIstate.systemStatus.get(sysID,  {}).get('myfleets',  [])
             for fid in fleetsHere:
-                if foAI.foAIstate.getFleetRole(fid)==EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
-                    print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sysNameIDs([sysID]))
+                if foAI.foAIstate.get_fleet_role(fid)==EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
+                    print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sys_name_ids([sysID]))
                     sysOrbitalDefenses[sysID] += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
             for pid in ColonisationAI.empireSpeciesSystems.get(sysID, {}).get('pids',  []):
                 sysOrbitalDefenses[sysID] += queuedDefenses.get(pid,  0)
@@ -822,11 +822,11 @@ def generateProductionOrders():
                 for pid in ColonisationAI.empireSpeciesSystems.get(sysID, {}).get('pids',  []):
                     bestDesignID,  colDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE,  pid)
                     if not bestDesignID:
-                        print "no orbital defenses can be built at ",  PlanetUtilsAI.planetNameIDs([pid])
+                        print "no orbital defenses can be built at ",  PlanetUtilsAI.planet_name_ids([pid])
                         continue
-                    #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
+                    #print "selecting  ",  PlanetUtilsAI.planet_name_ids([pid]),  " to build Orbital Defenses"
                     retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, pid)
-                    print "queueing %d Orbital Defenses at %s"%(numNeeded,  PlanetUtilsAI.planetNameIDs([pid]))
+                    print "queueing %d Orbital Defenses at %s"%(numNeeded,  PlanetUtilsAI.planet_name_ids([pid]))
                     if retval !=0:
                         if numNeeded > 1  :
                             fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1, numNeeded )
@@ -1006,7 +1006,7 @@ def generateProductionOrders():
                         if pid not in queuedShipyardLocs: #will catch it later if shipyard already present
                             needYard[sysID] = pid
             if  ( not yardLocs ) and len(asteroidYards.values())<= int(currentTurn/50): # not yet building & not enough current locs,  find a location to build one
-                queuedYardSystems = set(PlanetUtilsAI.getSystems(queuedShipyardLocs))
+                queuedYardSystems = set(PlanetUtilsAI.get_systems(queuedShipyardLocs))
                 colonizerLocChoices=[]
                 builderLocChoices=[]
                 bldSystems =  set(asteroidSystems.keys()).difference(asteroidYards.keys())
@@ -1308,7 +1308,7 @@ def generateProductionOrders():
                     tryLocs= [capitolID] + list(AIstate.popCtrIDs)
                 else:
                     tryLocs= AIstate.popCtrIDs
-                print "Possible locs for %s are: "%bldName,  PlanetUtilsAI.planetNameIDs(tryLocs)
+                print "Possible locs for %s are: "%bldName,  PlanetUtilsAI.planet_name_ids(tryLocs)
                 for pid in tryLocs:
                     if  pid not in queuedBldLocs:
                         planet=universe.getPlanet(pid)
@@ -1324,12 +1324,12 @@ def generateProductionOrders():
                                         break #only initiate max of one new build per turn
 
     colonyShipMap={}
-    for fid in FleetUtilsAI.getEmpireFleetIDsByRole( EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION):
+    for fid in FleetUtilsAI.get_empire_fleet_ids_by_role( EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION):
         fleet = universe.getFleet(fid)
         if not fleet: continue
         for shipID in fleet.shipIDs:
             thisShip=universe.getShip(shipID)
-            if thisShip and (foAI.foAIstate.getShipRole(thisShip.design.id) ==EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION):
+            if thisShip and (foAI.foAIstate.get_ship_role(thisShip.design.id) ==EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION):
                 colonyShipMap.setdefault( thisShip.speciesName,  []).append(1)
 
     bldName = "BLD_CONC_CAMP"
@@ -1454,23 +1454,23 @@ def generateProductionOrders():
                 dest_set.update( dd_neighbors.keys() )
             
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
-        print "Considering building %s,  found current and queued systems %s"%(bldName,  PlanetUtilsAI.sysNameIDs(cur_drydoc_sys.union(queued_sys)))
-        #print "Empire shipyards found at %s"%(PlanetUtilsAI.planetNameIDs(ColonisationAI.empireShipyards))
+        print "Considering building %s,  found current and queued systems %s"%(bldName,  PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys)))
+        #print "Empire shipyards found at %s"%(PlanetUtilsAI.planet_name_ids(ColonisationAI.empireShipyards))
         for sys_id,  pids_dict in ColonisationAI.empireSpeciesSystems.items(): #TODO: sort/prioritize in some fashion
             pids = pids_dict.get('pids', [])
             if len(queued_locs)>= max_dock_builds:
                 print "Drydock enqueing halted with %d of max %d"%(  len(queued_locs) ,  max_dock_builds  )
                 break
             if sys_id in covered_drydoc_locs:
-                #print "Considering %s at %s,  is already w/in coverage area"%(bldName,  PlanetUtilsAI.sysNameIDs([sys_id]))
+                #print "Considering %s at %s,  is already w/in coverage area"%(bldName,  PlanetUtilsAI.sys_name_ids([sys_id]))
                 continue
             else:
-                #print "Considering %s at %s, with planet choices %s"%(bldName,  PlanetUtilsAI.sysNameIDs([sys_id]),  pids)
+                #print "Considering %s at %s, with planet choices %s"%(bldName,  PlanetUtilsAI.sys_name_ids([sys_id]),  pids)
                 pass
             for pid in pids:
                 #print "checking planet '%s'"%pid
                 if pid not in ColonisationAI.empireShipyards:
-                    #print "Planet %s not in empireShipyards"%(PlanetUtilsAI.planetNameIDs([pid]) )
+                    #print "Planet %s not in empireShipyards"%(PlanetUtilsAI.planet_name_ids([pid]) )
                     continue
                 planet = universe.getPlanet(pid)
                 res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
@@ -1537,7 +1537,7 @@ def generateProductionOrders():
             else:
                 print "element %s is projected to never be completed as currently stands, but will remain on queue  "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
-            this_role = foAI.foAIstate.getShipRole(element.designID)
+            this_role = foAI.foAIstate.get_ship_role(element.designID)
             if this_role ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
                 thisSpec=universe.getPlanet(element.locationID).speciesName
                 queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
@@ -1558,11 +1558,11 @@ def generateProductionOrders():
     for queue_index in dequeueList[::-1]:
         fo.issueDequeueProductionOrder(queue_index)
 
-    allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY )
+    allMilitaryFleetIDs =  FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY )
     nMilitaryTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allMilitaryFleetIDs ] )
-    allTroopFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION )
+    allTroopFleetIDs =  FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION )
     nTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allTroopFleetIDs ] )
-    availTroopFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allTroopFleetIDs))
+    availTroopFleetIDs = list( FleetUtilsAI.extract_fleet_ids_without_mission_types(allTroopFleetIDs))
     nAvailTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in availTroopFleetIDs ] )
     print "Trooper Status turn %d: %d total,  with %d unassigned.  %d queued, compared to %d total Military Attack Ships"%(currentTurn,   nTroopTot,
                                                                                                                    nAvailTroopTot,  queuedTroopShips,  nMilitaryTot)
@@ -1591,8 +1591,8 @@ def generateProductionOrders():
     print
     # get the highest production priorities
     productionPriorities = {}
-    for priorityType in EnumsAI.getAIPriorityProductionTypes():
-        productionPriorities[priorityType] = int(max(0,  ( foAI.foAIstate.getPriority(priorityType) )**0.5))
+    for priorityType in EnumsAI.get_priority_production_types():
+        productionPriorities[priorityType] = int(max(0,  ( foAI.foAIstate.get_priority(priorityType) )**0.5))
 
     sortedPriorities = productionPriorities.items()
     sortedPriorities.sort(lambda x,y: cmp(x[1], y[1]), reverse=True)
@@ -1601,10 +1601,10 @@ def generateProductionOrders():
     topscore = -1
     numTotalFleets = len(foAI.foAIstate.fleetStatus)
     numColonyTargs=len(foAI.foAIstate.colonisablePlanetIDs )
-    numColonyFleets=len( FleetUtilsAI.getEmpireFleetIDsByRole( EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION) )# counting existing colony fleets each as one ship
+    numColonyFleets=len( FleetUtilsAI.get_empire_fleet_ids_by_role( EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION) )# counting existing colony fleets each as one ship
     totColonyFleets = sum(queuedColonyShips.values()) + numColonyFleets
     numOutpostTargs=len(foAI.foAIstate.colonisableOutpostIDs )
-    numOutpostFleets=len( FleetUtilsAI.getEmpireFleetIDsByRole( EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST) )# counting existing outpost fleets each as one ship
+    numOutpostFleets=len( FleetUtilsAI.get_empire_fleet_ids_by_role( EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST) )# counting existing outpost fleets each as one ship
     totOutpostFleets = queuedOutpostShips + numOutpostFleets
 
     #maxColonyFleets = max(  min( numColonyTargs+1+currentTurn/10 ,  numTotalFleets/4  ),  3+int(3*len(empireColonizers)))
@@ -1651,10 +1651,10 @@ def generateProductionOrders():
     planetsWithWastedPP = set( [tuple(pidset) for pidset in empire.planetsWithWastedPP ] )
     print "availPP ( <systems> : pp ):"
     for pSet in availablePP:
-        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  availablePP[pSet])
+        print "\t%s\t%.2f"%( PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( pSet))),  availablePP[pSet])
     print "\nallocatedPP ( <systems> : pp ):"
     for pSet in allocatedPP:
-        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  allocatedPP[pSet])
+        print "\t%s\t%.2f"%( PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( pSet))),  allocatedPP[pSet])
 
     if False: #log ship design assessment
         getBestShipRatings( list(AIstate.popCtrIDs),  verbose = True)
@@ -1664,9 +1664,9 @@ def generateProductionOrders():
         availPP =  totalPP - allocatedPP.get(pSet,  0)
         if availPP <=0.01:
             continue
-        print "%.2f PP remaining in system group: %s"%(availPP,   PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))))
+        print "%.2f PP remaining in system group: %s"%(availPP,   PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( pSet))))
         print "\t owned planets in this group are:"
-        print "\t %s"%( PlanetUtilsAI.planetNameIDs(pSet)  )
+        print "\t %s"%( PlanetUtilsAI.planet_name_ids(pSet)  )
         bestDesignID,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  list(pSet))
         speciesMap = {}
         for loc in (buildChoices or []):
@@ -1699,7 +1699,7 @@ def generateProductionOrders():
             print "bestShips[%s] = %s   \t locs are %s from %s"%( EnumsAI.AIPriorityNames[priority],  bestDesign.name(False) , buildChoices,   pSet)
 
         if len(localPriorities)==0:
-            print "Alert!! need shipyards in systemSet ",   PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( sorted(pSet))))
+            print "Alert!! need shipyards in systemSet ",   PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( sorted(pSet))))
         priorityChoices=[]
         for priority in localPriorities:
             priorityChoices.extend( int(localPriorities[priority]) * [priority] )
@@ -1765,7 +1765,7 @@ def generateProductionOrders():
                     locPlanet = universe.getPlanet(loc)
                     if locPlanet:
                         pname = locPlanet.name
-                        thisRating = ColonisationAI.ratePlanetaryPiloting(loc)
+                        thisRating = ColonisationAI.rate_planetary_piloting(loc)
                         ratingRatio = float(thisRating) / ColonisationAI.curBestPilotRating
                         qualifier = ["", "suboptimal"][ratingRatio < 1.0]
                         print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f"%(loc, pname, qualifier, thisRating, ratingRatio)
@@ -1775,7 +1775,7 @@ def generateProductionOrders():
             retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
             if retval !=0:
                 prioritized = False
-                print "adding %d new ship(s) at location %s to production queue:  %s; per turn production cost %.1f"%(numShips,  PlanetUtilsAI.planetNameIDs([loc]),   bestDesign.name(True),  perTurnCost)
+                print "adding %d new ship(s) at location %s to production queue:  %s; per turn production cost %.1f"%(numShips,  PlanetUtilsAI.planet_name_ids([loc]),   bestDesign.name(True),  perTurnCost)
                 print
                 if numShips>1:
                     fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  numShips)
@@ -1810,7 +1810,7 @@ def getAvailableBuildLocations(shipDesignID):
     shipDesign = fo.getShipDesign(shipDesignID)
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitolID = PlanetUtilsAI.getCapital()
+    capitolID = PlanetUtilsAI.get_capital()
     shipyards=set()
     for yardlist in ColonisationAI.empireShipBuilders.values():
         shipyards.update(yardlist)

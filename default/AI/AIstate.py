@@ -65,7 +65,7 @@ class AIstate(object):
         self.__priorityByType = {}
 
         #self.__explorableSystemByType = {}
-        #for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
+        #for explorableSystemsType in EnumsAI.get_explorable_system_types():
         #    self.__explorableSystemByType[explorableSystemsType] = {}
 
         #initialize home system knowledge
@@ -138,23 +138,23 @@ class AIstate(object):
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
         invasionTargets[:]=[]
-        exploration_center = PlanetUtilsAI.getCapitalSysID()
+        exploration_center = PlanetUtilsAI.get_capital_sys_id()
         if exploration_center == -1: #a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.origHomeSystemID
 
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
-            print "Border Exploration Update (relative to %s"%(PlanetUtilsAI.sysNameIDs([exploration_center,  -1])[0])
+            print "Border Exploration Update (relative to %s"%(PlanetUtilsAI.sys_name_ids([exploration_center,  -1])[0])
             print "-------------------------------------------------"
         if self.visBorderSystemIDs.keys() == [-1]:
             self.visBorderSystemIDs.clear()
             self.visBorderSystemIDs[exploration_center] = 1
         for sysID in list(self.visBorderSystemIDs):
             if fo.currentTurn() < 50:
-                print "Considering border system %s"%(PlanetUtilsAI.sysNameIDs([sysID,  -1])[0])
-            ExplorationAI.followVisSystemConnections(sysID,  exploration_center)
-        newlyExplored = ExplorationAI.updateExploredSystems()
+                print "Considering border system %s"%(PlanetUtilsAI.sys_name_ids([sysID,  -1])[0])
+            ExplorationAI.follow_vis_system_connections(sysID,  exploration_center)
+        newlyExplored = ExplorationAI.update_explored_systems()
         nametags=[]
         universe = fo.getUniverse()
         for sysID in newlyExplored:
@@ -165,17 +165,17 @@ class AIstate(object):
             print "newly explored systems: \n"+"\n".join(nametags)
             print "-------------------------------------------------"
         # cleanup fleet roles
-        #self.updateFleetLocs()
-        self.__cleanFleetRoles()
-        self.__cleanAIFleetMissions(FleetUtilsAI.getEmpireFleetIDs())
+        #self.update_fleet_locs()
+        self.__clean_fleet_roles()
+        self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
         print "Fleets lost by system: %s"%fleetsLostBySystem
-        self.updateSystemStatus()
-        ExplorationAI.updateScoutFleets() #should do this after clearing dead  fleets, currently should be already done here
+        self.update_system_status()
+        ExplorationAI.update_scout_fleets() #should do this after clearing dead  fleets, currently should be already done here
 
-    def assessSelfRating(self):
+    def assess_self_rating(self):
         return 1
 
-    def assessRating(self,  empireID):
+    def assess_rating(self,  empireID):
         """Returns assessed Rating of specified empire"""
         return 1
         
@@ -192,7 +192,7 @@ class AIstate(object):
             print "Error converting fleet summary ",  summary
             return None
             
-    def updateFleetLocs(self):
+    def update_fleet_locs(self):
         universe=fo.getUniverse()
         movedFleets=[]
         for fleetID in self.fleetStatus:
@@ -213,7 +213,7 @@ class AIstate(object):
             #print "no moved_fleets this turn"
             pass
 
-    def deleteFleetInfo(self,  fleetID, sysID=-1):
+    def delete_fleet_info(self,  fleetID, sysID=-1):
         for systemID in [sid for sid in   [sysID,   self.fleetStatus.get(fleetID, {}).get('sysID', -1)] if sid != -1]:
             if fleetID in self.systemStatus.get(sysID,  {}).get('myfleets', []):
                 del self.systemStatus[ sysID ]['myfleets'][ self.systemStatus[sysID]['myfleets'].index( fleetID) ]
@@ -224,7 +224,7 @@ class AIstate(object):
         if fleetID in self.__fleetRoleByID:
             del self.__fleetRoleByID[fleetID]
 
-    def reportSystemThreats(self, sysIDList=None):
+    def report_system_threats(self, sysIDList=None):
         if fo.currentTurn() >= 50:
             return
         universe = fo.getUniverse()
@@ -238,7 +238,7 @@ class AIstate(object):
             system = universe.getSystem(sysID)
             print "System %4d  ( %12s ) : %s"%(sysID,  (system and system.name) or "unknown",  sysStatus)
 
-    def assessPlanetThreat(self,  pid,  sightingAge=0):
+    def assess_planet_threat(self,  pid,  sightingAge=0):
         sightingAge+=1#play it safe
         universe = fo.getUniverse()
         planet = universe.getPlanet(pid)
@@ -256,7 +256,7 @@ class AIstate(object):
         infra=0 #doesn't really contribute to combat since damage to shields & 'defense' done first
         return  {'overall': defense*(defense + shields + infra ),  'attack':defense ,  'health':(defense + shields + infra ) }
 
-    def updateSystemStatus(self,  sysIDList=None):
+    def update_system_status(self,  sysIDList=None):
         print"-------\nUpdating System Threats\n---------"
         universe = fo.getUniverse()
         empire=fo.getEmpire()
@@ -288,7 +288,7 @@ class AIstate(object):
                 else:
                     dead_fleet = fleetID in destroyedObjIDs
                     if not fleet.ownedBy( -1 ):
-                        e_rating = self.rateFleet(fleetID)
+                        e_rating = self.rate_fleet(fleetID)
                         e_f_dict = [  cur_e_fighters,  old_e_fighters ][ dead_fleet ] # track old/dead enemy fighters for rating assessments in case not enough current info
                         for count, sum_stats in e_rating['summary']:
                             if sum_stats[0] > 0:
@@ -316,11 +316,11 @@ class AIstate(object):
                 sysStatus['name']=system.name
                 for fid in system.fleetIDs:
                     if fid in destroyedObjIDs: #TODO: double check are these checks/deletes necessary?
-                        self.deleteFleetInfo(fid)#this is safe even if fleet wasn't mine
+                        self.delete_fleet_info(fid)#this is safe even if fleet wasn't mine
                         continue
                     fleet = universe.getFleet(fid)
                     if not fleet or fleet.empty:
-                        self.deleteFleetInfo(fid)#this is safe even if fleet wasn't mine
+                        self.delete_fleet_info(fid)#this is safe even if fleet wasn't mine
                         continue
 
             #update threats
@@ -330,11 +330,11 @@ class AIstate(object):
             enemyRating=0
             monsterRatings=[]
             lostFleetRating=0
-            #enemyRatings =  [self.rateFleet(fid) for fid in localEnemyFleetIDs  ]
+            #enemyRatings =  [self.rate_fleet(fid) for fid in localEnemyFleetIDs  ]
             enemyRatings = []
             for fid in localEnemyFleetIDs:
                 oldstyle_rating = self.old_rate_fleet(fid)
-                newstyle_rating = self.rateFleet(fid, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_fighter  )]))
+                newstyle_rating = self.rate_fleet(fid, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_fighter  )]))
                 enemyRatings.append(newstyle_rating)
                 if oldstyle_rating.get('overall', 0) != newstyle_rating.get('overall', 0):
                     loc = ""
@@ -346,7 +346,7 @@ class AIstate(object):
                         system = universe.getSystem(sysID)
                         if system:
                             loc = " at %s" % system.name
-                    print "AiState.updateSystemStatus for fleet %s id (%d)%s got different newstyle rating (%s) and oldstyle rating (%s)" % (fleetname, fid, loc, newstyle_rating, oldstyle_rating)
+                    print "AiState.update_system_status for fleet %s id (%d)%s got different newstyle rating (%s) and oldstyle rating (%s)" % (fleetname, fid, loc, newstyle_rating, oldstyle_rating)
             enemyAttack = sum( [rating.get('attack', 0) for rating in enemyRatings])
             enemyHealth = sum( [rating.get('health', 0) for rating in enemyRatings])
             enemyRating =  enemyAttack * enemyHealth
@@ -371,7 +371,7 @@ class AIstate(object):
             phealth = 0
             mypattack,  myphealth = 0,  0
             for pid in system.planetIDs:
-                prating = self.assessPlanetThreat(pid,  sightingAge=currentTurn-partialVisTurn)
+                prating = self.assess_planet_threat(pid,  sightingAge=currentTurn-partialVisTurn)
                 planet = universe.getPlanet(pid)
                 if not planet: continue
                 if planet.owner == self.empireID : #TODO: check for diplomatic status
@@ -396,7 +396,7 @@ class AIstate(object):
                 for fleetID in localEnemyFleetIDs:
                     fleet = universe.getFleet(fleetID)
                     if fleet and  (not fleet.ownedBy(self.empireID)):
-                        rating=self.rateFleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
+                        rating=self.rate_fleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
                         if fleet.speed==0:
                             monsterattack += rating['attack']
                             monsterhealth += rating['health']
@@ -412,7 +412,7 @@ class AIstate(object):
             sysStatus = self.systemStatus[sysID]
             myattack, myhealth=0, 0
             for fid in sysStatus['myfleets']:
-                thisRating=self.getRating(fid,  True, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_enemy)]))
+                thisRating=self.get_rating(fid,  True, self.fleet_sum_tups_to_estat_dicts([(1,  self.empire_standard_enemy)]))
                 myattack += thisRating['attack']
                 myhealth += thisRating['health']
             if sysID != -1:
@@ -466,94 +466,94 @@ class AIstate(object):
             myrating += sys_status.get('myFleetRating', 0)
         return threat,  max_threat,  myrating
 
-    def afterTurnCleanup(self):
+    def after_turn_cleanup(self):
         """removes not required information to save from AI state after AI complete its turn"""
         # some ships in fleet can be destroyed between turns and then fleet may have have different roles
         #self.__fleetRoleByID = {}
         pass
 
-    def __hasAIFleetMission(self, fleetID):
+    def __has_fleet_mission(self, fleetID):
         """returns True if fleetID has AIFleetMission"""
-        return self.__aiMissionsByFleetID.__contains__(fleetID)
+        return fleetID in self.__aiMissionsByFleetID
 
-    def getAIFleetMission(self, fleetID):
+    def get_fleet_mission(self, fleetID):
         """returns AIFleetMission with fleetID"""
         if fleetID in self.__aiMissionsByFleetID:
             return self.__aiMissionsByFleetID[fleetID]
         else:
             return None
 
-    def getAllAIFleetMissions(self):
+    def get_all_fleet_missions(self):
         """returns all AIFleetMissions"""
 
         return self.__aiMissionsByFleetID.values()
 
-    def getFleetMissionsMap(self):
+    def get_fleet_missions_map(self):
         return self.__aiMissionsByFleetID
 
-    def getAIFleetMissionsWithAnyMissionTypes(self, fleetMissionTypes):
+    def get_fleet_missions_with_any_mission_types(self, fleetMissionTypes):
         """returns all AIFleetMissions which contains any of fleetMissionTypes"""
 
         result = []
 
-        aiFleetMissions = self.getAllAIFleetMissions()
+        aiFleetMissions = self.get_all_fleet_missions()
         for aiFleetMission in aiFleetMissions:
-            if aiFleetMission.hasAnyOfAIMissionTypes(fleetMissionTypes):
+            if aiFleetMission.has_any_of_mission_types(fleetMissionTypes):
                 result.append(aiFleetMission)
         return result
 
-    def __addAIFleetMission(self, fleetID):
+    def __add_fleet_mission(self, fleetID):
         """add new AIFleetMission with fleetID if it already not exists"""
 
-        if self.getAIFleetMission(fleetID) is None:
+        if self.get_fleet_mission(fleetID) is None:
             aiFleetMission = AIFleetMission.AIFleetMission(fleetID)
             self.__aiMissionsByFleetID[fleetID] = aiFleetMission
 
-    def __removeAIFleetMission(self, fleetID):
+    def __remove_fleet_mission(self, fleetID):
         """remove invalid AIFleetMission with fleetID if it exists"""
 
-        aiFleetMission = self.getAIFleetMission(fleetID)
+        aiFleetMission = self.get_fleet_mission(fleetID)
         if aiFleetMission is not None:
             self.__aiMissionsByFleetID[fleetID] = None
             del aiFleetMission
             del self.__aiMissionsByFleetID[fleetID]
 
-    def ensureHaveFleetMissions(self, fleetIDs):
+    def ensure_have_fleet_missions(self, fleetIDs):
         for fleetID in fleetIDs:
-            if self.getAIFleetMission(fleetID) is None:
-                self.__addAIFleetMission(fleetID)
+            if self.get_fleet_mission(fleetID) is None:
+                self.__add_fleet_mission(fleetID)
 
-    def __cleanAIFleetMissions(self, fleetIDs):
+    def __clean_fleet_missions(self, fleetIDs):
         """cleanup of AIFleetMissions"""
 
         for fleetID in fleetIDs:
-            if self.getAIFleetMission(fleetID) is None:
-                self.__addAIFleetMission(fleetID)
+            if self.get_fleet_mission(fleetID) is None:
+                self.__add_fleet_mission(fleetID)
 
-        aiFleetMissions = self.getAllAIFleetMissions()
+        aiFleetMissions = self.get_all_fleet_missions()
         deletedFleetIDs = []
         for aiFleetMission in aiFleetMissions:
             if not(aiFleetMission.target_id in fleetIDs):
                 deletedFleetIDs.append(aiFleetMission.target_id)
         for deletedFleetID in deletedFleetIDs:
-            self.__removeAIFleetMission(deletedFleetID)
+            self.__remove_fleet_mission(deletedFleetID)
 
-        aiFleetMissions = self.getAllAIFleetMissions()
+        aiFleetMissions = self.get_all_fleet_missions()
         for aiFleetMission in aiFleetMissions:
-            aiFleetMission.cleanInvalidAITargets()
+            aiFleetMission.clean_invalid_targets()
 
-    def hasAITarget(self, aiFleetMissionType, aiTarget):
-        aiFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([aiFleetMissionType])
+    def has_target(self, aiFleetMissionType, aiTarget):
+        aiFleetMissions = self.get_fleet_missions_with_any_mission_types([aiFleetMissionType])
         for mission in aiFleetMissions:
-            if mission.hasTarget(aiFleetMissionType, aiTarget):
+            if mission.has_target(aiFleetMissionType, aiTarget):
                 return True
         return False
 
         
     def rate_psuedo_fleet(self,  ship_info):
-        return self.rateFleet(-1, enemy_stats=self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
+        return self.rate_fleet(-1, enemy_stats=self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]),  ship_info=ship_info)
         
-    def rateFleet(self, fleetID,  enemy_stats=None,  ship_info = None):
+    def rate_fleet(self, fleetID,  enemy_stats=None,  ship_info = None):
         """ for enemy stats format see adjust_stats_vs_enemy()
             returns {'overall': adjusted attack*health,  'tally':sum_over_ships of ship_rating, 'attack':attack, 'health':health, 'nships':nships, 'summary':fleet_summary_tups}
             fleet_summary_tups is tuple of (nships, profile_tuple) tuples,
@@ -617,14 +617,14 @@ class AIstate(object):
             ship = universe.getShip(shipID)
             if not ship:
                 continue
-            stats = self.getDesignIDStats(ship.designID)
+            stats = self.get_design_id_stats(ship.designID)
             rating += stats['attack'] * ( stats['structure'] + stats['shields'] )
             attack +=  stats['attack']
             health += ( stats['structure'] + stats['shields'] )
             nships+=1
         return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
-    def getRating(self,  fleetID,  forceNew=False,  enemy_stats = None):
+    def get_rating(self,  fleetID,  forceNew=False,  enemy_stats = None):
         """returns a dict with various rating info"""
         if (fleetID in self.fleetStatus) and not forceNew and enemy_stats is None:
             return self.fleetStatus[fleetID].get('rating', {} )
@@ -632,13 +632,13 @@ class AIstate(object):
             fleet = fo.getUniverse().getFleet(fleetID)
             if not fleet:
                 return {} #TODO: also ensure any info for that fleet is deleted
-            status = {'rating':self.rateFleet(fleetID,  enemy_stats),  'sysID':fleet.systemID,  'nships':len(fleet.shipIDs)}
+            status = {'rating':self.rate_fleet(fleetID,  enemy_stats),  'sysID':fleet.systemID,  'nships':len(fleet.shipIDs)}
             self.fleetStatus[fleetID] = status
             #print "fleet ID %d rating: %s"%(fleetID,  status['rating'])
             return status['rating']
 
-    def updateFleetRating(self, fleetID):
-        return self.getRating(fleetID,  forceNew=True)
+    def update_fleet_rating(self, fleetID):
+        return self.get_rating(fleetID,  forceNew=True)
 
     def get_piloting_grades(self,  species_name):
         if species_name in piloting_grades:
@@ -684,7 +684,7 @@ class AIstate(object):
         """rate a  design, including species pilot effects
             returns dict of attacks {dmg1:count1}, attack, shields, structure"""
         weapons_grade,  shields_grade = self.get_piloting_grades(species_name)
-        design_stats = dict( self.getDesignIDStats(design_id) ) #new dict so we don't modify our original data
+        design_stats = dict( self.get_design_id_stats(design_id) ) #new dict so we don't modify our original data
         myattacks = self.weight_attacks(design_stats.get('attacks', {}),  weapons_grade)
         design_stats['attacks'] = myattacks
         #mystructure = design_stats.get('structure', 1)
@@ -761,7 +761,7 @@ class AIstate(object):
         
         return ship_stats
 
-    def getDesignIDStats(self,  designID):
+    def get_design_id_stats(self,  designID):
         if designID is None:
             return  {'attack':0, 'structure':0, 'shields':0,  'attacks':{}}
         elif designID in self.designStats:
@@ -799,21 +799,21 @@ class AIstate(object):
         self.designStats[designID] = stats
         return stats
 
-    def getShipRole(self, shipDesignID):
+    def get_ship_role(self, shipDesignID):
         """returns ship role for given designID, assesses and adds as needed"""
 
         if shipDesignID in self.__shipRoleByDesignID and self.__shipRoleByDesignID[shipDesignID] != EnumsAI.AIShipRoleType.SHIP_ROLE_INVALID: #if thought was invalid, recheck to be sure
             return self.__shipRoleByDesignID[shipDesignID]
         else:
-            self.getDesignIDStats(shipDesignID) # just to update with infor for this new design
-            role = FleetUtilsAI.assessShipDesignRole(fo.getShipDesign(shipDesignID))
+            self.get_design_id_stats(shipDesignID) # just to update with infor for this new design
+            role = FleetUtilsAI.assess_ship_design_role(fo.getShipDesign(shipDesignID))
             self.__shipRoleByDesignID[shipDesignID] = role
             return role
 
-    def addShipRole(self, shipDesignID, shipRole):
+    def add_ship_role(self, shipDesignID, shipRole):
         """adds a ship designID/role pair"""
 
-        if not (shipRole in EnumsAI.getAIShipRolesTypes()):
+        if not (shipRole in EnumsAI.get_ship_roles_types()):
             print "Invalid shipRole: " + str(shipRole)
             return
         elif shipDesignID in self.__shipRoleByDesignID:
@@ -821,7 +821,7 @@ class AIstate(object):
         else:
             self.__shipRoleByDesignID[shipDesignID] = shipRole
 
-    def removeShipRole(self, shipDesignID):
+    def remove_ship_role(self, shipDesignID):
         """removes a ship designID/role pair"""
 
         if shipDesignID in self.__shipRoleByDesignID:
@@ -831,23 +831,23 @@ class AIstate(object):
         else:
             print "No existing role found for ship design %d named: %s "%(shipDesignID,  fo.getShipDesign(shipDesignID).name)
 
-    def getFleetRolesMap(self):
+    def get_fleet_roles_map(self):
         return self.__fleetRoleByID
 
-    def getFleetRole(self, fleetID,  forceNew=False):
+    def get_fleet_role(self, fleetID,  forceNew=False):
         """returns fleet role by ID"""
 
         if (not forceNew) and fleetID in self.__fleetRoleByID and self.__fleetRoleByID[fleetID]!=AIFleetMissionType.FLEET_MISSION_INVALID :
             return self.__fleetRoleByID[fleetID]
         else:
-            role=FleetUtilsAI.assessFleetRole(fleetID)
+            role=FleetUtilsAI.assess_fleet_role(fleetID)
             self.__fleetRoleByID[fleetID] = role
             makeAggressive=False
             if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST,
                                 AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST]:
                 pass
             if role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
-                thisRating=self.getRating(fleetID)
+                thisRating=self.get_rating(fleetID)
                 if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.curBestMilShipRating():
                     makeAggressive=True
             else:
@@ -855,10 +855,10 @@ class AIstate(object):
             fo.issueAggressionOrder(fleetID,  makeAggressive)
             return role
 
-    def addFleetRole(self, fleetID, missionType):
+    def add_fleet_role(self, fleetID, missionType):
         """adds a fleet ID/role pair"""
 
-        if not EnumsAI.checkValidity(missionType):
+        if not EnumsAI.check_validity(missionType):
             return
         if fleetID in self.__fleetRoleByID:
             #print "Fleet ID " + str(fleetID) + " already exists."
@@ -866,7 +866,7 @@ class AIstate(object):
         else:
             self.__fleetRoleByID[fleetID] = missionType
 
-    def removeFleetRole(self, fleetID):
+    def remove_fleet_role(self, fleetID):
         """removes a fleet ID/role pair"""
 
         if fleetID in self.__fleetRoleByID:
@@ -874,14 +874,14 @@ class AIstate(object):
             del self.__fleetRoleByID[fleetID]
             return
 
-    def sessionStartCleanup(self):
+    def session_start_cleanup(self):
         ResourcesAI.newTargets.clear()
         self.newlySplitFleets={}
-        for fleetID in FleetUtilsAI.getEmpireFleetIDs():
-            self.getFleetRole(fleetID) #
-            self.getRating(fleetID) #
-            self.ensureHaveFleetMissions([fleetID])
-        self.__cleanFleetRoles(justResumed=True)
+        for fleetID in FleetUtilsAI.get_empire_fleet_ids():
+            self.get_fleet_role(fleetID) #
+            self.get_rating(fleetID) #
+            self.ensure_have_fleet_missions([fleetID])
+        self.__clean_fleet_roles(justResumed=True)
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
         popCtrSystemIDs[:] = []#resets without detroying existing references
@@ -898,19 +898,19 @@ class AIstate(object):
         
     def reset_invasions(self):
         """useful when testing changes to invasion planning"""
-        invasionAIFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
+        invasionAIFleetMissions = self.get_fleet_missions_with_any_mission_types([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
         for mission in invasionAIFleetMissions:
-            mission.clearAIFleetOrders()
-            mission.clearAITargets(([-1]+ mission.getAIMissionTypes()[:1])[-1])
+            mission.clear_fleet_orders()
+            mission.clear_targets(([-1]+ mission.get_mission_types()[:1])[-1])
 
-    def __cleanFleetRoles(self,  justResumed=False):
+    def __clean_fleet_roles(self,  justResumed=False):
         """removes fleetRoles if a fleet has been lost, and update fleet Ratings"""
         for sysID in self.systemStatus:
             self.systemStatus[sysID]['myFleetRating']=0
 
         #deleteRoles = []
         universe = fo.getUniverse()
-        okFleets=FleetUtilsAI.getEmpireFleetIDs()
+        okFleets=FleetUtilsAI.get_empire_fleet_ids()
         fleetList = sorted( list( self.__fleetRoleByID ))
         unaccountedFleets = set( okFleets ) - set( fleetList )
         shipCount=0
@@ -930,7 +930,7 @@ class AIstate(object):
         for fleetID in fleetList:
             status=self.fleetStatus.setdefault(fleetID,  {} )
             rating = status.get('rating', {'overall':0,  'attack':0,  'health':0} )
-            newRating = self.rateFleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]))
+            newRating = self.rate_fleet(fleetID,  self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]))
             oldSysID = status.get('sysID',  -2)
             fleet = universe.getFleet(fleetID)
             #if fleet and not fleet.aggressive:
@@ -985,7 +985,7 @@ class AIstate(object):
                 elif sysID !=-1:
                     status['sysID'] = sysID
                 else:
-                    mainFleetMission=self.getAIFleetMission(fleetID)
+                    mainFleetMission=self.get_fleet_mission(fleetID)
                     mainMissionType = (mainFleetMission.getAIMissionTypes() + [-1])[0]
                     if mainMissionType != -1:
                         mainMissionTargets = mainFleetMission.getAITargets(mainMissionType)
@@ -1001,7 +1001,7 @@ class AIstate(object):
         print "Empire standard fighter summary: ",  std_fighter
         print "------------------------"
 
-    def getExplorableSystems(self, explorableSystemsType):
+    def get_explorable_systems(self, explorableSystemsType):
         """get all explorable systems determined by type """
 
         #return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
@@ -1010,15 +1010,15 @@ class AIstate(object):
         elif explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED:
             return list(self.unexploredSystemIDs)
         else:
-            print "Error -- unexpected  explorableSystemsType (value %s ) submited to AIState.getExplorableSystems "
+            print "Error -- unexpected  explorableSystemsType (value %s ) submited to AIState.get_explorable_systems "
             return {}
 
-    def setPriority(self, priorityType, value):
+    def set_priority(self, priorityType, value):
         """sets a priority of the specified type"""
 
         self.__priorityByType[priorityType] = value
 
-    def getPriority(self, priorityType):
+    def get_priority(self, priorityType):
         """returns the priority value of the specified type"""
 
         if priorityType in self.__priorityByType:
@@ -1026,13 +1026,13 @@ class AIstate(object):
 
         return 0
 
-    def getAllPriorities(self):
+    def get_all_priorities(self):
         """returns a dictionary with all priority values"""
 
         return copy.deepcopy(self.__priorityByType)
 
 
-    def printPriorities(self):
+    def print_priorities(self):
         """prints all priorities"""
 
         print "all priorities:"
@@ -1041,22 +1041,22 @@ class AIstate(object):
         print
 
 
-    def splitNewFleets(self): # pylint: disable=invalid-name
+    def split_new_fleets(self): # pylint: disable=invalid-name
         """split any new fleets (at new game creation, can have unplanned mix of ship roles)"""
 
         print "Review of current Fleet Role/Mission records:"
         print "--------------------"
-        print "Map of Roles keyed by Fleet ID: %s" % self.getFleetRolesMap()
+        print "Map of Roles keyed by Fleet ID: %s" % self.get_fleet_roles_map()
         print "--------------------"
         print "Map of Missions  keyed by ID:"
-        for item in self.getFleetMissionsMap().items():
+        for item in self.get_fleet_missions_map().items():
             print " %4d : %s " % item
         print "--------------------"
         # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
-        known_fleets = self.getFleetRolesMap()
+        known_fleets = self.get_fleet_roles_map()
         self.newlySplitFleets.clear()
 
-        fleets_to_split = [fleet_id for fleet_id in FleetUtilsAI.getEmpireFleetIDs() if not fleet_id in known_fleets]
+        fleets_to_split = [fleet_id for fleet_id in FleetUtilsAI.get_empire_fleet_ids() if not fleet_id in known_fleets]
 
         if fleets_to_split:
             universe = fo.getUniverse()
@@ -1069,7 +1069,7 @@ class AIstate(object):
                 fleet_len = len(list(fleet.shipIDs))
                 if fleet_len == 1:
                     continue
-                new_fleets = FleetUtilsAI.splitFleet(fleet_id)  # try splitting fleet
+                new_fleets = FleetUtilsAI.split_fleet(fleet_id)  # try splitting fleet
                 print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (fleet_id, fleet_len, len(new_fleets))
                 # old fleet may have different role after split, later will be again identified
-                #self.removeFleetRole(fleet_id)  # in current system, orig new fleet will not yet have been assigned a role
+                #self.remove_fleet_role(fleet_id)  # in current system, orig new fleet will not yet have been assigned a role

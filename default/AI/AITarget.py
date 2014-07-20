@@ -70,7 +70,7 @@ class AITarget(object):
         """returns if this object is valid"""
 
         if self.target_id is None or self.target_type is None or \
-                EnumsAI.checkValidity(self.target_id) == False:
+                EnumsAI.check_validity(self.target_id) == False:
             return False
 
         if AITargetType.TARGET_EMPIRE == self.target_type:

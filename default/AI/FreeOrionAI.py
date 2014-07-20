@@ -61,9 +61,9 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
     # initialize AIstate
     global foAIstate
     foAIstate = AIstate.AIstate(aggression = aggression)
-    foAIstate.sessionStartCleanup()
+    foAIstate.session_start_cleanup()
     print "Initialized foAIstate class"
-    planet_id = PlanetUtilsAI.getCapital()
+    planet_id = PlanetUtilsAI.get_capital()
     planet = None
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
@@ -86,12 +86,12 @@ def resumeLoadedGame(savedStateString): # pylint: disable=invalid-name
     try:
         #loading saved state
         foAIstate = pickle.loads(savedStateString)
-        foAIstate.sessionStartCleanup()
+        foAIstate.session_start_cleanup()
     except:
         print "failed to parse saved state string"
         #assigning new state
         foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
-        foAIstate.sessionStartCleanup()
+        foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game")
 
 
@@ -156,7 +156,7 @@ def generateOrders(): # pylint: disable=invalid-name
     turn_timer.start("AI planning")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    planetID = PlanetUtilsAI.getCapital()
+    planetID = PlanetUtilsAI.get_capital()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency 
     random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn())
@@ -182,25 +182,25 @@ def generateOrders(): # pylint: disable=invalid-name
         declareWarOnAll()
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
-    foAIstate.splitNewFleets()
+    foAIstate.split_new_fleets()
 
     foAIstate.refresh() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
-    foAIstate.reportSystemThreats()
+    foAIstate.report_system_threats()
     # ...missions
     # ...demands/priorities
     print("Calling AI Modules")
     # call AI modules
-    action_list = [PriorityAI.calculatePriorities,
-                   ExplorationAI.assignScoutsToExploreSystems,
-                   ColonisationAI.assignColonyFleetsToColonise,
-                   InvasionAI.assignInvasionFleetsToInvade,
-                   MilitaryAI.assignMilitaryFleetsToSystems,
-                   FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions,
-                   FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions,
-                   ResearchAI.generateResearchOrders,
+    action_list = [PriorityAI.calculate_priorities,
+                   ExplorationAI.assign_scouts_to_explore_systems,
+                   ColonisationAI.assign_colony_fleets_to_colonise,
+                   InvasionAI.assign_invasion_fleets_to_invade,
+                   MilitaryAI.assign_military_fleets_to_systems,
+                   FleetUtilsAI.generate_fleet_orders_for_fleet_missions,
+                   FleetUtilsAI.issue_fleet_orders_for_fleet_missions,
+                   ResearchAI.generate_research_orders,
                    ProductionAI.generateProductionOrders,
-                   ResourcesAI.generateResourcesOrders,
-                   foAIstate.afterTurnCleanup,
+                   ResourcesAI.generate_resources_orders,
+                   foAIstate.after_turn_cleanup,
                    ]
 
     for action in action_list:

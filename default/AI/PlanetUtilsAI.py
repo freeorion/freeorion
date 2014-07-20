@@ -3,10 +3,10 @@ import FreeOrionAI as foAI
 import ColonisationAI
 
 
-def sysNameIDs(sysIDs):
+def sys_name_ids(sys_ids):
     universe = fo.getUniverse()
     res=[]
-    for sysID in sysIDs:
+    for sysID in sys_ids:
         sys = universe.getSystem(sysID)
         if sys:
             res.append( "%s:%d"%(sys.name, sysID ) )
@@ -15,10 +15,10 @@ def sysNameIDs(sysIDs):
     return res
 
 
-def planetNameIDs(planetIDs):
+def planet_name_ids(planet_ids):
     universe = fo.getUniverse()
     res=[]
-    for pid in planetIDs:
+    for pid in planet_ids:
         planet = universe.getPlanet(pid)
         if planet:
             res.append( "%s:%d"%(planet.name, pid ) )
@@ -27,70 +27,70 @@ def planetNameIDs(planetIDs):
     return res
 
 
-def getCapital(): # if no current capital returns planet with biggest pop
+def get_capital(): # if no current capital returns planet with biggest pop
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     if empire is None:
         print "Danger Danger! FO can't find an empire for me!!!!"
         return -1
-    empireID = empire.empireID
-    capitalID = empire.capitalID
-    homeworld = universe.getPlanet(capitalID)
+    empire_id = empire.empireID
+    capital_id = empire.capitalID
+    homeworld = universe.getPlanet(capital_id)
     if homeworld:
-        if homeworld.owner==empireID:
-            return capitalID
+        if homeworld.owner==empire_id:
+            return capital_id
         else:
-            print "Nominal Capitol %s does not appear to be owned by empire %d  %s"%(homeworld.name,  empireID,  empire.name)
+            print "Nominal Capitol %s does not appear to be owned by empire %d  %s"%(homeworld.name,  empire_id,  empire.name)
     #exploredSystemIDs = empire.exploredSystemIDs
-    #exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
-    empireOwnedPlanetIDs = getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    peopledPlanets = getPopulatedPlanetIDs(  empireOwnedPlanetIDs)
-    if not peopledPlanets:
-        if empireOwnedPlanetIDs:
-            return empireOwnedPlanetIDs[0]
+    #exploredPlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(exploredSystemIDs)
+    empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs, empire_id)
+    peopled_planets = get_populated_planet_ids(  empire_owned_planet_ids)
+    if not peopled_planets:
+        if empire_owned_planet_ids:
+            return empire_owned_planet_ids[0]
         else:
             return -1
     try:
         for spec_list in [ list(ColonisationAI.empireColonizers),  list(ColonisationAI.empireShipBuilders),  None]:
-            popMap = []
-            for planetID in peopledPlanets:
+            pop_map = []
+            for planetID in peopled_planets:
                 planet = universe.getPlanet(planetID)
                 if (spec_list is not None) and planet.speciesName not in spec_list:
                     continue
-                popMap.append( ( planet.currentMeterValue(fo.meterType.population) ,  planetID) )
-            if len(popMap) > 0:
-                popMap.sort()
-                return popMap[-1][-1]
+                pop_map.append( ( planet.currentMeterValue(fo.meterType.population) ,  planetID) )
+            if len(pop_map) > 0:
+                pop_map.sort()
+                return pop_map[-1][-1]
     except:
         pass
     return -1 #shouldn't ever reach here
 
 
-def getCapitalSysID():
-    capID = getCapital()
-    if capID is None or capID==-1:
+def get_capital_sys_id():
+    cap_id = get_capital()
+    if cap_id is None or cap_id==-1:
         return -1
     else:
-        return fo.getUniverse().getPlanet(capID).systemID
+        return fo.getUniverse().getPlanet(cap_id).systemID
 
 
-def getPlanetsInSystemsIDs(systemIDs):
+def get_planets_in__systems_ids(system_ids):
     """return list of planets in systems"""
 
     universe = fo.getUniverse()
-    planetIDs = []
+    planet_ids = []
 
-    for systemID in systemIDs:
-        thesePlanets=set(foAI.foAIstate.systemStatus.get(systemID, {}).get('planets', {}).keys())
-        system = universe.getSystem(systemID)
+    for system_id in system_ids:
+        these_planets=set(foAI.foAIstate.systemStatus.get(system_id, {}).get('planets', {}).keys())
+        system = universe.getSystem(system_id)
         if system is not None:
-            thesePlanets.update(list(system.planetIDs))
-        planetIDs.extend(list(thesePlanets)) # added list
+            these_planets.update(list(system.planetIDs))
+        planet_ids.extend(list(these_planets)) # added list
 
-    return planetIDs
+    return planet_ids
 
 
-def getOwnedPlanetsByEmpire(planetIDs, empireID):
+def get_owned_planets_by_empire(planetIDs, empireID):
     """return list of planets owned by empireID"""
 
     universe = fo.getUniverse()
@@ -105,7 +105,7 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
     return result
 
 
-def getAllOwnedPlanetIDs(planetIDs):
+def get_all_owned_planet_ids(planetIDs):
     """return list of all owned and populated planetIDs"""
     universe = fo.getUniverse()
     allOwnedPlanetIDs = []
@@ -120,7 +120,7 @@ def getAllOwnedPlanetIDs(planetIDs):
     return allOwnedPlanetIDs
 
 
-def getPopulatedPlanetIDs(planetIDs):
+def get_populated_planet_ids(planetIDs):
     universe = fo.getUniverse()
     pops=[]
     for planetID in planetIDs:
@@ -130,7 +130,7 @@ def getPopulatedPlanetIDs(planetIDs):
     return pops
 
 
-def getSystems(planetIDs):
+def get_systems(planetIDs):
     """return list of systems containing planetIDs"""
     universe = fo.getUniverse()
     systemIDs = []
