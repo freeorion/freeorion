@@ -711,6 +711,18 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                          m_player_save_game_data,               GetUniverse(),
                          Empires(),     GetSpeciesManager(),    GetCombatLogManager(),
                          server.m_galaxy_setup_data);
+                int seed = 0;
+                try {
+                    Logger().debugStream() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
+                    seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+                } catch (...) {
+                    try {
+                        boost::hash<std::string> string_hash;
+                        std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                        seed = static_cast<unsigned int>(h);
+                    } catch (...) {}
+                }
+                Seed(seed);
 
             } catch (const std::exception&) {
                 SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
