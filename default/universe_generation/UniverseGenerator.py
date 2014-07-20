@@ -7,6 +7,7 @@ import galaxy
 import starsystems
 import empires
 import natives
+import monsters
 import specials
 import statistics
 
@@ -81,21 +82,18 @@ def create_universe():
     print "Generating Natives"
     natives.generate_natives(gsd.nativeFrequency, systems, home_systems)
 
-    print "Distributing starting specials"
-    specials.distribute_specials(gsd.specialsFrequency)
+    print "Generating Space Monsters"
+    monsters.generate_monsters(gsd.monsterFrequency, systems)
+
+    print "Distributing Starting Specials"
+    specials.distribute_specials(gsd.specialsFrequency, fo.get_all_objects())
 
     # finally, write some statistics to the log file
-    print
     print "##############################"
     print "Universe generation statistics"
     print "##############################"
-    print
     statistics.log_planet_count_dist(systems)
-    print
     statistics.log_planet_type_summary(systems)
-    print
     statistics.log_species_summary()
-    print
     statistics.log_specials_summary()
-    print
     print "Python Universe Generator completed"

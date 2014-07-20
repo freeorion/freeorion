@@ -202,5 +202,3 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
             # if the ship couldn't be created, throw an exception
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
                 raise Exception("Python setup empire: couldn't create ship " + ship_design + " for fleet " + fleet_plan.name())
-
-

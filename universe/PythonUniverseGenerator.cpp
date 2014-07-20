@@ -132,6 +132,9 @@ namespace {
     int NativeFrequency(GalaxySetupOption freq)
     { return UniverseDataTables()["NativeFrequency"][0][freq]; }
 
+    int MonsterFrequency(GalaxySetupOption freq)
+    { return UniverseDataTables()["MonsterFrequency"][0][freq]; }
+
     int SpecialsFrequency(GalaxySetupOption freq)
     { return UniverseDataTables()["SpecialsFrequency"][0][freq]; }
 
@@ -234,6 +237,7 @@ namespace {
         }
 
         // get special location condition and evaluate it with the specified universe object
+        // if no location condition has been defined, no object matches
         const Condition::ConditionBase* location_test = special->Location();
         return (location_test && location_test->Eval(obj));
     }
@@ -381,13 +385,12 @@ namespace {
         return list(py_monster_designs);
     }
 
-    // Wrappers for starting fleet and monster fleet plans
+    // Wrappers for starting fleet plans
     class FleetPlanWrapper {
     public:
         // name ctors
-        FleetPlanWrapper(const FleetPlan& fleet_plan) {
-            m_fleet_plan = FleetPlan(fleet_plan.Name(), fleet_plan.ShipDesigns(), false);
-        }
+        FleetPlanWrapper(FleetPlan* fleet_plan)
+        { m_fleet_plan = fleet_plan; }
 
         FleetPlanWrapper(const std::string& fleet_name, const list& py_designs)
         {
@@ -395,16 +398,20 @@ namespace {
             for (int i = 0; i < len(py_designs); i++) {
                 designs.push_back(extract<std::string>(py_designs[i]));
             }
-            m_fleet_plan = FleetPlan(fleet_name, designs, false);
+            m_fleet_plan = new FleetPlan(fleet_name, designs, false);
         }
+
+        // dtor
+        virtual ~FleetPlanWrapper()
+        { delete m_fleet_plan; }
 
         // name accessors
         object Name()
-        { return object(m_fleet_plan.Name()); }
+        { return object(m_fleet_plan->Name()); }
 
         list ShipDesigns() {
             list py_designs;
-            const std::vector<std::string>& designs = m_fleet_plan.ShipDesigns();
+            const std::vector<std::string>& designs = m_fleet_plan->ShipDesigns();
             for (unsigned int i = 0; i < designs.size(); i++) {
                 py_designs.append(object(designs[i]));
             }
@@ -412,10 +419,10 @@ namespace {
         }
 
         const FleetPlan& GetFleetPlan()
-        { return m_fleet_plan; }
+        { return *m_fleet_plan; }
 
     private:
-        FleetPlan m_fleet_plan;
+        FleetPlan* m_fleet_plan;
     };
 
     list LoadFleetPlanList(const std::string& file_name) {
@@ -423,10 +430,83 @@ namespace {
         std::vector<FleetPlan*> fleet_plans;
         parse::fleet_plans(GetResourceDir() / file_name, fleet_plans);
         for (unsigned int i = 0; i < fleet_plans.size(); i++) {
-            py_fleet_plans.append(FleetPlanWrapper(*(fleet_plans[i])));
-            delete fleet_plans[i];
+            py_fleet_plans.append(new FleetPlanWrapper(fleet_plans[i]));
         }
         return list(py_fleet_plans);
+    }
+
+    // Wrappers for starting monster fleet plans
+    class MonsterFleetPlanWrapper {
+    public:
+        // name ctors
+        MonsterFleetPlanWrapper(MonsterFleetPlan* monster_fleet_plan) {
+            m_monster_fleet_plan = monster_fleet_plan;
+        }
+
+        MonsterFleetPlanWrapper(const std::string& fleet_name, const list& py_designs,
+                                double spawn_rate, int spawn_limit)
+        {
+            std::vector<std::string> designs;
+            for (int i = 0; i < len(py_designs); i++) {
+                designs.push_back(extract<std::string>(py_designs[i]));
+            }
+            m_monster_fleet_plan =
+                new MonsterFleetPlan(fleet_name, designs, spawn_rate,
+                                     spawn_limit, 0, false);
+        }
+
+        // dtor
+        virtual ~MonsterFleetPlanWrapper()
+        { delete m_monster_fleet_plan; }
+
+        // name accessors
+        object Name()
+        { return object(m_monster_fleet_plan->Name()); }
+
+        list ShipDesigns() {
+            list py_designs;
+            const std::vector<std::string>& designs = m_monster_fleet_plan->ShipDesigns();
+            for (unsigned int i = 0; i < designs.size(); i++) {
+                py_designs.append(object(designs[i]));
+            }
+            return list(py_designs);
+        }
+
+        double SpawnRate()
+        { return m_monster_fleet_plan->SpawnRate(); }
+
+        int SpawnLimit()
+        { return m_monster_fleet_plan->SpawnLimit(); }
+        
+        bool Location(int object_id) {
+            // get the universe object to test and check if it exists
+            TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+            if (!obj) {
+                Logger().errorStream() << "PythonUniverseGenerator::MonsterFleetPlanWrapper::Location: Couldn't get object with ID " << object_id;
+                return false;
+            }
+
+            // get location condition and evaluate it with the specified universe object
+            // if no location condition has been defined, any object matches
+            const Condition::ConditionBase* location_test = m_monster_fleet_plan->Location();
+            return (!location_test || location_test->Eval(obj));
+        }
+        
+        const MonsterFleetPlan& GetMonsterFleetPlan()
+        { return *m_monster_fleet_plan; }
+
+    private:
+        MonsterFleetPlan* m_monster_fleet_plan;
+    };
+    
+    list LoadMonsterFleetPlanList(const std::string& file_name) {
+        list py_monster_fleet_plans;
+        std::vector<MonsterFleetPlan*> monster_fleet_plans;
+        parse::monster_fleet_plans(GetResourceDir() / file_name, monster_fleet_plans);
+        for (unsigned int i = 0; i < monster_fleet_plans.size(); i++) {
+            py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(monster_fleet_plans[i]));
+        }
+        return list(py_monster_fleet_plans);
     }
 
     // Wrappers for the various universe object classes member funtions
@@ -673,16 +753,16 @@ namespace {
     int CreateShip(const std::string& name, const std::string& design_name, const std::string& species, int fleet_id) {
         Universe& universe = GetUniverse();
 
-        // check if we got a species name
-        if (species.empty()) {
-            Logger().errorStream() << "PythonUniverseGenerator::CreateShip: no species specified";
+        // check if we got a species name, if yes, check if species exists
+        if (!species.empty() && !GetSpecies(species)) {
+            Logger().errorStream() << "PythonUniverseGenerator::CreateShip: invalid species specified";
             return INVALID_OBJECT_ID;
         }
 
         // get ship design and check if it exists
         const ShipDesign* ship_design = universe.GetGenericShipDesign(design_name);
         if (!ship_design) {
-            Logger().errorStream() << "PythonUniverseGenerator::CreateShipDesign: couldn't get ship design " << design_name;
+            Logger().errorStream() << "PythonUniverseGenerator::CreateShip: couldn't get ship design " << design_name;
             return INVALID_OBJECT_ID;
         }
 
@@ -695,7 +775,7 @@ namespace {
 
         TemporaryPtr<System> system = GetSystem(fleet->SystemID());
         if (!system) {
-            Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't get system for fleet";
+            Logger().errorStream() << "PythonUniverseGenerator::CreateShip: couldn't get system for fleet";
             return INVALID_OBJECT_ID;
         }
 
@@ -745,6 +825,12 @@ namespace {
         //return the new ships id
         return ship->ID();
     }
+
+    int CreateMonsterFleet(int system_id)
+    { return CreateFleet(UserString("MONSTERS"), system_id, ALL_EMPIRES); }
+
+    int CreateMonster(const std::string& design_name, int fleet_id)
+    { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
 
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
@@ -1026,6 +1112,13 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
         .def("name",            &FleetPlanWrapper::Name)
         .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
+    class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
+        .def("name",            &MonsterFleetPlanWrapper::Name)
+        .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
+        .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
+        .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
+        .def("location",        &MonsterFleetPlanWrapper::Location);
+
     def("get_galaxy_setup_data",                GetGalaxySetupDataQ,            return_value_policy<reference_existing_object>());
     def("get_player_setup_data",                GetPlayerSetupDataQ,            return_value_policy<reference_existing_object>());
 
@@ -1049,6 +1142,7 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
     def("max_starlane_length",                  MaxStarlaneLength);
     def("native_frequency",                     NativeFrequency);
+    def("monster_frequency",                    MonsterFrequency);
     def("specials_frequency",                   SpecialsFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
@@ -1080,10 +1174,11 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
 
     def("design_create",                        ShipDesignCreate);
     def("design_get_premade_list",              ShipDesignGetPremadeList);
-    def("design_get_moster_list",               ShipDesignGetMonsterList);
+    def("design_get_monster_list",              ShipDesignGetMonsterList);
 
     def("load_item_spec_list",                  LoadItemSpecList);
     def("load_fleet_plan_list",                 LoadFleetPlanList);
+    def("load_monster_fleet_plan_list",         LoadMonsterFleetPlanList);
 
     def("get_name",                             GetName);
     def("set_name",                             SetName);
@@ -1104,6 +1199,8 @@ BOOST_PYTHON_MODULE(foUniverseGenerator) {
     def("create_building",                      CreateBuilding);
     def("create_fleet",                         CreateFleet);
     def("create_ship",                          CreateShip);
+    def("create_monster_fleet",                 CreateMonsterFleet);
+    def("create_monster",                       CreateMonster);
 
     def("sys_get_star_type",                    SystemGetStarType);
     def("sys_set_star_type",                    SystemSetStarType);
@@ -1217,9 +1314,9 @@ namespace {
             return;
         }
 
+        // set Python current work directory to directory containing
+        // the universe generation Python scripts
         std::string universe_generation_script_dir = GetResourceDir().string() + "/universe_generation";
-
-        // set Python current work directory to resource dir
         script = "import os\n"
         "os.chdir(r'" + universe_generation_script_dir + "')\n"
         "print 'Python current directory set to', os.getcwd()";
@@ -1260,7 +1357,7 @@ namespace {
     void PythonCreateUniverse() {
         object f = s_python_module.attr("create_universe");
         if (!f) {
-            Logger().errorStream() << "Unable to call Python function createUniverse ";
+            Logger().errorStream() << "Unable to call Python function create_universe ";
             return;
         }
         try { f(); }
@@ -1314,14 +1411,8 @@ void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) 
     // Call the main Python universe generator function
     PythonCreateUniverse();
 
-    // TEMPORARY: Use legacy universe generation funtions for
-    // all the stuff that hasn't been ported to Python yet
-    // Logger().debugStream() << "Generating Natives";
-    // GenerateNatives(universe, GetGalaxySetupData().m_native_freq);
-    Logger().debugStream() << "Generating Space Monsters";
-    GenerateSpaceMonsters(universe, GetGalaxySetupData().m_monster_freq);
-    // Logger().debugStream() << "Adding Starting Specials";
-    // AddStartingSpecials(universe, GetGalaxySetupData().m_specials_freq);
+    // Stop and clean up Python interpreter
+    PythonCleanup();
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 
@@ -1351,7 +1442,4 @@ void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) 
     }
 
     universe.UpdateEmpireObjectVisibilities();
-
-    // Stop and clean up Python interpreter
-    PythonCleanup();
 }

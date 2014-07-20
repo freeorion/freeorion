@@ -3,7 +3,7 @@ import foUniverseGenerator as fo
 import statistics
 
 
-def distribute_specials(specials_freq):
+def distribute_specials(specials_freq, universe_objects):
     """
     Adds start-of-game specials to universe objects
     """
@@ -11,7 +11,6 @@ def distribute_specials(specials_freq):
     # get basic chance for occurrence of specials from the universe tables
     # the values there are integers, so we have to divide them by 10,000 to get the actual basic probability value
     basic_chance = float(fo.specials_frequency(specials_freq)) / 10000.0
-    # if the chance for specials is 0, return immediately
     if basic_chance <= 0:
         return
 
@@ -19,7 +18,6 @@ def distribute_specials(specials_freq):
     # (no location condition means a special shouldn't get added at game start)
     specials = [sp for sp in fo.get_all_specials() if fo.special_spawn_rate(sp) > 0.0 and
                 fo.special_spawn_limit(sp) > 0 and fo.special_has_location(sp)]
-    # if there are no such specials, return immediately
     if not specials:
         return
     # dump a list of all specials meeting that conditions and their properties to the log
@@ -28,9 +26,10 @@ def distribute_specials(specials_freq):
         print "...", special, ": spawn rate", fo.special_spawn_rate(special),\
               "/ spawn limit", fo.special_spawn_limit(special)
 
-    # attempt to apply a special to every universe object by finding a special that can be applied to it and hasn't
-    # been added too many times, and then attempt to add that special by testing its spawn rate
-    for univ_obj in fo.get_all_objects():
+    # attempt to apply a special to each universe object in the list that has been passed to this function
+    # by finding a special that can be applied to it and hasn't been added too many times, and then attempt
+    # to add that special by testing its spawn rate
+    for univ_obj in universe_objects:
         # for this universe object, find a suitable special
         # start by shuffling our specials list, so each time the specials are considered in a new random order
         random.shuffle(specials)
