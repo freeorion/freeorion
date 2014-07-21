@@ -4835,8 +4835,6 @@ void MapWnd::ShowResearch() {
     // indicate selection on button
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
     m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
-
-    m_pedia_panel->SetText("ENC_TECH", false);
 }
 
 void MapWnd::HideResearch() {
@@ -4865,7 +4863,6 @@ void MapWnd::ShowProduction() {
     HideResearch();
     HideDesign();
     HideSidePanel();
-    m_pedia_panel->SetIndex();
 
     // show the production window
     m_production_wnd->Update();
