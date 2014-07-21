@@ -1,8 +1,5 @@
 import random
-from pprint import pprint
-
 import foUniverseGenerator as fo
-
 import options
 import names
 

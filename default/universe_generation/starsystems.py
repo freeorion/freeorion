@@ -1,8 +1,6 @@
 import sys
 import random
-
 import foUniverseGenerator as fo
-
 import planets
 
 

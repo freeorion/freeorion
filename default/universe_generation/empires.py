@@ -16,7 +16,7 @@ def get_empire_name_generator():
     empire_names = names.get_name_list("EMPIRE_NAMES")
     random.shuffle(empire_names)
     while True:
-        if names:
+        if empire_names:
             yield empire_names.pop()
         else:
             yield names.random_name(5)
