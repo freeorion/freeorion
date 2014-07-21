@@ -34,18 +34,8 @@ class AdjacencyGrid:
         upper_left_y = max(0, cell_y - 1)
         lower_right_x = min(self.width - 1, cell_x + 1)
         lower_right_y = min(self.width - 1, cell_y + 1)
-        too_close = False
-        for index_x in range(upper_left_x, lower_right_x + 1):
-            for index_y in range(upper_left_y, lower_right_y + 1):
-                for pos in self.grid[index_x][index_y]:
-                    if util.distance(pos.x, pos.y, x, y) < self.min_dist:
-                        too_close = True
-                        break
-                if too_close:
-                    break
-            if too_close:
-                break
-        return too_close
+        return any(util.distance(pos.x, pos.y, x, y) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
+                   for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
 
 
 def test_galaxy_calc_positions(positions, size, width):
