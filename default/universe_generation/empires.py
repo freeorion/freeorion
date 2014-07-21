@@ -72,7 +72,7 @@ def generate_home_system_list(num_home_systems, systems):
                     continue
                 if not fo.sys_get_planets(candidate):
                     continue
-            # if our candidate is too close to the already choosen home systems, don't use it
+            # if our candidate is too close to the already chosen home systems, don't use it
             if is_too_close_to_other_home_systems(candidate, home_systems):
                 continue
             # if our candidate passed the above tests, add it to our list
@@ -88,7 +88,7 @@ def generate_home_system_list(num_home_systems, systems):
                 attempts += 1
                 # again, choose one system from the list we got
                 candidate = random.choice(systems)
-                # but now just check if it has already been choosen as home system
+                # but now just check if it has already been chosen as home system
                 if candidate in home_systems:
                     # if yes, try again
                     continue
@@ -101,20 +101,20 @@ def generate_home_system_list(num_home_systems, systems):
         if not found:
             raise Exception("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems, aborting" % (num_home_systems, len(systems)))
 
-        # if choosen system has no "real" star, change star type to a randomly selected "real" star
+        # if chosen system has no "real" star, change star type to a randomly selected "real" star
         if fo.sys_get_star_type(candidate) not in starsystems.star_types_real:
             star_type = random.choice(starsystems.star_types_real)
             print "Home system #", len(home_systems), "has star type", fo.sys_get_star_type(candidate), ", changing that to", star_type
             fo.sys_set_star_type(candidate, star_type)
 
-        # if choosen system has no planets, create one in a random orbit
+        # if chosen system has no planets, create one in a random orbit
         # we take random values for type and size, as these will be
         # set to suitable values later
         if not fo.sys_get_planets(candidate):
             print "Home system #", len(home_systems), "has no planets, adding one"
             planet = planets.generate_planet(random.choice(planets.planet_sizes_real), random.choice(planets.planet_types_real),
                                              candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1))
-            if  planet == fo.invalid_object():
+            if planet == fo.invalid_object():
                 # generate planet failed, throw an exception
                 raise Exception("Python generate_home_system_list: couldn't create planet in home system")
     return home_systems
@@ -139,11 +139,11 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     print "Starting species for player", player_name, "is", starting_species
 
     # pick a planet from the specified home system as homeworld
-    planets = fo.sys_get_planets(home_system)
+    planet_list = fo.sys_get_planets(home_system)
     # if the system is empty, throw an exception
-    if not planets:
+    if not planet_list:
         raise Exception("Python setup_empire: got home system with no planets")
-    homeworld = random.choice(planets)
+    homeworld = random.choice(planet_list)
 
     # set selected planet as empire homeworld with selected starting species
     fo.empire_set_homeworld(empire, homeworld, starting_species)

@@ -12,19 +12,6 @@ import specials
 import statistics
 
 
-def adjust_universe_size(size, total_players):
-    """
-    This function checks if there are enough systems to give all
-    players adequately-separated homeworlds, and increases the
-    number of systems accordingly if not
-    """
-    min_sys = total_players * 3
-    if size < min_sys:
-        return min_sys
-    else:
-        return size
-
-
 def create_universe():
     print "Python Universe Generator"
 
@@ -38,7 +25,7 @@ def create_universe():
 
     # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
-    size = adjust_universe_size(gsd.size, total_players)
+    size = max(gsd.size, (total_players * 3))
     if size > gsd.size:
         # gsd.size = size
         print "Too few systems for the requested number of players, number of systems adjusted accordingly"
@@ -62,11 +49,9 @@ def create_universe():
     print "...systems chosen:", home_systems
 
     # set up empires for each player
-    home_systems_copy = list(home_systems)  # use a copy of the home system list, as we need this list unaltered later
-    for psd_entry in psd_list:
+    for psd_entry, home_system in zip(psd_list, home_systems):
         empire = psd_entry.key()
         psd = psd_entry.data()
-        home_system = home_systems_copy.pop()
         empires.setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name)
 
     # assign names to all star systems and their planets

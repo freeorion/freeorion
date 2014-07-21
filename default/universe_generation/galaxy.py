@@ -38,8 +38,6 @@ class AdjacencyGrid:
         for index_x in range(upper_left_x, lower_right_x + 1):
             for index_y in range(upper_left_y, lower_right_y + 1):
                 for pos in self.grid[index_x][index_y]:
-                    x_dist = pos.x - x
-                    y_dist = pos.y - y
                     if util.distance(pos.x, pos.y, x, y) < self.min_dist:
                         too_close = True
                         break
@@ -92,7 +90,7 @@ def calc_star_system_positions(shape, size):
     # calculate typical width for universe based on number of systems
     width = fo.calc_typical_universe_width(size)
     if shape == fo.galaxyShape.test:
-        width = width * 1.4
+        width *= 1.4
     fo.set_universe_width(width)
     print "Set universe width to", width
 
@@ -125,7 +123,6 @@ def calc_star_system_positions(shape, size):
     # Check if any positions have been calculated...
     if not positions:
         # ...if not, fall back on irregular shape
-        shape = fo.galaxyShape.irregular
         fo.irregular_galaxy_positions(positions, size, width, width)
 
     return positions

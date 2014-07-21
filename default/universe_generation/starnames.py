@@ -104,7 +104,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
         trial_mod = random.choice(stargroup_modifiers) + " " + "".join(random.sample(names.consonants + names.vowels, 3)).upper()
         if trial_mod not in modifiers:
             modifiers.append(trial_mod)
-    if options.postfix_stargroup_modifiers:
+    if options.POSTFIX_STARGROUP_MODIFIERS:
         name_list = [group_name + " " + modifier for modifier in modifiers]
     else:
         name_list = [modifier + " " + group_name for modifier in modifiers]
@@ -132,7 +132,7 @@ def name_star_systems(system_list):
     individual_names = []
     stargroup_words[:] = names.get_name_list("STAR_GROUP_WORDS")
     stargroup_chars[:] = names.get_name_list("STAR_GROUP_CHARS")
-    stargroup_modifiers[:] = [stargroup_words, stargroup_chars][options.star_groups_use_chars]
+    stargroup_modifiers[:] = [stargroup_words, stargroup_chars][options.STAR_GROUPS_USE_CHARS]
     for starname in star_names:
         if len(starname) > 6:  # if starname is long, don't allow it for groups
             individual_names.append(starname)
@@ -150,7 +150,7 @@ def name_star_systems(system_list):
 
     # ensure at least a portion of galaxy gets individual starnames
     num_systems = len(system_list)
-    target_indiv_ratio = [options.target_indiv_ratio_small, options.target_indiv_ratio_large][num_systems >= options.naming_large_galaxy_size]
+    target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE][num_systems >= options.NAMING_LARGE_GALAXY_SIZE]
     #TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than 50% potential_group_names used for groups
     num_individual_stars = int(max(min(num_systems * target_indiv_ratio,
                                        len(individual_names)+int(0.5*len(potential_group_names))),
