@@ -168,12 +168,15 @@ void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding
     filtered_objects = this->objects;       // for now, include all objects in battle / system
 }
 
-void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filtered_empire_known_objects, int encoding_empire) const {
+void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filtered_empire_known_objects,
+                                                  int encoding_empire) const
+{
     if (&filtered_empire_known_objects == &this->empire_known_objects)
         return;
 
-    for (std::map<int, ObjectMap>::iterator it = filtered_empire_known_objects.begin(); it != filtered_empire_known_objects.end(); ++it)
-        it->second.Clear();
+    for (std::map<int, ObjectMap>::iterator it = filtered_empire_known_objects.begin();
+         it != filtered_empire_known_objects.end(); ++it)
+    { it->second.Clear(); }
     filtered_empire_known_objects.clear();
 
     if (encoding_empire == ALL_EMPIRES) {
@@ -189,7 +192,9 @@ void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filt
     }
 }
 
-void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects, int encoding_empire) const {
+void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects,
+                                              int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         filtered_damaged_objects = this->damaged_object_ids;
         return;
@@ -198,7 +203,9 @@ void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_ob
     filtered_damaged_objects = this->damaged_object_ids;
 }
 
-void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroyed_objects, int encoding_empire) const {
+void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroyed_objects,
+                                                int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         filtered_destroyed_objects = this->destroyed_object_ids;
         return;
@@ -208,7 +215,8 @@ void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroye
 }
 
 void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&
-    filtered_destroyed_object_knowers, int encoding_empire) const
+                                                      filtered_destroyed_object_knowers,
+                                                      int encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
         filtered_destroyed_object_knowers = this->destroyed_object_knowers;
@@ -226,7 +234,7 @@ void CombatInfo::GetCombatEventsToSerialize(std::vector<CombatEventPtr>& filtere
 }
 
 void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&
-                                                        filtered_empire_object_visibility,
+                                                      filtered_empire_object_visibility,
                                                       int encoding_empire) const
 {
     filtered_empire_object_visibility = this->empire_object_visibility;
@@ -246,8 +254,7 @@ namespace {
         std::string     part_type_name;
         float           part_attack;
     };
-    
-    
+
     void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target, CombatInfo& combat_info, int bout, int round) {
         if (!attacker || ! target) return;
 
@@ -392,11 +399,11 @@ namespace {
     }
 
     void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon, TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round){
-        TemporaryPtr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
-        TemporaryPtr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
-        TemporaryPtr<Ship> target_ship = boost::dynamic_pointer_cast<Ship>(target);
-        TemporaryPtr<Planet> target_planet = boost::dynamic_pointer_cast<Planet>(target);
-        
+        TemporaryPtr<Ship>      attack_ship =   boost::dynamic_pointer_cast<Ship>(attacker);
+        TemporaryPtr<Planet>    attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
+        TemporaryPtr<Ship>      target_ship =   boost::dynamic_pointer_cast<Ship>(target);
+        TemporaryPtr<Planet>    target_planet = boost::dynamic_pointer_cast<Planet>(target);
+
         if (attack_ship && target_ship) {
             AttackShipShip(attack_ship, weapon.part_attack, target_ship, combat_info, bout, round);
         } else if (attack_ship && target_planet) {
@@ -407,21 +414,23 @@ namespace {
             // Planets don't attack each other, silly
         }
     }
-    
+
     bool ObjectCanBeAttacked(TemporaryPtr<const UniverseObject> obj) {
         if (!obj)
             return false;
+
         UniverseObjectType obj_type = obj->ObjectType();
-        if (obj_type == OBJ_SHIP) {
+
+        if (obj_type == OBJ_SHIP)
             return true;
-        } else if (obj_type == OBJ_PLANET) {
+
+        if (obj_type == OBJ_PLANET) {
             if (!obj->Unowned() || obj->CurrentMeterValue(METER_POPULATION) > 0.0f)
                 return true;
-            else
-                return false;
-        } else {
             return false;
         }
+
+        return false;
     }
 
     bool ObjectAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
@@ -502,24 +511,20 @@ namespace {
         }
         return retval;
     }
-    
+
     // Information about a single empire during combat
     struct EmpireCombatInfo{
         std::set<int> attacker_ids;
         std::set<int> target_ids;
-        
-        bool HasTargets() const {
-            return !target_ids.empty();
-        }
-        
-        bool HasAttackers() const {
-            return !attacker_ids.empty();
-        }
+        bool HasTargets() const     { return !target_ids.empty(); }
+        bool HasAttackers() const   { return !attacker_ids.empty(); }
     };
-    
+
     // Populate lists of things that can attack and be attacked. List attackers also by empire.
     void GetAttackersAndTargets(const CombatInfo& combat_info, std::set<int>& valid_target_object_ids,
-                                std::set<int>& valid_attacker_object_ids, std::map<int, EmpireCombatInfo>& empire_infos) {
+                                std::set<int>& valid_attacker_object_ids,
+                                std::map<int, EmpireCombatInfo>& empire_infos)
+    {
         for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
             TemporaryPtr<const UniverseObject> obj = *it;
             //Logger().debugStream() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
@@ -534,7 +539,7 @@ namespace {
             }
         }
     }
-    
+
     // Calculate monster detection strength in system
     float GetMonsterDetection(const CombatInfo& combat_info) {
         float monster_detection = 0.0;
@@ -546,17 +551,17 @@ namespace {
         }
         return monster_detection;
     }
-    
+
     /// A collection of information the autoresolution must keep around
     struct AutoresolveInfo {
         typedef std::map<int, EmpireCombatInfo>::iterator empire_it;
-        
-        std::set<int> valid_target_object_ids;          // all objects that can be attacked
-        std::set<int> valid_attacker_object_ids;        // all objects that can attack
-        std::map<int, EmpireCombatInfo> empire_infos;    // empire specific information
-        float monster_detection;                        // monster's detections strength
-        CombatInfo& combat_info;                        // a reference to the combat info
-        
+
+        std::set<int>                   valid_target_object_ids;    // all objects that can be attacked
+        std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
+        std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information
+        float                           monster_detection;          // monster's detections strength
+        CombatInfo&                     combat_info;                // a reference to the combat info
+
         AutoresolveInfo(CombatInfo& combat_info):
         combat_info(combat_info)
         {
@@ -564,39 +569,38 @@ namespace {
             PopulateAttackersAndTargets(combat_info);
             PopulateEmpireTargets(combat_info);
         }
-        
+
         // Return true if some empire that can attack has some targets that it can attack
         bool CanSomeoneAttackSomething() const {
             for (std::map<int, EmpireCombatInfo>::const_iterator attacker_it = empire_infos.begin();
                  attacker_it != empire_infos.end(); ++attacker_it)
-                 {
-                     if (attacker_it->second.HasTargets() && attacker_it->second.HasAttackers()) {
-                         return true;
-                     }
-                 }
-                 return false;
+            {
+                if (attacker_it->second.HasTargets() && attacker_it->second.HasAttackers())
+                    return true;
+            }
+            return false;
         }
-        
+
         /// Removes dead units from lists of attackers and defenders
-        void CullTheDead ( int bout ) {
-            for ( ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it ) {
+        void CullTheDead(int bout) {
+            for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
+                 it != combat_info.objects.const_end(); ++it)
+            {
                 TemporaryPtr<const UniverseObject> obj = *it;
-                
-                // There may be objects, for example unowned planets, that were no a part of the battle to start with.
-                // Ignore them
-                if ( valid_attacker_object_ids.find ( obj->ID() ) == valid_attacker_object_ids.end() &&
-                    valid_target_object_ids.find(obj->ID()) == valid_target_object_ids.end()){
-                    continue;
-                }
-                
+
+                // There may be objects, for example unowned planets, that were
+                // not a part of the battle to start with. Ignore them
+                if (valid_attacker_object_ids.find(obj->ID()) == valid_attacker_object_ids.end() &&
+                    valid_target_object_ids.find(obj->ID()) == valid_target_object_ids.end())
+                { continue; }
+
                 // Check if the target was destroyed and update lists if yes
                 bool destroyed = CheckDestruction(obj);
-                if ( destroyed ) {
+                if (destroyed)
                     combat_info.combat_events.push_back(boost::make_shared<IncapacitationEvent>(bout, obj->ID()));
-                }
             }
         }
-        
+
         /// Checks if target is destroyed and if it is, update lists of living objects.
         /// Return true if is incapacitated
         bool CheckDestruction(const TemporaryPtr<const UniverseObject>& target) {
@@ -633,14 +637,15 @@ namespace {
                     CleanEmpires();
                     return true;
                 }
-                
+
             } else if (target->ObjectType() == OBJ_PLANET) {
-                if (!ObjectCanAttack(target) && valid_attacker_object_ids.find(target_id)!=valid_attacker_object_ids.end()) {
+                if (!ObjectCanAttack(target) &&
+                    valid_attacker_object_ids.find(target_id) != valid_attacker_object_ids.end())
+                {
                     if (GetOptionsDB().Get<bool>("verbose-logging"))
                         Logger().debugStream() << "!! Target Planet defenses knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
-                    
                 }
                 if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
@@ -649,28 +654,28 @@ namespace {
                     if (GetOptionsDB().Get<bool>("verbose-logging")) {
                         Logger().debugStream() << "!! Target Planet is entirely knocked out of battle";
                     }
-                    
+
                     // remove disabled planet's ID from lists of valid targets
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
-                    
+
                     for (empire_it targeter_it = empire_infos.begin();
                          targeter_it != empire_infos.end(); ++targeter_it)
                     { targeter_it->second.target_ids.erase(target_id); }
-                    
+
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
-                    
+
                     CleanEmpires();
                     return true;
                 }
             }
-            
+
             return false;
         }
-        
+
         /// check if any empire has no remaining target or attacker objects.
         /// If so, remove that empire's entry
-        void CleanEmpires(){
+        void CleanEmpires() {
             std::map<int, EmpireCombatInfo> temp = empire_infos;
             for (empire_it empire_it = empire_infos.begin();
                  empire_it != empire_infos.end(); ++empire_it)
@@ -683,14 +688,14 @@ namespace {
             }
             empire_infos = temp;
         }
-        
+
         /// Returns the list of attacker ids in a random order
         void GiveAttackersShuffled(std::vector<int>& shuffled) {
             shuffled.clear();
             shuffled.insert(shuffled.begin(), valid_attacker_object_ids.begin(), valid_attacker_object_ids.end());
-            
+
             const unsigned swaps = shuffled.size();
-            for(unsigned i = 0; i < swaps; ++i){
+            for (unsigned i = 0; i < swaps; ++i){
                 int pos1 = RandInt(0, shuffled.size() - 1);
                 int pos2 = RandInt(0, shuffled.size() - 1);
                 std::swap(shuffled[pos1], shuffled[pos2]);
@@ -698,7 +703,7 @@ namespace {
         }
     private:
         typedef std::set<int>::const_iterator const_id_iterator;
-        
+
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
         void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
@@ -715,7 +720,7 @@ namespace {
                 }
             }
         }
-        
+
         // Get a map from empire to set of IDs of objects that empire's objects
         // could potentially target.
         void PopulateEmpireTargets(const CombatInfo& combat_info) {
@@ -724,23 +729,22 @@ namespace {
             {
                 int object_id = *target_it;
                 TemporaryPtr<const UniverseObject> obj = combat_info.objects.Object(object_id);
-                //Logger().debugStream() << "Considering attackability of object " << obj->Name() << " owned by " << obj->Owner();
-                
+                // Logger().debugStream() << "Considering attackability of object " << obj->Name() << " owned by " << obj->Owner();
+
                 // for all empires, can they attack this object?
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
-                    empire_it != combat_info.empire_ids.end(); ++empire_it)
+                     empire_it != combat_info.empire_ids.end(); ++empire_it)
                 {
                     int attacking_empire_id = *empire_it;
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectAttackableByMonsters(obj, monster_detection)) {
-                            //Logger().debugStream() << "object: " << obj->Name() << " attackable by monsters";
+                            // Logger().debugStream() << "object: " << obj->Name() << " attackable by monsters";
                             empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
                         }
-                        
+
                     } else {
-                        // call function to find if empires can attack objects...
                         if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
-                            //Logger().debugStream() << "object: " << obj->Name() << " attackable by empire " << attacking_empire_id;
+                            // Logger().debugStream() << "object: " << obj->Name() << " attackable by empire " << attacking_empire_id;
                             empire_infos[attacking_empire_id].target_ids.insert(object_id);
                         }
                     }
@@ -748,50 +752,52 @@ namespace {
             }
         }
     };
-    
-    
-    void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons, AutoresolveInfo& combat_state, int bout, int round) {
+
+    void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker,
+                         const std::vector<PartAttackInfo>& weapons,
+                         AutoresolveInfo& combat_state,
+                         int bout, int round)
+    {
         if (weapons.empty()) {
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 Logger().debugStream() << "no weapons' can't attack";
             return;   // no ability to attack!
         }
-        
+
         for (std::vector<PartAttackInfo>::const_iterator weapon_it = weapons.begin();
              weapon_it != weapons.end(); ++weapon_it)
         {
             // select object from valid targets for this object's owner   TODO: with this weapon...
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 Logger().debugStream() << "Attacking with weapon " << weapon_it->part_type_name << " with power " << weapon_it->part_attack;
-            
+
             // get valid targets set for attacker owner.  need to do this for
             // each weapon that is attacking, as the previous shot might have
             // destroyed something
             int attacker_owner_id = attacker->Owner();
-            
+
             std::map<int, EmpireCombatInfo >::iterator target_vec_it = combat_state.empire_infos.find(attacker_owner_id);
             if (target_vec_it == combat_state.empire_infos.end() || !target_vec_it->second.HasTargets()) {
                 if (GetOptionsDB().Get<bool>("verbose-logging"))
                     Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
                 break;
             }
-            
+
             const std::set<int>& valid_target_ids = target_vec_it->second.target_ids;
-            
+
             // DEBUG
             std::string id_list;
             for (std::set<int>::const_iterator target_it = valid_target_ids.begin();
-                target_it != valid_target_ids.end(); ++target_it)
+                 target_it != valid_target_ids.end(); ++target_it)
             { id_list += boost::lexical_cast<std::string>(*target_it) + " "; }
-            
+
             if (GetOptionsDB().Get<bool>("verbose-logging")) { 
                 Logger().debugStream() << "Valid targets for attacker with id: " << attacker_owner_id
                 << " owned by empire: " << attacker_owner_id
                 << " :  " << id_list;
             }
             // END DEBUG
-            
-            
+
             // select target object
             int target_idx = RandInt(0, valid_target_ids.size() - 1);
             if (GetOptionsDB().Get<bool>("verbose-logging"))
@@ -800,7 +806,7 @@ namespace {
             std::advance(target_it, target_idx);
             assert(target_it != valid_target_ids.end());
             int target_id = *target_it;
-            
+
             TemporaryPtr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
             if (!target) {
                 Logger().errorStream() << "AutoResolveCombat couldn't get target object with id " << target_id;
@@ -808,24 +814,25 @@ namespace {
             }
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 Logger().debugStream() << "Target: " << target->Name();
-            
-            
-            // do actual attacks, and mark attackers as valid targets for attacked object's owners
+
+            // do actual attacks
             Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round);
+
+            // mark attackers as valid targets for attacked object's owners, so
+            // attacker they can be counter-attacked in subsequent rounds if it
+            // was not already attackable
             combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
-            
         } // end for over weapons
     }
-    
-    
+
     std::vector<PartAttackInfo> GetWeapons(TemporaryPtr<UniverseObject>& attacker) {
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
         std::vector<PartAttackInfo> weapons;
-        
+
         TemporaryPtr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
         TemporaryPtr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
-        
+
         if (attack_ship) {
             weapons = ShipWeaponsStrengths(attack_ship);
             for (std::vector<PartAttackInfo>::const_iterator part_it = weapons.begin();
@@ -833,7 +840,7 @@ namespace {
             {
                 if (GetOptionsDB().Get<bool>("verbose-logging")) {
                     Logger().debugStream() << "weapon: " << part_it->part_type_name
-                    << " attack: " << part_it->part_attack;
+                                           << " attack: " << part_it->part_attack;
                 }
             }
         } else if (attack_planet) { // treat planet defenses as short range
@@ -841,24 +848,25 @@ namespace {
         }
         return weapons;
     }
-    
+
     void CombatRound(int bout, CombatInfo& combat_info, AutoresolveInfo& combat_state) {
-        
         combat_info.combat_events.push_back(boost::make_shared<BoutBeginEvent>(bout));
-        
+
         std::vector<int> shuffled_attackers;
         combat_state.GiveAttackersShuffled(shuffled_attackers);
-        
+
         int round = 1;
-        
+
         // Planets are processed first so that they still have full power as intended,
         // despite their attack power depending on a thing (defence meter)
         // processing shots at them may reduce.
-        for(std::vector<int>::iterator attacker_it = shuffled_attackers.begin(); attacker_it != shuffled_attackers.end(); ++attacker_it) {
+        for (std::vector<int>::iterator attacker_it = shuffled_attackers.begin();
+             attacker_it != shuffled_attackers.end(); ++attacker_it)
+        {
             int attacker_id = *attacker_it;
-            
+
             TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
-            
+
             if (!attacker) {
                 Logger().errorStream() << "CombatRound couldn't get object with id " << attacker_id;
                 return;
@@ -872,16 +880,18 @@ namespace {
             }
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 Logger().debugStream() << "Planet: " << attacker->Name();
-            
+
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
         }
-        
-        for(std::vector<int>::iterator attacker_it = shuffled_attackers.begin(); attacker_it != shuffled_attackers.end(); ++attacker_it) {
+
+        for (std::vector<int>::iterator attacker_it = shuffled_attackers.begin();
+             attacker_it != shuffled_attackers.end(); ++attacker_it)
+        {
             int attacker_id = *attacker_it;
-            
+
             TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
-            
+
             if (!attacker) {
                 Logger().errorStream() << "CombatRound couldn't get object with id " << attacker_id;
                 return;
@@ -895,17 +905,16 @@ namespace {
             }
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 Logger().debugStream() << "Attacker: " << attacker->Name();
-            
+
             // loop over weapons of the attacking object.  each gets a shot at a
             // randomly selected target object
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
         }
-        
+
         /// Remove all who died in the bout
         combat_state.CullTheDead(bout);
     }
-    
 }
 
 void AutoResolveCombat(CombatInfo& combat_info) {
@@ -931,7 +940,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     AutoresolveInfo combat_state(combat_info);
 
 
-    // Each combat "bout" all attackers get turns in a random order
+    // Each combat "bout" all attackers attack one target (if any are available)
     const int NUM_COMBAT_BOUTS = 3;
 
     for (int bout = 1; bout <= NUM_COMBAT_BOUTS; ++bout) {
@@ -965,9 +974,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         Logger().debugStream() << "combat event log:";
         for (std::vector<CombatEventPtr>::const_iterator it = combat_info.combat_events.begin();
-            it != combat_info.combat_events.end(); ++it)
-        {
-            Logger().debugStream() << (*it)->DebugString();
-        }
+             it != combat_info.combat_events.end(); ++it)
+        { Logger().debugStream() << (*it)->DebugString(); }
     }
 }
