@@ -9,6 +9,7 @@ from empires import generate_home_system_list, setup_empire
 from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
+from util import report_error
 from statistics import log_planet_count_dist, log_planet_type_summary, log_species_summary, log_specials_summary
 
 
@@ -46,13 +47,18 @@ def create_universe():
 
     print "Generate list of home systems..."
     home_systems = generate_home_system_list(total_players, systems)
+    if not home_systems:
+        err_msg = "Python create_universe: couldn't get any home systems, ABORTING!"
+        report_error(err_msg)
+        raise Exception(err_msg)
     print "...systems chosen:", home_systems
 
     # set up empires for each player
     for psd_entry, home_system in zip(psd_list, home_systems):
         empire = psd_entry.key()
         psd = psd_entry.data()
-        setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name)
+        if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
+            report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
     # assign names to all star systems and their planets
     # this needs to be done after all systems have been generated and empire home systems have been set, as

@@ -100,6 +100,7 @@ def generate_home_system_list(num_home_systems, systems):
         if not found:
             util.report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
                               % (num_home_systems, len(systems)))
+            return []
 
         # if chosen system has no "real" star, change star type to a randomly selected "real" star
         if fo.sys_get_star_type(candidate) not in starsystems.star_types_real:
@@ -116,8 +117,10 @@ def generate_home_system_list(num_home_systems, systems):
             planet = fo.create_planet(random.choice(planets.planet_sizes_real),
                                       random.choice(planets.planet_types_real),
                                       candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1), "")
+            # if we couldn't create the planet, report an error and return an empty list
             if planet == fo.invalid_object():
                 util.report_error("Python generate_home_system_list: couldn't create planet in home system")
+                return []
     return home_systems
 
 
@@ -206,3 +209,4 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
                 util.report_error("Python setup empire: couldn't create ship %s for fleet %s"
                                   % (ship_design, fleet_plan.name()))
+    return True

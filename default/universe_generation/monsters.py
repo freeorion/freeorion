@@ -1,4 +1,3 @@
-import sys
 import random
 import foUniverseGenerator as fo
 import util
@@ -26,19 +25,19 @@ def generate_monsters(monster_freq, systems):
     # enumerating the monster fleets we get and store them with their ids in a list of tuples
     # we can't use a Python dict with the fleet plans as keys in this case because the fleet plan objects are not
     # immutable
-    fleet_plans = [(id, fp) for id, fp in enumerate(fo.load_monster_fleet_plan_list("space_monster_spawn_fleets.txt"))
+    fleet_plans = [(i, fp) for i, fp in enumerate(fo.load_monster_fleet_plan_list("space_monster_spawn_fleets.txt"))
                    if fp.spawn_rate() > 0.0 and fp.spawn_limit() > 0 and fp.ship_designs()]
     if not fleet_plans:
         return
     # dump a list of all monster fleets meeting these conditions and their properties to the log
     print "Monster fleets available for generation at game start:"
-    for id, fleet_plan in fleet_plans:
+    for i, fleet_plan in fleet_plans:
         print "...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(),\
               "/ spawn limit", fleet_plan.spawn_limit()
 
     # initialize count of how many of each monster fleet plan has been created
     # here we are going to use the ids we just assigned to the monster fleets
-    monster_fleets_created = {id: 0 for id, fp in fleet_plans}
+    monster_fleets_created = {i: 0 for i, fp in fleet_plans}
 
     # for each system in the list that has been passed to this function, find a monster whose location condition
     # allows the system, which hasn't already been added too many times, and then attempt to add that monster by
