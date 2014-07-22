@@ -74,11 +74,12 @@ def create_universe():
     distribute_specials(gsd.specialsFrequency, fo.get_all_objects())
 
     # finally, write some statistics to the log file
-    print "##############################"
-    print "Universe generation statistics"
-    print "##############################"
+    print "############################################################"
+    print "##             Universe generation statistics             ##"
+    print "############################################################"
     log_planet_count_dist(systems)
     log_planet_type_summary(systems)
     log_species_summary()
     log_specials_summary()
+    print "############################################################"
     print "Python Universe Generator completed"

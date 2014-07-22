@@ -2,6 +2,7 @@ import sys
 import random
 import foUniverseGenerator as fo
 import planets
+import util
 
 
 # tuple of available star types
@@ -33,29 +34,13 @@ def pick_star_type(galaxy_age):
     except:
         # in case of an error play save and set star type to invalid
         star_type = fo.starType.unknown
-        print "Python pick_star_type: Pick star type failed"
-        print sys.exc_info()[1]
+        util.report_error("Python pick_star_type: Pick star type failed\n" + sys.exc_info()[1])
 
     # if we got an invalid star type (for whatever reason),
     # just select one randomly from the global tuple
     if star_type == fo.starType.unknown:
         star_type = random.choice(star_types)
     return star_type
-
-
-def generate_system(star_type, pos_x, pos_y, name=""):
-    """
-    Generates a new star system at the specified position with the specified star type
-    """
-    # create and insert the system into the universe
-    # and return ID of the newly created system
-    try:
-        system = fo.create_system(star_type, name, pos_x, pos_y)
-    except:
-        system = fo.invalid_object()
-        print "Python generate_system: Create system failed"
-        print sys.exc_info()[1]
-    return system
 
 
 def name_planets(system):
@@ -90,7 +75,12 @@ def generate_systems(pos_list, gsd):
     sys_list = []
     for position in pos_list:
         star_type = pick_star_type(gsd.age)
-        system = generate_system(star_type, position.x, position.y)
+        system = fo.create_system(star_type, "", position.x, position.y)
+        if system == fo.invalid_object():
+            # create system failed, report an error and try to continue with next position
+            util.report_error("Python generate_systems: create system at position (%f, %f) failed"
+                              % (position.x, position.y))
+            continue
         sys_list.append(system)
         for orbit in range(0, fo.sys_get_num_orbits(system) - 1):
             # check for each orbit if a planet shall be created by determining planet size
@@ -98,5 +88,7 @@ def generate_systems(pos_list, gsd):
             if planet_size in planets.planet_sizes:
                 # ok, we want a planet, determine planet type and generate the planet
                 planet_type = planets.calc_planet_type(star_type, orbit, planet_size)
-                planets.generate_planet(planet_size, planet_type, system, orbit)
+                if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
+                    # create planet failed, report an error and try to continue with next orbit
+                    util.report_error("Python generate_systems: create planet in system %d failed" % system)
     return sys_list

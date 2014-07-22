@@ -1,6 +1,7 @@
 import sys
 import random
 import foUniverseGenerator as fo
+import util
 
 
 def generate_monsters(monster_freq, systems):
@@ -76,15 +77,15 @@ def generate_monsters(monster_freq, systems):
             monster_fleets_created[fleet_plan_id] += 1
             # create monster fleet
             monster_fleet = fo.create_monster_fleet(system)
-            # if fleet creation fails, log an error and try to continue with next system
+            # if fleet creation fails, report an error and try to continue with next system
             if monster_fleet == fo.invalid_object():
-                print >> sys.stderr, "Python generate_monsters: unable to create new monster fleet", fleet_plan.name()
+                util.report_error("Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name())
                 break
             # add monsters to fleet
             for design in fleet_plan.ship_designs():
-                # create monster, if creation fails, log an error
+                # create monster, if creation fails, report an error and try to continue with the next design
                 if fo.create_monster(design, monster_fleet) == fo.invalid_object():
-                    print >> sys.stderr, "Python generate_monsters: unable to create monster", design
+                    util.report_error("Python generate_monsters: unable to create monster %s" % design)
 
             #continue with next system
             break

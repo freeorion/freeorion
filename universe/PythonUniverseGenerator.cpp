@@ -632,9 +632,8 @@ namespace {
         // Create system and insert it into the object map
         TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
         if (!system) {
-            std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
-            Logger().debugStream() << err_msg;
-            throw std::runtime_error(err_msg);
+            Logger().errorStream() << "PythonUniverseGenerator::CreateSystem : Attempt to insert system into the object map failed";
+            return INVALID_OBJECT_ID;
         }
 
         return system->SystemID();
@@ -684,9 +683,8 @@ namespace {
         // Create planet and insert it into the object map
         TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(planet_type, size);
         if (!planet) {
-            std::string err_msg = "PythonUniverseGenerator::CreateSystem : Attempt to insert planet into the object map failed";
-            Logger().debugStream() << err_msg;
-            throw std::runtime_error(err_msg);
+            Logger().errorStream() << "PythonUniverseGenerator::CreateSystem : Attempt to insert planet into the object map failed";
+            return INVALID_OBJECT_ID;
         }
 
         // Add planet to system map

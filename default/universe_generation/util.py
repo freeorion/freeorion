@@ -17,6 +17,12 @@ def load_string_list(file_name):
         with open(file_name, "r") as f:
             return [x.strip('" \t\r\n') for x in f]
     except:
-        print "Unable to access", file_name
-        print sys.exc_info()[1]
+        report_error("Python load_string_list: unable to access %s\n" % file_name + sys.exc_info()[1])
         return []
+
+
+def report_error(msg):
+    """
+    Logs an error message
+    """
+    print >> sys.stderr, msg

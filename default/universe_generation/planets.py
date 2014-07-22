@@ -1,6 +1,7 @@
 import sys
 import random
 import foUniverseGenerator as fo
+import util
 
 
 # tuple of all valid planet sizes (with "no world")
@@ -49,8 +50,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
     except:
         # in case of an error play save and set planet size to invalid
         planet_size = fo.planetSize.unknown
-        print "Python calc_planet_size: Pick planet size failed"
-        print sys.exc_info()[1]
+        util.report_error("Python calc_planet_size: Pick planet size failed\n" + sys.exc_info()[1])
 
     # if we got an invalid planet size (for whatever reason),
     # just select one randomly from the global tuple based
@@ -86,18 +86,3 @@ def calc_planet_type(star_type, orbit, planet_size):
             return random.choice(planet_types_real)
     else:
         return fo.planetType.unknown
-
-
-def generate_planet(planet_size, planet_type, system, orbit, name=""):
-    """
-    Generate a new planet in specified system and orbit
-    """
-    try:
-        planet = fo.create_planet(planet_size, planet_type, system, orbit, name)
-    except:
-        planet = fo.invalid_object()
-        print "Python generate_planet: Create planet failed"
-        print sys.exc_info()[1]
-    return planet
-
-

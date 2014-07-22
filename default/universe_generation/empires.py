@@ -48,9 +48,8 @@ def generate_home_system_list(num_home_systems, systems):
 
     # if the list of systems to choose home systems from is empty, raise an exception
     if not systems:
-        err_msg = "Python generate_home_system_list: no systems to choose from"
-        print err_msg
-        raise Exception(err_msg)
+        util.report_error("Python generate_home_system_list: no systems to choose from")
+        return []
 
     # initialize list of home systems
     home_systems = []
@@ -97,14 +96,16 @@ def generate_home_system_list(num_home_systems, systems):
                 found = True
 
         # if we still haven't found a suitable system, our galaxy obviously is too crowded
-        # in that case, throw a fit, em, exception ;)
+        # in that case, report an error and return an empty list
         if not found:
-            raise Exception("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems, aborting" % (num_home_systems, len(systems)))
+            util.report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
+                              % (num_home_systems, len(systems)))
 
         # if chosen system has no "real" star, change star type to a randomly selected "real" star
         if fo.sys_get_star_type(candidate) not in starsystems.star_types_real:
             star_type = random.choice(starsystems.star_types_real)
-            print "Home system #", len(home_systems), "has star type", fo.sys_get_star_type(candidate), ", changing that to", star_type
+            print "Home system #", len(home_systems), "has star type", fo.sys_get_star_type(candidate),\
+                  ", changing that to", star_type
             fo.sys_set_star_type(candidate, star_type)
 
         # if chosen system has no planets, create one in a random orbit
@@ -112,11 +113,11 @@ def generate_home_system_list(num_home_systems, systems):
         # set to suitable values later
         if not fo.sys_get_planets(candidate):
             print "Home system #", len(home_systems), "has no planets, adding one"
-            planet = planets.generate_planet(random.choice(planets.planet_sizes_real), random.choice(planets.planet_types_real),
-                                             candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1))
+            planet = fo.create_planet(random.choice(planets.planet_sizes_real),
+                                      random.choice(planets.planet_types_real),
+                                      candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1), "")
             if planet == fo.invalid_object():
-                # generate planet failed, throw an exception
-                raise Exception("Python generate_home_system_list: couldn't create planet in home system")
+                util.report_error("Python generate_home_system_list: couldn't create planet in home system")
     return home_systems
 
 
@@ -140,9 +141,10 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
 
     # pick a planet from the specified home system as homeworld
     planet_list = fo.sys_get_planets(home_system)
-    # if the system is empty, throw an exception
+    # if the system is empty, report an error and return false, indicating failure
     if not planet_list:
-        raise Exception("Python setup_empire: got home system with no planets")
+        util.report_error("Python setup_empire: got home system with no planets")
+        return False
     homeworld = random.choice(planet_list)
 
     # set selected planet as empire homeworld with selected starting species
@@ -193,12 +195,14 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     for fleet_plan in fleet_plans:
         # first, create the fleet
         fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
-        # if the fleet couldn't be created, throw an exception
+        # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
-            raise Exception("Python setup empire: couldn't create fleet " + fleet_plan.name())
+            util.report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
+            continue
         # second, iterate over the list of ship design names in the fleet plan
         for ship_design in fleet_plan.ship_designs():
             # create a ship in the fleet
-            # if the ship couldn't be created, throw an exception
+            # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
-                raise Exception("Python setup empire: couldn't create ship " + ship_design + " for fleet " + fleet_plan.name())
+                util.report_error("Python setup empire: couldn't create ship %s for fleet %s"
+                                  % (ship_design, fleet_plan.name()))
