@@ -782,6 +782,9 @@ The server was unable to select a new host.
 SERVER_FOUND_NO_ACTIVE_PLAYERS
 Cannot generate game with no active players.
 
+SERVER_UNIVERSE_GENERATION_ERRORS
+Universe generation completed with errors. See log files for detailed error messages. Game can start, but gameplay will probably be impaired.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

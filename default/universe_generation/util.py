@@ -2,6 +2,9 @@ import sys
 import math
 
 
+error_list = []
+
+
 def distance(x1, y1, x2, y2):
     """
     Calculates linear distance between two coordinates
@@ -23,6 +26,7 @@ def load_string_list(file_name):
 
 def report_error(msg):
     """
-    Logs an error message
+    Handles error messages
     """
+    error_list.append(msg)
     print >> sys.stderr, msg

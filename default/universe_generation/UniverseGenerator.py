@@ -9,11 +9,21 @@ from empires import generate_home_system_list, setup_empire
 from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
-from util import report_error
+from util import report_error, error_list
 from statistics import log_planet_count_dist, log_planet_type_summary, log_species_summary, log_specials_summary
 
 
+def error_report():
+    """
+    Can be called from C++ to retrieve a list of errors that occurred during universe generation
+    """
+    return error_list
+
+
 def create_universe():
+    """
+    Main universe generation function invoked from C++ code
+    """
     print "Python Universe Generator"
 
     # fetch universe and player setup data
@@ -84,8 +94,14 @@ def create_universe():
     print "##             Universe generation statistics             ##"
     print "############################################################"
     log_planet_count_dist(systems)
+    print "############################################################"
     log_planet_type_summary(systems)
+    print "############################################################"
     log_species_summary()
+    print "############################################################"
     log_specials_summary()
     print "############################################################"
     print "Python Universe Generator completed"
+
+    # return true if no errors occurred, false otherwise
+    return len(error_list) == 0

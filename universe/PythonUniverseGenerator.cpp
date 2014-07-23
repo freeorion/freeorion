@@ -1351,17 +1351,42 @@ namespace {
         Logger().debugStream() << "Cleaned up universe generator Python interface";
     }
 
+    // Wraps call to the Python universe generator error report function
+    std::vector<std::string> PythonErrorReport() {
+        object f = s_python_module.attr("error_report");
+        if (!f) {
+            Logger().errorStream() << "Unable to call Python function error_report ";
+            return;
+        }
+
+        list py_err_list;
+        std::vector<std::string> err_list;
+        try { py_err_list = extract<list>(f()); }
+        catch (error_already_set err) {
+            PyErr_Print();
+            return err_list;
+        }
+
+        for(int i = 0; i < len(py_err_list); i++) {
+            err_list.push_back(extract<std::string>(py_err_list[i]));
+        }
+        return err_list;
+    }
+
     // Wraps call to the main Python universe generator function
-    void PythonCreateUniverse() {
+    bool PythonCreateUniverse() {
+        bool success;
         object f = s_python_module.attr("create_universe");
         if (!f) {
             Logger().errorStream() << "Unable to call Python function create_universe ";
             return;
         }
-        try { f(); }
+        try { success = f(); }
         catch (error_already_set err) {
+            success = false;
             PyErr_Print();
         }
+        return success;
     }
 }
 
@@ -1407,7 +1432,9 @@ void GenerateUniverse(const std::map<int, PlayerSetupData>& player_setup_data_) 
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
     // Call the main Python universe generator function
-    PythonCreateUniverse();
+    if (!PythonCreateUniverse()) {
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+    }
 
     // Stop and clean up Python interpreter
     PythonCleanup();
