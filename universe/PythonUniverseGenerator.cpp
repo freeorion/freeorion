@@ -1353,14 +1353,14 @@ namespace {
 
     // Wraps call to the Python universe generator error report function
     std::vector<std::string> PythonErrorReport() {
+        std::vector<std::string> err_list;
         object f = s_python_module.attr("error_report");
         if (!f) {
             Logger().errorStream() << "Unable to call Python function error_report ";
-            return;
+            return err_list;
         }
 
         list py_err_list;
-        std::vector<std::string> err_list;
         try { py_err_list = extract<list>(f()); }
         catch (error_already_set err) {
             PyErr_Print();
@@ -1379,7 +1379,7 @@ namespace {
         object f = s_python_module.attr("create_universe");
         if (!f) {
             Logger().errorStream() << "Unable to call Python function create_universe ";
-            return;
+            return false;
         }
         try { success = f(); }
         catch (error_already_set err) {
