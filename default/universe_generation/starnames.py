@@ -87,7 +87,7 @@ def check_deep_space(group_list, star_type_assignments, planet_assignments):
                 not_deep.append(systemxy)
             else:
                 deep_space.append(systemxy)
-    return not_deep,  deep_space
+    return not_deep, deep_space
 
 
 def name_group(group_list, group_name, star_type_assignments, planet_assignments):
@@ -95,7 +95,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
     if group_size == 1:
         return [(group_list[0], group_name)]
     modifiers = list(stargroup_modifiers)  # copy the list so we can safely add to it if needed
-    not_deep,  deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
+    not_deep, deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
     these_systems = not_deep + deep_space  # so that unnamed deep space will get the later star group modifiers
     while len(modifiers) < group_size:  # emergency fallback
         trial_mod = random.choice(stargroup_modifiers) + " " + "".join(random.sample(names.consonants + names.vowels, 3)).upper()
@@ -178,7 +178,7 @@ def name_star_systems(system_list):
             break
         elif max_can_transfer <= len(group_list):
             continue
-        not_deep,  deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
+        not_deep, deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
         if len(not_deep) > 1:
             continue
         for systemxy in star_groups[groupindex]:
