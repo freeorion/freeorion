@@ -21,7 +21,7 @@ def generate_monsters(monster_freq, systems):
 
     # get a list with all monster fleets that have a spawn rate and limit both > 0 and at least one monster
     # ship design in it (a monster fleet with no monsters in it is pointless)
-    # as we can't rely on monster fleet names being unique, we nned to assign an unique id to each monster fleet by
+    # as we can't rely on monster fleet names being unique, we need to assign an unique id to each monster fleet by
     # enumerating the monster fleets we get and store them with their ids in a list of tuples
     # we can't use a Python dict with the fleet plans as keys in this case because the fleet plan objects are not
     # immutable

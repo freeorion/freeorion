@@ -60,19 +60,19 @@ def cluster_stars(positions, num_star_groups):
     all_coords = [(pos[0], pos[1]) for pos in positions]
     clusters = [[], []]
     clusters[0] = assign_clusters(all_coords, centers)  # assign clusters based on init centers
-    oldC = 0
+    old_c = 0
     for loop in range(1):  # main loop to try getting some convergence of center assignments
-        recalc_centers(centers, all_coords, clusters[oldC])  # get new centers
-        clusters[1-oldC] = assign_clusters(all_coords, centers)  # assign clusters based on new centers
+        recalc_centers(centers, all_coords, clusters[old_c])  # get new centers
+        clusters[1-old_c] = assign_clusters(all_coords, centers)  # assign clusters based on new centers
         if clusters[0] == clusters[1]:
             break  # stop iterating if no change in cluster assignments
-        oldC = 1-oldC
+        old_c = 1-old_c
     else:
         # TODO: this check will never work loop will be always 0.
         # if loop > 0: #if here at loop 0, then didn't try for convergence
         #     print "falling through system clustering iteration loop without convergence"
         pass
-    return clusters[1 - oldC]
+    return clusters[1 - old_c]
 
 
 def check_deep_space(group_list, star_type_assignments, planet_assignments):
@@ -96,7 +96,7 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
         return [(group_list[0], group_name)]
     modifiers = list(stargroup_modifiers)  # copy the list so we can safely add to it if needed
     not_deep,  deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
-    these_systems = not_deep + deep_space  # so that unnamed deep space will get the later starg group modifiers
+    these_systems = not_deep + deep_space  # so that unnamed deep space will get the later star group modifiers
     while len(modifiers) < group_size:  # emergency fallback
         trial_mod = random.choice(stargroup_modifiers) + " " + "".join(random.sample(names.consonants + names.vowels, 3)).upper()
         if trial_mod not in modifiers:

@@ -10,19 +10,15 @@ shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.
 
 
 class AdjacencyGrid:
-
-
     def __init__(self, universe_width):
         self.min_dist = fo.min_system_separation()
         self.cell_size = max(universe_width / 50, self.min_dist)
         self.width = int(universe_width / self.cell_size) + 1
-        self.grid = [[[] for y in range(self.width)] for x in range(self.width)]
+        self.grid = [[[] for _ in range(self.width)] for _ in range(self.width)]
         print "Adjacency Grid: width", self.width, ", cell size", self.cell_size
-
 
     def insert_pos(self, pos):
         self.grid[int(pos.x / self.cell_size)][int(pos.y / self.cell_size)].append(pos)
-
 
     def too_close_to_other_positions(self, x, y):
         """
