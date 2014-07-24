@@ -70,13 +70,10 @@ def generate_natives(native_freq, systems, empire_home_systems):
 
         # select a native species to put on this planet
         planet_type = fo.planet_get_type(candidate)
-        print "Attempting to add natives to planet", fo.get_name(candidate), "of type", planet_type
         # check if we have any native species that like this planet type
         if not natives_for_planet_type[planet_type]:
             # no, continue with next planet
-            print "... no suitable native species available (with good environment on this planet)"
             continue
-        print len(natives_for_planet_type[planet_type]), "native species are appropriate for this planet"
         # randomly pick one of the native species available for this planet type
         natives = random.choice(natives_for_planet_type[planet_type])
 

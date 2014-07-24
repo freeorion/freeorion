@@ -10,7 +10,7 @@ from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
 from util import report_error, error_list
-from statistics import log_planet_count_dist, log_planet_type_summary, log_species_summary, log_specials_summary
+import statistics
 
 
 def error_report():
@@ -93,13 +93,15 @@ def create_universe():
     print "############################################################"
     print "##             Universe generation statistics             ##"
     print "############################################################"
-    log_planet_count_dist(systems)
+    statistics.log_planet_count_dist(systems)
     print "############################################################"
-    log_planet_type_summary(systems)
+    statistics.log_planet_type_summary(systems)
     print "############################################################"
-    log_species_summary()
+    statistics.log_species_summary()
     print "############################################################"
-    log_specials_summary()
+    statistics.log_monsters_summary()
+    print "############################################################"
+    statistics.log_specials_summary()
     print "############################################################"
     print "Python Universe Generator completed"
 
