@@ -15,7 +15,7 @@ greek_letters = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "T
 
 def random_star_name():
     """
-    Returns a random star system name
+    Returns a random star system name.
     """
     return "".join(random.sample(names.consonants + names.vowels, 3)).upper() + "-" + str(random.randint(1000, 9999))
 
@@ -51,7 +51,7 @@ def assign_clusters(points, ctrs):
 
 def cluster_stars(positions, num_star_groups):
     """
-    returns a list, same size as positions argument, containing indices from 0 to num_star_groups
+    Returns a list, same size as positions argument, containing indices from 0 to num_star_groups.
     """
     
     if num_star_groups > len(positions):

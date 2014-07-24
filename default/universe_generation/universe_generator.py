@@ -22,7 +22,7 @@ def error_report():
 
 def create_universe():
     """
-    Main universe generation function invoked from C++ code
+    Main universe generation function invoked from C++ code.
     """
     print "Python Universe Generator"
 

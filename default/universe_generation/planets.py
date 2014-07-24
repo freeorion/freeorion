@@ -29,8 +29,7 @@ planet_types_real = (fo.planetType.swamp,  fo.planetType.radiated,  fo.planetTyp
 
 def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
     """
-    Calculate planet size for a potential new planet based on
-    planet density setup option, star type and orbit number
+    Calculate planet size for a potential new planet based on planet density setup option, star type and orbit number.
     """
 
     # try to pick a planet size by making a series of "rolls" (1-100)
@@ -66,7 +65,8 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
 
 def calc_planet_type(star_type, orbit, planet_size):
     """
-    Calculate planet type for a potential new planet
+    Calculate planet type for a potential new planet.
+
     TEMP: For now, pick planet type randomly, unless it is required by size
     TODO: Consider using the universe tables that modify planet type again,
           this has been (temporarily?) disabled in C code. But the respective

@@ -16,7 +16,7 @@ star_types_real = (fo.starType.blue,   fo.starType.white, fo.starType.yellow,
 
 def pick_star_type(galaxy_age):
     """
-    Picks and returns a star type based on universe tables distribution modifiers
+    Picks and returns a star type based on universe tables distribution modifiers.
     """
 
     # try to pick a star type by making a series of "rolls" (1-100)
@@ -45,10 +45,11 @@ def pick_star_type(galaxy_age):
 
 def name_planets(system):
     """
-    Sets the names of the planets of the specified system
-    planet name is system name + planet number (as roman number)
+    Sets the names of the planets of the specified system.
+
+    Planet name is system name + planet number (as roman number)
     unless it's an asteroid belt, in that case name is system
-    name + 'asteroid belt' (localized)
+    name + 'asteroid belt' (localized).
     """
     planet_number = 1
     # iterate over all planets in the system
@@ -70,7 +71,7 @@ def name_planets(system):
 
 def generate_systems(pos_list, gsd):
     """
-    Generates and populates star systems at all positions in specified list
+    Generates and populates star systems at all positions in specified list.
     """
     sys_list = []
     for position in pos_list:

@@ -8,8 +8,9 @@ import statistics
 
 def is_too_close_to_empire_home_systems(system, home_systems):
     """
-    Checks if a system is too close to the player home systems
-    Player home systems should be at least 2 jumps away
+    Checks if a system is too close to the player home systems.
+
+    Player home systems should be at least 2 jumps away.
     """
     for home_system in home_systems:
         if fo.jump_distance(system, home_system) < 2:
@@ -19,7 +20,7 @@ def is_too_close_to_empire_home_systems(system, home_systems):
 
 def generate_natives(native_freq, systems, empire_home_systems):
     """
-    Adds non-empire-affiliated native populations to planets
+    Adds non-empire-affiliated native populations to planets.
     """
 
     # first, calculate the chance for natives on a planet based on the native frequency that has been passed

@@ -5,7 +5,7 @@ import statistics
 
 def distribute_specials(specials_freq, universe_objects):
     """
-    Adds start-of-game specials to universe objects
+    Adds start-of-game specials to universe objects.
     """
 
     # get basic chance for occurrence of specials from the universe tables

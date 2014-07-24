@@ -15,7 +15,8 @@ _random_letter_generator = (random.choice(x) for x in cycle((consonants, vowels)
 def random_name(size):
     """
     Return random name of given size.
-    It rotates between _consonants and _vowels.
+
+    It rotates between consonants and vowels.
     Rotation is global first letter depends on prev calls.
     """
     return ''.join(next(_random_letter_generator) for _ in xrange(size)).capitalize()
@@ -23,6 +24,6 @@ def random_name(size):
 
 def get_name_list(name_list):
     """
-    Retrieves a list of names from the string tables
+    Retrieves a list of names from the string tables.
     """
     return fo.user_string(name_list).splitlines()
