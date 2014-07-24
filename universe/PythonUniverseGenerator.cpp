@@ -1079,12 +1079,12 @@ namespace {
 }
 
 // Python module for logging functions
-BOOST_PYTHON_MODULE(foLogger) {
+BOOST_PYTHON_MODULE(fo_logger) {
     FreeOrionPython::WrapLogger();
 }
 
 // Python module providing the universe generator API
-BOOST_PYTHON_MODULE(foUniverseGenerator) {
+BOOST_PYTHON_MODULE(fo_universe_generator) {
 
     class_<SystemPosition>("SystemPosition", init<double, double>())
         .def_readwrite("x", &SystemPosition::x)
@@ -1276,8 +1276,8 @@ namespace {
             Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
             Logger().debugStream() << "Python module search path: " << Py_GetPath();
             Logger().debugStream() << "Initializing C++ interfaces for Python";
-            initfoLogger();             // allows the "foLogger" C++ module to be imported within Python code
-            initfoUniverseGenerator();  // allows the "foUniverseGenerator" C++ module to be imported within Python code
+            initfo_logger();              // allows the "fo_logger" C++ module to be imported within Python code
+            initfo_universe_generator();  // allows the "fo_universe_generator" C++ module to be imported within Python code
         }
         catch (...) {
             Logger().errorStream() << "Unable to initialize Python interpreter";
@@ -1297,13 +1297,13 @@ namespace {
 
         // set up logging by redirecting stdout and stderr to exposed logging functions
         std::string script = "import sys\n"
-        "import foLogger\n"
+        "import fo_logger\n"
         "class dbgLogger:\n"
         "  def write(self, msg):\n"
-        "    foLogger.log(msg)\n"
+        "    fo_logger.log(msg)\n"
         "class errLogger:\n"
         "  def write(self, msg):\n"
-        "    foLogger.error(msg)\n"
+        "    fo_logger.error(msg)\n"
         "sys.stdout = dbgLogger()\n"
         "sys.stderr = errLogger()\n"
         "print ('Python stdout and stderr redirected')";
@@ -1332,7 +1332,7 @@ namespace {
 
         try {
             // import universe generator script file
-            s_python_module = import("UniverseGenerator");
+            s_python_module = import("universe_generator");
         }
         catch (error_already_set err) {
             Logger().errorStream() << "Unable to import universe generator script";

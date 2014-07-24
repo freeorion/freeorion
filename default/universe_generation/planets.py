@@ -1,6 +1,6 @@
 import sys
 import random
-import foUniverseGenerator as fo
+import fo_universe_generator as fo
 import util
 
 

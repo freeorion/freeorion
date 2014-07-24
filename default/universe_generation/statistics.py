@@ -1,4 +1,4 @@
-import foUniverseGenerator as fo
+import fo_universe_generator as fo
 import planets
 
 

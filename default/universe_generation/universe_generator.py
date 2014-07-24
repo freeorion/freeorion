@@ -1,6 +1,6 @@
 import random
 
-import foUniverseGenerator as fo
+import fo_universe_generator as fo
 
 from starnames import name_star_systems
 from galaxy import calc_star_system_positions

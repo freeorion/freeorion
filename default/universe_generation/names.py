@@ -1,7 +1,7 @@
 import random
 from itertools import cycle
 
-import foUniverseGenerator as fo
+import fo_universe_generator as fo
 
 
 #tuples of consonants and vowels for random name generation
