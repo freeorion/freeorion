@@ -1152,7 +1152,7 @@ BuildingType
                 HasSpecial "CONC_CAMP_MASTER_SPECIAL"
             ]
             effects = [
-                SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-3*100))^0.5)
+                SetPopulation Min(Value - 3, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-3*100))^0.5))
                 SetIndustry Target.TargetIndustry
             ]
         EffectsGroup
@@ -1757,8 +1757,8 @@ BuildingType
             ]
             effects = [ //complicated population formula necessary to actually peg pop reduction at -2, not just 2 less growth than it would have been
                 // the fixed amount for pop change per turn is 'k' towards the end of the comment line immediately below, which is 2 in the functional line that follows it
-                //SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5)
-                SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
+                //SetPopulation Min(Value - k, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5))
+                SetPopulation Min(Value - 2, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5))
                 SetIndustry Value = 0
                 SetTargetIndustry Value = 0
                 SetResearch Value = 0
