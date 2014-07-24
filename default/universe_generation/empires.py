@@ -81,7 +81,8 @@ def generate_home_system_list(num_home_systems, systems):
         # if no system could be found, just attempt to find one that's not
         # already a home system and disregard any other conditions
         if not found:
-            print "Couldn't find homeworld #", len(home_systems) + 1, "after 100 attempts, just trying to find one now that's not already a home system and disregard any other condition"
+            print "Couldn't find homeworld #", len(home_systems) + 1, "after 100 attempts, just trying to find one",\
+                  "now that's not already a home system and disregard any other condition"
             attempts = 0
             while (attempts < 50) and not found:
                 attempts += 1
@@ -166,9 +167,11 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         # if no, and there is at least one available focus,
         # just take the first of the list
         if preferred_focus == "":
-            print "Player", player_name, ": starting species", starting_species, "has no preferred focus, using", available_foci[0], "instead"
+            print "Player", player_name, ": starting species", starting_species, "has no preferred focus, using",\
+                  available_foci[0], "instead"
         else:
-            print "Player", player_name, ": preferred focus", preferred_focus, "for starting species", starting_species, "not available on homeworld, using", available_foci[0], "instead"
+            print "Player", player_name, ": preferred focus", preferred_focus, "for starting species",\
+                  starting_species, "not available on homeworld, using", available_foci[0], "instead"
         fo.planet_set_focus(homeworld, available_foci[0])
     else:
         # if no focus is available on the homeworld, don't set any focus

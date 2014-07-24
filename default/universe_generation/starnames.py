@@ -76,7 +76,6 @@ def cluster_stars(positions, num_star_groups):
 
 
 def check_deep_space(group_list, star_type_assignments, planet_assignments):
-    global c_with_star, c_with_planets, c_deep_space
     deep_space = []
     not_deep = []
     for systemxy in group_list:
@@ -98,7 +97,8 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
     not_deep, deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
     these_systems = not_deep + deep_space  # so that unnamed deep space will get the later star group modifiers
     while len(modifiers) < group_size:  # emergency fallback
-        trial_mod = random.choice(stargroup_modifiers) + " " + "".join(random.sample(names.consonants + names.vowels, 3)).upper()
+        trial_mod = random.choice(stargroup_modifiers) + " " +\
+            "".join(random.sample(names.consonants + names.vowels, 3)).upper()
         if trial_mod not in modifiers:
             modifiers.append(trial_mod)
     if options.POSTFIX_STARGROUP_MODIFIERS:
@@ -147,22 +147,25 @@ def name_star_systems(system_list):
 
     # ensure at least a portion of galaxy gets individual starnames
     num_systems = len(system_list)
-    target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE][num_systems >= options.NAMING_LARGE_GALAXY_SIZE]
-    #TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than 50% potential_group_names used for groups
+    target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE]\
+                         [num_systems >= options.NAMING_LARGE_GALAXY_SIZE]
+    # TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than
+    # 50% potential_group_names used for groups
     num_individual_stars = int(max(min(num_systems * target_indiv_ratio,
-                                       len(individual_names)+int(0.5*len(potential_group_names))),
-                                   num_systems - 0.8*len(stargroup_modifiers)*(len(group_names)+int(0.5*len(potential_group_names)))))
-    star_group_size = 1 + int((num_systems-num_individual_stars)/(max(1, len(group_names)+int(0.5*len(potential_group_names)))))
+                                       len(individual_names)+int(0.5 * len(potential_group_names))),
+                                   num_systems - 0.8 * len(stargroup_modifiers) *
+                                   (len(group_names)+int(0.5 * len(potential_group_names)))))
+    star_group_size = 1 + int((num_systems - num_individual_stars) /
+                              (max(1, len(group_names)+int(0.5 * len(potential_group_names)))))
     # make group size a bit bigger than min necessary, at least a trio
     star_group_size = max(3, star_group_size)
     num_star_groups = 1 + int(num_systems/star_group_size)  # initial value
-    #print "num_individual_stars:", num_individual_stars, "star group size: ", star_group_size, "num_star_groups", num_star_groups
-    #print "num indiv names:", len(individual_names), "num group_names:", len(group_names), "num potential_group_names:", len(potential_group_names)
 
-    # first cluster all systems, then remove some to be individually named (otherwise groups can have too many individually
-    # named systems in their middle).  First remove any that are too small (only 1 or 2 systems).  The clusters with the most systems
-    # are generally the most closely spaced, and though they might make good logical candidates for groups, their names are then prone
-    # to overlapping on the galaxy map, so after removing small groups, remove the groups with the most systems.
+    # first cluster all systems, then remove some to be individually named (otherwise groups can have too many
+    # individually named systems in their middle).  First remove any that are too small (only 1 or 2 systems).
+    # The clusters with the most systems are generally the most closely spaced, and though they might make good
+    # logical candidates for groups, their names are then prone to overlapping on the galaxy map, so after removing
+    # small groups, remove the groups with the most systems.
     random.shuffle(position_list)  # just to be sure it is randomized
     init_cluster_assgts = cluster_stars(position_list, num_star_groups)
     star_groups = {}
@@ -216,7 +219,8 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names)/2, num_individual_stars+1-len(individual_names)), len(potential_group_names))
+    num_for_indiv = min(max(len(potential_group_names)/2, num_individual_stars+1-len(individual_names)),
+                        len(potential_group_names))
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
 
@@ -230,7 +234,8 @@ def name_star_systems(system_list):
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])
     group_name_sample = random.sample(group_names, num_star_groups)
     for index_group, group_list in enumerate(star_groups.values()):
-        star_name_map.update(name_group(group_list, group_name_sample[index_group], star_type_assignments, planet_assignments))
+        star_name_map.update(name_group(group_list, group_name_sample[index_group], star_type_assignments,
+                                        planet_assignments))
 
     # assign names from star_name_map to star systems
     for system in system_list:

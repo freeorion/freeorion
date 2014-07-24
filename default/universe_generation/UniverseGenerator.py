@@ -103,7 +103,10 @@ def create_universe():
     print "############################################################"
     statistics.log_specials_summary()
     print "############################################################"
-    print "Python Universe Generator completed"
 
-    # return true if no errors occurred, false otherwise
-    return len(error_list) == 0
+    if error_list:
+        print "Python Universe Generator completed with errors"
+        return False
+    else:
+        print "Python Universe Generator completed successfully"
+        return True
