@@ -46,9 +46,9 @@ SPIRAL_3                        0           0           0       0       0       
 SPIRAL_4                        0           0           0       0       0       0       0               0
 CLUSTER                         0           0           0       0       0       0       0               0
 ELLIPTICAL                      0           0           0       0       0       0       0               0
-IRREGULAR                       0           0           0       0       0       0       0               0
+IRREGULAR1                      0           0           0       0       0       0       0               0
+IRREGULAR2                      0           0           0       0       0       0       0               0
 RING                            0           0           0       0       0       0       0               0
-PYTHON_TEST                     0           0           0       0       0       0       0               0
 RANDOM                          0           0           0       0       0       0       0               0
 
 <8x11>

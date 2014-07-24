@@ -143,9 +143,9 @@ GG_ENUM(Shape,
     SPIRAL_4,       ///< a four-armed spiral galaxy
     CLUSTER,        ///< a cluster galaxy
     ELLIPTICAL,     ///< an elliptical galaxy
-    IRREGULAR,      ///< an irregular galaxy
+    IRREGULAR1,     ///< an irregular galaxy (type 1)
+    IRREGULAR2,     ///< an irregular galaxy (type 2)
     RING,           ///< a ring galaxy
-    PYTHON_TEST,    ///< "test" galaxy shape for use in Python universe generator script
     RANDOM,         ///< a random one of the above
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
 )

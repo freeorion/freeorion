@@ -6,7 +6,7 @@ import util
 # tuple of galaxy shapes to randomly choose from when shape is "random"
 shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.spiral4,
           fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.ring,
-          fo.galaxyShape.irregular,  fo.galaxyShape.test)
+          fo.galaxyShape.irregular1, fo.galaxyShape.irregular2)
 
 
 class AdjacencyGrid:
@@ -34,7 +34,7 @@ class AdjacencyGrid:
                    for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
 
 
-def test_galaxy_calc_positions(positions, size, width):
+def irregular2_galaxy_calc_positions(positions, size, width):
     """
     Calculate positions for the 'Python Test' galaxy shape
     """
@@ -75,7 +75,7 @@ def calc_star_system_positions(shape, size):
 
     # calculate typical width for universe based on number of systems
     width = fo.calc_typical_universe_width(size)
-    if shape == fo.galaxyShape.test:
+    if shape == fo.galaxyShape.irregular2:
         width *= 1.4
     fo.set_universe_width(width)
     print "Set universe width to", width
@@ -103,12 +103,12 @@ def calc_star_system_positions(shape, size):
             fo.cluster_galaxy_calc_positions(positions, clusters, size, width, width)
     elif shape == fo.galaxyShape.ring:
         fo.ring_galaxy_calc_positions(positions, size, width, width)
-    elif shape == fo.galaxyShape.test:
-        test_galaxy_calc_positions(positions, size, width)
+    elif shape == fo.galaxyShape.irregular2:
+        irregular2_galaxy_calc_positions(positions, size, width)
 
     # Check if any positions have been calculated...
     if not positions:
-        # ...if not, fall back on irregular shape
+        # ...if not, fall back on irregular1 shape
         fo.irregular_galaxy_positions(positions, size, width, width)
 
     return positions
