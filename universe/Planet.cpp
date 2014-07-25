@@ -585,7 +585,6 @@ bool Planet::RemoveBuilding(int building_id) {
 }
 
 void Planet::Reset() {
-    SetOwner(ALL_EMPIRES);
     PopCenter::Reset();
     ResourceCenter::Reset();
 
@@ -598,14 +597,17 @@ void Planet::Reset() {
     GetMeter(METER_DETECTION)->Reset();
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
-    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        if (TemporaryPtr<Building> building = GetBuilding(*it))
-            building->Reset();
+    if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
+        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
+            if (TemporaryPtr<Building> building = GetBuilding(*it))
+                building->Reset();
+    }
 
     m_just_conquered = false;
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
     m_is_about_to_be_bombarded = false;
+    SetOwner(ALL_EMPIRES);
 }
 
 void Planet::Depopulate() {
