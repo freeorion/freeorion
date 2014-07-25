@@ -5,7 +5,7 @@ import fo_universe_generator as fo
 from starnames import name_star_systems
 from galaxy import calc_star_system_positions
 from starsystems import name_planets, generate_systems
-from empires import generate_home_system_list, setup_empire
+from empires import compile_home_system_list, setup_empire
 from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
@@ -55,13 +55,13 @@ def create_universe():
     fo.generate_starlanes(gsd.starlaneFrequency)
     print "Starlanes generated"
 
-    print "Generate list of home systems..."
-    home_systems = generate_home_system_list(total_players, systems)
+    print "Compile list of home systems..."
+    home_systems = compile_home_system_list(total_players, systems)
     if not home_systems:
         err_msg = "Python create_universe: couldn't get any home systems, ABORTING!"
         report_error(err_msg)
         raise Exception(err_msg)
-    print "...systems chosen:", home_systems
+    print "Home systems:", home_systems
 
     # set up empires for each player
     for psd_entry, home_system in zip(psd_list, home_systems):

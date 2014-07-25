@@ -26,102 +26,88 @@ def get_empire_name_generator():
 empire_name_generator = get_empire_name_generator()
 
 
-def is_too_close_to_other_home_systems(system, home_systems):
+def find_systems_with_min_jumps_between(num_systems, systems_pool, min_jumps):
     """
-    Checks if a system is too close to the other home systems
-    Home systems should be at least 200 units (linear distance)
-    and 2 jumps apart
+    Find requested number of systems out of a pool that are at least a specified number of jumps apart.
     """
-    for home_system in home_systems:
-        if fo.linear_distance(system, home_system) < 200:
-            return True
-        elif fo.jump_distance(system, home_system) < 2:
-            return True
-    return False
+    # make several tries to get the requested number of systems
+    attempts = min(100, len(systems_pool))
+    while attempts > 0:
+        attempts -= 1
+        # shuffle our pool of systems so each try the candidates are tried in different order
+        # (otherwise each try would yield the same result, which would make trying several times kind of pointless...)
+        random.shuffle(systems_pool)
+        # try to find systems that meet our condition until we either have the requested number
+        # or we have tried all systems in our pool
+        accepted = []
+        for candidate in systems_pool:
+            # check if our candidate is at least min_jumps away from all other systems we already found
+            if all(fo.jump_distance(candidate, system) >= min_jumps for system in accepted):
+                # if yes, add the candidate to the list of accepted systems
+                accepted.append(candidate)
+                # if we have the requested number of systems, we can stop and return the systems we found
+                if len(accepted) >= num_systems:
+                    return accepted
+    # all tries failed, return an empty list to indicate failure
+    return []
 
 
-def generate_home_system_list(num_home_systems, systems):
+def compile_home_system_list(num_home_systems, systems):
     """
-    Generates a list with a requested number of home systems
-    choose the home systems from the specified list
+    Compiles a list with a requested number of home systems.
     """
 
-    # if the list of systems to choose home systems from is empty, raise an exception
+    # if the list of systems to choose home systems from is empty, report an error and return empty list
     if not systems:
         util.report_error("Python generate_home_system_list: no systems to choose from")
         return []
 
-    # initialize list of home systems
-    home_systems = []
+    # calculate an initial minimal number of jumps that the home systems should be apart,
+    # based on the total number of systems to choose from and the requested number of home systems
+    min_jumps = max(int(float(len(systems)) / float(num_home_systems * 2)), 5)
+    # try to find the home systems, decrease the min jumps until enough systems can be found, or the min jump distance
+    # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
+    while min_jumps > 0:
+        print "Trying to find", num_home_systems, "home systems that are at least", min_jumps, "jumps apart"
+        # try to find home systems...
+        home_systems = find_systems_with_min_jumps_between(num_home_systems, systems, min_jumps)
+        # ...check if we got enough...
+        if len(home_systems) >= num_home_systems:
+            # ...yes, we got what we need, so let's break out of the loop
+            break
+        # ...no, decrease the min jump distance and try again
+        min_jumps -= 1
 
-    # loop and get a new home systems until we have the requested number
-    while len(home_systems) < num_home_systems:
+    # check if the loop above delivered a list with enough home systems, or if it exited because the min jump distance
+    # has been decreased to 0 without finding enough systems
+    # in that case, our galaxy obviously is too crowded, report an error and return an empty list
+    if len(home_systems) < num_home_systems:
+        util.report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
+                          % (num_home_systems, len(systems)))
+        return []
 
-        # try to choose a system until too many attempts failed or a system has been found
-        attempts = 0
-        found = False
-        while (attempts < 100) and not found:
-            attempts += 1
-            # randomly choose one system from the list we got
-            candidate = random.choice(systems)
-            # for the first 50 attempts, only consider systems with "real" stars and at least one planet
-            # if we haven't found a system after 50 attempts, consider all systems
-            if attempts < 50:
-                if fo.sys_get_star_type(candidate) not in starsystems.star_types_real:
-                    continue
-                if not fo.sys_get_planets(candidate):
-                    continue
-            # if our candidate is too close to the already chosen home systems, don't use it
-            if is_too_close_to_other_home_systems(candidate, home_systems):
-                continue
-            # if our candidate passed the above tests, add it to our list
-            home_systems.append(candidate)
-            found = True
-
-        # if no system could be found, just attempt to find one that's not
-        # already a home system and disregard any other conditions
-        if not found:
-            print "Couldn't find homeworld #", len(home_systems) + 1, "after 100 attempts, just trying to find one",\
-                  "now that's not already a home system and disregard any other condition"
-            attempts = 0
-            while (attempts < 50) and not found:
-                attempts += 1
-                # again, choose one system from the list we got
-                candidate = random.choice(systems)
-                # but now just check if it has already been chosen as home system
-                if candidate in home_systems:
-                    # if yes, try again
-                    continue
-                # if our candidate passed the test, add it to our list
-                home_systems.append(candidate)
-                found = True
-
-        # if we still haven't found a suitable system, our galaxy obviously is too crowded
-        # in that case, report an error and return an empty list
-        if not found:
-            util.report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
-                              % (num_home_systems, len(systems)))
-            return []
-
-        # if chosen system has no "real" star, change star type to a randomly selected "real" star
-        if fo.sys_get_star_type(candidate) not in starsystems.star_types_real:
+    # make sure all our home systems have a "real" star (that is, a star that is not a neutron star, black hole,
+    # or even no star at all) and at least one planet in it
+    for home_system in home_systems:
+        # if this home system has no "real" star, change star type to a randomly selected "real" star
+        if fo.sys_get_star_type(home_system) not in starsystems.star_types_real:
             star_type = random.choice(starsystems.star_types_real)
-            print "Home system #", len(home_systems), "has star type", fo.sys_get_star_type(candidate),\
+            print "Home system", home_system, "has star type", fo.sys_get_star_type(home_system),\
                   ", changing that to", star_type
-            fo.sys_set_star_type(candidate, star_type)
+            fo.sys_set_star_type(home_system, star_type)
 
-        # if chosen system has no planets, create one in a random orbit
-        # we take random values for type and size, as these will be
-        # set to suitable values later
-        if not fo.sys_get_planets(candidate):
-            print "Home system #", len(home_systems), "has no planets, adding one"
+        # if this home system has no planets, create one in a random orbit
+        # we take random values for type and size, as these will be set to suitable values later
+        if not fo.sys_get_planets(home_system):
+            print "Home system", home_system, "has no planets, adding one"
             planet = fo.create_planet(random.choice(planets.planet_sizes_real),
                                       random.choice(planets.planet_types_real),
-                                      candidate, random.randint(0, fo.sys_get_num_orbits(candidate) - 1), "")
+                                      home_system, random.randint(0, fo.sys_get_num_orbits(home_system) - 1), "")
             # if we couldn't create the planet, report an error and return an empty list
             if planet == fo.invalid_object():
                 util.report_error("Python generate_home_system_list: couldn't create planet in home system")
                 return []
+
     return home_systems
 
 
