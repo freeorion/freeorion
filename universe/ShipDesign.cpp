@@ -1091,7 +1091,6 @@ std::string ShipDesign::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "lookup_strings = " + (m_name_desc_in_stringtable ? "true" : "false") + "\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
     retval += DumpIndent() + "parts = ";
     if (m_parts.empty()) {
