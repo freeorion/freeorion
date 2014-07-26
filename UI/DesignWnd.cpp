@@ -1,16 +1,16 @@
 #include "DesignWnd.h"
 
-#include "../util/i18n.h"
-#include "../util/Logger.h"
-#include "../util/Order.h"
-#include "../util/OptionsDB.h"
-#include "../util/ScopedTimer.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
 #include "EncyclopediaDetailPanel.h"
 #include "InfoPanels.h"
 #include "Sound.h"
+#include "../util/i18n.h"
+#include "../util/Logger.h"
+#include "../util/Order.h"
+#include "../util/OptionsDB.h"
+#include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/UniverseObject.h"
@@ -29,6 +29,8 @@
 
 namespace {
     const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
+    const std::string   HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
+    const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     const std::string   EMPTY_STRING = "";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
     const GG::X         PART_CONTROL_WIDTH(64);
@@ -147,7 +149,9 @@ PartControl::PartControl(const PartType* part) :
     m_background(0),
     m_part(part)
 {
-    if (m_part) {
+    if (!m_part)
+        return;
+
         m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
                                              PartBackgroundTexture(m_part),
                                              GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -175,11 +179,10 @@ PartControl::PartControl(const PartType* part) :
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
-                                  UserString(m_part->Name()),
-                                  UserString(m_part->Description()))
-                                 )
-                        );
-    }
+                                                     UserString(m_part->Name()),
+                                                     UserString(m_part->Description()))
+                                                    )
+                                 );
 }
 
 void PartControl::Render() {}
@@ -252,10 +255,10 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
-    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list due because PartControls can only be dragged one-at-a-time
+    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list because PartControls doesn't allow selection, so dragging is only one-at-a-time
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
-        return;
+        delete wnd;
 
     GG::Control* dragged_control = 0;
 
@@ -912,6 +915,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -938,26 +942,6 @@ public:
     /** a complete design was right-clicked (once) */
     mutable boost::signals2::signal<void (const ShipDesign*)> DesignRightClickedSignal;
 
-private:
-    void    BaseDoubleClicked(GG::ListBox::iterator it);
-    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-
-    GG::Pt  ListRowSize();
-    void    InitRowSizes();
-
-    void    PopulateWithEmptyHulls();
-    void    PopulateWithCompletedDesigns();
-
-    int                             m_empire_id_shown;
-    std::pair<bool, bool>           m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
-    bool                            m_showing_empty_hulls, m_showing_completed_designs;
-
-    std::set<int>                   m_designs_in_list;
-    std::set<std::string>           m_hulls_in_list;
-
-    boost::signals2::connection     m_empire_designs_changed_signal;
-
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
@@ -978,8 +962,8 @@ private:
             GG::TextControl*                m_cost_and_build_time;
         };
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts);
-        const std::string&              Hull() const { return m_hull; }
-        const std::vector<std::string>& Parts() const { return m_parts; }
+        const std::string&              Hull() const    { return m_hull; }
+        const std::vector<std::string>& Parts() const   { return m_parts; }
     private:
         std::string                     m_hull;
         std::vector<std::string>        m_parts;
@@ -989,12 +973,29 @@ private:
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id);
         int                             DesignID() const { return m_design_id; }
-//        void                            Update() {
-//            ShipDesignPanel* panel = dynamic_cast<ShipDesignPanel*>(this->operator[](0));
-//        }
     private:
         int                             m_design_id;
     };
+
+private:
+    void    BaseDoubleClicked(GG::ListBox::iterator it);
+    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+
+    GG::Pt  ListRowSize();
+    void    InitRowSizes();
+
+    void    PopulateWithEmptyHulls();
+    void    PopulateWithCompletedDesigns();
+
+    int                             m_empire_id_shown;
+    std::pair<bool, bool>           m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    bool                            m_showing_empty_hulls, m_showing_completed_designs;
+
+    std::set<int>                   m_designs_in_list;
+    std::set<std::string>           m_hulls_in_list;
+
+    boost::signals2::connection     m_empire_designs_changed_signal;
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h) :
@@ -1050,6 +1051,7 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, c
         // contents are a hull and parts  TODO: make a HullAndPartsPanel
         push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
     }
+    SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
 BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id) :
@@ -1060,6 +1062,7 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     if (const ShipDesign* ship_design = GetShipDesign(design_id))
         hull = ship_design->Hull();
     push_back(new ShipDesignPanel(w, h, design_id));
+    SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
 BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
@@ -1070,6 +1073,7 @@ BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_showing_completed_designs(false)
 {
     InitRowSizes();
+    SetStyle(GG::LIST_NOSEL);
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
@@ -1086,6 +1090,49 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt row_size = ListRowSize();
         for (GG::ListBox::iterator it = begin(); it != end(); ++it)
             (*it)->Resize(row_size);
+    }
+}
+
+void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+    if (wnds.empty())
+        return;
+    if (!wnds.size() == 1)
+        Logger().errorStream() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
+    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
+    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
+    if (!control)
+        return;
+
+    // remove dragged-away row from this ListBox
+    CUIListBox::ChildrenDraggedAway(wnds, destination);
+
+    // replace dragged-away control with new copy
+    const GG::Pt row_size = ListRowSize();
+    std::vector<std::string> empty_parts_vec;
+
+    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
+        // find design that was dragged away, and replace
+        const BasesListBox::CompletedDesignListBoxRow* design_row =
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+
+        int design_id = design_row->DesignID();
+        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
+                                                                       design_id);
+        Insert(row);
+        row->Resize(row_size);
+        m_designs_in_list.insert(design_id);// should be redundant
+
+    } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
+        // find type of hull that was dragged away, and replace
+        const BasesListBox::HullAndPartsListBoxRow* design_row =
+            boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
+
+        const std::string& hull_name = design_row->Hull();
+        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y,
+                                                                 hull_name, empty_parts_vec);
+        Insert(row);
+        row->Resize(row_size);
+        m_hulls_in_list.insert(hull_name);  // should be redundant
     }
 }
 
@@ -1630,7 +1677,7 @@ SlotControl::SlotControl() :
     m_y_position_fraction(0.4),
     m_part_control(0),
     m_background(0)
-{ SetDragDropDataType(""); }
+{}
 
 SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
@@ -1641,7 +1688,6 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_part_control(0),
     m_background(0)
 {
-    SetDragDropDataType("");
     m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
                                          SlotBackgroundTexture(m_slot_type),
                                          GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -1664,6 +1710,11 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+    for (DropsAcceptableIter it = first; it != last; ++it)
+        it->second = false;
+    if (std::distance(first, last) != 1)
+        return;
+
     bool acceptable_part_found = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
@@ -1671,7 +1722,8 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
             const PartType* part_type = part_control->Part();
             if (part_type &&
                 part_type->CanMountInSlotType(m_slot_type) &&
-                part_control != m_part_control) {
+                part_control != m_part_control)
+            {
                 it->second = true;
                 acceptable_part_found = true;
             } else {
@@ -1726,16 +1778,23 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
 }
 
 void SlotControl::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    assert(wnds.size() == 1);
+    if (wnds.size() != 1) {
+        // delete any extra wnds that won't be processed below
+        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
+        ++it;
+        for (; it != wnds.end(); ++it)
+            delete *it;
+        Logger().errorStream() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
+    }
 
     const GG::Wnd* wnd = *(wnds.begin());
     const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd);
-    const PartType* part_type = control->Part();
+    const PartType* part_type = control ? control->Part() : 0;
 
-    delete control;
+    delete wnd;
 
-    //Logger().debugStream() << "SlotControl::AcceptDrops part_type: " << (part_type ? part_type->Name() : "no part");
-    SlotContentsAlteredSignal(part_type);
+    if (part_type)
+        SlotContentsAlteredSignal(part_type);
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -1816,6 +1875,10 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual void                        DropsAcceptable(DropsAcceptableIter first,
+                                                        DropsAcceptableIter last,
+                                                        const GG::Pt& pt) const;
+
     const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const;               //!< returns name of hull of current shown design
     const std::string&                  DesignName() const;         //!< returns name currently entered for design
@@ -1829,6 +1892,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Sanitize();
@@ -2413,6 +2477,75 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         Logger().errorStream() << "DesignWnd::MainPanel::RefreshIncompleteDesign caught exception: " << e.what();
     }
 }
+
+void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
+                                           DropsAcceptableIter last,
+                                           const GG::Pt& pt) const
+{
+    for (DropsAcceptableIter it = first; it != last; ++it)
+        it->second = false;
+    if (std::distance(first, last) != 1)
+        return;
+
+    bool accepted_something = false;
+    for (DropsAcceptableIter it = first; it != last; ++it) {
+        if (!accepted_something && it->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
+            //const BasesListBox::CompletedDesignListBoxRow* design_row =
+            //    boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(it->first);
+            accepted_something = true;
+            it->second = true;
+
+        } else if (!accepted_something && it->first->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
+            //const BasesListBox::HullAndPartsListBoxRow* design_row =
+            //    boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(it->first);
+            accepted_something = true;
+            it->second = true;
+
+        } else {
+            it->second = false;
+        }
+    }
+}
+
+void DesignWnd::MainPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    if (wnds.size() != 1) {
+        // delete any extra wnds that won't be processed below
+        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
+        ++it;
+        for (; it != wnds.end(); ++it)
+            delete *it;
+        Logger().errorStream() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
+    }
+
+    const GG::Wnd* wnd = *(wnds.begin());
+    if (!wnd)
+        return;
+
+    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
+        const BasesListBox::CompletedDesignListBoxRow* control =
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+        if (control) {
+            int design_id = control->DesignID();
+            if (design_id != ShipDesign::INVALID_DESIGN_ID)
+                SetDesign(design_id);
+        }
+    }
+    else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
+        const BasesListBox::HullAndPartsListBoxRow* control =
+            boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
+        if (control) {
+            const std::string& hull = control->Hull();
+            const std::vector<std::string>& parts = control->Parts();
+
+            if (!hull.empty())
+                SetHull(hull);
+            SetParts(parts);
+        }
+    }
+
+    delete wnd;
+}
+
 
 //////////////////////////////////////////////////
 // DesignWnd                                    //
