@@ -939,14 +939,15 @@ public:
     mutable boost::signals2::signal<void (const ShipDesign*)> DesignRightClickedSignal;
 
 private:
-    void                            BaseDoubleClicked(GG::ListBox::iterator it);
-    void                            BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void                            BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BaseDoubleClicked(GG::ListBox::iterator it);
+    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
-    GG::Pt                          ListRowSize();
+    GG::Pt  ListRowSize();
+    void    InitRowSizes();
 
-    void                            PopulateWithEmptyHulls();
-    void                            PopulateWithCompletedDesigns();
+    void    PopulateWithEmptyHulls();
+    void    PopulateWithCompletedDesigns();
 
     int                             m_empire_id_shown;
     std::pair<bool, bool>           m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
@@ -1068,6 +1069,8 @@ BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false)
 {
+    InitRowSizes();
+
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
     GG::Connect(RightClickedSignal,     &BasesListBox::BaseRightClicked,    this);
@@ -1117,6 +1120,14 @@ void BasesListBox::Populate() {
 
 GG::Pt BasesListBox::ListRowSize()
 { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, BASES_LIST_BOX_ROW_HEIGHT); }
+
+void BasesListBox::InitRowSizes() {
+    // preinitialize listbox/row column widths, because what
+    // ListBox::Insert does on default is not suitable for this case
+    SetNumCols(1);
+    SetColWidth(0, GG::X0);
+    LockColWidths();
+}
 
 void BasesListBox::PopulateWithEmptyHulls() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithEmptyHulls");
