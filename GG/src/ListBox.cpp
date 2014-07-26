@@ -705,16 +705,18 @@ void ListBox::AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt)
 
 void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
-    if (!MatchesOrContains(this, destination)) {
-        for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-            Row* row = boost::polymorphic_downcast<Row*>(*it);
-            iterator row_it = std::find(m_rows.begin(), m_rows.end(), row);
-            //assert(row_it != m_rows.end());   // replaced with following test and continue to avoid crashes
-            if (row_it == m_rows.end())
-                continue;
+    if (MatchesOrContains(this, destination))
+        return;
 
-            Erase(row_it, false, true);
-        }
+    // remove dragged-away row from this ListBox
+    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+        Row* row = boost::polymorphic_downcast<Row*>(*it);
+        iterator row_it = std::find(m_rows.begin(), m_rows.end(), row);
+        //assert(row_it != m_rows.end());   // replaced with following test and continue to avoid crashes
+        if (row_it == m_rows.end())
+            continue;
+
+        Erase(row_it, false, true);
     }
 }
 
