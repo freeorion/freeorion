@@ -1948,7 +1948,7 @@ public:
             this->SetStyle(GG::LIST_NOSORT);
             //std::cout << "col -1 : set style to no sort" << std::endl;
 
-        } else {
+        } else if (!GetColumnName(clicked_column).empty()) { // empty columns are not sort-worthy
             this->SetSortCol(clicked_column);
             if (old_sort_col == clicked_column) {
                 // if previously descending sorting, switch to normal sort
