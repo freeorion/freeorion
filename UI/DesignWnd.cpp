@@ -1804,7 +1804,11 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control)
         return;
-    m_part_control = 0; // SlotContentsAlteredSignal is connected to this->SetPart, which will delete m_part_control if it is not null.  The drop-accepting Wnd is responsible for deleting the accepted Wnd, so setting m_part_control = 0 here prevents this->SetPart from deleting it prematurely
+    // SlotContentsAlteredSignal is connected to this->SetPart, which will
+    // delete m_part_control if it is not null.  The drop-accepting Wnd is
+    // responsible for deleting the accepted Wnd, so setting m_part_control = 0
+    // here prevents this->SetPart from deleting it prematurely
+    m_part_control = 0;
     SlotContentsAlteredSignal(0);
 }
 
@@ -1932,6 +1936,8 @@ public:
     /** propegates signals from contained SlotControls that signal that a part
       * has been clicked */
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+
+    mutable boost::signals2::signal<void (const HullType*)> HullTypeClickedSignal;
 
     /** emitted when the user clicks the m_confirm_button to add the new
       * design to the player's empire */
@@ -2091,10 +2097,8 @@ bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
 }
 
 void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_incomplete_design.get())
-        DesignChangedSignal();
-    else if (m_complete_design_id != ShipDesign::INVALID_DESIGN_ID)
-        CompleteDesignClickedSignal(m_complete_design_id);
+    if (m_hull)
+        HullTypeClickedSignal(m_hull);
     CUIWnd::LClick(pt, mod_keys);
 }
 
@@ -2152,10 +2156,13 @@ void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
 }
 
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
-    if (!AddPartEmptySlot(part, FindEmptySlotForPart(part))) {
-        if (!AddPartWithSwapping(part, FindSlotForPartWithSwapping(part)))
-            Logger().debugStream() << "DesignWnd::MainPanel::AddPart(" << (part ? part->Name() : "no part") << ") couldn't find a slot for the part";
-    }      
+    if (AddPartEmptySlot(part, FindEmptySlotForPart(part)))
+        return;
+
+    if (!AddPartWithSwapping(part, FindSlotForPartWithSwapping(part)))
+        Logger().debugStream() << "DesignWnd::MainPanel::AddPart("
+                               << (part ? part->Name() : "no part")
+                               << ") couldn't find a slot for the part";
 }
 
 bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part) {
@@ -2173,8 +2180,10 @@ bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_numbe
 bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot) {
     if (!part || swap_and_empty_slot.first < 0 || swap_and_empty_slot.second < 0)
         return false;
-    SetPart(m_slots[swap_and_empty_slot.first]->GetPart(), swap_and_empty_slot.second);         // Move the flexible part to the first open spot
-    SetPart(part, swap_and_empty_slot.first);                                                   // Move ourself into the newly opened slot
+    // Move the flexible part to the first open spot
+    SetPart(m_slots[swap_and_empty_slot.first]->GetPart(), swap_and_empty_slot.second);
+    // Move replacement part into the newly opened slot
+    SetPart(part, swap_and_empty_slot.first);
     return true;
 }
 
@@ -2577,6 +2586,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_main_panel = new MainPanel(most_panels_width, main_height);
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
+    GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
     GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
                                                                             m_detail_panel,
@@ -2598,10 +2608,14 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
 
     m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
     AttachChild(m_base_selector);
-    GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),              m_main_panel);
-    GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
-    GG::Connect(m_base_selector->DesignBrowsedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
-    GG::Connect(m_base_selector->HullBrowsedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
+    GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),
+                m_main_panel);
+    GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,
+                m_main_panel);
+    GG::Connect(m_base_selector->DesignBrowsedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),
+                m_detail_panel);
+    GG::Connect(m_base_selector->HullBrowsedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),
+                m_detail_panel);
     m_base_selector->MoveTo(GG::Pt());
 }
 
