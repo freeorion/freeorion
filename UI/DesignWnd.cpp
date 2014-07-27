@@ -2579,7 +2579,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Y part_palette_top = ClientHeight() - part_palette_height;
     GG::Y main_height = part_palette_top - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(most_panels_width, detail_height);
+    m_detail_panel = new EncyclopediaDetailPanel(most_panels_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
     AttachChild(m_detail_panel);
     m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 

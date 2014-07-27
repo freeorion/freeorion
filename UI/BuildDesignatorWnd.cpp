@@ -888,7 +888,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     const GG::Y DETAIL_PANEL_HEIGHT =   GG::Y(240);
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
 
     m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, Height());
     m_side_panel->EnableSelection();
