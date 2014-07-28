@@ -3,6 +3,17 @@ def check_validity(value):
     return value is not None and value >= 0
 
 
+class EnumsType(object):
+    names = ()
+
+    @classmethod
+    def name(cls, mtype):
+        try:
+            return cls.names[mtype]
+        except IndexError:
+            return "invalidPriorityType"
+
+
 class AIPriorityType(object):
     PRIORITY_INVALID = -1
     PRIORITY_RESOURCE_GROWTH = 0
@@ -91,7 +102,7 @@ def get_explorable_system_types():
     return range(0, 4)
 
 
-class AIFleetMissionType(object):
+class AIFleetMissionType(EnumsType):
     FLEET_MISSION_INVALID = -1
     FLEET_MISSION_EXPLORATION = 0
     FLEET_MISSION_OUTPOST = 1
@@ -111,18 +122,11 @@ class AIFleetMissionType(object):
     FLEET_MISSION_ORBITAL_COLONISATION = 15
     FLEET_MISSION_REPAIR = 16      # though currently, repair will be handled w/o mission, like resupply
 
-    MissionTypeNames=['explore',  'outpost',  'colonize',  'split_fleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
+    names = ['explore', 'outpost',  'colonize',  'split_fleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation',  'repair', 'invalid']
 
-    def name(self, mtype):
-        try:
-            return self.MissionTypeNames[mtype]
-        except IndexError:
-            return "invalidMissionType"
 
-
-def get_fleet_mission_types():
-    return range(0, 17)
+FLEET_MISSION_TYPES = range(0, 17)
 
 
 class AIFleetOrderType(object):
@@ -154,30 +158,6 @@ def get_fleet_order_types():
     return range(0, 13)
 
 
-ORDERS_FOR_MISSION = {
-        AIFleetMissionType.FLEET_MISSION_EXPLORATION: AIFleetOrderType.ORDER_MOVE,
-        AIFleetMissionType.FLEET_MISSION_OUTPOST: AIFleetOrderType.ORDER_OUTPOST,
-        AIFleetMissionType.FLEET_MISSION_COLONISATION: AIFleetOrderType.ORDER_COLONISE,
-        AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: AIFleetOrderType.ORDER_SPLIT_FLEET,  # not really supported in this fashion currently
-        AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: AIFleetOrderType.ORDER_MERGE_FLEET,  # not really supported in this fashion currently
-        AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_ATTACK: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_DEFEND: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_LAST_STAND: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_INVASION: AIFleetOrderType.ORDER_INVADE,
-        AIFleetMissionType.FLEET_MISSION_MILITARY: AIFleetOrderType.ORDER_MILITARY,
-        AIFleetMissionType.FLEET_MISSION_SECURE: AIFleetOrderType.ORDER_MILITARY,  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: AIFleetOrderType.ORDER_DEFEND,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: AIFleetOrderType.ORDER_INVADE,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST: AIFleetOrderType.ORDER_OUTPOST,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION: AIFleetOrderType.ORDER_COLONISE,
-        AIFleetMissionType.FLEET_MISSION_REPAIR: AIFleetOrderType.ORDER_REPAIR}
-
-
-def get_fleet_order_type_for_mission(aiFleetMissionType):
-    return ORDERS_FOR_MISSION.get(aiFleetMissionType, AIFleetOrderType.ORDER_INVALID)
-
-
 class AIShipDesignTypes(object):
     explorationShip = {"SD_SCOUT":"A",  "Scout":"B",  "Tracker":"C"}
     colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}
@@ -205,7 +185,7 @@ class AIShipDesignTypes(object):
     defenseBase={"Decoy":"A", "OrbitalGrid":"B",  "OrbitalShield":"C",  "OrbitalMultiShield":"D"}
 
 
-class AIShipRoleType(object):  #this is also used in determining fleetRoles
+class AIShipRoleType(EnumsType):  # this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1
     SHIP_ROLE_MILITARY_ATTACK = 0
     SHIP_ROLE_MILITARY_LONGRANGE = 1
@@ -220,14 +200,9 @@ class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_BASE_INVASION = 10
     SHIP_ROLE_BASE_OUTPOST = 11
     SHIP_ROLE_BASE_COLONISATION = 12
-    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil',
-                                            'baseDef',  'baseInvasion',  'baseOutpost',  'baseColony',  'invalid']
 
-    def name(self, roletype):
-        try:
-            return self.ShipRoleNames[roletype]
-        except IndexError:
-            return "invalidRoleType"
+    names = ('milAttack', 'milLongrange', 'milMissiles', 'MilPD', 'CivExplore', 'CivColonize', 'CivOutpost',
+             'MilInvasion', 'MilMil', 'baseDef', 'baseInvasion', 'baseOutpost', 'baseColony', 'invalid')
 
 
 def get_ship_roles_types():

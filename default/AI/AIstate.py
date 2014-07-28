@@ -495,10 +495,10 @@ class AIstate(object):
         """returns all AIFleetMissions which contains any of fleetMissionTypes"""
 
         result = []
-
         aiFleetMissions = self.get_all_fleet_missions()
         for aiFleetMission in aiFleetMissions:
-            if aiFleetMission.has_any_of_mission_types(fleetMissionTypes):
+            these_types = aiFleetMission.get_mission_types()
+            if any(wanted_mission_type in these_types for wanted_mission_type in fleetMissionTypes):
                 result.append(aiFleetMission)
         return result
 

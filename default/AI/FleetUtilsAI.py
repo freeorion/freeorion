@@ -37,9 +37,14 @@ def count_parts_fleetwide(fleet_id,  parts_list):
                 tally += 1
     return tally
 
-
 def get_fleets_for_mission(nships,  target_stats,  min_stats,  cur_stats,  species,  systems_to_check,  systems_checked, fleet_pool_set,   fleet_list,
-                                                            take_any=False,  extend_search=True,  tried_fleets=None,  verbose=False,  depth=0): #implements breadth-first search through systems
+                                                            take_any=False,  extend_search=True,  tried_fleets=None,  verbose=False,  depth=0): 
+    """implements breadth-first search through systems
+        mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked, fleet_pool_set as fleets are checked
+        also mutates fleet_list as running list of selected fleets; this list will be returned as the function return value if the target stats
+        are met or if upon exhausting systems_to_check both take_any is true and the min stats are met.  Otherwise, an empty list is returned by the function,
+        in which case the caller can make an evaluation of an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool"""
+
     if tried_fleets is None:
         tried_fleets = set()
     if verbose:
@@ -53,7 +58,7 @@ def get_fleets_for_mission(nships,  target_stats,  min_stats,  cur_stats,  speci
             return fleet_list
         else:
             return []
-    this_system_id = systems_to_check.pop(0) #take the head of the line
+    this_system_id = systems_to_check.pop(0)  # take the head of the line
     systems_checked.append(this_system_id)
     fleets_here = [ fid for fid in foAI.foAIstate.systemStatus.get(this_system_id,  {}).get('myFleetsAccessible',  []) if fid in fleet_pool_set]
     if verbose:
@@ -270,14 +275,9 @@ def get_empire_fleet_ids_by_role(fleetRole):
     return fleetIDsWithRole
 
 
-def extract_fleet_ids_without_mission_types(fleetIDs):
+def extract_fleet_ids_without_mission_types(fleets_ids):
     """extracts a list with fleetIDs that have no mission"""
-    fleetIDsWithoutMission = []
-    for fleetID in fleetIDs:
-        aiFleetMission = foAI.foAIstate.get_fleet_mission(fleetID)
-        if not aiFleetMission.has_any_mission_types():
-            fleetIDsWithoutMission.append(fleetID)
-    return fleetIDsWithoutMission
+    return [fleet_id for fleet_id in fleets_ids if not foAI.foAIstate.get_fleet_mission(fleet_id).get_mission_types()]
 
 
 def assess_fleet_role(fleetID):
@@ -491,7 +491,7 @@ def issue_fleet_orders_for_fleet_missions():
         print "issuing fleet orders Round %d:"%thisround
         for aiFleetMission in aiFleetMissions:
             fleetID = aiFleetMission.target_id
-            fleet = aiFleetMission.get_target().target_obj
+            fleet = aiFleetMission.target.target_obj
             if (not fleet) or ( len(fleet.shipIDs)==0)  or fleetID in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
                 continue
             aiFleetMission.issue_fleet_orders()
