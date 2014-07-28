@@ -40,7 +40,7 @@ def irregular2_galaxy_calc_positions(positions, size, width):
     """
     adjacency_grid = AdjacencyGrid(width)
     max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
-    print "test galaxy shape: max delta distance =", max_delta
+    print "Irregular2 galaxy shape: max delta distance =", max_delta
     origin_x, origin_y = width / 2.0, width / 2.0
     prev_x, prev_y = origin_x, origin_y
     reset_to_origin = 0
