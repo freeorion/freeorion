@@ -81,6 +81,7 @@ def calculateIndustryPriority(): #currently only used to print status
     planets = map(universe.getPlanet,  ownedPlanetIDs)
     targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry),  planets) )
 
+    # currently, previously set to 50 in calculatePriorities(), this is just for reporting
     industryPriority = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
     print
@@ -95,6 +96,9 @@ def calculateResearchPriority():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
+    current_turn = fo.currentTurn()
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+    recent_enemies = [x for x in enemies_sighted if x > current_turn - 8]
 
     industryPriority = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
@@ -107,7 +111,7 @@ def calculateResearchPriority():
     
     milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"  ]
     milestones_done = [mstone for mstone in milestone_techs if (empire.getTechStatus(mstone) == fo.techStatus.complete)]
-    print "Research Milestones accomplished at turn %d: %s"%(fo.currentTurn(), milestones_done)
+    print "Research Milestones accomplished at turn %d: %s"%(current_turn, milestones_done)
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
@@ -125,17 +129,17 @@ def calculateResearchPriority():
     if foAI.foAIstate.aggression >=fo.aggression.maniacal:
         styleIndex+= 1
 
-    cutoffSets =  [ [25, 45, 70,  110  ],  [35,  50,  70,  150  ],  [25,  50,  80,  160  ]    ]
+    cutoffSets =  [ [25, 45, 70,  110  ],  [30,  45,  70,  150  ],  [25,  45,  80,  160  ]    ]
     cutoffs = cutoffSets[styleIndex  ]
-    settings = [ [1.4, .7, .5,  .4, .35  ],  [1.6,  1.0,  .8,  .6, .35   ],  [1.8,  1.4,  1.0,  .7, .35   ]    ][styleIndex  ]
+    settings = [ [1.4, .7, .5,  .4, .35  ],  [1.5, 0.7,  0.6, 0.5, 0.35   ],  [1.6, 0.8,  0.7, 0.6, 0.5   ]    ][styleIndex  ]
 
-    if  (fo.currentTurn() < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
+    if  (current_turn < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
         researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
-    elif (not got_orb_gen) or (fo.currentTurn() < cutoffs[1]) :
+    elif (not got_orb_gen) or (current_turn < cutoffs[1]) :
         researchPriority = settings[1] * industryPriority# med-high research
-    elif fo.currentTurn() < cutoffs[2]:
+    elif current_turn < cutoffs[2]:
         researchPriority = settings[2] * industryPriority # med-high  industry
-    elif fo.currentTurn() < cutoffs[3]:
+    elif current_turn < cutoffs[3]:
         researchPriority = settings[3] * industryPriority # med-high  industry
     else:
         researchQueue = list(empire.researchQueue)
@@ -165,6 +169,10 @@ def calculateResearchPriority():
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)
     print  "Priority for Research: %d (new target ~ %d RP)"%(researchPriority,  totalPP * researchPriority/industryPriority)
 
+    if  len(enemies_sighted) < (2 + current_turn/20.0): #TODO: adjust for colonisation priority
+        researchPriority *= 1.2
+    if (current_turn > 20) and (len(recent_enemies) > 2):
+        researchPriority *= 0.6
     return researchPriority
 
 
@@ -200,6 +208,7 @@ def calculateExplorationPriority():
 def calculateColonisationPriority():
     """calculates the demand for colony ships by colonisable planets"""
     global allottedColonyTargets, colonyGrowthBarrier
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
     totalPP=fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
     colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
@@ -208,7 +217,7 @@ def calculateColonisationPriority():
     colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    allottedPortion = [0.3,  0.4][ fo.empireID() % 2 ]    #
+    allottedPortion = [[0.3,  0.4],[0.6,  0.9]][any(enemies_sighted)][fo.empireID() % 2]    #
     #if ( foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     #        > 2 * foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     #    allottedPortion *= 1.5
@@ -226,7 +235,7 @@ def calculateColonisationPriority():
 
     colonyshipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colonyshipIDs))
-    colonisationPriority = 121 * (1+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
+    colonisationPriority = 60 * (1+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
 
     # print
     # print "Number of Colony Ships        : " + str(numColonyships)
@@ -249,7 +258,7 @@ def calculateOutpostPriority():
 
     outpostShipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST)
     numOutpostShips = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpostShipIDs))
-    outpostPriority = 102 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
+    outpostPriority = 50 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
 
     # print
     # print "Number of Outpost Ships       : " + str(numOutpostShips)
@@ -266,6 +275,7 @@ def calculateInvasionPriority():
     global allottedInvasionTargets
     troopsPerPod=2
     empire=fo.getEmpire()
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
     multiplier = 1
     num_colonies = len( list(AIstate.popCtrIDs) )
     if num_colonies > colonyGrowthBarrier:
@@ -321,6 +331,8 @@ def calculateInvasionPriority():
             invasionPriority *= 2.0
         else:
             invasionPriority *= 1.5
+    if not enemies_sighted:
+        invasionPriority *= 1.5
         
     if invasionPriority < 0:
         return 0
@@ -343,9 +355,12 @@ def calculateMilitaryPriority():
     else:
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
         
-    have_mod_weaps = ( empire.getTechStatus("SHP_WEAPON_1_4") == fo.techStatus.complete or
-                                   empire.getTechStatus("SHP_WEAPON_2_1") == fo.techStatus.complete or
-                                   empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete )
+    have_l1_weaps = (empire.getTechStatus("SHP_WEAPON_1_4") == fo.techStatus.complete or
+                      empire.getTechStatus("SHP_WEAPON_2_1") == fo.techStatus.complete or
+                      empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)
+    have_l2_weaps = (empire.getTechStatus("SHP_WEAPON_2_3") == fo.techStatus.complete or
+                      empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete )
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
         
     allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
     targetPlanetIDs =  [pid for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:allottedColonyTargets]  ] + [pid for pid,  pscore in foAI.foAIstate.colonisableOutpostIDs[:allottedColonyTargets]  ]
@@ -388,8 +403,10 @@ def calculateMilitaryPriority():
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
     militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(75*shipsNeeded) )
     #militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(scale*shipsNeeded) )
-    if not have_mod_weaps:
-        militaryPriority /= 2
+    if not have_l1_weaps:
+        militaryPriority /= 2.0
+    elif not (have_l2_weaps and enemies_sighted):
+        militaryPriority /= 1.5
     #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
     print "Calculating Military Priority:  40 + 75 * shipsNeeded \n\t  Priority: %d   \t shipsNeeded %d   \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority, shipsNeeded,   unmetThreat,  curShipRating)
     return max( militaryPriority,  0)

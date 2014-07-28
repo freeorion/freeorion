@@ -60,13 +60,13 @@ def tech_group_1a(): # early org_hull
 def tech_group_1b():  # early _lrn_artif_minds
     result = [
             "LRN_ALGO_ELEGANCE",
-            "GRO_PLANET_ECOL",
-            "GRO_SUBTER_HAB",
-            "SHP_WEAPON_1_2",
-            "CON_ENV_ENCAPSUL",
             "LRN_ARTIF_MINDS",
+            "SHP_WEAPON_1_2",
             "SHP_DOMESTIC_MONSTER",
             "SHP_ORG_HULL",
+            "GRO_PLANET_ECOL",
+            "GRO_SUBTER_HAB",
+            "CON_ENV_ENCAPSUL",
             "CON_ORBITAL_CON",
             "SHP_WEAPON_1_4",
     ]
@@ -80,8 +80,8 @@ def tech_group_2a():  # prioritizes growth & defense over weapons
             "DEF_GARRISON_1", 
             "PRO_ROBOTIC_PROD",
             "PRO_FUSION_GEN",
-            "SPY_DETECT_2",
             "GRO_SYMBIOTIC_BIO",
+            "SPY_DETECT_2",
             "PRO_INDUSTRY_CENTER_I",
             "LRN_FORCE_FIELD",
             "SHP_WEAPON_2_1",
@@ -92,9 +92,10 @@ def tech_group_2a():  # prioritizes growth & defense over weapons
     return result
 
 
-def tech_group_2b():  # prioritizes weapons over growth & defense
+def tech_group_2b():  # prioritizes weapons over defense
     result = [
             "SHP_ZORTRIUM_PLATE",
+            "GRO_SYMBIOTIC_BIO",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
@@ -105,7 +106,6 @@ def tech_group_2b():  # prioritizes weapons over growth & defense
             "PRO_INDUSTRY_CENTER_I",
             "DEF_GARRISON_1",
             "SPY_DETECT_2",
-            "GRO_SYMBIOTIC_BIO",
             "LRN_FORCE_FIELD",
     ]
     return result
@@ -138,6 +138,7 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "LRN_QUANT_NET",
             "DEF_PLAN_BARRIER_SHLD_1",
             "DEF_DEFENSE_NET_3",
+            "CON_CONTGRAV_ARCH",
             "CON_ORBITAL_HAB",
             "CON_FRC_ENRG_STRC", 
             "DEF_PLAN_BARRIER_SHLD_2",
@@ -189,7 +190,6 @@ def tech_group_4b():  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
 
 def tech_group_5():
     result = [
-            "CON_CONTGRAV_ARCH",
             "LRN_XENOARCH",
             "LRN_GRAVITONICS",
             "LRN_ENCLAVE_VOID",

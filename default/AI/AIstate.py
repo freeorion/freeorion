@@ -273,7 +273,7 @@ class AIstate(object):
         myFleetsBySystem={}
         fleetSpotPosition={}
         sawEnemiesAtSystem={}
-        currentTurn = fo.currentTurn()
+        current_turn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
             #    continue
@@ -294,11 +294,13 @@ class AIstate(object):
                             if sum_stats[0] > 0:
                                 e_f_dict.setdefault( sum_stats,  [0])[0] += count
                     partialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(fleetID, empireID)).get(fo.visibility.partial, -9999)
-                    if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
+                    if partialVisTurn >= current_turn -1 : #only interested in immediately recent data
                         if not dead_fleet:
                             sawEnemiesAtSystem[fleet.systemID] = True
                             enemyFleetIDs.append( fleetID )
                             enemiesBySystem.setdefault( thisSysID,  [] ).append( fleetID )
+                            if not fleet.ownedBy( -1 ):
+                                self.misc.setdefault('enemies_sighted',{}).setdefault(current_turn, []).append(fleetID)
         e_f_dict = [  cur_e_fighters,  old_e_fighters ][ len(cur_e_fighters)==1 ]
         std_fighter = sorted( [ (v, k) for k, v in e_f_dict.items()] )[-1][1]
         self.empire_standard_enemy = std_fighter
@@ -352,7 +354,7 @@ class AIstate(object):
             enemyRating =  enemyAttack * enemyHealth
             if fleetsLostBySystem.get(sysID, []):
                 #print  "     Assessing threats on turn %d ; noting that fleets were just lost in system %d ,  enemy fleets were %s seen as of turn %d, of which %s survived"%(
-                #                currentTurn,  sysID, ["not", ""][sawEnemiesAtSystem.get(sysID, False)],  partialVisTurn,   localEnemyFleetIDs)
+                #                current_turn,  sysID, ["not", ""][sawEnemiesAtSystem.get(sysID, False)],  partialVisTurn,   localEnemyFleetIDs)
                 lostFleetAttack = sum( [rating.get('attack', 0) for rating in fleetsLostBySystem.get(sysID,  {}) ] )
                 lostFleetHealth = sum( [rating.get('health', 0) for rating in fleetsLostBySystem.get(sysID,  {} ) ]  )
                 lostFleetRating= lostFleetAttack * lostFleetHealth
@@ -371,7 +373,7 @@ class AIstate(object):
             phealth = 0
             mypattack,  myphealth = 0,  0
             for pid in system.planetIDs:
-                prating = self.assess_planet_threat(pid,  sightingAge=currentTurn-partialVisTurn)
+                prating = self.assess_planet_threat(pid,  sightingAge=current_turn-partialVisTurn)
                 planet = universe.getPlanet(pid)
                 if not planet: continue
                 if planet.owner == self.empireID : #TODO: check for diplomatic status
@@ -386,7 +388,7 @@ class AIstate(object):
             if max( sysStatus.get('totalThreat', 0), pattack*phealth ) >= 0.6* lostFleetRating: #previous threat assessment could account for losses, ignore the losses now
                 lostFleetRating=0
 
-            if  not   partialVisTurn == currentTurn:  #(universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):
+            if  not   partialVisTurn == current_turn:  #(universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):
                 #print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"),  partialVisTurn,  currentTurn)
                 sysStatus['fleetThreat'] = int( max(enemyRating,  0.98*sysStatus.get('fleetThreat',  0),  1.1*lostFleetRating) )
                 sysStatus['totalThreat'] = (pattack + enemyAttack + sysStatus.get('monsterThreat', 0)**0.5) * (phealth + enemyHealth + sysStatus.get('monsterThreat', 0)**0.5)

@@ -202,6 +202,7 @@ def survey_universe():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empire_id = empire.empireID
+    current_turn = fo.currentTurn()
 
     # get outpost and colonization planets
     exploredSystemIDs = foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
@@ -336,8 +337,13 @@ def survey_universe():
                             activeGrowthSpecials.setdefault(special,  []).append(pid)
                 if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
                     empire_dry_docks.setdefault(planet.systemID,  []).append(pid)
-            elif (owner_id == -1) and (spec_name==""):
-                unowned_empty_planet_ids.add(pid)
+            elif owner_id == -1:
+                if spec_name == "":
+                    unowned_empty_planet_ids.add(pid)
+            else:
+                partialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(pid, empire_id)).get(fo.visibility.partial, -9999)
+                if partialVisTurn >= current_turn -1 : #only interested in immediately recent data
+                    foAI.foAIstate.misc.setdefault('enemies_sighted',{}).setdefault(current_turn, []).append(pid)
                     
         if empire_has_colony_in_sys:
             if empire_has_pop_ctr_in_sys:
