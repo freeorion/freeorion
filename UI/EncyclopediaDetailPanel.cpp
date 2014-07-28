@@ -1843,34 +1843,34 @@ namespace {
         GetUniverse().UpdateMeterEstimates(planet_id);
     }
 
-    std::map<int, int> CountByOwner(const std::set<int>& objects){
+    std::map<int, int> CountByOwner(const std::set<int>& objects) {
         std::map<int, int> objects_per_owner;
-        for ( std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it ) {
+        for (std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it) {
             TemporaryPtr<const UniverseObject> object = Objects().Object(*it);
-            if ( object && ( object->ObjectType() == OBJ_SHIP || ( object->GetMeter ( METER_POPULATION ) && object->CurrentMeterValue ( METER_POPULATION ) > 0.0 ) ) ) {
+            if (object && (
+                    object->ObjectType() == OBJ_SHIP || (
+                        object->GetMeter(METER_POPULATION) &&
+                        object->CurrentMeterValue(METER_POPULATION) > 0.0)))
+            {
                 int owner_id = object->Owner();
-                if ( objects_per_owner.find ( owner_id ) == objects_per_owner.end() ) {
+                if (objects_per_owner.find(owner_id) == objects_per_owner.end())
                     objects_per_owner[owner_id] = 0;
-                }
                 ++objects_per_owner[owner_id];
             }
         }
         return objects_per_owner;
     }
-    
-    std::string CountsToText(const std::map<int, int>& count_per_empire, std::string delimiter = ", "){
+
+    std::string CountsToText(const std::map<int, int>& count_per_empire, std::string delimiter = ", ") {
         std::stringstream ss;
-        for ( std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
+        for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
             std::string owner_string = UserString("NEUTRAL");
-            Empire* owner = Empires().Lookup(it->first);
-            if ( owner ) {
+            if (const Empire* owner = Empires().Lookup(it->first))
                 owner_string = GG::RgbaTag(owner->Color()) + owner->Name() + "</rgba>";
-            }
             ss << owner_string << ": " << it->second;
             ++it;
-            if ( it != count_per_empire.end() ) {
+            if (it != count_per_empire.end())
                 ss << delimiter;
-            }
         }
         return ss.str();
     }
@@ -1948,7 +1948,7 @@ namespace {
                 detailed_description += str(FlexibleFormat(template_str) % owner_string % object_link) + "\n";
             }
         }
-        
+
         detailed_description += "\n" + UserString("COMBAT_SUMMARY_DESTROYED") + "\n" + CountsToText(CountByOwner(log.destroyed_object_ids));
     }
 
