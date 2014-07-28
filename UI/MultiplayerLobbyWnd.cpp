@@ -606,12 +606,11 @@ void MultiPlayerLobbyWnd::DoLayout(void) {
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
     GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
-    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GG::Y(225));
+    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GG::Y(340));
     m_galaxy_setup_panel->SizeMove(galaxy_setup_panel_ul, galaxy_setup_panel_lr);
 
     GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));
     GG::Pt game_buttons_lr = game_buttons_ul + m_galaxy_setup_panel->RelativeLowerRight();
-    game_buttons_lr.y += 116;
     m_new_load_game_buttons->SizeMove(game_buttons_ul, game_buttons_lr);
 
     GG::Pt browse_saves_btn_ul(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->RelativeLowerRight().y + CONTROL_MARGIN);
