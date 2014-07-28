@@ -113,7 +113,7 @@ Freq                            0       1000    3000    8000
 # per how many stars should monsters appear
 <1x4>
 MonsterFrequency                None    Low     Medium  High
-Freq                            0       9       5       3
+Freq                            0       30       8       3
 
 # per how many planets should natives appear
 <1x4>

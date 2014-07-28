@@ -109,6 +109,13 @@ Special
     spawnrate = 0.7
     spawnlimit = 9999
     location = And [
+        Or [
+            ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+            And [
+                ValueTest low = 0 high = 0 testvalue = GalaxyMonsterFrequency
+                Random probability = 0.2
+            ]
+        ]
         Planet
         Not Planet type = [Asteroids GasGiant]
         Not ContainedBy And [
