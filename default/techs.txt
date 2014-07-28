@@ -2368,28 +2368,6 @@ Tech
 //########################################################
 
 Tech
-    name = "SHP_FLEET_REPAIR"
-    description = "SHP_FLEET_REPAIR_DESC"
-    short_description = "SHIP_REPAIR_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 40 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 10
-    prerequisites = "SHP_INTSTEL_LOG"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Ship
-                InSystem
-                Stationary
-                OwnedBy TheEmpire Source.Owner
-                Turn low = LocalCandidate.System.LastTurnBattleHere + 2
-                Structure high = LocalCandidate.MaxStructure - 0.001
-                ResupplyableBy empire = Source.Owner
-            ]
-            effects = SetStructure Value + 1
-
-Tech
     name = "SHP_REINFORCED_HULL"
     description = "SHP_REINFORCED_HULL_DESC"
     short_description = "STRUCTURE_SHORT_DESC"
@@ -2421,8 +2399,33 @@ Tech
                 Ship
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
+//            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
             effects = SetStructure Value + 1
+
+Tech
+    name = "SHP_FLEET_REPAIR"
+    description = "SHP_FLEET_REPAIR_DESC"
+    short_description = "SHIP_REPAIR_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 10
+    prerequisites = [
+        "SHP_INTSTEL_LOG"
+        "SHP_BASIC_DAM_CONT"
+            ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem
+                Stationary
+                OwnedBy TheEmpire Source.Owner
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                ResupplyableBy empire = Source.Owner
+            ]
+            effects = SetStructure Value + (Target.MaxStructure/10)
 
 Tech
     name = "SHP_ADV_DAM_CONT"
@@ -2430,16 +2433,21 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 3
-    prerequisites = "SHP_BASIC_DAM_CONT"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_FLEET_REPAIR"
+        "CON_GAL_INFRA"
+        ]
     effectsgroups =
         EffectsGroup
             scope = And [
                 Ship
                 OwnedBy TheEmpire Source.Owner
+                Stationary
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
             ]
-            effects = SetStructure Value + (Target.MaxStructure/4)
+            effects = SetStructure Value + (Target.MaxStructure/10)
    
 //########################################################
 //#     Parts
