@@ -48,6 +48,10 @@ class AITarget(object):
             target_name
         )
 
+    @property #TODO consider may not want a fully functional property here, perhaps only a getter
+    def my_target_id(self):
+        return self.target_id
+
     @property
     def target_obj(self):
         """
