@@ -1131,6 +1131,7 @@ Part
             
     icon = ""
 
+/*
 Part
     name = "RS_AUTOLAB"
     description = "RS_AUTOLAB_DESC"
@@ -1139,6 +1140,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    Unproducible
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/categories/learning.png"
 
@@ -1150,6 +1152,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    Unproducible
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/categories/production.png"
 
@@ -1161,8 +1164,10 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    Unproducible
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/categories/economics.png"
+*/
 
 Part
     name = "SH_ROBOTIC_INTERFACE_SHIELDS"
