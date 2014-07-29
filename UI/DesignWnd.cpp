@@ -33,10 +33,10 @@ namespace {
     const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     const std::string   EMPTY_STRING = "";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
-    const GG::X         PART_CONTROL_WIDTH(64);
-    const GG::Y         PART_CONTROL_HEIGHT(64);
-    const GG::X         SLOT_CONTROL_WIDTH(72);
-    const GG::Y         SLOT_CONTROL_HEIGHT(72);
+    const GG::X         PART_CONTROL_WIDTH(54);
+    const GG::Y         PART_CONTROL_HEIGHT(54);
+    const GG::X         SLOT_CONTROL_WIDTH(60);
+    const GG::Y         SLOT_CONTROL_HEIGHT(60);
     const int           PAD(3);
 
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
@@ -2569,7 +2569,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 
-    GG::X base_selector_width(300);
+    GG::X base_selector_width(250);
     GG::X most_panels_left = base_selector_width;
     GG::X most_panels_width = ClientWidth() - most_panels_left;
     GG::X detail_width = 5*most_panels_width/11;
