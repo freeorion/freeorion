@@ -2572,14 +2572,17 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::X base_selector_width(300);
     GG::X most_panels_left = base_selector_width;
     GG::X most_panels_width = ClientWidth() - most_panels_left;
+    GG::X detail_width = 5*most_panels_width/11;
+    GG::X part_palette_left = base_selector_width + detail_width;
+    GG::X part_palette_width = most_panels_width - detail_width;
     GG::Y detail_top = GG::Y0;
-    GG::Y detail_height(200);
+    GG::Y detail_height = 2*ClientHeight()/5;   //(200);
     GG::Y main_top = detail_top + detail_height;
-    GG::Y part_palette_height(160);
-    GG::Y part_palette_top = ClientHeight() - part_palette_height;
-    GG::Y main_height = part_palette_top - main_top;
+    GG::Y part_palette_height = detail_height; //(160);
+    GG::Y part_palette_top = detail_top;//ClientHeight() - part_palette_height;
+    GG::Y main_height = ClientHeight() - main_top;//part_palette_top - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(most_panels_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
+    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
     AttachChild(m_detail_panel);
     m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 
@@ -2600,11 +2603,11 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
     m_main_panel->Sanitize();
 
-    m_part_palette = new PartPalette(most_panels_width, part_palette_height);
+    m_part_palette = new PartPalette(part_palette_width, part_palette_height);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal,          static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
-    m_part_palette->MoveTo(GG::Pt(most_panels_left, part_palette_top));
+    m_part_palette->MoveTo(GG::Pt(part_palette_left, part_palette_top));
 
     m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
     AttachChild(m_base_selector);
