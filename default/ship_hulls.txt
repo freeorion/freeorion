@@ -964,7 +964,7 @@ Hull
     speed = 50
     starlaneSpeed = 90
     fuel = 2
-    stealth = 15
+    stealth = 5
     structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -972,7 +972,7 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
-    buildCost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
