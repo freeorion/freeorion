@@ -505,10 +505,7 @@ private:
   * drop-shadow effect, impriving text readability. */
 class ShadowedTextControl : public GG::Control {
 public:
-    ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
-                        GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE);
-
-    ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+    ShadowedTextControl(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE);
     
     virtual GG::Pt MinUsableSize() const;

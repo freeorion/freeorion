@@ -507,14 +507,15 @@ namespace {
         if (this_client_empire && system_selected) {
             location_font = ClientUI::GetBoldFont();
             location_clr = this_client_empire->Color();
-            m_location_text = new ShadowedTextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
-                                                      location_text, location_font, location_clr,
+            m_location_text = new ShadowedTextControl(location_text, location_font, location_clr,
                                                       GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
             m_location_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
                                                   location_text, location_font, location_clr,
                                                   GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         }
+        m_location_text->MoveTo(GG::Pt(left, top));
+        m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
 
         top += m_name_text->Height();
         left = GG::X(GRAPHIC_SIZE + MARGIN*2);

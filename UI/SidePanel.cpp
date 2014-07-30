@@ -875,8 +875,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 
     // create planet name control
-    m_planet_name = new ShadowedTextControl(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0, wrapped_planet_name,
-                                            font, ClientUI::TextColor());
+    m_planet_name = new ShadowedTextControl(wrapped_planet_name, font, ClientUI::TextColor());
+    m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     AttachChild(m_planet_name);
 
 
@@ -2577,7 +2577,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_button_prev = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
     m_button_next = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
     m_system_name = new CUIDropDownList(        GG::X0, GG::Y0, GG::X(40),      SystemNameTextControlHeight(),  DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
-    m_star_type_text = new ShadowedTextControl( GG::X0, GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER);
+    m_star_type_text = new ShadowedTextControl("", ClientUI::GetFont(), ClientUI::TextColor());
 
     Sound::TempUISoundDisabler sound_disabler;
 

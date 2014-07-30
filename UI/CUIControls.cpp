@@ -1423,21 +1423,10 @@ std::string RemoveRGB(const std::string& text){
     return boost::regex_replace(text, rx, "", boost::match_default | boost::format_all);
 }
 
-ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+ShadowedTextControl::ShadowedTextControl(const std::string& str,
                                          const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format) :
-    GG::Control(x, y, w, h, GG::NO_WND_FLAGS),
-    shadow_text(new GG::TextControl(GG::X0, GG::Y0, w, h, RemoveRGB(str), font, GG::CLR_BLACK, format, GG::NO_WND_FLAGS)),
-    main_text(new GG::TextControl(GG::X0, GG::Y1, w, h, str, font, color, format, GG::NO_WND_FLAGS))
-{
-    AttachChild(shadow_text);
-    AttachChild(main_text);
-}
-
-ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str,
-                                         const boost::shared_ptr<GG::Font>& font,
-                                         GG::Clr color, GG::Flags<GG::TextFormat> format) :
-    GG::Control(x, y, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     shadow_text(new GG::TextControl(GG::X0, GG::Y0, RemoveRGB(str), font, GG::CLR_BLACK, format, GG::NO_WND_FLAGS)),
     main_text(new GG::TextControl(GG::X0, GG::Y1, str, font, color, format, GG::NO_WND_FLAGS))
 {

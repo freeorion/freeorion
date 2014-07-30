@@ -213,7 +213,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         text_color = ClientUI::TextColor();
     }
 
-    GG::Control* text = new ShadowedTextControl(GG::X0, GG::Y0, wrapped_system_name, font, text_color);
+    GG::Control* text = new ShadowedTextControl(wrapped_system_name, font, text_color);
     AttachChild(text);
     Resize(GG::Pt(text->Width(), text->Height()));
 }
