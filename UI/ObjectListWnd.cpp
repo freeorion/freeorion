@@ -1197,8 +1197,7 @@ public:
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
 
-        m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())),
-                                               ClientHeight(), textures,
+        m_icon = new MultiTextureStaticGraphic(textures,
                                                std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
         AttachChild(m_icon);
 

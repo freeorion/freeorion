@@ -1494,9 +1494,9 @@ void ShadowedTextControl::Render() {
       * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_NONE. */
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<boost::shared_ptr<GG::Texture> >& textures,
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
-    GG::Control(x, y, w, h, GG::NO_WND_FLAGS),
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(),
     m_styles(styles)
 {
@@ -1505,9 +1505,9 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, 
     Init();
 }
 
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<GG::SubTexture>& subtextures,
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
-    GG::Control(x, y, w, h, GG::NO_WND_FLAGS),
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(subtextures),
     m_styles(styles)
 { Init(); }

@@ -1437,7 +1437,7 @@ void FleetDataPanel::Refresh() {
         for (size_t i = 0; i < head_icons.size(); ++i)
             styles.push_back(DataPanelIconStyle());
 
-        m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icons, styles);
+        m_fleet_icon = new MultiTextureStaticGraphic(icons, styles);
         AttachChild(m_fleet_icon);
 
         if (Empire* empire = Empires().Lookup(fleet->Owner()))
