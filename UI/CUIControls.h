@@ -312,6 +312,7 @@ public:
     /** \name Mutators */ //@{
     virtual void    Render() {}
 
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -325,6 +326,7 @@ public:
     mutable boost::signals2::signal<void ()>    RightClickedSignal;
 
 private:
+    void            DoLayout(void);
     void            Refresh();
     GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
 

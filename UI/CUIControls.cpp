@@ -834,29 +834,14 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     m_show_signs(std::vector<bool>(1, showsign)),
     m_icon(0), m_text(0)
 {
-    int font_space = ClientUI::Pts()*3/2;
-    // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
-    if (w >= Value(h)) {
-        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X(Value(h) + STAT_ICON_PAD), GG::Y0,
-                                     w - Value(h) - STAT_ICON_PAD, GG::Y(std::max(font_space, Value(h))),
-                                     "", ClientUI::GetFont(), ClientUI::TextColor(),
-                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    } else {
-        // need vertical space for text, but don't want icon to be larger than available horizontal space
-        int icon_height = std::min(Value(w), std::max(Value(h - font_space - STAT_ICON_PAD), 1));
-        int icon_left = Value(w - icon_height)/2;
-        m_icon = new GG::StaticGraphic(GG::X(icon_left), GG::Y0, GG::X(icon_height),
-                                       GG::Y(icon_height), texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X0, GG::Y(icon_height + STAT_ICON_PAD), w, GG::Y(font_space),
-                                     "", ClientUI::GetFont(), ClientUI::TextColor(),
-                                     GG::FORMAT_CENTER | GG::FORMAT_TOP);
-    }
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
+    m_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_icon);
     AttachChild(m_text);
+    DoLayout();
     Refresh();
 }
 
@@ -870,18 +855,8 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     m_icon(0), m_text(0)
 {
     SetName("StatisticIcon");
-    // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
-    if (w >= Value(h)) {
-        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X(Value(h) + STAT_ICON_PAD), GG::Y0,
-                                     w - Value(h) - STAT_ICON_PAD, std::max(GG::Y(ClientUI::Pts()*3/2), h),
-                                     "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    } else {
-        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X0, GG::Y(Value(w) + STAT_ICON_PAD),
-                                     w, GG::Y(ClientUI::Pts()*3/2),
-                                     "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
-    }
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
+    m_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -894,6 +869,7 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
 
     AttachChild(m_icon);
     AttachChild(m_text);
+    DoLayout();
     Refresh();
 }
 
@@ -917,6 +893,15 @@ void StatisticIcon::SetValue(double value, int index) {
     Refresh();
 }
 
+void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
 void StatisticIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
@@ -935,6 +920,25 @@ void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
+
+void StatisticIcon::DoLayout(void) {
+    // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
+    int icon_dim = std::min(Value(Height()), Value(Width()));
+    m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
+
+    GG::Pt text_ul;
+    GG::Pt text_lr(Width(), Height());
+
+    if (Width() >= Value(Height())) {
+        m_text->SetTextFormat(GG::FORMAT_LEFT);
+        text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
+    } else {
+        m_text->SetTextFormat(GG::FORMAT_BOTTOM);
+        text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
+    }
+
+    m_text->SizeMove(text_ul, text_lr);
+}
 
 void StatisticIcon::Refresh() {
     std::string text = "";
