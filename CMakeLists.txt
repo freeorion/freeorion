@@ -9,8 +9,8 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release)
 ########################################
 project(FreeOrion)
 
-set(FreeOrion_VERSION 0.4.3+)
-set(FREEORION_RELEASE false)
+set(FreeOrion_VERSION 0.4.4)
+set(FREEORION_RELEASE true)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
 
