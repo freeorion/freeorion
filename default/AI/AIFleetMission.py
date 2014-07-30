@@ -260,13 +260,19 @@ class AIFleetMission(object):
                     self._remove_target(mission_type, target)
 
     def _check_abort_mission(self, fleet_order):
-        """ Check if order is incorrect and abort it. return False if order is correct."""
+        """ checks if current mission (targeting a planet) should be aborted"""
         planet = fo.getUniverse().getPlanet(fleet_order.get_target_target().target_id)
         if planet:
             order_type = fleet_order.get_fleet_order_type()
-            if order_type == AIFleetOrderType.ORDER_COLONISE and planet.currentMeterValue(fo.meterType.population) == 0 and (planet.ownedBy(fo.empireID()) or planet.unowned):
+            if order_type == AIFleetOrderType.ORDER_COLONISE:
+                if planet.currentMeterValue(fo.meterType.population) == 0 and (planet.ownedBy(fo.empireID()) or planet.unowned):
+                    return False
+            elif order_type == AIFleetOrderType.ORDER_OUTPOST:
+                if planet.unowned:
+                    return False
+            elif order_type == AIFleetOrderType.ORDER_INVADE: #TODO add substantive abort check
                 return False
-            if order_type == AIFleetOrderType.ORDER_OUTPOST and planet.unowned:
+            else:
                 return False
 
         # canceling fleet orders
