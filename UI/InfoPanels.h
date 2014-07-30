@@ -16,7 +16,6 @@ class BuildingIndicator;
 class SpecialsPanel;
 class MultiTurnProgressBar;
 class MultiMeterStatusBar;
-class MeterModifiersIndicator;
 class MultiIconValueIndicator;
 class Meter;
 class ShipDesign;
@@ -66,7 +65,7 @@ public:
 private:
     void                ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
 
-    void                DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
+    void                DoLayout(void);                     ///< resizes panel and positions widgets
 
     TemporaryPtr<const PopCenter>   GetPopCenter() const;           ///< returns the PopCenter object with id m_popcenter_id
 
@@ -113,7 +112,7 @@ public:
 
 private:
     void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
-    void            DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
+    void            DoLayout(void);                 ///< resizes panel and positions widgets
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -160,7 +159,7 @@ public:
 
 private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
-    void                    DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
+    void                    DoLayout(void);                 ///< resizes panel and positions widgets
 
     int                         m_planet_id;                ///< object id for the UniverseObject that this panel display info about
 
@@ -209,7 +208,7 @@ public:
 
 private:
     void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
-    void            DoExpandCollapseLayout();               ///< resizes panel and positions indicators, differently depending on collapsed / expanded status
+    void            DoLayout(void);                         ///< resizes panel and positions indicators
 
     void            Update();                               ///< recreates building indicators for building on or being built at this planet
 
@@ -368,23 +367,6 @@ private:
     std::vector<GG::Clr>                            m_bar_colours;
 };
 
-/** Shows a summary of meter modifications associated with a particular source
-  * object. */
-class MeterModifiersIndicator : public StatisticIcon {
-public:
-    MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h, int source_object_id, MeterType meter_type);
-    MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h, int source_object_id, const std::string& empire_meter_type);
-
-    /** \name Mutators */ //@{
-    void            Update();
-    //@}
-
-private:
-    int             m_source_object_id;
-    MeterType       m_meter_type;
-    std::string     m_empire_meter_type;
-};
-
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
 class IconTextBrowseWnd : public GG::BrowseInfoWnd {
 public:
@@ -418,7 +400,7 @@ public:
     CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts, const std::map<std::string, float>& tag_counts);
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
-    void            DoLayout();
+    void            DoLayout(void);
 
 private:
     GG::TextControl*    m_title_text;

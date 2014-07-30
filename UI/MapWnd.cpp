@@ -825,36 +825,30 @@ MapWnd::MapWnd() :
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(24);
-    m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                     ClientUI::MeterIcon(METER_POPULATION),
-                                     0, 3, false);
+    m_population = new StatisticIcon(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false);
+    m_population->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                   ClientUI::MeterIcon(METER_INDUSTRY),
-                                   0, 3, false);
+    m_industry = new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false);
+    m_industry->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_industry->SetName("Industry StatisticIcon");
     GG::Connect(m_industry->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
 
-    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                   ClientUI::MeterIcon(METER_RESEARCH),
-                                   0, 3, false);
+    m_research = new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false);
+    m_research->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_research->SetName("Research StatisticIcon");
     GG::Connect(m_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
 
-    m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                ClientUI::MeterIcon(METER_TRADE),
-                                0, 3, false);
+    m_trade = new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
+    m_trade->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_trade->SetName("Trade StatisticIcon");
 
-    m_fleet = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
-                                0, 3, false);
+    m_fleet = new StatisticIcon(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"), 0, 3, false);
+    m_fleet->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_fleet->SetName("Fleet StatisticIcon");
 
-    m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height(),
-                                    ClientUI::MeterIcon(METER_DETECTION),
-                                    0, 3, false);
+    m_detection = new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false);
+    m_detection->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_detection->SetName("Detection StatisticIcon");
 
     m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),

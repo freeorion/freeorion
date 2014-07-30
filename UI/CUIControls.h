@@ -297,10 +297,10 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row {
 class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
+    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign); ///< initializes with one value
 
-    StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
+    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
                   bool showsign0, bool showsign1);  ///< initializes with two values
     //@}

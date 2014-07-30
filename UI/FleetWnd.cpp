@@ -1017,8 +1017,7 @@ void ShipDataPanel::Init() {
 
 
     // damage stat icon
-    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                            DamageIcon(), 0, 0, false);
+    StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
     AttachChild(icon);
     icon->SetBrowseModeTime(tooltip_delay);
@@ -1028,8 +1027,7 @@ void ShipDataPanel::Init() {
     meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD);     meters.push_back(METER_FUEL);
     meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_STARLANE_SPEED);
     for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                ClientUI::MeterIcon(*it), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(ClientUI::MeterIcon(*it), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(*it, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1126,48 +1124,42 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         // stat icon for fleet count
-        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                FleetCountIcon(), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_SIZE));
         AttachChild(icon);
 
         // stat icon for fleet damage
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 DamageIcon(), 0, 0, false);
+        icon = new StatisticIcon(DamageIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_DAMAGE));
         AttachChild(icon);
 
         // stat icon for fleet structure
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
         AttachChild(icon);
 
         // stat icon for fleet shields
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_SHIELD));
         AttachChild(icon);
 
         // stat icon for fleet fuel
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_FUEL));
         AttachChild(icon);
 
         // stat icon for fleet speed
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                 SpeedIcon(), 0, 0, false);
+        icon = new StatisticIcon(SpeedIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_STARLANE_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(METER_STARLANE_SPEED));
@@ -2592,32 +2584,28 @@ void FleetWnd::Init(int selected_fleet_id) {
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     // stat icon for fleet count
-    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                            FleetCountIcon(), 0, 0, false);
+    StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(METER_SIZE));
     AttachChild(icon);
 
     // stat icon for fleet damage
-    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                             DamageIcon(), 0, 0, false);
+    icon = new StatisticIcon(DamageIcon(), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(METER_DAMAGE));
     AttachChild(icon);
 
     // stat icon for fleet structure
-    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                             ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+    icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
     AttachChild(icon);
 
     // stat icon for fleet shields
-    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                             ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+    icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(StatTooltip(METER_SHIELD));

@@ -826,9 +826,9 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign) :
-    GG::Control(x, y, w, h, GG::INTERACTIVE),
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_num_values(1),
     m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
     m_show_signs(std::vector<bool>(1, showsign)),
@@ -845,10 +845,10 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     Refresh();
 }
 
-StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
                              bool showsign0, bool showsign1) :
-    GG::Control(x, y, w, h, GG::INTERACTIVE),
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
     m_show_signs(std::vector<bool>(2, false)),
