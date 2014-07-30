@@ -744,11 +744,11 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         //////////////////////////////////////////////////////////////////
         int system_id = 0;
         StarType star_type = STAR_BLUE;
-        std::vector<int> planet_ids(10);
-        for (int i = 0; i < 10; ++i) {
+        std::vector<int> planet_ids(9);
+        for (int i = 0; i < 9; ++i) {
             planet_ids[i] = i;
         }
-        std::vector<PlanetType> planet_types(10);
+        std::vector<PlanetType> planet_types(9);
         planet_types[0] = PT_SWAMP;
         planet_types[1] = PT_TOXIC;
         planet_types[2] = PT_TERRAN;
@@ -758,8 +758,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planet_types[6] = PT_TUNDRA;
         planet_types[7] = PT_GASGIANT;
         planet_types[8] = PT_DESERT;
-        planet_types[9] = PT_OCEAN;
-        std::vector<PlanetSize> planet_sizes(10);
+        std::vector<PlanetSize> planet_sizes(9);
         planet_sizes[0] = SZ_SMALL;
         planet_sizes[1] = SZ_LARGE;
         planet_sizes[2] = SZ_LARGE;
@@ -769,7 +768,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planet_sizes[6] = SZ_MEDIUM;
         planet_sizes[7] = SZ_GASGIANT;
         planet_sizes[8] = SZ_TINY;
-        planet_sizes[9] = SZ_HUGE;
 
 #if 1
         std::map<PlanetType, std::size_t> textures_available;
@@ -834,8 +832,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
         // a sample system
         std::vector<TemporaryPtr<Planet> > planets;
-        for (unsigned int i = 0; i <= 9; ++i)
-            planets.push_back(GetUniverse().CreatePlanet(planet_types[0], planet_sizes[0]));
+        for (unsigned int i = 0; i < 9; ++i)
+            planets.push_back(GetUniverse().CreatePlanet(planet_types[i], planet_sizes[i]));
 
         CombatData* combat_data = new CombatData;
         combat_data->m_system = GetUniverse().CreateSystem(star_type, "Sample", 0.0, 0.0);
