@@ -135,12 +135,13 @@ namespace {
         m_name_text->ClipText(true);
         top += m_name_text->Height();
 
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime(m_empire_id) : 1,
+        m_progress_bar = new MultiTurnProgressBar(tech ? tech->ResearchTime(m_empire_id) : 1,
                                                   turns_completed,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
         m_progress_bar->MoveTo(GG::Pt(left, top));
+        m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
         top += m_progress_bar->Height() + MARGIN;
 
         using boost::io::str;

@@ -1639,10 +1639,11 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), total_turns, turns_completed, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+    m_progress_bar = new MultiTurnProgressBar(total_turns, turns_completed, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                               ClientUI::TechWndProgressBarColor(), GG::LightColor(ClientUI::ResearchableTechFillColor()));
-    m_progress_bar->MoveTo(GG::Pt(GG::X0, Height() - m_progress_bar->Height()));
     AttachChild(m_progress_bar);
+
+    DoLayout();
 }
 
 void BuildingIndicator::Render() {
@@ -1705,7 +1706,7 @@ void BuildingIndicator::Refresh() {
         return;
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
-    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), texture,
+    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X0, GG::Y0, texture,
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
@@ -1719,25 +1720,18 @@ void BuildingIndicator::Refresh() {
 
     if (building->OrderedScrapped()) {
         boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y0, scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
 }
 
 void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    Wnd::SizeMove(ul, lr);
+    GG::Pt old_size = Size();
 
-    GG::Pt child_lr = lr - ul - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
+    GG::Wnd::SizeMove(ul, lr);
 
-    if (m_graphic)
-        m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
-
-    if (m_scrap_indicator)
-        m_scrap_indicator->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
-
-    GG::Y bar_top = Height() * 4 / 5;
-    if (m_progress_bar)
-        m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
+    if (old_size != Size())
+        DoLayout();
 }
 
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1804,6 +1798,20 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)
 { m_order_issuing_enabled = enable; }
+
+void BuildingIndicator::DoLayout(void) {
+    GG::Pt child_lr = Size() - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
+
+    if (m_graphic)
+        m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+
+    if (m_scrap_indicator)
+        m_scrap_indicator->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+
+    GG::Y bar_top = Height() * 4 / 5;
+    if (m_progress_bar)
+        m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
+}
 
 
 /////////////////////////////////////

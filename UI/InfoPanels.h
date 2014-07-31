@@ -246,6 +246,8 @@ public:
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
 
 private:
+    void            DoLayout(void);
+
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;
 
     GG::StaticGraphic*          m_graphic;
