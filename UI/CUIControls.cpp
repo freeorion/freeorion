@@ -704,8 +704,8 @@ void CUIMultiEdit::Render() {
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
 ///////////////////////////////////////
-CUILinkTextMultiEdit::CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style) :
-    CUIMultiEdit(x, y, w, h, str, style),
+CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style) :
+    CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, str, style),
     TextLinker(),
     m_already_setting_text_so_dont_link(false),
     m_raw_text(str)

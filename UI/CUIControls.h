@@ -248,7 +248,7 @@ public:
 class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
 public:
     /** \name Structors */ //@{
-    CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP); ///< basic ctor
+    CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP); ///< basic ctor
     //@}
     /** \name Accessors */ //@{
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
