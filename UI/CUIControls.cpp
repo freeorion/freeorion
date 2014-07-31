@@ -1167,8 +1167,8 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
 ///////////////////////////////////////
 // class ColorSelector
 ///////////////////////////////////////
-ColorSelector::ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color) :
-    Control(x, y, w, h),
+ColorSelector::ColorSelector(GG::Clr color, GG::Clr default_color) :
+    Control(GG::X0, GG::Y0, GG::X1, GG::Y1),
     m_default_color(default_color)
 { SetColor(color); }
 

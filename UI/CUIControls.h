@@ -405,7 +405,7 @@ private:
 class ColorSelector : public GG::Control {
 public:
     /** \name Structors */ //@{
-    ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color);
+    ColorSelector(GG::Clr color, GG::Clr default_color);
     //@}
 
     /** \name Mutators */ //@{
