@@ -877,6 +877,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // create planet name control
     m_planet_name = new ShadowedTextControl(wrapped_planet_name, font, ClientUI::TextColor());
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
+    m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
 
 

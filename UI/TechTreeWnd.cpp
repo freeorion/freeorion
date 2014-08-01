@@ -17,6 +17,7 @@
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
 
+#include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
@@ -568,6 +569,8 @@ private:
     std::string                     m_eta_text;
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
+    ShadowedTextControl*            m_name_label;
+    ShadowedTextControl*            m_eta_label;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
     bool                            m_browse_highlight;
@@ -583,6 +586,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_eta_text(),
     m_layout_panel(panel),
     m_icon(0),
+    m_name_label(0),
+    m_eta_label(0),
     m_colour(GG::CLR_GRAY),
     m_status(TS_RESEARCHABLE),
     m_browse_highlight(false),
@@ -594,7 +599,10 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
                                    ClientUI::TechIcon(m_tech_name),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    // intentionally not attaching as child; TechPanel::Render calls m_icon->Render() instead.
+    m_name_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+    m_eta_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
+
+    // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -602,7 +610,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 }
 
 TechTreeWnd::LayoutPanel::TechPanel::~TechPanel()
-{ delete m_icon; }
+{
+    delete m_icon;
+    delete m_name_label;
+    delete m_eta_label;
+}
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 { return ClientUI::Pts() * 3 / 2; }
@@ -640,33 +652,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     // tech name
     int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
-    if (font_pts > 10) {
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
-        GG::Pt text_ul = ul + GG::Pt(GG::X(4), GG::Y0);
-        GG::Pt text_lr = lr - GG::Pt(GG::X(PAD + 4), GG::Y0);
 
-        glEnable(GL_TEXTURE_2D);
-
-        std::vector<GG::Font::LineData> line_data;
-        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT;
-        font->DetermineLines(m_name_text, line_format, lr.x - ul.x, line_data);
-
-        // render background offset from actual text location
-        glColor(GG::CLR_BLACK);
-        font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         line_format, &line_data);
-        font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr - GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         line_format, &line_data);
-        font->RenderText(text_ul + GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         line_format, &line_data);
-        font->RenderText(text_ul - GG::Pt(GG::X1, GG::Y0), text_lr + GG::Pt(GG::X1, GG::Y0), m_name_text,
-                         line_format, &line_data);
-        // render actual text
-        glColor(ClientUI::TextColor());
-        font->RenderText(text_ul, text_lr, m_name_text, line_format, &line_data);
-
-        glDisable(GL_TEXTURE_2D);
-    }
 
     // panel border
     GG::Clr border_colour;
@@ -701,27 +687,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         glColor(border_colour);
         CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
-
         glEnable(GL_TEXTURE_2D);
 
-        std::vector<GG::Font::LineData> line_data;
-        GG::Flags<GG::TextFormat> line_format = GG::FORMAT_VCENTER | GG::FORMAT_CENTER;
-        font->DetermineLines(m_eta_text, line_format, eta_lr.x - eta_ul.x, line_data);
+        m_eta_label->SizeMove(eta_ul, eta_lr);
 
-        // render background offset from actual text location
-        glColor(GG::CLR_BLACK);
-        font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         line_format, &line_data);
-        font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr - GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         line_format, &line_data);
-        font->RenderText(eta_ul + GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         line_format, &line_data);
-        font->RenderText(eta_ul - GG::Pt(GG::X1, GG::Y0), eta_lr + GG::Pt(GG::X1, GG::Y0), m_eta_text,
-                         line_format, &line_data);
-        // render actual text
-        glColor(ClientUI::TextColor());
-        font->RenderText(eta_ul, eta_lr, m_eta_text, line_format, &line_data);
+        /// Need to render text too
+        GG::GUI::GetGUI()->RenderWindow(m_eta_label);
 
         glDisable(GL_TEXTURE_2D);
     }
@@ -740,6 +711,14 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_TEXTURE_2D);
 
     m_icon->Render();
+
+    if (font_pts > 10) {
+        GG::Pt text_ul(text_left + 4, text_top);
+        GG::Pt text_size(text_width + PAD, text_height);
+        m_name_label->SizeMove(text_ul, text_ul + text_size);
+        /// Need to render children too
+        GG::GUI::GetGUI()->RenderWindow(m_name_label);
+    }
 
     m_layout_panel->UndoZoom();
 }
@@ -831,6 +810,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     m_icon->SetColor(icon_colour);
 
     m_name_text = UserString(m_tech_name);
+    m_name_label->SetText(m_name_text);
+    m_eta_label->SetText(m_eta_text);
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
