@@ -2917,7 +2917,7 @@ Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Partei
 OUTPOSTS_TITLE
 Außenposten
 OUTPOSTS_TEXT
-'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auf, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
+'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auf, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.'''
 
 GROWTH_FOCUS_TITLE
 Wachstumsfokus
@@ -9229,6 +9229,59 @@ Telepathic
 
 ORBITAL
 Orbital
+
+STAR_GROUP_WORDS
+'''Alpha
+Beta
+Gamma
+Delta
+Epsilon
+Zeta
+Eta
+Theta
+Iota
+Kappa
+Lambda
+Mu
+Nu
+Xi
+Omicron
+Pi
+Rho
+Sigma
+Tau
+Upsilon
+Phi
+Chi
+Psi
+Omega'''
+
+STAR_GROUP_CHARS
+'''α
+β
+γ
+δ
+ε
+ζ
+η
+θ
+ι
+κ
+λ
+μ
+ν
+ξ
+ο
+π
+ρ
+σ
+τ
+υ
+φ
+χ
+ψ
+ω'''
+
 
 #############################################################
 ####           A I   S T R I N G S                       ####
