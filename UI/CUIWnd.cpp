@@ -79,15 +79,42 @@ CUI_CloseButton::CUI_CloseButton(GG::X x, GG::Y y) :
 }
 
 ////////////////////////////////////////////////
+// CUI_PinButton
+////////////////////////////////////////////////
+CUI_PinButton::CUI_PinButton(GG::X x, GG::Y y) :
+GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+{
+    GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
+    SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
+    SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"  )));
+    SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
+}
+
+void CUI_PinButton::Toggle(bool pinned)
+{
+    if (!pinned) {
+        SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
+        SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
+        SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
+    } else {
+        SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned.png")));
+        SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned.png")));
+        SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pinned.png")));
+    }
+}
+
+////////////////////////////////////////////////
 // CUIWnd
 ////////////////////////////////////////////////
 GG::WndFlag MINIMIZABLE(1 << 10);
 GG::WndFlag CLOSABLE(1 << 11);
+GG::WndFlag PINABLE(1 << 12);
 
 namespace {
     bool RegisterWndFlags() {
         GG::FlagSpec<GG::WndFlag>::instance().insert(MINIMIZABLE, "MINIMIZABLE");
         GG::FlagSpec<GG::WndFlag>::instance().insert(CLOSABLE, "CLOSABLE");
+        GG::FlagSpec<GG::WndFlag>::instance().insert(PINABLE, "PINABLE");
         return true;
     }
     bool dummy = RegisterWndFlags();
@@ -115,7 +142,10 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_drag_offset(-GG::X1, -GG::Y1),
     m_mouse_in_resize_tab(false),
     m_close_button(0),
-    m_minimize_button(0)
+    m_minimize_button(0),
+    m_pinable(flags & PINABLE),
+    m_pinned(false),
+    m_pin_button(0)
 {
     // set window name
     SetName(t);
@@ -135,6 +165,8 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
     if (m_minimize_button)
         m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
+    if (m_pin_button)
+        m_pin_button->MoveTo(GG::Pt(button_ul.x - (m_pin_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
 }
 
 void CUIWnd::Render() {
@@ -208,47 +240,49 @@ bool CUIWnd::InResizeTab(const GG::Pt& pt) const {
 }
 
 void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
+    if ( !m_pinned ) {
+        if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
+            GG::Pt new_lr = pt - m_drag_offset;
 
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
-        }
+            // constrain to within parent
+            if (GG::Wnd* parent = Parent()) {
+                GG::Pt max_lr = parent->ClientLowerRight();
+                new_lr.x = std::min(new_lr.x, max_lr.x);
+                new_lr.y = std::min(new_lr.y, max_lr.y);
+            }
 
-        Resize(new_lr - UpperLeft());
-    } else { // normal-dragging
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft();
-            GG::Pt new_ul = ul + move;
-            //GG::Pt new_lr = lr + move;
+            Resize(new_lr - UpperLeft());
+        } else { // normal-dragging
+            if (GG::Wnd* parent = Parent()) {
+                GG::Pt ul = UpperLeft();
+                GG::Pt new_ul = ul + move;
+                //GG::Pt new_lr = lr + move;
 
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - Size();
+                GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
+                GG::Pt max_lr = parent->ClientLowerRight();
+                GG::Pt max_ul = max_lr - Size();
 
-            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
+                new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
+                new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
 
-            GG::Pt final_move = new_ul - ul;
-            GG::Wnd::LDrag(pt, final_move, mod_keys);
-        } else {
-            GG::Pt ul = UpperLeft();
-            GG::Pt requested_ul = ul + move;
+                GG::Pt final_move = new_ul - ul;
+                GG::Wnd::LDrag(pt, final_move, mod_keys);
+            } else {
+                GG::Pt ul = UpperLeft();
+                GG::Pt requested_ul = ul + move;
 
-            GG::Pt min_ul = GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
-                                   GG::GUI::GetGUI()->AppHeight() - this->Height());
+                GG::Pt min_ul = GG::Pt(GG::X1, GG::Y1);
+                GG::Pt max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
+                                       GG::GUI::GetGUI()->AppHeight() - this->Height());
 
-            GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
-            GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
-            GG::Pt new_ul(new_x, new_y);
+                GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
+                GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
+                GG::Pt new_ul(new_x, new_y);
 
-            GG::Pt final_move = new_ul - ul;
+                GG::Pt final_move = new_ul - ul;
 
-            GG::Wnd::LDrag(pt, final_move, mod_keys);
+                GG::Wnd::LDrag(pt, final_move, mod_keys);
+            }
         }
     }
 }
@@ -305,6 +339,15 @@ void CUIWnd::InitButtons() {
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
+ 
+    // create the pin button
+    if (m_pinable) {
+        m_pin_button = new CUI_PinButton(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y);
+        GG::Connect(m_pin_button->LeftClickedSignal, &CUIWnd::PinClicked, this);
+        AttachChild(m_pin_button);
+        m_pin_button->NonClientChild(true);
+    }
+  
 }
 
 GG::X CUIWnd::MinimizedWidth() const
@@ -331,6 +374,14 @@ void CUIWnd::CloseClicked() {
         Parent()->DetachChild(this);
     else
         GG::GUI::GetGUI()->Remove(this);
+}
+
+// Pin button is clicked
+void CUIWnd::PinClicked() {
+    m_pinned = !m_pinned;
+    m_resizable = !m_pinned;
+    
+    m_pin_button->Toggle(m_pinned); // Change the icon on the pin butotn
 }
 
 void CUIWnd::MinimizeClicked() {
