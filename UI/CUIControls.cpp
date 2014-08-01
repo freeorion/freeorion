@@ -1438,7 +1438,7 @@ ShadowedTextControl::ShadowedTextControl(const std::string& str,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     shadow_text(new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, RemoveRGB(str), font, GG::CLR_BLACK, format, GG::NO_WND_FLAGS)),
-    main_text(new GG::TextControl(GG::X0, GG::Y1, GG::X1, GG::Y1, str, font, color, format, GG::NO_WND_FLAGS))
+    main_text(new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, format, GG::NO_WND_FLAGS))
 {
     Resize(main_text->Size());
     AttachChild(shadow_text);
