@@ -139,12 +139,12 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),
+    m_pinable(flags & PINABLE),
+    m_pinned(false),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_mouse_in_resize_tab(false),
     m_close_button(0),
     m_minimize_button(0),
-    m_pinable(flags & PINABLE),
-    m_pinned(false),
     m_pin_button(0)
 {
     // set window name
