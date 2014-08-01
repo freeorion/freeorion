@@ -1957,13 +1957,13 @@ private:
     void            DesignChanged();                    //!< responds to the design being changed
     void            DesignNameChanged();                //!< responds to the design name being changed
     void            RefreshIncompleteDesign() const;
-    std::string     GetCleanDesignDump(const ShipDesign* ship_design); //!< similar to ship design dump but without 'lookup_strings', icon and model entries
+    std::string     GetCleanDesignDump(const ShipDesign* ship_design);  //!< similar to ship design dump but without 'lookup_strings', icon and model entries
 
     bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
     int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
-    
-    void            EditedSignal(const std::string& new_name);                                ///< Triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
+
+    void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
 
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
@@ -2014,7 +2014,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 
     m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"));
     AttachChild(m_design_name);
-    GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::EditedSignal, this);
+    GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
 
     m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), ClientUI::GetFont(),
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
@@ -2058,13 +2058,11 @@ const std::string& DesignWnd::MainPanel::Hull() const {
         return EMPTY_STRING;
 }
 
-const std::string& DesignWnd::MainPanel::DesignName() const {
-    return m_design_name->Text();
-}
+const std::string& DesignWnd::MainPanel::DesignName() const
+{ return m_design_name->Text(); }
 
-const std::string& DesignWnd::MainPanel::DesignDescription() const {
-    return m_design_description->Text();
-}
+const std::string& DesignWnd::MainPanel::DesignDescription() const
+{ return m_design_description->Text(); }
 
 boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() const {
     RefreshIncompleteDesign();
@@ -2204,7 +2202,7 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     return result;
 }
 
-void DesignWnd::MainPanel::EditedSignal(const std::string& new_name) {
+void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
     DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
