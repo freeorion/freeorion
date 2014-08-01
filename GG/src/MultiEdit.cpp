@@ -1168,6 +1168,9 @@ void MultiEdit::AdjustScrolls()
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     Y vscroll_min = (m_style & MULTI_TERMINAL_STYLE) ? cl_sz.y - m_contents_sz.y : Y0;
+    if (cl_sz.y - m_contents_sz.y > 0 ) {
+        vscroll_min = Y0;
+    }
     X hscroll_min(0); // default value for MULTI_LEFT
     if (m_style & MULTI_RIGHT) {
         hscroll_min = -excess_width;
