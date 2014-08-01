@@ -438,17 +438,25 @@ public:
 class ProductionInfoPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
+    ProductionInfoPanel(const std::string& title, const std::string& points_str,
                         float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color);
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual GG::Pt MinUsableSize() const;
     //@}
 
     /** \name Mutators */ //@{
     virtual void Render();
 
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
     void Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size);
     //@}
 
 private:
+    void DoLayout(void);
+
     void Draw(GG::Clr clr, bool fill);
 
     GG::TextControl* m_title;

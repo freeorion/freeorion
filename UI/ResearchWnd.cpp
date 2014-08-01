@@ -198,16 +198,15 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_tech_tree_wnd(0),
     m_enabled(false)
 {
-    m_research_info_panel = new ProductionInfoPanel(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y(200),
-                                                    UserString("RESEARCH_INFO_PANEL_TITLE"),
+    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_INFO_PANEL_TITLE"),
                                                     UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(),
                                                     ClientUI::KnownTechTextAndBorderColor());
 
     m_queue_lb = new QueueListBox(GG::X(2),
-                                  m_research_info_panel->Height(),
-                                  m_research_info_panel->Width() - 4,
-                                  ClientSize().y - 4 - m_research_info_panel->Height(),
+                                  m_research_info_panel->MinUsableSize().y,
+                                  GG::X(GetOptionsDB().Get<int>("UI.queue-width")) - 4,
+                                  ClientSize().y - 4 - m_research_info_panel->MinUsableSize().y,
                                   "RESEARCH_QUEUE_ROW",
                                   UserString("RESEARCH_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
@@ -217,7 +216,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
 
 
-    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
 
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
@@ -243,6 +242,7 @@ void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ResearchWnd::DoLayout() {
+    m_research_info_panel->Resize(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), m_research_info_panel->MinUsableSize().y));
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_research_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_research_info_panel->Height());

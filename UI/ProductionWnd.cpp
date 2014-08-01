@@ -609,23 +609,22 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     Logger().debugStream() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
                            << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
-    m_production_info_panel = new ProductionInfoPanel(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y(200),
-                                                      UserString("PRODUCTION_INFO_PANEL_TITLE"),
+    m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_INFO_PANEL_TITLE"),
                                                       UserString("PRODUCTION_INFO_PP"),
                                                       static_cast<GLfloat>(OUTER_LINE_THICKNESS),
                                                       ClientUI::KnownTechFillColor(),
                                                       ClientUI::KnownTechTextAndBorderColor());
 
-    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->Bottom(),
-                                  m_production_info_panel->Width() - 4,
-                                  ClientSize().y - 4 - m_production_info_panel->Height(),
+    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->MinUsableSize().y,
+                                  GG::X(GetOptionsDB().Get<int>("UI.queue-width")) - 4,
+                                  ClientSize().y - 4 - m_production_info_panel->MinUsableSize().y,
                                   "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     m_queue_lb->SetName("ProductionQueue ListBox");
 
-    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y0);
+    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
-    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), GG::Y0));
+    m_build_designator_wnd->MoveTo(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0));
 
     SetChildClippingMode(ClipToClient);
 
@@ -640,6 +639,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_lb);
     AttachChild(m_build_designator_wnd);
+
+    DoLayout();
 }
 
 ProductionWnd::~ProductionWnd()
@@ -659,6 +660,7 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ProductionWnd::DoLayout() {
+    m_production_info_panel->Resize(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), m_production_info_panel->MinUsableSize().y));
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_production_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_production_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_production_info_panel->Height());

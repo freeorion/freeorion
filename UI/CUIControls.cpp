@@ -1261,41 +1261,30 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 const int ProductionInfoPanel::CORNER_RADIUS = 9;
 const GG::Y ProductionInfoPanel::VERTICAL_SECTION_GAP(4);
 
-ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
+ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& points_str,
                                          float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_border_thickness(border_thickness),
     m_color(color),
     m_text_and_border_color(text_and_border_color)
 {
     const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
-    const int STAT_TEXT_PTS = ClientUI::Pts();
-    const int CENTERLINE_GAP = 4;
-    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
-    const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
-    const GG::X LEFT_TEXT_X(0);
-    const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
-    const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
-    const GG::X P_LABEL_WIDTH = Width() - 2 - 5 - P_LABEL_X;
     const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
-    m_center_gap = std::make_pair(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
-    m_title = new GG::TextControl(GG::X(2), GG::Y(4), Width() - 4, GG::Y(RESEARCH_TITLE_PTS + 4), title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->Bottom(), P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->Bottom(), P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->Bottom(), LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->Bottom(), VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-
-    Resize(GG::Pt(Width(), m_projects_in_queue_label->Bottom() + 5));
+    m_title = new GG::TextControl(GG::X0, GG::Y0, GG::X0, GG::Y0, title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
+    m_total_points_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_total_points = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_total_points_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_wasted_points = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_progress = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_queue = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
 
     AttachChild(m_title);
     AttachChild(m_total_points_label);
@@ -1311,6 +1300,12 @@ ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& ti
     AttachChild(m_points_to_underfunded_projects_P_label);
     AttachChild(m_projects_in_queue_label);
     AttachChild(m_projects_in_queue);
+
+    DoLayout();
+}
+
+GG::Pt ProductionInfoPanel::MinUsableSize() const {
+    return GG::Pt(Width(), m_projects_in_queue_label->Bottom() + 5);
 }
 
 void ProductionInfoPanel::Render() {
@@ -1325,6 +1320,15 @@ void ProductionInfoPanel::Render() {
     glEnable(GL_TEXTURE_2D);
 }
 
+void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
 void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress,
                                 double points_to_underfunded_projects, int queue_size)
 {
@@ -1334,6 +1338,50 @@ void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, in
     *m_projects_in_progress << projects_in_progress;
     *m_points_to_underfunded_projects << DoubleToString(points_to_underfunded_projects, 3, false);
     *m_projects_in_queue << queue_size;
+}
+
+void ProductionInfoPanel::DoLayout() {
+    const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
+    const int STAT_TEXT_PTS = ClientUI::Pts();
+    const int CENTERLINE_GAP = 4;
+    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
+    const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
+    const GG::X LEFT_TEXT_X(0);
+    const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
+    const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
+    m_center_gap = std::make_pair(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
+    const GG::Pt LABEL_TEXT_SIZE(LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
+    const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
+    const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
+
+    m_title->MoveTo(GG::Pt(GG::X(2), GG::Y(4)));
+    m_title->Resize(GG::Pt(Width() - 4, GG::Y(RESEARCH_TITLE_PTS + 4)));
+    m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_total_points_label->Resize(LABEL_TEXT_SIZE);
+    m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_total_points->Resize(VALUE_TEXT_SIZE);
+    m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_total_points_P_label->Resize(P_LABEL_SIZE);
+    m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_total_points_label->Bottom()));
+    m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
+    m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, m_total_points_label->Bottom()));
+    m_wasted_points->Resize(VALUE_TEXT_SIZE);
+    m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, m_total_points_label->Bottom()));
+    m_wasted_points_P_label->Resize(P_LABEL_SIZE);
+    m_projects_in_progress_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_projects_in_progress_label->Resize(LABEL_TEXT_SIZE);
+    m_projects_in_progress->MoveTo(GG::Pt(RIGHT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_projects_in_progress->Resize(VALUE_TEXT_SIZE);
+    m_points_to_underfunded_projects_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_projects_in_progress_label->Bottom()));
+    m_points_to_underfunded_projects_label->Resize(LABEL_TEXT_SIZE);
+    m_points_to_underfunded_projects->MoveTo(GG::Pt(RIGHT_TEXT_X, m_projects_in_progress_label->Bottom()));
+    m_points_to_underfunded_projects->Resize(VALUE_TEXT_SIZE);
+    m_points_to_underfunded_projects_P_label->MoveTo(GG::Pt(P_LABEL_X, m_projects_in_progress_label->Bottom()));
+    m_points_to_underfunded_projects_P_label->Resize(P_LABEL_SIZE);
+    m_projects_in_queue_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_points_to_underfunded_projects_label->Bottom()));
+    m_projects_in_queue_label->Resize(LABEL_TEXT_SIZE);
+    m_projects_in_queue->MoveTo(GG::Pt(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->Bottom()));
+    m_projects_in_queue->Resize(VALUE_TEXT_SIZE);
 }
 
 void ProductionInfoPanel::Draw(GG::Clr clr, bool fill) {
