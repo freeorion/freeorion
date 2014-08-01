@@ -507,17 +507,12 @@ class ShadowedTextControl : public GG::Control {
 public:
     ShadowedTextControl(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE);
-    
+
     virtual GG::Pt MinUsableSize() const;
-    
     virtual void SetText(const std::string& str);
-    
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    
     virtual void SetColor(GG::Clr c);
-    
     virtual void SetTextColor(GG::Clr c);
- 
     virtual void Render();
 private:
     GG::TextControl* shadow_text;

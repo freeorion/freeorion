@@ -2053,13 +2053,11 @@ void CombatWnd::RemoveAccelerators() {
     m_disabled_accels_list.clear();
 }
 
-void CombatWnd::DisableTypingUnsafeAccels() {
-    HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys();
-}
+void CombatWnd::DisableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
-void CombatWnd::EnableTypingUnsafeAccels() {
-    HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys();
-}
+void CombatWnd::EnableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
 void CombatWnd::ChatMessageSentSlot() {
     if (!m_disabled_accels_list.empty()) {
@@ -2074,9 +2072,8 @@ void CombatWnd::ChatMessageSentSlot() {
 bool IsVisible(const Ogre::SceneNode& node) {
     bool retval = true;
     Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
-    while (retval && iterator.hasMoreElements()) {
-        retval &= iterator.getNext()->isVisible();
-    }
+    while (retval && iterator.hasMoreElements())
+    { retval &= iterator.getNext()->isVisible(); }
     return retval;
 }
 

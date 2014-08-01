@@ -1115,9 +1115,9 @@ MapWnd::MapWnd() :
             &MapWnd::ShipRightClicked,          this);
 
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->TypingSignal,
-            &MapWnd::DisableTypingUnsafeAccels,     this);
+            &MapWnd::DisableTypingUnsafeAccels, this);
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->DoneTypingSignal,
-            &MapWnd::EnableTypingUnsafeAccels,     this);
+            &MapWnd::EnableTypingUnsafeAccels,  this);
 
     DoLayout();
 

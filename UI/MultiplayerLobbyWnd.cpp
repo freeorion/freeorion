@@ -503,8 +503,8 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) &&
          GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
     {
-        int receiver = Networking::INVALID_PLAYER_ID; // all players by default
-        std::string text = m_chat_input_edit->Text();
+        int receiver = Networking::INVALID_PLAYER_ID;   // all players by default
+        std::string text = m_chat_input_edit->Text();   // copy, so subsequent clearing doesn't affect typed message that is used later...
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
 

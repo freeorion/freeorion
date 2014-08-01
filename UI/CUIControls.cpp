@@ -1435,28 +1435,25 @@ ShadowedTextControl::ShadowedTextControl(const std::string& str,
     AttachChild(main_text);
 }
 
-GG::Pt ShadowedTextControl::MinUsableSize() const {
-    return main_text->MinUsableSize();
-}
+GG::Pt ShadowedTextControl::MinUsableSize() const
+{ return main_text->MinUsableSize(); }
 
-void ShadowedTextControl::SetText(const std::string& str){
+void ShadowedTextControl::SetText(const std::string& str) {
     shadow_text->SetText(str);
     main_text->SetText(str);
 }
 
-void ShadowedTextControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr){
+void ShadowedTextControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
     main_text->Resize(Size());
     shadow_text->Resize(Size());
 }
 
-void ShadowedTextControl::SetColor(GG::Clr c){
-    main_text->SetColor(c);
-}
+void ShadowedTextControl::SetColor(GG::Clr c)
+{ main_text->SetColor(c); }
 
-void ShadowedTextControl::SetTextColor ( GG::Clr c ) {
-    main_text->SetTextColor(c);
-}
+void ShadowedTextControl::SetTextColor ( GG::Clr c )
+{ main_text->SetTextColor(c); }
 
 void ShadowedTextControl::Render() {
     shadow_text->OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
@@ -1470,7 +1467,7 @@ void ShadowedTextControl::Render() {
 
     shadow_text->OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
     shadow_text->Render();
-    
+
     shadow_text->OffsetMove(GG::Pt(GG::X0, GG::Y1));       // center
 }
 
