@@ -58,7 +58,7 @@ public:
     //!@}
 
 private:
-    void DoLayout(void);
+    void DoLayout();
     void RandomClicked();
     void SettingChanged_(int);
     void SettingChanged(GG::ListBox::iterator);
@@ -117,7 +117,7 @@ public:
     //!@}
 
 private:
-    void DoLayout(void);
+    void DoLayout();
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void EmpireNameChanged(const std::string& name);
     void PlayerNameChanged(const std::string& name);

@@ -330,7 +330,7 @@ public:
     mutable boost::signals2::signal<void ()>    RightClickedSignal;
 
 private:
-    void            DoLayout(void);
+    void            DoLayout();
     void            Refresh();
     GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
 
@@ -454,7 +454,7 @@ public:
     //@}
 
 private:
-    void DoLayout(void);
+    void DoLayout();
 
     void Draw(GG::Clr clr, bool fill);
 

@@ -595,7 +595,7 @@ void MultiPlayerLobbyWnd::Refresh() {
     m_start_game_bn->Disable(!ThisClientIsHost() || !CanStart());
 }
 
-void MultiPlayerLobbyWnd::DoLayout(void) {
+void MultiPlayerLobbyWnd::DoLayout() {
     GG::X x(CONTROL_MARGIN);
 
     GG::Pt chat_input_ul(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN);
@@ -668,10 +668,10 @@ void MultiPlayerLobbyWnd::DoLayout(void) {
     m_start_conditions_text->SizeMove(start_conditions_text_ul, start_conditions_text_lr);
 }
 
-void MultiPlayerLobbyWnd::DisableTypingUnsafeAccels(void)
+void MultiPlayerLobbyWnd::DisableTypingUnsafeAccels()
 { HotkeyManager::GetManager()->EnableTypingUnsafeHotkeys(); }
 
-void MultiPlayerLobbyWnd::EnableTypingUnsafeAccels(void)
+void MultiPlayerLobbyWnd::EnableTypingUnsafeAccels()
 { HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
 void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx) {
@@ -740,6 +740,9 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
 bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     bool send_update_back_retval = false;
 
+    // store list position to restore after update
+    int initial_list_scroll_pos = std::distance(m_players_lb->begin(), m_players_lb->FirstRowShown());
+
     m_players_lb->Clear();
 
     // repopulate list with rows built from current lobby data
@@ -787,6 +790,14 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     } else {
         m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"));
     }
+
+    // restore list scroll position
+    GG::ListBox::iterator first_row_it = m_players_lb->FirstRowShown();
+    int first_row_to_show = std::max<int>(0, std::min<int>(initial_list_scroll_pos,
+                                                           m_players_lb->NumRows() - 1));
+    std::advance(first_row_it, first_row_to_show);
+    m_players_lb->SetFirstRowShown(first_row_it);
+
 
     Refresh();
 

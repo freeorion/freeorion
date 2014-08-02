@@ -930,7 +930,7 @@ void StatisticIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void StatisticIcon::DoLayout(void) {
+void StatisticIcon::DoLayout() {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     int icon_dim = std::min(Value(Height()), Value(Width()));
     m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));

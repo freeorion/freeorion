@@ -33,7 +33,7 @@ public:
 private:
     typedef void (OptionsWnd::* VolumeSliderHandler)(int, int, int);
 
-    void                DoLayout(void);
+    void                DoLayout();
 
     CUIListBox*         CreatePage(const std::string& name);
     void                CreateSectionHeader(CUIListBox* page, int indentation_level, const std::string& name);

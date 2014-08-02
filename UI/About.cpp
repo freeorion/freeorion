@@ -66,7 +66,7 @@ void About::OnLicense()
 void About::OnVision()
 { m_info->SetText(UserString("FREEORION_VISION")); }
 
-void About::DoLayout(void) {
+void About::DoLayout() {
     const GG::X HORIZONTAL_SPACING(5);
     const GG::Y VERTICAL_SPACING(5);
 

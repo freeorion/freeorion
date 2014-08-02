@@ -28,7 +28,7 @@ public:
 //!@}
 
 private:
-    void DoLayout(void);
+    void DoLayout();
 
 //! \name Controls
 //!@{

@@ -28,7 +28,7 @@ GLBufferBase::~GLBufferBase()
     dropServerBuffer();
 }
 
-void GLBufferBase::dropServerBuffer(void)
+void GLBufferBase::dropServerBuffer()
 {
     if (b_name) 
     {
@@ -101,12 +101,12 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype ite
 }
 
 template <class vtype> 
-void GLClientAndServerBufferBase<vtype>::createServerBuffer(void)
+void GLClientAndServerBufferBase<vtype>::createServerBuffer()
 {
-    if (HumanClientApp::GetApp()->GLVersion() >= 1.5f && !b_data.empty())
-    {
+    if (HumanClientApp::GetApp()->GLVersion() >= 1.5f && !b_data.empty()) {
         glGenBuffers(1, &b_name);
-        if (!b_name) return;
+        if (!b_name)
+            return;
         glBindBuffer(GL_ARRAY_BUFFER, b_name);
         glBufferData(GL_ARRAY_BUFFER, 
                      b_data.size() * sizeof(vtype),
@@ -116,10 +116,9 @@ void GLClientAndServerBufferBase<vtype>::createServerBuffer(void)
     }
 }
 
-template <class vtype> void GLClientAndServerBufferBase<vtype>::clear(void)
+template <class vtype> void GLClientAndServerBufferBase<vtype>::clear()
 {
     dropServerBuffer();
-    
     b_size=0;
     b_data.clear();
 }
@@ -134,15 +133,12 @@ GLRGBAColorBuffer::GLRGBAColorBuffer() :
 GLClientAndServerBufferBase<unsigned char>(4)
 {}
 
-void GLRGBAColorBuffer::activate(void) const
+void GLRGBAColorBuffer::activate() const
 {
-    if (b_name)
-    {
+    if (b_name) {
         glBindBuffer(GL_ARRAY_BUFFER, b_name);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);    
-    }
-    else
-    {
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+    } else {
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, &b_data[0]);
     }
 }
@@ -157,15 +153,12 @@ GL2DVertexBuffer::GL2DVertexBuffer () :
 GLClientAndServerBufferBase<float>(2)
 {}
 
-void GL2DVertexBuffer::activate(void) const
+void GL2DVertexBuffer::activate() const
 {
-    if (b_name)
-    {
+    if (b_name) {
         glBindBuffer(GL_ARRAY_BUFFER, b_name);
-        glVertexPointer(2, GL_FLOAT, 0, 0);    
-    }
-    else
-    {
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+    } else {
         glVertexPointer(2, GL_FLOAT, 0, &b_data[0]);
     }
 }
@@ -178,15 +171,12 @@ GLTexCoordBuffer::GLTexCoordBuffer () :
 GLClientAndServerBufferBase<float>(2)
 {}
 
-void GLTexCoordBuffer::activate(void) const
+void GLTexCoordBuffer::activate() const
 {
-    if (b_name)
-    {
+    if (b_name) {
         glBindBuffer(GL_ARRAY_BUFFER, b_name);
-        glTexCoordPointer(2, GL_FLOAT, 0, 0);    
-    }
-    else
-    {
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+    } else {
         glTexCoordPointer(2, GL_FLOAT, 0, &b_data[0]);
     }
 }

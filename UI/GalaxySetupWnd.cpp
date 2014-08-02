@@ -336,7 +336,7 @@ void GalaxySetupPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     DoLayout();
 }
 
-void GalaxySetupPanel::DoLayout(void) {
+void GalaxySetupPanel::DoLayout() {
     const GG::X LABELS_WIDTH = (Width() - CONTROL_MARGIN) / 2;
     const GG::X DROPLIST_WIDTH = LABELS_WIDTH;
     const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 12);
@@ -532,7 +532,12 @@ GalaxySetupWnd::GalaxySetupWnd() :
     // Subtract the drop down entry padding for the inner element height.
     m_starting_secies_selector = new SpeciesSelector(LABELS_WIDTH, CONTROL_HEIGHT - 5);
     std::string default_starting_species = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
-    if (default_starting_species.empty() || default_starting_species == "1") {  // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
+
+    if (default_starting_species.empty() || default_starting_species == "1") {
+        // kludge / bug workaround for bug with options storage and retreival.
+        // Empty-string options are stored, but read in as "true" boolean, and
+        // converted to string equal to "1"
+
         // if no previously-stored species selection, need to pick a default
         std::vector<std::string> selector_avail_species = m_starting_secies_selector->AvailableSpeciesNames();
         if (!selector_avail_species.empty()) {
@@ -612,7 +617,7 @@ void GalaxySetupWnd::Render() {
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void GalaxySetupWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void GalaxySetupWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_ok->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) // Same behaviour as if "OK" was pressed
         OkClicked();
     else if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
@@ -624,7 +629,7 @@ void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     DoLayout();
 }
 
-void GalaxySetupWnd::DoLayout(void) {
+void GalaxySetupWnd::DoLayout() {
     m_galaxy_setup_panel->MoveTo(GG::Pt(GG::X0, GG::Y(4)));
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
@@ -731,7 +736,6 @@ void GalaxySetupWnd::OkClicked() {
             Logger().errorStream() << GetConfigPath().string();
         }
     }
-
 
     m_ended_with_ok = true;
     m_done = true;

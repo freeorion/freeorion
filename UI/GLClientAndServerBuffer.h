@@ -54,7 +54,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 
 template <class vtype> 
-class GLClientAndServerBufferBase : public GLBufferBase 
+class GLClientAndServerBufferBase : public GLBufferBase
 {
 private:
     GLClientAndServerBufferBase(); // default ctor forbidden, 
@@ -63,30 +63,30 @@ private:
 public:
     GLClientAndServerBufferBase(std::size_t elementsPerItem);
     std::size_t size() const;
-    
+
     // store items, buffers usually store tupels, convenience functions
     // do not use while server buffer exists
-    void store(vtype item);                                     
-    void store(vtype item1,vtype item2);                        
+    void store(vtype item);
+    void store(vtype item1,vtype item2);
     void store(vtype item1,vtype item2,vtype item3);
     void store(vtype item1,vtype item2,vtype item3,vtype item4);
-    
+
     // try to store the buffered data in a server buffer
-    void createServerBuffer(void);
-    
+    void createServerBuffer();
+
     // drops a server buffer if one exists,
     // clears the client side buffer
-    void clear(void);
-    
+    void clear();
+
 protected:
     std::vector<vtype> b_data;
     std::size_t b_size;
     std::size_t b_elementsPerItem;
-    
+
     // used in derived classes to activate the buffer
     // implementations should use glBindBuffer, gl...Pointer if
-    // server buffer exists (b_name!=0), just gl...Pointer otherwise
-    virtual void activate(void) const =0;
+    // server buffer exists (b_name! = 0), just gl...Pointer otherwise
+    virtual void activate() const = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -97,8 +97,7 @@ class GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned char>
 {
 public:
     GLRGBAColorBuffer();
-    
-    void activate(void) const;
+    void activate() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -109,8 +108,7 @@ class GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GL2DVertexBuffer();
-    
-    void activate(void) const;
+    void activate() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -121,8 +119,7 @@ class GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GLTexCoordBuffer();
-    
-    void activate(void) const;
+    void activate() const;
 };
 
 #endif

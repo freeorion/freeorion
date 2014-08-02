@@ -334,7 +334,7 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void PopulationPanel::DoLayout(void) {
+void PopulationPanel::DoLayout() {
     GG::Pt expand_button_ul(Width() - 16, GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(16), GG::Y(16));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
@@ -598,7 +598,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void ResourcePanel::DoLayout(void) {
+void ResourcePanel::DoLayout() {
     GG::Pt expand_button_ul(Width() - 16, GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(16), GG::Y(16));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
@@ -946,7 +946,7 @@ void MilitaryPanel::Refresh() {
 void MilitaryPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
-void MilitaryPanel::DoLayout(void) {
+void MilitaryPanel::DoLayout() {
     GG::Pt expand_button_ul(Width() - 16, GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(16), GG::Y(16));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
@@ -1505,7 +1505,7 @@ void BuildingsPanel::Refresh() {
 void BuildingsPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
-void BuildingsPanel::DoLayout(void) {
+void BuildingsPanel::DoLayout() {
     GG::Pt expand_button_ul(Width() - 16, GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(16), GG::Y(16));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
@@ -1799,7 +1799,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)
 { m_order_issuing_enabled = enable; }
 
-void BuildingIndicator::DoLayout(void) {
+void BuildingIndicator::DoLayout() {
     GG::Pt child_lr = Size() - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
 
     if (m_graphic)
@@ -2098,7 +2098,7 @@ public:
     { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndColor(), 1u); }
 
 private:
-    void            DoLayout(void) {
+    void            DoLayout() {
         const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
 

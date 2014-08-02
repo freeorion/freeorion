@@ -63,11 +63,11 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void                ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
+    void                ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
 
-    void                DoLayout(void);                     ///< resizes panel and positions widgets
+    void                DoLayout();                         ///< resizes panel and positions widgets
 
-    TemporaryPtr<const PopCenter>   GetPopCenter() const;           ///< returns the PopCenter object with id m_popcenter_id
+    TemporaryPtr<const PopCenter>   GetPopCenter() const;   ///< returns the PopCenter object with id m_popcenter_id
 
     int                             m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -111,8 +111,8 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 private:
-    void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
-    void            DoLayout(void);                 ///< resizes panel and positions widgets
+    void            ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
+    void            DoLayout();                         ///< resizes panel and positions widgets
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -138,7 +138,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int                     PlanetID() const {return m_planet_id;}
+    int                     PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
@@ -159,7 +159,7 @@ public:
 
 private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
-    void                    DoLayout(void);                 ///< resizes panel and positions widgets
+    void                    DoLayout();                     ///< resizes panel and positions widgets
 
     int                         m_planet_id;                ///< object id for the UniverseObject that this panel display info about
 
@@ -208,7 +208,7 @@ public:
 
 private:
     void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
-    void            DoLayout(void);                         ///< resizes panel and positions indicators
+    void            DoLayout();                             ///< resizes panel and positions indicators
 
     void            Update();                               ///< recreates building indicators for building on or being built at this planet
 
@@ -246,7 +246,7 @@ public:
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
 
 private:
-    void            DoLayout(void);
+    void            DoLayout();
 
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;
 
@@ -402,7 +402,7 @@ public:
     CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts, const std::map<std::string, float>& tag_counts);
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
-    void            DoLayout(void);
+    void            DoLayout();
 
 private:
     GG::TextControl*    m_title_text;
