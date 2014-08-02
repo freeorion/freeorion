@@ -106,8 +106,6 @@ set(LIB_SUFFIX "${LIB_SUFFIX}/freeorion")
 add_subdirectory(GG)
 set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 
-add_subdirectory(parse)
-
 ########################################
 # Dependencies                         #
 ########################################
@@ -298,7 +296,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif ()
 
 target_link_libraries(freeorioncommon
-    freeorionparse
     ${Boost_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
@@ -322,6 +319,7 @@ endif ()
 ########################################
 add_subdirectory(log4cpp)
 add_subdirectory(PagedGeometry)
+add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)

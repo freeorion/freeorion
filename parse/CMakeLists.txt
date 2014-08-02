@@ -9,15 +9,6 @@ if (NOT BUILD_TESTS)
     endif ()
 endif ()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif ()
-
-include_directories(
-    ${CMAKE_SOURCE_DIR}/GG
-    ${CMAKE_SOURCE_DIR}/OpenSteer/include
-)
-
 set (freeorionparse_HEADER
     ConditionParserImpl.h
     Double.h
@@ -85,7 +76,7 @@ set (freeorionparse_SOURCE
     ValueRefParserImpl.cpp
 )
 
-add_library(freeorionparse STATIC
+add_library(freeorionparse
     ${freeorionparse_HEADER}
     ${freeorionparse_SOURCE}
 )

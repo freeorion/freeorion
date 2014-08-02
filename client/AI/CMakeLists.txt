@@ -21,6 +21,7 @@ endif ()
 
 set(freeorionca_LINK_LIBS
     freeorioncommon
+    freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_LIBRARIES}
 )
