@@ -62,7 +62,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     AttachChild(m_create_system_button);
 
     GG::Connect(m_create_system_button->LeftClickedSignal,  &ModeratorActionsWnd::CreateSystemClicked,  this);
-    m_star_type_drop = new CUIDropDownList(GG::X0, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*8);
+    m_star_type_drop = new CUIDropDownList(CONTROL_HEIGHT*8);
+    m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
         boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
@@ -85,7 +86,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     AttachChild(m_create_planet_button);
     GG::Connect(m_create_planet_button->LeftClickedSignal,  &ModeratorActionsWnd::CreatePlanetClicked,  this);
 
-    m_planet_type_drop = new CUIDropDownList(GG::X0, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
+    m_planet_type_drop = new CUIDropDownList(CONTROL_HEIGHT*10);
+    m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
@@ -96,7 +98,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
     GG::Connect(m_planet_type_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetTypeSelected,   this);
 
-    m_planet_size_drop = new CUIDropDownList(DROP_WIDTH + PAD, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
+    m_planet_size_drop = new CUIDropDownList(CONTROL_HEIGHT*10);
+    m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
@@ -131,7 +134,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     AttachChild(m_set_owner_button);
 
     GG::Connect(m_set_owner_button->LeftClickedSignal,      &ModeratorActionsWnd::SetOwnerClicked,      this);
-    m_empire_drop = new CUIDropDownList(GG::X0, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
+    m_empire_drop = new CUIDropDownList(CONTROL_HEIGHT*10);
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
     GG::Connect(m_empire_drop->SelChangedSignal,        &ModeratorActionsWnd::EmpireSelected,       this);

@@ -516,8 +516,8 @@ private:
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
-        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, DropListWidth(),
-                                           DropListHeight(), DropListDropHeight());
+        m_class_drop = new CUIDropDownList(DropListDropHeight());
+        m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
 
@@ -598,8 +598,9 @@ private:
                    condition_key == SPECIES_CONDITION)
         {
             // droplist of valid species
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -616,8 +617,9 @@ private:
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             // droplist of valid specials
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -634,8 +636,9 @@ private:
 
         } else if (condition_key == HASTAG_CONDITION) {
             // droplist of valid tags
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -662,8 +665,9 @@ private:
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
             // droplist of valid sizes
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -685,8 +689,9 @@ private:
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             std::vector< ::PlanetType> planet_types;
@@ -706,8 +711,9 @@ private:
 
         } else if (condition_key == STARTYPE_CONDITION) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -729,8 +735,9 @@ private:
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
             // droplist of valid foci
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -756,8 +763,9 @@ private:
 
         } else if (condition_key == METERVALUE_CONDITION) {
             // droplist of meter types
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
             param_widget_left = GG::X0;
             param_widget_top = m_string_drop->Height() + GG::Y(Value(PAD));
@@ -791,8 +799,9 @@ private:
             param_widget_top += m_param_spin1->Height();
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             // droplist of empires
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
-                                                DropListHeight(), DropListDropHeight());
+            m_string_drop = new CUIDropDownList(DropListDropHeight());
+            m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();

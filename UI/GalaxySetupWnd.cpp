@@ -111,7 +111,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
     GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_shapes_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_galaxy_shapes_list = new CUIDropDownList(drop_height);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
@@ -119,7 +119,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_ages_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_galaxy_ages_list = new CUIDropDownList(drop_height);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
@@ -127,7 +127,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_starlane_freq_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_starlane_freq_list = new CUIDropDownList(drop_height);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
@@ -135,7 +135,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_planet_density_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_planet_density_list = new CUIDropDownList(drop_height);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
@@ -143,7 +143,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_specials_freq_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_specials_freq_list = new CUIDropDownList(drop_height);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
@@ -151,7 +151,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_monster_freq_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_monster_freq_list = new CUIDropDownList(drop_height);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
@@ -159,7 +159,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_native_freq_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_native_freq_list = new CUIDropDownList(drop_height);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
@@ -167,7 +167,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_AI_AGGRESSION_LEVELS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_ai_aggression_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_height);
+    m_ai_aggression_list = new CUIDropDownList(drop_height);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_seed_label);

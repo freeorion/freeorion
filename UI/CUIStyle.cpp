@@ -27,7 +27,12 @@ GG::StateButton* CUIStyle::NewStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, co
 
 GG::DropDownList* CUIStyle::NewDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color,
                                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIDropDownList(x, y, w, h, drop_ht); }
+{
+    CUIDropDownList* retval = new CUIDropDownList(drop_ht);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, h));
+    return retval;
+}
 
 GG::Edit* CUIStyle::NewEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,

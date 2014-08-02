@@ -626,7 +626,7 @@ void SaveFileDialog::Init() {
         m_layout->SetMinimumColumnWidth ( 3, std::max( cancel_btn->MinUsableSize().x , delete_btn->MinUsableSize().x ) +
         SAVE_FILE_BUTTON_MARGIN );
     } else {
-        m_remote_dir_dropdown = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, SAVE_FILE_DIALOG_HEIGHT/2);
+        m_remote_dir_dropdown = new CUIDropDownList(SAVE_FILE_DIALOG_HEIGHT/2);
         m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 1);
         m_layout->Add ( m_remote_dir_dropdown,   0, 2 , 1, 2);
         GG::X drop_width = font->TextExtent(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL).x;

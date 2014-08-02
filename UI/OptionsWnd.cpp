@@ -938,8 +938,8 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
     drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
-    CUIDropDownList* drop_list =
-        new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    CUIDropDownList* drop_list = new CUIDropDownList(DROPLIST_DROP_HEIGHT);
+    drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, DROPLIST_HEIGHT));
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     drop_list->SetStyle(GG::LIST_NOSORT);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));

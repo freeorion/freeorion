@@ -98,14 +98,7 @@ namespace {
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
                          GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress,
                          GG::X nwidth, bool amBlockType) :
-            CUIDropDownList(xoffset, yoffset, nwidth,h-GG::Y(2), h,
-                            inProgress
-                                ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
-                                : ClientUI::ResearchableTechTextAndBorderColor(),
-                            inProgress
-                                ? GG::LightColor(ClientUI::ResearchableTechFillColor())
-                                : ClientUI::ResearchableTechFillColor()
-                           ),
+            CUIDropDownList(h),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
@@ -114,10 +107,21 @@ namespace {
             amOn(false),
             h(h)
         {
+            MoveTo(GG::Pt(xoffset, yoffset));
+            Resize(GG::Pt(nwidth, h - GG::Y(2)));
             GG::X width = GG::X0;
             DisableDropArrow();
             SetStyle(GG::LIST_LEFT | GG::LIST_NOSORT);
-            //SetInteriorColor(GG::Clr(0, 0, 0, 200));
+            SetColor(
+                inProgress
+                    ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                    : ClientUI::ResearchableTechTextAndBorderColor()
+            );
+            SetInteriorColor(
+                inProgress
+                    ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+                    : ClientUI::ResearchableTechFillColor()
+            );
             SetNumCols(1);
             //m_quantity_selector->SetColWidth(0, GG::X(14));
             //m_quantity_selector->LockColWidths();
@@ -150,46 +154,6 @@ namespace {
             //QuantLabel ref2 = QuantLabel(100, ClientUI::Pts());
             //OffsetMove(GG::Pt(ref1.Width()-GG::X(50) +GG::X(8), GG::Y(-4)));
         }
-
-        QuantitySelector(const ProductionQueue::Element &build, GG::Y h) :
-            //CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
-            CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, ClientUI::KnownTechTextAndBorderColor(), ClientUI::KnownTechFillColor()),
-            quantity(build.remaining),
-            prevQuant(build.remaining),
-            blocksize(build.blocksize),
-            prevBlocksize(build.blocksize),
-            amBlockType(false),
-            amOn(false)
-        {
-            DisableDropArrow();
-            SetStyle(GG::LIST_CENTER);
-            SetInteriorColor(GG::Clr(0, 0, 0, 200));
-            SetNumCols(1);
-            //m_quantity_selector->SetColWidth(0, GG::X(14));
-            //m_quantity_selector->LockColWidths();
-
-            int quantInts[] = {1, 5, 10, 20, 50, 99};
-            std::set<int> myQuantSet(quantInts,quantInts+6);
-            myQuantSet.insert(build.remaining);
-            for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                GG::DropDownList::iterator latest_it = Insert(new QuantRow(*it, 0, ClientUI::GetFont(), GG::X1, h, false, amBlockType));
-                if (build.remaining == *it)
-                    Select(latest_it);
-            }
-            // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-            SetDropHeight(std::min(8, int(myQuantSet.size()))* CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT +4);
-        }
-
-        QuantitySelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/,
-            GG::Clr interior/* = ClientUI::WndColor()*/) :
-            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
-            quantity(0),
-            prevQuant(0),
-            blocksize(1),
-            prevBlocksize(1),
-            amBlockType(false),
-            amOn(false)
-        {}
 
         void SelectionChanged(GG::DropDownList::iterator it) {
             int quant;

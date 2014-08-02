@@ -882,8 +882,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 
     // focus-selection droplist
-    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4,
-                                       MeterIconSize().y*3/2, MeterIconSize().y*7/2);
+    m_focus_drop = new CUIDropDownList(MeterIconSize().y*7/2);
     AttachChild(m_focus_drop);
     GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
     GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
@@ -985,6 +984,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 
     if (m_focus_drop && m_focus_drop->Parent() == this) {
         m_focus_drop->MoveTo(GG::Pt(left, y));
+        m_focus_drop->Resize(GG::Pt(MeterIconSize().x*4, MeterIconSize().y*3/2));
         y += m_focus_drop->Height() + EDGE_PAD;
     }
 
@@ -2577,7 +2577,9 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
 
     m_button_prev = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
     m_button_next = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(        GG::X0, GG::Y0, GG::X(40),      SystemNameTextControlHeight(),  DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_system_name = new CUIDropDownList(DROP_DISPLAYED_LIST_HEIGHT);
+    m_system_name->SetColor(GG::CLR_ZERO);
+    m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
     m_star_type_text = new ShadowedTextControl("", ClientUI::GetFont(), ClientUI::TextColor());
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -2927,7 +2929,7 @@ void SidePanel::DoLayout() {
 
     // system name / droplist
     ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
-    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), m_system_name->Height());
+    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), SystemNameTextControlHeight());
     m_system_name->SizeMove(ul, lr);
 
     // system name droplist rows

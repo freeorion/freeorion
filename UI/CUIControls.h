@@ -200,8 +200,7 @@ public:
 class CUIDropDownList : public GG::DropDownList {
 public:
     /** \name Structors */ //@{
-    CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color = ClientUI::CtrlBorderColor(),
-                    GG::Clr interior = ClientUI::CtrlColor()); ///< basic ctor
+    CUIDropDownList(GG::Y drop_ht); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
