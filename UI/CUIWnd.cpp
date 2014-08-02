@@ -376,12 +376,10 @@ void CUIWnd::CloseClicked() {
         GG::GUI::GetGUI()->Remove(this);
 }
 
-// Pin button is clicked
 void CUIWnd::PinClicked() {
     m_pinned = !m_pinned;
     m_resizable = !m_pinned;
-    
-    m_pin_button->Toggle(m_pinned); // Change the icon on the pin butotn
+    m_pin_button->Toggle(m_pinned); // Change the icon on the pin button
 }
 
 void CUIWnd::MinimizeClicked() {
