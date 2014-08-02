@@ -57,7 +57,12 @@ GG::MultiEdit* CUIStyle::NewMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const 
                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style/* = GG::MULTI_LINEWRAP*/,
                                       GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIMultiEdit(x, y, w, h, str); }
+{
+    CUIMultiEdit* retval = new CUIMultiEdit(str);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, h));
+    return retval;
+}
 
 GG::Scroll* CUIStyle::NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const

@@ -402,7 +402,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     Sound::TempUISoundDisabler sound_disabler;
 
     m_chat_input_edit = new CUIEdit("");
-    m_chat_box = new CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
+    m_chat_box = new CUIMultiEdit("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y0, GG::X1);

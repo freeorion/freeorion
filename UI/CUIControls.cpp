@@ -688,8 +688,8 @@ void CUIEdit::Render() {
 ///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
-    MultiEdit(x, y, w, h, str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::REPEAT_KEY_PRESS)
+CUIMultiEdit::CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
+    MultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::REPEAT_KEY_PRESS)
 {
     RecreateScrolls();
     SetHiliteColor(ClientUI::EditHiliteColor());
@@ -713,7 +713,7 @@ void CUIMultiEdit::Render() {
 // class CUILinkTextMultiEdit
 ///////////////////////////////////////
 CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style) :
-    CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, str, style),
+    CUIMultiEdit(str, style),
     TextLinker(),
     m_already_setting_text_so_dont_link(false),
     m_raw_text(str)

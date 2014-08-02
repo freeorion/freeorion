@@ -22,8 +22,7 @@ About::About():
     m_done_btn = new CUIButton(UserString("DONE"));
     m_license = new CUIButton(UserString("LICENSE"));
     m_vision = new CUIButton(UserString("VISION"));
-    m_info = new CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("FREEORION_VISION"),
-                              GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    m_info = new CUIMultiEdit(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     AttachChild(m_info);
     AttachChild(m_vision);
     AttachChild(m_license);
