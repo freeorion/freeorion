@@ -24,7 +24,7 @@
 class MessageWndEdit : public CUIEdit {
 public:
     //! \name Structors //@{
-    MessageWndEdit(void);
+    MessageWndEdit();
     //@}
 
     //! \name Mutators //@{
@@ -60,7 +60,7 @@ private:
 ////////////////////
 // MessageWndEdit //
 ////////////////////
-MessageWndEdit::MessageWndEdit(void) :
+MessageWndEdit::MessageWndEdit() :
     CUIEdit(""),
     m_auto_complete_choices(),
     m_repeatedTabCount(0),
