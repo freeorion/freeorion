@@ -188,7 +188,7 @@ protected:
 class CUIListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
-    CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h); ///< basic ctor
+    CUIListBox(void); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

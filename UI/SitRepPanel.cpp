@@ -276,7 +276,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
 
-    m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_sitreps_lb = new CUIListBox();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
     AttachChild(m_sitreps_lb);

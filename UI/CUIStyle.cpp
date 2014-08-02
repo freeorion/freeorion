@@ -41,7 +41,12 @@ GG::Edit* CUIStyle::NewEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, c
 
 GG::ListBox* CUIStyle::NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
                                   GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIListBox(x, y, w, h); }
+{
+    CUIListBox* retval = new CUIListBox();
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, h));
+    return retval;
+}
 
 GG::MultiEdit* CUIStyle::NewMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style/* = GG::MULTI_LINEWRAP*/,

@@ -437,7 +437,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
                                                                         UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
                                                                         ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
 
-    m_players_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));

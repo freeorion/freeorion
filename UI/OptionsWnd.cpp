@@ -581,7 +581,7 @@ void OptionsWnd::DoLayout() {
 }
 
 CUIListBox* OptionsWnd::CreatePage(const std::string& name) {
-    CUIListBox* page = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    CUIListBox* page = new CUIListBox();
     page->SetColor(GG::CLR_ZERO);
     page->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     page->SetVScrollWheelIncrement(ClientUI::Pts() * 10);

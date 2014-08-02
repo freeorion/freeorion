@@ -260,7 +260,7 @@ CombatSetupWnd::CombatSetupWnd(
     m_button_press_on_placed_ship(INVALID_PRESS_POS),
     m_button_press_placed_ship_node(0),
     m_mouse_dragged(false),
-    m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
+    m_listbox(new CUIListBox()),
     m_redo_placements_button(new CUIButton(UserString("REDO_PLACEMENTS"))),
     m_auto_place_button(new CUIButton(UserString("AUTO_PLACE_SHIPS"))),
     m_done_button(new CUIButton(UserString("DONE"))),

@@ -1663,14 +1663,8 @@ namespace {
   * operations on them, in FleetWnd. */
 class FleetsListBox : public CUIListBox {
 public:
-    FleetsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, bool order_issuing_enabled) :
-        CUIListBox(x, y, w, h),
-        m_highlighted_row_it(end()),
-        m_order_issuing_enabled(order_issuing_enabled)
-    { InitRowSizes(); }
-
     FleetsListBox(bool order_issuing_enabled) :
-        CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1),
+        CUIListBox(),
         m_highlighted_row_it(end()),
         m_order_issuing_enabled(order_issuing_enabled)
     { InitRowSizes(); }
@@ -2006,14 +2000,8 @@ private:
   * operations on them, in FleetDetailPanel. */
 class ShipsListBox : public CUIListBox {
 public:
-    ShipsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled) :
-        CUIListBox(x, y, w, h),
-        m_fleet_id(fleet_id),
-        m_order_issuing_enabled(order_issuing_enabled)
-    {}
-
     ShipsListBox(int fleet_id, bool order_issuing_enabled) :
-        CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1),
+        CUIListBox(),
         m_fleet_id(fleet_id),
         m_order_issuing_enabled(order_issuing_enabled)
     {}

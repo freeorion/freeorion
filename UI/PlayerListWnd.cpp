@@ -416,8 +416,8 @@ namespace {
 ////////////////////////////////////////////////
 class PlayerListBox : public CUIListBox {
 public:
-    PlayerListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-        CUIListBox(x, y, w, h)
+    PlayerListBox(void) :
+        CUIListBox()
     {
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
@@ -453,7 +453,7 @@ PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE ),
     m_player_list(0)
 {
-    m_player_list = new PlayerListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight());
+    m_player_list = new PlayerListBox();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
     GG::Connect(m_player_list->SelChangedSignal,            &PlayerListWnd::PlayerSelectionChanged, this);

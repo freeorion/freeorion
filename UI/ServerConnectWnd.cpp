@@ -63,7 +63,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_LAN_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("LAN_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_servers_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_servers_lb = new CUIListBox();
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);

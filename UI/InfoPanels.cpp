@@ -2159,7 +2159,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     AttachChild(m_species_text);
 
     top += ROW_HEIGHT+HALF_HEIGHT;
-    m_list = new CUIListBox(m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
+    m_list = new CUIListBox();
+    m_list->MoveTo(GG::Pt(m_offset.x, top + m_offset.y));
+    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
@@ -2194,7 +2196,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     AttachChild(m_tags_text);
     
     top2 += ROW_HEIGHT + HALF_HEIGHT;
-    m_tags_list = new CUIListBox(m_offset.x, top2 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
+    m_tags_list = new CUIListBox();
+    m_tags_list->MoveTo(GG::Pt(m_offset.x, top2 + m_offset.y));
+    m_tags_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_tags_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_tags_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case

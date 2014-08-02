@@ -1583,7 +1583,7 @@ private:
 class ObjectListBox : public CUIListBox {
 public:
     ObjectListBox() :
-        CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1),
+        CUIListBox(),
         m_object_change_connections(),
         m_collapsed_objects(),
         m_filter_condition(0),

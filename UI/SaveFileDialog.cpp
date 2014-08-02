@@ -404,7 +404,7 @@ private:
 class SaveFileListBox : public CUIListBox {
 public:
     SaveFileListBox() :
-        CUIListBox (GG::X0, GG::Y0, GG::X1, GG::Y1)
+        CUIListBox ()
     {
         m_columns = SaveFileColumn::GetColumns();
         m_visible_columns = FilterColumns();

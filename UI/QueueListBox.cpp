@@ -27,8 +27,8 @@ struct PromptRow : GG::ListBox::Row {
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str) :
-    CUIListBox(x, y, w, h),
+QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+    CUIListBox(),
     m_drop_point(end()),
     m_show_drop_point(false),
     m_order_issuing_enabled(true),
@@ -42,7 +42,7 @@ QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string
     GG::Connect(ClearedSignal,                      &QueueListBox::ShowPromptSlot,              this);
     GG::Connect(GG::ListBox::RightClickedSignal,    &QueueListBox::ItemRightClicked,            this);
 
-    Insert(new PromptRow(w, m_prompt_str));
+    Insert(new PromptRow(GG::X(10), m_prompt_str));
 }
 
 void QueueListBox::DropsAcceptable(DropsAcceptableIter first,

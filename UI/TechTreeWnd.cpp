@@ -1391,7 +1391,7 @@ void TechTreeWnd::LayoutPanel::TreeZoomOutClicked()
 class TechTreeWnd::TechListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
-    TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    TechListBox(GG::X w, GG::Y h);
     virtual ~TechListBox();
     //@}
 
@@ -1523,9 +1523,10 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     push_back(text);
 }
 
-TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIListBox(x, y, w, h)
+TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
+    CUIListBox()
 {
+    Resize(GG::Pt(w, h));
     GG::Connect(DoubleClickedSignal,    &TechListBox::TechDoubleClicked,    this);
     GG::Connect(LeftClickedSignal,      &TechListBox::TechLeftClicked,      this);
     GG::Connect(RightClickedSignal,     &TechListBox::TechRightClicked,     this);
@@ -1751,7 +1752,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_layout_panel->TechDoubleClickedSignal,&TechTreeWnd::TechDoubleClickedSlot,    this);
     AttachChild(m_layout_panel);
 
-    m_tech_list = new TechListBox(GG::X0, GG::Y0, w, h);
+    m_tech_list = new TechListBox(w, h);
     GG::Connect(m_tech_list->TechBrowsedSignal,         &TechTreeWnd::TechBrowsedSlot,          this);
     GG::Connect(m_tech_list->TechLeftClickedSignal,     &TechTreeWnd::TechLeftClickedSlot,      this);
     GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);

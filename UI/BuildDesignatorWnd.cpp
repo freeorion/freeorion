@@ -323,8 +323,8 @@ namespace {
     //////////////////////////////////
     class BuildableItemsListBox : public CUIListBox {
     public:
-        BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-            CUIListBox(x, y, w, h)
+        BuildableItemsListBox(void) :
+            CUIListBox()
         {
             SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
             // preinitialize listbox/row column widths, because what
@@ -464,7 +464,7 @@ const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
-    m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
+    m_buildable_items(new BuildableItemsListBox()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
 {

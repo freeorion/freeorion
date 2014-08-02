@@ -203,12 +203,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(),
                                                     ClientUI::KnownTechTextAndBorderColor());
 
-    m_queue_lb = new QueueListBox(GG::X(2),
-                                  m_research_info_panel->MinUsableSize().y,
-                                  GG::X(GetOptionsDB().Get<int>("UI.queue-width")) - 4,
-                                  ClientSize().y - 4 - m_research_info_panel->MinUsableSize().y,
-                                  "RESEARCH_QUEUE_ROW",
-                                  UserString("RESEARCH_QUEUE_PROMPT"));
+    m_queue_lb = new QueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
     GG::Connect(m_queue_lb->QueueItemMovedSignal,       &ResearchWnd::QueueItemMoved,               this);

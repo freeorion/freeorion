@@ -207,7 +207,7 @@ public:
     };
 
     /** \name Structors */ //@{
-    PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    PartsListBox(void);
     //@}
 
     /** \name Accessors */ //@{
@@ -293,8 +293,8 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     }
 }
 
-PartsListBox::PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIListBox(x, y, w, h),
+PartsListBox::PartsListBox(void) :
+    CUIListBox(),
     m_part_classes_shown(),
     m_availabilities_shown(std::make_pair(false, false)),
     m_show_superfluous_parts(true),
@@ -616,7 +616,7 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     SetChildClippingMode(ClipToClient);
 
-    m_parts_list = new PartsListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
+    m_parts_list = new PartsListBox();
     AttachChild(m_parts_list);
     GG::Connect(m_parts_list->PartTypeClickedSignal,        PartTypeClickedSignal);
     GG::Connect(m_parts_list->PartTypeDoubleClickedSignal,  PartTypeDoubleClickedSignal);
@@ -906,7 +906,7 @@ void DesignWnd::PartPalette::Reset()
 class BasesListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
-    BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    BasesListBox(void);
     //@}
 
     /** \name Accessors */ //@{
@@ -1065,8 +1065,8 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
-BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIListBox(x, y, w, h),
+BasesListBox::BasesListBox(void) :
+    CUIListBox(),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
@@ -1494,25 +1494,29 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 
-    m_hulls_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
+    m_hulls_list = new BasesListBox();
+    m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
 
-    m_designs_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
+    m_designs_list = new BasesListBox();
+    m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
     GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
 
-    ////m_saved_designs_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    //m_saved_designs_list = new CUIListBox();
+    //m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
     //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
     //                                   ClientUI::GetFont(),
     //                                   ClientUI::TextColor()),
     //               UserString("DESIGN_WND_SAVED_DESIGNS"));
 
-    ////m_templates_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    //m_templates_list = new CUIListBox();
+    //m_templates_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
     //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
     //                                   ClientUI::GetFont(),
     //                                   ClientUI::TextColor()),
