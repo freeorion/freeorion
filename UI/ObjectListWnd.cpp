@@ -2101,7 +2101,7 @@ private:
 ////////////////////////////////////////////////
 ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE ),
     m_list_box(0),
     m_filter_button(0),
     m_collapse_button(0)

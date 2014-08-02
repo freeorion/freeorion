@@ -450,7 +450,7 @@ public:
 //  PlayerListWnd  //
 /////////////////////
 PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE),
+    CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE ),
     m_player_list(0)
 {
     m_player_list = new PlayerListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight());
