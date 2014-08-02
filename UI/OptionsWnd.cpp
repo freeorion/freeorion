@@ -679,13 +679,13 @@ CUISpin<int>* OptionsWnd::IntOption(CUIListBox* page, int indentation_level, con
     CUISpin<int>* spin = 0;
     int value = GetOptionsDB().Get<int>(option_name);
     if (boost::shared_ptr<const RangedValidator<int> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(validator))
-        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
     else if (boost::shared_ptr<const StepValidator<int> > step_validator = boost::dynamic_pointer_cast<const StepValidator<int> >(validator))
-        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, step_validator->m_step_size, -1000000, 1000000, true);
+        spin = new CUISpin<int>(value, step_validator->m_step_size, -1000000, 1000000, true);
     else if (boost::shared_ptr<const RangedStepValidator<int> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
-        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+        spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
-        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, 1, -1000000, 1000000, true);
+        spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
     assert(spin);
     spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
@@ -711,13 +711,13 @@ CUISpin<double>* OptionsWnd::DoubleOption(CUIListBox* page, int indentation_leve
     CUISpin<double>* spin = 0;
     double value = GetOptionsDB().Get<double>(option_name);
     if (boost::shared_ptr<const RangedValidator<double> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<double> >(validator))
-        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        spin = new CUISpin<double>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
     else if (boost::shared_ptr<const StepValidator<double> > step_validator = boost::dynamic_pointer_cast<const StepValidator<double> >(validator))
-        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, step_validator->m_step_size, -1000000, 1000000, true);
+        spin = new CUISpin<double>(value, step_validator->m_step_size, -1000000, 1000000, true);
     else if (boost::shared_ptr<const RangedStepValidator<double> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
-        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+        spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
-        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, 1, -1000000, 1000000, true);
+        spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
     assert(spin);
     spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);

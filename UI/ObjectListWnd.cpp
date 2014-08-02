@@ -777,13 +777,15 @@ private:
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
-            m_param_spin1 = new CUISpin<int>(param_widget_left, param_widget_top, DropListWidth(),
-                                             0, 1, 0, 1000, true);
+            m_param_spin1 = new CUISpin<int>(0, 1, 0, 1000, true);
+            m_param_spin1->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_param_spin1->Resize(GG::Pt(DropListWidth(), m_param_spin1->Height()));
             AttachChild(m_param_spin1);
             param_widget_left = DropListWidth() + PAD;
 
-            m_param_spin2 = new CUISpin<int>(param_widget_left, param_widget_top, DropListWidth(),
-                                             0, 1, 0, 1000, true);
+            m_param_spin2 = new CUISpin<int>(0, 1, 0, 1000, true);
+            m_param_spin2->MoveTo(GG::Pt(param_widget_left, param_widget_top));
+            m_param_spin2->Resize(GG::Pt(DropListWidth(), m_param_spin2->Height()));
             AttachChild(m_param_spin2);
 
             param_widget_top += m_param_spin1->Height();

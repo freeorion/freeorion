@@ -104,7 +104,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_stars_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_STARS"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
-    m_stars_spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, 100, 1, 10, 5000, true);
+    m_stars_spin = new CUISpin<int>(100, 1, 10, 5000, true);
 
     // galaxy shape
     m_galaxy_shapes_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SHAPE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -561,7 +561,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_number_ais_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);
+    m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);
 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());

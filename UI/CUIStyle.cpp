@@ -66,12 +66,22 @@ GG::Slider<double>* CUIStyle::NewDoubleSlider(GG::X x, GG::Y y, GG::X w, GG::Y h
 GG::Spin<int>* CUIStyle::NewIntSpin(GG::X x, GG::Y y, GG::X w, int value, int step, int min, int max, bool edits,
                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                     GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUISpin<int>(x, y, w, value, step, min, max, edits); }
+{
+    CUISpin<int>* retval = new CUISpin<int>(value, step, min, max, edits);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, retval->Height()));
+    return retval;
+}
 
 GG::Spin<double>* CUIStyle::NewDoubleSpin(GG::X x, GG::Y y, GG::X w, double value, double step, double min, double max, bool edits,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUISpin<double>(x, y, w, value, step, min, max, edits); }
+{
+    CUISpin<double>* retval = new CUISpin<double>(value, step, min, max, edits);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, retval->Height()));
+    return retval;
+}
 
 GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                 GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
