@@ -643,7 +643,8 @@ MapWnd::MapWnd() :
 
 
     // Menu button
-    m_btn_menu = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_menu = new SettableInWindowCUIButton("");
+    m_btn_menu->SetColor(GG::CLR_WHITE);
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
     m_btn_menu->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_clicked.png"  )));
@@ -662,7 +663,8 @@ MapWnd::MapWnd() :
 
 
     // Encyclo"pedia" button
-    m_btn_pedia = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_pedia = new SettableInWindowCUIButton("");
+    m_btn_pedia->SetColor(GG::CLR_WHITE);
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     m_btn_pedia->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_clicked.png"  )));
@@ -678,7 +680,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
     // Graphs button
-    m_btn_graphs = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_graphs = new SettableInWindowCUIButton("");
+    m_btn_graphs->SetColor(GG::CLR_WHITE);
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_graphs->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts.png")));
     m_btn_graphs->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts_clicked.png"  )));
@@ -694,7 +697,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
 
     // Design button
-    m_btn_design = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_design = new SettableInWindowCUIButton("");
+    m_btn_design->SetColor(GG::CLR_WHITE);
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
     m_btn_design->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_clicked.png"  )));
@@ -710,7 +714,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
     // Production button
-    m_btn_production = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_production = new SettableInWindowCUIButton("");
+    m_btn_production->SetColor(GG::CLR_WHITE);
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_clicked.png"  )));
@@ -726,7 +731,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
 
     // Research button
-    m_btn_research = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_research = new SettableInWindowCUIButton("");
+    m_btn_research->SetColor(GG::CLR_WHITE);
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
     m_btn_research->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_clicked.png"  )));
@@ -742,7 +748,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
     // Objects button
-    m_btn_objects = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_objects = new SettableInWindowCUIButton("");
+    m_btn_objects->SetColor(GG::CLR_WHITE);
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
@@ -758,7 +765,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
 
     // Empires button
-    m_btn_empires = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_empires = new SettableInWindowCUIButton("");
+    m_btn_empires->SetColor(GG::CLR_WHITE);
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
     m_btn_empires->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_clicked.png"  )));
@@ -774,7 +782,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES"))));
 
     // SitRep button
-    m_btn_siterep = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_siterep = new SettableInWindowCUIButton("");
+    m_btn_siterep->SetColor(GG::CLR_WHITE);
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     m_btn_siterep->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_clicked.png"  )));
@@ -790,7 +799,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
     // Messages button
-    m_btn_messages = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_messages = new SettableInWindowCUIButton("");
+    m_btn_messages->SetColor(GG::CLR_WHITE);
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
     m_btn_messages->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_clicked.png"  )));
@@ -806,7 +816,8 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES"))));
 
     // Moderator button
-    m_btn_moderator = new SettableInWindowCUIButton("", GG::X0, GG::Y0, GG::X(24), GG::CLR_WHITE);
+    m_btn_moderator = new SettableInWindowCUIButton("");
+    m_btn_moderator->SetColor(GG::CLR_WHITE);
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     m_btn_moderator->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_clicked.png"  )));

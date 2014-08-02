@@ -68,8 +68,7 @@ private:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
-                              GG::Clr color = ClientUI::CtrlColor()); ///< basic ctor
+    SettableInWindowCUIButton(const std::string& str); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{

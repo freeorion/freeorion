@@ -171,9 +171,8 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category) {
 ///////////////////////////////////////
 // class SettableInWindowCUIButton
 ///////////////////////////////////////
-SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w,
-                                                     GG::Clr color/* = ClientUI::CtrlColor()*/) :
-    CUIButton(str, x, y, w, color)
+SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str) :
+    CUIButton(str, GG::X0, GG::Y0, GG::X1, ClientUI::CtrlColor())
 {}
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
