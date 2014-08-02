@@ -223,7 +223,7 @@ private:
 class CUIEdit : public GG::Edit {
 public:
     /** \name Structors */ //@{
-    CUIEdit(const std::string& str, GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr interior = ClientUI::CtrlColor()); ///< basic ctor
+    CUIEdit(const std::string& str); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

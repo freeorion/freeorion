@@ -207,7 +207,9 @@ namespace {
             }
 
             // empire name editable text
-            CUIEdit* edit = new CUIEdit(m_player_data.m_empire_name, GG::CLR_ZERO, GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(m_player_data.m_empire_name);
+            edit->SetColor(GG::CLR_ZERO);
+            edit->SetInteriorColor(GG::CLR_ZERO);
             edit->Resize(GG::Pt(EMPIRE_NAME_WIDTH, edit->MinUsableSize().y));
             push_back(edit);
             if (disabled)
