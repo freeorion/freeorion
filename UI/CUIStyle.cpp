@@ -32,7 +32,12 @@ GG::DropDownList* CUIStyle::NewDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, 
 GG::Edit* CUIStyle::NewEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIEdit(x, y, w, str); }
+{
+    CUIEdit* retval = new CUIEdit(str);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, retval->MinUsableSize().y));
+    return retval;
+}
 
 GG::ListBox* CUIStyle::NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
                                   GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const

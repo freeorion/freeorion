@@ -58,7 +58,7 @@ ServerConnectWnd::ServerConnectWnd() :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::TextControl* player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
+    m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
     m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
@@ -67,7 +67,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_IP_address_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("multiplayersetup.host-address"));
+    m_IP_address_edit = new CUIEdit(GetOptionsDB().Get<std::string>("multiplayersetup.host-address"));
     m_ok_bn = new CUIButton(UserString("OK"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
 

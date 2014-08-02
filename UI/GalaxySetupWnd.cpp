@@ -89,7 +89,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_seed_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SEED"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
-    m_seed_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.seed"));
 
     // random seed button
     m_random = new CUIButton("");
@@ -510,13 +510,13 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_PLAYER_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
-    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("GameSetup.player-name"));
+    m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
     // empire name
     m_empire_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    m_empire_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
+    m_empire_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
 
     // empire color
     m_empire_color_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);

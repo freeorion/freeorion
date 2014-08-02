@@ -790,7 +790,7 @@ void OptionsWnd::FileOptionImpl(CUIListBox* page, int indentation_level, const s
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
-    CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>(option_name));
+    CUIEdit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
     CUIButton* button = new CUIButton("...");
     button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));

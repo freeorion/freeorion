@@ -207,8 +207,8 @@ namespace {
             }
 
             // empire name editable text
-            CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
-                                        GG::CLR_ZERO, GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(m_player_data.m_empire_name, GG::CLR_ZERO, GG::CLR_ZERO);
+            edit->Resize(GG::Pt(EMPIRE_NAME_WIDTH, edit->MinUsableSize().y));
             push_back(edit);
             if (disabled)
                 edit->Disable();
@@ -397,9 +397,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_chat_input_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, "");
-    m_chat_box = new CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, "",
-                                  GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
+    m_chat_input_edit = new CUIEdit("");
+    m_chat_box = new CUIMultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y0, GG::X1);

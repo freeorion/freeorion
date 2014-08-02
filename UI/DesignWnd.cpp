@@ -2012,7 +2012,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
                                               GG::INTERACTIVE);
     AttachChild(m_design_name_label);
 
-    m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"));
+    m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
     AttachChild(m_design_name);
     GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
 
@@ -2021,7 +2021,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
                                                      GG::INTERACTIVE);
     AttachChild(m_design_description_label);
 
-    m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"));
+    m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     AttachChild(m_design_description);
 
     m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"));
@@ -2344,7 +2344,7 @@ void DesignWnd::MainPanel::DoLayout() {
     m_clear_button->SizeMove(ul, lr);
 
     ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
-    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->Height());
+    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
     ul.x += lr.x;
@@ -2353,7 +2353,7 @@ void DesignWnd::MainPanel::DoLayout() {
 
     ul.x = GG::X(PAD);
     ul.y += (m_design_name->Height() + PAD);
-    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->Height());
+    lr = ul + GG::Pt(LABEL_WIDTH, m_design_name->MinUsableSize().y);
     m_design_description_label->SizeMove(ul, lr);
 
     ul.x = lr.x + PAD;

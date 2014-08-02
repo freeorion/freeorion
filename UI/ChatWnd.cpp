@@ -24,7 +24,7 @@
 class MessageWndEdit : public CUIEdit {
 public:
     //! \name Structors //@{
-    MessageWndEdit(GG::X x, GG::Y y, GG::X w);
+    MessageWndEdit(void);
     //@}
 
     //! \name Mutators //@{
@@ -60,8 +60,8 @@ private:
 ////////////////////
 // MessageWndEdit //
 ////////////////////
-MessageWndEdit::MessageWndEdit(GG::X x, GG::Y y, GG::X w) :
-    CUIEdit(x, y, w, ""),
+MessageWndEdit::MessageWndEdit(void) :
+    CUIEdit(""),
     m_auto_complete_choices(),
     m_repeatedTabCount(0),
     m_lastLineRead(),
@@ -281,7 +281,7 @@ MessageWnd::MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     AttachChild(m_display);
     m_display->SetMaxLinesOfHistory(100); // executing this line seems to cause crashes in MultiEdit when adding more lines to the control than the history limit
 
-    m_edit = new MessageWndEdit(GG::X0, GG::Y0, ClientWidth());
+    m_edit = new MessageWndEdit();
     AttachChild(m_edit);
 
     GG::Connect(m_edit->TextEnteredSignal,  &MessageWnd::MessageEntered,                this);
@@ -298,8 +298,8 @@ MessageWnd::MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
 void MessageWnd::DoLayout() {
     const GG::Y PAD(3);
     m_display->SizeMove(GG::Pt(GG::X0, GG::Y0),
-                        GG::Pt(ClientWidth(), ClientHeight() - PAD - m_edit->Height()));
-    m_edit->SizeMove(GG::Pt(GG::X0, ClientHeight() - m_edit->Height()),
+                        GG::Pt(ClientWidth(), ClientHeight() - PAD - m_edit->MinUsableSize().y));
+    m_edit->SizeMove(GG::Pt(GG::X0, ClientHeight() - m_edit->MinUsableSize().y),
                      GG::Pt(ClientWidth() - GG::X(CUIWnd::INNER_BORDER_ANGLE_OFFSET), ClientHeight()));
 }
 
