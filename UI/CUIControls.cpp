@@ -253,8 +253,8 @@ void CUIArrowButton::RenderUnpressed() {
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(const std::string& str, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
-    StateButton(x, y, w, h, str, ClientUI::GetFont(), format, ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO, style, GG::INTERACTIVE),
+CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
+    StateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), format, ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO, style, GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_mouse_here(false)
 {

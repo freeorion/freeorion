@@ -601,7 +601,7 @@ void OptionsWnd::CreateSectionHeader(CUIListBox* page, int indentation_level, co
 
 CUIStateButton* OptionsWnd::BoolOption(CUIListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(text, GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, indentation_level));
@@ -738,7 +738,7 @@ CUISpin<double>* OptionsWnd::DoubleOption(CUIListBox* page, int indentation_leve
 
 void OptionsWnd::MusicVolumeOption(CUIListBox* page, int indentation_level) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
@@ -763,7 +763,7 @@ void OptionsWnd::VolumeOption(CUIListBox* page, int indentation_level, const std
                               VolumeSliderHandler volume_slider_handler, bool toggle_value)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(text, GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));

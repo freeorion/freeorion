@@ -13,8 +13,12 @@ GG::Button* CUIStyle::NewButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::s
 GG::StateButton* CUIStyle::NewStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                           GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                          GG::StateButtonStyle style/* = GG::SBSTYLE_3D_XBOX*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIStateButton(str, x, y, w, h, format, style); }
+                                          GG::StateButtonStyle style/* = GG::SBSTYLE_3D_XBOX*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const {
+    CUIStateButton* retval = new CUIStateButton(str, format, style);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, h));
+    return retval;
+}
 
 GG::DropDownList* CUIStyle::NewDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color,
                                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
@@ -118,7 +122,8 @@ GG::StateButton* CUIStyle::NewTabBarTab(GG::X x, GG::Y y, GG::X w, GG::Y h, cons
                                         GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                         GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 {
-    GG::StateButton* retval = new CUIStateButton(str, x, y, w, h, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
+    GG::StateButton* retval = new CUIStateButton(str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
+    retval->MoveTo(GG::Pt(x, y));
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }

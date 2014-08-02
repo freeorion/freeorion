@@ -406,9 +406,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("NEW_GAME_BN"), GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::X0, GG::Y0, GG::X1, GG::Y1, GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_browse_saves_btn = new CUIButton("...");
     m_save_file_text = new GG::TextControl(GG::X0, GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor());

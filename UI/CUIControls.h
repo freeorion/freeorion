@@ -118,7 +118,7 @@ private:
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(const std::string& str, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX); ///< ctor
+    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX); ///< ctor
     //@}
 
     /** \name Accessors */ //@{
