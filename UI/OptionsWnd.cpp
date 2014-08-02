@@ -409,8 +409,8 @@ OptionsWnd::OptionsWnd():
                &ValidStringtableFile);
 
     // flush stringtable button
-    GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"),
-                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20));
+    GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"));
+    flush_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
     GG::ListBox::Row* row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, 0));
@@ -999,9 +999,9 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
 
 
     // apply button, sized to fit text
-    std::string apply_button_text = UserString("OPTIONS_APPLY");
-    GG::Button* apply_button = new CUIButton(apply_button_text,
-                                             GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20));
+    GG::Button* apply_button = new CUIButton(UserString("OPTIONS_APPLY"));
+    apply_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
+    apply_button->Resize(GG::Pt(GG::X(20), apply_button->MinUsableSize().y));
     row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, indentation_level));

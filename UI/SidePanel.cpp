@@ -917,16 +917,13 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_env_size);
 
 
-    m_colonize_button = new CUIButton(UserString("PL_COLONIZE"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
+    m_colonize_button = new CUIButton(UserString("PL_COLONIZE"));
     GG::Connect(m_colonize_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_invade_button   = new CUIButton(UserString("PL_INVADE"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
+    m_invade_button   = new CUIButton(UserString("PL_INVADE"));
     GG::Connect(m_invade_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
-    m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"),
-                                      GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15));
+    m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"));
     GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);
 
     if (m_planet_graphic)
@@ -972,14 +969,17 @@ void SidePanel::PlanetPanel::DoLayout() {
 
     if (m_colonize_button && m_colonize_button->Parent() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
+        m_colonize_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_colonize_button->MinUsableSize().y));
         y += m_colonize_button->Height() + EDGE_PAD;
     }
     if (m_invade_button && m_invade_button->Parent() == this) {
         m_invade_button->MoveTo(GG::Pt(left, y));
+        m_invade_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_invade_button->MinUsableSize().y));
         y += m_invade_button->Height() + EDGE_PAD;
     }
     if (m_bombard_button && m_bombard_button->Parent() == this) {
         m_bombard_button->MoveTo(GG::Pt(left, y));
+        m_bombard_button->Resize(GG::Pt(GG::X(ClientUI::Pts()*15), m_bombard_button->MinUsableSize().y));
         y += m_bombard_button->Height() + EDGE_PAD;
     }
 

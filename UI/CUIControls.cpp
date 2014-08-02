@@ -60,8 +60,8 @@ namespace {
     const int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(const std::string& str, GG::X x, GG::Y y, GG::X w, GG::Clr color/* = ClientUI::CtrlColor()*/) :
-    Button(x, y, w, ClientUI::GetFont()->Lineskip() + 6, str, ClientUI::GetFont(), color, ClientUI::TextColor(), GG::INTERACTIVE),
+CUIButton::CUIButton(const std::string& str) :
+    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
@@ -172,7 +172,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category) {
 // class SettableInWindowCUIButton
 ///////////////////////////////////////
 SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str) :
-    CUIButton(str, GG::X0, GG::Y0, GG::X1, ClientUI::CtrlColor())
+    CUIButton(str)
 {}
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {

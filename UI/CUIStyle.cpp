@@ -8,7 +8,12 @@
 GG::Button* CUIStyle::NewButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                 const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIButton(str, x, y, w); }
+{
+    CUIButton* retval = new CUIButton(str);
+    retval->MoveTo(GG::Pt(x, y));
+    retval->Resize(GG::Pt(w, retval->MinUsableSize().y));
+    return retval;
+}
 
 GG::StateButton* CUIStyle::NewStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,

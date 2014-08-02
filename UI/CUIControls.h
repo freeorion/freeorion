@@ -30,7 +30,7 @@
 class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIButton(const std::string& str, GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Clr color = ClientUI::CtrlColor()); ///< basic ctor
+    CUIButton(const std::string& str); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{

@@ -844,10 +844,10 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_vscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_hscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
 
-    const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
-
-    m_zoom_in_button = new CUIButton("+", GG::X1, GG::Y1, ZBSIZE, ClientUI::WndColor());
-    m_zoom_out_button = new CUIButton("-", GG::X1, GG::Y1, ZBSIZE, ClientUI::WndColor());
+    m_zoom_in_button = new CUIButton("+");
+    m_zoom_in_button->SetColor(ClientUI::WndColor());
+    m_zoom_out_button = new CUIButton("-");
+    m_zoom_out_button->SetColor(ClientUI::WndColor());
 
     DoLayout();
 
@@ -991,12 +991,15 @@ void TechTreeWnd::LayoutPanel::DoLayout() {
     GG::Pt hscroll_lr = GG::Pt(Width() - SCRLWDTH, Height());
     m_hscroll->SizeMove(hscroll_ul, hscroll_lr);
 
+    const GG::X ZBSIZE(ClientUI::ScrollWidth() * 2);
     const int ZBOFFSET = ClientUI::ScrollWidth() / 2;
 
-    GG::Pt button_ul = GG::Pt(Width() - m_zoom_in_button->Width() - ZBOFFSET - SCRLWDTH, GG::Y(ZBOFFSET));
+    GG::Pt button_ul = GG::Pt(Width() - ZBSIZE - ZBOFFSET - SCRLWDTH, GG::Y(ZBOFFSET));
     m_zoom_in_button->MoveTo(button_ul);
+    m_zoom_in_button->Resize(GG::Pt(ZBSIZE, m_zoom_in_button->MinUsableSize().y));
     button_ul += GG::Pt(GG::X0, m_zoom_in_button->Height() + ZBOFFSET);
     m_zoom_out_button->MoveTo(button_ul);
+    m_zoom_out_button->Resize(GG::Pt(ZBSIZE, m_zoom_out_button->MinUsableSize().y));
 }
 
 void TechTreeWnd::LayoutPanel::Update()

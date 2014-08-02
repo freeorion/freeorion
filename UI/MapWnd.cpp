@@ -622,9 +622,8 @@ MapWnd::MapWnd() :
     // turn button
     // determine size from the text that will go into the button, using a test year string
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
-    GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + GG::X(12);
-    // create button using determined width
-    m_btn_turn = new CUIButton(turn_button_longest_reasonable_text, GG::X0, GG::Y0, button_width);
+    m_btn_turn = new CUIButton(turn_button_longest_reasonable_text);
+    m_btn_turn->Resize(m_btn_turn->MinUsableSize());
     GG::Connect(m_btn_turn->LeftClickedSignal, boost::bind(&MapWnd::EndTurn, this));
     GG::Connect(m_btn_turn->LeftClickedSignal, &PlayTurnButtonClickSound);
 

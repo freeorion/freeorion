@@ -855,17 +855,20 @@ private:
         GG::X button_width = GG::X(ClientUI::Pts()*8);
         GG::Button* label = 0;
 
-        label = new CUIButton(UserString("VISIBLE"), GG::X0, GG::Y0, button_width);
+        label = new CUIButton(UserString("VISIBLE"));
+        label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
 
-        label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"), GG::X0, GG::Y0, button_width);
+        label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"));
+        label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, 2, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_PREVIOUSLY_VISIBLE));
 
-        label = new CUIButton(UserString("DESTROYED"), GG::X0, GG::Y0, button_width);
+        label = new CUIButton(UserString("DESTROYED"));
+        label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
         m_filters_layout->Add(label, 3, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
@@ -875,12 +878,11 @@ private:
              uot_it != m_vis_filters.end(); ++uot_it, ++col)
         {
             const UniverseObjectType& uot = uot_it->first;
-            const std::string& uot_label = " " + UserString(EnumToString(uot)) + " ";
             const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
-            label = new CUIButton(uot_label, GG::X0, GG::Y0, GG::X1);
+            label = new CUIButton(" " + UserString(EnumToString(uot)) + " ");
             m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
@@ -909,18 +911,20 @@ private:
         m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
         AttachChild(m_condition_widget);
 
-        m_cancel_button = new CUIButton(UserString("CANCEL"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8));
+        m_cancel_button = new CUIButton(UserString("CANCEL"));
         AttachChild(m_cancel_button);
         GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
 
-        m_apply_button = new CUIButton(UserString("APPLY"), GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8));
+        m_apply_button = new CUIButton(UserString("APPLY"));
         AttachChild(m_apply_button);
         GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
 
         GG::Pt button_lr = this->ClientSize();
+        m_cancel_button->Resize(GG::Pt(button_width, m_cancel_button->MinUsableSize().y));
         m_cancel_button->MoveTo(GG::Pt(button_lr.x - m_cancel_button->Width(),
                                        button_lr.y - m_cancel_button->Height()));
         button_lr = button_lr - GG::Pt(m_apply_button->Width() + GG::X(3), GG::Y0);
+        m_apply_button->Resize(GG::Pt(button_width, m_apply_button->MinUsableSize().y));
         m_apply_button->MoveTo(GG::Pt(button_lr.x - m_apply_button->Width(),
                                       button_lr.y - m_apply_button->Height()));
     }
@@ -1520,8 +1524,7 @@ private:
     std::vector<GG::Button*>    GetControls() {
         std::vector<GG::Button*> retval;
 
-        GG::Button* control = new CUIButton("-", GG::X0, GG::Y0,
-                                            GG::X(GetColumnWidth(-1)));
+        GG::Button* control = new CUIButton("-");
         retval.push_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
@@ -1529,8 +1532,7 @@ private:
             const std::string& header_name = GetColumnName(static_cast<int>(i));
             if (!header_name.empty())
                 text = UserString(header_name);
-            control = new CUIButton(text, GG::X0, GG::Y0,
-                                    GG::X(GetColumnWidth(static_cast<int>(i))));
+            control = new CUIButton(text);
             retval.push_back(control);
         }
 
@@ -2112,11 +2114,11 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     GG::Connect(m_list_box->ExpandCollapseSignal,       &ObjectListWnd::DoLayout,               this);
     AttachChild(m_list_box);
 
-    m_filter_button = new CUIButton(UserString("FILTERS"), GG::X0, GG::Y0, GG::X(30));
+    m_filter_button = new CUIButton(UserString("FILTERS"));
     GG::Connect(m_filter_button->LeftClickedSignal,     &ObjectListWnd::FilterClicked,          this);
     AttachChild(m_filter_button);
 
-    m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"), GG::X0, GG::Y0, GG::X(30));
+    m_collapse_button = new CUIButton(UserString("COLLAPSE_ALL"));
     GG::Connect(m_collapse_button->LeftClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
     AttachChild(m_collapse_button);
 
