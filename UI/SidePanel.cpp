@@ -984,7 +984,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 
     if (m_focus_drop && m_focus_drop->Parent() == this) {
         m_focus_drop->MoveTo(GG::Pt(left, y));
-        m_focus_drop->Resize(GG::Pt(MeterIconSize().x*4, MeterIconSize().y*3/2));
+        m_focus_drop->Resize(GG::Pt(MeterIconSize().x*4, MeterIconSize().y*3/2 + 4));
         y += m_focus_drop->Height() + EDGE_PAD;
     }
 
