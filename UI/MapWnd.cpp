@@ -87,43 +87,43 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.galaxy-gas-background",          UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                    true,       Validator<bool>());
-        db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),             true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),             true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),            false,      Validator<bool>());
-        db.Add("UI.optimized-system-rendering",     UserStringNop("OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING"),        true,       Validator<bool>());
-        db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                     4.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
-        db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),       true,       Validator<bool>());
-        db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                true,       Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),           3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),     20,         RangedStepValidator<int>(1, 3, 40));
-        db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
-        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
+        db.Add("UI.galaxy-gas-background",          UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
+        db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),              true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
+        db.Add("UI.optimized-system-rendering",     UserStringNop("OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING"),         true,       Validator<bool>());
+        db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      4.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
+        db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
+        db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
+        db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
+        db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
+        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
-        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),        true,      Validator<bool>());
+        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
-        db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                     true,       Validator<bool>());
-        db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
+        db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
+        db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
 
-        db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),               14,         RangedValidator<int>(8, 50));
+        db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
-        db.Add("UI.system-circles",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                 true,       Validator<bool>());
-        db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),             1.0,        RangedStepValidator<double>(0.125, 1.0, 2.5));
+        db.Add("UI.system-circles",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
+        db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.0,        RangedStepValidator<double>(0.125, 1.0, 2.5));
 
-        db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"),10,         RangedValidator<int>(1, 16));
-        db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"),1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
-        db.Add("UI.system-selection-indicator-fps", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"), 12,         RangedValidator<int>(1, 60));
+        db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,         RangedValidator<int>(1, 16));
+        db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("UI.system-selection-indicator-fps", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
 
-        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
+        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
 
-        db.Add("UI.tiny-fleet-button-minimum-zoom", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.medium-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.tiny-fleet-button-minimum-zoom", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),      0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),     1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.medium-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),   4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
 
-        db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),   3,       RangedValidator<int>(0, 8));
+        db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));
 
-        db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),               false,      Validator<bool>());
+        db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
 
 
         // Register hotkey names/default values for the context "map".
@@ -2005,7 +2005,6 @@ void MapWnd::KeyRelease ( GG::Key key, boost::uint32_t key_code_point, GG::Flags
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
     }
 }
-
 
 void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     // disallow order enabling if this client does not have an empire
