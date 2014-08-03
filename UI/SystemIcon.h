@@ -6,15 +6,15 @@
 #include "CUIDrawUtil.h"
 #include <GG/Control.h>
 
+class CUILabel;
 class FleetButton;
 namespace GG {
     class StaticGraphic;
     class DynamicGraphic;
-    class TextControl;
     class Texture;
 }
 
-/** A TextControl-like GG::Control that displays the name of a system in the
+/** A label like GG::Control that displays the name of a system in the
   * color(s) of the owning empire(s).  This class is derived from GG::Control
   * because GG::ListBox::Row accepts GG::Control but not GG::Wnd being added
   * to them.  OwnerColoredSystemName are added to the list of systems on the

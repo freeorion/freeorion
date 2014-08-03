@@ -301,21 +301,23 @@ void ModeratorActionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ModeratorActionsWnd::Refresh() {
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-
     // todo: get currently selected empire, if any, reselect after refresh
 
     m_empire_drop->Clear();
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        row->push_back(new GG::TextControl(GG::X0, GG::Y0, empire->Name(), font, empire->Color()));
+        CUILabel* label = new CUILabel(GG::X0, GG::Y0, empire->Name());
+        label->SetTextColor(empire->Color());
+        row->push_back(label);
         m_empire_drop->Insert(row);
     }
 
     // no empire / monsters
     GG::DropDownList::Row* row = new GG::DropDownList::Row();
-    row->push_back(new GG::TextControl(GG::X0, GG::Y0, UserString("UNOWNED"), font, GG::CLR_RED));
+    CUILabel* label = new CUILabel(GG::X0, GG::Y0, UserString("UNOWNED"));
+    label->SetTextColor(GG::CLR_RED);
+    row->push_back(label);
     m_empire_drop->Insert(row);
 
     if (!m_empire_drop->Empty())

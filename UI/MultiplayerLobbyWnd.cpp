@@ -28,7 +28,6 @@
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
-#include <GG/TextControl.h>
 
 
 namespace {
@@ -335,7 +334,7 @@ namespace {
             m_color_selector->SelectColor(m_player_data.m_empire_color);
 
             // set previous player name indication
-            boost::polymorphic_downcast<GG::TextControl*>(operator[](4))->SetText(it->second.m_player_name);
+            boost::polymorphic_downcast<CUILabel*>(operator[](4))->SetText(it->second.m_player_name);
 
             DataChangedSignal();
         }
@@ -414,30 +413,16 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
         new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_browse_saves_btn = new CUIButton("...");
-    m_save_file_text = new GG::TextControl(GG::X0, GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_save_file_text = new CUILabel(GG::X0, GG::Y0, "");
 
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(GG::X0, GG::Y0, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
-    m_players_lb_player_type_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                         UserString("MULTIPLAYER_PLAYER_LIST_TYPES"),
-                                                         ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-
-    m_players_lb_player_name_column_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                                UserString("MULTIPLAYER_PLAYER_LIST_NAMES"),
-                                                                ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-
-    m_players_lb_empire_name_column_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                                UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"),
-                                                                ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-
-    m_players_lb_empire_colour_column_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                                  UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"),
-                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-
-    m_players_lb_species_or_original_player_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                                        UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
-                                                                        ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_players_lb_player_type_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_LEFT);
+    m_players_lb_player_name_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_LEFT);
+    m_players_lb_empire_name_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_LEFT);
+    m_players_lb_empire_colour_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_LEFT);
+    m_players_lb_species_or_original_player_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_LEFT);
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
@@ -445,10 +430,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
 
-    m_start_conditions_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                                  UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
-                                                  ClientUI::GetFont(),
-                                                  ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_start_conditions_text = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_GAME_START_CONDITIONS"), GG::FORMAT_LEFT);
 
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);

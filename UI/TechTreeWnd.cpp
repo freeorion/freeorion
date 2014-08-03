@@ -1490,36 +1490,28 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-
-    GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, NAME_WIDTH, HEIGHT, UserString(m_tech),
-                                                font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    CUILabel* text = new CUILabel(GG::X0, GG::Y0, NAME_WIDTH, HEIGHT, UserString(m_tech), GG::FORMAT_LEFT);
     text->ClipText(true);
     push_back(text);
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    text = new GG::TextControl(GG::X0, GG::Y0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(),
-                               GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text = new CUILabel(GG::X0, GG::Y0, COST_WIDTH, HEIGHT, cost_str, GG::FORMAT_LEFT);
     push_back(text);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new GG::TextControl(GG::X0, GG::Y0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(),
-                               GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text = new CUILabel(GG::X0, GG::Y0, TIME_WIDTH, HEIGHT, time_str, GG::FORMAT_LEFT);
     push_back(text);
 
     std::string category_str = UserString(this_row_tech->Category());
-    text = new GG::TextControl(GG::X0, GG::Y0, CATEGORY_WIDTH, HEIGHT, category_str, font, ClientUI::TextColor(),
-                               GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text = new CUILabel(GG::X0, GG::Y0, CATEGORY_WIDTH, HEIGHT, category_str, GG::FORMAT_LEFT);
     push_back(text);
 
     std::string type_str = UserString(boost::lexical_cast<std::string>(this_row_tech->Type()));
-    text = new GG::TextControl(GG::X0, GG::Y0, TYPE_WIDTH, HEIGHT, type_str, font, ClientUI::TextColor(),
-                               GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text = new CUILabel(GG::X0, GG::Y0, TYPE_WIDTH, HEIGHT, type_str, GG::FORMAT_LEFT);
     push_back(text);
 
     std::string desc_str = UserString(this_row_tech->ShortDescription());
-    text = new GG::TextControl(GG::X0, GG::Y0, DESC_WIDTH, HEIGHT, desc_str, font, ClientUI::TextColor(),
-                               GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text = new CUILabel(GG::X0, GG::Y0, DESC_WIDTH, HEIGHT, desc_str, GG::FORMAT_LEFT);
     push_back(text);
 }
 

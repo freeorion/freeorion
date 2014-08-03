@@ -24,7 +24,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
-#include <GG/TextControl.h>
 
 namespace {
     //////////////////////////////////
@@ -128,9 +127,7 @@ namespace {
                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
 
-            m_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, name_text,
-                                         ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_name = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, name_text, GG::FORMAT_LEFT);
             AttachChild(m_name);
 
             // cost / turn, and minimum production turns
@@ -141,19 +138,13 @@ namespace {
                 cost_text = DoubleToString(cost_time.first, 3, false);
                 time_text = boost::lexical_cast<std::string>(cost_time.second);
             }
-            m_cost = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, cost_text,
-                                         ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+            m_cost = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, cost_text);
             AttachChild(m_cost);
 
-            m_time = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, time_text,
-                                         ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+            m_time = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, time_text);
             AttachChild(m_time);
 
-            m_desc = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, desc_text,
-                                         ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_desc = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, desc_text, GG::FORMAT_LEFT);
             AttachChild(m_desc);
 
             DoLayout();
@@ -165,11 +156,11 @@ namespace {
         int                                     m_empire_id;
         int                                     m_location_id;
 
-        GG::StaticGraphic*              m_icon;
-        GG::TextControl*                m_name;
-        GG::TextControl*                m_cost;
-        GG::TextControl*                m_time;
-        GG::TextControl*                m_desc;
+        GG::StaticGraphic* m_icon;
+        CUILabel*          m_name;
+        CUILabel*          m_cost;
+        CUILabel*          m_time;
+        CUILabel*          m_desc;
     };
 
     TemporaryPtr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {

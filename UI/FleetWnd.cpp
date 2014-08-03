@@ -26,7 +26,6 @@
 #include <GG/Menu.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
-#include <GG/TextControl.h>
 #include <GG/Enum.h>
 
 #include <boost/cast.hpp>
@@ -995,9 +994,7 @@ void ShipDataPanel::Init() {
     if (ship)
         ship_name = ship->Name();
 
-    m_ship_name_text = new GG::TextControl(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(),
-                                            ship_name, ClientUI::GetFont(),
-                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_ship_name_text = new CUILabel(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(), ship_name, GG::FORMAT_LEFT);
     AttachChild(m_ship_name_text);
 
 
@@ -1006,9 +1003,7 @@ void ShipDataPanel::Init() {
         return;
 
     if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = new GG::TextControl(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(),
-                                                    design->Name(), ClientUI::GetFont(),
-                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_design_name_text = new CUILabel(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(), design->Name(), GG::FORMAT_RIGHT);
         AttachChild(m_design_name_text);
     }
 
@@ -1086,8 +1081,8 @@ private:
     boost::signals2::connection  m_fleet_connection;
 
     GG::Control*        m_fleet_icon;
-    GG::TextControl*    m_fleet_name_text;
-    GG::TextControl*    m_fleet_destination_text;
+    CUILabel*           m_fleet_name_text;
+    CUILabel*           m_fleet_destination_text;
     GG::Button*         m_aggression_toggle;
     GG::StaticGraphic*  m_gift_indicator;
     ScanlineControl*    m_scanline_control;
@@ -1113,11 +1108,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_selected(false)
 {
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_fleet_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                                   ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_fleet_destination_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
 
     if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
@@ -1196,11 +1189,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_selected(false)
 {
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_fleet_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                                   ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_fleet_destination_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
     m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
                                          GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);

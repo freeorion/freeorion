@@ -167,6 +167,12 @@ public:
         whatever space the newly rendered text occupies. */
     virtual void SetText(const std::string& str);
 
+    /** Returns the Font used by this TextControl to render its text. */
+    const boost::shared_ptr<Font>& GetFont() const;
+
+    /** Sets the Font used by this TextControl to render its text. */
+    void         SetFont(boost::shared_ptr<Font> font);
+
     virtual void SizeMove(const Pt& ul, const Pt& lr);
 
     /** Sets the text format; ensures that the flags are sane. */
@@ -233,9 +239,6 @@ protected:
     /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
     const std::vector<Font::LineData>& GetLineData() const;
-
-    /** Returns the Font used by this TextControl to render its text. */
-    const boost::shared_ptr<Font>& GetFont() const;
 
     /** Returns true iff this TextControl was constructed using the ctor
         without width and height parameters.  \see TextControl::SetText() */

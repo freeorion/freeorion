@@ -63,14 +63,12 @@ namespace {
             push_back(new ShipDataPanel(widths[0], h, m_ship->ID()));
 
             const std::string& fleet_name = fleet->Name();
-            push_back(new GG::TextControl(GG::X0, GG::Y0, widths[1], h, fleet_name,
-                                            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+            push_back(new CUILabel(GG::X0, GG::Y0, widths[1], h, fleet_name, GG::FORMAT_LEFT));
 
             std::string arrival_starlane = "Present";
             if (fleet->ArrivedThisTurn())
                 arrival_starlane = "From " + GetUniverseObject(fleet->ArrivalStarlane())->Name();
-            push_back(new GG::TextControl(GG::X0, GG::Y0, widths[2], h, arrival_starlane,
-                                            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+            push_back(new CUILabel(GG::X0, GG::Y0, widths[2], h, arrival_starlane, GG::FORMAT_LEFT));
 
             assert(widths[0] != ColWidth(0));
             assert(widths[1] != ColWidth(1));

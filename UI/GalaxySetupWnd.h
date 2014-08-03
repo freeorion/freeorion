@@ -9,7 +9,6 @@
 namespace GG {
     class RadioButtonGroup;
     class StaticGraphic;
-    class TextControl;
     class Texture;
 }
 class CUIButton;
@@ -65,26 +64,26 @@ private:
     void SeedChanged(const std::string& newseed);
     void ShapeChanged(GG::ListBox::iterator it);
 
-    GG::TextControl*    m_seed_label;
+    CUILabel*           m_seed_label;
     CUIEdit*            m_seed_edit;            //!< The seed used in the generation of the galaxy
     CUIButton*          m_random;               //!< Random seed button
-    GG::TextControl*    m_stars_label;
+    CUILabel*           m_stars_label;
     CUISpin<int>*       m_stars_spin;           //!< The number of stars to include in the galaxy
-    GG::TextControl*    m_galaxy_shapes_label;
+    CUILabel*           m_galaxy_shapes_label;
     CUIDropDownList*    m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
-    GG::TextControl*    m_galaxy_ages_label;
+    CUILabel*           m_galaxy_ages_label;
     CUIDropDownList*    m_galaxy_ages_list;     //!< The possible ages for the galaxy
-    GG::TextControl*    m_starlane_freq_label;
+    CUILabel*           m_starlane_freq_label;
     CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
-    GG::TextControl*    m_planet_density_label;
+    CUILabel*           m_planet_density_label;
     CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
-    GG::TextControl*    m_specials_freq_label;
+    CUILabel*           m_specials_freq_label;
     CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
-    GG::TextControl*    m_monster_freq_label;
+    CUILabel*           m_monster_freq_label;
     CUIDropDownList*    m_monster_freq_list;    //!< The frequency of monsters
-    GG::TextControl*    m_native_freq_label;
+    CUILabel*           m_native_freq_label;
     CUIDropDownList*    m_native_freq_list;     //!< The frequency of natives
-    GG::TextControl*    m_ai_aggression_label;
+    CUILabel*           m_ai_aggression_label;
     CUIDropDownList*    m_ai_aggression_list;   //!< The max aggression choices for AI opponents
     
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
@@ -127,15 +126,15 @@ private:
     bool m_ended_with_ok;    //!< indicates whether or not we ended the dialog with OK or not
 
     GalaxySetupPanel*       m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
-    GG::TextControl*        m_player_name_label;
+    CUILabel*               m_player_name_label;
     CUIEdit*                m_player_name_edit;
-    GG::TextControl*        m_empire_name_label;
+    CUILabel*               m_empire_name_label;
     CUIEdit*                m_empire_name_edit;
-    GG::TextControl*        m_empire_color_label;
+    CUILabel*               m_empire_color_label;
     EmpireColorSelector*    m_empire_color_selector;
     SpeciesSelector*        m_starting_secies_selector;
-    GG::TextControl*        m_starting_species_label;
-    GG::TextControl*        m_number_ais_label;
+    CUILabel*               m_starting_species_label;
+    CUILabel*               m_number_ais_label;
     CUISpin<int>*           m_number_ais_spin;
     GG::StaticGraphic*      m_preview_image;         //!< The galaxy shape preview image
     CUIButton*              m_ok;                    //!< OK button

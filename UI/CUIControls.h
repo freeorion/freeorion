@@ -26,6 +26,20 @@
 //! depend on graphics and design team specifications.  They extend
 //! GG controls.
 
+/** a FreeOrion Label control */
+class CUILabel : public GG::TextControl {
+public:
+    /** \name Structors */ //@{
+    CUILabel(GG::X x, GG::Y y, const std::string& str,
+             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
+
+    CUILabel(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
+    //@}
+};
+
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button {
 public:
@@ -340,7 +354,7 @@ private:
     std::vector<bool>   m_show_signs;
 
     GG::StaticGraphic*  m_icon;
-    GG::TextControl*    m_text;
+    CUILabel*           m_text;
 };
 
 class CUIToolBar : public GG::Control {
@@ -457,20 +471,20 @@ private:
 
     void Draw(GG::Clr clr, bool fill);
 
-    GG::TextControl* m_title;
-    GG::TextControl* m_total_points_label;
-    GG::TextControl* m_total_points;
-    GG::TextControl* m_total_points_P_label;
-    GG::TextControl* m_wasted_points_label;
-    GG::TextControl* m_wasted_points;
-    GG::TextControl* m_wasted_points_P_label;
-    GG::TextControl* m_projects_in_progress_label;
-    GG::TextControl* m_projects_in_progress;
-    GG::TextControl* m_points_to_underfunded_projects_label;
-    GG::TextControl* m_points_to_underfunded_projects;
-    GG::TextControl* m_points_to_underfunded_projects_P_label;
-    GG::TextControl* m_projects_in_queue_label;
-    GG::TextControl* m_projects_in_queue;
+    CUILabel* m_title;
+    CUILabel* m_total_points_label;
+    CUILabel* m_total_points;
+    CUILabel* m_total_points_P_label;
+    CUILabel* m_wasted_points_label;
+    CUILabel* m_wasted_points;
+    CUILabel* m_wasted_points_P_label;
+    CUILabel* m_projects_in_progress_label;
+    CUILabel* m_projects_in_progress;
+    CUILabel* m_points_to_underfunded_projects_label;
+    CUILabel* m_points_to_underfunded_projects;
+    CUILabel* m_points_to_underfunded_projects_P_label;
+    CUILabel* m_projects_in_queue_label;
+    CUILabel* m_projects_in_queue;
 
     std::pair<int, int> m_center_gap;
     float m_border_thickness;

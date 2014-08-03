@@ -505,7 +505,7 @@ private:
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     ShadowedTextControl*    m_planet_name;              ///< planet name
-    GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
+    CUILabel*               m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
     CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet
     CUIButton*              m_bombard_button;           ///< btn which can be pressed to bombard this planet
@@ -912,7 +912,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
-    m_env_size = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_env_size = new CUILabel(GG::X(MaxPlanetDiameter()), GG::Y0, "");
     AttachChild(m_env_size);
 
 

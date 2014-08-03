@@ -312,7 +312,7 @@ private:
 
 protected:
     GG::StaticGraphic*      m_graphic;
-    GG::TextControl*        m_name;
+    CUILabel*               m_name;
 };
 
 /** Display icon and number for various meter-related quantities associated
@@ -379,8 +379,8 @@ public:
 
 private:
     GG::StaticGraphic*  m_icon;
-    GG::TextControl*    m_title_text;
-    GG::TextControl*    m_main_text;
+    CUILabel*           m_title_text;
+    CUILabel*           m_main_text;
 };
 
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
@@ -391,8 +391,8 @@ public:
     virtual void Render();
 
 private:
-    GG::TextControl*    m_title_text;
-    GG::TextControl*    m_main_text;
+    CUILabel*           m_title_text;
+    CUILabel*           m_main_text;
     GG::Pt              m_offset;
 };
 
@@ -405,10 +405,10 @@ public:
     void            DoLayout();
 
 private:
-    GG::TextControl*    m_title_text;
-    GG::TextControl*    m_species_text;
+    CUILabel*           m_title_text;
+    CUILabel*           m_species_text;
     CUIListBox*         m_list;
-    GG::TextControl*    m_tags_text;
+    CUILabel*           m_tags_text;
     CUIListBox*         m_tags_list;
     GG::Pt              m_offset;
     GG::Y               m_row_height;
@@ -431,8 +431,8 @@ private:
     void            Initialize();
     virtual void    UpdateImpl(std::size_t mode, const GG::Wnd* target);
 
-    void            UpdateProduction(GG::Y& top);   // adds pairs of TextControl for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
-    void            UpdateAllocation(GG::Y& top);   // adds pairs of TextControl for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
+    void            UpdateProduction(GG::Y& top);   // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
+    void            UpdateAllocation(GG::Y& top);   // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
     void            UpdateImportExport(GG::Y& top); // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 
     ResourceType        m_resource_type;
@@ -442,13 +442,13 @@ private:
     double              m_production;               // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
     double              m_allocation;               // set by UpdateAllocation - used like m_production
 
-    GG::TextControl*    m_production_label;
-    GG::TextControl*    m_allocation_label;
-    GG::TextControl*    m_import_export_label;
+    CUILabel*           m_production_label;
+    CUILabel*           m_allocation_label;
+    CUILabel*           m_import_export_label;
 
-    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_production_labels_and_amounts;
-    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_allocation_labels_and_amounts;
-    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_import_export_labels_and_amounts;
+    std::vector<std::pair<CUILabel*, CUILabel*> > m_production_labels_and_amounts;
+    std::vector<std::pair<CUILabel*, CUILabel*> > m_allocation_labels_and_amounts;
+    std::vector<std::pair<CUILabel*, CUILabel*> > m_import_export_labels_and_amounts;
 
     GG::Y               row_height;
 
@@ -477,18 +477,18 @@ private:
     MeterType               m_secondary_meter_type;
     int                     m_object_id;
 
-    GG::TextControl*        m_summary_title;
+    CUILabel*               m_summary_title;
 
-    GG::TextControl*        m_current_label;
-    GG::TextControl*        m_current_value;
-    GG::TextControl*        m_next_turn_label;
-    GG::TextControl*        m_next_turn_value;
-    GG::TextControl*        m_change_label;
-    GG::TextControl*        m_change_value;
+    CUILabel*               m_current_label;
+    CUILabel*               m_current_value;
+    CUILabel*               m_next_turn_label;
+    CUILabel*               m_next_turn_value;
+    CUILabel*               m_change_label;
+    CUILabel*               m_change_value;
 
-    GG::TextControl*        m_meter_title;
+    CUILabel*               m_meter_title;
 
-    std::vector<std::pair<GG::TextControl*, GG::TextControl*> >
+    std::vector<std::pair<CUILabel*, CUILabel*> >
                             m_effect_labels_and_values;
 
     GG::Y                   m_row_height;

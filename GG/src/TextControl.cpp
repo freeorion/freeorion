@@ -166,6 +166,15 @@ void TextControl::SetText(const std::string& str)
     }
 }
 
+const boost::shared_ptr<Font>& TextControl::GetFont() const
+{ return m_font; }
+
+void TextControl::SetFont(boost::shared_ptr<Font> font)
+{
+    m_font = font;
+    SetText(m_text);
+}
+
 void TextControl::SizeMove(const Pt& ul, const Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -279,9 +288,6 @@ void TextControl::Erase(std::size_t line, CPSize pos, CPSize num/* = CP1*/)
 
 const std::vector<Font::LineData>& TextControl::GetLineData() const
 { return m_line_data; }
-
-const boost::shared_ptr<Font>& TextControl::GetFont() const
-{ return m_font; }
 
 bool TextControl::FitToText() const
 { return m_fit_to_text; }

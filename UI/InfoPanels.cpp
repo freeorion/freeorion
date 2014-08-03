@@ -234,9 +234,9 @@ namespace {
         MeterType               m_meter_type;
         int                     m_source_object_id;
 
-        GG::TextControl*        m_summary_title;
+        CUILabel*               m_summary_title;
 
-        std::vector<std::pair<GG::TextControl*, GG::TextControl*> >
+        std::vector<std::pair<CUILabel*, CUILabel*> >
                                 m_effect_labels_and_values;
 
         GG::Y                   m_row_height;
@@ -1956,7 +1956,8 @@ ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     if (const ShipDesign* design = GetShipDesign(m_design_id)) {
         m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::ShipDesignIcon(design_id), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new GG::TextControl(GG::X0, GG::Y0, design->Name(), ClientUI::GetFont(), GG::CLR_WHITE);
+        m_name = new CUILabel(GG::X0, GG::Y0, design->Name());
+        m_name->SetTextColor(GG::CLR_WHITE);
         AttachChild(m_name);
     }
 }
@@ -1989,16 +1990,13 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
     AttachChild(m_icon);
 
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
-    m_title_text = new GG::TextControl(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0, ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
-                                       font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_title_text = new CUILabel(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0, ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_title_text);
 
-    m_main_text = new GG::TextControl(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT, ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text,
-                                      font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    m_main_text = new CUILabel(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT, ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     AttachChild(m_main_text);
 
     m_main_text->SetMinSize(true);
@@ -2025,18 +2023,15 @@ void IconTextBrowseWnd::Render() {
 TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
 {
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
-                                       font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_title_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_title_text);
 
-    m_main_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text,
-                                      font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    m_main_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     AttachChild(m_main_text);
 
     m_main_text->SetMinSize(true);
@@ -2079,16 +2074,13 @@ public:
             AttachChild(m_icon);
         }
 
-        m_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(name),
-            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+        m_name = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(name), GG::FORMAT_RIGHT);
         AttachChild(m_name);
 
         int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
         num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
         num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
-        m_census_val = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
-                                               DoubleToString(census_val, num_digits, false),
-                                               ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+        m_census_val = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
         AttachChild(m_census_val);
 
         DoLayout();
@@ -2117,8 +2109,8 @@ private:
     }
 
     GG::StaticGraphic*  m_icon;
-    GG::TextControl*    m_name;
-    GG::TextControl*    m_census_val;
+    CUILabel*           m_name;
+    CUILabel*           m_census_val;
     bool                m_show_icon;
 };
 
@@ -2135,9 +2127,6 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_tags_text(0),
     m_tags_list(0)
     {
-    //const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(ClientUI::Pts()-1);
     const GG::Y ROW_HEIGHT(MeterIconSize().y);
     const GG::Y HALF_HEIGHT(GG::Y(int(ClientUI::Pts()/2)));
     
@@ -2147,15 +2136,12 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y,
-                                       BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, font_bold,
-                                       ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_title_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_title_text);
 
     top += ROW_HEIGHT;
-    m_species_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y,
-                                         BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT, UserString("CENSUS_SPECIES_HEADER"), font,
-                                       ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+    m_species_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT, UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
     AttachChild(m_species_text);
 
     top += ROW_HEIGHT+HALF_HEIGHT;
@@ -2190,9 +2176,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top - 2* ROW_HEIGHT - HALF_HEIGHT));
 
     GG::Y top2 = top;
-    m_tags_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y,
-                                      BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT, UserString("CENSUS_TAG_HEADER"), font,
-                                      ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+    m_tags_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT, UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
     AttachChild(m_tags_text);
     
     top2 += ROW_HEIGHT + HALF_HEIGHT;
@@ -2295,33 +2279,28 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
     row_height = GG::Y(ClientUI::Pts() * 3/2);
     const GG::X TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
 
-    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-
     GG::Y top = GG::Y0;
 
 
     production_label_top = top;
-    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD,
-                                             row_height, "", font_bold, ClientUI::TextColor(),
-                                             GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_production_label = new CUILabel(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_production_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_production_label);
     top += row_height;
     UpdateProduction(top);
 
 
     allocation_label_top = top;
-    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD,
-                                             row_height, "", font_bold, ClientUI::TextColor(),
-                                             GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_allocation_label = new CUILabel(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_allocation_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_allocation_label);
     top += row_height;
     UpdateAllocation(top);
 
 
     import_export_label_top = top;
-    m_import_export_label = new GG::TextControl(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD,
-                                                row_height, "", font_bold, ClientUI::TextColor(),
-                                                GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_import_export_label = new CUILabel(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_import_export_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_import_export_label);
     top += row_height;
     UpdateImportExport(top);
@@ -2331,7 +2310,7 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
-    // adds pairs of TextControl for ResourceCenter name and production of resource starting at vertical position \a top
+    // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top
     // and updates \a top to the vertical position after the last entry
     for (unsigned int i = 0; i < m_production_labels_and_amounts.size(); ++i) {
         DeleteChild(m_production_labels_and_amounts[i].first);
@@ -2346,8 +2325,6 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     m_production = 0.0;
 
-
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
     // add label-value pair for each resource-producing object in system to indicate amount of resource produced
     std::vector<TemporaryPtr<const UniverseObject> > objects =
@@ -2372,18 +2349,14 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         std::string amount_text = DoubleToString(production, 3, false);
 
 
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
-                                                     name, font, ClientUI::TextColor(),
-                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, name, GG::FORMAT_RIGHT);
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                     amount_text, font, ClientUI::TextColor(),
-                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+        m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
         top += row_height;
     }
@@ -2391,17 +2364,13 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     if (m_production_labels_and_amounts.empty()) {
         // add "blank" line to indicate no production
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
-                                                     UserString("NOT_APPLICABLE"), font, ClientUI::TextColor(),
-                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, UserString("NOT_APPLICABLE"));
         AttachChild(label);
 
-        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                     "", font, ClientUI::TextColor(),
-                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, "");
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+        m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
         top += row_height;
     }
@@ -2428,7 +2397,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
-    // adds pairs of TextControl for allocation of resources in system, starting at vertical position \a top and
+    // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and
     // updates \a top to be the vertical position after the last entry
     for (unsigned int i = 0; i < m_allocation_labels_and_amounts.size(); ++i) {
         DeleteChild(m_allocation_labels_and_amounts[i].first);
@@ -2440,8 +2409,6 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
-
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
     m_allocation = 0.0;
 
@@ -2479,18 +2446,14 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         std::string amount_text = DoubleToString(allocation, 3, false);
 
 
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
-                                                     name, font, ClientUI::TextColor(),
-                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, name, GG::FORMAT_RIGHT);
         AttachChild(label);
 
 
-        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                     amount_text, font, ClientUI::TextColor(),
-                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
         top += row_height;
     }
@@ -2498,17 +2461,13 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
     if (m_allocation_labels_and_amounts.empty()) {
         // add "blank" line to indicate no allocation
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
-                                                     UserString("NOT_APPLICABLE"), font, ClientUI::TextColor(),
-                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
         AttachChild(label);
 
-        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                     "", font, ClientUI::TextColor(),
-                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, "");
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
         top += row_height;
     }
@@ -2597,20 +2556,14 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     }
 
 
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-
     // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
-    GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
-                                                 label_text, font, ClientUI::TextColor(),
-                                                 GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, label_text, GG::FORMAT_RIGHT);
     AttachChild(label);
 
-    GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                 amount_text, font, ClientUI::TextColor(),
-                                                 GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
     AttachChild(value);
 
-    m_import_export_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+    m_import_export_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
     top += row_height;
 }
@@ -2620,19 +2573,19 @@ void SystemResourceSummaryBrowseWnd::Clear() {
     DeleteChild(m_allocation_label);
     DeleteChild(m_import_export_label);
 
-    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }
     m_production_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }
     m_allocation_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }
@@ -2687,9 +2640,6 @@ void MeterBrowseWnd::Initialize() {
     m_row_height = GG::Y(ClientUI::Pts()*3/2);
     const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
 
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
@@ -2720,32 +2670,26 @@ void MeterBrowseWnd::Initialize() {
             summary_title_text = MeterToUserString(m_primary_meter_type);
         }
 
-        m_summary_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height,
-                                              summary_title_text, font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_summary_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, summary_title_text, GG::FORMAT_RIGHT);
+        m_summary_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_summary_title);
         top += m_row_height;
 
-        m_current_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
-                                              UserString("TT_THIS_TURN"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_current_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_THIS_TURN"), GG::FORMAT_RIGHT);
         AttachChild(m_current_label);
-        m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
-                                              "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        m_current_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
         AttachChild(m_current_value);
         top += m_row_height;
 
-        m_next_turn_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
-                                                UserString("TT_NEXT_TURN"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_next_turn_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_NEXT_TURN"), GG::FORMAT_RIGHT);
         AttachChild(m_next_turn_label);
-        m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
-                                                font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        m_next_turn_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
         AttachChild(m_next_turn_value);
         top += m_row_height;
 
-        m_change_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"),
-                                             font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_change_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"), GG::FORMAT_RIGHT);
         AttachChild(m_change_label);
-        m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
-                                             font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        m_change_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
         AttachChild(m_change_value);
         top += m_row_height;
     }
@@ -2754,8 +2698,8 @@ void MeterBrowseWnd::Initialize() {
         // effect accounting meter breakdown total / summary.  Shows "Meter Name: Value"
         // above a list of effects.  Actual text is set in UpdateSummary() but
         // the control is created here.
-        m_meter_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
-                                            font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_meter_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", GG::FORMAT_RIGHT);
+        m_meter_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_meter_title);
         top += m_row_height;
     }
@@ -2873,9 +2817,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
 
 
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-
-
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
         TemporaryPtr<const UniverseObject> source = GetUniverseObject(info_it->source_id);
@@ -2974,14 +2915,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         }
         }
 
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        CUILabel* label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, GG::FORMAT_RIGHT);
         AttachChild(label);
 
-        GG::TextControl* value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
-                                                     ColouredNumber(info_it->meter_change),
-                                                     font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        CUILabel* value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, ColouredNumber(info_it->meter_change));
         AttachChild(value);
-        m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+        m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
         top += m_row_height;
     }
@@ -3022,11 +2961,8 @@ namespace {
 
         const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
 
-        const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-        const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-
-        m_summary_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
-                                                font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        m_summary_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", GG::FORMAT_RIGHT);
+        m_summary_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_summary_title);
         top += m_row_height;
 
@@ -3087,14 +3023,11 @@ namespace {
                 modifications_sum += account_it->meter_change;
 
                 const std::string& text = target_obj->Name();
-                GG::TextControl* label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
-                                                                text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                CUILabel* label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, GG::FORMAT_RIGHT);
                 AttachChild(label);
-                GG::TextControl* value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
-                                                                ColouredNumber(account_it->meter_change),
-                                                                font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+                CUILabel* value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, ColouredNumber(account_it->meter_change));
                 AttachChild(value);
-                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+                m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
                 top += m_row_height;
             }

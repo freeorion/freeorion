@@ -958,8 +958,8 @@ public:
             virtual void                    Render() {}
         private:
             GG::StaticGraphic*              m_graphic;
-            GG::TextControl*                m_name;
-            GG::TextControl*                m_cost_and_build_time;
+            CUILabel*                       m_name;
+            CUILabel*                       m_cost_and_build_time;
         };
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts);
         const std::string&              Hull() const    { return m_hull; }
@@ -1023,7 +1023,7 @@ BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, con
 {
     m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_graphic);
-    m_name = new GG::TextControl(GG::X0, GG::Y0, UserString(hull), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE);
+    m_name = new CUILabel(GG::X0, GG::Y0, UserString(hull), GG::FORMAT_NONE);
     AttachChild(m_name);
 }
 
@@ -1510,17 +1510,11 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
 
     //m_saved_designs_list = new CUIListBox();
     //m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
-    //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
-    //                                   ClientUI::GetFont(),
-    //                                   ClientUI::TextColor()),
-    //               UserString("DESIGN_WND_SAVED_DESIGNS"));
+    //m_tabs->AddWnd(new CUILabel(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART")), UserString("DESIGN_WND_SAVED_DESIGNS"));
 
     //m_templates_list = new CUIListBox();
     //m_templates_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
-    //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
-    //                                   ClientUI::GetFont(),
-    //                                   ClientUI::TextColor()),
-    //               UserString("DESIGN_WND_TEMPLATES"));
+    //m_tabs->AddWnd(new CUILabel(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART")), UserString("DESIGN_WND_TEMPLATES"));
 
     DoLayout();
     ShowAvailability(true, false);   // default to showing available unavailable bases.
@@ -1980,9 +1974,9 @@ private:
     std::set<std::string>                   m_completed_design_dump_strings;
 
     GG::StaticGraphic*  m_background_image;
-    GG::TextControl*    m_design_name_label;
+    CUILabel*           m_design_name_label;
     GG::Edit*           m_design_name;
-    GG::TextControl*    m_design_description_label;
+    CUILabel*           m_design_description_label;
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
@@ -2011,18 +2005,14 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 {
     SetChildClippingMode(ClipToClient);
 
-    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), ClientUI::GetFont(),
-                                              ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
-                                              GG::INTERACTIVE);
+    m_design_name_label = new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     AttachChild(m_design_name_label);
 
     m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
     AttachChild(m_design_name);
     GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
 
-    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), ClientUI::GetFont(),
-                                                     ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
-                                                     GG::INTERACTIVE);
+    m_design_description_label = new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     AttachChild(m_design_description_label);
 
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));

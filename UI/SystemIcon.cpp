@@ -19,7 +19,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
-#include <GG/TextControl.h>
 #include <GG/utf8/core.h>
 #include <GG/utf8/checked.h>
 

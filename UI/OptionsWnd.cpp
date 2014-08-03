@@ -593,7 +593,8 @@ CUIListBox* OptionsWnd::CreatePage(const std::string& name) {
 void OptionsWnd::CreateSectionHeader(CUIListBox* page, int indentation_level, const std::string& name) {
     assert(0 <= indentation_level);
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* heading_text = new GG::TextControl(GG::X0, GG::Y0, name, ClientUI::GetFont(ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    CUILabel* heading_text = new CUILabel(GG::X0, GG::Y0, name, GG::FORMAT_LEFT);
+    heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
     row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, indentation_level));
     page->Insert(row);
@@ -657,7 +658,7 @@ void OptionsWnd::HotkeyOption(CUIListBox* page, int indentation_level, const std
     const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
     std::string text = UserString(Hotkey::UserStringForHotkey(hotkey_name));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* text_control = new CUILabel(GG::X0, GG::Y0, text, GG::FORMAT_LEFT, GG::INTERACTIVE);
     CUIButton* button = new CUIButton(hk.PrettyPrint());
 
     layout->Add(text_control, 0, 0);
@@ -674,7 +675,7 @@ void OptionsWnd::HotkeyOption(CUIListBox* page, int indentation_level, const std
 
 CUISpin<int>* OptionsWnd::IntOption(CUIListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* text_control = new CUILabel(GG::X0, GG::Y0, text, GG::FORMAT_LEFT, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<int>* spin = 0;
     int value = GetOptionsDB().Get<int>(option_name);
@@ -706,7 +707,7 @@ CUISpin<int>* OptionsWnd::IntOption(CUIListBox* page, int indentation_level, con
 
 CUISpin<double>* OptionsWnd::DoubleOption(CUIListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* text_control = new CUILabel(GG::X0, GG::Y0, text, GG::FORMAT_LEFT, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<double>* spin = 0;
     double value = GetOptionsDB().Get<double>(option_name);
@@ -789,7 +790,7 @@ void OptionsWnd::FileOptionImpl(CUIListBox* page, int indentation_level, const s
                                 StringValidator string_validator, bool directory, bool relative_path)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* text_control = new CUILabel(GG::X0, GG::Y0, text, GG::FORMAT_LEFT, GG::INTERACTIVE);
     CUIEdit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
     CUIButton* button = new CUIButton("...");
@@ -842,7 +843,7 @@ void OptionsWnd::DirectoryOption(CUIListBox* page, int indentation_level, const 
 
 void OptionsWnd::ColorOption(CUIListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* text_control = new CUILabel(GG::X0, GG::Y0, text, GG::FORMAT_LEFT, GG::INTERACTIVE);
     ColorSelector* color_selector = new ColorSelector(GetOptionsDB().Get<StreamableColor>(option_name).ToClr(),
                                                       GetOptionsDB().GetDefault<StreamableColor>(option_name).ToClr());
     color_selector->Resize(GG::Pt(color_selector->Width(), GG::Y(ClientUI::Pts() + 4)));
@@ -932,9 +933,7 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
 
 
     // drop list and label
-    GG::TextControl* drop_list_label =
-        new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(),
-                            ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* drop_list_label = new CUILabel(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), GG::FORMAT_LEFT, GG::INTERACTIVE);
     drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
@@ -972,9 +971,7 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
 
 
     // customizable windowed width and height
-    GG::TextControl* windowed_spinner_label =
-        new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE_WINDOWED"), ClientUI::GetFont(),
-                            ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    CUILabel* windowed_spinner_label = new CUILabel(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE_WINDOWED"), GG::FORMAT_LEFT, GG::INTERACTIVE);
     windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     windowed_spinner_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION"));
 

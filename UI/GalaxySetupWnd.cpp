@@ -86,7 +86,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     const int TOTAL_LISTBOX_MARGIN = 4;
 
     // seed
-    m_seed_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SEED"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_seed_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
     m_seed_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.seed"));
@@ -101,13 +101,13 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     // number of stars
-    m_stars_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_STARS"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_stars_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
     m_stars_spin = new CUISpin<int>(100, 1, 10, 5000, true);
 
     // galaxy shape
-    m_galaxy_shapes_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SHAPE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_shapes_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
     GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -115,7 +115,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
-    m_galaxy_ages_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_AGE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_ages_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -123,7 +123,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
-    m_starlane_freq_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_STARLANE_FREQ"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starlane_freq_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -131,7 +131,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
-    m_planet_density_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_PLANET_DENSITY"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_planet_density_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -139,7 +139,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
-    m_specials_freq_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SPECIALS_FREQ"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_specials_freq_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -147,7 +147,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
-    m_monster_freq_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_MONSTER_FREQ"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_monster_freq_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -155,7 +155,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
-    m_native_freq_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_NATIVE_FREQ"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_native_freq_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -163,7 +163,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
-    m_ai_aggression_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_AI_AGGR"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_ai_aggression_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_AI_AGGRESSION_LEVELS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
@@ -504,29 +504,27 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
 
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-
     // player name
-    m_player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_PLAYER_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_player_name_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
     m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
     // empire name
-    m_empire_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_empire_name_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
     m_empire_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
 
     // empire color
-    m_empire_color_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_empire_color_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
     m_empire_color_selector = new EmpireColorSelector(CONTROL_HEIGHT - CONTROL_VMARGIN);
     m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
 
     // starting species
-    m_starting_species_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SPECIES"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starting_species_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
     // Subtract the drop down entry padding for the inner element height.
@@ -558,7 +556,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_starting_secies_selector->SelectSpecies(default_starting_species);
 
     // number of AIs
-    m_number_ais_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_number_ais_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
     m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);

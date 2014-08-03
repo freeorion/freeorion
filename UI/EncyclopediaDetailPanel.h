@@ -15,11 +15,11 @@ class FieldType;
 class UniverseObject;
 class Empire;
 class ShipDesign;
+class CUILabel;
 class CUIMultiEdit;
 class GraphControl;
 template <class T> class TemporaryPtr;
 namespace GG {
-    class TextControl;
     class StaticGraphic;
     class MultiEdit;
 }
@@ -97,9 +97,9 @@ private:
     static std::list<std::pair <std::string, std::string> >::iterator   m_items_it; // stores actual position within m_items
     boost::weak_ptr<const ShipDesign>                                   m_incomplete_design;
 
-    GG::TextControl*    m_name_text;        // name
-    GG::TextControl*    m_cost_text;        // cost and time to build or research
-    GG::TextControl*    m_summary_text;     // general purpose item
+    CUILabel*           m_name_text;        // name
+    CUILabel*           m_cost_text;        // cost and time to build or research
+    CUILabel*           m_summary_text;     // general purpose item
     GG::MultiEdit*      m_description_box;  // detailed and lengthy description
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_other_icon;

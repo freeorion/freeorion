@@ -211,7 +211,7 @@ IntroScreen::IntroScreen() :
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
-    m_version = new GG::TextControl(GG::X0, GG::Y0, FreeOrionVersionString(), ClientUI::GetFont(), ClientUI::TextColor());
+    m_version = new CUILabel(GG::X0, GG::Y0, FreeOrionVersionString());
     m_version->MoveTo(GG::Pt(Width() - m_version->Width(), Height() - m_version->Height()));
 
     AttachChild(m_splash);

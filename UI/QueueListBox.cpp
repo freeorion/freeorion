@@ -14,9 +14,8 @@ struct PromptRow : GG::ListBox::Row {
     PromptRow(GG::X w, std::string prompt_str) {
         Resize(GG::Pt(w, GG::Y(3*ClientUI::Pts() + 15)));
 
-        GG::TextControl* prompt = new GG::TextControl(GG::X(2), GG::Y(2), Width() - 10, Height(), prompt_str,
-                                                      ClientUI::GetFont(), GG::LightColor(ClientUI::TextColor()),
-                                                      GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        CUILabel* prompt = new CUILabel(GG::X(2), GG::Y(2), Width() - 10, Height(), prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
         prompt->ClipText(true);
         Resize(prompt->Size());
         push_back(prompt);

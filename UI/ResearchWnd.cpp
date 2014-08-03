@@ -41,9 +41,9 @@ namespace {
         void Draw(GG::Clr clr, bool fill);
 
         const std::string&      m_tech_name;
-        GG::TextControl*        m_name_text;
-        GG::TextControl*        m_RPs_and_turns_text;
-        GG::TextControl*        m_turns_remaining_text;
+        CUILabel*               m_name_text;
+        CUILabel*               m_RPs_and_turns_text;
+        CUILabel*               m_turns_remaining_text;
         GG::StaticGraphic*      m_icon;
         MultiTurnProgressBar*   m_progress_bar;
         bool                    m_in_progress;
@@ -117,7 +117,6 @@ namespace {
         GG::Clr clr = m_in_progress
                         ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
                         : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
@@ -129,9 +128,8 @@ namespace {
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
-                                          UserString(m_tech_name),
-                                          font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
         top += m_name_text->Height();
 
@@ -147,15 +145,15 @@ namespace {
         using boost::io::str;
 
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
-        m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
-                                                   turns_cost_text, font, clr, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_cost_text, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text->SetTextColor(clr);
 
         left += TURNS_AND_COST_WIDTH;
 
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
                                                      : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
-                                                     turns_left_text, font, clr, GG::FORMAT_RIGHT);
+        m_turns_remaining_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
 
         AttachChild(m_name_text);

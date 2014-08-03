@@ -1,6 +1,7 @@
 #include "FieldIcon.h"
 
 #include "ClientUI.h"
+#include "CUIControls.h"
 #include "../universe/Field.h"
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"
@@ -8,7 +9,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/DynamicGraphic.h>
-#include <GG/TextControl.h>
 #include <GG/WndEvent.h>
 #include <GG/Menu.h>
 

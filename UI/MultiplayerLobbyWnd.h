@@ -11,12 +11,12 @@
 class CUIButton;
 class CUIDropDownList;
 class CUIEdit;
+class CUILabel;
 class CUIListBox;
 class CUIMultiEdit;
 class Message;
 namespace GG {
     class StaticGraphic;
-    class TextControl;
 }
 
 /** multiplayer lobby window */
@@ -63,18 +63,18 @@ private:
     CUIEdit*                m_chat_input_edit;
     GG::RadioButtonGroup*   m_new_load_game_buttons;
     GalaxySetupPanel*       m_galaxy_setup_panel;
-    GG::TextControl*        m_save_file_text;
+    CUILabel*               m_save_file_text;
     CUIButton*              m_browse_saves_btn;
     GG::StaticGraphic*      m_preview_image;
-    GG::TextControl*        m_players_lb_player_type_label;
-    GG::TextControl*        m_players_lb_player_name_column_label;
-    GG::TextControl*        m_players_lb_empire_name_column_label;
-    GG::TextControl*        m_players_lb_empire_colour_column_label;
-    GG::TextControl*        m_players_lb_species_or_original_player_label;
+    CUILabel*               m_players_lb_player_type_label;
+    CUILabel*               m_players_lb_player_name_column_label;
+    CUILabel*               m_players_lb_empire_name_column_label;
+    CUILabel*               m_players_lb_empire_colour_column_label;
+    CUILabel*               m_players_lb_species_or_original_player_label;
     CUIListBox*             m_players_lb;
     CUIButton*              m_start_game_bn;
     CUIButton*              m_cancel_bn;
-    GG::TextControl*        m_start_conditions_text;
+    CUILabel*               m_start_conditions_text;
 };
 
 #endif // _MultiPlayerLobbyWnd_h_

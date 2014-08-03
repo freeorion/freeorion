@@ -396,8 +396,7 @@ private:
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
-            push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(m_condition_key), ClientUI::GetFont(),
-                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+            push_back(new CUILabel(GG::X0, GG::Y0, UserString(m_condition_key), GG::FORMAT_LEFT));
         }
         const std::string&  GetKey() const { return m_condition_key; }
     private:
@@ -413,8 +412,7 @@ private:
             SetChildClippingMode(ClipToClient);
             const std::string& label = (text.empty() ? EMPTY_STRING :
                 (stringtable_lookup ? UserString(text) : text));
-            push_back(new GG::TextControl(GG::X0, GG::Y0, label, ClientUI::GetFont(),
-                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+            push_back(new CUILabel(GG::X0, GG::Y0, label, GG::FORMAT_LEFT));
         }
         const std::string&  Text() const { return m_string; }
     private:
@@ -1310,16 +1308,11 @@ private:
     std::vector<GG::Control*>   GetControls() {
         std::vector<GG::Control*> retval;
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr clr = ClientUI::TextColor();
-
         RefreshCache();
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string col_val = m_column_val_cache[i];
-            GG::Control* control = new GG::TextControl(GG::X0, GG::Y0, GG::X(GetColumnWidth(i)),
-                                                       ClientHeight(), col_val, font,
-                                                       clr, GG::FORMAT_LEFT);
+            CUILabel* control = new CUILabel(GG::X0, GG::Y0, GG::X(GetColumnWidth(i)), ClientHeight(), col_val, GG::FORMAT_LEFT);
             retval.push_back(control);
         }
 
@@ -1335,7 +1328,7 @@ private:
     GG::Button*                     m_expand_button;
     GG::StaticGraphic*              m_dot;
     MultiTextureStaticGraphic*      m_icon;
-    GG::TextControl*                m_name_label;
+    CUILabel*                       m_name_label;
     std::vector<GG::Control*>       m_controls;
 
     mutable std::vector<std::string>m_column_val_cache;

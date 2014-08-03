@@ -359,14 +359,16 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
 {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
     const int ICON_WIDTH(32);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
-    m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
-    m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
+    m_name_text =       new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
+    m_cost_text =       new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
+    m_summary_text =    new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
+
+    m_name_text->SetFont(ClientUI::GetBoldFont(NAME_PTS));
+    m_summary_text->SetFont(ClientUI::GetFont(SUMMARY_PTS));
 
     m_index_button =    new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_back_button =     new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);

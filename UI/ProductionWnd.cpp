@@ -39,7 +39,7 @@ namespace {
     ////////////////
     class QuantLabel : public GG::Control {
     public:
-        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth,
+        QuantLabel(int quantity, int designID, GG::X nwidth,
                    GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::NO_WND_FLAGS)
         {
@@ -50,7 +50,8 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, nameText, font, txtClr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+            CUILabel* text = new CUILabel(GG::X0, GG::Y0, nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+            text->SetTextColor(txtClr);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
             AttachChild(text);
             Resize(GG::Pt(nwidth, text->Height()));
@@ -64,13 +65,13 @@ namespace {
     //////////////
     class QuantRow : public GG::ListBox::Row {
     public:
-        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h,
+        QuantRow(int quantity, int designID, GG::X nwidth, GG::Y h,
                  bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
             width(0),
             m_quant(quantity)
         {
-            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress, amBlockType);
+            QuantLabel* newLabel = new QuantLabel(m_quant, designID, nwidth, h, inProgress, amBlockType);
             width = newLabel->Width();
             height = newLabel->Height();
             push_back(newLabel);
@@ -96,8 +97,7 @@ namespace {
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
-                         GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress,
-                         GG::X nwidth, bool amBlockType) :
+                         GG::Y h, bool inProgress, GG::X nwidth, bool amBlockType) :
             CUIDropDownList(h),
             quantity(build.remaining),
             prevQuant(build.remaining),
@@ -134,7 +134,7 @@ namespace {
                 myQuantSet.insert(quantity);
             GG::Y height;
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, nwidth, h, inProgress, amBlockType);
+                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 if (newRow->width)
                     width = newRow->width;
                 GG::DropDownList::iterator latest_it = Insert(newRow);
@@ -223,10 +223,10 @@ namespace {
         void Draw(GG::Clr clr, bool fill);
 
         const ProductionQueue::Element  m_build;
-        GG::TextControl*                m_name_text;
+        CUILabel*                       m_name_text;
         GG::Control*                    m_location_text;
-        GG::TextControl*                m_PPs_and_turns_text;
-        GG::TextControl*                m_turns_remaining_until_next_complete_text;
+        CUILabel*                       m_PPs_and_turns_text;
+        CUILabel*                       m_turns_remaining_until_next_complete_text;
         GG::StaticGraphic*              m_icon;
         MultiTurnProgressBar*           m_progress_bar;
         QuantitySelector*               m_quantity_selector;
@@ -415,7 +415,6 @@ namespace {
         GG::Clr clr = m_in_progress
             ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         // get graphic and player-visible name text for item
         boost::shared_ptr<GG::Texture> graphic;
@@ -452,31 +451,28 @@ namespace {
         left += GRAPHIC_SIZE + MARGIN;
 
         if (m_build.item.build_type == BT_SHIP) {
-            m_quantity_selector = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*2.5), false);
+            m_quantity_selector = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), false);
             GG::Connect(m_quantity_selector->SelChangedSignal,        &QuantitySelector::SelectionChanged, m_quantity_selector);
             left += m_quantity_selector->Width();
-            m_block_size_selector = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*2.5), true);
+            m_block_size_selector = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), true);
             GG::Connect(m_block_size_selector->SelChangedSignal,           &QuantitySelector::SelectionChanged, m_block_size_selector);
             left += m_block_size_selector->Width();
         }
 
         const GG::X NAME_WIDTH = w - left - MARGIN;
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
 
         GG::Clr location_clr = clr;
-        boost::shared_ptr<GG::Font> location_font = font;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* this_client_empire = Empires().Lookup(client_empire_id);
         if (this_client_empire && system_selected) {
-            location_font = ClientUI::GetBoldFont();
-            location_clr = this_client_empire->Color();
-            m_location_text = new ShadowedTextControl(location_text, location_font, location_clr,
-                                                      GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text = new ShadowedTextControl(location_text, ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            m_location_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
-                                                  location_text, location_font, location_clr,
-                                                  GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            CUILabel* l_location_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            l_location_text->SetTextColor(location_clr);
+            m_location_text = l_location_text;
         }
         m_location_text->MoveTo(GG::Pt(left, top));
         m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
@@ -496,8 +492,8 @@ namespace {
 
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
         GG::X TURNS_AND_COST_WIDTH = METER_WIDTH / 2;
-        m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
-                                                   turn_spending_text, font, clr, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turn_spending_text, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text->SetTextColor(clr);
 
         left += TURNS_AND_COST_WIDTH;
 
@@ -505,9 +501,8 @@ namespace {
         std::string turns_left_text = turns_left < 0
             ? UserString("PRODUCTION_TURNS_LEFT_NEVER")
             : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH,
-                                                                         GG::Y(FONT_PTS + MARGIN), turns_left_text,
-                                                                         font, clr, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text->SetTextColor(clr);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
         if (m_icon)

@@ -59,34 +59,22 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
 
-            //m_player_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-            //                                         ClientUI::GetFont(), ClientUI::TextColor(),
-            //                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            //m_player_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             //AttachChild(m_player_name_text);
 
-            m_empire_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_empire_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_name_text);
 
-            m_empire_ship_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_empire_ship_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_ship_text);
 
-            m_empire_planet_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_empire_planet_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_planet_text);
 
-            m_empire_production_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_empire_production_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_production_text);
 
-            m_empire_research_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            m_empire_research_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_research_text);
 
             DoLayout();
@@ -340,12 +328,12 @@ namespace {
         }
 
         int                     m_player_id;
-        //GG::TextControl*        m_player_name_text;
-        GG::TextControl*        m_empire_name_text;
-        GG::TextControl*        m_empire_ship_text;
-        GG::TextControl*        m_empire_planet_text;
-        GG::TextControl*        m_empire_production_text;
-        GG::TextControl*        m_empire_research_text;
+        //CUILabel*             m_player_name_text;
+        CUILabel*               m_empire_name_text;
+        CUILabel*               m_empire_ship_text;
+        CUILabel*               m_empire_planet_text;
+        CUILabel*               m_empire_production_text;
+        CUILabel*               m_empire_research_text;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_ship_icon_ul;

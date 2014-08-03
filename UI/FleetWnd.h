@@ -231,8 +231,8 @@ private:
     GG::StaticGraphic*          m_invade_indicator;
     GG::StaticGraphic*          m_bombard_indicator;
     ScanlineControl*            m_scanline_control;
-    GG::TextControl*            m_ship_name_text;
-    GG::TextControl*            m_design_name_text;
+    CUILabel*                   m_ship_name_text;
+    CUILabel*                   m_design_name_text;
 
     std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 

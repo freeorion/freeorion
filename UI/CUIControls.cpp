@@ -56,6 +56,22 @@ namespace {
 ///////////////////////////////////////
 // class CUIButton
 ///////////////////////////////////////
+CUILabel::CUILabel(GG::X x, GG::Y y, const std::string& str,
+             GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
+             GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
+    TextControl(x, y, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+{}
+
+CUILabel::CUILabel(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+             GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
+             GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
+    TextControl(x, y, w, h, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+{}
+
+
+///////////////////////////////////////
+// class CUIButton
+///////////////////////////////////////
 namespace {
     const int CUIBUTTON_ANGLE_OFFSET = 5;
 }
@@ -822,8 +838,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
 {
-    push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(),
-                                ClientUI::TextColor(), GG::FORMAT_LEFT));
+    push_back(new CUILabel(GG::X0, GG::Y0, row_text, GG::FORMAT_LEFT));
 }
 
 
@@ -843,7 +858,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_icon(0), m_text(0)
 {
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_text = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -864,7 +879,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 {
     SetName("StatisticIcon");
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
+    m_text = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "");
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -1013,10 +1028,7 @@ namespace {
             GG::Wnd::SetName(species->Name());
             push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6,
                                             ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
-            push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h,
-                                          UserString(species->Name()),
-                                          ClientUI::GetFont(), ClientUI::TextColor(),
-                                          GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+            push_back(new CUILabel(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()), GG::FORMAT_LEFT));
             GG::X first_col_width(Value(h) - 10);
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
@@ -1269,23 +1281,37 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_color(color),
     m_text_and_border_color(text_and_border_color)
 {
-    const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
     const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
 
-    m_title = new GG::TextControl(GG::X0, GG::Y0, GG::X0, GG::Y0, title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_total_points = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_total_points_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_wasted_points = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_progress = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_queue = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_title = new CUILabel(GG::X0, GG::Y0, GG::X0, GG::Y0, title);
+    m_title->SetFont(ClientUI::GetFont(ClientUI::Pts() + 10));
+    m_title->SetTextColor(TEXT_COLOR);
+    m_total_points_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
+    m_title->SetTextColor(TEXT_COLOR);
+    m_total_points = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::FORMAT_LEFT);
+    m_total_points->SetTextColor(TEXT_COLOR);
+    m_total_points_P_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, GG::FORMAT_LEFT);
+    m_total_points_P_label->SetTextColor(TEXT_COLOR);
+    m_wasted_points_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+    m_wasted_points_label->SetTextColor(TEXT_COLOR);
+    m_wasted_points = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::FORMAT_LEFT);
+    m_wasted_points->SetTextColor(TEXT_COLOR);
+    m_wasted_points_P_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, GG::FORMAT_LEFT);
+    m_wasted_points_P_label->SetTextColor(TEXT_COLOR);
+    m_projects_in_progress_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::FORMAT_RIGHT);
+    m_projects_in_progress_label->SetTextColor(TEXT_COLOR);
+    m_projects_in_progress = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::FORMAT_LEFT);
+    m_projects_in_progress->SetTextColor(TEXT_COLOR);
+    m_points_to_underfunded_projects_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::FORMAT_RIGHT);
+    m_points_to_underfunded_projects_label->SetTextColor(TEXT_COLOR);
+    m_points_to_underfunded_projects = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects->SetTextColor(TEXT_COLOR);
+    m_points_to_underfunded_projects_P_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, points_str, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_P_label->SetTextColor(TEXT_COLOR);
+    m_projects_in_queue_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::FORMAT_RIGHT);
+    m_projects_in_queue_label->SetTextColor(TEXT_COLOR);
+    m_projects_in_queue = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, "", GG::FORMAT_LEFT);
+    m_projects_in_queue->SetTextColor(TEXT_COLOR);
 
     AttachChild(m_title);
     AttachChild(m_total_points_label);

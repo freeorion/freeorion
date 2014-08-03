@@ -90,16 +90,12 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    GG::TextControl* CreateResizingText(const std::string& string,
-                                        const boost::shared_ptr<GG::Font>& font,
-                                        const GG::Clr& color)
+    CUILabel* CreateResizingText(const std::string& string)
     {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
-        GG::Pt extent = font->TextExtent(string);
-        GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, extent.x, extent.y,
-                                                    string, font, color,
-                                                    GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
+        GG::Pt extent = ClientUI::GetFont()->TextExtent(string);
+        CUILabel* text = new CUILabel(GG::X0, GG::Y0, extent.x, extent.y, string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
@@ -134,7 +130,7 @@ namespace {
             const GG::DropDownList::Row& row = list->GetRow(i);
             for (unsigned j = 0; j < row.size(); ++j) {
                 const GG::Control* control = row.at(j);
-                const GG::TextControl* text = dynamic_cast<const GG::TextControl*>(control);
+                const CUILabel* text = dynamic_cast<const CUILabel*>(control);
                 if (text) {
                     if (text->Text() == str || text->Text() + "/" == str) {
                         return true;
@@ -156,17 +152,14 @@ public:
         return columns;
     }
 
-    static GG::Control* TitleForColumn(const SaveFileColumn& column, GG::Clr color,
-                                       boost::shared_ptr<GG::Font>& font)
+    static GG::Control* TitleForColumn(const SaveFileColumn& column)
     {
-        return new GG::TextControl (GG::X0, GG::Y0, GG::X1, font->Height(),
-                                    column.Title(), font, color,
-                                    GG::FORMAT_LEFT );
+        return new CUILabel(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Height(), column.Title(), GG::FORMAT_LEFT);
     }
 
-    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full,
-                                      boost::shared_ptr<GG::Font>& font, GG::Clr color)
+    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full)
     {
+        GG::Clr color = ClientUI::TextColor();
         std::string value = ColumnInPreview(full, column.m_name);
         if (column.m_name == "empire")
             color = full.preview.main_player_empire_colour;
@@ -175,13 +168,16 @@ public:
         if (column.m_name == "turn")
             format_flags = GG::FORMAT_CENTER;
 
+        CUILabel* retval = 0;
+
         if (column.m_fixed) {
-            return new GG::TextControl(GG::X0, GG::Y0, column.FixedWidth(), font->Height(),
-                                       value, font, color,
-                                       format_flags);
+            retval = new CUILabel(GG::X0, GG::Y0, column.FixedWidth(), ClientUI::GetFont()->Height(), value, format_flags);
         } else {
-            return CreateResizingText(value, font, color);
+            retval = CreateResizingText(value);
         }
+
+        retval->SetTextColor(color);
+        return retval;
     }
 
     bool Fixed() const
@@ -299,10 +295,8 @@ public:
     {
         SetMargin(ROW_MARGIN);
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr head_clr = ClientUI::TextColor();
         for (std::vector<SaveFileColumn>::const_iterator it = columns.begin(); it != columns.end(); ++it)
-        { push_back(SaveFileColumn::TitleForColumn(*it, head_clr, font)); }
+        { push_back(SaveFileColumn::TitleForColumn(*it)); }
         AdjustColumns(columns);
     }
 
@@ -316,12 +310,10 @@ public:
 
         VarText browse_text("SAVE_DIALOG_ROW_BROWSE_TEMPLATE");
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr color = ClientUI::TextColor();
         for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin();
              it != visible_columns.end(); ++it)
         {
-            push_back(SaveFileColumn::CellForColumn(*it, full, font, color));
+            push_back(SaveFileColumn::CellForColumn(*it, full));
         }
         for (std::vector<SaveFileColumn>::const_iterator it = columns.begin();
              it != columns.end(); ++it)
@@ -340,11 +332,7 @@ public:
     {
         SetMargin(ROW_MARGIN);
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr color = ClientUI::TextColor();
-        push_back(new GG::TextControl(GG::X0, GG::Y0,
-                                      PATH_DELIM_BEGIN + directory + PATH_DELIM_END,
-                                      font, color) );
+        push_back(new CUILabel(GG::X0, GG::Y0, PATH_DELIM_BEGIN + directory + PATH_DELIM_END));
         GetLayout()->SetColumnStretch(0, 1.0);
     }
 
@@ -591,7 +579,6 @@ SaveFileDialog::SaveFileDialog (bool load) :
 }
 
 void SaveFileDialog::Init() {
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
     m_layout = new GG::Layout( GG::X0, GG::Y0,
@@ -607,12 +594,13 @@ void SaveFileDialog::Init() {
     CUIButton* cancel_btn = new CUIButton ( UserString ( "CANCEL" ) );
 
     m_name_edit = new CUIEdit("");
-    GG::TextControl* filename_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_FILENAME" ), font, ClientUI::TextColor() );
-    GG::TextControl* directory_label = new GG::TextControl ( GG::X0, GG::Y0, UserString ( "SAVE_DIRECTORY" ), font, ClientUI::TextColor() );
+    CUILabel* filename_label = new CUILabel(GG::X0, GG::Y0, UserString("SAVE_FILENAME"));
+    CUILabel* directory_label = new CUILabel(GG::X0, GG::Y0, UserString("SAVE_DIRECTORY"));
     m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
 
     m_layout->Add ( directory_label,    0, 0 );
 
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     if (!m_server_previews) {
         m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 3);
 
@@ -806,7 +794,7 @@ void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
 void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
     GG::DropDownList::Row& row = **selection;
     if (row.size() > 0) {
-        GG::TextControl* control = dynamic_cast<GG::TextControl*>(row[0]);
+        CUILabel* control = dynamic_cast<CUILabel*>(row[0]);
         if (control) {
             UpdateDirectory(control->Text());
         }
