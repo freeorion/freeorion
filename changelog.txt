@@ -43,7 +43,7 @@ Content:
 ~ Derelict specials now have a stealth of 40 to prevent locating them via Pedia and similar at game start
 ~ Space monsters:
 ~ ~ Spawn rates have been reduced
-~ ~ If AI max agression is set to beginner, probability for guard monsters is reduced
+~ ~ If AI max aggression is set to beginner, probability for guard monsters is reduced
 ~ ~ If monsters frequency is set to "None", no guard monsters for specials are spawned 
 ~ Ancient Ruins special:
 ~ ~ Modest decrease in spawn rate
@@ -51,12 +51,12 @@ Content:
 ~ ~ Much rarer now if Monsters Frequency is set to "None"
 ~ ~ Explored Ancient Ruins are now marked as excavated
 ~ ~ Made less sparse on Low Planet Density setting 
-~ Added Transpatial Drive
+~ Added Transpatial Drive as a core part
 ~ Added LastTurnActiveInBattle property to ships for content scripting
 ~ Added enqueue location condition
 
 Graphics / GUI:
-~ Added sitreps when a researched tech unlocks a specific building, hull or part
+~ Added Sitreps when a researched tech unlocks a specific building, hull or part
 ~ New graphics and icons for various parts, buildings and techs
 ~ ~ Blackshield, Plasma Shield, Armor and Xentronium armour
 ~ ~ Diamond & Crystal armour, Rock armour and Distortion Modulator
@@ -66,7 +66,7 @@ Graphics / GUI:
 ~ ~ Icons for Nova Bomb, Distributed Thought Computing, Stargate and Transformer
 ~ ~ Happiness Meter status is now represented by an expression changing icon
 ~ ~ Added Statistic Menu icon
-~ Empires player list allows right clicking to look up empire in pedia
+~ Empires player list allows right clicking to look up empire in Pedia
 ~ More Sitreps for monsters maturing
 ~ Stealth and visibility improvements for the planet sidepanel
 ~ ~ Planets that can't be colonized for stealth or visibility reasons no longer display the colonize button
@@ -75,22 +75,22 @@ Graphics / GUI:
 ~ Production list now highlights items for the currently selected system with different colour text.
 ~ Right-click menu for production queue and research queue items allowing them to be deleted, moved to the top or the bottom of the list
 ~ Right-click menu commands to enqueue techs and producible items
-~ In multiplayer, moderators and observers now see sitreps for all empires and can apply filters
+~ In multiplayer, moderators and observers now see Sitreps for all empires and can apply filters
 ~ Introduced graphs tracking progress of all empires in various metrics
 ~ Limited copy/paste functionality with keyboard shortcuts in chat window
-~ Clicking a sitrep or performing a lookup that results in a Pedia entry in the Map window will now give a box within that window instead of taking you to the production or research window.
-~ Rumour sitreps inform all players what discovery is made at an ancient ruins, but not where the discovery was made.
+~ Clicking a Sitrep or performing a lookup that results in a Pedia entry in the Map window will now give a box within that window instead of taking you to the production or research window.
+~ Rumour Sitreps inform all players what discovery is made at an ancient ruins, but not where the discovery was made.
 ~ Game graphics have been recompressed to reduce memory usage and improve performance.
 ~ Tooltips added to tech queue.
 ~ Sitrep list now has an all/none toggle
-~ Turn autocycling toggle introduced in moderator games allowing the game to go on to next turn if all empires have submitted orders without human intervention
+~ Turn auto-cycling toggle introduced in moderator games allowing the game to go on to next turn if all empires have submitted orders without human intervention
 ~ Option to limit the number of processing threads used for effects evaluation
 ~ Sitreps for fleet arrivals substantially improved
 ~ ~ A single ship arriving will have its name and type displayed
 ~ ~ A fleet arriving will also state how many ships in the fleet
 ~ ~ Lone monsters arriving will have their type displayed
-~ Save and Load dialogues have been substantially reworked displaying info on the game, the player & empire name, etc. NB the autosave folder is still there, you need to double click the [.] option to take you back to the load dialogue screen.
-~ The Objects list and filter dialogues have been reworked with sortable columns and all/none selection
+~ Save and Load dialogs have been substantially reworked displaying info on the game, the player & empire name, etc. NB the autosave folder is still there, you need to double click the [.] option to take you back to the load dialog screen.
+~ The Objects list and filter dialogs have been reworked with sortable columns and all/none selection
 ~ The "X" close button on Pedia windows is now hidden in contexts where the Pedia window can't be closed
 ~ Ship Design Screen:
 ~ ~ Layout has been rearranged
