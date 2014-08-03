@@ -64,6 +64,8 @@ Graphics / GUI:
 ~ ~ Replaced Sentinel art and icon to differentiate it from Sentry
 ~ ~ Objects list planet icons substantially improved
 ~ ~ Icons for Nova Bomb, Distributed Thought Computing, Stargate and Transformer
+~ ~ Happiness Meter status is now represented by an expression changing icon
+~ ~ Added Statistic Menu icon
 ~ Empires player list allows right clicking to look up empire in pedia
 ~ More Sitreps for monsters maturing
 ~ Stealth and visibility improvements for the planet sidepanel
@@ -104,9 +106,10 @@ Graphics / GUI:
 ~ Added options to control keypress and mouse button repeat delays and intervals
 
 Balancing:
+~ Stargates require at target population of at least 1 to be buildable
 ~ Replaced the "Weapons" species bonus with piloting skills
 ~ ~ Ship weapons do more or less damage based on how good the piloting species are, most species are average but some can do up to 50% more damage, or 25% less.
-~ Organic Growth introduced for organic line hulls meaning their initial structure is low but it grows over time
+~ Organic Growth introduced for organic line hulls meaning their initial structure is low but it grows over time until their maximum structure is reached.
 ~ Core slot introduced for some hull types, some parts made core slot only
 ~ Planets now lose 2 of any meter above target value on the first turn after any focus change.
 ~ Bombard order introduced, some parts now only bombard a planet if ordered to do so.
