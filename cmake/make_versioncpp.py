@@ -22,15 +22,15 @@ try:
     svn_info = svn_proc.communicate()[0]
 
     for line in svn_info.splitlines():
-        if line.startswith("Revision:"):
-            wc_rev = line.partition(" ")[2]
+        if line.startswith("Last Changed Rev:"):
+            wc_rev = line.rpartition(" ")[2]
 except:
     try:
         svn_proc = sp.Popen(["SubWCRev.exe", "."], stdout=sp.PIPE)
         svn_info = svn_proc.communicate()[0]
 
         for line in svn_info.splitlines():
-            if line.startswith("Updated to revision"):
+            if line.startswith("Last committed at revision"):
                 wc_rev = line.rpartition(" ")[2]
     except:
         print "WARNING: No properly installed SVN client found"
