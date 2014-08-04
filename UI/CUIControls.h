@@ -228,8 +228,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void GainingFocus();
+    virtual void LosingFocus();
     virtual void Render();
     //@}
+
+    mutable boost::signals2::signal<void ()> GainingFocusSignal;
+    mutable boost::signals2::signal<void ()> LosingFocusSignal;
 };
 
 /** a FreeOrion MultiEdit control */

@@ -662,6 +662,16 @@ CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, GG::Clr bord
     SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
+void CUIEdit::GainingFocus() {
+    GG::Edit::GainingFocus();
+    GainingFocusSignal();
+}
+
+void CUIEdit::LosingFocus() {
+    GG::Edit::LosingFocus();
+    LosingFocusSignal();
+}
+
 void CUIEdit::Render() {
     GG::Clr color = Color();
     GG::Clr border_color = Disabled() ? DisabledColor(color) : color;

@@ -28,8 +28,6 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual void    GainingFocus();
-    virtual void    LosingFocus();
     virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
@@ -37,8 +35,6 @@ public:
     mutable boost::signals2::signal<void ()> TextEnteredSignal;
     mutable boost::signals2::signal<void ()> UpPressedSignal;
     mutable boost::signals2::signal<void ()> DownPressedSignal;
-    mutable boost::signals2::signal<void ()> GainingFocusSignal;
-    mutable boost::signals2::signal<void ()> LosingFocusSignal;
 
 private:
     void            FindGameWords();                    //!< Finds all game words for autocomplete
@@ -71,16 +67,6 @@ MessageWndEdit::MessageWndEdit(GG::X x, GG::Y y, GG::X w) :
     m_lastLineRead(),
     m_lastGameWord()
 {}
-
-void MessageWndEdit::GainingFocus() {
-    GG::Edit::GainingFocus();
-    GainingFocusSignal();
-}
-
-void MessageWndEdit::LosingFocus() {
-    GG::Edit::LosingFocus();
-    LosingFocusSignal();
-}
 
 void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
                               GG::Flags<GG::ModKey> mod_keys)
