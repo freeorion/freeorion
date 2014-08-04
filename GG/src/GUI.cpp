@@ -147,6 +147,7 @@ struct GG::GUIImpl
     void HandleKeyRelease(       Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
     void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
+    void HandleMouseEnter(       Flags<ModKey> mod_keys, const GG::Pt& pos, Wnd* w);
 
     void ClearState();
 
@@ -681,6 +682,12 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
         m_curr_wnd_under_cursor->HandleEvent(WndEvent(
             WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
+}
+
+void GUIImpl::HandleMouseEnter (Flags< ModKey > mod_keys, const GG::Pt& pos, Wnd* w)
+{
+    w->HandleEvent(WndEvent(WndEvent::MouseEnter, pos, mod_keys));
+    m_curr_wnd_under_cursor = w;
 }
 
 void GUIImpl::ClearState()
@@ -1609,7 +1616,7 @@ Wnd* GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
                                    pt);
                 s_impl->m_curr_drag_drop_here_wnd = w;
             } else {
-                w->HandleEvent(WndEvent(WndEvent::MouseEnter, pt, mod_keys));
+                s_impl->HandleMouseEnter(mod_keys, pt, w);
             }
         }
     }
