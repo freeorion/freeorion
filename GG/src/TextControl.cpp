@@ -177,14 +177,16 @@ void TextControl::SetFont(boost::shared_ptr<Font> font)
 
 void TextControl::SizeMove(const Pt& ul, const Pt& lr)
 {
+    GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);
+    bool resized = old_size != Size();
     bool redo_determine_lines = false;
     X client_width = ClientSize().x;
     if (!m_fit_to_text && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
         X text_width = m_text_lr.x - m_text_ul.x;
         redo_determine_lines =
-            client_width < text_width ||
-            text_width < client_width && 1u < m_line_data.size();
+            (client_width < text_width ||
+            text_width < client_width && 1u < m_line_data.size()) && resized;
     }
     if (redo_determine_lines) {
         Pt text_sz;
