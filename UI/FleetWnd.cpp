@@ -939,7 +939,7 @@ double ShipDataPanel::StatValue(MeterType stat_name) const {
             return ship->TotalWeaponsDamage();
 
         if (ship->UniverseObject::GetMeter(stat_name)) {
-            return ship->CurrentMeterValue(stat_name);
+            return ship->InitialMeterValue(stat_name);
         }
         Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
     }
@@ -1486,10 +1486,10 @@ void FleetDataPanel::SetStatIconValues() {
         if (ship->Design()) {
             ship_count++;
             damage_tally += ship->TotalWeaponsDamage();
-            structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
-            shield_tally += ship->CurrentMeterValue(METER_SHIELD);
-            fuels.push_back(ship->CurrentMeterValue(METER_FUEL));
-            speeds.push_back(ship->CurrentMeterValue(METER_STARLANE_SPEED));
+            structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
+            shield_tally += ship->InitialMeterValue(METER_SHIELD);
+            fuels.push_back(ship->InitialMeterValue(METER_FUEL));
+            speeds.push_back(ship->InitialMeterValue(METER_STARLANE_SPEED));
         }
     }
     if (!fuels.empty())
@@ -2667,8 +2667,8 @@ void FleetWnd::SetStatIconValues() {
             if (ship->Design()) {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsDamage();
-                structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
-                shield_tally += ship->CurrentMeterValue(METER_SHIELD);
+                structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
+                shield_tally += ship->InitialMeterValue(METER_SHIELD);
             }
         }
     }
@@ -3055,7 +3055,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     damaged_ship_ids.reserve(ship_ids_set.size());
     for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
         TemporaryPtr<const Ship> ship = GetShip(*it);
-        if (ship->CurrentMeterValue(METER_STRUCTURE) < ship->CurrentMeterValue(METER_MAX_STRUCTURE))
+        if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
             damaged_ship_ids.push_back(*it);
     }
 
@@ -3066,7 +3066,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         TemporaryPtr<const Ship> ship = GetShip(*it);
         if (!ship)
             continue;
-        if (ship->CurrentMeterValue(METER_FUEL) < 1)
+        if (ship->InitialMeterValue(METER_FUEL) < 1)
             unfueled_ship_ids.push_back(*it);
     }
 
