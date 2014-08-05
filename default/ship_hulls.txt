@@ -812,7 +812,12 @@ Hull
                 Contains Planet type = Asteroids
             ]
             effects = SetStealth Value + 20
-
+            
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxShield Value + 5
+            
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1201,7 +1206,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 25)
+            effects = SetMaxStructure Value + min(Source.Age*0.5, 25)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1451,7 +1456,7 @@ Hull
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 45)
+            effects = SetMaxStructure Value + min(Source.Age*1, 45)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1499,7 +1504,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = -5
-    structure = 80
+    structure = 40
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1546,7 +1551,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = -15
-    structure = 100
+    structure = 50
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.22, 0.15)
@@ -1589,7 +1594,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = -55
-    structure = 300
+    structure = 200
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
