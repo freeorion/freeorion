@@ -17,6 +17,10 @@
 
 
 namespace {
+    GG::X ICON_WIDTH(16);
+    GG::X ICON_RIGHT_MARGIN(3);
+    GG::Y ITEM_VERTICAL_PADDING(2);
+
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db)
     { db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>()); }
@@ -123,7 +127,6 @@ namespace {
         return retval;
     }
 
-    
     class ColorEmpire : public LinkDecorator {
     public:
         virtual std::string Decorate ( const std::string& target, const std::string& content ) const{
@@ -136,7 +139,7 @@ namespace {
             return GG::RgbaTag(color) + content + "</rgba>";
         }
     };
-    
+
     //////////////////////////////////
     // SitRepDataPanel
     //////////////////////////////////
@@ -156,14 +159,25 @@ namespace {
             if (!m_initialized)
                 Init();
             GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
-            GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
+            GG::FlatRectangle(UpperLeft(), LowerRight() - GG::Pt(GG::X0, GG::Y(2)), background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
         virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            Init();
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
-            if (old_size != Size())
+            if (old_size != Size()) {
                 DoLayout();
+            }
+            if (m_link_text) {
+                // Use the height of the text as our height.
+                // DoLayout reflowed the text.
+                GG::Pt text_size = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
+                text_size.y += ITEM_VERTICAL_PADDING*2; // Text centers, so this puts padding on both above and below
+                text_size.x = lr.x - ul.x; // Ignore the width of the text, use whatever was requested.
+                GG::Control::SizeMove(ul, ul + text_size );
+                DoLayout();
+            }
         }
 
         const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
@@ -172,13 +186,13 @@ namespace {
         void            DoLayout() {
             if (!m_initialized)
                 return;
-            const GG::X ICON_WIDTH(Value(ClientHeight()));
+            const GG::Y ICON_HEIGHT(Value(ICON_WIDTH));
 
             GG::X left(GG::X0);
             GG::Y bottom(ClientHeight());
 
-            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
-            left += ICON_WIDTH + GG::X(3);
+            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + ICON_WIDTH, bottom/2 + ICON_HEIGHT/2));
+            left += ICON_WIDTH + ICON_RIGHT_MARGIN;
 
             m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
         }
@@ -198,7 +212,7 @@ namespace {
 
             m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
                                        m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
-                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER, ClientUI::TextColor());
+                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
 
@@ -235,9 +249,13 @@ namespace {
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
-            GG::ListBox::Row::SizeMove(ul, lr);
-            if (!empty() && old_size != Size() && m_panel)
-                m_panel->Resize(Size());
+            GG::Pt new_size = lr - ul;
+            new_size.x -= 7; // Avoid allowing the scrollbar to hide the very rightmost pixels.
+            if (!empty() && m_panel && old_size != new_size) {
+                m_panel->Resize(new_size);
+                new_size.y = m_panel->Size().y;
+            }
+            GG::ListBox::Row::SizeMove(ul, ul + new_size);
         }
 
         const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
