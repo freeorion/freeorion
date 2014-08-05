@@ -3576,7 +3576,7 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] instead increase by 6% for each planet already owned by the empire.'''
+'''The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] as well as [[building BLD_EXOBOT_SHIP]] instead increase by 6% for each planet already owned by the empire.'''
 
 EVACUATION_TITLE
 Evacuation
@@ -3914,6 +3914,7 @@ SITREP_VICTORY_CAPTURE
 SITREP_VICTORY_TECH
 SITREP_VICTORY_BIO
 SITREP_EMPIRE_ELIMINATED
+HEAD_ON_A_SPIKE_MESSAGE
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 EFFECT_ANCIENT_SHIP
 EFFECT_ANCIENT_SHIP_RUMORS
@@ -4301,6 +4302,12 @@ At %system%: mines destroyed the %ship% (owned by %empire%).
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
+HEAD_ON_A_SPIKE_MESSAGE
+The capital of the %empire% empire has fallen.
+
+HEAD_ON_A_SPIKE_MESSAGE_LABEL
+Empire Capital Captured
+
 
 
 #############################################################
@@ -4628,7 +4635,9 @@ Prefer Desert planets.
 '''
 
 SP_MUURSH_DESC
-''''''
+'''Mu Ursh are a peaceful, non-aggressive race of vaguely feline appearance, they became the dominant lifeform on their planet in part due to their excellent reactions and eyesight. They used their abilities to round up and control all threatening predatory life, limiting numbers in order to ensure a peaceful planet.
+
+To their regret, their natural abilities seem to make them exceptionally gifted pilots, and some amongst their number have decided the best way to ensure galactic peace is to conquer and control all aggressive intelligent species, making the galaxy as peaceful as their homeworld.'''
 
 SP_GEORGE
 George
@@ -4717,7 +4726,6 @@ SP_CYNOS
 Cynos
 SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
-Prefer Swamp planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4727,14 +4735,13 @@ Prefer Swamp planets.
 [[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
         
-[[BROAD_EP]]
 '''
 
 SP_CYNOS_DESC
 '''Description:
 The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
 
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant.
+A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant—artificial substitutes for this feed are possible, but result in the infertility of the Cyno, thus all Cyno leaving their homeworld become infertile.
 
 Social Structure:
 Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
@@ -4746,8 +4753,7 @@ Neither can the Cynos reproduce without their mother plants, nor can they bring 
 SP_PHINNERT
 Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
-'''Flying Monkeys.
-Prefer Swamp planets.
+'''Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4825,7 +4831,6 @@ SP_FIFTYSEVEN
 Fifty-seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
-Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -5142,6 +5147,9 @@ As the Acirema found the anomaly that allowed them to enter into this universe, 
 
 The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
 
+Living Weapons:
+Ships crewed by Acirema will gain a +1 bonus to their shields, even if the ship itself has no shield.
+
 "Homeworld"
 Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
 
@@ -5200,9 +5208,10 @@ SP_VOLP_DESC
 '''Description:
 The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunneling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resource needs, as well as how societal structures affected individual behavior.
 The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
+
 They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of individually taking on various large battle engines, the chaos of combat is not their most effective environment.
 
-Home World:
+Homeworld:
 Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
 
 Reason for Staying:
@@ -5395,12 +5404,12 @@ At some point young kraken will rise from this place. With knowledge of [[tech S
 SNOWFLAKE_NEST_SPECIAL
 Snowflake Nest
 SNOWFLAKE_NEST_SPECIAL_DESC
-At some point young snowflakes will rise from this place. With the proper tech, these mega-fauna could be domesticated.
+At some point young snowflakes will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 JUGGERNAUT_NEST_SPECIAL
 Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
-At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
+At some point young juggernauts will rise from this place.  With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 HEAD_ON_A_SPIKE_SPECIAL
 Head on a Spike
@@ -5412,12 +5421,6 @@ Non-empire ships, both enemies and allies, within 100uu will have slightly reduc
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
 Cowering in fear
-
-HEAD_ON_A_SPIKE_MESSAGE
-The capital of the %empire% empire has fallen.
-
-HEAD_ON_A_SPIKE_MESSAGE_LABEL
-Empire Capital Captured
 
 CONC_CAMP_MASTER_SPECIAL
 Pall of Death
@@ -5437,7 +5440,7 @@ This planet is populated with aerial creatures that emit humidity, causing high 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
 CLOUD_COVER_SLAVE_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20.
+This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_1]].
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
@@ -5452,7 +5455,7 @@ VOLCANIC_ACTIVITY_SPECIAL_DESC
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40.
+This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_2]].
 
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
@@ -5462,7 +5465,7 @@ This planet has monsters burrowing around in its core causing dimensional tears 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
 DIM_RIFT_SLAVE_SPECIAL_DESC
-This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60.
+This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
 Void Monsters
@@ -5472,7 +5475,7 @@ Monsters inside the core of this planet are dragging it into the void. There sho
 VOID_SLAVE_SPECIAL
 Void Metamorphosis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.
+This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_4]].
 
 DERELICT_SPECIAL
 Derelict
@@ -5504,7 +5507,7 @@ This dimensional integrity of this region of space is highly unstable, causing a
 EXPERIMENTOR_OUTPOST_SPECIAL
 Experimentor Outpost
 EXPERIMENTOR_OUTPOST_SPECIAL_DESC
-En Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
+An Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
 
 PROBIOTIC_SPECIAL
 Probiotic Soup
@@ -7407,24 +7410,20 @@ SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
 SHP_QUANT_ENRG_MAG_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
-
-Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
+'''Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
 SHP_ENRG_BOUND_MAN
 Energy Boundary Manipulation
 
 SHP_ENRG_BOUND_MAN_DESC
 '''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
+'''
 
-This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
 SHP_SOLAR_CONT
 Solar Containment
 
 SHP_SOLAR_CONT_DESC
-'''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
-
-This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
+'''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.'''
 
 SHP_KRILL_SPAWN
 Krill Spawner
@@ -8079,13 +8078,13 @@ SPY_STEALTH_1
 Electromagnetic Damper
 
 SPY_STEALTH_1_DESC
-Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
+Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. 
 
 SPY_STEALTH_2
 Absorption Field
 
 SPY_STEALTH_2_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. This bonus is not cumulative with that of other stealth techs.
+'''Unlocks the [[shippart ST_CLOAK_2]] ship part and gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. 
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
@@ -8093,13 +8092,13 @@ SPY_STEALTH_3
 Dimensional Cloak
 
 SPY_STEALTH_3_DESC
-Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60. This bonus is not cumulative with that of other stealth techs.
+Unlocks the [[shippart ST_CLOAK_3]] ship part and gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60. 
 
 SPY_STEALTH_4
 Phasing Cloak
 
 SPY_STEALTH_4_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. This bonus is not cumulative with that of other stealth techs.
+'''Unlocks the [[shippart ST_CLOAK_4]] ship part and gives all planets and outposts in the empire the [[special VOID_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. 
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
@@ -8113,13 +8112,13 @@ SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. May be added more than once to a hull.
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 20. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. May be added more than once to a hull.
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
@@ -8209,37 +8208,37 @@ SHP_CAMO_AST_HULL
 Camouflage Asteroid Hull
 
 SHP_CAMO_AST_HULL_DESC
-This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is designed to look exactly like a real asteroid. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
 
 SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. 
 
 SHP_SCAT_AST_HULL
 Scattered Asteroid Hull
 
 SHP_SCAT_AST_HULL_DESC
-This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity.
 
 SHP_ORG_HULL
 Organic Hull
 
 SHP_ORG_HULL_DESC
-This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
+This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. 
 
 SHP_ENDOSYMB_HULL
 Endosymbiotic Hull
 
 SHP_ENDOSYMB_HULL_DESC
-This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
+This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. 
 
 SHP_SENT_HULL
 Sentient Hull
 
 SHP_SENT_HULL_DESC
-This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
+This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat.
 
 SHP_BIOINTERCEPTOR
 Biointerceptors
@@ -8359,7 +8358,7 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built, this upgrade also provides repair abilities to repair damaged ships in a single turn.
+'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, repairing 10 points of structural damage per turn in addition to repairs from damage control techs, as long as no combat has taken place in system that turn.
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
@@ -8383,7 +8382,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shiphull SH_TRANSSPATIAL]] and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shiphull SH_TRANSSPATIAL]] and [[shippart FU_TRANSPATIAL_DRIVE]], and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive.'''
 
@@ -8407,7 +8406,7 @@ BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
 
 BLD_SHIPYARD_ORG_ORB_INC_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the development of all organic hulls with the exception of the Static Multicellular Hull, and for the production of all further organic hull shipyard upgrades.
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the development of all organic hulls and for the production of all further organic hull shipyard upgrades. On its own it can build [[shiphull SH_ORGANIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_STATIC_MULTICELLULAR]]s.
 
 A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
 
@@ -8415,7 +8414,7 @@ BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Cellular Growth Chamber
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
 
 A specialized shipyard upgrade able to increase the size of mono-cellular organisms to truly massive proportions.'''
 
@@ -8423,7 +8422,7 @@ BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
 
 BLD_SHIPYARD_ORG_XENO_FAC_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_STATIC_MULTICELLULAR]]s, [[shiphull SH_ENDOMORPHIC]]s and [[shiphull SH_RAVENOUS]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_ENDOMORPHIC]]s and [[shiphull SH_RAVENOUS]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
 
 A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.'''
 
@@ -8455,7 +8454,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost.
+Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost. Friendly ships within 50 uus gain a starlane speed bonus of 20.
 
 BLD_SCANNING_FACILITY
 Scanning Facility
@@ -8484,7 +8483,7 @@ BLD_INDUSTRY_CENTER_DESC
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
 BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production. However, once established on their own planet, they will be able to build themselves.'''
+'''Constructing the first group of exobots is a major production. However, once established on their own planet, they will be able to build themselves. The cost of this building increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 BLD_MEGALITH
 Megalith
@@ -8692,7 +8691,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Starlane Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[building BLD_PLANET_CLOAK]], a [[building BLD_BIOTERROR_PROJECTOR]], a [[building BLD_STARGATE]], a [[building BLD_PLANET_DRIVE]], or a [[building BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -9202,7 +9201,7 @@ Colony Pod
 CO_COLONY_POD_DESC
 '''Basic facilities for colonists to survive journey to a new planet. Allows ship to colonize new worlds.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least three. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 CO_SUSPEND_ANIM_POD
 Cryonic Colony Pod
@@ -9210,13 +9209,13 @@ Cryonic Colony Pod
 CO_SUSPEND_ANIM_POD_DESC
 '''Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least three. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Colonies can be founded on planets that already have an Outpost.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Colonies can be founded on planets that already have an Outpost. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -9364,7 +9363,9 @@ SH_ASTEROID
 Asteroid Hull
 
 SH_ASTEROID_DESC
-'''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from an average-sized asteroid and it is fairly inexpensive to build. A bit roomier than the standard hull, it has four external slots and two internal slots. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus  on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low.  
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
@@ -9372,7 +9373,9 @@ SH_SMALL_ASTEROID
 Small Asteroid Hull
 
 SH_SMALL_ASTEROID_DESC
-'''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
@@ -9380,7 +9383,9 @@ SH_HEAVY_ASTEROID
 Heavy Asteroid Hull
 
 SH_HEAVY_ASTEROID_DESC
-'''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus  on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
@@ -9388,7 +9393,9 @@ SH_CAMOUFLAGE_ASTEROID
 Camouflage Asteroid Hull
 
 SH_CAMOUFLAGE_ASTEROID_DESC
-'''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. 
+
+[[encyclopedia STEALTH_TITLE]] is moderate and the hull gets a large bonus  on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
@@ -9396,7 +9403,9 @@ SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
 
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its [[encyclopedia STEALTH_TITLE]] bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its [[encyclopedia STEALTH_TITLE]] bonus. It has a single external slot and a single internal slot. 
+
+[[encyclopedia STEALTH_TITLE]] is high and the hull gets a bonus  on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
@@ -9404,7 +9413,9 @@ SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
 
 SH_AGREGATE_ASTEROID_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots.
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
@@ -9412,7 +9423,9 @@ SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
 
 SH_MINIASTEROID_SWARM_DESC
-'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
@@ -9420,7 +9433,9 @@ SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
 
 SH_SCATTERED_ASTEROID_DESC
-'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Structure is high. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
@@ -9428,7 +9443,9 @@ SH_CRYSTALLIZED_ASTEROID
 Crystallized Asteroid Hull
 
 SH_CRYSTALLIZED_ASTEROID_DESC
-'''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Structure is extremely high. 
+
+[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
@@ -9441,7 +9458,7 @@ Organic Growth: starts with 5 structure, but grows an additional 5 structure ove
 
 [[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is poor and starlane speed is good. 
 
-Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology developes. Low detection makes it poorly suited in a scouting role but it can make a capable warship. Living hulls regenerates structure and fuel between combats.
+Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology develops. Low detection makes it poorly suited in a scouting role but it can make a capable warship. Living hulls regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
 
@@ -9451,7 +9468,7 @@ Static Multicellular Hull
 SH_STATIC_MULTICELLULAR_DESC
 '''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots.
 
-[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high.  
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is high.  
 
 Cheap and versatile hull able to fill many fleet roles without excelling at any. This hull regenerates neither structure nor fuel between combats.
 
@@ -9492,7 +9509,7 @@ Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
 '''A living hull with three internal slots and two external slots. 
-Organic Growth: starts with 5 structure, gains an additional 25 over 125 turns.
+Organic Growth: starts with 5 structure, gains an additional 25 over 50 turns.
 
 [[encyclopedia STEALTH_TITLE]] is high, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
 
@@ -9505,7 +9522,7 @@ Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
 '''A living hull with four external slots and three internal slots. 
-The base hull is born with 5 structure, but grows an additional 15 structure over 75 turns.
+The base hull is born with 5 structure, but grows an additional 15 structure over 30 turns.
 
 [[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is high and starlane speed is high. 
 
@@ -9554,7 +9571,7 @@ Sentient Hull
 
 SH_SENTIENT_DESC
 '''This self-aware organic flagship with powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. 
-Organic Growth: Starts with 12 structure, grows an additional 45 over 90 turns.
+Organic Growth: Starts with 12 structure, grows an additional 45 over 45 turns.
 
 [[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is good and starlane speed is high. 
 
@@ -9566,38 +9583,48 @@ SH_COMPRESSED_ENERGY
 Compressed Energy Hull
 
 SH_COMPRESSED_ENERGY_DESC
-'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
+'''This fast hull is comprised entirely of compressed energy and has a single external slot. 
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+Structure is low, [[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and starlane speed is very high. 
+
+This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_FRACTAL_ENERGY
 Fractal Energy Hull
 
 SH_FRACTAL_ENERGY_DESC
-'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has fourteen external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
+'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has fourteen external slots, but no internal slots. 
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+Structure is moderate, [[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and starlane speed is very high.  
+
+This hull requires a very great deal of energy to construct—it can only be built at a system with a star of type Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_QUANTUM_ENERGY
 Quantum Energy Hull
 
 SH_QUANTUM_ENERGY_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
+'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. 
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+Structure is moderate, [[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and starlane speed is very high.  
+
+This hull requires a very great deal of energy to construct—it can only be built at a system with a star of type Blue or Black Hole. and requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_SOLAR
 Solar Hull
 
 SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots—a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
+'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots, eight internal slots and a core slot—a far greater internal capacity than any other hull.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
+Structure is extremely high, [[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and starlane speed is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. 
+
+This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation. It requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
 
 SH_BASIC_SMALL
 Basic Small Hull
 SH_BASIC_SMALL_DESC
 '''A small, basic interstellar hull. Can make an extra jump compared to other basic hulls.
+
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
 
@@ -9606,6 +9633,8 @@ Basic Medium Hull
 SH_BASIC_MEDIUM_DESC
 '''A medium-sized, basic interstellar hull.
 
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
+
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
 
 SH_STANDARD
@@ -9613,6 +9642,8 @@ Basic Large Hull
 
 SH_STANDARD_DESC
 '''A large, basic interstellar hull.
+
+[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
 
@@ -10149,26 +10180,31 @@ AI_CAPITOL_NAMES_BEGINNER
 '''Ivory Tower
 Nunnery
 Monastery
-Orphanage Planet'''
+Orphanage'''
 
 AI_CAPITOL_NAMES_TURTLE
 '''Citadel
-Prison World'''
+Prison'''
 
 AI_CAPITOL_NAMES_CAUTIOUS
-'''Bastion of the Brave,
+'''Bastion
 Stronghold'''
 
 AI_CAPITOL_NAMES_TYPICAL
 '''Haven
-Free Trade Zone'''
+Free Trade Zone
+Homeworld'''
+
 AI_CAPITOL_NAMES_AGGRESSIVE
-'''Royal Demesne
-Imperial Court'''
+'''Royal
+Imperial'''
 
 AI_CAPITOL_NAMES_MANIACAL
-'''Throne of Heaven,
-Glorious Revolutionary Planning Center, '''
+'''Glorious
+Supreme
+Eternal
+Invincible
+'''
 ### End of Capital Names Lists
 
 #############################################################
@@ -13474,14 +13510,14 @@ Love
 Remorse
 Sorrow
 Surprise
-Ambivalance
+Ambivalence
 Awe
 Rage
 Shame
-Ecstacy
+Ecstasy
 Smugness
 Suspicion
-Lonliness
+Loneliness
 Depression
 Agony
 Confidence
@@ -13491,7 +13527,7 @@ Angst'''
 
 SHIP_NAME_ARCHITECTURE
 '''Arch
-Butress
+Buttress
 Ceiling
 Column
 Pillar
