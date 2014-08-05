@@ -170,18 +170,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 Orders().ApplyOrders();
             } else {
                 Logger().debugStream() << "Message::GAME_START Starting New Game!";
-                // % Distributions   using m_max_aggression range for RandSmallInt
-                // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
-                //                __  __  __  __  __  __
-                //Max 0         :100   0   0   0   0   0
-                //Max 1         : 25  75   0   0   0   0
-                //Max 2         : 11  56  33   0   0   0
-                //Max 3         :  6  31  44  19   0   0
-                //Max 4         :  4  20  36  28  12   0
-                //Max 5         :  3  14  25  31  19   8
-                //unsigned mySeed = m_player_name.c_str()[0] + m_player_name.size();
-                //
-                // % Distributions   using range [0,1] for RandSmallInt
+                // % Distribution of aggression levels
                 // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
                 //                __  __  __  __  __  __
                 //Max 0         :100   0   0   0   0   0
@@ -190,21 +179,48 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 //Max 3         :  0   0  25  75   0   0
                 //Max 4         :  0   0   0  25  75   0
                 //Max 5         :  0   0   0   0  25  75
-                void* seedPtr = &m_player_name;
-                unsigned int mySeed = static_cast<unsigned int>(reinterpret_cast<unsigned long>(seedPtr));
-                Seed(mySeed);
-                int rand1 = 0;
-                int rand2 = 0;
-                int thisAggr = 0;
-                if ( m_max_aggression > 0 ) {
-                    rand1 = RandSmallInt(0, 1);
-                    rand2 = RandSmallInt(0, 1);
-                    thisAggr = m_max_aggression -1 + int(( rand1+rand2+1)/2);
-                }
-                Logger().debugStream() << "Message::GAME_START getting AI aggression, max is  "<< m_max_aggression;
-                Logger().debugStream() << "Message::GAME_START starting new game with AI aggression set to "<< thisAggr <<" from int("<< rand1<<"+"<<rand2<<"+1)/2";
+                
+                
+                // Optional aggression table, possibly for 0.4.4+?
+                // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
+                //                __  __  __  __  __  __
+                //Max 0         :100   0   0   0   0   0
+                //Max 1         : 25  75   0   0   0   0
+                //Max 2         :  8  17  75   0   0   0
+                //Max 3         :  0   8  17  75   0   0
+                //Max 4         :  0   0   8  17  75   0
+                //Max 5         :  0   0   0   8  17  75
 
-                m_AI->SetAggression(thisAggr);
+                const std::string g_seed = GetGalaxySetupData().m_seed;
+                const std::string emp_name = Empires().Lookup(m_empire_id)->Name();
+                unsigned int my_seed = 0;
+
+                try {
+                    // generate consistent my_seed values from galaxy seed & empire name.
+                    boost::hash<std::string> string_hash;
+                    std::size_t h = string_hash(g_seed);
+                    my_seed = 3 * static_cast<unsigned int>(h) * static_cast<unsigned int>(string_hash(emp_name));
+                    Logger().debugStream() << "Message::GAME_START getting " << emp_name << " AI aggression, RNG Seed: " << my_seed;
+                } catch (...) {
+                    Logger().debugStream() << "Message::GAME_START getting " << emp_name << " AI aggression, could not initialise RNG.";
+                }
+
+                int rand_num = 0;
+                int this_aggr = m_max_aggression;
+
+                if (this_aggr > 0  && my_seed > 0) {
+                    Seed(my_seed);
+                    rand_num = RandSmallInt(0, 99);
+                    // if it's in the top 25% then decrease aggression.
+                    if (rand_num > 74) this_aggr--;
+                    // Leaving the following as commented out code for now. Possibly for 0.4.4+? 
+                    // in the top 8% ? decrease aggression again, unless it's already as low as it gets.
+                    // if (rand_num > 91 && this_aggr > 0) this_aggr--;
+                }
+
+                Logger().debugStream() << "Message::GAME_START setting AI aggression as " << this_aggr << " (from rnd " << rand_num << "; max aggression " << m_max_aggression << ")";
+
+                m_AI->SetAggression(this_aggr);
                 m_AI->StartNewGame();
             }
             m_AI->GenerateOrders();
