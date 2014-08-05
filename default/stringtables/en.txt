@@ -186,282 +186,282 @@ Unowned
 
 SD_SCOUT
 Scout
-
 SD_SCOUT_DESC
 Small and cheap unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.
 
 SD_AST_SCOUT
-Scout
-
+Asteroid Scout
 SD_AST_SCOUT_DESC
 Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. Asteroid ships can only be built in systems with an asteroid processor.
 
-SD_ADV_SCOUT
-Advanced Scout
+SD_SCOUT_2
+Scout II
+SD_SCOUT_2_DESC
+Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration.
 
-SD_ADV_SCOUT_DESC
+SD_SCOUT_3
+Scout III
+SD_SCOUT_3_DESC
+Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration.
+
+SD_SCOUT_4
+Scout IV
+SD_SCOUT_4_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration.
 
 SD_ENG_SCOUT
-Scout
-
+Energy Scout
 SD_ENG_SCOUT_DESC
 Small and fast unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
-SD_MARK_1
-Mark I
-SD_MARK1_DESC
-Basic mass-driver patrol frigate.
-
 SD_SMALL_MARK_1
-Small Mark I
+Corvette I
 SD_SMALL_MARK1_DESC
-Small and cheap mass-driver patrol frigate.
+Small and cheap mass-driver ship.
+
+SD_SMALL_MARK_2
+Corvette II
+SD_SMALL_MARK2_DESC
+Small and cheap mass-driver ship.
+
+SD_MARK_1
+Frigate I
+SD_MARK1_DESC
+Basic mass-driver frigate.
 
 SD_MARK_2
-Mark II
+Frigate II
 SD_MARK2_DESC
-Improved mass-driver patrol frigate with shields.
+Improved mass-driver frigate.
 
 SD_MARK_3
-Mark III
+Frigate III
 SD_MARK3_DESC
-Basic laser patrol frigate.
+Basic laser frigate.
 
 SD_MARK_4
-Mark IV
+Frigate IV
 SD_MARK4_DESC
-Improved laser patrol frigate.
+Improved laser frigate.
 
-SD_MARK_A1
-Mark I
+SD_LARGE_MARK_1
+Cruiser I
+SD_LARGE_MARK1_DESC
+Basic mass-driver fighter.
 
-SD_MARK_A2
-Mark II
+SD_LARGE_MARK_2
+Cruiser II
+SD_LARGE_MARK2_DESC
+Improved mass-driver fighter.
 
-SD_MARK_A3
-Mark III
+SD_LARGE_MARK_3
+Cruiser III
+SD_LARGE_MARK3_DESC
+Improved fighter with lasers.
 
-SD_MARK_A3B
-Mark III B
-
-SD_MARK_A4
-Mark IV
-
-SD_MARK_A4B
-Mark IV B
-
-SD_MARK_A5
-Mark V
-SD_MARK5_DESC
-Basic laser patrol frigate.
-
-SD_MARK_A5B
-Mark V B
-
-SD_MARK_A6
-Mark VI
-SD_MARK6_DESC
-Improved laser patrol frigate.
-
-SD_MARK_A6B
-Mark VI B
-
-SD_MARK_A7
-Mark VII
-SD_MARK7_DESC
-Advanced laser patrol frigate.
-
-SD_MARK_A7B
-Mark VII B
-
-SD_MARK_A8
-Mark VIII
-SD_MARK8_DESC
-Top-of-the-Line laser patrol frigate.
-
-SD_MARK_A8B
-Mark VIII B
+SD_LARGE_MARK_4
+Cruiser IV
+SD_LARGE_MARK4_DESC
+Improved fighter with heavy lasers and armor.
 
 SD_ROBOTIC1
-Robotic I
+Robocruiser I
 SD_ROBOTIC1_DESC
-Advanced cruiser with heavy weaponry and shields. Able to do the dirty work in large groups. Can only be built at a colony with an orbital drydock and with robotic species.
+Robotic mass-driver fighter. Can only be built at a colony with an orbital drydock.
 
 SD_ROBOTIC2
-Robotic II
+Robocruiser II
 SD_ROBOTIC2_DESC
-Advanced cruiser with heavy weaponry and shields. Able to do the dirty work in large groups. Can only be built at a colony with an orbital drydock and with robotic species.
+Robotic fighter with lasers and heavy armor. Can only be built at a colony with an orbital drydock.
 
-SD_MARK_B_ROBOTIC3
-Robotic III
-SD_MARK_B_ROBOTIC3_DESC
-Advanced cruiser with heavy weaponry and armor to do the dirty work.
-
-SD_MARK_B_ROBOTIC4
-Robotic IV
-SD_MARK_B_ROBOTIC4_DESC
-Advanced cruiser with heavy weaponry and armor to do the dirty work.
+SD_ROBOTIC3
+Robocruiser III
+SD_ROBOTIC3_DESC
+Improved robotic fighter with heavy lasers. Can only be built at a colony with an orbital drydock.
 
 SD_ORGANIC1
 Organic I
 SD_ORGANIC1_DESC
-Organic hull design with preliminary weaponry and defence technology.
+Organic fighter with preliminary weaponry and defence technology.
 
 SD_ORGANIC2
 Organic II
 SD_ORGANIC2_DESC
-Organic hull design with Laser weaponry
+Organic fighter with lasers.
 
-SD_MARK_A_ORGANIC3
+SD_ORGANIC3
 Organic III
-SD_MARK_A_ORGANIC3_DESC
-Organic hull design with Laser weaponry
+SD_ORGANIC3_DESC
+Organic fighter with heavy lasers and armor.
 
-SD_MARK_A_ORGANIC4
-Organic IV
-SD_MARK_A_ORGANIC4_DESC
-Organic hull design with Laser weaponry
+SD_SHIELD_BUG_1
+Shield Bug I
+SD_SHIELD_BUG_1_DESC
+Organic fighter with shields. Effective against enemies with poor weapons.
 
-SD_MARK_B_ORGANIC1
-Organic V
-SD_MARK_B_ORGANIC1_DESC
-Organic hull design with preliminary Plasma weaponry.
+SD_SHIELD_BUG_2
+Shield Bug II
+SD_SHIELD_BUG_2_DESC
+Organic fighter with shields. Effective against enemies with poor weapons.
 
-SD_MARK_C_ENDO1
+SD_SHIELD_BUG_3
+Shield Bug III
+SD_SHIELD_BUG_3_DESC
+Organic fighter with shields. Effective against enemies with poor weapons.
+
+SD_AST_1
+Rock I
+SD_AST_1_DESC
+A hollowed-out asteroid armed with lasers. Asteroid ships can only be built in systems with an asteroid processor.
+
+SD_AST_2
+Rock II
+SD_AST_2_DESC
+A hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an asteroid processor.
+
+SD_AST_3
+Rock III
+SD_AST_3_DESC
+A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Asteroid ships can only be built in systems with an asteroid processor.
+
+SD_HEAVY_AST_1
+Big Rock I
+SD_HEAVY_AST_1_DESC
+A large hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an asteroid processor.
+
+SD_HEAVY_AST_2
+Big Rock II
+SD_HEAVY_AST_2_DESC
+A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Asteroid ships can only be built in systems with an asteroid processor.
+
+SD_CRYSTAL
+Crystal
+SD_CRYSTAL_DESC
+A crystallized asteroid armed with heavy plasma cannons and crystal rock armor.
+
+SD_ENDO_1
 Endomorphic I
-SD_MARK_C_ENDO1_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+SD_ENDO_1_DESC
+Advanced endomorphic fighter with heavy weaponry and armor.
 
-SD_MARK_C_ENDO2
+SD_ENDO_2
 Endomorphic II
-SD_MARK_C_ENDO2_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+SD_ENDO_2_DESC
+Advanced endomorphic fighter with heavy weaponry and armor.
 
-SD_MARK_C_ENDO3
+SD_ENDO_3
 Endomorphic III
-SD_MARK_C_ENDO3_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+SD_ENDO_3_DESC
+Advanced endomorphic fighter with heavy weaponry and armor.
 
-SD_MARK_C_ENDO4
+SD_ENDO_4
 Endomorphic IV
-SD_MARK_C_ENDO4_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
-
-SD_MARK_C_ENDO5
-Endomorphic V
-SD_MARK_C_ENDO5_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
-
-SD_MARK_C_ENDO6
-Endomorphic VI
-SD_MARK_C_ENDO6_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
-
-SD_MARK_C_ENDO7
-Endomorphic VII
-SD_MARK_C_ENDO7_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
-
-SD_MARK_C_ENDO8
-Endomorphic VIII
-SD_ENDO8_DESC
-Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+SD_ENDO_4_DESC
+Advanced endomorphic fighter with heavy weaponry and armor.
 
 SD_GRAVITATING1
 Gravitating I
 SD_GRAVITATING1_DESC
-Massive state-of-art warship armed and protected with the latest technology. Priced accordingly.
+Massive state-of-art battleship armed and protected with the latest technology. Priced accordingly.
+
+SD_FRACTAL_1
+Fractal I
+SD_FRACTAL_1_DESC
+An exotic warship made of fractal energy.
 
 SD_COLONY_SHIP
 Colony Ship
-
 SD_COLONY_SHIP_DESC
 Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
+SD_ORG_COLONY_SHIP
+Organic Colony Ship
+SD_ORG_COLONY_SHIP_DESC
+Unarmed organic vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
+
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
-
 SD_CRYONIC_COLONY_SHIP_DESC
 Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_ORG_CRYOCOL_SHIP
-Cryonic Colony Ship
-
+Organic Cryonic Colony Ship
 SD_ORG_CRYOCOL_SHIP_DESC
 Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
 
 SD_AST_CRYOCOL_SHIP
-Cryonic Colony Ship
-
+Cryonic Colony Asteroid
 SD_AST_CRYOCOL_SHIP_DESC
 Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard, in a system with an asteroid processor.
 
 SD_OUTPOST_SHIP
 Outpost Ship
-
 SD_OUTPOST_SHIP_DESC
 Unarmed vessel capable of creating an outpost on an uninhabitable world.
 
+SD_ORG_OUTPOST_SHIP
+Organic Outpost Ship
+SD_ORG_OUTPOST_SHIP_DESC
+Unarmed organic vessel capable of creating an outpost on an uninhabitable world. This vessel can only be built at a colony with an orbital incubator.
+
 SD_COLONY_BASE
 Colony Base
-
 SD_COLONY_BASE_DESC
 Unarmed vessel capable of creating a colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_CRYONIC_COLONY_BASE
 Cryonic Colony Base
-
 SD_CRYONIC_COLONY_BASE_DESC
 Unarmed vessel capable of creating a large colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_OUTPOST_BASE
 Outpost Base
-
 SD_OUTPOST_BASE_DESC
 Unarmed vessel capable of creating an outpost on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
 
+SD_TROOP_DROP
+Troop Drop
+SD_TROOP_DROP_DESC
+Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
+
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
-
 SD_SMALL_TROOP_SHIP_DESC
 Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
 
 SD_TROOP_SHIP
 Troop Ship
-
 SD_TROOP_SHIP_DESC
 Carries six units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
 
 SD_ORG_TROOP_SHIP
-Troop Ship
-
+Organic Troop Ship
 SD_ORG_TROOP_SHIP_DESC
 Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Organic vessels can only be built at planets with an orbital incubator.
 
 SD_ENG_TROOP_SHIP
 Small Troop Ship
-
 SD_ENG_TROOP_SHIP_DESC
 Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_ENG1
-Compressed Energy 1
-
+Energy 1
 SD_ENG1_DESC
 Small fast combat vessel. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_ENG2
-Compressed Energy 2
-
+Energy 2
 SD_ENG2_DESC
 Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
-
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems.
+
+############
+# Monsters #
+############
 
 SM_MONSTER
 Monster
