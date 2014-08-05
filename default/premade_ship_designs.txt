@@ -40,6 +40,15 @@ ShipDesign
     model = "mark1"
 
 ShipDesign
+    name = "SD_TROOP_DROP"
+    description = "SD_TROOP_DROP_DESC"
+    hull = "SH_COLONY_BASE"
+    parts = [
+        "GT_TROOP_POD"
+    ]
+    model = "mark1"
+
+ShipDesign
     name = "SD_SCOUT"
     description = "SD_SCOUT_DESC"
     hull = "SH_BASIC_SMALL"
@@ -49,11 +58,29 @@ ShipDesign
     model = "fighter"
 
 ShipDesign
-    name = "SD_ADV_SCOUT"
-    description = "SD_ADV_SCOUT_DESC"
+    name = "SD_SCOUT_2"
+    description = "SD_SCOUT_2_DESC"
     hull = "SH_BASIC_SMALL"
     parts = [
         "DT_DETECTOR_2"
+    ]
+    model = "fighter"
+
+ShipDesign
+    name = "SD_SCOUT_3"
+    description = "SD_SCOUT_3_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "DT_DETECTOR_3"
+    ]
+    model = "fighter"
+
+ShipDesign
+    name = "SD_SCOUT_4"
+    description = "SD_SCOUT_4_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "DT_DETECTOR_4"
     ]
     model = "fighter"
 
@@ -62,7 +89,7 @@ ShipDesign
     description = "SD_AST_SCOUT_DESC"
     hull = "SH_SMALL_ASTEROID"
     parts = [
-        "DT_DETECTOR_1"
+        "DT_DETECTOR_2"
         "FU_BASIC_TANK"
     ]
     model = "fighter"
@@ -72,7 +99,7 @@ ShipDesign
     description = "SD_ENG_SCOUT_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [
-        "DT_DETECTOR_1"
+        "DT_DETECTOR_3"
     ]
     model = "fighter"
 
@@ -81,6 +108,18 @@ ShipDesign
     description = "SD_COLONY_SHIP_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
+        ""
+        ""
+        "CO_COLONY_POD"
+    ]
+    model = "seed"
+
+ShipDesign
+    name = "SD_ORG_COLONY_SHIP"
+    description = "SD_ORG_COLONY_SHIP_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        ""
         ""
         ""
         "CO_COLONY_POD"
@@ -155,29 +194,16 @@ ShipDesign
     model = "seed"
 
 ShipDesign
-    name = "SD_MARK_1"
-    description = "SD_MARK1_DESC"
-    hull = "SH_BASIC_MEDIUM"
+    name = "SD_ORG_OUTPOST_SHIP"
+    description = "SD_ORG_OUTPOST_SHIP_DESC"
+    hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_1_1"
-        "SR_WEAPON_1_1"
         ""
+        ""
+        ""
+        "CO_OUTPOST_POD"
     ]
-    icon = ""
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_2"
-    description = "SD_MARK2_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_1_2"
-        "SR_WEAPON_1_2"
-        "SH_DEFLECTOR"
-    ]
-    icon = ""
-    model = "mark1"
-
+    model = "seed"
 
 ShipDesign
     name = "SD_SMALL_MARK_1"
@@ -186,19 +212,119 @@ ShipDesign
     parts = [
         "SR_WEAPON_1_1"
     ]
-    icon = ""
     model = "fighter"
+
+ShipDesign
+    name = "SD_SMALL_MARK_2"
+    description = "SD_SMALL_MARK2_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "SR_WEAPON_1_3"
+    ]
+    model = "fighter"
+
+ShipDesign
+    name = "SD_MARK_1"
+    description = "SD_MARK1_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_1_1"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_2"
+    description = "SD_MARK2_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_1_3"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_3"
+    description = "SD_MARK3_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_2_2"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_4"
+    description = "SD_MARK4_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_LARGE_MARK_1"
+    description = "SD_LARGE_MARK1_DESC"
+    hull = "SH_STANDARD"
+    parts = [
+        "SR_WEAPON_1_1"
+        "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_LARGE_MARK_2"
+    description = "SD_LARGE_MARK2_DESC"
+    hull = "SH_STANDARD"
+    parts = [
+        "SR_WEAPON_1_3"
+        "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_LARGE_MARK_3"
+    description = "SD_LARGE_MARK3_DESC"
+    hull = "SH_STANDARD"
+    parts = [
+        "SR_WEAPON_2_2"
+        "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_LARGE_MARK_4"
+    description = "SD_LARGE_MARK3_DESC"
+    hull = "SH_STANDARD"
+    parts = [
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
 
 ShipDesign
     name = "SD_ROBOTIC1"
     description = "SD_ROBOTIC1_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_1_1"
-        "SR_WEAPON_1_1"
-        "SR_WEAPON_1_1"
-        "SR_WEAPON_1_1"
-        "SH_ROBOTIC_INTERFACE_SHIELDS"
+        "SR_WEAPON_1_4"
+        "SR_WEAPON_1_4"
+        "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
@@ -207,11 +333,24 @@ ShipDesign
     description = "SD_ROBOTIC2_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_2_1"
-        "SR_WEAPON_2_1"
-        "SR_WEAPON_2_1"
-        "SR_WEAPON_2_1"
-        "SH_ROBOTIC_INTERFACE_SHIELDS"
+        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_2"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_ROBOTIC3"
+    description = "SD_ROBOTIC3_DESC"
+    hull = "SH_ROBOTIC"
+    parts = [
+        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
@@ -220,7 +359,7 @@ ShipDesign
     description = "SD_ENG1_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_4"
     ]
     model = "mark1"
 
@@ -229,7 +368,7 @@ ShipDesign
     description = "SD_ENG2_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_2"
     ]
     model = "mark1"
 
@@ -238,21 +377,69 @@ ShipDesign
     description = "SD_ORGANIC1_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_1_1"
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_1_4"
         "AR_STD_PLATE"
-        "SH_DEFLECTOR"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
-    
+
 ShipDesign
     name = "SD_ORGANIC2"
     description = "SD_ORGANIC2_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_2_1"
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_2"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_ORGANIC3"
+    description = "SD_ORGANIC2_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_SHIELD_BUG_1"
+    description = "SD_SHIELD_BUG_1_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_1_4"
         "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "SH_DEFENSE_GRID"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_SHIELD_BUG_2"
+    description = "SD_SHIELD_BUG_2_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_2_2"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "SH_DEFENSE_GRID"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_SHIELD_BUG_3"
+    description = "SD_SHIELD_BUG_3_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
         "SH_DEFLECTOR"
     ]
     model = "mark1"
@@ -271,356 +458,149 @@ ShipDesign
     model = "mark1"
 
 
-/*
 ShipDesign
-    name = "SD_MARK_3"
-    description = "SD_MARK3_DESC"
-    hull = "SH_BASIC_MEDIUM"
+    name = "SD_AST_1"
+    description = "SD_AST_1_DESC"
+    hull = "SH_ASTEROID"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_AST_2"
+    description = "SD_AST_2_DESC"
+    hull = "SH_ASTEROID"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_3_2"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_AST_3"
+    description = "SD_AST_3_DESC"
+    hull = "SH_ASTEROID"
+    parts = [
+        "AR_ROCK_PLATE"
+        "AR_ROCK_PLATE"
+        "SR_WEAPON_3_4"
+        "AR_ROCK_PLATE"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_HEAVY_AST_1"
+    description = "SD_HEAVY_AST_1_DESC"
+    hull = "SH_HEAVY_ASTEROID"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_2"
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_HEAVY_AST_2"
+    description = "SD_HEAVY_AST_2_DESC"
+    hull = "SH_HEAVY_ASTEROID"
+    parts = [
+        "AR_ROCK_PLATE"
+        "AR_ROCK_PLATE"
+        "AR_ROCK_PLATE"
+        "AR_ROCK_PLATE"
+        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_4"
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_CRYSTAL"
+    description = "SD_CRYSTAL_DESC"
+    hull = "SH_CRYSTALLIZED_ASTEROID"
+    parts = [
+        "AR_CRYSTAL_PLATE"
+        "AR_CRYSTAL_PLATE"
+        "SR_WEAPON_3_4"
+        "AR_CRYSTAL_PLATE"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_ENDO_1"
+    description = "SD_ENDO_1_DESC"
+    hull = "SH_ENDOMORPHIC"
     parts = [
         "SR_WEAPON_2_2"
         "SR_WEAPON_2_2"
-        ""
-    ]
-    icon = ""
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_4"
-    description = "SD_MARK4_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_2_3"
-        "SR_WEAPON_2_3"
-        ""
-    ]
-    icon = ""
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_A1"
-    description = "SD_MARK1_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_1"
-        "SR_WEAPON_1"
-        ""
-    ]
-    icon = ""
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_A2"
-    description = "SD_MARK2_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_2"
-        "SR_WEAPON_2"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
         "SH_DEFENSE_GRID"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
 ShipDesign
-    name = "SD_MARK_A3"
-    description = "SD_MARK3_DESC"
-    hull = "SH_BASIC_MEDIUM"
+    name = "SD_ENDO_2"
+    description = "SD_ENDO_2_DESC"
+    hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_3"
-        "SR_WEAPON_3"
+        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_4"
+        "AR_ZORTRIUM_PLATE"
+        "AR_ZORTRIUM_PLATE"
         "SH_DEFENSE_GRID"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A3B"
-    description = "SD_MARK3_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_3"
-        "SR_WEAPON_3"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A4"
-    description = "SD_MARK4_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_4"
-        "SR_WEAPON_4"
-        "SH_DEFENSE_GRID"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A4B"
-    description = "SD_MARK4_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_4"
-        "SR_WEAPON_4"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A5"
-    description = "SD_MARK5_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_5"
-        "SR_WEAPON_5"
-        "SH_DEFENSE_GRID"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A5B"
-    description = "SD_MARK5_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_5"
-        "SR_WEAPON_5"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A6"
-    description = "SD_MARK6_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_6"
-        "SR_WEAPON_6"
-        "SH_DEFENSE_GRID"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A6B"
-    description = "SD_MARK6_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_6"
-        "SR_WEAPON_6"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A7"
-    description = "SD_MARK7_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFENSE_GRID"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A7B"
-    description = "SD_MARK7_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A8"
-    description = "SD_MARK8_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFENSE_GRID"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
 ShipDesign
-    name = "SD_MARK_A8B"
-    description = "SD_MARK8_DESC"
-    hull = "SH_BASIC_MEDIUM"
-    parts = [
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-ShipDesign
-    name = "SD_MARK_B_ROBOTIC3"
-    description = "SD_MARK_B_ROBOTIC3_DESC"
-    hull = "SH_ROBOTIC"
-    parts = [
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_B_ROBOTIC4"
-    description = "SD_MARK_B_ROBOTIC4_DESC"
-    hull = "SH_ROBOTIC"
-    parts = [
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-    
-ShipDesign
-    name = "SD_MARK_A_ORGANIC3"
-    description = "SD_MARK_A_ORGANIC3_DESC"
-    hull = "SH_ORGANIC"
-    parts = [
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_A_ORGANIC4"
-    description = "SD_MARK_A_ORGANIC4_DESC"
-    hull = "SH_ORGANIC"
-    parts = [
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_B_ORGANIC1"
-    description = "SD_MARK_B_ORGANIC1_DESC"
-    hull = "SH_ORGANIC"
-    parts = [
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"    
-    
-ShipDesign
-    name = "SD_MARK_C_ENDO1"
-    description = "SD_MARK_C_ENDO1_DESC"
+    name = "SD_ENDO_3"
+    description = "SD_ENDO_3_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_5"
-        "SR_WEAPON_5"
-        "SR_WEAPON_5"
-        "SR_WEAPON_5"
+        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_2"
+        "AR_DIAMOND_PLATE"
+        "AR_DIAMOND_PLATE"
         "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
 ShipDesign
-    name = "SD_MARK_C_ENDO2"
-    description = "SD_MARK_C_ENDO2_DESC"
+    name = "SD_ENDO_4"
+    description = "SD_ENDO_4_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_6"
-        "SR_WEAPON_6"
-        "SR_WEAPON_6"
-        "SR_WEAPON_6"
+        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_4"
+        "AR_DIAMOND_PLATE"
+        "AR_DIAMOND_PLATE"
         "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO3"
-    description = "SD_MARK_C_ENDO3_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO4"
-    description = "SD_MARK_C_ENDO4_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO5"
-    description = "SD_MARK_C_ENDO5_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO6"
-    description = "SD_MARKC_ENDO6_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_10"
-        "SR_WEAPON_10"
-        "SR_WEAPON_10"
-        "SR_WEAPON_10"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO7"
-    description = "SD_ENDO7_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_11"
-        "SR_WEAPON_11"
-        "SR_WEAPON_11"
-        "SR_WEAPON_11"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
-    ]
-    model = "mark1"
-
-ShipDesign
-    name = "SD_MARK_C_ENDO8"
-    description = "SD_MARK_C_ENDO8_DESC"
-    hull = "SH_ENDOMORPHIC"
-    parts = [
-        "SR_WEAPON_12"
-        "SR_WEAPON_12"
-        "SR_WEAPON_12"
-        "SR_WEAPON_12"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
+        "FU_BASIC_TANK"
     ]
     model = "mark1"
 
@@ -629,16 +609,36 @@ ShipDesign
     description = "SD_GRAVITATING1_DESC"
     hull = "SH_SELF_GRAVITATING"
     parts = [
-        "DT_DETECTOR_1"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SH_DEFLECTOR"
-        "SH_DEFLECTOR"
+        "DT_DETECTOR_4"
+        "SR_WEAPON_4_4"
+        "SR_WEAPON_4_4"
+        "SR_WEAPON_4_4"
+        "AR_XENTRONIUM_PLATE"
+	"FU_SINGULARITY_ENGINE_CORE"
+        "AR_XENTRONIUM_PLATE"
+        "FU_ZERO_FUEL"
+        "SH_BLACK"
     ]
     model = "mark1"
-*/
+
+ShipDesign
+    name = "SD_FRACTAL_1"
+    description = "SD_FRACTAL_1_DESC"
+    hull = "SH_FRACTAL_ENERGY"
+    parts = [
+        "DT_DETECTOR_3"
+        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_4"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+    ]
+    model = "fighter"
