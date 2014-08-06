@@ -1956,7 +1956,7 @@ ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     if (const ShipDesign* design = GetShipDesign(m_design_id)) {
         m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::ShipDesignIcon(design_id), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new CUILabel(GG::X0, GG::Y0, design->Name());
+        m_name = new CUILabel(design->Name(), GG::FORMAT_NOWRAP);
         m_name->SetTextColor(GG::CLR_WHITE);
         AttachChild(m_name);
     }

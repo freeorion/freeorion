@@ -33,10 +33,6 @@ public:
     CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
-
-    CUILabel(GG::X x, GG::Y y, const std::string& str,
-             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
-             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
     //@}
 };
 

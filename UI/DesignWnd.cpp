@@ -1023,7 +1023,7 @@ BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, con
 {
     m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_graphic);
-    m_name = new CUILabel(GG::X0, GG::Y0, UserString(hull), GG::FORMAT_NONE);
+    m_name = new CUILabel(UserString(hull), GG::FORMAT_NOWRAP);
     AttachChild(m_name);
 }
 

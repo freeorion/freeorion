@@ -336,7 +336,7 @@ public:
     {
         SetMargin(ROW_MARGIN);
 
-        push_back(new CUILabel(GG::X0, GG::Y0, PATH_DELIM_BEGIN + directory + PATH_DELIM_END));
+        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP));
         GetLayout()->SetColumnStretch(0, 1.0);
     }
 
@@ -598,8 +598,8 @@ void SaveFileDialog::Init() {
     CUIButton* cancel_btn = new CUIButton ( UserString ( "CANCEL" ) );
 
     m_name_edit = new CUIEdit("");
-    CUILabel* filename_label = new CUILabel(GG::X0, GG::Y0, UserString("SAVE_FILENAME"));
-    CUILabel* directory_label = new CUILabel(GG::X0, GG::Y0, UserString("SAVE_DIRECTORY"));
+    CUILabel* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
+    CUILabel* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
     m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
 
     m_layout->Add ( directory_label,    0, 0 );

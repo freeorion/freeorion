@@ -227,9 +227,10 @@ const TextFormat GG::FORMAT_BOTTOM       (1 << 2);
 const TextFormat GG::FORMAT_CENTER       (1 << 3);
 const TextFormat GG::FORMAT_LEFT         (1 << 4);
 const TextFormat GG::FORMAT_RIGHT        (1 << 5);
-const TextFormat GG::FORMAT_WORDBREAK    (1 << 6);
-const TextFormat GG::FORMAT_LINEWRAP     (1 << 7);
-const TextFormat GG::FORMAT_IGNORETAGS   (1 << 8);
+const TextFormat GG::FORMAT_NOWRAP       (1 << 6);
+const TextFormat GG::FORMAT_WORDBREAK    (1 << 7);
+const TextFormat GG::FORMAT_LINEWRAP     (1 << 8);
+const TextFormat GG::FORMAT_IGNORETAGS   (1 << 9);
 
 GG_FLAGSPEC_IMPL(TextFormat);
 
@@ -244,6 +245,7 @@ namespace {
         spec.insert(FORMAT_CENTER,      "FORMAT_CENTER",    true);
         spec.insert(FORMAT_LEFT,        "FORMAT_LEFT",      true);
         spec.insert(FORMAT_RIGHT,       "FORMAT_RIGHT",     true);
+        spec.insert(FORMAT_NOWRAP,      "FORMAT_NOWRAP",    true);
         spec.insert(FORMAT_WORDBREAK,   "FORMAT_WORDBREAK", true);
         spec.insert(FORMAT_LINEWRAP,    "FORMAT_LINEWRAP",  true);
         spec.insert(FORMAT_IGNORETAGS,  "FORMAT_IGNORETAGS",true);

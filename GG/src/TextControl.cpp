@@ -44,8 +44,7 @@ TextControl::TextControl() :
     m_format(FORMAT_NONE),
     m_clip_text(false),
     m_set_min_size(false),
-    m_code_points(0),
-    m_fit_to_text(false)
+    m_code_points(0)
 {}
 
 TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
@@ -56,8 +55,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     m_clip_text(false),
     m_set_min_size(false),
     m_code_points(0),
-    m_font(font),
-    m_fit_to_text(false)
+    m_font(font)
 {
     ValidateFormat();
     SetText(str);
@@ -66,13 +64,12 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 TextControl::TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
                          Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, X0, Y0, flags),
-    m_format(format),
+    m_format(format | FORMAT_NOWRAP),
     m_text_color(color),
     m_clip_text(false),
     m_set_min_size(false),
     m_code_points(0),
-    m_font(font),
-    m_fit_to_text(true)
+    m_font(font)
 {
     ValidateFormat();
     SetText(str);
@@ -159,7 +156,7 @@ void TextControl::SetText(const std::string& str)
     m_text_ul = Pt();
     m_text_lr = text_sz;
     AdjustMinimumSize();
-    if (m_fit_to_text) {
+    if (m_format & FORMAT_NOWRAP) {
         Resize(text_sz);
     } else {
         RecomputeTextBounds();
@@ -182,7 +179,7 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
     bool resized = old_size != Size();
     bool redo_determine_lines = false;
     X client_width = ClientSize().x;
-    if (!m_fit_to_text && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
+    if (!(m_format & FORMAT_NOWRAP) && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
         X text_width = m_text_lr.x - m_text_ul.x;
         redo_determine_lines =
             (client_width < text_width ||
@@ -290,9 +287,6 @@ void TextControl::Erase(std::size_t line, CPSize pos, CPSize num/* = CP1*/)
 
 const std::vector<Font::LineData>& TextControl::GetLineData() const
 { return m_line_data; }
-
-bool TextControl::FitToText() const
-{ return m_fit_to_text; }
 
 void TextControl::ValidateFormat()
 {

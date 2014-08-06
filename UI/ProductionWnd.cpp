@@ -50,7 +50,7 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            CUILabel* text = new CUILabel(GG::X0, GG::Y0, nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+            CUILabel* text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             text->SetTextColor(txtClr);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
             AttachChild(text);

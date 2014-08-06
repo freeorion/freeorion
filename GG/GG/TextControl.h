@@ -75,8 +75,7 @@ public:
 
     /** Ctor that does not require window size.  Window size is determined
         from the string and font; the window will be large enough to fit the
-        text as rendered, and no larger.  The private member FitToText() will
-        also return true. \see TextControl::SetText() */
+        text as rendered, and no larger. */
     TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
@@ -162,9 +161,9 @@ public:
     virtual void Render();
 
     /** Sets the text displayed in this control to \a str.  May resize the
-        window.  If FitToText() returns true (i.e. if the second ctor was
-        used), calls to this function cause the window to be resized to
-        whatever space the newly rendered text occupies. */
+        window.  If the control was constructed with FORMAT_NOWRAP, calls
+        to this function cause the window to be resized to whatever space
+        the newly rendered text occupies. */
     virtual void SetText(const std::string& str);
 
     /** Returns the Font used by this TextControl to render its text. */
@@ -239,10 +238,6 @@ protected:
     /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
     const std::vector<Font::LineData>& GetLineData() const;
-
-    /** Returns true iff this TextControl was constructed using the ctor
-        without width and height parameters.  \see TextControl::SetText() */
-    bool FitToText() const;
     //@}
 
 private:
@@ -260,7 +255,6 @@ private:
     std::vector<Font::LineData> m_line_data;
     CPSize                      m_code_points;
     boost::shared_ptr<Font>     m_font;
-    bool                        m_fit_to_text; ///< when true, this window will maintain a minimum width and height that encloses the text
     Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
 };

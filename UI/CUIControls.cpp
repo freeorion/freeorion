@@ -62,12 +62,6 @@ CUILabel::CUILabel(const std::string& str,
     TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
-CUILabel::CUILabel(GG::X x, GG::Y y, const std::string& str,
-             GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-             GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
-    TextControl(x, y, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
-{}
-
 
 ///////////////////////////////////////
 // class CUIButton
@@ -838,7 +832,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
 {
-    push_back(new CUILabel(GG::X0, GG::Y0, row_text, GG::FORMAT_LEFT));
+    push_back(new CUILabel(row_text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
 }
 
 

@@ -60,11 +60,11 @@ ServerConnectWnd::ServerConnectWnd() :
     m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
-    m_LAN_game_label = new CUILabel(GG::X0, GG::Y0, UserString("LAN_GAME_LABEL"), GG::FORMAT_LEFT);
+    m_LAN_game_label = new CUILabel(UserString("LAN_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     m_servers_lb = new CUIListBox();
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(UserString("REFRESH_LIST_BN"));
-    m_internet_game_label = new CUILabel(GG::X0, GG::Y0, UserString("INTERNET_GAME_LABEL"), GG::FORMAT_LEFT);
+    m_internet_game_label = new CUILabel(UserString("INTERNET_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     m_IP_address_edit = new CUIEdit(GetOptionsDB().Get<std::string>("multiplayersetup.host-address"));
     m_ok_bn = new CUIButton(UserString("OK"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));

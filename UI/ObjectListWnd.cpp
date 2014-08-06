@@ -396,7 +396,7 @@ private:
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
-            push_back(new CUILabel(GG::X0, GG::Y0, UserString(m_condition_key), GG::FORMAT_LEFT));
+            push_back(new CUILabel(UserString(m_condition_key), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
         }
         const std::string&  GetKey() const { return m_condition_key; }
     private:
@@ -412,7 +412,7 @@ private:
             SetChildClippingMode(ClipToClient);
             const std::string& label = (text.empty() ? EMPTY_STRING :
                 (stringtable_lookup ? UserString(text) : text));
-            push_back(new CUILabel(GG::X0, GG::Y0, label, GG::FORMAT_LEFT));
+            push_back(new CUILabel(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP));
         }
         const std::string&  Text() const { return m_string; }
     private:

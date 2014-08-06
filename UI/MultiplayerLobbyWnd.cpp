@@ -413,7 +413,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
         new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_browse_saves_btn = new CUIButton("...");
-    m_save_file_text = new CUILabel(GG::X0, GG::Y0, "");
+    m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);
 
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(GG::X0, GG::Y0, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);

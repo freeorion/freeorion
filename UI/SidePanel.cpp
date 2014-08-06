@@ -912,7 +912,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
-    m_env_size = new CUILabel(GG::X(MaxPlanetDiameter()), GG::Y0, "");
+    m_env_size = new CUILabel("", GG::FORMAT_NOWRAP);
+    m_env_size->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0));
     AttachChild(m_env_size);
 
 
