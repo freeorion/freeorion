@@ -10203,8 +10203,8 @@ AI_CAPITOL_NAMES_MANIACAL
 '''Glorious
 Supreme
 Eternal
-Invincible
-'''
+Invincible'''
+
 ### End of Capital Names Lists
 
 #############################################################
