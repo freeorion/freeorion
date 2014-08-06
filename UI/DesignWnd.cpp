@@ -2005,31 +2005,29 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 {
     SetChildClippingMode(ClipToClient);
 
-    m_design_name_label = new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    AttachChild(m_design_name_label);
-
+    m_design_name_label = new CUILabel(UserString("DESIGN_WND_DESIGN_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
-    AttachChild(m_design_name);
-    GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
-
-    m_design_description_label = new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    AttachChild(m_design_description_label);
-
+    m_design_description_label = new CUILabel(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
-    AttachChild(m_design_description);
-
     m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"));
-    AttachChild(m_confirm_button);
-    GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
+    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
+
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
+    AttachChild(m_design_name_label);
+    AttachChild(m_design_name);
+    AttachChild(m_design_description_label);
+    AttachChild(m_design_description);
+    AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
+
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
-
-
+    GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
+    GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
     GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
+
     DesignChanged(); // Initialize components that rely on the current state of the design.
+
     DoLayout();
 }
 

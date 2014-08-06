@@ -1992,15 +1992,20 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
 
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
-    m_title_text = new CUILabel(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0, ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0));
+    m_title_text->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
-    AttachChild(m_title_text);
 
-    m_main_text = new CUILabel(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT, ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
-    AttachChild(m_main_text);
-
+    m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    m_main_text->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT));
+    m_main_text->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
     m_main_text->SetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
+
+    AttachChild(m_title_text);
+    AttachChild(m_main_text);
+
     Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, std::max(m_icon->Height(), ROW_HEIGHT + m_main_text->Height())));
 }
 
@@ -2027,15 +2032,19 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y));
+    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
-    AttachChild(m_title_text);
 
-    m_main_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
-    AttachChild(m_main_text);
-
+    m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    m_main_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y));
+    m_main_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
     m_main_text->SetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
+
+    AttachChild(m_main_text);
+    AttachChild(m_title_text);
 
     Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + m_main_text->Height()));
 }
@@ -2074,13 +2083,14 @@ public:
             AttachChild(m_icon);
         }
 
-        m_name = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(name), GG::FORMAT_RIGHT);
-        AttachChild(m_name);
+        m_name = new CUILabel(UserString(name), GG::FORMAT_RIGHT);
 
         int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
         num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
         num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
-        m_census_val = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+        m_census_val = new CUILabel(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+
+        AttachChild(m_name);
         AttachChild(m_census_val);
 
         DoLayout();
@@ -2136,13 +2146,15 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, GG::FORMAT_LEFT);
+    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
+    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
-    AttachChild(m_title_text);
 
     top += ROW_HEIGHT;
-    m_species_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT, UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
-    AttachChild(m_species_text);
+    m_species_text = new CUILabel(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
+    m_species_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
+    m_species_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT));
 
     top += ROW_HEIGHT+HALF_HEIGHT;
     m_list = new CUIListBox();
@@ -2154,7 +2166,6 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_list->SetNumCols(1);
     m_list->SetColWidth(0, GG::X0);
     m_list->LockColWidths();
-    AttachChild(m_list);
 
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
@@ -2176,9 +2187,10 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top - 2* ROW_HEIGHT - HALF_HEIGHT));
 
     GG::Y top2 = top;
-    m_tags_text = new CUILabel(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT, UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
-    AttachChild(m_tags_text);
-    
+    m_tags_text = new CUILabel(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
+    m_tags_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+    m_tags_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT));
+
     top2 += ROW_HEIGHT + HALF_HEIGHT;
     m_tags_list = new CUIListBox();
     m_tags_list->MoveTo(GG::Pt(m_offset.x, top2 + m_offset.y));
@@ -2189,6 +2201,11 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_tags_list->SetNumCols(1);
     m_tags_list->SetColWidth(0, GG::X0);
     m_tags_list->LockColWidths();
+
+    AttachChild(m_title_text);
+    AttachChild(m_species_text);
+    AttachChild(m_list);
+    AttachChild(m_tags_text);
     AttachChild(m_tags_list);
 
     // determine tag order
@@ -2283,7 +2300,9 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     production_label_top = top;
-    m_production_label = new CUILabel(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_production_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_production_label->MoveTo(GG::Pt(GG::X0, production_label_top));
+    m_production_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_production_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_production_label);
     top += row_height;
@@ -2291,7 +2310,9 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     allocation_label_top = top;
-    m_allocation_label = new CUILabel(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_allocation_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_allocation_label->MoveTo(GG::Pt(GG::X0, allocation_label_top));
+    m_allocation_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_allocation_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_allocation_label);
     top += row_height;
@@ -2299,7 +2320,9 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     import_export_label_top = top;
-    m_import_export_label = new CUILabel(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", GG::FORMAT_RIGHT);
+    m_import_export_label = new CUILabel("", GG::FORMAT_RIGHT);
+    m_import_export_label->MoveTo(GG::Pt(GG::X0, import_export_label_top));
+    m_import_export_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
     m_import_export_label->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_import_export_label);
     top += row_height;
@@ -2349,11 +2372,14 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         std::string amount_text = DoubleToString(production, 3, false);
 
 
-        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, name, GG::FORMAT_RIGHT);
+        CUILabel* label = new CUILabel(name, GG::FORMAT_RIGHT);
+        label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
+        CUILabel* value = new CUILabel(amount_text);
+        value->MoveTo(GG::Pt(LABEL_WIDTH, top));
+        value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
         m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
@@ -2364,10 +2390,14 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     if (m_production_labels_and_amounts.empty()) {
         // add "blank" line to indicate no production
-        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, UserString("NOT_APPLICABLE"));
+        CUILabel* label = new CUILabel(UserString("NOT_APPLICABLE"));
+        label->MoveTo(GG::Pt(GG::X0, top));
+        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, "");
+        CUILabel* value = new CUILabel("");
+        value->MoveTo(GG::Pt(LABEL_WIDTH, top));
+        value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
         m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
@@ -2446,11 +2476,15 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         std::string amount_text = DoubleToString(allocation, 3, false);
 
 
-        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, name, GG::FORMAT_RIGHT);
+        CUILabel* label = new CUILabel(name, GG::FORMAT_RIGHT);
+        label->MoveTo(GG::Pt(GG::X0, top));
+        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
 
-        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
+        CUILabel* value = new CUILabel(amount_text);
+        value->MoveTo(GG::Pt(LABEL_WIDTH, top));
+        value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
         m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
@@ -2461,10 +2495,14 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
     if (m_allocation_labels_and_amounts.empty()) {
         // add "blank" line to indicate no allocation
-        CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
+        CUILabel* label = new CUILabel(UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
+        label->MoveTo(GG::Pt(GG::X0, top));
+        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, "");
+        CUILabel* value = new CUILabel("");
+        value->MoveTo(GG::Pt(LABEL_WIDTH, top));
+        value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
         m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
@@ -2557,10 +2595,14 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 
 
     // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
-    CUILabel* label = new CUILabel(GG::X0, top, LABEL_WIDTH, row_height, label_text, GG::FORMAT_RIGHT);
+    CUILabel* label = new CUILabel(label_text, GG::FORMAT_RIGHT);
+    label->MoveTo(GG::Pt(GG::X0, top));
+    label->Resize(GG::Pt(LABEL_WIDTH, row_height));
     AttachChild(label);
 
-    CUILabel* value = new CUILabel(LABEL_WIDTH, top, VALUE_WIDTH, row_height, amount_text);
+    CUILabel* value = new CUILabel(amount_text);
+    value->MoveTo(GG::Pt(LABEL_WIDTH, top));
+    value->Resize(GG::Pt(VALUE_WIDTH, row_height));
     AttachChild(value);
 
     m_import_export_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
@@ -2670,26 +2712,43 @@ void MeterBrowseWnd::Initialize() {
             summary_title_text = MeterToUserString(m_primary_meter_type);
         }
 
-        m_summary_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, summary_title_text, GG::FORMAT_RIGHT);
+        m_summary_title = new CUILabel(summary_title_text, GG::FORMAT_RIGHT);
+        m_summary_title->MoveTo(GG::Pt(GG::X0, top));
+        m_summary_title->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, m_row_height));
         m_summary_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_summary_title);
         top += m_row_height;
 
-        m_current_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_THIS_TURN"), GG::FORMAT_RIGHT);
+        m_current_label = new CUILabel(UserString("TT_THIS_TURN"), GG::FORMAT_RIGHT);
+        m_current_label->MoveTo(GG::Pt(GG::X0, top));
+        m_current_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
         AttachChild(m_current_label);
-        m_current_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
+
+        m_current_value = new CUILabel("");
+        m_current_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+        m_current_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
         AttachChild(m_current_value);
         top += m_row_height;
 
-        m_next_turn_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_NEXT_TURN"), GG::FORMAT_RIGHT);
+        m_next_turn_label = new CUILabel(UserString("TT_NEXT_TURN"), GG::FORMAT_RIGHT);
+        m_next_turn_label->MoveTo(GG::Pt(GG::X0, top));
+        m_next_turn_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
         AttachChild(m_next_turn_label);
-        m_next_turn_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
+
+        m_next_turn_value = new CUILabel("");
+        m_next_turn_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+        m_next_turn_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
         AttachChild(m_next_turn_value);
         top += m_row_height;
 
-        m_change_label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"), GG::FORMAT_RIGHT);
+        m_change_label = new CUILabel(UserString("TT_CHANGE"), GG::FORMAT_RIGHT);
+        m_change_label->MoveTo(GG::Pt(GG::X0, top));
+        m_change_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
         AttachChild(m_change_label);
-        m_change_value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "");
+
+        m_change_value = new CUILabel("");
+        m_change_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+        m_change_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
         AttachChild(m_change_value);
         top += m_row_height;
     }
@@ -2698,7 +2757,9 @@ void MeterBrowseWnd::Initialize() {
         // effect accounting meter breakdown total / summary.  Shows "Meter Name: Value"
         // above a list of effects.  Actual text is set in UpdateSummary() but
         // the control is created here.
-        m_meter_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", GG::FORMAT_RIGHT);
+        m_meter_title = new CUILabel("", GG::FORMAT_RIGHT);
+        m_meter_title->MoveTo(GG::Pt(GG::X0, top));
+        m_meter_title->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, m_row_height));
         m_meter_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_meter_title);
         top += m_row_height;
@@ -2915,10 +2976,14 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         }
         }
 
-        CUILabel* label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, GG::FORMAT_RIGHT);
+        CUILabel* label = new CUILabel(text, GG::FORMAT_RIGHT);
+        label->MoveTo(GG::Pt(GG::X0, top));
+        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, ColouredNumber(info_it->meter_change));
+        CUILabel* value = new CUILabel(ColouredNumber(info_it->meter_change));
+        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 
@@ -2961,7 +3026,9 @@ namespace {
 
         const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
 
-        m_summary_title = new CUILabel(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", GG::FORMAT_RIGHT);
+        m_summary_title = new CUILabel("", GG::FORMAT_RIGHT);
+        m_summary_title->MoveTo(GG::Pt(GG::X0, top));
+        m_summary_title->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, m_row_height));
         m_summary_title->SetFont(ClientUI::GetBoldFont());
         AttachChild(m_summary_title);
         top += m_row_height;
@@ -3022,10 +3089,14 @@ namespace {
                     continue;
                 modifications_sum += account_it->meter_change;
 
-                const std::string& text = target_obj->Name();
-                CUILabel* label = new CUILabel(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, GG::FORMAT_RIGHT);
+                CUILabel* label = new CUILabel(target_obj->Name(), GG::FORMAT_RIGHT);
+                label->MoveTo(GG::Pt(GG::X0, top));
+                label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
                 AttachChild(label);
-                CUILabel* value = new CUILabel(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, ColouredNumber(account_it->meter_change));
+
+                CUILabel* value = new CUILabel(ColouredNumber(account_it->meter_change));
+                value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+                value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
                 AttachChild(value);
                 m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
 

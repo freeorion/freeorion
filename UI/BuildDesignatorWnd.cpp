@@ -101,8 +101,11 @@ namespace {
 
             boost::shared_ptr<GG::Texture>                  texture;
             std::string                                     name_text;
+            std::string                                     cost_text;
+            std::string                                     time_text;
             std::string                                     desc_text;
             std::vector<const Condition::ConditionBase*>    location_conditions;
+
             switch (m_item.build_type) {
             case BT_BUILDING: {
                 texture = ClientUI::BuildingIcon(m_item.name);
@@ -123,28 +126,24 @@ namespace {
                 texture = ClientUI::GetTexture("");
             }
 
-            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture,
-                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            AttachChild(m_icon);
-
-            m_name = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, name_text, GG::FORMAT_LEFT);
-            AttachChild(m_name);
-
             // cost / turn, and minimum production turns
-            std::string cost_text;
-            std::string time_text;
             if (empire) {
                 std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
                 cost_text = DoubleToString(cost_time.first, 3, false);
                 time_text = boost::lexical_cast<std::string>(cost_time.second);
             }
-            m_cost = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, cost_text);
+
+            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture,
+                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_name = new CUILabel(name_text, GG::FORMAT_LEFT);
+            m_cost = new CUILabel(cost_text);
+            m_time = new CUILabel(time_text);
+            m_desc = new CUILabel(desc_text, GG::FORMAT_LEFT);
+
+            AttachChild(m_icon);
+            AttachChild(m_name);
             AttachChild(m_cost);
-
-            m_time = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, time_text);
             AttachChild(m_time);
-
-            m_desc = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, desc_text, GG::FORMAT_LEFT);
             AttachChild(m_desc);
 
             DoLayout();

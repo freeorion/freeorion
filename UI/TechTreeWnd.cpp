@@ -1490,28 +1490,32 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    CUILabel* text = new CUILabel(GG::X0, GG::Y0, NAME_WIDTH, HEIGHT, UserString(m_tech), GG::FORMAT_LEFT);
+    CUILabel* text = new CUILabel(UserString(m_tech), GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(NAME_WIDTH, HEIGHT));
     text->ClipText(true);
     push_back(text);
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    text = new CUILabel(GG::X0, GG::Y0, COST_WIDTH, HEIGHT, cost_str, GG::FORMAT_LEFT);
+    text = new CUILabel(cost_str, GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(COST_WIDTH, HEIGHT));
     push_back(text);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new CUILabel(GG::X0, GG::Y0, TIME_WIDTH, HEIGHT, time_str, GG::FORMAT_LEFT);
+    text = new CUILabel(time_str, GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(TIME_WIDTH, HEIGHT));
     push_back(text);
 
-    std::string category_str = UserString(this_row_tech->Category());
-    text = new CUILabel(GG::X0, GG::Y0, CATEGORY_WIDTH, HEIGHT, category_str, GG::FORMAT_LEFT);
+    text = new CUILabel(UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(CATEGORY_WIDTH, HEIGHT));
     push_back(text);
 
     std::string type_str = UserString(boost::lexical_cast<std::string>(this_row_tech->Type()));
-    text = new CUILabel(GG::X0, GG::Y0, TYPE_WIDTH, HEIGHT, type_str, GG::FORMAT_LEFT);
+    text = new CUILabel(type_str, GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(TYPE_WIDTH, HEIGHT));
     push_back(text);
 
-    std::string desc_str = UserString(this_row_tech->ShortDescription());
-    text = new CUILabel(GG::X0, GG::Y0, DESC_WIDTH, HEIGHT, desc_str, GG::FORMAT_LEFT);
+    text = new CUILabel(UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
+    text->Resize(GG::Pt(DESC_WIDTH, HEIGHT));
     push_back(text);
 }
 

@@ -1312,7 +1312,8 @@ private:
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string col_val = m_column_val_cache[i];
-            CUILabel* control = new CUILabel(GG::X0, GG::Y0, GG::X(GetColumnWidth(i)), ClientHeight(), col_val, GG::FORMAT_LEFT);
+            CUILabel* control = new CUILabel(col_val, GG::FORMAT_LEFT);
+            control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
             retval.push_back(control);
         }
 

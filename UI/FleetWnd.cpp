@@ -994,7 +994,7 @@ void ShipDataPanel::Init() {
     if (ship)
         ship_name = ship->Name();
 
-    m_ship_name_text = new CUILabel(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(), ship_name, GG::FORMAT_LEFT);
+    m_ship_name_text = new CUILabel(ship_name, GG::FORMAT_LEFT);
     AttachChild(m_ship_name_text);
 
 
@@ -1003,7 +1003,7 @@ void ShipDataPanel::Init() {
         return;
 
     if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = new CUILabel(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(), design->Name(), GG::FORMAT_RIGHT);
+        m_design_name_text = new CUILabel(design->Name(), GG::FORMAT_RIGHT);
         AttachChild(m_design_name_text);
     }
 
@@ -1108,9 +1108,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_selected(false)
 {
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_LEFT);
+    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_RIGHT);
+    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
 
     if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
@@ -1189,9 +1189,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_selected(false)
 {
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_LEFT);
+    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", GG::FORMAT_RIGHT);
+    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
     m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
                                          GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
@@ -1591,7 +1591,7 @@ void FleetDataPanel::DoLayout() {
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD - GG::X(Value(LabelHeight())),    LabelHeight());
     if (m_fleet_name_text)
         m_fleet_name_text->SizeMove(name_ul, name_lr);
-    if (m_fleet_name_text)
+    if (m_fleet_destination_text)
         m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
     if (ClientWidth() < 250)

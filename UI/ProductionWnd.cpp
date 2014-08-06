@@ -460,7 +460,9 @@ namespace {
         }
 
         const GG::X NAME_WIDTH = w - left - MARGIN;
-        m_name_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text->MoveTo(GG::Pt(left, top));
+        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
 
@@ -470,7 +472,7 @@ namespace {
         if (this_client_empire && system_selected) {
             m_location_text = new ShadowedTextControl(location_text, ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            CUILabel* l_location_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            CUILabel* l_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             l_location_text->SetTextColor(location_clr);
             m_location_text = l_location_text;
         }
@@ -492,7 +494,9 @@ namespace {
 
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
         GG::X TURNS_AND_COST_WIDTH = METER_WIDTH / 2;
-        m_PPs_and_turns_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turn_spending_text, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text = new CUILabel(turn_spending_text, GG::FORMAT_LEFT);
+        m_PPs_and_turns_text->MoveTo(GG::Pt(left, top));
+        m_PPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_PPs_and_turns_text->SetTextColor(clr);
 
         left += TURNS_AND_COST_WIDTH;
@@ -501,7 +505,9 @@ namespace {
         std::string turns_left_text = turns_left < 0
             ? UserString("PRODUCTION_TURNS_LEFT_NEVER")
             : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text = new CUILabel(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_until_next_complete_text->MoveTo(GG::Pt(left, top));
+        m_turns_remaining_until_next_complete_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_until_next_complete_text->SetTextColor(clr);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 

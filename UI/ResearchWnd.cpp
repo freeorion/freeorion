@@ -128,7 +128,9 @@ namespace {
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new CUILabel(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text->MoveTo(GG::Pt(left, top));
+        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
         top += m_name_text->Height();
@@ -145,14 +147,18 @@ namespace {
         using boost::io::str;
 
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
-        m_RPs_and_turns_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_cost_text, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text = new CUILabel(turns_cost_text, GG::FORMAT_LEFT);
+        m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
+        m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
 
         left += TURNS_AND_COST_WIDTH;
 
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
                                                      : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new CUILabel(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN), turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_text = new CUILabel(turns_left_text, GG::FORMAT_RIGHT);
+        m_turns_remaining_text->MoveTo(GG::Pt(left, top));
+        m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
 

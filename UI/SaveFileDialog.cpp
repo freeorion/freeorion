@@ -95,7 +95,8 @@ namespace {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
         GG::Pt extent = ClientUI::GetFont()->TextExtent(string);
-        CUILabel* text = new CUILabel(GG::X0, GG::Y0, extent.x, extent.y, string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
+        CUILabel* text = new CUILabel(string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
+        text->Resize(GG::Pt(extent.x, extent.y));
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
@@ -154,7 +155,9 @@ public:
 
     static GG::Control* TitleForColumn(const SaveFileColumn& column)
     {
-        return new CUILabel(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Height(), column.Title(), GG::FORMAT_LEFT);
+        CUILabel* retval = new CUILabel(column.Title(), GG::FORMAT_LEFT);
+        retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
+        return retval;
     }
 
     static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full)
@@ -171,7 +174,8 @@ public:
         CUILabel* retval = 0;
 
         if (column.m_fixed) {
-            retval = new CUILabel(GG::X0, GG::Y0, column.FixedWidth(), ClientUI::GetFont()->Height(), value, format_flags);
+            retval = new CUILabel(value, format_flags);
+            retval->Resize(GG::Pt(column.FixedWidth(), ClientUI::GetFont()->Height()));
         } else {
             retval = CreateResizingText(value);
         }

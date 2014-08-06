@@ -59,22 +59,18 @@ namespace {
         {
             SetChildClippingMode(ClipToClient);
 
-            //m_player_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
+            //m_player_name_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_name_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_ship_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_planet_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_production_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_research_text = new CUILabel("", GG::FORMAT_LEFT);
+
             //AttachChild(m_player_name_text);
-
-            m_empire_name_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_name_text);
-
-            m_empire_ship_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_ship_text);
-
-            m_empire_planet_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_planet_text);
-
-            m_empire_production_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_production_text);
-
-            m_empire_research_text = new CUILabel(GG::X0, GG::Y0, GG::X1, h, "", GG::FORMAT_LEFT);
             AttachChild(m_empire_research_text);
 
             DoLayout();

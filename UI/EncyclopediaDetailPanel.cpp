@@ -363,9 +363,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     const int ICON_WIDTH(32);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_name_text =       new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
-    m_cost_text =       new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
-    m_summary_text =    new CUILabel(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "");
+    m_name_text =    new CUILabel("");
+    m_cost_text =    new CUILabel("");
+    m_summary_text = new CUILabel("");
 
     m_name_text->SetFont(ClientUI::GetBoldFont(NAME_PTS));
     m_summary_text->SetFont(ClientUI::GetFont(SUMMARY_PTS));

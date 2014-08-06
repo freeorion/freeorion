@@ -30,11 +30,11 @@
 class CUILabel : public GG::TextControl {
 public:
     /** \name Structors */ //@{
-    CUILabel(GG::X x, GG::Y y, const std::string& str,
+    CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
 
-    CUILabel(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    CUILabel(GG::X x, GG::Y y, const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
     //@}

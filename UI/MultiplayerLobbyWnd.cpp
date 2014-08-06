@@ -418,11 +418,11 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(GG::X0, GG::Y0, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
-    m_players_lb_player_type_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_LEFT);
-    m_players_lb_player_name_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_LEFT);
-    m_players_lb_empire_name_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_LEFT);
-    m_players_lb_empire_colour_column_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_LEFT);
-    m_players_lb_species_or_original_player_label = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_LEFT);
+    m_players_lb_player_type_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_LEFT);
+    m_players_lb_player_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_LEFT);
+    m_players_lb_empire_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_LEFT);
+    m_players_lb_empire_colour_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_LEFT);
+    m_players_lb_species_or_original_player_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_LEFT);
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
@@ -430,7 +430,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
 
-    m_start_conditions_text = new CUILabel(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("MULTIPLAYER_GAME_START_CONDITIONS"), GG::FORMAT_LEFT);
+    m_start_conditions_text = new CUILabel(UserString("MULTIPLAYER_GAME_START_CONDITIONS"), GG::FORMAT_LEFT);
 
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);
