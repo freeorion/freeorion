@@ -38,9 +38,18 @@ public:
    CUI_CloseButton(GG::X x, GG::Y y);
 };
 
+/** a basic Pin-shaped pin button. */
+class CUI_PinButton : public GG::Button {
+public:
+    CUI_PinButton(GG::X x, GG::Y y);
+
+    void Toggle(bool pinned); // Switches icon from Pin to Pinned and back
+};
+
 // Aditional window creation flags
 extern GG::WndFlag MINIMIZABLE;    ///< allows the window to be minimized
 extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
+extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 
 
 //! This class is a superclass of all interface windows in GG.  It takes care of
@@ -106,6 +115,7 @@ public:
 
     //! \name Mutators //@{
     virtual void    CloseClicked();                 //!< called when window is closed via the close button
+    virtual void    PinClicked();                   //!< called when window is pinned or unpinned via the pin button
     //@}
 
 protected:
@@ -129,6 +139,9 @@ protected:
     bool                    m_closable;       //!< true if the window is able to be closed with a button press
     bool                    m_minimizable;    //!< true if the window is able to be minimized
     bool                    m_minimized;      //!< true if the window is currently minimized
+    bool                    m_pinable;        //!< true if the window is able to be pinned
+    bool                    m_pinned;         //!< true if the window is currently pinned
+    
     GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
 
@@ -136,6 +149,7 @@ protected:
 
     CUI_CloseButton*        m_close_button;     //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
+    CUI_PinButton*          m_pin_button;       //!< the pin button
 
     static const GG::Y      BUTTON_TOP_OFFSET;
     static const GG::X      BUTTON_RIGHT_OFFSET;

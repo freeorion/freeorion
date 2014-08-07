@@ -266,7 +266,7 @@ namespace {
 }
 
 SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
+    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE ),
     m_sitreps_lb(0),
     m_prev_turn_button(0),
     m_next_turn_button(0),
