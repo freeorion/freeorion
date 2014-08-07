@@ -269,8 +269,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
-    m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(),
-                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
+    m_expand_button = new CUIButton("");
+    m_expand_button->SetColor(GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
@@ -534,7 +534,8 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     SetChildClippingMode(ClipToClient);
 
     // expand / collapse button at top right
-    m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
+    m_expand_button = new CUIButton("");
+    m_expand_button->SetColor(GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
@@ -804,7 +805,8 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     SetName("MilitaryPanel");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE);
+    m_expand_button = new CUIButton("");
+    m_expand_button->SetColor(GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
@@ -1366,7 +1368,8 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     }
 
     // expand / collapse button at top right
-    m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), GG::CLR_WHITE);
+    m_expand_button = new CUIButton("");
+    m_expand_button->SetColor(GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));

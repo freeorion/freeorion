@@ -370,21 +370,29 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     m_name_text->SetFont(ClientUI::GetBoldFont(NAME_PTS));
     m_summary_text->SetFont(ClientUI::GetFont(SUMMARY_PTS));
 
-    m_index_button =    new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
-    m_back_button =     new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
-    m_next_button =     new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
-    m_back_button->Disable();
-    m_next_button->Disable();
-
+    m_index_button = new CUIButton("");
+    m_index_button->SetColor(GG::CLR_WHITE);
+    m_index_button->Resize(GG::Pt(GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH)));
     m_index_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "uparrownormal.png"      )));
     m_index_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "uparrowclicked.png"     )));
     m_index_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "uparrowmouseover.png"   )));
+
+    m_back_button = new CUIButton("");
+    m_back_button->SetColor(GG::CLR_WHITE);
+    m_back_button->Resize(GG::Pt(GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH)));
     m_back_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrownormal.png"    )));
     m_back_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrowclicked.png"   )));
     m_back_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrowmouseover.png" )));
+
+    m_next_button = new CUIButton("");
+    m_next_button->SetColor(GG::CLR_WHITE);
+    m_next_button->Resize(GG::Pt(GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH)));
     m_next_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrownormal.png"   )));
     m_next_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrowclicked.png"  )));
     m_next_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrowmouseover.png")));
+
+    m_back_button->Disable();
+    m_next_button->Disable();
 
     CUILinkTextMultiEdit* desc_box = new CUILinkTextMultiEdit("", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);

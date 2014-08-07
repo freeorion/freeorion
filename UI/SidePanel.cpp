@@ -2570,14 +2570,17 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_resource_summary(0),
     m_selection_enabled(false)
 {
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(SystemNameFontSize());
     const GG::Y DROP_DISPLAYED_LIST_HEIGHT = GG::Y(10*SystemNameFontSize());
 
     m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
     AttachChild(m_planet_panel_container);
 
-    m_button_prev = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
-    m_button_next = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
+    m_button_prev = new CUIButton("");
+    m_button_prev->SetColor(GG::CLR_WHITE);
+    m_button_prev->Resize(GG::Pt(ButtonWidth(),  SystemNameTextControlHeight()));
+    m_button_next = new CUIButton("");
+    m_button_next->SetColor(GG::CLR_WHITE);
+    m_button_next->Resize(GG::Pt(ButtonWidth(),  SystemNameTextControlHeight()));
     m_system_name = new CUIDropDownList(DROP_DISPLAYED_LIST_HEIGHT);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));

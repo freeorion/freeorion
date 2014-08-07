@@ -617,7 +617,6 @@ MapWnd::MapWnd() :
     //////////////////////////////
     // Toolbar buttons and icons
     //////////////////////////////
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     // turn button
     // determine size from the text that will go into the button, using a test year string
@@ -628,9 +627,10 @@ MapWnd::MapWnd() :
     GG::Connect(m_btn_turn->LeftClickedSignal, &PlayTurnButtonClickSound);
 
     // auto turn button
-    m_btn_auto_turn = new GG::Button(GG::X0, GG::Y0, GG::X(24), GG::Y(24), "", ClientUI::GetFont(),
-                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+    m_btn_auto_turn = new CUIButton("");
+    m_btn_auto_turn->SetColor(GG::CLR_WHITE);
     GG::Connect(m_btn_auto_turn->LeftClickedSignal, &MapWnd::ToggleAutoEndTurn, this);
+    m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
     ToggleAutoEndTurn();
@@ -861,11 +861,13 @@ MapWnd::MapWnd() :
     m_detection->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_detection->SetName("Detection StatisticIcon");
 
-    m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
-                                       "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_industry_wasted = new CUIButton("");
+    m_industry_wasted->SetColor(GG::CLR_WHITE);
+    m_industry_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
     m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
-                                       "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_research_wasted = new CUIButton("");
+    m_research_wasted->SetColor(GG::CLR_WHITE);
+    m_research_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
     m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /

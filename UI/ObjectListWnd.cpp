@@ -1176,7 +1176,6 @@ public:
     void                Refresh() {
         if (!m_initialized)
             return;
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
@@ -1185,9 +1184,9 @@ public:
         delete m_icon;          m_icon = 0;
 
         if (m_has_contents) {
-            m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                             "", font, GG::CLR_WHITE, GG::CLR_ZERO,
-                                             GG::INTERACTIVE);
+            m_expand_button = new CUIButton("");
+            m_expand_button->SetColor(GG::CLR_WHITE);
+            m_expand_button->Resize(GG::Pt(GG::X(16), GG::Y(16)));
             AttachChild(m_expand_button);
             GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 
