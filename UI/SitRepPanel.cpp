@@ -278,6 +278,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
 
     m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
     AttachChild(m_sitreps_lb);
 
     m_prev_turn_button = new CUIButton(UserString("BACK"));
