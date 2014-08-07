@@ -990,12 +990,27 @@ void HumanClientApp::HandleFocusChange() {
     OIS::Mouse* mouse = 0;
     if (ois)
         mouse = ois->GetMouse();
-    if (ois && mouse) {
-        OIS::MouseState mouse_state = mouse->getMouseState();
-        OIS::MouseEvent mouse_event(mouse, mouse_state);
-        OIS::MouseListener* ml = ois;
-        for (OIS::MouseButtonID id = OIS::MB_Left; id <= OIS::MB_Button7; id = OIS::MouseButtonID(id + 1))
-            ml->mouseReleased(mouse_event, id);
+    if (mouse) {
+        //OIS::MouseState mouse_state = mouse->getMouseState();
+        //OIS::MouseEvent mouse_event(mouse, mouse_state);
+        //OIS::MouseListener* ml = ois;
+        //for (OIS::MouseButtonID id = OIS::MB_Left; id <= OIS::MB_Button7; id = OIS::MouseButtonID(id + 1))
+        //    ml->mouseReleased(mouse_event, id);
+        mouse->capture();
+    }
+
+    OIS::Keyboard* keyboard = 0;
+    if (ois)
+        keyboard = ois->GetKeyboard();
+    if (keyboard) {
+        //OIS::KeyListener* kl = ois;
+        //for (OIS::KeyCode key_code = OIS::KC_ESCAPE; key_code <= OIS::KC_MEDIASELECT;
+        //     key_code = OIS::KeyCode(key_code + 1))
+        //{
+        //    OIS::KeyEvent key_event(keyboard, key_code, '\0');
+        //    kl->keyReleased(key_event);
+        //}
+        keyboard->capture();
     }
 
     CancelDragDrop();
