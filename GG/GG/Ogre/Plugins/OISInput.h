@@ -55,7 +55,8 @@ public:
     virtual void shutdown();
     virtual void uninstall();
 
-    OIS::Mouse* GetMouse() { return m_mouse; }
+    OIS::Mouse*     GetMouse()      { return m_mouse; }
+    OIS::Keyboard*  GetKeyboard()   { return m_keyboard; }
 
 private:
     virtual void HandleSystemEvents();
