@@ -2144,7 +2144,7 @@ void ObjectListWnd::DoLayout() {
 
     m_list_box->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), button_ul.y));
 
-    SetMinSize(GG::Pt(5*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
+    SetMinSize(GG::Pt(3*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
 
     if (m_list_box->AnythingCollapsed())
         m_collapse_button->SetText(UserString("EXPAND_ALL"));
