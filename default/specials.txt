@@ -221,7 +221,7 @@ Special
                     icon = "icons/specials_large/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
-                        tag = "tech" data = GalaxySeed
+                        tag = "tech" data = "SHP_WEAPON_4_1"
                     ]
                     empire = Source.Owner
                 GenerateSitRepMessage
