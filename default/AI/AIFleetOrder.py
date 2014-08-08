@@ -238,7 +238,7 @@ class AIFleetOrder(object):
         if verbose:
             mainFleetMission=foAI.foAIstate.get_fleet_mission(fleetID)
             mainMissionType = (mainFleetMission.get_mission_types() + [-1])[0]
-            msgP1 = "** %s  -- Mission Type  %s , current loc sys %d  - %s"%(  self,   AIFleetMissionTypeNames.name(mainMissionType),  systemID,  sysName )
+            msgP1 = "** %s  -- Mission Type  %s (%s) , current loc sys %d  - %s"%(  self,   AIFleetMissionTypeNames.name(mainMissionType), mainMissionType,  systemID,  sysName )
             print msgP1
 
         #
