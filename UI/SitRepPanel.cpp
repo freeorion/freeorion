@@ -129,13 +129,12 @@ namespace {
 
     class ColorEmpire : public LinkDecorator {
     public:
-        virtual std::string Decorate ( const std::string& target, const std::string& content ) const{
+        virtual std::string Decorate(const std::string& target, const std::string& content) const {
             GG::Clr color = ClientUI::DefaultLinkColor();
-            int id = try_to_int(target);
+            int id = CastStringToInt(target);
             Empire* empire = Empires().Lookup(id);
-            if( empire ) {
+            if (empire)
                 color = empire->Color();
-            }
             return GG::RgbaTag(color) + content + "</rgba>";
         }
     };

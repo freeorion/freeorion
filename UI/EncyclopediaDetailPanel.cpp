@@ -249,7 +249,6 @@ namespace {
 
         return retval;
     }
-
 }
 
 namespace {
@@ -317,29 +316,21 @@ namespace {
         std::string& m_description;
     };
 
-    
-    class ColorByOwner: public LinkDecorator{
+    class ColorByOwner: public LinkDecorator {
     public:
-        
-        virtual std::string Decorate ( const std::string& href, const std::string& content ) const{
+        virtual std::string Decorate(const std::string& object_id_str, const std::string& content) const {
             GG::Clr color = ClientUI::DefaultLinkColor();
-            Empire* empire = HrefToEmpire(href);
-            if ( empire ) {
-                color = empire->Color();
-}
-            return GG::RgbaTag(color) + content + "</rgba>";
-        }
+            const Empire* empire = 0;
 
-    private:
-        Empire* HrefToEmpire ( const std::string& target ) const{
-            int id = try_to_int(target);
-            if ( id ) {
-                TemporaryPtr<const UniverseObject> object = Objects().Object(id);
-                if ( object && object->Owner() != ALL_EMPIRES ) {
-                    return Empires().Lookup(object->Owner());
-                }
-            }
-            return NULL;
+            // get object indicated by object_id, and then get object's owner, if any
+            int object_id = CastStringToInt(object_id_str);
+            TemporaryPtr<const UniverseObject> object = Objects().Object(object_id);
+            if (object && !object->Unowned())
+                empire = Empires().Lookup(object->Owner());
+            if (empire)
+                color = empire->Color();
+
+            return GG::RgbaTag(color) + content + "</rgba>";
         }
     };
 }

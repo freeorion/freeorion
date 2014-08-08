@@ -20,7 +20,7 @@ public:
     /// \param content The text the link tag was wrapped around.
     /// \returns The text that should be shown to the user in the place of content
     virtual std::string Decorate(const std::string& target, const std::string& content) const;
-    
+
     /// Gets called when the mouse hovers over a link of the type this decorator is assigned to.
     /// The return value is shown to the user as the link.
     /// The default implementation wraps content in an rgba tag that colors it by ClientUI::RolloverLinkColor
@@ -28,11 +28,12 @@ public:
     /// \param content The text the link tag was wrapped around.
     /// \returns The text that should be shown to the user in the place of content
     virtual std::string DecorateRollover(const std::string& target, const std::string& content) const;
-    
+
 protected:
-    /// Try to convert str to int. Returns 0 if fails.
-    /// Helper for interpreting href as an id.
-    static int try_to_int(const std::string& str);
+    /// Try to convert str to int. Returns -1 if \param str conversion to an
+    /// int fails.  Helper for interpreting \param str as an ID of an object
+    /// in the game universe.
+    static int CastStringToInt(const std::string& str);
 };
 
 // Should be unique_ptr, but we don't have c++11

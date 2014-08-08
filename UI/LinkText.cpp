@@ -120,24 +120,24 @@ void LinkText::MouseLeave()
 // LinkDecorator
 ///////////////////////////////////////
 
-std::string LinkDecorator::Decorate ( const std::string& target, const std::string& content ) const{
+std::string LinkDecorator::Decorate(const std::string& target, const std::string& content) const{
     return GG::RgbaTag(ClientUI::DefaultLinkColor()) + content + LINK_FORMAT_CLOSE;
 }
 
-std::string LinkDecorator::DecorateRollover ( const std::string& target, const std::string& content ) const{
+std::string LinkDecorator::DecorateRollover(const std::string& target, const std::string& content) const{
     return GG::RgbaTag(ClientUI::RolloverLinkColor()) + content + LINK_FORMAT_CLOSE;
 }
 
-int LinkDecorator::try_to_int ( const std::string& str ) {
+int LinkDecorator::CastStringToInt(const std::string& str) {
     std::stringstream ss;
     ss << str;
-    int ret = 0;
-    ss >> ret;
-    if ( ss.eof() ) {
-        return ret;
-    } else {
-        return 0;
-    }
+    int retval = -1;
+    ss >> retval;
+
+    if (ss.eof())
+        return retval;
+
+    return -1;
 }
 
 
