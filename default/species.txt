@@ -3193,8 +3193,10 @@ EffectsGroup
                 Not OwnedBy AnyEmpire
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
-            effects = SetMaxDefense Value + 10
-            
+            effects = [
+                SetMaxDefense Value + 10
+                SetDetection Value + 10
+                ]
     [[PROTECTION_FOCUS_DEFENSE]]
 '''
 
