@@ -8358,7 +8358,7 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, repairing 10 points of structural damage per turn in addition to repairs from damage control techs, as long as no combat has taken place in system that turn.
+'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, fully repairing all structural damage each turn, as long as no combat has taken place in system that turn.
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
