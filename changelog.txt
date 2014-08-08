@@ -1,4 +1,4 @@
-v0.4.3 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+v0.4.4 SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:
 
@@ -6,52 +6,61 @@ Key Changes:
 
 
 New Features / Improvements:
-~ Numerous tweaks and improvements to the backend code that should reduce lag and improve performance
+~ Interface responsiveness and turn processing speed improvements
+~ Various AI improvements
 ~ Default game setting is now 150 systems, 6 AIs on Maniacal setting
-~ Species can now be given a preferred focus setting, so new colonies will automatically default to that setting, this is indicated in their pedia entry.
-~ Introduced a new Happiness meter. This currently does nothing but all planets smile at you until it does.
-~ The selected game setup/galaxy creation options are now a pedia entry allowing in game checking.
-~ Major overhaul to backend of universe generation, now all done using Python scripts. This includes some improvements to universe generation:
-~ ~ Naming of star systems: a part of the systems on a map gets assigned to "star groups", each star in a group gets the same primary name and varying suffixes. On larger maps a greater percentage of stars is assigned to groups, so we don't run out of names even on very large maps.
-~ ~ Reworked starting home system selection, home systems should be more evenly distributed now
+~ Some species now have a preferred focus setting, which will be their default setting on new colonies
+~ Added a happniess meter to planets, which currently does nothing, but will be used in future updates
+~ Game setup/galaxy creation settings are now accessible in the pedia during a game
+~ Universe generation changes:
+~ ~ Now uses Python scripts that are easily modifiable
+~ ~ Nearby systems may have similar names, distinguished by suffixes, to prevent running out of names in large galaxies
+~ ~ Improved spacing uniformity of homeworld locations
 ~ ~ Additional irregular galaxy shape
-~ ~ If errors occur during universe generation, the game will still try to start if possible at all, but the players will get a respective error message / warning
-~ Substantial improvements to the AI in various respects
-~ Combat mechanics have been reworked to be more predictable, there are now three rounds per combat, at the start of each round all ships are put into a random order, then each fire their weapons simultaneously in turn at a random enemy target, this is then repeated including reshuffling for the second and third round. Further improvements are planned.
-~ Fleet management has several improvements
-~ ~ New automatically created fleets are set to aggressive or passive depending on whether the fleet contains any armed ships, meaning scouts and colony ships default to passive, warships to aggressive.
-~ ~ The toggle for aggressive/passive when splitting fleets manually now has an extra option to default as above depending on whether they're armed or not.
-~ ~ A new right click menu in the fleets window allows for all fleets in the system to be merged into the clicked fleet, or for the fleet to be separated by design. Right clicking on an individual ship within a fleet gives the option of separating that ship into a new fleet or all ships of that design into a new fleet.
-~ Fleets can now be given waypoints by holding shift when right clicking systems, allowing them to be moved around obstacles or to force a specific route.
-~ Supply mechanics substantially reworked, Tiny and Small planets receive a bonus to supply, Large and Huge planets a malus, Good and Bad Supply are also included as species traits. Space Elevator now replaces the planetary stat with a flat +3 bonus, making it more useful on larger planets.
+~ ~ If errors occur during universe generation, an error will be reported, but the generation will continue if possible
+~ Combat mechanics reworked:
+~ ~ 3 rounds, during which objects all fire simultaneously at random targets
+~ ~ Initially undetected ships that fire become targetable on later combat rounds
+~ Fleet management improvements
+~ ~ New automatically created fleets are set to aggressive if they contain warships, or passive otherwise
+~ ~ The new fleet aggression toggle can be set to automatically decide aggression for new fleets, as above
+~ ~ Right-clicking fleets or ships gives management commands: merging, splitting, and splitting by design
+~ Fleet move orders can be queued by holding shift while right-clicking destination systems
+~ Supply mechanics changes
+~ ~ Planets have size-dependent supply ranges: tiny and small get bonuses, large and huge have penalties
+~ ~ The space elevator building replaces size-dependent bonuses with a fixed bonus
+~ ~ Species can have good or bad supply traits
 
 
 Content:
 ~ Extra starnames added
-~ The Experimentors receive multiple tweaks to the way they work
-~ ~ Starlanes removed at the beginning of the game will no longer be placed back if the system they are in already contains a monster such as a sentry until after turn 200
-~ ~ Sitreps are issued to all players whenever the Experimentors launch a fleet of monsters, these Sitreps link to Pedia entries for said monsters, Pedia entries are expanded with some extra hints.
+~ The Experimentors have been reworked
+~ ~ Starlanes removed at the beginning of the game will not be replaced until after turn 200
+~ ~ Sitreps announce monster release events
 ~ ~ The stealth levels of Black Kraken and Bloated Juggernauts are reduced
-~ ~ A Victory Sitrep is generated if the Experimentor Outpost building is captured.
+~ ~ A Victory Sitrep is generated if the Experimentor Outpost building is captured
+~ Organic hulls "grow", increasing structure over time
+~ Core slot type introduced, appearing on some hulls, and with some parts only mountable in core slots
+~ Changing planet focus causes a 2 point penalty to resource meters that are above their target values on the turn after the change, to discourage frequent focus changes
 ~ Shipname list expanded, unowned monsters now receive names
-~ Several planet specials have been removed or merged, some new ones added.
-~ New Krill Spawner part introduced as a possible Ancient Ruin unlock
+~ Several planet specials have been removed or merged, some new ones added
+~ New Krill Spawner part added as a possible Ancient Ruin unlock
 ~ New Ramscoop part unlocked with Deuterium tanks
 ~ All meters reset to 0 if a planet is conquered, including Supply
-~ Supply is now a meter that grows 1 per turn towards target max.
+~ Supply is now a meter that grows 1 per turn towards target max
 ~ Premade ship designs are updated with greater variety
 ~ Derelict specials now have a stealth of 40 to prevent locating them via Pedia and similar at game start
 ~ Space monsters:
 ~ ~ Spawn rates have been reduced
 ~ ~ If AI max aggression is set to beginner, probability for guard monsters is reduced
-~ ~ If monsters frequency is set to "None", no guard monsters for specials are spawned 
+~ ~ If monsters frequency is set to "None", no guard monsters for specials are spawned
 ~ Ancient Ruins special:
 ~ ~ Modest decrease in spawn rate
 ~ ~ Preventing them from doubling up in a system
 ~ ~ Much rarer now if Monsters Frequency is set to "None"
 ~ ~ Explored Ancient Ruins are now marked as excavated
-~ ~ Made less sparse on Low Planet Density setting 
-~ Added Transpatial Drive as a core part
+~ ~ Made less sparse on Low Planet Density setting
+~ Added Transpatial Drive
 ~ Added LastTurnActiveInBattle property to ships for content scripting
 ~ Added enqueue location condition
 
@@ -72,16 +81,16 @@ Graphics / GUI:
 ~ ~ Planets that can't be colonized for stealth or visibility reasons no longer display the colonize button
 ~ ~ Tooltips and other info text added giving players more info about why they can't see a specific planet
 ~ Detection circles now default to on and can be turned off in the options menu
-~ Production list now highlights items for the currently selected system with different colour text.
+~ Production list now highlights items for the currently selected system with different colour text
 ~ Right-click menu for production queue and research queue items allowing them to be deleted, moved to the top or the bottom of the list
 ~ Right-click menu commands to enqueue techs and producible items
 ~ In multiplayer, moderators and observers now see Sitreps for all empires and can apply filters
 ~ Introduced graphs tracking progress of all empires in various metrics
 ~ Limited copy/paste functionality with keyboard shortcuts in chat window
-~ Clicking a Sitrep or performing a lookup that results in a Pedia entry in the Map window will now give a box within that window instead of taking you to the production or research window.
-~ Rumour Sitreps inform all players what discovery is made at an ancient ruins, but not where the discovery was made.
-~ Game graphics have been recompressed to reduce memory usage and improve performance.
-~ Tooltips added to tech queue.
+~ Clicking a Sitrep or performing a lookup that results in a Pedia entry in the Map window will now give a box within that window instead of taking you to the production or research window
+~ Rumour Sitreps inform all players what discovery is made at an ancient ruins, but not where the discovery was made
+~ Game graphics have been recompressed to reduce memory usage and improve performance
+~ Tooltips added to tech queue
 ~ Sitrep list now has an all/none toggle
 ~ Turn auto-cycling toggle introduced in moderator games allowing the game to go on to next turn if all empires have submitted orders without human intervention
 ~ Option to limit the number of processing threads used for effects evaluation
@@ -89,8 +98,8 @@ Graphics / GUI:
 ~ ~ A single ship arriving will have its name and type displayed
 ~ ~ A fleet arriving will also state how many ships in the fleet
 ~ ~ Lone monsters arriving will have their type displayed
-~ Save and Load dialogs have been substantially reworked displaying info on the game, the player & empire name, etc. NB the autosave folder is still there, you need to double click the [.] option to take you back to the load dialog screen.
-~ The Objects list and filter dialogs have been reworked with sortable columns and all/none selection
+~ Save and Load dialogs have been substantially reworked
+~ The Objects list and filter dialogs have been reworked with sortable columns
 ~ The "X" close button on Pedia windows is now hidden in contexts where the Pedia window can't be closed
 ~ Ship Design Screen:
 ~ ~ Layout has been rearranged
@@ -107,52 +116,49 @@ Graphics / GUI:
 
 Balancing:
 ~ Stargates require at target population of at least 1 to be buildable
-~ Replaced the "Weapons" species bonus with piloting skills
-~ ~ Ship weapons do more or less damage based on how good the piloting species are, most species are average but some can do up to 50% more damage, or 25% less.
-~ Organic Growth introduced for organic line hulls meaning their initial structure is low but it grows over time until their maximum structure is reached.
-~ Core slot introduced for some hull types, some parts made core slot only
-~ Planets now lose 2 of any meter above target value on the first turn after any focus change.
-~ Bombard order introduced, some parts now only bombard a planet if ordered to do so.
+~ Replaced the "Weapons" species bonus with piloting skills, which modifies ship damage
+~ Bombard order introduced, some parts now only bombard a planet if ordered to do so
 ~ Interstellar Logistics focus now adds a flat +3 to supply range
-~ Tech tree tweaks removing some prerequisite techs and merging some bonuses.
-~ Base troop level on native planets is increased to 12.
+~ Tech tree tweaks removing some prerequisite techs and merging some bonuses
+~ Base troop level on native planets is increased to 12
 ~ Some native species get basic shields and defenses to balance their relative in-game power once captured
 ~ Various tweaks made to the Robotic line of hulls
 ~ ~ Tweaked research costs of Robotic line techs
 ~ ~ Introduced Robotic Interface Shields for robotic hull ships with robotic crews
 ~ ~ Spatial Flux hull made substantially cheaper and buildable from just a drydock
-~ ~ Robotic Hull, Titanic Hull, Self Gravitating Hull and Logistics Facilitator have their costs reduced substantially to bring them in line with most other hull types.
+~ ~ Robotic Hull, Titanic Hull, Self Gravitating Hull and Logistics Facilitator have their costs reduced substantially to bring them in line with most other hull types
 ~ ~ Self Gravitating and Titanic Hull techs are split into a separate line from Nanorobotic Hull and Transpatial Hull allowing players to choose to research either or both
 ~ The basic Large hull has its base cost reduced to 30 and starlane speed increased to 60
 ~ The basic Medium hull has its base cost reduced to 20
-~ The Psychogenic Domination tech has been reworked to require a focus setting to activate and to only affect ships present in the system.
+~ The Psychogenic Domination tech has been reworked to require a focus setting to activate and to only affect ships present in the system
 ~ Basic Damage Control, Advanced Damage Control and Fleet Field Repair techs have been reworked/rebalanced
 ~ Improved engine parts speed boosts
 ~ Some general rebalancing of ship and hull parts
 
 Bugs:
 ~ Collective Thought Network research bonus range checking corrected
-~ Bug causing display errors in the production queue, including "never" for items that should complete that turn, fixed.
-~ Bug in xenophobic self script that could cause it to trigger from outposts with negative population fixed.
-~ A homeworld set to the growth focus won't override the homeworld bonus for the same species elsewhere if it has more than one homeworld.
+~ Bug causing display errors in the production queue, including "never" for items that should complete that turn, fixed
+~ Bug in xenophobic self script that could cause it to trigger from outposts with negative population fixed
+~ A homeworld set to the growth focus won't override the homeworld bonus for the same species elsewhere if it has more than one homeworld
 ~ Closed a memory leak in the filter condition objects list
-~ Increased the threshold for triggering the wasted production warnings to prevent tiny fractions creating spurious warnings.
+~ Increased the threshold for triggering the wasted production warnings to prevent tiny fractions creating spurious warnings
 ~ Gaia special will no longer trigger for Exobots on an Adequate planet
 ~ Terraformers can no longer be built on Adequate Exobot planets
 ~ Two or more Resonant Moon specials in the same system no longer stack
-~ Ships captured by Psionic Snowflakes should now move, scavenge fuel, etc.
-~ Option to rename other empires fleets is removed.
+~ Ships captured by Psionic Snowflakes should now move, scavenge fuel, etc
+~ Option to rename other empires fleets is removed
 ~ A ship moving from a system with the derelict special to another system with the derelict special now receives the bonus from the second derelict after the first is removed
-~ Scrapping multiple ships at the same time should no longer crash the game or leave some ships unscrapped.
-~ Ion Storms changed to give fixed 40 pt penalty to stealth and vision when in storm.
+~ Scrapping multiple ships at the same time should no longer crash the game or leave some ships unscrapped
+~ Ion Storms changed to give fixed 40 point penalty to stealth and vision
 ~ Fixed multiplayer galaxy setup so that the galaxy seed is used correctly
-~ Experimentor planets should now start on research focus instead of no focus at all.
-~ Cosmic Dragons should no longer add the nova bomb activator special to random planets if they're in transit at the end of a turn.
-~ The Observatory building and tech have been removed as it was incompatible with current visibility mechanics.
+~ Experimentor planets should now start on research focus instead of no focus at all
+~ Cosmic Dragons should no longer add the nova bomb activator special to random planets if they're in transit at the end of a turn
+~ The Observatory building and tech have been removed as it was incompatible with current visibility mechanics
 ~ Fixed bug that caused colonization of an empire-owned planet to cancel in-progress scrap orders
 ~ Adjustment to population reduction formula for the Concentration Camps and Evacuation buildings, to correct odd results when target population is substantially below current population
 ~ Fixes/adjustments to xenophobic races
-~ Some fixes to avoid quirky dragging when clicking outside and back into the FreeOrion UI window
+~ Changes to avoid or reduce quirky dragging when clicking outside and back into the FreeOrion UI window
+~ The Nanorobotic, Bio Adaptive and Logistics Facilitator hulls should now be built with the correct structure value instead of zero
 
 
 v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
