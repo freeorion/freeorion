@@ -371,10 +371,11 @@ def calculateMilitaryPriority():
     curShipRating = ProductionAI.curBestMilShipRating()
     cSRR = curShipRating**0.5
 
-    unmetThreat = 0.0
+    defense_ships_needed = 0
     currentTurn=fo.currentTurn()
-    shipsNeeded=0
-    defenses_needed = 0
+    ships_needed=0
+    defense_ships_needed = 0
+    ships_needed_allocation = []
     for sysID in mySystems.union(targetSystems) :
         status=foAI.foAIstate.systemStatus.get( sysID,  {} )
         myRating = status.get('myFleetRating',  0)
@@ -397,18 +398,26 @@ def calculateMilitaryPriority():
             threatRoot = status.get('fleetThreat', 0)**0.5 + 0.8*status.get('max_neighbor_threat', 0)**0.5 + 0.2*status.get('neighborThreat', 0)**0.5 + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
         else:
             threatRoot = status.get('fleetThreat', 0)**0.5  + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
-        shipsNeeded += math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
+        ships_needed_here = math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
+        ships_needed += ships_needed_here
+        ships_needed_allocation.append((sysID, ships_needed_here))
+        if sysID in mySystems:
+            defense_ships_needed += ships_needed_here
 
     scale = (75 + ProductionAI.curBestMilShipCost()) / 2.0
     #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )
-    militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(75*shipsNeeded) )
-    #militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(scale*shipsNeeded) )
+    part1 = min(1*fo.currentTurn(),  40)
+    part2 = max(0,  int(75*ships_needed) )
+    militaryPriority = part1 + part2
+    #militaryPriority = min(1*fo.currentTurn(),  40) + max(0,  int(scale*ships_needed) )
     if not have_l1_weaps:
         militaryPriority /= 2.0
     elif not (have_l2_weaps and enemies_sighted):
         militaryPriority /= 1.5
     #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
-    print "Calculating Military Priority:  40 + 75 * shipsNeeded \n\t  Priority: %d   \t shipsNeeded %d   \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority, shipsNeeded,   unmetThreat,  curShipRating)
+    fmt_string = "Calculating Military Priority:  min(t,40) + %d * ships_needed \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
+    print fmt_string%(scale, militaryPriority, ships_needed, defense_ships_needed,  curShipRating, have_l1_weaps, enemies_sighted)
+    print "Source of milship demand: ", ships_needed_allocation
     return max( militaryPriority,  0)
 
 

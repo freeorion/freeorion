@@ -127,6 +127,7 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "DEF_DEFENSE_NET_REGEN_1",
             "SHP_REINFORCED_HULL",
             "PRO_INDUSTRY_CENTER_II",
+            "SHP_FLEET_REPAIR"
             "PRO_ORBITAL_GEN",
             "PRO_SOL_ORB_GEN",
             "DEF_GARRISON_2",
@@ -134,7 +135,6 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SPY_DETECT_3",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
-            "SHP_ADV_DAM_CONT",
             "LRN_QUANT_NET",
             "DEF_PLAN_BARRIER_SHLD_1",
             "DEF_DEFENSE_NET_3",
@@ -193,6 +193,7 @@ def tech_group_5():
             "LRN_XENOARCH",
             "LRN_GRAVITONICS",
             "LRN_ENCLAVE_VOID",
+            "SHP_ADV_DAM_CONT",
             "LRN_STELLAR_TOMOGRAPHY",
             "LRN_TIME_MECH",
             "DEF_PLAN_BARRIER_SHLD_4",
