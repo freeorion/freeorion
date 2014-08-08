@@ -3130,7 +3130,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/make_dmg.py\" $BUILT_PRODUCTS_DIR\nfi";
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/make_dmg.py\" \"${SRCROOT}/..\" $BUILT_PRODUCTS_DIR\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
