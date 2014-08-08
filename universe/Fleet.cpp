@@ -742,6 +742,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     // Moving to where we are is not moving at all
     if (m_travel_route.size() == 1 && this->SystemID() == m_travel_route.front()) {
         m_travel_route.clear();
+        m_next_system = INVALID_OBJECT_ID;
     }
 
 
@@ -751,7 +752,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     m_travel_distance = PathLength(m_travel_route.begin(), m_travel_route.end());
 
 
-    if (!route.empty()) {
+    if (!m_travel_route.empty()) {
         // if we're already moving, add in the distance from where we are to the first system in the route
         if (SystemID() != route.front()) {
             TemporaryPtr<const System> starting_system = GetSystem(route.front());
