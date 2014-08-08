@@ -1186,7 +1186,6 @@ public:
         if (m_has_contents) {
             m_expand_button = new CUIButton("");
             m_expand_button->SetColor(GG::CLR_WHITE);
-            m_expand_button->Resize(GG::Pt(GG::X(16), GG::Y(16)));
             AttachChild(m_expand_button);
             GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 

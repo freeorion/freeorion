@@ -1165,7 +1165,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
             m_aggression_toggle = new CUIButton("");
             m_aggression_toggle->SetColor(GG::CLR_WHITE);
-            m_aggression_toggle->Resize(GG::Pt(GG::X(16), GG::Y(16)));
             AttachChild(m_aggression_toggle);
             GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
         }
@@ -1196,7 +1195,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     AttachChild(m_fleet_destination_text);
     m_aggression_toggle = new CUIButton("");
     m_aggression_toggle->SetColor(GG::CLR_WHITE);
-    m_aggression_toggle->Resize(GG::Pt(GG::X(16), GG::Y(16)));
     AttachChild(m_aggression_toggle);
     GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 

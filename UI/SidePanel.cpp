@@ -2577,10 +2577,8 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
 
     m_button_prev = new CUIButton("");
     m_button_prev->SetColor(GG::CLR_WHITE);
-    m_button_prev->Resize(GG::Pt(ButtonWidth(),  SystemNameTextControlHeight()));
     m_button_next = new CUIButton("");
     m_button_next->SetColor(GG::CLR_WHITE);
-    m_button_next->Resize(GG::Pt(ButtonWidth(),  SystemNameTextControlHeight()));
     m_system_name = new CUIDropDownList(DROP_DISPLAYED_LIST_HEIGHT);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
