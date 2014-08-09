@@ -85,7 +85,7 @@ void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
     default:
         break;
     }
-    Edit::KeyPress(key, key_code_point, mod_keys);
+    CUIEdit::KeyPress(key, key_code_point, mod_keys);
 }
 
 void MessageWndEdit::FindGameWords() {

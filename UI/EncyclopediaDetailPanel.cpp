@@ -4,6 +4,7 @@
 #include "DesignWnd.h"
 #include "Encyclopedia.h"
 #include "GraphControl.h"
+#include "Hotkeys.h"
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
@@ -33,6 +34,8 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
+
+#include <boost/algorithm/string.hpp>
 
 namespace {
     const GG::X TEXT_MARGIN_X(3);
@@ -335,6 +338,31 @@ namespace {
     };
 }
 
+namespace {
+    class SearchEdit : public CUIEdit {
+    public:
+        SearchEdit() :
+            CUIEdit("")
+        {}
+
+        virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point,
+                                 GG::Flags<GG::ModKey> mod_keys)
+        {
+            switch (key) {
+            case GG::GGK_RETURN:
+            case GG::GGK_KP_ENTER:
+                TextEnteredSignal();
+                break;
+            default:
+                break;
+            }
+            CUIEdit::KeyPress(key, key_code_point, mod_keys);
+        }
+
+        mutable boost::signals2::signal<void ()> TextEnteredSignal;
+    };
+}
+
 std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
 std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
@@ -346,6 +374,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     m_description_box(0),
     m_icon(0),
     m_other_icon(0),
+    m_search_edit(0),
     m_graph(0)
 {
     const int PTS = ClientUI::Pts();
@@ -397,8 +426,15 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
 
     m_graph = new GraphControl(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_graph->ShowPoints(false);
-    AttachChild(m_graph);
 
+    SearchEdit* search_edit = new SearchEdit();
+    m_search_edit = search_edit;
+    GG::Connect(search_edit->TextEnteredSignal,     &EncyclopediaDetailPanel::HandleSearchTextEntered,  this);
+    GG::Connect(m_search_edit->GainingFocusSignal,  &EncyclopediaDetailPanel::EnableTypingUnsafeAccels, this);
+    GG::Connect(m_search_edit->LosingFocusSignal,   &EncyclopediaDetailPanel::DisableTypingUnsafeAccels,this);
+
+    AttachChild(m_search_edit);
+    AttachChild(m_graph);
     AttachChild(m_name_text);
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
@@ -408,9 +444,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     AttachChild(m_next_button);
 
     SetChildClippingMode(ClipToWindow);
-
     DoLayout();
-
     MoveChildUp(m_graph);
 
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
@@ -450,19 +484,25 @@ void EncyclopediaDetailPanel::DoLayout() {
     m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr - GG::Pt(GG::X1, GG::Y1));
 
     // "back" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8, Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8, Height() - BORDER_BOTTOM*2);
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8,   Height() - BORDER_BOTTOM*2 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8,   Height() - BORDER_BOTTOM*2);
     m_back_button->SizeMove(ul, lr);
 
     // "up" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4, Height() - BORDER_BOTTOM*3 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4, Height() - BORDER_BOTTOM*3);
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4,   Height() - BORDER_BOTTOM*3 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4,       Height() - BORDER_BOTTOM*3);
     m_index_button->SizeMove(ul, lr);
 
     // "next" button
-    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH, Height() - BORDER_BOTTOM*2 - PTS);
-    lr = GG::Pt(Width() - BORDER_RIGHT*3, Height() - BORDER_BOTTOM*2);
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH,           Height() - BORDER_BOTTOM*2 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3,                       Height() - BORDER_BOTTOM*2);
     m_next_button->SizeMove(ul, lr);
+
+    // search edit box
+    ul = GG::Pt(BORDER_LEFT + 2,                                Height() - BORDER_BOTTOM*3 - PTS - 3);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 12,  Height() - BORDER_BOTTOM - 3);
+    m_search_edit->SizeMove(ul, lr);
+
 
     // icon
     if (m_icon) {
@@ -479,6 +519,12 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
+
+void EncyclopediaDetailPanel::DisableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->EnableTypingUnsafeHotkeys(); }
+
+void EncyclopediaDetailPanel::EnableTypingUnsafeAccels()
+{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
 void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
@@ -635,6 +681,27 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
     }
 }
 
+void EncyclopediaDetailPanel::HandleSearchTextEntered() {
+    const std::string& search_text = m_search_edit->Text();
+    // Find an article that has part or all of the typed text in its name or contents
+    const Encyclopedia& pedia = GetEncyclopedia();
+    for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+         category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
+    {
+        const std::string& category = category_it->first;
+        const std::vector<EncyclopediaArticle>& articles = category_it->second;
+        for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
+             article_it != articles.end(); ++article_it)
+        {
+            const std::string& article_name = UserString(article_it->name);
+            if (boost::icontains(article_name, search_text)) {
+                AddItem(TextLinker::ENCYCLOPEDIA_TAG, article_it->name);
+                break;
+            }
+        }
+    }
+}
+
 namespace {
     int DefaultLocationForEmpire(int empire_id) {
         const Empire* empire = Empires().Lookup(empire_id);
@@ -758,7 +825,7 @@ namespace {
             const Encyclopedia& encyclopedia = GetEncyclopedia();
 
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-                     category_it = encyclopedia.articles.begin();
+                 category_it = encyclopedia.articles.begin();
                  category_it != encyclopedia.articles.end(); ++category_it)
             {
                 const std::vector<EncyclopediaArticle>& articles = category_it->second;
