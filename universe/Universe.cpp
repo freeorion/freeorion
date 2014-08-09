@@ -3474,6 +3474,14 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
     } else {
         designs_to_serialize.clear();
 
+        // add generic monster ship designs so they always appear in players' pedias
+        for (ShipDesignMap::const_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+            ShipDesign* design = it->second;
+            if (design->IsMonster() && design->DesignedByEmpire() == ALL_EMPIRES)
+                designs_to_serialize[design->ID()] = design;
+        }
+
+        // get empire's known ship designs
         std::map<int, std::set<int> >::const_iterator it = m_empire_known_ship_design_ids.find(encoding_empire);
         if (it == m_empire_known_ship_design_ids.end())
             return; // no known designs to serialize
