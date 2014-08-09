@@ -65,84 +65,179 @@ namespace {
     { return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">"; }
 
     void GetSortedPediaDirEntires(const std::string& dir_name,
-                                  std::multimap<std::string, std::string>& sorted_entries_list)
+                                  std::multimap<std::string,
+                                                std::pair<std::string,
+                                                          std::string> >& sorted_entries_list)
     {
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         if (dir_name == "ENC_INDEX") {
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING_TYPE"),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIAL"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD_TYPE"),     LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD_TYPE") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_EMPIRE"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),    LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER_TYPE"),   LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER_TYPE") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FLEET"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),       LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n"));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_GALAXY_SETUP"),   LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GALAXY_SETUP") + "\n"));
+            // add entries consisting of links to pedia page lists of
+            // articles of various types
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n",
+                               "ENC_SHIP_PART")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n",
+                               "ENC_SHIP_HULL")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n",
+                               "ENC_TECH")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING_TYPE"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n",
+                               "ENC_BUILDING_TYPE")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIAL"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n",
+                               "ENC_SPECIAL")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n",
+                               "ENC_SPECIES")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD_TYPE"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD_TYPE") + "\n",
+                               "ENC_FIELD_TYPE")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_EMPIRE"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n",
+                               "ENC_EMPIRE")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n",
+                               "ENC_SHIP_DESIGN")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n",
+                               "ENC_SHIP")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n",
+                               "ENC_MONSTER")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER_TYPE"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER_TYPE") + "\n",
+                               "ENC_MONSTER_TYPE")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_FLEET"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n",
+                               "ENC_FLEET")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n",
+                               "ENC_PLANET")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n",
+                               "ENC_BUILDING")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n",
+                               "ENC_SYSTEM")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n",
+                               "ENC_FIELD")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n",
+                               "ENC_GRAPH")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_GALAXY_SETUP"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GALAXY_SETUP") + "\n",
+                               "ENC_GALAXY_SETUP")));
 
-            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
+            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+                 it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
-            { sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n")); }
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
-            for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SHIP_PART_TAG, it->first) + "\n"));
+            for (PartTypeManager::iterator it = part_type_manager.begin();
+                 it != part_type_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::SHIP_PART_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_SHIP_HULL") {
             const HullTypeManager& hull_type_manager = GetHullTypeManager();
-            for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SHIP_HULL_TAG, it->first) + "\n"));
+            for (HullTypeManager::iterator it = hull_type_manager.begin();
+                 it != hull_type_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::SHIP_HULL_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_TECH") {
             std::vector<std::string> tech_names = GetTechManager().TechNames();
             std::map<std::string, std::string> userstring_tech_names;
             // sort tech names by user-visible name, so names are shown alphabetically in UI
-            for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
+            for (std::vector<std::string>::const_iterator it = tech_names.begin();
+                 it != tech_names.end(); ++it)
+            {
                 userstring_tech_names[UserString(*it)] = *it;
-            for (std::map<std::string, std::string>::const_iterator it = userstring_tech_names.begin(); it != userstring_tech_names.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::TECH_TAG, it->second) + "\n"));
+            }
+            for (std::map<std::string, std::string>::const_iterator
+                 it = userstring_tech_names.begin(); it != userstring_tech_names.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::TECH_TAG, it->second) + "\n",
+                                   it->second)));
+            }
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
-            for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first) + "\n"));
+            for (BuildingTypeManager::iterator it = building_type_manager.begin();
+                 it != building_type_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_SPECIAL") {
             const std::vector<std::string> special_names = SpecialNames();
-            for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(*it),  LinkTaggedText(VarText::SPECIAL_TAG, *it) + "\n"));
+            for (std::vector<std::string>::const_iterator it = special_names.begin();
+                 it != special_names.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(*it),
+                    std::make_pair(LinkTaggedText(VarText::SPECIAL_TAG, *it) + "\n",
+                                   *it)));
+            }
 
         } else if (dir_name == "ENC_SPECIES") {
             const SpeciesManager& species_manager = GetSpeciesManager();
-            for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n"));
+            for (SpeciesManager::iterator it = species_manager.begin();
+                 it != species_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_FIELD_TYPE") {
             const FieldTypeManager& fields_manager = GetFieldTypeManager();
-            for (FieldTypeManager::iterator it = fields_manager.begin(); it != fields_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::FIELD_TYPE_TAG, it->first) + "\n"));
+            for (FieldTypeManager::iterator it = fields_manager.begin();
+                 it != fields_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(VarText::FIELD_TYPE_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else if (dir_name == "ENC_EMPIRE") {
             const EmpireManager& empire_manager = Empires();
-            for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
-                sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n"));
+            for (EmpireManager::const_iterator it = empire_manager.begin();
+                 it != empire_manager.end(); ++it)
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),
+                    std::make_pair(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n",
+                                   boost::lexical_cast<std::string>(it->first))));
+            }
 
         } else if (dir_name == "ENC_SHIP_DESIGN") {
-            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
+            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns();
+                 it != GetUniverse().endShipDesigns(); ++it)
+            {
                 if (!it->second->IsMonster())
-                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
+                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),
+                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
+                                       boost::lexical_cast<std::string>(it->first))));
+            }
 
         } else if (dir_name == "ENC_SHIP") {
             for (ObjectMap::const_iterator<Ship> ship_it = Objects().const_begin<Ship>();
@@ -150,7 +245,9 @@ namespace {
             {
                 TemporaryPtr<const Ship> ship = *ship_it;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(ship_name,  LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(ship_name,
+                    std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
+                                   boost::lexical_cast<std::string>(ship->ID()))));
             }
 
         } else if (dir_name == "ENC_MONSTER") {
@@ -161,13 +258,17 @@ namespace {
                 if (!ship->IsMonster())
                     continue;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(ship_name,    LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(ship_name,
+                    std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
+                                   boost::lexical_cast<std::string>(ship->ID()))));
             }
 
         } else if (dir_name == "ENC_MONSTER_TYPE") {
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 if (it->second->IsMonster())
-                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
+                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),
+                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
+                                       boost::lexical_cast<std::string>(it->first))));
 
         } else if (dir_name == "ENC_FLEET") {
             for (ObjectMap::const_iterator<Fleet> fleet_it = Objects().const_begin<Fleet>();
@@ -175,7 +276,9 @@ namespace {
             {
                 TemporaryPtr<const Fleet> fleet = *fleet_it;
                 const std::string& flt_name = fleet->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(flt_name,  LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(flt_name,
+                    std::make_pair(LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
+                                   boost::lexical_cast<std::string>(fleet->ID()))));
             }
 
         } else if (dir_name == "ENC_PLANET") {
@@ -184,7 +287,9 @@ namespace {
             {
                 TemporaryPtr<const Planet> planet = *planet_it;
                 const std::string& plt_name = planet->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(plt_name,  LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(plt_name,
+                    std::make_pair(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
+                                   boost::lexical_cast<std::string>(planet->ID()))));
             }
 
         } else if (dir_name == "ENC_BUILDING") {
@@ -193,7 +298,9 @@ namespace {
             {
                 TemporaryPtr<const Building> building = *building_it;
                 const std::string& bld_name = building->PublicName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(bld_name,  LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(bld_name,
+                    std::make_pair(LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
+                                   boost::lexical_cast<std::string>(building->ID()))));
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
@@ -202,16 +309,20 @@ namespace {
             {
                 TemporaryPtr<const System> system = *system_it;
                 const std::string& sys_name = system->ApparentName(client_empire_id);
-                sorted_entries_list.insert(std::make_pair(sys_name,  LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  "));
+                sorted_entries_list.insert(std::make_pair(sys_name,
+                    std::make_pair(LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  ",
+                                   boost::lexical_cast<std::string>(system->ID()))));
             }
 
         } else if (dir_name == "ENC_FIELD") {
             for (ObjectMap::const_iterator<Field> field_it = Objects().const_begin<Field>();
                  field_it != Objects().const_end<Field>(); ++field_it)
             {
-                const std::string& field_name = field_it->Name();
+                TemporaryPtr<const Field> field = *field_it;
+                const std::string& field_name = field->Name();
                 sorted_entries_list.insert(std::make_pair(field_name,
-                    LinkTaggedIDText(VarText::FIELD_ID_TAG, field_it->ID(), field_name) + "  "));
+                    std::make_pair(LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name) + "  ",
+                                   boost::lexical_cast<std::string>(field->ID()))));
             }
 
         } else if (dir_name == "ENC_GRAPH") {
@@ -219,7 +330,11 @@ namespace {
                 stat_records = GetUniverse().GetStatRecords();
             for (std::map<std::string, std::map<int, std::map<int, double> > >::const_iterator
                  it = stat_records.begin(); it != stat_records.end(); ++it)
-            { sorted_entries_list.insert(std::make_pair(UserString(it->first),   LinkTaggedText(TextLinker::GRAPH_TAG, it->first) + "\n")); }
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(LinkTaggedText(TextLinker::GRAPH_TAG, it->first) + "\n",
+                                   it->first)));
+            }
 
         } else {
             // list categories
@@ -229,7 +344,11 @@ namespace {
                 const std::vector<EncyclopediaArticle>& articles = category_it->second;
                 for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
                      article_it != articles.end(); ++article_it)
-                { sorted_entries_list.insert(std::make_pair(UserString(article_it->name),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n")); }
+                {
+                    sorted_entries_list.insert(std::make_pair(UserString(article_it->name),
+                        std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n",
+                                       article_it->name)));
+                }
             }
         }
     }
@@ -238,13 +357,13 @@ namespace {
         std::string retval;
 
         // get sorted list of entries for requested directory
-        std::multimap<std::string, std::string> sorted_entries_list;
+        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
         GetSortedPediaDirEntires(dir_name, sorted_entries_list);
 
         // add sorted entries to page text
-        for (std::multimap<std::string, std::string>::const_iterator
+        for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
              it = sorted_entries_list.begin(); it != sorted_entries_list.end(); ++it)
-        { retval += it->second; }
+        { retval += it->second.first; }
 
         return retval;
     }
@@ -677,9 +796,68 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
     }
 }
 
+namespace {
+    const std::vector<std::string>& GetSearchTextDirNames() {
+        static std::vector<std::string> dir_names;
+        if (dir_names.empty()) {
+            dir_names.push_back("ENC_SHIP_PART");       dir_names.push_back("ENC_SHIP_HULL");
+            dir_names.push_back("ENC_TECH");            dir_names.push_back("ENC_BUILDING_TYPE");
+            dir_names.push_back("ENC_SPECIAL");         dir_names.push_back("ENC_SPECIES");
+            dir_names.push_back("ENC_FIELD_TYPE");      dir_names.push_back("ENC_EMPIRE");
+            dir_names.push_back("ENC_SHIP_DESIGN");     dir_names.push_back("ENC_SHIP");
+            dir_names.push_back("ENC_MONSTER");         dir_names.push_back("ENC_MONSTER_TYPE");
+            dir_names.push_back("ENC_FLEET");           dir_names.push_back("ENC_PLANET");
+            dir_names.push_back("ENC_BUILDING");        dir_names.push_back("ENC_SYSTEM");
+            dir_names.push_back("ENC_FIELD");           dir_names.push_back("ENC_GRAPH");
+            dir_names.push_back("ENC_GALAXY_SETUP");
+        }
+        return dir_names;
+    }
+}
+
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     const std::string& search_text = m_search_edit->Text();
-    // Find an article that has part or all of the typed text in its name or contents
+
+    // search lists of articles for typed text
+    const std::vector<std::string>& dir_names = GetSearchTextDirNames();
+
+    // search for exact matches
+    for (std::vector<std::string>::const_iterator it = dir_names.begin();
+         it != dir_names.end(); ++it)
+    {
+        const std::string& type_text = *it;
+        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
+        GetSortedPediaDirEntires(type_text, sorted_entries_list);
+        for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+             entry_it = sorted_entries_list.begin(); 
+             entry_it != sorted_entries_list.end(); ++entry_it)
+        {
+            if (boost::iequals(entry_it->first, search_text)) {
+                AddItem(type_text, entry_it->second.second);
+                return;
+            }
+        }
+    }
+
+    // search for partial matches
+    for (std::vector<std::string>::const_iterator it = dir_names.begin();
+         it != dir_names.end(); ++it)
+    {
+        const std::string& type_text = *it;
+        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
+        GetSortedPediaDirEntires(type_text, sorted_entries_list);
+        for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+             entry_it = sorted_entries_list.begin(); 
+             entry_it != sorted_entries_list.end(); ++entry_it)
+        {
+            if (boost::icontains(entry_it->first, search_text)) {
+                AddItem(type_text, entry_it->second.second);
+                return;
+            }
+        }
+    }
+
+    // Find a custom article that contains the search text in its name
     const Encyclopedia& pedia = GetEncyclopedia();
     for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
          category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
@@ -1736,22 +1914,22 @@ namespace {
                                             GG::Clr& color)
     {
         int id = boost::lexical_cast<int>(item_name);
+        if (id == INVALID_OBJECT_ID)
+            return;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        if (id != INVALID_OBJECT_ID) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(id);
-            if (!obj) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
-                return;
-            }
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(id);
+        if (!obj) {
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
+            return;
+        }
 
-            detailed_description = obj->Dump();
-            name = obj->PublicName(client_empire_id);
-            general_type = GeneralTypeOfObject(obj->ObjectType());
-            if (general_type.empty()) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
-                return;
-            }
+        detailed_description = obj->Dump();
+        name = obj->PublicName(client_empire_id);
+        general_type = GeneralTypeOfObject(obj->ObjectType());
+        if (general_type.empty()) {
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
+            return;
         }
     }
 
@@ -2061,7 +2239,11 @@ namespace {
                                                 name, texture, other_texture, turns, cost, cost_units,
                                                 general_type, specific_type, detailed_description, color,
                                                 incomplete_design);
-        } else if (item_type == UNIVERSE_OBJECT) {
+        } else if (item_type == UNIVERSE_OBJECT         || item_type == "ENC_BUILDING"  ||
+                   item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
+                   item_type == "ENC_PLANET"            || item_type == "ENC_SHIP"      ||
+                   item_type == "ENC_SYSTEM")
+        {
             RefreshDetailPanelObjectTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
                                                 general_type, specific_type, detailed_description, color);
