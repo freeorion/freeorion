@@ -64,14 +64,11 @@ namespace {
     std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text)
     { return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">"; }
 
-    std::string PediaDirText(const std::string& dir_name) {
-        std::string retval;
+    void GetSortedPediaDirEntires(const std::string& dir_name,
+                                  std::multimap<std::string, std::string>& sorted_entries_list)
+    {
         const Encyclopedia& encyclopedia = GetEncyclopedia();
-        const Universe& universe = GetUniverse();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        const ObjectMap& objects = Objects();
-
-        std::multimap<std::string, std::string> sorted_entries_list;
 
         if (dir_name == "ENC_INDEX") {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n"));
@@ -85,6 +82,7 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),    LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER_TYPE"),   LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER_TYPE") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_FLEET"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n"));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),       LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n"));
@@ -142,13 +140,13 @@ namespace {
                 sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_SHIP_DESIGN") {
-            for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
+            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 if (!it->second->IsMonster())
                     sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_SHIP") {
-            for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
-                 ship_it != objects.const_end<Ship>(); ++ship_it)
+            for (ObjectMap::const_iterator<Ship> ship_it = Objects().const_begin<Ship>();
+                 ship_it != Objects().const_end<Ship>(); ++ship_it)
             {
                 TemporaryPtr<const Ship> ship = *ship_it;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
@@ -156,34 +154,24 @@ namespace {
             }
 
         } else if (dir_name == "ENC_MONSTER") {
-            // monster objects
-            std::vector<TemporaryPtr<const Ship> > monsters;
-            for (ObjectMap::const_iterator<Ship> ship_it = objects.const_begin<Ship>();
-                 ship_it != objects.const_end<Ship>(); ++ship_it)
+            for (ObjectMap::const_iterator<Ship> ship_it = Objects().const_begin<Ship>();
+                 ship_it != Objects().const_end<Ship>(); ++ship_it)
             {
-                if ((*ship_it)->IsMonster())
-                    monsters.push_back(*ship_it);
-            }
-            if (!monsters.empty()) {
-                retval += UserString("MONSTER_OBJECTS");
-                for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it) {
-                    TemporaryPtr<const Ship> ship = *ship_it;
-                    const std::string& ship_name = ship->PublicName(client_empire_id);
-                    retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ";
-                }
-            } else {
-                retval += UserString("NO_MONSTER_OBJECTS");
+                TemporaryPtr<const Ship> ship = *ship_it;
+                if (!ship->IsMonster())
+                    continue;
+                const std::string& ship_name = ship->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(ship_name,    LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
             }
 
-            // monster types
-            retval += "\n\n" + UserString("MONSTER_TYPES") + "\n";
-            for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
+        } else if (dir_name == "ENC_MONSTER_TYPE") {
+            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 if (it->second->IsMonster())
                     sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_FLEET") {
-            for (ObjectMap::const_iterator<Fleet> fleet_it = objects.const_begin<Fleet>();
-                 fleet_it != objects.const_end<Fleet>(); ++fleet_it)
+            for (ObjectMap::const_iterator<Fleet> fleet_it = Objects().const_begin<Fleet>();
+                 fleet_it != Objects().const_end<Fleet>(); ++fleet_it)
             {
                 TemporaryPtr<const Fleet> fleet = *fleet_it;
                 const std::string& flt_name = fleet->PublicName(client_empire_id);
@@ -191,8 +179,8 @@ namespace {
             }
 
         } else if (dir_name == "ENC_PLANET") {
-            for (ObjectMap::const_iterator<Planet> planet_it = objects.const_begin<Planet>();
-                 planet_it != objects.const_end<Planet>(); ++planet_it)
+            for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
+                 planet_it != Objects().const_end<Planet>(); ++planet_it)
             {
                 TemporaryPtr<const Planet> planet = *planet_it;
                 const std::string& plt_name = planet->PublicName(client_empire_id);
@@ -200,8 +188,8 @@ namespace {
             }
 
         } else if (dir_name == "ENC_BUILDING") {
-            for (ObjectMap::const_iterator<Building> building_it = objects.const_begin<Building>();
-                 building_it != objects.const_end<Building>(); ++building_it)
+            for (ObjectMap::const_iterator<Building> building_it = Objects().const_begin<Building>();
+                 building_it != Objects().const_end<Building>(); ++building_it)
             {
                 TemporaryPtr<const Building> building = *building_it;
                 const std::string& bld_name = building->PublicName(client_empire_id);
@@ -209,8 +197,8 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
-            for (ObjectMap::const_iterator<System> system_it = objects.const_begin<System>();
-                 system_it != objects.const_end<System>(); ++system_it)
+            for (ObjectMap::const_iterator<System> system_it = Objects().const_begin<System>();
+                 system_it != Objects().const_end<System>(); ++system_it)
             {
                 TemporaryPtr<const System> system = *system_it;
                 const std::string& sys_name = system->ApparentName(client_empire_id);
@@ -218,8 +206,8 @@ namespace {
             }
 
         } else if (dir_name == "ENC_FIELD") {
-            for (ObjectMap::const_iterator<Field> field_it = objects.const_begin<Field>();
-                 field_it != objects.const_end<Field>(); ++field_it)
+            for (ObjectMap::const_iterator<Field> field_it = Objects().const_begin<Field>();
+                 field_it != Objects().const_end<Field>(); ++field_it)
             {
                 const std::string& field_name = field_it->Name();
                 sorted_entries_list.insert(std::make_pair(field_name,
@@ -228,7 +216,7 @@ namespace {
 
         } else if (dir_name == "ENC_GRAPH") {
             const std::map<std::string, std::map<int, std::map<int, double> > >&
-                stat_records = universe.GetStatRecords();
+                stat_records = GetUniverse().GetStatRecords();
             for (std::map<std::string, std::map<int, std::map<int, double> > >::const_iterator
                  it = stat_records.begin(); it != stat_records.end(); ++it)
             { sorted_entries_list.insert(std::make_pair(UserString(it->first),   LinkTaggedText(TextLinker::GRAPH_TAG, it->first) + "\n")); }
@@ -244,10 +232,18 @@ namespace {
                 { sorted_entries_list.insert(std::make_pair(UserString(article_it->name),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n")); }
             }
         }
+    }
 
-        // add sorted entries
-        for (std::multimap<std::string, std::string>::const_iterator it = sorted_entries_list.begin();
-             it != sorted_entries_list.end(); ++it)
+    std::string PediaDirText(const std::string& dir_name) {
+        std::string retval;
+
+        // get sorted list of entries for requested directory
+        std::multimap<std::string, std::string> sorted_entries_list;
+        GetSortedPediaDirEntires(dir_name, sorted_entries_list);
+
+        // add sorted entries to page text
+        for (std::multimap<std::string, std::string>::const_iterator
+             it = sorted_entries_list.begin(); it != sorted_entries_list.end(); ++it)
         { retval += it->second; }
 
         return retval;
@@ -780,8 +776,8 @@ namespace {
     /// Creates a link tag of the appropriate type for object_id,
     /// with the content being the public name from the point of view of client_empire_id.
     /// Returns not_found if object_id is not found.
-    std::string PublicNameLink ( int client_empire_id, int object_id, std::string not_found ) {
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject ( object_id );
+    std::string PublicNameLink(int client_empire_id, int object_id, std::string not_found) {
+        TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
         if (object) {
             const std::string& name = object->PublicName(client_empire_id);
             const std::string& tag = LinkTag(object->ObjectType());
@@ -799,14 +795,11 @@ namespace {
                                             GG::Clr& color)
     {
         detailed_description = PediaDirText(item_name);
-        if (!detailed_description.empty()) {
-            // attempt to treat as a directory
-            name = UserString(item_name);
+        name = UserString(item_name);
 
-        } else if (item_name == "ENC_GALAXY_SETUP") {
+        // special case for galaxy setup data: display info
+        if (item_name == "ENC_GALAXY_SETUP") {
             const GalaxySetupData& gsd = ClientApp::GetApp()->GetGalaxySetupData();
-
-            name = UserString("ENC_GALAXY_SETUP");
 
             detailed_description += str(FlexibleFormat(UserString("ENC_GALAXY_SETUP_SETTINGS"))
                 % gsd.m_seed
@@ -820,27 +813,28 @@ namespace {
                 % TextForGalaxySetupSetting(gsd.m_native_freq)
                 % TextForAIAggression(gsd.m_ai_aggr));
 
-        } else {
-            // couldn't find a directory; look up in custom encyclopedia entries
-            const Encyclopedia& encyclopedia = GetEncyclopedia();
+            return;
+        }
 
-            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-                 category_it = encyclopedia.articles.begin();
-                 category_it != encyclopedia.articles.end(); ++category_it)
+        // search for article in custom pedia entries. 
+        const Encyclopedia& encyclopedia = GetEncyclopedia();
+        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+             category_it = encyclopedia.articles.begin();
+             category_it != encyclopedia.articles.end(); ++category_it)
+        {
+            const std::vector<EncyclopediaArticle>& articles = category_it->second;
+            for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
+                    article_it != articles.end(); ++article_it)
             {
-                const std::vector<EncyclopediaArticle>& articles = category_it->second;
-                for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
-                     article_it != articles.end(); ++article_it)
-                {
-                    if (article_it->name != item_name)
-                        continue;
-                    name = UserString(article_it->name);
-                    detailed_description = UserString(article_it->description);
-                    general_type = UserString(article_it->category);
-                    specific_type = UserString(article_it->short_description);
-                    texture = ClientUI::GetTexture(ClientUI::ArtDir() / article_it->icon, true);
-                    break;
-                }
+                if (article_it->name != item_name)
+                    continue;
+
+                detailed_description = UserString(article_it->description);
+                general_type = UserString(article_it->category);
+                specific_type = UserString(article_it->short_description);
+                texture = ClientUI::GetTexture(ClientUI::ArtDir() / article_it->icon, true);
+
+                return;
             }
         }
     }
@@ -1596,50 +1590,48 @@ namespace {
         }
     }
 
-    namespace {
-        std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design) {
-            GetUniverse().UpdateMeterEstimates(ship->ID());
+    std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design) {
+        GetUniverse().UpdateMeterEstimates(ship->ID());
 
-            std::string hull_link;
-            if (!design->Hull().empty())
-                 hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
+        std::string hull_link;
+        if (!design->Hull().empty())
+                hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
 
-            std::string parts_list;
-            const std::vector<std::string>& parts = design->Parts();
-            std::vector<std::string> non_empty_parts;
-            for (std::vector<std::string>::const_iterator part_it = parts.begin();
-                 part_it != parts.end(); ++part_it)
-            {
-                if (!part_it->empty())
-                    non_empty_parts.push_back(*part_it);
-            }
-            for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
-                    part_it != non_empty_parts.end(); ++part_it)
-            {
-                if (part_it != non_empty_parts.begin())
-                    parts_list += ", ";
-                parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
-            }
-
-            return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-            % design->Description()
-            % hull_link
-            % parts_list
-            % static_cast<int>(design->SRWeapons().size())
-            % static_cast<int>(design->LRWeapons().size())
-            % static_cast<int>(design->FWeapons().size())
-            % static_cast<int>(design->PDWeapons().size())
-            % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-            % ship->CurrentMeterValue(METER_MAX_SHIELD)
-            % ship->CurrentMeterValue(METER_DETECTION)
-            % ship->CurrentMeterValue(METER_STEALTH)
-            % ship->CurrentMeterValue(METER_BATTLE_SPEED)
-            % ship->CurrentMeterValue(METER_STARLANE_SPEED)
-            % ship->CurrentMeterValue(METER_MAX_FUEL)
-            % design->ColonyCapacity()
-            % design->TroopCapacity()
-            % design->Attack());
+        std::string parts_list;
+        const std::vector<std::string>& parts = design->Parts();
+        std::vector<std::string> non_empty_parts;
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+                part_it != parts.end(); ++part_it)
+        {
+            if (!part_it->empty())
+                non_empty_parts.push_back(*part_it);
         }
+        for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
+                part_it != non_empty_parts.end(); ++part_it)
+        {
+            if (part_it != non_empty_parts.begin())
+                parts_list += ", ";
+            parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
+        }
+
+        return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+        % design->Description()
+        % hull_link
+        % parts_list
+        % static_cast<int>(design->SRWeapons().size())
+        % static_cast<int>(design->LRWeapons().size())
+        % static_cast<int>(design->FWeapons().size())
+        % static_cast<int>(design->PDWeapons().size())
+        % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+        % ship->CurrentMeterValue(METER_MAX_SHIELD)
+        % ship->CurrentMeterValue(METER_DETECTION)
+        % ship->CurrentMeterValue(METER_STEALTH)
+        % ship->CurrentMeterValue(METER_BATTLE_SPEED)
+        % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+        % ship->CurrentMeterValue(METER_MAX_FUEL)
+        % design->ColonyCapacity()
+        % design->TroopCapacity()
+        % design->Attack());
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,

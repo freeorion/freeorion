@@ -3223,7 +3223,10 @@ ENC_SHIP
 Ship
 
 ENC_MONSTER
-Monster Type
+Monster
+
+ENC_MONSTER_TYPE
+Monster Types
 
 MONSTER_TYPES
 Monster Types
