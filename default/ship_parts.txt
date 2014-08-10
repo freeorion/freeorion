@@ -1209,7 +1209,7 @@ Count condition = And [
                 VisibleToEmpire Source.Owner
                 HasTag "ROBOTIC"
                 Not Source
-                DesignHasPart 1 999 "ROBOTIC_INTERFACE_SHIELDS"
+                DesignHasPart 1 999 "SH_ROBOTIC_INTERFACE_SHIELDS"
                 Or [
                     DesignHasHull name = "SH_ROBOTIC"
                     DesignHasHull name = "SH_SELF_GRAVITATING"
