@@ -272,7 +272,11 @@ def calculateOutpostPriority():
 
 def calculateInvasionPriority():
     """calculates the demand for troop ships by opponent planets"""
+    
     global allottedInvasionTargets
+    if foAI.foAIstate.aggression <= fo.aggression.turtle:
+        return 0
+    
     troopsPerPod=2
     empire=fo.getEmpire()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
@@ -418,6 +422,9 @@ def calculateMilitaryPriority():
     fmt_string = "Calculating Military Priority:  min(t,40) + %d * ships_needed \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
     print fmt_string%(scale, militaryPriority, ships_needed, defense_ships_needed,  curShipRating, have_l1_weaps, enemies_sighted)
     print "Source of milship demand: ", ships_needed_allocation
+    
+    if foAI.foAIstate.aggression < fo.aggression.typical:
+        militaryPriority *= (1.0 + foAI.foAIstate.aggression) / (1.0 + fo.aggression.typical)
     return max( militaryPriority,  0)
 
 

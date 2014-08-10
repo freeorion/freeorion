@@ -201,7 +201,8 @@ def generate_research_orders():
     #
     # check to accelerate xeno_arch
     if True: #just to help with cold-folding /  organization
-        if ColonisationAI.gotRuins and empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete:
+        if (ColonisationAI.gotRuins and empire.getTechStatus("LRN_XENOARCH") != fo.techStatus.complete and
+                        foAI.foAIstate.aggression >= fo.aggression.typical):
             if "LRN_ARTIF_MINDS" in research_queue_list:
                 insert_idx = 7+ research_queue_list.index("LRN_ARTIF_MINDS")
             elif "GRO_SYMBIOTIC_BIO" in research_queue_list:

@@ -127,11 +127,11 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "DEF_DEFENSE_NET_REGEN_1",
             "SHP_REINFORCED_HULL",
             "PRO_INDUSTRY_CENTER_II",
-            "SHP_FLEET_REPAIR"
+            "SHP_INTSTEL_LOG",
+            "SHP_FLEET_REPAIR",
             "PRO_ORBITAL_GEN",
             "PRO_SOL_ORB_GEN",
             "DEF_GARRISON_2",
-            "SHP_INTSTEL_LOG",
             "SPY_DETECT_3",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
