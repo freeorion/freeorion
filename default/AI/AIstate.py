@@ -845,10 +845,16 @@ class AIstate(object):
             role=FleetUtilsAI.assess_fleet_role(fleetID)
             self.__fleetRoleByID[fleetID] = role
             makeAggressive=False
-            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST,
-                                AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST]:
+            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  
+                        AIFleetMissionType.FLEET_MISSION_OUTPOST,
+                        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
+                        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION,
+                        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
+                        ]:
                 pass
-            if role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
+            elif role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION,
+                          AIFleetMissionType.FLEET_MISSION_INVASION
+                          ]:
                 thisRating=self.get_rating(fleetID)
                 if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.curBestMilShipRating():
                     makeAggressive=True

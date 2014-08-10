@@ -1576,7 +1576,7 @@ def generateProductionOrders():
             troopersNeededForcing = max(0,   int( min(0.99+  (currentTurn/20.0 - nAvailTroopTot)/max(2, prodTime-1),  nMilitaryTot/3 -nTroopTot)))
             numShips=troopersNeededForcing
             perTurnCost = (float(prodCost) / prodTime)
-            if troopersNeededForcing>0  and totalPP > 3*perTurnCost*queuedTroopShips:
+            if troopersNeededForcing>0  and totalPP > 3*perTurnCost*queuedTroopShips and foAI.foAIstate.aggression >= fo.aggression.typical:
                 retval  = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
                 if retval !=0:
                     print "forcing %d new ship(s) to production queue:  %s; per turn production cost %.1f"%(numShips,  bestDesign.name(True),  numShips*perTurnCost)
