@@ -220,8 +220,6 @@ public:
 
     typedef std::list<Row*>::iterator iterator;
     typedef std::list<Row*>::const_iterator const_iterator;
-    typedef std::list<Row*>::reverse_iterator reverse_iterator;
-    typedef std::list<Row*>::const_reverse_iterator const_reverse_iterator;
 
     typedef std::set<iterator, RowPtrIteratorLess<std::list<Row*> > > SelectionSet;
 
@@ -268,8 +266,6 @@ public:
     bool                    Empty() const;          ///< returns true when the ListBox is empty
     const_iterator          begin() const;          ///< returns an iterator to the first list row
     const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
-    const_reverse_iterator  rbegin() const;         ///< returns an iterator to the last list row
-    const_reverse_iterator  rend() const;           ///< returns an iterator to the imaginary row one past the first one
     const Row&              GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
     iterator                Caret() const;          ///< returns the row that has the caret
     const SelectionSet&     Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
@@ -375,8 +371,6 @@ public:
 
     iterator            begin();                            ///< returns an iterator to the first list row
     iterator            end();                              ///< returns an iterator to the imaginary row one past the last one
-    reverse_iterator    rbegin();                           ///< returns an iterator to the last list row
-    reverse_iterator    rend();                             ///< returns an iterator to the imaginary row one past the first one
 
     Row&            GetRow(std::size_t n);                  ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 

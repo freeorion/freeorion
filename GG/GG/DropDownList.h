@@ -58,8 +58,6 @@ public:
 
     typedef ListBox::iterator iterator;
     typedef ListBox::const_iterator const_iterator;
-    typedef ListBox::reverse_iterator reverse_iterator;
-    typedef ListBox::const_reverse_iterator const_reverse_iterator;
 
     /** \name Signal Types */ ///@{
     /** emitted when a new item is selected; will be end() when no item is
@@ -85,8 +83,6 @@ public:
 
     const_iterator          begin() const;          ///< returns an iterator to the first list row
     const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
-    const_reverse_iterator  rbegin() const;         ///< returns an iterator to the last list row
-    const_reverse_iterator  rend() const;           ///< returns an iterator to the imaginary row one past the first
 
     const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
     bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
@@ -149,8 +145,6 @@ public:
 
     iterator            begin();                    ///< returns an iterator to the first list row
     iterator            end();                      ///< returns an iterator to the imaginary row one past the last one
-    reverse_iterator    rbegin();                   ///< returns an iterator to the last list row
-    reverse_iterator    rend();                     ///< returns an iterator to the imaginary row one past the first
 
     Row&            GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 

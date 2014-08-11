@@ -557,12 +557,6 @@ ListBox::const_iterator ListBox::begin() const
 ListBox::const_iterator ListBox::end() const
 { return m_rows.end(); }
 
-ListBox::const_reverse_iterator ListBox::rbegin() const
-{ return m_rows.rbegin(); }
-
-ListBox::const_reverse_iterator ListBox::rend() const
-{ return m_rows.rend(); }
-
 const ListBox::Row& ListBox::GetRow(std::size_t n) const
 {
     assert(n < m_rows.size());
@@ -953,12 +947,6 @@ ListBox::iterator ListBox::begin()
 
 ListBox::iterator ListBox::end()
 { return m_rows.end(); }
-
-ListBox::reverse_iterator ListBox::rbegin()
-{ return m_rows.rbegin(); }
-
-ListBox::reverse_iterator ListBox::rend()
-{ return m_rows.rend(); }
 
 ListBox::Row& ListBox::GetRow(std::size_t n)
 {
