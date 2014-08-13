@@ -37,7 +37,14 @@
 #include <GG/utf8/checked.h>
 
 #if GG_HAVE_LIBPNG
-#include "GIL/extension/io/png_io.hpp"
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+# endif
+# include "GIL/extension/io/png_io.hpp"
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+#  pragma GCC diagnostic pop
+# endif
 #endif
 
 #include <boost/format.hpp>

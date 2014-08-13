@@ -627,13 +627,11 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 }
 
 void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews){
-    bool server_just_for_us = false;
     std::string  generic_directory = fs::path(directory).generic_string();
     if(!m_networking.Connected()){
         Logger().debugStream() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
         StartServer();
-        server_just_for_us = true;
-        
+
         Logger().debugStream() << "HumanClientApp::RequestSavePreviews Connecting to server";
         unsigned int start_time = Ticks();
         while (!m_networking.ConnectToLocalHostServer()) {

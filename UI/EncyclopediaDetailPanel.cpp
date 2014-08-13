@@ -495,7 +495,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
-    const int ICON_WIDTH(32);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_name_text =    new CUILabel("");
@@ -862,7 +861,6 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
          category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
     {
-        const std::string& category = category_it->first;
         const std::vector<EncyclopediaArticle>& articles = category_it->second;
         for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
              article_it != articles.end(); ++article_it)
