@@ -101,13 +101,13 @@ namespace {
         bool m_invert;
     };
 
-    bool LessThan(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
-    { return ListBox::RowPtrIteratorLess<std::list<ListBox::Row*> >::LessThan(lhs, rhs, end); }
-
     bool LessThanEqual(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
     {
-        return lhs == rhs ||
-            ListBox::RowPtrIteratorLess<std::list<ListBox::Row*> >::LessThan(lhs, rhs, end);
+        if (rhs == end)
+            return true;
+        if (lhs == end)
+            return false;
+        return lhs == rhs || ListBox::RowPtrIteratorLess()(lhs, rhs);
     }
 
     void ResetIfEqual(ListBox::iterator& val, ListBox::iterator other, ListBox::iterator end)
@@ -410,6 +410,16 @@ void ListBox::Row::AdjustLayout(bool adjust_for_push_back/* = false*/)
     }
 }
 
+
+////////////////////////////////////////////////
+// GG::ListBox::RowPtrIteratorLess
+////////////////////////////////////////////////
+bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const ListBox::iterator& rhs) const
+{
+    return (*lhs)->Top() < (*rhs)->Top();
+}
+
+
 ////////////////////////////////////////////////
 // GG::ListBox
 ////////////////////////////////////////////////
@@ -424,7 +434,7 @@ ListBox::ListBox() :
     m_vscroll_wheel_scroll_increment(0),
     m_hscroll_wheel_scroll_increment(0),
     m_caret(m_rows.end()),
-    m_selections(RowPtrIteratorLess<std::list<Row*> >(&m_rows)),
+    m_selections(),
     m_old_sel_row(m_rows.end()),
     m_old_sel_row_selected(false),
     m_old_rdown_row(m_rows.end()),
@@ -462,7 +472,7 @@ ListBox::ListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
     m_vscroll_wheel_scroll_increment(0),
     m_hscroll_wheel_scroll_increment(0),
     m_caret(m_rows.end()),
-    m_selections(RowPtrIteratorLess<std::list<Row*> >(&m_rows)),
+    m_selections(),
     m_old_sel_row(m_rows.end()),
     m_old_sel_row_selected(false),
     m_old_rdown_row(m_rows.end()),
@@ -973,7 +983,7 @@ void ListBox::SetCaret(iterator it)
 void ListBox::BringRowIntoView(iterator it)
 {
     if (it != m_rows.end()) {
-        if (LessThan(it, m_first_row_shown, m_rows.end())) {
+        if (RowPtrIteratorLess()(it, m_first_row_shown)) {
             m_first_row_shown = it;
         } else if (LessThanEqual(LastVisibleRow(), it, m_rows.end())) {
             // Find the row that preceeds the target row by about ClientSize().y
@@ -2054,8 +2064,8 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
         if (mod_keys & MOD_KEY_CTRL) { // control key depressed
             if (mod_keys & MOD_KEY_SHIFT && m_caret != m_rows.end()) {
                 // Both shift and control keys are depressed.
-                iterator low  = LessThan(m_caret, it, m_rows.end()) ? m_caret : it;
-                iterator high = LessThan(m_caret, it, m_rows.end()) ? it : m_caret;
+                iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
+                iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
                 bool erase = m_selections.find(m_caret) == m_selections.end();
                 if (high != m_rows.end())
                     ++high;
@@ -2081,8 +2091,8 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 m_selections.insert(it);
                 m_caret = it;
             } else { // select all rows between the caret and this row (inclusive), don't move the caret
-                iterator low  = LessThan(m_caret, it, m_rows.end()) ? m_caret : it;
-                iterator high = LessThan(m_caret, it, m_rows.end()) ? it : m_caret;
+                iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
+                iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
                 if (high != m_rows.end())
                     ++high;
                 for (iterator it2 = low; it2 != high; ++it2) {

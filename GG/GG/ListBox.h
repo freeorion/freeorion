@@ -100,26 +100,6 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
 class GG_API ListBox : public Control
 {
 public:
-    /** \brief Sorts iterators to ListBox::Row*s from a container of
-        ListBox::Row*s.
-
-        For instance for use in a std::map<> or std::set<> (eg,
-        ListBox::SelectionSet).  The iterators must refer to pointers to
-        ListBox::Rows that are laid out vertically (as in a ListBox).  This
-        layout is used to define a y-ordering that is used to sort the
-        iterators. */
-    template <class Cont>
-    struct RowPtrIteratorLess
-    {
-        typedef typename Cont::iterator Iter;
-        RowPtrIteratorLess();
-        RowPtrIteratorLess(Cont* c);
-        bool operator()(Iter lhs, Iter rhs) const;
-        static bool LessThan(Iter lhs, Iter rhs, Iter end);
-    private:
-        Cont* m_container;
-    };
-
     /** \brief A single item in a listbox.
 
         A Row is primarily a container for Controls.  Each cell in a Row
@@ -221,7 +201,20 @@ public:
     typedef std::list<Row*>::iterator iterator;
     typedef std::list<Row*>::const_iterator const_iterator;
 
-    typedef std::set<iterator, RowPtrIteratorLess<std::list<Row*> > > SelectionSet;
+    /** \brief Sorts iterators to ListBox::Row*s from a container of
+        ListBox::Row*s.
+
+        For instance for use in a std::map<> or std::set<> (eg,
+        ListBox::SelectionSet).  The iterators must refer to pointers to
+        ListBox::Rows that are laid out vertically (as in a ListBox).  This
+        layout is used to define a y-ordering that is used to sort the
+        iterators. */
+    struct RowPtrIteratorLess
+    {
+        bool operator()(const iterator& lhs, const iterator& rhs) const;
+    };
+
+    typedef std::set<iterator, RowPtrIteratorLess> SelectionSet;
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
@@ -575,35 +568,6 @@ private:
 
 
 // template implementations
-template <class Cont>
-GG::ListBox::RowPtrIteratorLess<Cont>::RowPtrIteratorLess() :
-    m_container()
-{ assert(m_container); }
-
-template <class Cont>
-GG::ListBox::RowPtrIteratorLess<Cont>::RowPtrIteratorLess(Cont* c) :
-    m_container(c)
-{ assert(m_container); }
-
-template <class Cont>
-bool GG::ListBox::RowPtrIteratorLess<Cont>::operator()(Iter lhs, Iter rhs) const
-{
-    // If you've seen an error message that lead you here, it is because you
-    // are attempting to use RowPtrIteratorLess to sort a type that is not
-    // iterators-to-pointers-to-ListBox::Rows!
-    BOOST_MPL_ASSERT((boost::is_same<typename Iter::value_type, ::GG::ListBox::Row*>));
-    return LessThan(lhs, rhs, m_container->end());
-}
-
-template <class Cont>
-bool GG::ListBox::RowPtrIteratorLess<Cont>::LessThan(Iter lhs, Iter rhs, Iter end)
-{
-    return lhs == end ?
-        false :
-        (rhs == end ?
-         true : (*lhs)->Top() < (*rhs)->Top());
-}
-
 template <class RowType>
 bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const
 {
