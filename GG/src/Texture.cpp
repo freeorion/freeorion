@@ -33,12 +33,12 @@
 # include <IL/ilu.h>
 #else
 # include <boost/filesystem/operations.hpp>
-# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 # endif
 # include "GIL/extension/dynamic_image/any_image.hpp"
-# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #  pragma GCC diagnostic pop
 # endif
 # if GG_HAVE_LIBJPEG

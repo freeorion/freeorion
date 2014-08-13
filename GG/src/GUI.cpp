@@ -37,12 +37,12 @@
 #include <GG/utf8/checked.h>
 
 #if GG_HAVE_LIBPNG
-# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 # endif
 # include "GIL/extension/io/png_io.hpp"
-# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC__ > 6)
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 #  pragma GCC diagnostic pop
 # endif
 #endif
