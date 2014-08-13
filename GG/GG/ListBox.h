@@ -203,7 +203,7 @@ public:
         ListBox::Rows that are laid out vertically (as in a ListBox).  This
         layout is used to define a y-ordering that is used to sort the
         iterators. */
-    struct RowPtrIteratorLess
+    struct GG_API RowPtrIteratorLess
     {
         bool operator()(const iterator& lhs, const iterator& rhs) const;
     };
