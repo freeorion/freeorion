@@ -141,7 +141,7 @@ void ServerConnectWnd::PopulateServerList()
     m_servers_lb->Clear();
     for (ClientNetworking::ServerList::iterator it = m_LAN_servers.begin(); it != m_LAN_servers.end(); ++it) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(it->second, ClientUI::GetFont(), ClientUI::TextColor());
+        row->push_back(new CUILabel(it->second));
         m_servers_lb->Insert(row);
     }
 }

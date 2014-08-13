@@ -253,12 +253,6 @@ X ListBox::Row::ColWidth(std::size_t n) const
 unsigned int ListBox::Row::Margin() const
 { return m_margin; }
 
-Control* ListBox::Row::CreateControl(const std::string& str, const boost::shared_ptr<Font>& font, Clr color) const
-{ return GetStyleFactory()->NewTextControl(X0, Y0, str, font, color); }
-
-Control* ListBox::Row::CreateControl(const SubTexture& st) const
-{ return new StaticGraphic(X0, Y0, st.Width(), st.Height(), st, GRAPHIC_SHRINKFIT); }
-
 void ListBox::Row::Render()
 {}
 
@@ -271,17 +265,6 @@ void ListBox::Row::push_back(Control* c)
         m_col_widths.back() = m_col_widths[m_cells.size() - 1];
     AdjustLayout();
 }
-
-void ListBox::Row::push_back(const std::string& str, const boost::shared_ptr<Font>& font,
-                             Clr color/* = CLR_BLACK*/)
-{ push_back(CreateControl(str, font, color)); }
-
-void ListBox::Row::push_back(const std::string& str, const std::string& font_filename, unsigned int pts,
-                             Clr color/* = CLR_BLACK*/)
-{ push_back(CreateControl(str, GUI::GetGUI()->GetFont(font_filename, pts), color)); }
-
-void ListBox::Row::push_back(const SubTexture& st)
-{ push_back(CreateControl(st)); }
 
 void ListBox::Row::clear()
 {

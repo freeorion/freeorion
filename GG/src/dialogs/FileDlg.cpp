@@ -638,7 +638,7 @@ void FileDlg::PopulateFilters()
     } else {
         for (std::size_t i = 0; i < m_file_filters.size(); ++i) {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back(m_file_filters[i].first, m_font, m_text_color);
+            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, m_file_filters[i].first, m_font, m_text_color));
             m_filter_list->Insert(row);
         }
         m_filter_list->Select(m_filter_list->begin());
@@ -694,13 +694,13 @@ void FileDlg::UpdateList()
             Win32Paths())
         {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back("[..]", m_font, m_text_color);
+            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[..]", m_font, m_text_color));
             m_files_list->Insert(row);
         }
         // current directory selector
         {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back("[.]", m_font, m_text_color);
+            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[.]", m_font, m_text_color));
             m_files_list->Insert(row);
         }
         try {
@@ -737,7 +737,7 @@ void FileDlg::UpdateList()
 #else
                     std::string row_text = "[" + it->filename() + "]";
 #endif
-                    row->push_back(row_text, m_font, m_text_color);
+                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, row_text, m_font, m_text_color));
                     sorted_rows.insert(std::make_pair(row_text, row));
                 }
             } catch (const fs::filesystem_error&) {
@@ -772,10 +772,10 @@ void FileDlg::UpdateList()
                         if (meets_filters) {
                             ListBox::Row* row = new ListBox::Row();
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-                            row->push_back(it->path().filename().string(), m_font, m_text_color);
+                            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, it->path().filename().string(), m_font, m_text_color));
                             sorted_rows.insert(std::make_pair(it->path().filename().string(), row));
 #else
-                            row->push_back(it->filename(), m_font, m_text_color);
+                            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, it->filename(), m_font, m_text_color));
                             sorted_rows.insert(std::make_pair(it->filename(), row));
 #endif
                         }
@@ -794,9 +794,9 @@ void FileDlg::UpdateList()
                 if (fs::exists(path)) {
                     ListBox::Row* row = new ListBox::Row();
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-                    row->push_back("[" + path.root_name().string() + "]", m_font, m_text_color);
+                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[" + path.root_name().string() + "]", m_font, m_text_color));
 #else
-                    row->push_back("[" + path.root_name() + "]", m_font, m_text_color);
+                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[" + path.root_name() + "]", m_font, m_text_color));
 #endif
                     m_files_list->Insert(row);
                 }

@@ -822,11 +822,8 @@ void SaveFileDialog::UpdatePreviewList() {
         m_remote_dir_dropdown->Clear();
         SetDirPath(preview_information.folder);
 
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr color = ClientUI::TextColor();
-
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        row->push_back(SERVER_LABEL, font, color);
+        row->push_back(new CUILabel(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
         for (std::vector<std::string>::const_iterator
@@ -835,11 +832,11 @@ void SaveFileDialog::UpdatePreviewList() {
         {
             GG::DropDownList::Row* row = new GG::DropDownList::Row();
             if (it->find("/") == 0) {
-                row->push_back(SERVER_LABEL + *it, font, color);
+                row->push_back(new CUILabel(SERVER_LABEL + *it));
             } else if(it->find("./") == 0) {
-                row->push_back(SERVER_LABEL + it->substr(1), font, color);
+                row->push_back(new CUILabel(SERVER_LABEL + it->substr(1)));
             } else {
-                row->push_back(SERVER_LABEL + "/" + *it, font, color);
+                row->push_back(new CUILabel(SERVER_LABEL + "/" + *it));
             }
 
             m_remote_dir_dropdown->Insert(row);

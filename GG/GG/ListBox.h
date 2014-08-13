@@ -159,18 +159,12 @@ public:
         Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
         X            ColWidth(std::size_t n) const;     ///< returns the width of the \a nth cell of this Row; not range checked
         unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
-
-        Control*     CreateControl(const std::string& str, const boost::shared_ptr<Font>& font, Clr color) const; ///< creates a "shrink-fit" TextControl from text, font, and color parameters
-        Control*     CreateControl(const SubTexture& st) const; ///< creates a "shrink-fit" StaticGraphic Control from a SubTexture parameter
         //@}
 
         /** \name Mutators */ ///@{
         virtual void Render();
 
         void         push_back(Control* c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
-        void         push_back(const std::string& str, const boost::shared_ptr<Font>& font, Clr color = CLR_BLACK); ///< overload of push_back that creates a TextControl and adds it to the Row
-        void         push_back(const std::string& str, const std::string& font_filename, unsigned int pts, Clr color = CLR_BLACK); ///< overload of push_back that creates a TextControl and adds it to the Row
-        void         push_back(const SubTexture& st); ///< overload of push_back that creates a StaticGraphic Control and adds it to the Row
         void         clear(); ///< removes and deletes all cells in this Row
         void         resize(std::size_t n); ///< resizes the Row to have \a n cells
 
