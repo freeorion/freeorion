@@ -118,10 +118,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    Scroll(); ///< defalt ctor
-    //@}
-
     /** \name Accessors */ ///@{
     unsigned int  TabSpace() const;          ///< returns the space the tab has to move about in (the control's width less the width of the incr & decr buttons)
     unsigned int  TabWidth() const;          ///< returns the calculated width of the tab, based on PageSize() and the logical size of the control, in pixels

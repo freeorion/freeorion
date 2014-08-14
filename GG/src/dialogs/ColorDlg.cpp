@@ -153,12 +153,6 @@ HSVClr::HSVClr(double h_, double s_, double v_, GLubyte a_/* = 255*/) :
 ////////////////////////////////////////////////
 // HueSaturationPicker
 ////////////////////////////////////////////////
-HueSaturationPicker::HueSaturationPicker() :
-    Control(),
-    m_hue(0.0),
-    m_saturation(0.0)
-{}
-
 HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
     Control(x, y, w, h, INTERACTIVE),
     m_hue(0.0),
@@ -242,13 +236,6 @@ void HueSaturationPicker::SetHueSaturationFromPt(Pt pt)
 ////////////////////////////////////////////////
 // ValuePicker
 ////////////////////////////////////////////////
-ValuePicker::ValuePicker() :
-    Control(),
-    m_hue(0.0),
-    m_saturation(0.0),
-    m_value(0.0)
-{}
-
 ValuePicker::ValuePicker(X x, Y y, X w, Y h, Clr arrow_color) :
     Control(x, y, w, h, INTERACTIVE),
     m_hue(0.0),
@@ -322,10 +309,6 @@ void ValuePicker::SetValueFromPt(Pt pt)
 ////////////////////////////////////////////////
 
 // ColorDlg::ColorButton
-ColorDlg::ColorButton::ColorButton() :
-    Button()
-{}
-
 ColorDlg::ColorButton::ColorButton(const Clr& color) :
     Button(X0, Y0, X1, Y1, "", boost::shared_ptr<Font>(), color),
     m_represented_color(CLR_BLACK)
@@ -356,10 +339,6 @@ void ColorDlg::ColorButton::RenderRollover()
 
 
 // ColorDlg::ColorDisplay
-ColorDlg::ColorDisplay::ColorDisplay() :
-    Control()
-{}
-
 ColorDlg::ColorDisplay::ColorDisplay(Clr color) :
     Control(X0, Y0, X1, Y1, NO_WND_FLAGS)
 { SetColor(color); }
@@ -419,25 +398,6 @@ void ColorDlg::ColorButtonClickFunctor::operator()()
 // static(s)
 std::vector<Clr> ColorDlg::s_custom_colors;
 const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
-
-ColorDlg::ColorDlg() :
-    Wnd(),
-    m_original_color_specified(false),
-    m_color_was_picked(false),
-    m_hue_saturation_picker(0),
-    m_value_picker(0),
-    m_pickers_layout(0),
-    m_new_color_square(0),
-    m_old_color_square(0),
-    m_new_color_square_text(0),
-    m_old_color_square_text(0),
-    m_color_squares_layout(0),
-    m_color_buttons_layout(0),
-    m_current_color_button(INVALID_COLOR_BUTTON),
-    m_ok(0),
-    m_cancel(0),
-    m_sliders_ok_cancel_layout(0)
-{}
 
 ColorDlg::ColorDlg(X x, Y y, const boost::shared_ptr<Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :

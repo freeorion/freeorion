@@ -54,24 +54,6 @@ const std::size_t DynamicGraphic::ALL_FRAMES = std::numeric_limits<std::size_t>:
 const std::size_t DynamicGraphic::INVALID_INDEX = std::numeric_limits<std::size_t>::max();
 const unsigned int DynamicGraphic::INVALID_TIME = std::numeric_limits<unsigned int>::max();
 
-DynamicGraphic::DynamicGraphic() :
-    Control(),
-    m_margin(0),
-    m_frame_width(0),
-    m_frame_height(0),
-    m_FPS(DEFAULT_FPS),
-    m_playing(true),
-    m_looping(true),
-    m_curr_texture(0),
-    m_curr_subtexture(0),
-    m_frames(0),
-    m_curr_frame(0),
-    m_first_frame_time(INVALID_TIME),
-    m_last_frame_time(INVALID_TIME),
-    m_first_frame_idx(0),
-    m_style(GRAPHIC_NONE)
-{}
-
 DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
                                unsigned int margin, const std::vector<boost::shared_ptr<Texture> >& textures,
                                Flags<GraphicStyle> style/* = GRAPHIC_NONE*/, std::size_t frames/* = ALL_FRAMES*/,

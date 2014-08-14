@@ -140,10 +140,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    Edit(); ///< Default ctor.
-    //@}
-
     /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters selected. */
     virtual bool MultiSelected() const;

@@ -87,11 +87,6 @@ public:
 
     static const std::size_t NO_BUTTON;
 
-protected:
-    /** \name Structors */ ///@{
-    ThreeButtonDlg(); ///< default ctor
-    //@}
-
 private:
     std::size_t NumButtons() const;
     void Init(const std::string& msg, const boost::shared_ptr<Font>& font, std::size_t buttons,

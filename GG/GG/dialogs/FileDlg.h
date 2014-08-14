@@ -161,10 +161,6 @@ protected:
     static const X DEFAULT_WIDTH;  ///< default width for the dialog
     static const Y DEFAULT_HEIGHT; ///< default height for the dialog
 
-    /** \name Structors */ ///@{
-    FileDlg(); ///< default ctor
-    //@}
-
 private:
     void CreateChildren(const std::string& filename, bool multi);
     void PlaceLabelsAndEdits(X button_width, Y button_height);

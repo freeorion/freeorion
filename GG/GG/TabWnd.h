@@ -105,11 +105,6 @@ public:
         Wnd. */
     static const std::size_t NO_WND;
 
-protected:
-    /** \name Structors */ ///@{
-    OverlayWnd(); ///< default ctor
-    //@}
-
 private:
     std::vector<Wnd*> m_wnds;
     std::size_t       m_current_wnd_index;
@@ -181,10 +176,6 @@ public:
     static const std::size_t NO_WND;
 
 protected:
-    /** \name Structors */ ///@{
-    TabWnd(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     /** Returns the TabBar at the top of this TabWnd. */
     const TabBar* GetTabBar() const;
@@ -279,10 +270,6 @@ public:
     static const X BUTTON_WIDTH;
 
 protected:
-    /** \name Structors */ ///@{
-    TabBar(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     const Button* LeftButton() const;
     const Button* RightButton() const;

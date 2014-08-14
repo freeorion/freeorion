@@ -77,11 +77,6 @@ public:
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
 
-protected:
-    /** \name Structors */ ///@{
-    HueSaturationPicker(); ///< default ctor
-    //@}
-
 private:
     void SetHueSaturationFromPt(Pt pt);
 
@@ -118,11 +113,6 @@ public:
     //@}
 
     mutable ChangedSignalType ChangedSignal; ///< emitted whenever the hue or saturation in the picker changes
-
-protected:
-    /** \name Structors */ ///@{
-    ValuePicker(); ///< default ctor
-    //@}
 
 private:
     void SetValueFromPt(Pt pt);
@@ -164,10 +154,6 @@ public:
         //@}
 
     protected:
-        /** \name Structors */ ///@{
-        ColorButton(); ///< default ctor
-        //@}
-
         /** \name Mutators */ ///@{
         virtual void RenderUnpressed();
         virtual void RenderPressed();
@@ -193,11 +179,6 @@ public:
 
         /** \name Accessors */ ///@{
         virtual void Render();
-        //@}
-
-    protected:
-        /** \name Structors */ ///@{
-        ColorDisplay(); ///< default ctor
         //@}
     };
 
@@ -251,11 +232,6 @@ public:
     //@}
 
     static const std::size_t INVALID_COLOR_BUTTON;
-
-protected:
-    /** \name Structors */ ///@{
-    ColorDlg(); ///< default ctor
-    //@}
 
 private:
     struct ColorButtonClickFunctor

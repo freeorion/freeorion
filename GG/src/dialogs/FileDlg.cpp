@@ -135,21 +135,6 @@ const X FileDlg::DEFAULT_WIDTH(500);
 const Y FileDlg::DEFAULT_HEIGHT(450);
 
 
-FileDlg::FileDlg() :
-    Wnd(),
-    m_select_directories(false),
-    m_append_missing_save_extension(false),
-    m_in_win32_drive_selection(false),
-    m_curr_dir_text(0),
-    m_files_list(0),
-    m_files_edit(0),
-    m_filter_list(0),
-    m_ok_button(0),
-    m_cancel_button(0),
-    m_files_label(0),
-    m_file_types_label(0)
-{}
-
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const boost::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color/* = CLR_BLACK*/) : 
     Wnd((GUI::GetGUI()->AppWidth() - DEFAULT_WIDTH) / 2,

@@ -210,10 +210,6 @@ protected:
         std::size_t                      frames;  ///< the number of frames in this texture
     };
 
-    /** \name Structors */ ///@{
-    DynamicGraphic(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     std::size_t FramesInTexture(const Texture* t) const; ///< returns the maximum number of frames that could be stored in \a t given the size of the control and Margin()
     const std::vector<FrameSet>& Textures() const; ///< returns the shared_ptrs to texture objects with all animation frames

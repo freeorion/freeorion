@@ -39,10 +39,6 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::BrowseInfoWnd
 ////////////////////////////////////////////////
-BrowseInfoWnd::BrowseInfoWnd() :
-    Wnd()
-{}
-
 BrowseInfoWnd::BrowseInfoWnd(X x, Y y, X w, Y h) :
     Wnd(x, y, w, h)
 {}
@@ -80,14 +76,6 @@ void BrowseInfoWnd::UpdateImpl(std::size_t mode, const Wnd* target)
 ////////////////////////////////////////////////
 // GG::TextBoxBrowseInfoWnd
 ////////////////////////////////////////////////
-TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd() :
-    BrowseInfoWnd(),
-    m_text_from_target(true),
-    m_border_width(1),
-    m_preferred_width(1),
-    m_text_control(0)
-{}
-
 TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const boost::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                                            Flags<TextFormat> format/* = FORMAT_LEFT | FORMAT_WORDBREAK*/,
                                            unsigned int border_width/* = 2*/, unsigned int text_margin/* = 4*/) :

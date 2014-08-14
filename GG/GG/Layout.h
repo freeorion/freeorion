@@ -238,10 +238,6 @@ public:
     static const unsigned int INVALID_CELL_MARGIN;
 
 protected:
-    /** \name Structors */ ///@{
-    Layout(); ///< default ctor
-    //@}
-
     /** \name Mutators */ ///@{
     virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);

@@ -51,10 +51,6 @@ namespace {
 // static(s)
 const std::size_t OverlayWnd::NO_WND = std::numeric_limits<std::size_t>::max();
 
-OverlayWnd::OverlayWnd() :
-    m_current_wnd_index(NO_WND)
-{}
-
 OverlayWnd::OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
     Wnd(x, y, w, h, flags),
     m_current_wnd_index(NO_WND)
@@ -152,11 +148,6 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 ////////////////////////////////////////////////
 // static(s)
 const std::size_t TabWnd::NO_WND = std::numeric_limits<std::size_t>::max();
-
-TabWnd::TabWnd() :
-    m_tab_bar(0),
-    m_overlay(0)
-{}
 
 TabWnd::TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/, TabBarStyle style/* = TAB_BAR_ATTACHED*/,
@@ -260,17 +251,6 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 // static(s)
 const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 const X TabBar::BUTTON_WIDTH(10);
-
-TabBar::TabBar() :
-    Control(),
-    m_tabs(0),
-    m_left_button(0),
-    m_right_button(0),
-    m_left_right_button_layout(0),
-    m_text_color(CLR_BLACK),
-    m_style(TAB_BAR_ATTACHED),
-    m_first_tab_shown(0)
-{}
 
 TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :

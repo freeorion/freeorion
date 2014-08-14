@@ -84,11 +84,6 @@ public:
     void SetStyle(Flags<GraphicStyle> style);
     //@}
 
-protected:
-    /** \name Structors */ ///@{
-    StaticGraphic(); ///< default ctor
-    //@}
-
 private:
     void     Init(const SubTexture& subtexture); ///< initializes a StaticGraphic from a SubTexture
     void     ValidateStyle();   ///< ensures that the style flags are consistent

@@ -140,10 +140,6 @@ protected:
 
     enum {BORDER_THICK = 2, PIXEL_MARGIN = 5};
 
-    /** \name Structors */ ///@{
-    Spin(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     Button*     UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
     Button*     DownButton() const; ///< returns a pointer to the Button control used as this control's down button
@@ -183,20 +179,6 @@ private:
 
 
 // template implementations
-template<class T>
-Spin<T>::Spin() : 
-    Control(),
-    m_value(),
-    m_step_size(),
-    m_min_value(),
-    m_max_value(),
-    m_editable(false),
-    m_edit(0),
-    m_up_button(0),
-    m_down_button(0),
-    m_button_width(15)
-{}
-
 template<class T>
 Spin<T>::Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color, 
               Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, Flags<WndFlag> flags/* = INTERACTIVE*/) : 

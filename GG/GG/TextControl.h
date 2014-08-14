@@ -231,10 +231,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    TextControl(); ///< Default ctor.
-    //@}
-
     /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
     const std::vector<Font::LineData>& GetLineData() const;

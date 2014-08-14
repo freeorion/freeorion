@@ -84,7 +84,6 @@ public:
 
 protected:
     /** \name Structors */ ///@{
-    BrowseInfoWnd(); ///< default ctor
     BrowseInfoWnd(X x, Y y, X w, Y h); ///< basic ctor
     //@}
 
@@ -138,11 +137,6 @@ public:
     void SetTextFormat(Flags<TextFormat> format);      ///< sets the text format used to render the text
     void SetBorderWidth(unsigned int border_width);    ///< sets the width of the text box border
     void SetTextMargin(unsigned int text_margin);      ///< sets the margin to leave between the text and the text box
-    //@}
-
-protected:
-    /** \name Structors */ ///@{
-    TextBoxBrowseInfoWnd(); ///< default ctor
     //@}
 
 private:

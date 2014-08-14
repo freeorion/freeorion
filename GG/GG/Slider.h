@@ -117,10 +117,6 @@ public:
     static const T INVALID_PAGE_SIZE;
 
 protected:
-    /** \name Structors */ ///@{
-    Slider(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     Button* Tab() const;                  ///< returns a pointer to the Button used as this control's sliding tab
     T       PtToPosn(const Pt& pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
@@ -162,22 +158,6 @@ private:
 // template implementations
 template <class T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
-
-template <class T>
-Slider<T>::Slider() :
-    Control(),
-    m_posn(0),
-    m_range_min(T(0)),
-    m_range_max(T(99)),
-    m_page_sz(INVALID_PAGE_SIZE),
-    m_orientation(VERTICAL),
-    m_line_width(5),
-    m_tab_width(5),
-    m_line_style(RAISED),
-    m_tab_drag_offset(-1),
-    m_tab(0),
-    m_dragging_tab(false)
-{}
 
 template <class T>
 Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, SliderLineStyle style,

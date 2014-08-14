@@ -454,10 +454,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    ListBox(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     X               RightMargin() const;     ///< space skipped at right of client area for vertical scroll bar
     Y               BottomMargin() const;    ///< space skipped at bottom of client area for horizontal scroll bar

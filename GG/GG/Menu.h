@@ -187,10 +187,6 @@ public:
     static const std::size_t INVALID_CARET;
 
 protected:
-    /** \name Structors */ ///@{
-    MenuBar(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     const boost::shared_ptr<Font>&   GetFont() const;    ///< returns the font used to render text in the control
     const std::vector<TextControl*>& MenuLabels() const; ///< returns the text for each top-level menu item

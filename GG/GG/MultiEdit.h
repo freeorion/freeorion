@@ -119,10 +119,6 @@ public:
     static const unsigned int BORDER_THICK;
 
 protected:
-    /** \name Structors */ ///@{
-    MultiEdit(); ///< Default ctor.
-    //@}
-
     /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters are selected. */
     virtual bool MultiSelected() const;

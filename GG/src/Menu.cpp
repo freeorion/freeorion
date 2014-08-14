@@ -128,11 +128,6 @@ MenuItem::~MenuItem()
 ////////////////////////////////////////////////
 const std::size_t MenuBar::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
-MenuBar::MenuBar() :
-    Control(),
-    m_caret(INVALID_CARET)
-{}
-
 MenuBar::MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
                  Clr color/* = CLR_BLACK*/, Clr interior/* = CLR_SHADOW*/) :
     Control(x, y, w, font->Lineskip()),

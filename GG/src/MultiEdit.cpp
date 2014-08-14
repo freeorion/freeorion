@@ -102,22 +102,6 @@ const std::size_t MultiEdit::ALL_LINES = std::numeric_limits<std::size_t>::max()
 const unsigned int MultiEdit::SCROLL_WIDTH = 14;
 const unsigned int MultiEdit::BORDER_THICK = 2;
 
-MultiEdit::MultiEdit() :
-    Edit(),
-    m_style(MULTI_NONE),
-    m_cursor_begin(0, CP0),
-    m_cursor_end(0, CP0),
-    m_first_col_shown(0),
-    m_first_row_shown(0),
-    m_max_lines_history(ALL_LINES),
-    m_vscroll(0),
-    m_hscroll(0),
-    m_vscroll_wheel_scroll_increment(0),
-    m_hscroll_wheel_scroll_increment(0),
-    m_preserve_text_position_on_next_set_text(false),
-    m_ignore_adjust_scrolls(false)
-{}
-
 MultiEdit::MultiEdit(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color, 
                      Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, 
                      Flags<WndFlag> flags/* = INTERACTIVE*/) : 

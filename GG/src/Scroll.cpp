@@ -52,23 +52,6 @@ namespace {
 ////////////////////////////////////////////////
 // GG::Scroll
 ////////////////////////////////////////////////
-Scroll::Scroll() :
-    Control(),
-    m_orientation(VERTICAL),
-    m_posn(0),
-    m_range_min(0),
-    m_range_max(99),
-    m_line_sz(5),
-    m_page_sz(25),
-    m_tab(0),
-    m_incr(0),
-    m_decr(0),
-    m_initial_depressed_region(SBR_NONE),
-    m_depressed_region(SBR_NONE),
-    m_dragging_tab(false),
-    m_tab_dragged(false)
-{}
-
 Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior, Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) :
     Control(x, y, w, h, flags),
     m_int_color(interior),

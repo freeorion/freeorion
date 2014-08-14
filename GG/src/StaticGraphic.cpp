@@ -71,11 +71,6 @@ namespace {
 ////////////////////////////////////////////////
 // GG::StaticGraphic
 ////////////////////////////////////////////////
-StaticGraphic::StaticGraphic() :
-    Control(),
-    m_style(GRAPHIC_NONE)
-{}
-
 StaticGraphic::StaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
     Control(x, y, w, h, flags),

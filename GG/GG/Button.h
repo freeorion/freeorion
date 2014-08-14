@@ -93,10 +93,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    Button(); ///< default ctor
-    //@}
-
     /** \name Mutators */ ///@{
     virtual void   LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
@@ -179,10 +175,6 @@ public:
     //@}
 
 protected:
-    /** \name Structors */ ///@{
-    StateButton(); ///< default ctor
-    //@}
-
     /** \name Accessors */ ///@{
     Pt  ButtonUpperLeft() const;  ///< Returns the upper-left of the button part of the control
     Pt  ButtonLowerRight() const; ///< Returns the lower-right of the button part of the control
@@ -340,10 +332,6 @@ protected:
         StateButton*                button;
         boost::signals2::connection connection;
     };
-
-    /** \name Structors */ ///@{
-    RadioButtonGroup(); ///< default ctor
-    //@}
 
     /** \name Accessors */ ///@{
     const std::vector<ButtonSlot>& ButtonSlots() const; ///< returns the state buttons in the group

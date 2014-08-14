@@ -77,16 +77,6 @@ Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_colum
 // Layout
 const unsigned int Layout::INVALID_CELL_MARGIN = std::numeric_limits<unsigned int>::max();
 
-Layout::Layout() :
-    Wnd(),
-    m_border_margin(0),
-    m_cell_margin(0),
-    m_ignore_child_resize(false),
-    m_ignore_parent_resize(false),
-    m_render_outline(false),
-    m_outline_color(CLR_MAGENTA)
-{}
-
 Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
                unsigned int border_margin/* = 0*/, unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
     Wnd(x, y, w, h, NO_WND_FLAGS),
