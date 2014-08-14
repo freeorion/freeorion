@@ -1161,7 +1161,6 @@ std::string HumanClientApp::SelectSaveFile() {
     return sfd.Result();
 }
 
-
 void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     Logger().debugStream() << "HumanClientApp::EndGame";
     m_game_started = false;

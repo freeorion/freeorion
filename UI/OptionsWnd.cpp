@@ -35,11 +35,9 @@ namespace fs = boost::filesystem;
 
 // Small window that will grab a unique key press.
 class KeyPressCatcher : public GG::Wnd {
-    GG::Key m_key;
-
-    boost::uint32_t m_code_point;
-
-    GG::Flags<GG::ModKey> m_mods;
+    GG::Key                 m_key;
+    boost::uint32_t         m_code_point;
+    GG::Flags<GG::ModKey>   m_mods;
 
 public:
     KeyPressCatcher() :
@@ -47,7 +45,9 @@ public:
     {};
     virtual void Render() {};
 
-    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point,
+                          GG::Flags<GG::ModKey> mod_keys)
+    {
         m_key = key;
         m_code_point = key_code_point;
         m_mods = mod_keys;
@@ -65,7 +65,6 @@ public:
         return std::make_pair(ct.m_key, ct.m_mods);
     };
 };
-
 
 namespace {
     const GG::X PAGE_WIDTH(400);

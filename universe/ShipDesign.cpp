@@ -796,7 +796,6 @@ bool ShipDesign::CanColonize() const {
     return false;
 }
 
-
 //// TEMPORARY
 float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
