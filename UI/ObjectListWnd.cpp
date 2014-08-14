@@ -87,21 +87,28 @@ namespace {
             col_types[UserStringNop("OWNER")] =                     StringValueRef("OwnerName");
             col_types[UserStringNop("OBJECT_TYPE")] =               UserStringValueRef("TypeName");
             col_types[UserStringNop("SPECIES")] =                   UserStringValueRef("Species");
+            col_types[UserStringNop("BUILDING_TYPE")] =             UserStringValueRef("BuildingType");
+            col_types[UserStringNop("FOCUS")] =                     UserStringValueRef("Focus");
+            col_types[UserStringNop("PREFERRED_FOCUS")] =           UserStringValueRef("PreferredFocus");
 
             col_types[UserStringNop("ID")] =                        StringCastedValueRef<int>("ID");
             col_types[UserStringNop("CREATION_TURN")] =             StringCastedValueRef<int>("CreationTurn");
             col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
+            col_types[UserStringNop("SYSTEM_ID")] =                 StringCastedValueRef<int>("SystemID");
             col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
             col_types[UserStringNop("FINAL_DEST")] =                StringCastedValueRef<int>("FinalDestinationID");
             col_types[UserStringNop("NEXT_SYSTEM")] =               StringCastedValueRef<int>("NextSystemID");
             col_types[UserStringNop("PREV_SYSTEM")] =               StringCastedValueRef<int>("PreviousSystemID");
             col_types[UserStringNop("LAST_TURN_BATTLE_HERE")] =     StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE")] =StringCastedValueRef<int>("LastTurnActiveInBattle");
 
             col_types[UserStringNop("SIZE_AS_DOUBLE")] =            StringCastedValueRef<double>("SizeAsDouble");
             col_types[UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE")]=StringCastedValueRef<double>("DistanceFromOriginalType");
             col_types[UserStringNop("NEXT_TURN_POP_GROWTH")] =      StringCastedValueRef<double>("NextTurnPopGrowth");
+
+
 
             for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
                  meter = MeterType(meter + 1))

@@ -2032,24 +2032,6 @@ Side-panel open
 OPTIONS_SOUND_PLANET
 Planet click
 
-OPTIONS_SOUND_FOCUS
-Focus Sounds
-
-OPTIONS_SOUND_BALANCED
-Balanced focus
-
-OPTIONS_SOUND_FARMING
-Farming focus
-
-OPTIONS_SOUND_INDUSTRY
-Industry focus
-
-OPTIONS_SOUND_MINING
-Mining focus
-
-OPTIONS_SOUND_RESEARCH
-Research focus
-
 OPTIONS_SOUND_LIST
 List sounds
 
@@ -3781,6 +3763,15 @@ Owner
 SPECIES
 Species
 
+BUILDING_TYPE
+Building Type
+
+FOCUS
+Focus
+
+PREFERRED_FOCUS
+Preferred Focus
+
 OBJECT_TYPE
 Type
 
@@ -3796,6 +3787,9 @@ Turns Since Focus Change
 PRODUCED_BY
 Produced By Empire ID
 
+SYSTEM_ID
+System ID
+
 DESIGN_ID
 Design ID
 
@@ -3810,6 +3804,9 @@ Previous System ID
 
 LAST_TURN_BATTLE_HERE
 Last Turn Battle Here
+
+LAST_TURN_ACTIVE_IN_BATTLE
+Last Turn In Battle
 
 SIZE_AS_DOUBLE
 Size As Number
