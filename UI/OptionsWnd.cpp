@@ -33,39 +33,6 @@
 
 namespace fs = boost::filesystem;
 
-// Small window that will grab a unique key press.
-class KeyPressCatcher : public GG::Wnd {
-    GG::Key                 m_key;
-    boost::uint32_t         m_code_point;
-    GG::Flags<GG::ModKey>   m_mods;
-
-public:
-    KeyPressCatcher() :
-        Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL))
-    {};
-    virtual void Render() {};
-
-    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point,
-                          GG::Flags<GG::ModKey> mod_keys)
-    {
-        m_key = key;
-        m_code_point = key_code_point;
-        m_mods = mod_keys;
-        // exit modal loop only if not a modifier
-        if (!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
-            m_done = true;
-
-        /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
-        /// the like...
-    };
-
-    static std::pair<GG::Key, GG::Flags<GG::ModKey> > GetKeypress() {
-        KeyPressCatcher ct;
-        ct.Run();
-        return std::make_pair(ct.m_key, ct.m_mods);
-    };
-};
-
 namespace {
     const GG::X PAGE_WIDTH(400);
     const GG::Y PAGE_HEIGHT(450);
@@ -320,6 +287,123 @@ namespace {
         }
         CUISpin<double>* m_max_fps_spin;
     };
+
+    // Small window that will grab a unique key press.
+    class KeyPressCatcher : public GG::Wnd {
+        GG::Key                 m_key;
+        boost::uint32_t         m_code_point;
+        GG::Flags<GG::ModKey>   m_mods;
+
+    public:
+        KeyPressCatcher() :
+            Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL))
+        {};
+        virtual void Render() {};
+
+        virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point,
+                              GG::Flags<GG::ModKey> mod_keys)
+        {
+            m_key = key;
+            m_code_point = key_code_point;
+            m_mods = mod_keys;
+            // exit modal loop only if not a modifier
+            if (!(m_key >= GG::GGK_NUMLOCK && m_key <= GG::GGK_COMPOSE))
+                m_done = true;
+
+            /// @todo Clean up, ie transform LCTRL or RCTRL into CTRL and
+            /// the like...
+        };
+
+        static std::pair<GG::Key, GG::Flags<GG::ModKey> > GetKeypress() {
+            KeyPressCatcher ct;
+            ct.Run();
+            return std::make_pair(ct.m_key, ct.m_mods);
+        };
+    };
+
+    // Displays current font textures
+    class FontTextureWnd : public CUIWnd {
+    public:
+        FontTextureWnd() :
+            CUIWnd(UserString("OPTIONS_FONTS"),
+                   GG::GUI::GetGUI()->AppWidth() / 6,       GG::GUI::GetGUI()->AppHeight() / 6,
+                   GG::GUI::GetGUI()->AppWidth() * 2 / 3,   GG::GUI::GetGUI()->AppHeight() * 2 / 3,
+                   GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE | CLOSABLE),
+            m_font_graphic(0),
+            m_title_font_graphic(0),
+            m_hscroll(0)
+        {
+            GG::Y top = GG::Y1;
+
+            boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+            boost::shared_ptr<GG::Texture> texture;
+            if (font)
+                texture = font->GetTexture();
+            if (texture) {
+                m_font_graphic = new GG::StaticGraphic(GG::X0, top, texture->Width(),
+                                                       texture->Height(), texture);
+                AttachChild(m_font_graphic);
+                top += m_font_graphic->Height() + 1;
+            }
+
+            font = ClientUI::GetTitleFont();
+            texture.reset();
+            if (font)
+                texture = font->GetTexture();
+            if (texture) {
+                m_title_font_graphic = new GG::StaticGraphic(GG::X0, top, texture->Width(),
+                                                             texture->Height(), texture);
+                AttachChild(m_title_font_graphic);
+            }
+
+
+            m_hscroll = new CUIScroll(GG::X0, ClientHeight() - ClientUI::ScrollWidth(),
+                            ClientWidth(),    GG::Y(ClientUI::ScrollWidth()),
+                            GG::HORIZONTAL);
+            AttachChild(m_hscroll);
+
+            GG::Connect(m_hscroll->ScrolledSignal, &FontTextureWnd::ScrolledSlot, this);
+            DoLayout();
+        }
+
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            GG::Pt old_size = GG::Wnd::Size();
+
+            CUIWnd::SizeMove(ul, lr);
+
+            if (old_size != GG::Wnd::Size())
+                DoLayout();
+        }
+
+        void DoLayout() {
+            m_hscroll->SizeMove(GG::Pt(GG::X0,          ClientHeight() - ClientUI::ScrollWidth()),
+                                GG::Pt(ClientWidth(),   ClientHeight()));
+
+            int texture_width = 1;
+            if (m_font_graphic)
+                texture_width = std::max(texture_width, Value(m_font_graphic->Width()));
+            if (m_title_font_graphic)
+                texture_width = std::max(texture_width, Value(m_title_font_graphic->Width()));
+
+             m_hscroll->SizeScroll(0, texture_width - Value(ClientWidth()) / 2, 1, 50);
+        }
+
+        void ScrolledSlot(int tab_low, int tab_high, int low, int high) {
+            m_font_graphic->MoveTo(      GG::Pt(GG::X(-tab_low), GG::Y1));
+            m_title_font_graphic->MoveTo(GG::Pt(GG::X(-tab_low), m_font_graphic->Height() + 2));
+        }
+
+    private:
+        GG::StaticGraphic*  m_font_graphic;
+        GG::StaticGraphic*  m_title_font_graphic;
+        GG::Scroll*         m_hscroll;
+    };
+
+    void ShowFontTextureWnd() {
+        FontTextureWnd* font_wnd = new FontTextureWnd();
+        font_wnd->Run();
+        delete font_wnd;
+    }
 }
 
 OptionsWnd::OptionsWnd():
@@ -419,6 +503,15 @@ OptionsWnd::OptionsWnd():
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
     FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));
     FontOption(current_page, 0, "UI.title-font", UserString("OPTIONS_FONT_TITLE"));
+
+    // show font texture button
+    GG::Button* show_font_texture_button = new CUIButton(UserString("SHOW_FONT_TEXTURES"));
+    show_font_texture_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
+    row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, show_font_texture_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), show_font_texture_button, 0));
+    current_page->Insert(row);
+    GG::Connect(show_font_texture_button->LeftClickedSignal, &ShowFontTextureWnd);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
     IntOption(current_page, 0, "UI.font-size",       UserString("OPTIONS_FONT_TEXT"));

@@ -1771,6 +1771,9 @@ Text
 OPTIONS_FONT_TITLE
 Window titles
 
+SHOW_FONT_TEXTURES
+Show Font Textures
+
 OPTIONS_TECH_SPACING
 Tech spacing
 
