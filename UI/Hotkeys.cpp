@@ -300,7 +300,7 @@ bool Hotkey::IsDefault() const
 
 void Hotkey::SetHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!IsTypingSafe(key, mod)) {
-        Logger().debugStream() << "Hotkey::SetHotkey: Typing-hotkey requested: "
+        Logger().debugStream() << "Hotkey::SetHotkey: Typing-unsafe hotkey requested: "
                                << mod << " + " << key << " for hotkey " << name;
         return;
     }
