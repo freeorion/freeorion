@@ -365,6 +365,8 @@ public:
         rendered. */
     unsigned int PointSize() const;
 
+    const boost::shared_ptr<Texture> GetTexture() const { return m_texture; }
+
     /** Returns the range(s) of code points rendered in the font */
     const std::vector<UnicodeCharset>& UnicodeCharsets() const;
 
