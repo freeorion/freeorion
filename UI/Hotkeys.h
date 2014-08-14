@@ -93,7 +93,7 @@ public:
     /// Converts a string back to the pair key/modifier
     static std::pair<GG::Key, GG::Flags<GG::ModKey> > HotkeyFromString(const std::string& str);
 
-    void FromString(const std::string& str);
+    void SetFromString(const std::string& str);
 
     /// Adds hotkey-related options to the options data base
     ///

@@ -134,7 +134,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
     return std::pair<GG::Key, GG::Flags<GG::ModKey> >(key, mod);
 }
 
-void Hotkey::FromString(const std::string& str) {
+void Hotkey::SetFromString(const std::string& str) {
     std::pair<GG::Key, GG::Flags<GG::ModKey> > km = HotkeyFromString(str);
     m_key = km.first;
     m_mod_keys = km.second;
@@ -299,8 +299,13 @@ bool Hotkey::IsDefault() const
 { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
 
 void Hotkey::SetHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
-    Hotkey& hk = PrivateNamedHotkey(name);
+    if (!IsTypingSafe(key, mod)) {
+        Logger().debugStream() << "Hotkey::SetHotkey: Typing-hotkey requested: "
+                               << mod << " + " << key << " for hotkey " << name;
+        return;
+    }
 
+    Hotkey& hk = PrivateNamedHotkey(name);
     hk.m_key = key;
     hk.m_mod_keys = GG::MassagedAccelModKeys(mod);
 
