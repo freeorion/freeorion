@@ -447,12 +447,6 @@ namespace {
         db.Add<std::string>("UI.sound.fleet-button-click",      UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
         db.Add<std::string>("UI.sound.system-icon-rollover",    UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
         db.Add<std::string>("UI.sound.sidepanel-open",          UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),           (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
-        db.Add<std::string>("UI.sound.farming-focus",           UserStringNop("OPTIONS_DB_UI_SOUND_FARMING_FOCUS"),            (GetRootDataDir() / "default" / "data" / "sound" / "farm_select.ogg").string());
-        db.Add<std::string>("UI.sound.industry-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "industry_select.ogg").string());
-        db.Add<std::string>("UI.sound.research-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "research_select.ogg").string());
-        db.Add<std::string>("UI.sound.mining-focus",            UserStringNop("OPTIONS_DB_UI_SOUND_MINING_FOCUS"),             (GetRootDataDir() / "default" / "data" / "sound" / "mining_select.ogg").string());
-        db.Add<std::string>("UI.sound.trade-focus",             UserStringNop("OPTIONS_DB_UI_SOUND_TRADE_FOCUS"),              (GetRootDataDir() / "default" / "data" / "sound" / "trade_select.ogg").string());
-        db.Add<std::string>("UI.sound.balanced-focus",          UserStringNop("OPTIONS_DB_UI_SOUND_BALANCED_FOCUS"),           (GetRootDataDir() / "default" / "data" / "sound" / "balanced_select.ogg").string());
 
         // fonts
         db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
