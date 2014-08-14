@@ -386,12 +386,6 @@ OptionsWnd::OptionsWnd():
     SoundFileOption(current_page, 1, "UI.sound.turn-button-click",     UserString("OPTIONS_SOUND_TURN"));
     SoundFileOption(current_page, 1, "UI.sound.planet-button-click",   UserString("OPTIONS_SOUND_PLANET"));
 
-    CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_FOCUS"));
-    SoundFileOption(current_page, 1, "UI.sound.balanced-focus", UserString("OPTIONS_SOUND_BALANCED"));
-    SoundFileOption(current_page, 1, "UI.sound.farming-focus",  UserString("OPTIONS_SOUND_FARMING"));
-    SoundFileOption(current_page, 1, "UI.sound.industry-focus", UserString("OPTIONS_SOUND_INDUSTRY"));
-    SoundFileOption(current_page, 1, "UI.sound.mining-focus",   UserString("OPTIONS_SOUND_MINING"));
-    SoundFileOption(current_page, 1, "UI.sound.research-focus", UserString("OPTIONS_SOUND_RESEARCH"));
     m_tabs->SetCurrentWnd(0);
 
     // UI settings tab
