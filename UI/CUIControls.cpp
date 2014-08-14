@@ -811,6 +811,9 @@ void CUILinkTextMultiEdit::SetText(const std::string& str) {
         FindLinks();
         MarkLinks();
         m_already_setting_text_so_dont_link = false;
+        // The scrollbar shenanigans apparently also confuse the link locations
+        // so we refresh them here.
+        LocateLinks();
         return;
     } else {
         CUIMultiEdit::SetText(str);
