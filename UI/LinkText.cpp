@@ -115,6 +115,12 @@ void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void LinkText::MouseLeave()
 { TextLinker::MouseLeave_(); }
 
+void LinkText::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    bool resized = Size() != (lr-ul);
+    GG::TextControl::SizeMove(ul, lr);
+    if (resized)
+        LocateLinks();
+}
 
 ///////////////////////////////////////
 // LinkDecorator
@@ -148,7 +154,8 @@ struct TextLinker::Link {
     std::string             type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
     std::string             data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
     std::vector<GG::Rect>   rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
-    std::pair<int, int>     text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the link text
+    std::pair<int, int>     text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the raw link text
+    std::pair<int, int>     real_text_posn; ///< the index of the first and last + 1 characters in the current (potentially decorated) content string
 };
 
 
@@ -185,7 +192,6 @@ std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string
     return decorator->Decorate(link.data, content);
 }
 
-
 std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const{
     
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
@@ -197,8 +203,6 @@ std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::strin
     
     return decorator->DecorateRollover(link.data, content);
 }
-
-
 
 void TextLinker::Render_() {
     if (!RENDER_DEBUGGING_LINK_RECTS)
@@ -279,20 +283,14 @@ void TextLinker::FindLinks() {
     m_links.clear();
 
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
-    const boost::shared_ptr<GG::Font>& font = GetFont();
 
     GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
 
     for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
-         it != line_data.end();
-         ++it, y_posn += font->Lineskip()) {
+         it != line_data.end(); ++it)
+    {
         const GG::Font::LineData& curr_line = *it;
-
-        // if the last line ended without the current tag ending
-        if (link.type != "") {
-            link.rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
-        }
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
@@ -320,7 +318,6 @@ void TextLinker::FindLinks() {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
                         link.text_posn.second = Value(curr_line.char_data[i].string_index);
-                        link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
                         m_links.push_back(link);
                         link = Link();
                     } else {
@@ -329,19 +326,62 @@ void TextLinker::FindLinks() {
                         for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
                             link.text_posn.first -= Value(curr_line.char_data[i].tags[k]->StringSize());
                         }
-                        link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
-                                                      y_posn,
-                                                      GG::X0,
-                                                      y_posn + font->Height()));
                     }
+                    // Before decoration, the real positions are the same as the raw ones
+                    link.real_text_posn = link.text_posn;
                 }
+            }
+        }
+    }
+
+    LocateLinks();
+}
+
+void TextLinker::LocateLinks() {
+    const std::vector<GG::Font::LineData>& line_data = GetLineData();
+    const boost::shared_ptr<GG::Font>& font = GetFont();
+
+    if(m_links.size() == 0)
+        return;
+
+    GG::Y y_posn(0); // y-coordinate of the top of the current line
+
+    // We assume that links are stored in m_links in the order they appear in the text.
+    // We shall iterate through the text, updating the rectangles of a link whenever we know we are inside it
+    std::vector<Link>::iterator current_link = m_links.begin();
+    bool inside_link = false;
+
+    for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
+         it != line_data.end(); ++it, y_posn += font->Lineskip())
+    {
+        const GG::Font::LineData& curr_line = *it;
+
+        // if the last line ended without the current tag ending
+        if (inside_link)
+            current_link->rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
+
+        for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
+            // The link text_posn is at the beginning of the tag, whereas
+            // char_data jumps over tags. That is why we cannot test for precise equality
+            if (!inside_link && curr_line.char_data[i].string_index >= current_link->real_text_posn.first &&
+                curr_line.char_data[i].string_index < current_link->real_text_posn.second){
+                inside_link = true;
+                // Clear out the old rectangles
+                current_link->rects.clear();
+                current_link->rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
+                                              y_posn, GG::X0, y_posn + font->Height()));
+            } else if (inside_link && curr_line.char_data[i].string_index >= current_link->real_text_posn.second) {
+                inside_link = false;
+                current_link->rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
+                ++current_link;
+                if (current_link == m_links.end())
+                    return;
             }
         }
 
         // if a line is ending without the current tag ending
-        if (link.type != "") {
-            link.rects.back().lr.x = curr_line.char_data.empty() ? GG::X0 : curr_line.char_data.back().extent;
-        }
+        if (inside_link)
+            current_link->rects.back().lr.x = curr_line.char_data.empty() ? GG::X0 : curr_line.char_data.back().extent;
     }
 }
 
@@ -374,7 +414,7 @@ void TextLinker::MarkLinks() {
 
     // copy text from current copy_start_index up to just before start of next link
     for (int i = 0; i < static_cast<int>(m_links.size()); ++i) {
-        const Link& link = m_links[i];
+        Link& link = m_links[i];
         int link_start_index = link.text_posn.first;
         int link_end_index = link.text_posn.second;
 
@@ -382,6 +422,8 @@ void TextLinker::MarkLinks() {
         std::copy(raw_text_start_it + copy_start_index, raw_text_start_it + link_start_index, std::back_inserter(marked_text));
 
         std::string content = std::string(raw_text_start_it + link_start_index, raw_text_start_it + link_end_index);
+
+        int length_before = marked_text.size();
         // add link markup open tag
         if (i == m_rollover_link)
             marked_text += LinkRolloverFormatTag(link, content);
@@ -390,6 +432,10 @@ void TextLinker::MarkLinks() {
 
         // update copy point for following text
         copy_start_index = link_end_index;
+        // update m_links to know the real positions of the links in the decorated text
+        // this makes you able to call LocateLinks without resetting the text.
+        link.real_text_posn.first = length_before;
+        link.real_text_posn.second = marked_text.size();
     }
 
     // copy remaining text after last link

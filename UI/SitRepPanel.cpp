@@ -252,7 +252,7 @@ namespace {
             new_size.x -= 7; // Avoid allowing the scrollbar to hide the very rightmost pixels.
             if (!empty() && m_panel && old_size != new_size) {
                 m_panel->Resize(new_size);
-                new_size.y = m_panel->Size().y;
+                new_size = m_panel->Size();
             }
             GG::ListBox::Row::SizeMove(ul, ul + new_size);
         }

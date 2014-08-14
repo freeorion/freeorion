@@ -74,7 +74,8 @@ protected:
     virtual void                                    SetLinkedText(const std::string& str) = 0;
     virtual const std::string&                      RawText() const = 0;      ///< returns text being displayed before any link formatting is added
 
-    void        FindLinks();                        ///< finds the links in the text, with which to populate m_links
+    void        FindLinks();                        ///< finds the links in the text, with which to populate m_links.
+    void        LocateLinks();                      ///< calculates the physical locations of the links in m_links
     void        MarkLinks();                        ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
     int         GetLinkUnderPt(const GG::Pt& pt);   ///< returns the index of the link under screen coordinate \a pt, or -1 if none
 private:
@@ -142,6 +143,7 @@ public:
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type
