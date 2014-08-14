@@ -1775,19 +1775,22 @@ namespace {
 
         std::string parts_list;
         const std::vector<std::string>& parts = design->Parts();
-        std::vector<std::string> non_empty_parts;
+        std::map<std::string, int> non_empty_parts_count;
         for (std::vector<std::string>::const_iterator part_it = parts.begin();
                 part_it != parts.end(); ++part_it)
         {
-            if (!part_it->empty())
-                non_empty_parts.push_back(*part_it);
+            if (part_it->empty())
+                continue;
+            non_empty_parts_count[*part_it]++;
         }
-        for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
-                part_it != non_empty_parts.end(); ++part_it)
+        for (std::map<std::string, int>::const_iterator part_it = non_empty_parts_count.begin();
+                part_it != non_empty_parts_count.end(); ++part_it)
         {
-            if (part_it != non_empty_parts.begin())
+            if (part_it != non_empty_parts_count.begin())
                 parts_list += ", ";
-            parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
+            parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, part_it->first);
+            if (part_it->second > 1)
+                parts_list += " x" + boost::lexical_cast<std::string>(part_it->second);
         }
 
         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
