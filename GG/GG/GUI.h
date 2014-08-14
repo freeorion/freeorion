@@ -345,8 +345,9 @@ public:
     bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.
     //@}
 
-    static GUI*  GetGUI();                ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
-    static void  RenderWindow(Wnd* wnd);  ///< renders a window (if it is visible) and all its visible descendents recursively
+    static GUI*  GetGUI();                  ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
+    static void  RenderWindow(Wnd* wnd);    ///< renders a window (if it is visible) and all its visible descendents recursively
+    virtual void RenderDragDropWnds();      ///< renders Wnds currently being drag-dropped
 
     /** \name Exceptions */ ///@{
     /** The base class for GUI exceptions. */

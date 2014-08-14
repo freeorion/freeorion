@@ -691,7 +691,7 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleMouseEnter (Flags< ModKey > mod_keys, const GG::Pt& pos, Wnd* w)
+void GUIImpl::HandleMouseEnter(Flags< ModKey > mod_keys, const GG::Pt& pos, Wnd* w)
 {
     w->HandleEvent(WndEvent(WndEvent::MouseEnter, pos, mod_keys));
     m_curr_wnd_under_cursor = w;
@@ -1427,7 +1427,10 @@ GUI* GUI::GetGUI()
 
 void GUI::RenderWindow(Wnd* wnd)
 {
-    if (wnd && wnd->Visible()) {
+    if (!wnd)
+        return;
+
+    if (wnd->Visible()) {
         wnd->Render();
 
         Wnd::ChildClippingMode clip_mode = wnd->GetChildClippingMode();
@@ -1475,6 +1478,25 @@ void GUI::RenderWindow(Wnd* wnd)
     }
 }
 
+void GUI::RenderDragDropWnds()
+{
+    // render drag-and-drop windows in arbitrary order (sorted by pointer value)
+    s_impl->m_rendering_drag_drop_wnds = true;
+    for (std::map<Wnd*, Pt>::const_iterator it = s_impl->m_drag_drop_wnds.begin(); it != s_impl->m_drag_drop_wnds.end(); ++it) {
+        bool old_visible = it->first->Visible();
+        if (!old_visible)
+            it->first->Show();
+        Pt parent_offset = it->first->Parent() ? it->first->Parent()->ClientUpperLeft() : Pt();
+        Pt old_pos = it->first->UpperLeft() - parent_offset;
+        it->first->MoveTo(s_impl->m_mouse_pos - parent_offset - it->second);
+        RenderWindow(it->first);
+        it->first->MoveTo(old_pos);
+        if (!old_visible)
+            it->first->Hide();
+    }
+    s_impl->m_rendering_drag_drop_wnds = false;
+}
+
 void GUI::ProcessBrowseInfo()
 {
     assert(s_impl->m_curr_wnd_under_cursor);
@@ -1519,21 +1541,9 @@ void GUI::Render()
             RenderWindow(s_impl->m_browse_info_wnd.get());
         }
     }
-    // render drag-and-drop windows in arbitrary order (sorted by pointer value)
-    s_impl->m_rendering_drag_drop_wnds = true;
-    for (std::map<Wnd*, Pt>::const_iterator it = s_impl->m_drag_drop_wnds.begin(); it != s_impl->m_drag_drop_wnds.end(); ++it) {
-        bool old_visible = it->first->Visible();
-        if (!old_visible)
-            it->first->Show();
-        Pt parent_offset = it->first->Parent() ? it->first->Parent()->ClientUpperLeft() : Pt();
-        Pt old_pos = it->first->UpperLeft() - parent_offset;
-        it->first->MoveTo(s_impl->m_mouse_pos - parent_offset - it->second);
-        RenderWindow(it->first);
-        it->first->MoveTo(old_pos);
-        if (!old_visible)
-            it->first->Hide();
-    }
-    s_impl->m_rendering_drag_drop_wnds = false;
+
+    RenderDragDropWnds();
+
     if (s_impl->m_render_cursor && s_impl->m_cursor)
         s_impl->m_cursor->Render(s_impl->m_mouse_pos);
     Exit2DMode();
