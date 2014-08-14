@@ -547,8 +547,7 @@ private:
     double               m_italics_offset;   ///< Amount that the top of an italicized glyph is left of the bottom
     X                    m_space_width; ///< The width of the glyph for the space character
     GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
-    std::vector<boost::shared_ptr<Texture> >
-                         m_textures;    ///< The OpenGL texture objects in which the glyphs can be found
+    boost::shared_ptr<Texture> m_texture;    ///< The OpenGL texture object in which the glyphs can be found
 
     static std::set<std::string>   s_action_tags; ///< Embedded tags that Font must act upon when rendering are stored here
     static std::set<std::string>   s_known_tags;  ///< Embedded tags that Font knows about but should not act upon are stored here

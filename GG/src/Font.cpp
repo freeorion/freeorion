@@ -88,13 +88,121 @@ namespace {
     struct TempGlyphData
     {
         TempGlyphData() {}
-        TempGlyphData(std::size_t i, const Pt& ul_, const Pt& lr_, Y y_ofs, X lb, X a) :
-            idx(i), ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
-        std::size_t idx;      ///< index into m_textures of texture that contains this glyph
+        TempGlyphData(const Pt& ul_, const Pt& lr_, Y y_ofs, X lb, X a) :
+            ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
         Pt          ul, lr;   ///< area of glyph subtexture within texture
         Y           y_offset; ///< vertical offset to draw texture (may be negative!)
         X           left_b;   ///< left bearing (see Glyph)
         X           adv;      ///< advance of glyph (see Glyph)
+    };
+
+    /// A two dimensional grid of pixels that expands to
+    /// fit any write much like an stl vector, but in 2d.
+    template<typename T>
+    class Buffer2d
+    {
+    public:
+        /// Create a new 2D buffer
+        /// \param initial_width Initial width to allocate
+        /// \param initial_height Initial height to allocate
+        /// \param default_value The value to fill empty space with whenever it appears
+        Buffer2d(X initial_width, Y initial_height, const T& default_value):
+            m_capacity_width(initial_width),
+            m_capacity_height(initial_height),
+            m_data(Value(initial_width)*Value(initial_height), default_value),
+            m_current_width(initial_width),
+            m_current_height(initial_height),
+            m_default_value(default_value)
+        {}
+
+        /// Access point \x,\y, expanding the buffer if it does not exist yet
+        T& at(X x, Y y)
+        {
+            EnsureFit(x, y);
+            return this->get(x,y);
+        }
+
+        /// Access point \x, \y without any checks
+        T& get(X x, Y y)
+        { return m_data[Value(m_capacity_width)*Value(y) + Value(x)]; }
+
+        /// Returns the current highest x the user has requested to exist
+        X CurrentWidth() const
+        { return m_current_width; }
+
+        /// Returns the current highest y the user has requested to exist
+        Y CurrentHeight() const
+        { return m_capacity_height; }
+
+        /// Returns the actual width of the storage area allocated so far
+        X BufferWidth() const
+        { return m_capacity_width; }
+
+        /// Returns the actual height of the storage area allocated so far
+        Y BufferHeight() const
+        { return m_capacity_height; }
+
+        /// Return a pointer to the storage buffer where the data is kept
+        T* Buffer()
+        { return &*m_data.begin(); }
+
+        /// Returns the size of the storage buffer where the data is kept
+        std::size_t BufferSize() const
+        { return m_data.size(); }
+
+        /// Makes the size of the underlying buffer the smallest power of power of two
+        /// rectangle that can accommodate CurrentWidth() and CUrrentHeight()
+        void MakePowerOfTwo()
+        { ResizeCapacity(NextPowerOfTwo(m_current_width), NextPowerOfTwo(m_current_height)); }
+
+
+
+    private:
+        X m_capacity_width; // How wide the reserved buffer is
+        Y m_capacity_height; // How hight the reserved buffer is
+        std::vector<T> m_data;
+        X m_current_width; // The highest x coordinate written to
+        Y m_current_height; // The highest y coordinate written to
+        const T m_default_value; // The value with which to fill all emerging empty slots in the buffer
+
+        void EnsureFit(X x, Y y)
+        {
+            X new_width = std::max(m_current_width, x + 1); // Zero indexed => width = max_x + 1
+            Y new_height = std::max(m_current_height, y + 1); // Also zero indexed
+            X new_capacity_width = m_capacity_width;
+            Y new_capacity_height = m_capacity_height;
+            while (new_width > new_capacity_width) {
+                new_capacity_width *= 2;
+            }
+            while (new_height > new_capacity_height) {
+                new_capacity_height *= 2;
+            }
+
+            ResizeCapacity(new_capacity_width, new_capacity_height);
+            m_current_width = new_width;
+            m_current_height = new_height;
+        }
+
+        void ResizeCapacity(X new_capacity_width, Y new_capacity_height)
+        {
+            // If there really was a change, we need to recreate our storage.
+            // This is expensive, but since we double the size every time,
+            // the cost of adding data here in some sane order is amortized constant
+            if (new_capacity_width != m_capacity_width || new_capacity_height != m_capacity_height) {
+                // Create new storaga and copy old data. A linear copy won't do, there
+                // will be a new mapping from 2d indexes to 1d memory.
+                std::vector<T> new_data(Value(new_capacity_width)*Value(new_capacity_height), m_default_value);
+                for (Y y_i = Y0; y_i < m_current_height && y_i < new_capacity_height; ++y_i) {
+                    for (X x_i = X0; x_i < m_current_width && x_i < new_capacity_width; ++x_i) {
+                        unsigned pos = Value(new_capacity_width) * Value(y_i) + Value(x_i);
+                        new_data[pos] = get(x_i, y_i);
+                    }
+                }
+                std::swap(m_data, new_data);
+                m_capacity_width = new_capacity_width;
+                m_capacity_height = new_capacity_height;
+            }
+        }
     };
 
     struct FTLibraryWrapper
@@ -635,6 +743,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     X orig_x = pt.x;
     std::string::const_iterator it = text.begin();
     std::string::const_iterator end_it = text.end();
+    glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
     while (it != end_it) {
         pt.x += RenderGlyph(pt, utf8::next(it, end_it));
     }
@@ -666,6 +775,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 {
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
+    glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
     if (!render_state.colors.empty())
         glColor(render_state.colors.top());
@@ -1262,19 +1372,18 @@ void Font::Init(FT_Face& face)
         }
     }
 
-    // define default image buffer size
-    const X BUF_WIDTH(256);
-    const Y BUF_HEIGHT(256);
-    const std::size_t BUF_SZ = Value(BUF_WIDTH) * Value(BUF_HEIGHT);
+    //Get maximum texture size
+    GLint TEX_MAX_SIZE;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TEX_MAX_SIZE);
 
-    // declare std::vector of image buffers into which we will copy glyph images and create first buffer
-    std::vector<boost::uint16_t*> buffer_vec; // 16 bpp: we are creating a luminance + alpha image
-    std::vector<Pt> buffer_sizes;
     std::map<boost::uint32_t, TempGlyphData> temp_glyph_data;
-    boost::uint16_t* temp_buf = new boost::uint16_t[BUF_SZ]; // 16 bpp: we are creating a luminance + alpha image
-    std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
-    buffer_vec.push_back(temp_buf);
-    buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
+
+    // Start with width and height of 16,
+    // increase them as needed.
+    // We will lay out the glyphs on the texture side by side
+    // until the width would reach TEX_MAX_SIZE, then go to the next row.
+    // QUESTION: Would a more square-like shape be better for the texture?
+    Buffer2d<boost::uint16_t> buffer(X(16), Y(16), 0);
 
     X x = X0;
     Y y = Y0;
@@ -1288,42 +1397,31 @@ void Font::Init(FT_Face& face)
         for (boost::uint32_t c = low; c < high; ++c) {
             if (temp_glyph_data.find(c) == temp_glyph_data.end() && GenerateGlyph(face, c)) {
                 const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
-                if ((glyph_bitmap.width > BUF_WIDTH) | (glyph_bitmap.rows > BUF_HEIGHT)) {
+                if ((glyph_bitmap.width > TEX_MAX_SIZE) | (glyph_bitmap.rows > TEX_MAX_SIZE)) {
                     ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
                 }
 
-                if (x + glyph_bitmap.width > BUF_WIDTH) { // start a new row of glyph images
+                if (Value(x + glyph_bitmap.width) >= TEX_MAX_SIZE) { // start a new row of glyph images
                     if (x > max_x) max_x = x;
                     x = X0;
                     y = max_y;
                 }
-                if (y + glyph_bitmap.rows > BUF_HEIGHT) { // if there's not enough room, create a new buffer
-                    // cut off bottom and side of buffer just written, if it is possible to do so and maintain power-of-two height
-                    X pow_of_2_x(NextPowerOfTwo(max_x));
-                    Y pow_of_2_y(NextPowerOfTwo(max_y));
-                    if (pow_of_2_y < buffer_sizes.back().y)
-                        buffer_sizes.back().y = pow_of_2_y;
-                    if (pow_of_2_x < buffer_sizes.back().x)
-                        buffer_sizes.back().x = pow_of_2_x;
-                    x = X0;
-                    y = Y0;
-                    max_x = X0;
-                    max_y = Y0;
-                    temp_buf = new boost::uint16_t[BUF_SZ];
-                    std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
-                    buffer_vec.push_back(temp_buf);
-                    buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
+                if (Value(y + glyph_bitmap.rows) >= TEX_MAX_SIZE) {
+                    // We cannot make the texture any larger. The font does not fit.
+                    ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
                 }
                 if (y + glyph_bitmap.rows > max_y) {
-                    max_y = y + glyph_bitmap.rows;
+                    max_y = y + glyph_bitmap.rows +1; //Leave a one pixel gap between glyphs
                 }
 
                 boost::uint8_t*  src_start = glyph_bitmap.buffer;
-                boost::uint16_t* dst_start = buffer_vec.back() + Value(y) * Value(BUF_WIDTH) + Value(x);
+                // Resize buffer to fit new data
+                buffer.at(x + glyph_bitmap.width, y + glyph_bitmap.rows) = 0;
 
                 for (int row = 0; row < glyph_bitmap.rows; ++row) {
                     boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
-                    boost::uint16_t* dst = dst_start + row * Value(BUF_WIDTH);
+                    boost::uint16_t* dst = &buffer.get(x, Y(y + row));
+                    // Rows are always contiguous, so we can copy along a row using simple incrementation
                     for (int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
                         *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
@@ -1335,38 +1433,27 @@ void Font::Init(FT_Face& face)
 
                 // record info on how to find and use this glyph later
                 temp_glyph_data[c] =
-                    TempGlyphData(static_cast<int>(buffer_vec.size()) - 1,
-                                  Pt(x, y), Pt(x + glyph_bitmap.width, y + glyph_bitmap.rows),
+                    TempGlyphData(Pt(x, y), Pt(x + glyph_bitmap.width, y + glyph_bitmap.rows),
                                   Y(m_height - 1 + m_descent - face->glyph->bitmap_top),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiBearingX / 64.0)))),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
 
                 // advance buffer write-position
-                x += glyph_bitmap.width;
+                x += glyph_bitmap.width + 1; //Leave a one pixel gap between glyphs
             }
         }
     }
 
-    // cut off bottom portion of last buffer, if it is possible to do so and maintain power-of-two height
-    if (x > max_x) max_x = x;
-    X pow_of_2_x(NextPowerOfTwo(max_x));
-    Y pow_of_2_y(NextPowerOfTwo(y + m_height));
-    if (pow_of_2_y < buffer_sizes.back().y)
-        buffer_sizes.back().y = pow_of_2_y;
-    if (pow_of_2_x < buffer_sizes.back().x)
-        buffer_sizes.back().x = pow_of_2_x;
+    buffer.MakePowerOfTwo();
 
-    // create opengl texture from buffer(s) and release buffer(s)
-    for (std::size_t i = 0; i < buffer_vec.size(); ++i) {
-        boost::shared_ptr<Texture> temp_texture(new Texture);
-        temp_texture->Init(X0, Y0, buffer_sizes[i].x, buffer_sizes[i].y, BUF_WIDTH, (unsigned char*)(buffer_vec[i]), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
-        m_textures.push_back(temp_texture);
-        delete [] buffer_vec[i];
-    }
+    // create opengl texture from buffer
+    m_texture.reset(new Texture);
+    m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
+                    (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
     for (std::map<boost::uint32_t, TempGlyphData>::iterator it = temp_glyph_data.begin(); it != temp_glyph_data.end(); ++it)
-        m_glyphs[it->first] = Glyph(m_textures[it->second.idx], it->second.ul, it->second.lr, it->second.y_offset, it->second.left_b, it->second.adv);
+        m_glyphs[it->first] = Glyph(m_texture, it->second.ul, it->second.lr, it->second.y_offset, it->second.left_b, it->second.adv);
 
     // record the width of the space character
     GlyphMap::const_iterator glyph_it = m_glyphs.find(WIDE_SPACE);
@@ -1425,23 +1512,25 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
 
 X Font::RenderGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state) const
 {
+    // Italics is emulated by tilting the quad with an offset if italics are on
+    double offset = 0;
     if (render_state && render_state->use_italics) {
-        // render subtexture to rhombus instead of rectangle
-        glBindTexture(GL_TEXTURE_2D, glyph.sub_texture.GetTexture()->OpenGLId());
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-        glVertex(pt.x + glyph.left_bearing + m_italics_offset, pt.y + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + m_italics_offset, pt.y + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-        glVertex(pt.x + glyph.left_bearing - m_italics_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - m_italics_offset,
-                 pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-        glEnd();
-    } else {
-        glyph.sub_texture.OrthoBlit(Pt(pt.x + glyph.left_bearing, pt.y + glyph.y_offset));
+        offset = m_italics_offset;
     }
+
+    // render subtexture to rhombus instead of rectangle
+    glBegin (GL_TRIANGLE_STRIP);
+    glTexCoord2f (glyph.sub_texture.TexCoords() [0], glyph.sub_texture.TexCoords() [1]);
+    glVertex(pt.x + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
+        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+        glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
+        glVertex(pt.x + glyph.left_bearing - offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
+        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - offset,
+                 pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    glEnd();
+
     if (render_state && render_state->draw_underline) {
         X x1 = pt.x;
         Y_d y1 = pt.y + m_height + m_descent - m_underline_offset;
