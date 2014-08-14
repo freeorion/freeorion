@@ -456,8 +456,6 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
-    GG::Connect(m_chat_input_edit->GainingFocusSignal,          &MultiPlayerLobbyWnd::EnableTypingUnsafeAccels,  this);
-    GG::Connect(m_chat_input_edit->LosingFocusSignal,           &MultiPlayerLobbyWnd::DisableTypingUnsafeAccels, this);
     GG::Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiPlayerLobbyWnd::NewLoadClicked,           this);
     GG::Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiPlayerLobbyWnd::GalaxySetupPanelChanged,  this);
     GG::Connect(m_browse_saves_btn->LeftClickedSignal,          &MultiPlayerLobbyWnd::SaveGameBrowse,          this);
@@ -651,12 +649,6 @@ void MultiPlayerLobbyWnd::DoLayout() {
     GG::Pt start_conditions_text_lr = start_conditions_text_ul + GG::Pt(m_cancel_bn->RelativeUpperLeft().x - x, TEXT_HEIGHT);
     m_start_conditions_text->SizeMove(start_conditions_text_ul, start_conditions_text_lr);
 }
-
-void MultiPlayerLobbyWnd::DisableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->EnableTypingUnsafeHotkeys(); }
-
-void MultiPlayerLobbyWnd::EnableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
 void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx) {
     switch (idx) {

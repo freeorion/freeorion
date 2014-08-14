@@ -544,8 +544,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     SearchEdit* search_edit = new SearchEdit();
     m_search_edit = search_edit;
     GG::Connect(search_edit->TextEnteredSignal,     &EncyclopediaDetailPanel::HandleSearchTextEntered,  this);
-    GG::Connect(m_search_edit->GainingFocusSignal,  &EncyclopediaDetailPanel::EnableTypingUnsafeAccels, this);
-    GG::Connect(m_search_edit->LosingFocusSignal,   &EncyclopediaDetailPanel::DisableTypingUnsafeAccels,this);
 
     AttachChild(m_search_edit);
     AttachChild(m_graph);
@@ -633,12 +631,6 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
-
-void EncyclopediaDetailPanel::DisableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->EnableTypingUnsafeHotkeys(); }
-
-void EncyclopediaDetailPanel::EnableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
 
 void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();

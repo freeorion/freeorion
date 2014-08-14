@@ -350,15 +350,6 @@ private:
 
     void            ConnectKeyboardAcceleratorSignals();        //!< connects signals from keyboard accelerators to various GUI responses
 
-    /** Disables keyboard accelerators that use an alphanumeric key without
-      * modifiers. This is useful if a keyboard input is required, so that the
-      * keys aren't interpreted as an accelerator.
-      * @note Repeated calls of DisableTypingUnsafeAccels have to be followed by
-      * the same number of calls to EnableTypingUnsafeAccels to re-enable the
-      * accelerators. */
-    void            DisableTypingUnsafeAccels();
-    void            EnableTypingUnsafeAccels();                     //!< Re-enable accelerators disabled by DisableTypingUnsafeAccels
-
     void            ChatMessageSentSlot();
 
     void            CloseAllPopups();
@@ -369,8 +360,6 @@ private:
     void            SelectedShipsChanged();
 
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
-
-    std::set<GG::Key>           m_disabled_accels_list;                 //!< the list of Accelerators disabled by \a DisableTypingUnsafeAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls

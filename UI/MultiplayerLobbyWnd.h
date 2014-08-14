@@ -42,8 +42,6 @@ public:
 
 private:
     void            DoLayout();
-    void            DisableTypingUnsafeAccels();
-    void            EnableTypingUnsafeAccels();
     void            NewLoadClicked(std::size_t idx);
     void            GalaxySetupPanelChanged();
     void            SaveGameBrowse();

@@ -29,6 +29,7 @@
 
 
 class OptionsDB;
+
 /// A single hotkey, ie just a combination key+modifier that has been
 /// given a certain name.
 class Hotkey {
@@ -52,17 +53,6 @@ public:
     /// Returns the name of the user string containing the description
     /// of the shortcut.
     static std::string UserStringForHotkey(const std::string& name);
-
-    /// Key hotkey
-    ///
-    /// GG::GGK_RETURN set both return and keypad return
-    GG::Key m_key;
-    GG::Key m_key_default;
-
-    /// Modifier for the key.
-    GG::Flags<GG::ModKey> m_mod_keys;
-    GG::Flags<GG::ModKey> m_mod_keys_default;
-
 
     /// Registers a hotkey name (ie the one used for storing in the
     /// database) along with a description and a default value.
@@ -105,30 +95,30 @@ public:
 
     void FromString(const std::string& str);
 
-    /// Adds the options to the database.
+    /// Adds hotkey-related options to the options data base
     ///
     /// This function must be called after the initialization of all the
     /// hotkey lists, which is probably why it should be called from
     /// main(), or something like that.
     static void AddOptions(OptionsDB& db);
-
-    /// Parses the configuration back.
+    /// 
     static void ReadFromOptions(OptionsDB& db);
 
     /// Pretty print, ie transform into something that may look
     /// reasonably nice for the user, but won't be parseable anymore.
     static std::string PrettyPrint(GG::Key key, GG::Flags<GG::ModKey> mod);
-
     std::string PrettyPrint() const;
 
     /// Whether or not the given key combination is safe to recognize while typing text
     static bool IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod);
 
-    /// Is the hotkey safe to recognize while typing text?
-    bool IsTypingSafe() const;
+    bool IsTypingSafe() const;  /// Is the hotkey safe to recognize while typing text?
+    bool IsDefault() const;     /// Is the hotkey set to its default value ?
 
-    /// Is the hotkey set to its default value ?
-    bool IsDefault() const;
+    GG::Key                 m_key;
+    GG::Key                 m_key_default;
+    GG::Flags<GG::ModKey>   m_mod_keys;
+    GG::Flags<GG::ModKey>   m_mod_keys_default;
 };
 
 /// A simple functor returning a boolean value. The children will be
@@ -221,73 +211,10 @@ public:
 };
 
 
-/// An instance of this class is necessary for all classes that use
-/// hotkeys. You must connect each hotkey you use to a given signal
-/// manually, using the one of the Connect functions.
 class HotkeyManager {
-    /// A helper class that stores both a connection and the
-    /// conditions in which it should be on.
-    struct ConditionalConnection {
-        /// The condition. If null, always on.
-        boost::shared_ptr<HotkeyCondition> condition;
-
-        boost::signals2::connection connection;
-        boost::signals2::shared_connection_block blocker;
-
-        /// Block or unblocks the connection based on condition.
-        void UpdateConnection() {
-            if (connection.connected()) {
-                if (!condition || condition->IsActive())
-                    blocker.unblock();
-                else
-                    blocker.block();
-            }
-        };
-
-        ConditionalConnection(const boost::signals2::connection& conn,
-                              HotkeyCondition* cond) :
-            condition(cond), connection(conn), blocker(connection)
-        {
-            blocker.unblock();
-        }
-    };
-
-    typedef std::list<ConditionalConnection> ConditionalConnectionList;
-
-    /// The list of connections !
-    typedef std::map<std::string, ConditionalConnectionList> Connections;
-
-    /// A set of connected shortcuts.
-    Connections m_connections;
-
-    /// Add the given conditional connection.
-    void AddConditionalConnection(const std::string& name,
-                                  const boost::signals2::connection& conn,
-                                  HotkeyCondition* cond);
-
-    /// The singleton instance
-    static HotkeyManager* s_singleton;
-
-    /// The constructor for the singleton. Private.
-    HotkeyManager();
-
-    /// Whether or not shortcuts that are unsafe while typing are currently disabled
-    bool m_disabled_typing_unsafe_hotkeys;
-
-    /// Signals for each shortut name, created on demand.
-    std::map<std::string, GG::GUI::AcceleratorSignalType*> m_signals;
-
-    /// The shortcut processing function. Passed using boost::bind.
-    bool ProcessNamedShortcut(const std::string& name);
-
-    /// The connections hot key (real keypress) -> named hot key
-    std::set<boost::signals2::connection> m_internal_connections;
-
-    /// Returns the signal for the given named accelerator, creating
-    /// it if necessary.
-    GG::GUI::AcceleratorSignalType& NamedSignal(const std::string& name);
-
 public:
+    ~HotkeyManager();
+
     /// Rebuilds all shortcuts/connections. Should be called again at
     /// the end of every function that registers new connections (just
     /// once, though cause calling it every time would get expensive),
@@ -304,13 +231,33 @@ public:
         AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond);
     };
 
-    ~HotkeyManager();
+private:
+    HotkeyManager();
 
-    /// Disables all alphanumeric accelerators
-    void DisableTypingUnsafeHotkeys();
+    /// The shortcut processing function. Passed using boost::bind.
+    bool ProcessNamedShortcut(const std::string& name);
 
-    /// Reenables all alphanumeric accelerators
-    void EnableTypingUnsafeHotkeys();
+    /// Returns the signal for the given named accelerator, creating
+    /// it if necessary.
+    GG::GUI::AcceleratorSignalType& NamedSignal(const std::string& name);
+
+    /// Add the given conditional connection.
+    void AddConditionalConnection(const std::string& name,
+                                  const boost::signals2::connection& conn,
+                                  HotkeyCondition* cond);
+
+    struct ConditionalConnection;
+    typedef std::list<ConditionalConnection> ConditionalConnectionList;
+    typedef std::map<std::string, ConditionalConnectionList> Connections;
+
+    /// A set of connected shortcuts.
+    Connections             m_connections;
+    int                     m_hotkey_disablings_count;
+    std::map<std::string, GG::GUI::AcceleratorSignalType*>
+                            m_signals;
+    std::set<boost::signals2::connection>
+                            m_internal_connections;
+    static HotkeyManager*   s_singleton;
 };
 
 #endif

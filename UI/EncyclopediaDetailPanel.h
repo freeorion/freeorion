@@ -87,9 +87,6 @@ public:
 private:
     void            DoLayout();
 
-    void            DisableTypingUnsafeAccels();
-    void            EnableTypingUnsafeAccels();
-
     virtual void    CloseClicked();
 
     void            HandleLinkClick(const std::string& link_type, const std::string& data);

@@ -407,17 +407,17 @@ namespace {
 
         // We also register shortcut names/default values, for the
         // context "map".
-        Hotkey::AddHotkey("combat.open_chat",           GG::GGK_RETURN);
-        Hotkey::AddHotkey("combat.end_turn",            GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.open_chat",           GG::GGK_t,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.end_turn",            GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("combat.menu",                GG::GGK_F10);
-        Hotkey::AddHotkey("combat.zoom_in",             GG::GGK_e);
-        Hotkey::AddHotkey("combat.zoom_in_alt",         GG::GGK_KP_PLUS);
-        Hotkey::AddHotkey("combat.zoom_out",            GG::GGK_r);
-        Hotkey::AddHotkey("combat.zoom_out_alt",        GG::GGK_KP_MINUS);
-        Hotkey::AddHotkey("combat.zoom_prev_unit",      GG::GGK_v);
-        Hotkey::AddHotkey("combat.zoom_next_unit",      GG::GGK_b);
-        Hotkey::AddHotkey("combat.zoom_prev_idle_unit", GG::GGK_f);
-        Hotkey::AddHotkey("combat.zoom_next_idle_unit", GG::GGK_g);
+        Hotkey::AddHotkey("combat.zoom_in",             GG::GGK_e,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_in_alt",         GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_out",            GG::GGK_r,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_out_alt",        GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_prev_unit",      GG::GGK_v,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_next_unit",      GG::GGK_b,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_prev_idle_unit", GG::GGK_f,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("combat.zoom_next_idle_unit", GG::GGK_g,          GG::MOD_KEY_CTRL);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -2054,15 +2054,8 @@ void CombatWnd::RemoveAccelerators() {
     m_disabled_accels_list.clear();
 }
 
-void CombatWnd::DisableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
-
-void CombatWnd::EnableTypingUnsafeAccels()
-{ HotkeyManager::GetManager()->DisableTypingUnsafeHotkeys(); }
-
 void CombatWnd::ChatMessageSentSlot() {
     if (!m_disabled_accels_list.empty()) {
-        EnableTypingUnsafeAccels();
         GG::GUI::GetGUI()->SetFocusWnd(this);
     }
 }
