@@ -151,11 +151,9 @@ namespace {
         { return m_data.size(); }
 
         /// Makes the size of the underlying buffer the smallest power of power of two
-        /// rectangle that can accommodate CurrentWidth() and CUrrentHeight()
+        /// rectangle that can accommodate CurrentWidth() and CurrentHeight()
         void MakePowerOfTwo()
         { ResizeCapacity(NextPowerOfTwo(m_current_width), NextPowerOfTwo(m_current_height)); }
-
-
 
     private:
         X m_capacity_width; // How wide the reserved buffer is
@@ -189,7 +187,7 @@ namespace {
             // This is expensive, but since we double the size every time,
             // the cost of adding data here in some sane order is amortized constant
             if (new_capacity_width != m_capacity_width || new_capacity_height != m_capacity_height) {
-                // Create new storaga and copy old data. A linear copy won't do, there
+                // Create new storage and copy old data. A linear copy won't do, there
                 // will be a new mapping from 2d indexes to 1d memory.
                 std::vector<T> new_data(Value(new_capacity_width)*Value(new_capacity_height), m_default_value);
                 for (Y y_i = Y0; y_i < m_current_height && y_i < new_capacity_height; ++y_i) {
@@ -222,9 +220,9 @@ namespace {
                         bool& ignore_tags) :
             m_known_tags(known_tags),
             m_ignore_tags(ignore_tags)
-            {}
+        {}
         bool operator()(const boost::xpressive::ssub_match& sub) const
-            { return m_ignore_tags ? false : m_known_tags.find(sub.str()) != m_known_tags.end(); }
+        { return m_ignore_tags ? false : m_known_tags.find(sub.str()) != m_known_tags.end(); }
         const std::set<std::string>& m_known_tags;
         bool& m_ignore_tags;
     };
@@ -236,11 +234,11 @@ namespace {
                         std::stack<Font::Substring>& tag_stack,
                         bool& ignore_tags,
                         const boost::xpressive::ssub_match& sub) const
-            {
-                tag_stack.push(Font::Substring(str, sub));
-                if (tag_stack.top() == PRE_TAG)
-                    ignore_tags = true;
-            }
+        {
+            tag_stack.push(Font::Substring(str, sub));
+            if (tag_stack.top() == PRE_TAG)
+                ignore_tags = true;
+        }
     };
     const boost::xpressive::function<PushSubmatchOntoStack>::type Push = {{}};
 
@@ -256,17 +254,17 @@ namespace {
                           bool& ignore_tags) :
             m_tag_stack(tag_stack),
             m_ignore_tags(ignore_tags)
-            {}
+        {}
         bool operator()(const boost::xpressive::ssub_match& sub) const
-            {
-                bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
-                if (retval) {
-                    m_tag_stack.pop();
-                    if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
-                        m_ignore_tags = false;
-                }
-                return retval;
+        {
+            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
+            if (retval) {
+                m_tag_stack.pop();
+                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
+                    m_ignore_tags = false;
             }
+            return retval;
+        }
         std::stack<Font::Substring>& m_tag_stack;
         bool& m_ignore_tags;
     };
