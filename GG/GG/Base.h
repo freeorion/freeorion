@@ -101,11 +101,8 @@ GG_ENUM(Orientation,
 
 /** The built-in visual styles of state buttons. */
 GG_ENUM(StateButtonStyle,
-    SBSTYLE_3D_XBOX,         ///< Draws a down-beveled box with a 3D x-mark inside.
     SBSTYLE_3D_CHECKBOX,     ///< Draws a down-beveled box with a 3D check-mark inside.
     SBSTYLE_3D_RADIO,        ///< Draws a down-beveled circle with a 3D "dot" or "bubble" inside.
-    SBSTYLE_3D_BUTTON,       ///< Draws a button that toggles bewtween popped up and pushed down.
-    SBSTYLE_3D_ROUND_BUTTON, ///< Draws a down-beveled circle with an up-beveled circle inside.
 
     /** Draws an up-beveled rectagular tab that is brighter and larger when
         pressed; it's bottom is unbeveled. */

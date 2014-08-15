@@ -129,9 +129,6 @@ namespace GG {
     /** Draws an X-mark used to draw state buttons. */
     GG_API void FlatX(Pt ul, Pt lr, Clr color);
 
-    /** Like FlatX(), but with a raised appearance. */
-    GG_API void BeveledX(Pt ul, Pt lr, Clr color);
-
     /** Draws a disk that appears to be a portion of a lit sphere.  The
         portion may appear raised or depressed. */
     GG_API void Bubble(Pt ul, Pt lr, Clr color, bool up = true);

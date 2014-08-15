@@ -237,7 +237,7 @@ void Button::RenderDefault()
 // GG::StateButton
 ////////////////////////////////////////////////
 StateButton::StateButton(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format, 
-                         Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_XBOX*/,
+                         Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_CHECKBOX*/,
                          Flags<WndFlag> flags/* = INTERACTIVE*/) :
     TextControl(x, y, w, h, str, font, text_color, format, flags),
     m_checked(false),
@@ -282,15 +282,6 @@ void StateButton::Render()
     const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
     switch (m_style) {
-    case SBSTYLE_3D_XBOX:
-        BeveledRectangle(bn_ul, bn_lr,
-                         Disabled() ? DisabledColor(m_int_color) : m_int_color,
-                         Disabled() ? DisabledColor(m_color) : m_color,
-                         false, BEVEL);
-        if (m_checked)
-            BeveledX(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
-                     m_disabled ? DisabledColor(m_color) : m_color);
-        break;
     case SBSTYLE_3D_CHECKBOX:
         BeveledRectangle(bn_ul, bn_lr,
                          Disabled() ? DisabledColor(m_int_color) : m_int_color,
@@ -308,18 +299,6 @@ void StateButton::Render()
         if (m_checked)
             Bubble(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
                    Disabled() ? DisabledColor(m_color) : m_color);
-        break;
-    case SBSTYLE_3D_BUTTON:
-        BeveledRectangle(bn_ul, bn_lr,
-                         Disabled() ? DisabledColor(m_color) : m_color,
-                         Disabled() ? DisabledColor(m_color) : m_color,
-                         !m_checked, BEVEL);
-        break;
-    case SBSTYLE_3D_ROUND_BUTTON:
-        BeveledCircle(bn_ul, bn_lr,
-                      Disabled() ? DisabledColor(m_color) : m_color,
-                      Disabled() ? DisabledColor(m_color) : Color(),
-                      !m_checked, BEVEL);
         break;
     case SBSTYLE_3D_TOP_ATTACHED_TAB: {
         Clr color_to_use = m_checked ? m_color : DarkColor(m_color);

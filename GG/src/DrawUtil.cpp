@@ -753,9 +753,6 @@ namespace GG {
     void FlatX(Pt ul, Pt lr, Clr color)
     { XMark(ul, lr, color, color, color); }
 
-    void BeveledX(Pt ul, Pt lr, Clr color)
-    { XMark(ul, lr, color, LightColor(color), DarkColor(color)); }
-
     void Bubble(Pt ul, Pt lr, Clr color, bool up/* = true*/)
     {
         BubbleArc(ul, lr, color,
