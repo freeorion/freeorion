@@ -63,6 +63,17 @@ namespace {
         }
     }
 
+    void ShutdownOpenAL() {
+        ALCcontext* context = alcGetCurrentContext();
+        if (context != 0) {
+            ALCdevice* device = alcGetContextsDevice(context);
+            alcMakeContextCurrent(0);
+            alcDestroyContext(context);
+            if (device != 0)
+                alcCloseDevice(device);
+        }
+    }
+
 #ifdef FREEORION_WIN32
     int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {
         if (!f)
@@ -146,7 +157,7 @@ Sound::Sound() :
 }
 
 Sound::~Sound()
-{}
+{ ShutdownOpenAL(); }
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
