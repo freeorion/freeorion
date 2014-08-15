@@ -168,8 +168,18 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_files_label(0),
     m_file_types_label(0)
 {
-    CreateChildren(filename, multi);
+    CreateChildren(multi);
     Init(directory);
+
+    if (!filename.empty()) {
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    fs::path filename_path = fs::system_complete(fs::path(filename));
+    m_files_edit->SetText(filename_path.leaf().string());
+#else
+    fs::path filename_path = fs::complete(fs::path(filename));
+    m_files_edit->SetText(filename_path.leaf());
+#endif
+    }
 }
 
 std::set<std::string> FileDlg::Result() const
@@ -321,7 +331,7 @@ void FileDlg::SetThreeButtonDlgCancelString(const std::string& str)
 const fs::path& FileDlg::WorkingDirectory()
 { return s_working_dir; }
 
-void FileDlg::CreateChildren(const std::string& filename, bool multi)
+void FileDlg::CreateChildren(bool multi)
 {
     if (m_save)
         multi = false;
@@ -331,20 +341,9 @@ void FileDlg::CreateChildren(const std::string& filename, bool multi)
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-    fs::path filename_path = fs::system_complete(fs::path(filename));
-#else
-    fs::path filename_path = fs::complete(fs::path(filename));
-#endif
     m_files_edit = style->NewEdit(X0, Y0, X1, "", m_font, m_border_color, m_text_color);
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-    m_files_edit->SetText(filename_path.leaf().string());
-#else
-    m_files_edit->SetText(filename_path.leaf());
-#endif
     m_filter_list = style->NewDropDownList(X0, Y0, X(100), m_font->Lineskip(), m_font->Lineskip() * 3, m_border_color);
     m_filter_list->SetStyle(LIST_NOSORT);
-
     m_files_edit->Resize(Pt(X(100), m_font->Height() + 2 * 5));
     m_files_edit->MoveTo(Pt());
     m_filter_list->Resize(Pt(X(100), m_filter_list->Height()));

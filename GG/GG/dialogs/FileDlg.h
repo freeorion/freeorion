@@ -162,7 +162,7 @@ protected:
     static const Y DEFAULT_HEIGHT; ///< default height for the dialog
 
 private:
-    void CreateChildren(const std::string& filename, bool multi);
+    void CreateChildren(bool multi);
     void PlaceLabelsAndEdits(X button_width, Y button_height);
     void AttachSignalChildren();
     void DetachSignalChildren();
