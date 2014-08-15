@@ -120,14 +120,14 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             path = GetSaveDir()/path;
             Logger().debugStream() << "Made save path relative to save dir. Is now: " << path;
         }
-        
+
         if (multiplayer) {
             // Make sure the path points into our save directory
-            if(!IsInside(path, GetSaveDir())){
+            if (!IsInside(path, GetSaveDir())){
                 path = GetSaveDir() / path.filename();
             }
         }
-        
+
         fs::ofstream ofs(path, std::ios_base::binary);
 
         if (!ofs)
