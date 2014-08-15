@@ -44,53 +44,52 @@ namespace {
             retval[it->first] = SaveGameEmpireData(it->first, it->second->Name(), it->second->PlayerName(), it->second->Color());
         return retval;
     }
-    
+
     void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
                                     const std::vector<PlayerSaveGameData>& player_save_game_data,
                                     const std::map<int, SaveGameEmpireData>& empire_save_game_data,
-                                    SaveGamePreviewData& preview){
-        
+                                    SaveGamePreviewData& preview)
+    {
         typedef std::vector<PlayerSaveGameData>::const_iterator player_iterator;
-        
+
         // First compile the non-player related data
         preview.current_turn = server_save_game_data.m_current_turn;
         preview.number_of_empires = empire_save_game_data.size();
         preview.save_time = boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time());
-        
+
         if (player_save_game_data.empty()) {
             preview.main_player_name = "No players.";
             preview.main_player_empire_name ="No players";
         } else {
             // Consider the first player the main player
-            const PlayerSaveGameData* the_player = &(*player_save_game_data.begin());
-            
+            const PlayerSaveGameData* player = &(*player_save_game_data.begin());
+
             // If there are human players, the first of them should be the main player
             short humans = 0;
             for (player_iterator it = player_save_game_data.begin(); it != player_save_game_data.end(); ++it) {
                 if (it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                    if (the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
-                       the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
-                       the_player->m_client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR
-                    ){ 
-                        the_player = &(*it);
+                    if (player->m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+                       player->m_client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
+                       player->m_client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                    {
+                        player = &(*it);
                     }
                     ++humans;
                 }
             }
-            
-            preview.main_player_name = the_player->m_name;
+
+            preview.main_player_name = player->m_name;
             preview.number_of_human_players = humans;
-            
+
             // Find the empire of the player, if it has one
-            std::map<int, SaveGameEmpireData>::const_iterator the_empire = empire_save_game_data.find(the_player->m_empire_id);
-            if ( the_empire != empire_save_game_data.end()) {
-                preview.main_player_empire_name = the_empire->second.m_empire_name;
-                preview.main_player_empire_colour = the_empire->second.m_color;
+            std::map<int, SaveGameEmpireData>::const_iterator empire = empire_save_game_data.find(player->m_empire_id);
+            if (empire != empire_save_game_data.end()) {
+                preview.main_player_empire_name = empire->second.m_empire_name;
+                preview.main_player_empire_colour = empire->second.m_color;
             }
         }
-        
     }
-    
+
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 }
 
@@ -238,7 +237,6 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
         throw e;
     }
 }
-
 
 void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data) {
     SaveGamePreviewData ignored_save_preview_data;
