@@ -26,9 +26,9 @@
 #include <boost/timer.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include <algorithm>
-
 
 namespace {
     const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
@@ -116,6 +116,24 @@ namespace {
                      std::vector<const PartType* > >            PartGroupsType;
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
+    const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
+
+    void WriteDesignToFile(int design_id, boost::filesystem::path& file) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
+
+        try {
+            boost::filesystem::ofstream ofs(file);
+            if (!ofs)
+                throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+            ofs << design->Dump();
+
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "Error writing design file.  Exception: " << ": " << e.what();
+            ClientUI::MessageBox(e.what(), true);
+        }
+    }
 
     void ShowSaveDesignDialog(int design_id) {
         const ShipDesign* design = GetShipDesign(design_id);
@@ -137,25 +155,24 @@ namespace {
         filters.push_back(std::make_pair(UserString("SHIP_DESIGN_FILES"),
                                          "*" + DESIGN_FILENAME_EXTENSION));
 
-
         try {
             FileDlg dlg(PathString(designs_dir_path),
                         PathString(designs_dir_path / default_file_name),
                         true, false, filters);
             dlg.Run();
             if (!dlg.Result().empty()) {
-                boost::filesystem::path path =
+                boost::filesystem::path save_path =
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
                 boost::filesystem::absolute(*dlg.Result().begin());
 #else
                 boost::filesystem::complete(*dlg.Result().begin());
 #endif
-                std::cout << "path: " << PathString(path) << std::endl;
+                WriteDesignToFile(design_id, save_path);
             }
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
+            return;
         }
-
     }
 }
 
