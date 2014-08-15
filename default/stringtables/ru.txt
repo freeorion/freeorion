@@ -1065,11 +1065,10 @@ OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 '''Цвет вашей империи.'''
 
 OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-Артефакты вашей родной системы в начале игры.
-
+Расса населяющая столицу вашей империи.
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Количество игроков AI.
+Количество компьютерных игроков.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 Горизонтальный интервал между технологиями на экране технологий.
@@ -1323,7 +1322,7 @@ MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES
 Предыдущий игрок
 
 MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
-Артефакты на старте
+Стартовая расса
 
 NEW_GAME_BN
 Новая игра
@@ -1358,10 +1357,10 @@ GSETUP_EMPIRE_COLOR
 Цвет империи
 
 GSETUP_SPECIES
-Артефакты на старте
+Стартовая расса
 
 GSETUP_NUMBER_AIS
-Количество игроков AI
+Количество компьютерных игроков
 
 #Drop-down list labels and choices####
 
@@ -2330,6 +2329,9 @@ FW_FLEET_DAMAGE_SUMMARY
 FW_FLEET_COUNT_SUMMARY
 Состав флота - количество кораблей во флоте.
 
+FW_MERGE_SYSTEM_FLEETS
+Объединить все корабли в системе в единый флот
+
 FW_SPLIT_DAMAGED_FLEET
 Отделить повреждённые корабли от флота
 
@@ -2338,6 +2340,12 @@ FW_SPLIT_UNFUELED_FLEET
 
 FW_SPLIT_FLEET
 Разделить флот
+
+FW_SPLIT_SHIPS_THIS_DESIGN
+Создать флот из кораблей этого типа
+
+FW_SPLIT_SHIPS_ALL_DESIGNS
+Разделить по типу кораблей
 
 ORDER_SHIP_SCRAP
 Уничтожить корабль
@@ -2853,7 +2861,7 @@ ENC_TECH_DETAIL_TYPE_STR
 %3%
 
 ENC_LOOKUP
-Pedia Lookup %1%
+Справка o %1%
 
 ENC_COMBAT_LOG
 Протокол боев 
