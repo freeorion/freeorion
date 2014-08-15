@@ -145,10 +145,17 @@ namespace {
         if (!exists(designs_dir_path))
             boost::filesystem::create_directories(designs_dir_path);
 
-        // default file name: take design name, process a bit to make nicer
+        // default file name: take design name, process a bit to make nicer / safe
         std::string default_file_name = design->Name();
         boost::trim(default_file_name);
         boost::replace_all(default_file_name, " ", "_");
+        std::string bad_chars = "/?<>\\:*|\".";
+        for (unsigned int i = 0; i < bad_chars.length(); ++i)
+            boost::replace_all(default_file_name, bad_chars.substr(i,1), "");
+
+        if (default_file_name.length() > 200)
+            default_file_name = default_file_name.substr(0, 200);
+
         default_file_name += DESIGN_FILENAME_EXTENSION;
 
         std::vector<std::pair<std::string, std::string> > filters;
