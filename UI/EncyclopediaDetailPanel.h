@@ -103,7 +103,6 @@ private:
     CUILabel*           m_summary_text;     // general purpose item
     GG::MultiEdit*      m_description_box;  // detailed and lengthy description
     GG::StaticGraphic*  m_icon;
-    GG::StaticGraphic*  m_other_icon;
     GG::Button*         m_index_button;
     GG::Button*         m_back_button;
     GG::Button*         m_next_button;

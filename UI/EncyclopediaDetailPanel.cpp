@@ -488,7 +488,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     m_summary_text(0),
     m_description_box(0),
     m_icon(0),
-    m_other_icon(0),
     m_search_edit(0),
     m_graph(0)
 {
@@ -571,24 +570,28 @@ void EncyclopediaDetailPanel::DoLayout() {
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 
     const int BTN_WIDTH = 24;
+    const int Y_OFFSET = 22;
 
     // name
-    GG::Pt ul = GG::Pt();
+    GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));
     GG::Pt lr = ul + GG::Pt(Width() - 1, GG::Y(NAME_PTS + 4));
+    m_name_text->SetTextFormat(GG::FORMAT_LEFT);
     m_name_text->SizeMove(ul, lr);
 
     // cost / turns
     ul += GG::Pt(GG::X0, m_name_text->Height());
     lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
+    m_cost_text->SetTextFormat(GG::FORMAT_LEFT);
     m_cost_text->SizeMove(ul, lr);
 
     // one line summary
     ul += GG::Pt(GG::X0, m_cost_text->Height());
     lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
+    m_summary_text->SetTextFormat(GG::FORMAT_LEFT);
     m_summary_text->SizeMove(ul, lr);
 
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(BORDER_LEFT, ICON_SIZE + TEXT_MARGIN_Y + 1);
+    ul = GG::Pt(BORDER_LEFT, ICON_SIZE + TEXT_MARGIN_Y + Y_OFFSET + 1);
     lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
     m_description_box->SizeMove(ul, lr);
 
@@ -618,15 +621,9 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     // icon
     if (m_icon) {
-        ul = GG::Pt(GG::X1, GG::Y1);
-        lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-        m_icon->SizeMove(ul, lr);
-    }
-    // other icon
-    if (m_other_icon) {
-        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1));
+        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1 + Y_OFFSET));
         ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-        m_other_icon->SizeMove(ul, lr);
+        m_icon->SizeMove(ul, lr);
     }
 
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
@@ -645,10 +642,12 @@ GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft(); }
 
 void EncyclopediaDetailPanel::Render() {
+    const int Y_OFFSET = 22;
+
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     const GG::Y ICON_SIZE = m_summary_text->Bottom() - m_name_text->Top();
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
+    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + Y_OFFSET); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
     // draw background and outer border
@@ -657,8 +656,15 @@ void EncyclopediaDetailPanel::Render() {
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    // draw inner border, including extra resize-tab lines
 
+    // extra line to underscore title
+    glBegin(GL_LINES);
+        glColor(ClientUI::WndInnerBorderColor());
+        glVertex(cl_lr.x+2, cl_ul.y - ICON_SIZE - 7 );
+        glVertex(cl_ul.x-2, cl_ul.y - ICON_SIZE - 7 );
+    glEnd();
+
+    // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndInnerBorderColor());
         glVertex(cl_ul.x, cl_ul.y);
@@ -686,6 +692,10 @@ void EncyclopediaDetailPanel::Render() {
         glEnd();
     }
     glEnable(GL_TEXTURE_2D);
+
+    glColor(ClientUI::TextColor());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
+    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y + TITLE_OFFSET), "Pedia");
 }
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
@@ -2259,10 +2269,6 @@ void EncyclopediaDetailPanel::Refresh() {
         DeleteChild(m_icon);
         m_icon = 0;
     }
-    if (m_other_icon) {
-        DeleteChild(m_other_icon);
-        m_other_icon = 0;
-    }
     m_name_text->Clear();
     m_summary_text->Clear();
     m_cost_text->Clear();
@@ -2340,19 +2346,10 @@ void EncyclopediaDetailPanel::Refresh() {
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }
-    if (other_texture) {
-        m_other_icon =  new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), other_texture,  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        if (color != GG::CLR_ZERO)
-            m_other_icon->SetColor(color);
-    }
 
     if (m_icon) {
         m_icon->Show();
         AttachChild(m_icon);
-    }
-    if (m_other_icon) {
-        m_other_icon->Show();
-        AttachChild(m_other_icon);
     }
 
     // Set Text
