@@ -11,6 +11,7 @@
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
+#include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/UniverseObject.h"
@@ -23,6 +24,8 @@
 #include <boost/cast.hpp>
 #include <boost/function.hpp>
 #include <boost/timer.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <algorithm>
 
@@ -111,6 +114,49 @@ namespace {
     }
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
                      std::vector<const PartType* > >            PartGroupsType;
+
+    const std::string DESIGN_FILENAME_EXTENSION = ".txt";
+
+    void ShowSaveDesignDialog(int design_id) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
+
+        // ensure directory present
+        boost::filesystem::path designs_dir_path(GetUserDir() / "shipdesigns");
+        if (!exists(designs_dir_path))
+            boost::filesystem::create_directories(designs_dir_path);
+
+        // default file name: take design name, process a bit to make nicer
+        std::string default_file_name = design->Name();
+        boost::trim(default_file_name);
+        boost::replace_all(default_file_name, " ", "_");
+        default_file_name += DESIGN_FILENAME_EXTENSION;
+
+        std::vector<std::pair<std::string, std::string> > filters;
+        filters.push_back(std::make_pair(UserString("SHIP_DESIGN_FILES"),
+                                         "*" + DESIGN_FILENAME_EXTENSION));
+
+
+        try {
+            FileDlg dlg(PathString(designs_dir_path),
+                        PathString(designs_dir_path / default_file_name),
+                        true, false, filters);
+            dlg.Run();
+            if (!dlg.Result().empty()) {
+                boost::filesystem::path path =
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                boost::filesystem::absolute(*dlg.Result().begin());
+#else
+                boost::filesystem::complete(*dlg.Result().begin());
+#endif
+                std::cout << "path: " << PathString(path) << std::endl;
+            }
+        } catch (const std::exception& e) {
+            ClientUI::MessageBox(e.what(), true);
+        }
+
+    }
 }
 
 //////////////////////////////////////////////////
@@ -1320,52 +1366,63 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
-    if (design_row) {
-        int design_id = design_row->DesignID();
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (design)
-            DesignRightClickedSignal(design);
-        // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
+    if (!design_row)
+        return;
 
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int design_id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(design_id);
+    if (!design)
+         return;
 
-        Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
+    DesignRightClickedSignal(design);
+    // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
 
-        // create popup menu with a commands in it
-        GG::MenuItem menu_contents;
-        if (client_empire_id != ALL_EMPIRES)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        if (design->DesignedByEmpire() == client_empire_id)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
+    Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    // create popup menu with a commands in it
+    GG::MenuItem menu_contents;
+    if (client_empire_id != ALL_EMPIRES)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
 
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
+    if (design->DesignedByEmpire() == client_empire_id)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
 
-            case 1: { // delete design
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_SAVE"),       3, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+
+        case 1: {   // delete design
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
+            break;
+        }
+
+        case 2: {   // rename design
+            CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+            edit_wnd.Run();
+            const std::string& result = edit_wnd.Result();
+            if (result != "" && result != design->Name()) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
-                break;
+                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
+                ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
+                design_panel->Update();
             }
-            case 2: { // rename design
-                CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
-                edit_wnd.Run();
-                const std::string& result = edit_wnd.Result();
-                if (result != "" && result != design->Name()) {
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
-                    ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
-                    design_panel->Update();
-                }
-                break;
-            }
+            break;
+        }
 
-            default:
-                break;
-            }
+        case 3: {   // save design
+            ShowSaveDesignDialog(design_id);
+            break;
+        }
+
+        default:
+            break;
         }
     }
 }

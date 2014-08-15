@@ -2931,8 +2931,11 @@ Move to Queue Bottom
 #  DesignWnd  #
 ###############
 
-DESIGN_ADD_TEST
-Add Test Design
+SHIP_DESIGN_FILES
+Design Files
+
+DESIGN_SAVE
+Save Design File
 
 DESIGN_NAME_DEFAULT
 Custom Ship Design
