@@ -1090,6 +1090,8 @@ std::string ShipDesign::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    if (!m_name_desc_in_stringtable)
+        retval += DumpIndent() + "NoStringtableLookup\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
     retval += DumpIndent() + "parts = ";
     if (m_parts.empty()) {
@@ -1105,7 +1107,8 @@ std::string ShipDesign::Dump() const {
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
-    retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
+    if (!m_icon.empty())
+        retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
     retval += DumpIndent() + "model = \"" + m_3D_model + "\"\n";
     --g_indent;
     return retval; 
@@ -1239,8 +1242,9 @@ namespace {
 
         // duplicate design to add to Universe
         ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false),
-                                          design->DesignedOnTurn(), design->DesignedByEmpire(), design->Hull(), design->Parts(),
-                                          design->Icon(), design->Model(), true, monster);
+                                          design->DesignedOnTurn(), design->DesignedByEmpire(),
+                                          design->Hull(), design->Parts(), design->Icon(),
+                                          design->Model(), design->LookupInStringtable(), monster);
         if (!copy) {
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
             return;

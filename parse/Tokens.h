@@ -202,6 +202,7 @@
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
     (NoStar)                                    \
+    (NoStringtableLookup)                       \
     (Not)                                       \
     (Number)                                    \
     (NumberOf)                                  \

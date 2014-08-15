@@ -44,9 +44,12 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
+            qi::_f_type _f;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
+            qi::_r4_type _r4;
+            qi::eps_type eps;
             using phoenix::new_;
             using phoenix::push_back;
 
@@ -54,11 +57,15 @@ namespace {
                 =    tok.ShipDesign_
                 >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
                 >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
+                > (
+                     tok.NoStringtableLookup_ [ _r4 = false ]
+                    | eps [ _r4 = true ]
+                  )
                 >    parse::label(Hull_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
-                =    design_prefix(_a, _b, _c)
+                =    design_prefix(_a, _b, _c, _f)
                 >    parse::label(Parts_token)
                 >    (
                             '[' > +tok.string [ push_back(_d, _1) ] > ']'
@@ -67,14 +74,15 @@ namespace {
                 >   -(
                         parse::label(Icon_token)     >> tok.string [ _e = _1 ]
                      )
-                >    parse::label(Model_token)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1)) ]
+                >    parse::label(Model_token)       > tok.string
+                [ insert(_r1, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]
                 ;
 
             start
                 =   +design(_r1)
                 ;
 
-            design_prefix.name("ShipDesign");
+            design_prefix.name("Name, Description, Lookup Flag, Hull");
             design.name("ShipDesign");
 
 #if DEBUG_PARSERS
@@ -87,7 +95,7 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::string&, std::string&, std::string&),
+            void (std::string&, std::string&, std::string&, bool&),
             parse::skipper_type
         > design_prefix_rule;
 
@@ -99,7 +107,8 @@ namespace {
                 std::string,
                 std::string,
                 std::vector<std::string>,
-                std::string
+                std::string,
+                bool
             >,
             parse::skipper_type
         > design_rule;
