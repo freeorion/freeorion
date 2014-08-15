@@ -563,7 +563,7 @@ Part
             activation = Source
             effects = SetStarlaneSpeed Value + 40
     ]
-    icon = "icons/ship_parts/engine-3.png"
+    icon = "icons/ship_parts/engine-4.png"
     
 Part
     name = "FU_BASIC_TANK"

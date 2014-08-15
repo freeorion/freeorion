@@ -1327,24 +1327,27 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             DesignRightClickedSignal(design);
         // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
         Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
         // create popup menu with a commands in it
         GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
-        if (design->DesignedByEmpire() == empire_id) {
+        if (client_empire_id != ALL_EMPIRES)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+
+        if (design->DesignedByEmpire() == client_empire_id)
             menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
-        }
+
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
         if (popup.Run()) {
             switch (popup.MenuID()) {
 
             case 1: { // delete design
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(empire_id, design_id, true)));
+                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
                 break;
             }
             case 2: { // rename design
@@ -1353,7 +1356,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
                 const std::string& result = edit_wnd.Result();
                 if (result != "" && result != design->Name()) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new ShipDesignOrder(empire_id, design_id, result)));
+                        OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
                     ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
                     design_panel->Update();
                 }

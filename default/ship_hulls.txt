@@ -1709,16 +1709,19 @@ Hull
 
         EffectsGroup    // in systems with no other monsters, spawn trees
             scope = And [
+                Object Source.SystemID
                 System
-                Star type = [Blue White Yellow Orange Red]
-                InSystem Source.SystemID
+                Star type = [Blue White Yellow Orange Red]                
                 Not Number low = 2 condition = And [
                     Ship
                     Monster
                     InSystem Source.SystemID
                 ]
             ]
-            activation = Random probability = 0.1
+            activation = And [
+                InSystem
+                Random probability = 0.1
+            ]
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_TREE"
         ]
