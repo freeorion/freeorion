@@ -143,18 +143,16 @@ void InGameMenu::Save() {
         SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
 
     try {
-        
         std::string filename;
-        
+
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
-        if(app->SinglePlayerGame()){
-            
+        if (app->SinglePlayerGame()) {
             Logger().debugStream() << "... running save file dialog";
             SaveFileDialog dlg(SAVE_GAME_EXTENSION);
             dlg.Run();
             filename = dlg.Result();
-        }else{
+        } else {
             /// Multiplayer save. Talk to the server.
             filename = app->SelectSaveFile();
         }

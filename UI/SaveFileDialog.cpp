@@ -585,72 +585,71 @@ SaveFileDialog::SaveFileDialog (bool load) :
 void SaveFileDialog::Init() {
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
-    m_layout = new GG::Layout( GG::X0, GG::Y0,
-                                SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
-                                SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4 );
-    m_layout->SetCellMargin( SAVE_FILE_CELL_MARGIN );
-    m_layout->SetBorderMargin ( SAVE_FILE_CELL_MARGIN*2 );
+    m_layout = new GG::Layout(GG::X0, GG::Y0,
+                              SAVE_FILE_DIALOG_WIDTH - LeftBorder() - RightBorder(),
+                              SAVE_FILE_DIALOG_HEIGHT - TopBorder() - BottomBorder(), 4, 4);
+    m_layout->SetCellMargin(SAVE_FILE_CELL_MARGIN);
+    m_layout->SetBorderMargin(SAVE_FILE_CELL_MARGIN*2);
 
     m_file_list = new SaveFileListBox();
-    m_file_list->SetStyle ( GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING );
+    m_file_list->SetStyle(GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING);
 
-    m_confirm_btn = new CUIButton ( UserString ( "OK" ) );
-    CUIButton* cancel_btn = new CUIButton ( UserString ( "CANCEL" ) );
+    m_confirm_btn = new CUIButton(UserString("OK"));
+    CUIButton* cancel_btn = new CUIButton(UserString("CANCEL"));
 
     m_name_edit = new CUIEdit("");
     CUILabel* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     CUILabel* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
     m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
 
-    m_layout->Add ( directory_label,    0, 0 );
+    m_layout->Add(directory_label, 0, 0);
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     if (!m_server_previews) {
-        m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 3);
+        m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
 
-        CUIButton* delete_btn = new CUIButton( UserString("DELETE") );
-        m_layout->Add( delete_btn, 2, 3 );
-        GG::Connect ( delete_btn->LeftClickedSignal, &SaveFileDialog::AskDelete, this );
+        CUIButton* delete_btn = new CUIButton(UserString("DELETE"));
+        m_layout->Add(delete_btn, 2, 3);
+        GG::Connect(delete_btn->LeftClickedSignal, &SaveFileDialog::AskDelete, this);
 
-        m_layout->SetMinimumRowHeight ( 2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)) );
-        m_layout->SetMinimumColumnWidth ( 2, m_confirm_btn->MinUsableSize().x +
-        2*SAVE_FILE_BUTTON_MARGIN );
-        m_layout->SetMinimumColumnWidth ( 3, std::max( cancel_btn->MinUsableSize().x , delete_btn->MinUsableSize().x ) +
-        SAVE_FILE_BUTTON_MARGIN );
+        m_layout->SetMinimumRowHeight(2, delete_btn->MinUsableSize().y + GG::Y(Value(SAVE_FILE_BUTTON_MARGIN)));
+        m_layout->SetMinimumColumnWidth(2, m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN);
+        m_layout->SetMinimumColumnWidth(3, std::max( cancel_btn->MinUsableSize().x,
+                                        delete_btn->MinUsableSize().x) + SAVE_FILE_BUTTON_MARGIN);
     } else {
         m_remote_dir_dropdown = new CUIDropDownList(SAVE_FILE_DIALOG_HEIGHT/2);
-        m_layout->Add ( m_current_dir_edit, 0, 1, 1 , 1);
-        m_layout->Add ( m_remote_dir_dropdown,   0, 2 , 1, 2);
+        m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
+        m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
         GG::X drop_width = font->TextExtent(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL).x;
-        m_layout->SetMinimumColumnWidth ( 2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2) );
-        m_layout->SetMinimumColumnWidth ( 3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2) );
+        m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
+        m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
 
-        GG::Connect ( m_remote_dir_dropdown->SelChangedSignal,   &SaveFileDialog::DirectoryDropdownSelect, this );
+        GG::Connect(m_remote_dir_dropdown->SelChangedSignal,   &SaveFileDialog::DirectoryDropdownSelect, this );
     }
 
-    m_layout->Add ( m_file_list,        1, 0, 1, 4 );
-    m_layout->Add ( filename_label,     2, 0 );
-    m_layout->Add ( m_name_edit,        3, 0, 1, 2 );
-    m_layout->Add ( m_confirm_btn,      3, 2 );
-    m_layout->Add ( cancel_btn,         3, 3 );
+    m_layout->Add(m_file_list,      1, 0, 1, 4);
+    m_layout->Add(filename_label,   2, 0);
+    m_layout->Add(m_name_edit,      3, 0, 1, 2);
+    m_layout->Add(m_confirm_btn,    3, 2);
+    m_layout->Add(cancel_btn,       3, 3);
 
-    m_layout->SetMinimumRowHeight ( 0, m_current_dir_edit->MinUsableSize().y );
-    m_layout->SetRowStretch       ( 1, 1.0 );
-    m_layout->SetMinimumRowHeight ( 3, font->TextExtent ( cancel_btn->Text() ).y );
+    m_layout->SetMinimumRowHeight(0, m_current_dir_edit->MinUsableSize().y);
+    m_layout->SetRowStretch      (1, 1.0 );
+    m_layout->SetMinimumRowHeight(3, font->TextExtent(cancel_btn->Text()).y);
 
-    m_layout->SetMinimumColumnWidth ( 0, std::max ( font->TextExtent ( filename_label->Text() ).x,
-                                                    font->TextExtent ( directory_label->Text() ).x ) );
-    m_layout->SetColumnStretch ( 1, 1.0 );
+    m_layout->SetMinimumColumnWidth(0, std::max(font->TextExtent(filename_label->Text()).x,
+                                                font->TextExtent(directory_label->Text()).x));
+    m_layout->SetColumnStretch(1, 1.0);
 
-    SetLayout ( m_layout );
+    SetLayout(m_layout);
 
-    GG::Connect ( m_confirm_btn->LeftClickedSignal,      &SaveFileDialog::Confirm,           this );
-    GG::Connect ( cancel_btn->LeftClickedSignal,         &SaveFileDialog::Cancel,            this );
-    GG::Connect ( m_file_list->SelChangedSignal,         &SaveFileDialog::SelectionChanged,  this );
-    GG::Connect ( m_file_list->DoubleClickedSignal,      &SaveFileDialog::DoubleClickRow,    this );
-    GG::Connect ( m_name_edit->EditedSignal,             &SaveFileDialog::FileNameEdited,    this );
-    GG::Connect ( m_current_dir_edit->EditedSignal,      &SaveFileDialog::DirectoryEdited,   this );
-    GG::Connect ( HumanClientApp::GetApp()->FocusChangedSignal, &SaveFileDialog::UpdatePreviewList, this );
+    GG::Connect(m_confirm_btn->LeftClickedSignal,               &SaveFileDialog::Confirm,           this);
+    GG::Connect(cancel_btn->LeftClickedSignal,                  &SaveFileDialog::Cancel,            this);
+    GG::Connect(m_file_list->SelChangedSignal,                  &SaveFileDialog::SelectionChanged,  this);
+    GG::Connect(m_file_list->DoubleClickedSignal,               &SaveFileDialog::DoubleClickRow,    this);
+    GG::Connect(m_name_edit->EditedSignal,                      &SaveFileDialog::FileNameEdited,    this);
+    GG::Connect(m_current_dir_edit->EditedSignal,               &SaveFileDialog::DirectoryEdited,   this);
+    GG::Connect(HumanClientApp::GetApp()->FocusChangedSignal,   &SaveFileDialog::UpdatePreviewList, this);
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp());
@@ -684,14 +683,17 @@ void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
     if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
         if (m_loaded_dir != GetDirPath() ) {
             UpdatePreviewList();
-        }else{
-            if(GG::GUI::GetGUI()->FocusWnd() == m_name_edit){
+        } else {
+            if (GG::GUI::GetGUI()->FocusWnd() == m_name_edit) {
                 Confirm();
             }
         }
     } else if (key == GG::GGK_DELETE) { // Delete would be better, but gets eaten by someone
         // Ask to delete selection on Delete, if valid and not editing text
-        if ( CheckChoiceValidity() && GG::GUI::GetGUI()->FocusWnd() != m_name_edit && GG::GUI::GetGUI()->FocusWnd() != m_current_dir_edit ) {
+        if (CheckChoiceValidity() &&
+            GG::GUI::GetGUI()->FocusWnd() != m_name_edit &&
+            GG::GUI::GetGUI()->FocusWnd() != m_current_dir_edit)
+        {
             AskDelete();
         }
     } else {
@@ -703,19 +705,19 @@ void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
 void SaveFileDialog::Confirm() {
     Logger().debugStream() << "SaveFileDialog::Confirm: Confirming";
 
-    if(!CheckChoiceValidity()){
+    if (!CheckChoiceValidity()) {
         Logger().debugStream() << "SaveFileDialog::Confirm: Invalid choice. abort.";
         return;
     }
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
-    fs::path current_dir ( GetDirPath() );
-    if ( !choice.empty() ) {
+    fs::path current_dir(GetDirPath());
+    if (!choice.empty()) {
         fs::path chosen = current_dir / choice;
-        if ( fs::is_directory ( chosen ) ) {
+        if (fs::is_directory(chosen)) {
             Logger().debugStream() << "SaveFileDialog::Confirm: " << chosen << " is a directory. Listing content.";
-            UpdateDirectory ( PathString ( chosen ) );
+            UpdateDirectory(PathString(chosen));
             return;
         } else {
             Logger().debugStream() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
