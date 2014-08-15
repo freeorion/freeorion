@@ -272,22 +272,9 @@ public:
     /** Adds a button to the end of the group. */
     void AddButton(StateButton* bn);
 
-    /** creates a StateButton from the given parameters and adds it to the end
-        of the group. */
-    void AddButton(const std::string& text, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                   Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                   StateButtonStyle style = SBSTYLE_3D_RADIO);
-
     /** Adds a button to the group at position \a index.  \a index must be in
         the range [0, NumButtons()]. */
     void InsertButton(std::size_t index, StateButton* bn);
-
-    /** Creates a StateButton from the given parameters and adds it to the
-        group at position \a index.  \a index must be in the range [0,
-        NumButtons()]. */
-    void InsertButton(std::size_t index, const std::string& text, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                      Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                      StateButtonStyle style = SBSTYLE_3D_RADIO);
 
     /** Removes \a button from the group.  If \a button is at index i, and is
         the currently-checked button, the currently-checked button index is

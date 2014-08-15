@@ -102,12 +102,6 @@ public:
                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                          Flags<WndFlag> flags = INTERACTIVE) const;
 
-    /** Returns a new GG StateButton. */
-    virtual StateButton*       NewStateButton(X x, Y y, X w, Y h, const std::string& str,
-                                              const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                              Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                              StateButtonStyle style = SBSTYLE_3D_XBOX, Flags<WndFlag> flags = INTERACTIVE) const;
-
     /** Returns a new GG RadioButtonGroup. */
     virtual RadioButtonGroup*  NewRadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation) const;
 

@@ -11,11 +11,6 @@ public:
                                              const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::StateButton*       NewStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
-                                                  const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                                  GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
-                                                  GG::StateButtonStyle style = GG::SBSTYLE_3D_XBOX, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
-
     virtual GG::DropDownList*      NewDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color,
                                                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 

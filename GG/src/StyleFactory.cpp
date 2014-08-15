@@ -82,11 +82,6 @@ Button* StyleFactory::NewButton(X x, Y y, X w, Y h, const std::string& str, cons
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new Button(x, y, w, h, str, font, color, text_color, flags); }
 
-StateButton* StyleFactory::NewStateButton(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
-                                          Flags<TextFormat> format, Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                          StateButtonStyle style/* = SBSTYLE_3D_XBOX*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new StateButton(x, y, w, h, str, font, format, color, text_color, interior, style, flags); }
-
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation) const
 { return new RadioButtonGroup(x, y, w, h, orientation); }
 
@@ -244,7 +239,7 @@ StateButton* StyleFactory::NewTabBarTab(X x, Y y, X w, Y h, const std::string& s
                                         Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
                                         StateButtonStyle style/* = SBSTYLE_3D_TOP_ATTACHED_TAB*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 {
-    StateButton* retval = NewStateButton(x, y, w, h, str, font, format, color, text_color, interior, style, flags);
+    StateButton* retval = new StateButton(x, y, w, h, str, font, format, color, text_color, interior, style, flags);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }

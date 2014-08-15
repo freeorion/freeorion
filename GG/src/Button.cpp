@@ -587,11 +587,6 @@ void RadioButtonGroup::DisableButton(std::size_t index, bool b/* = true*/)
 void RadioButtonGroup::AddButton(StateButton* bn)
 { InsertButton(m_button_slots.size(), bn); }
 
-void RadioButtonGroup::AddButton(const std::string& text, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                                 Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                 StateButtonStyle style/* = SBSTYLE_3D_RADIO*/)
-{ InsertButton(m_button_slots.size(), text, font, format, color, text_color, interior, style); }
-
 void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
 {
     assert(index <= m_button_slots.size());
@@ -645,16 +640,6 @@ void RadioButtonGroup::InsertButton(std::size_t index, StateButton* bn)
     if (m_checked_button != NO_BUTTON && index <= m_checked_button)
         ++m_checked_button;
     Reconnect();
-}
-
-void RadioButtonGroup::InsertButton(std::size_t index, const std::string& text, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                                    Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                    StateButtonStyle style/* = SBSTYLE_3D_RADIO*/)
-{
-    assert(index <= m_button_slots.size());
-    StateButton* button = GetStyleFactory()->NewStateButton(X0, Y0, X1, Y1, text, font, format, color, text_color, interior, style);
-    button->Resize(button->MinUsableSize());
-    InsertButton(index, button);
 }
 
 void RadioButtonGroup::RemoveButton(StateButton* button)
