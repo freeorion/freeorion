@@ -99,7 +99,7 @@ public:
                                                Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG Edit. */
-    virtual Edit*              NewEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
+    virtual Edit*              NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                                        Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
                                        Flags<WndFlag> flags = INTERACTIVE) const;
 
@@ -112,7 +112,7 @@ public:
                                          Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new GG Slider<int>. */
-    virtual Slider<int>*       NewIntSlider(X x, Y y, X w, Y h, int min, int max, Orientation orientation,
+    virtual Slider<int>*       NewIntSlider(int min, int max, Orientation orientation,
                                             SliderLineStyle style, Clr color, int tab_width, int line_width = 5,
                                             Flags<WndFlag> flags = INTERACTIVE) const;
 
@@ -193,22 +193,22 @@ public:
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new increase Button, to be used in a Spin. */
-    virtual Button*            NewSpinIncrButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewSpinIncrButton(const std::string& str,
                                                  const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new decrease Button, to be used in a Spin. */
-    virtual Button*            NewSpinDecrButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewSpinDecrButton(const std::string& str,
                                                  const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new Edit, to be used in an editable Spin. */
-    virtual Edit*              NewSpinEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
+    virtual Edit*              NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                                            Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
                                            Flags<WndFlag> flags = INTERACTIVE | REPEAT_KEY_PRESS) const;
 
     /** Returns a new StateButton, to be used in a TabBar. */
-    virtual StateButton*       NewTabBarTab(X x, Y y, X w, Y h, const std::string& str,
+    virtual StateButton*       NewTabBarTab(const std::string& str,
                                             const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                             Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
                                             StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB, Flags<WndFlag> flags = INTERACTIVE) const;

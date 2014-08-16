@@ -24,15 +24,10 @@ GG::DropDownList* CUIStyle::NewDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, 
     return retval;
 }
 
-GG::Edit* CUIStyle::NewEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{
-    CUIEdit* retval = new CUIEdit(str);
-    retval->MoveTo(GG::Pt(x, y));
-    retval->Resize(GG::Pt(w, retval->MinUsableSize().y));
-    return retval;
-}
+{ return new CUIEdit(str); }
 
 GG::ListBox* CUIStyle::NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
                                   GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
@@ -47,10 +42,10 @@ GG::Scroll* CUIStyle::NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientat
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return new CUIScroll(x, y, w, h, orientation); }
 
-GG::Slider<int>* CUIStyle::NewIntSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation,
+GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
                                         GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width/* = 5*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUISlider<int>(x, y, w, h, min, max, orientation); }
+{ return new CUISlider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation); }
 
 
 GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
@@ -97,23 +92,22 @@ GG::Button* CUIStyle::NewHSliderTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, co
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, Value(h), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewSpinIncrButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_UP, flags); }
 
-GG::Button* CUIStyle::NewSpinDecrButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewSpinDecrButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_DOWN, flags); }
 
-GG::StateButton* CUIStyle::NewTabBarTab(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                         GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                         GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 {
     GG::StateButton* retval = new CUIStateButton(str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
-    retval->MoveTo(GG::Pt(x, y));
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }

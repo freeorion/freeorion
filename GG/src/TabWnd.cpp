@@ -341,7 +341,7 @@ void TabBar::InsertTab(std::size_t index, const std::string& name)
 {
     assert(index <= m_tab_buttons.size());
     boost::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
-    StateButton* button = style_factory->NewTabBarTab(X0, Y0, X1, Y1, name,
+    StateButton* button = style_factory->NewTabBarTab(name,
                                                       m_font, FORMAT_CENTER, Color(),
                                                       m_text_color, CLR_ZERO,
                                                       m_style == TAB_BAR_ATTACHED ?

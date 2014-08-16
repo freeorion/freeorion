@@ -624,8 +624,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(color.r)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 0, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(color.r);
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 0, 2);
 
@@ -634,8 +633,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(color.g)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 1, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(color.g);
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 1, 2);
 
@@ -644,8 +642,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(color.b)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 2, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(color.b);
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 2, 2);
 
@@ -654,8 +651,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(color.a)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 3, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(color.a);
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 3, 2);
 
@@ -664,8 +660,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(m_current_color.h * 359)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 4, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 359, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 359, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(static_cast<int>(m_current_color.h * 359));
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 4, 2);
 
@@ -674,8 +669,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(m_current_color.s * 255)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 5, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(static_cast<int>(m_current_color.s * 255));
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 5, 2);
 
@@ -684,8 +678,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_slider_values.push_back(style->NewTextControl(X0, Y0, X1, Y1, lexical_cast<std::string>(static_cast<int>(m_current_color.v * 255)),
                                                     font, m_text_color, FORMAT_LEFT));
     m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 6, 1);
-    m_sliders.push_back(style->NewIntSlider(X0, Y0, X1, Y1, 0, 255, HORIZONTAL,
-                                         RAISED, m_color, 10));
+    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, RAISED, m_color, 10));
     m_sliders.back()->SlideTo(static_cast<int>(m_current_color.v * 255));
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 6, 2);
 
