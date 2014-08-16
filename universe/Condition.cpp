@@ -230,9 +230,6 @@ bool Condition::ConditionBase::operator==(const Condition::ConditionBase& rhs) c
     if (this == &rhs)
         return true;
 
-    if (!this)
-        return false;
-
     if (typeid(*this) != typeid(rhs))
         return false;
 

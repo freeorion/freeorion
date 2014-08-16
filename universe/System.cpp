@@ -216,8 +216,6 @@ std::string System::Dump() const {
 
 const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const {
     static const std::string EMPTY_STRING;
-    if (!this)
-        return EMPTY_STRING;
 
     if (empire_id == ALL_EMPIRES)
         return this->PublicName(empire_id);
