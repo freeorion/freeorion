@@ -18,6 +18,7 @@
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/DynamicGraphic.h>
 #include <GG/StaticGraphic.h>
 #include <GG/utf8/core.h>
 #include <GG/utf8/checked.h>

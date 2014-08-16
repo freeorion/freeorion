@@ -43,17 +43,6 @@ GG::ListBox* CUIStyle::NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr co
     return retval;
 }
 
-GG::MultiEdit* CUIStyle::NewMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
-                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style/* = GG::MULTI_LINEWRAP*/,
-                                      GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{
-    CUIMultiEdit* retval = new CUIMultiEdit(str);
-    retval->MoveTo(GG::Pt(x, y));
-    retval->Resize(GG::Pt(w, h));
-    return retval;
-}
-
 GG::Scroll* CUIStyle::NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return new CUIScroll(x, y, w, h, orientation); }
@@ -63,30 +52,6 @@ GG::Slider<int>* CUIStyle::NewIntSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int 
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUISlider<int>(x, y, w, h, min, max, orientation); }
 
-GG::Slider<double>* CUIStyle::NewDoubleSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, double min, double max, GG::Orientation orientation,
-                                              GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width/* = 5*/,
-                                              GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUISlider<double>(x, y, w, h, min, max, orientation); }
-
-GG::Spin<int>* CUIStyle::NewIntSpin(GG::X x, GG::Y y, GG::X w, int value, int step, int min, int max, bool edits,
-                                    const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                    GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{
-    CUISpin<int>* retval = new CUISpin<int>(value, step, min, max, edits);
-    retval->MoveTo(GG::Pt(x, y));
-    retval->Resize(GG::Pt(w, retval->Height()));
-    return retval;
-}
-
-GG::Spin<double>* CUIStyle::NewDoubleSpin(GG::X x, GG::Y y, GG::X w, double value, double step, double min, double max, bool edits,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                          GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{
-    CUISpin<double>* retval = new CUISpin<double>(value, step, min, max, edits);
-    retval->MoveTo(GG::Pt(x, y));
-    retval->Resize(GG::Pt(w, retval->Height()));
-    return retval;
-}
 
 GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                 GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const

@@ -30,36 +30,25 @@
 #define _GG_StyleFactory_h_
 
 #include  <GG/ClrConstants.h>
-#include  <GG/DynamicGraphic.h>
 #include  <GG/FontFwd.h>
-#include  <GG/MultiEditFwd.h>
+#include  <GG/Wnd.h>
 
 
 namespace GG {
 
 class Button;
-class ColorDlg;
 class DropDownList;
-class DynamicGraphic;
-class FileDlg;
 class Edit;
 class Font;
 class GroupBox;
 class ListBox;
-class MenuBar;
-class MultiEdit;
 class RadioButtonGroup;
 class Scroll;
 template <class T>
 class Slider;
-template <class T>
-class Spin;
 class StateButton;
-class StaticGraphic;
 class TabBar;
-class TabWnd;
 class TextControl;
-class Texture;
 class ThreeButtonDlg;
 struct UnicodeCharset;
 
@@ -109,12 +98,6 @@ public:
     virtual DropDownList*      NewDropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color,
                                                Flags<WndFlag> flags = INTERACTIVE) const;
 
-    /** Returns a new GG DynamicGraphic. */
-    virtual DynamicGraphic*    NewDynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
-                                                 int margin, const std::vector<boost::shared_ptr<Texture> >& textures,
-                                                 Flags<GraphicStyle> style = GRAPHIC_NONE, int frames = DynamicGraphic::ALL_FRAMES,
-                                                 Flags<WndFlag> flags = NO_WND_FLAGS) const;
-
     /** Returns a new GG Edit. */
     virtual Edit*              NewEdit(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
                                        Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
@@ -124,17 +107,6 @@ public:
     virtual ListBox*           NewListBox(X x, Y y, X w, Y h, Clr color, Clr interior = CLR_ZERO,
                                           Flags<WndFlag> flags = INTERACTIVE) const;
 
-    /** Returns a new GG MenuBar. */
-    virtual MenuBar*           NewMenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font,
-                                          Clr text_color = CLR_WHITE, Clr color = CLR_BLACK,
-                                          Clr interior = CLR_SHADOW) const;
-
-    /** Returns a new GG MultiEdit. */
-    virtual MultiEdit*         NewMultiEdit(X x, Y y, X w, Y h, const std::string& str,
-                                            const boost::shared_ptr<Font>& font, Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
-                                            Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                            Flags<WndFlag> flags = INTERACTIVE) const;
-
     /** Returns a new GG Scroll. */
     virtual Scroll*            NewScroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior,
                                          Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
@@ -143,25 +115,6 @@ public:
     virtual Slider<int>*       NewIntSlider(X x, Y y, X w, Y h, int min, int max, Orientation orientation,
                                             SliderLineStyle style, Clr color, int tab_width, int line_width = 5,
                                             Flags<WndFlag> flags = INTERACTIVE) const;
-
-    /** Returns a new GG Slider<double>. */
-    virtual Slider<double>*    NewDoubleSlider(X x, Y y, X w, Y h, double min, double max, Orientation orientation,
-                                            SliderLineStyle style, Clr color, int tab_width, int line_width = 5,
-                                            Flags<WndFlag> flags = INTERACTIVE) const;
-
-    /** Returns a new GG Spin<int>. */
-    virtual Spin<int>*         NewIntSpin(X x, Y y, X w, int value, int step, int min, int max, bool edits,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-                                          Clr interior = CLR_ZERO, Flags<WndFlag> flags = INTERACTIVE) const;
-
-    /** Returns a new GG Spin<int>. */
-    virtual Spin<double>*      NewDoubleSpin(X x, Y y, X w, double value, double step, double min, double max, bool edits,
-                                             const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-                                             Clr interior = CLR_ZERO, Flags<WndFlag> flags = INTERACTIVE) const;
-
-    /** Returns a new GG StaticGraphic. */
-    virtual StaticGraphic*     NewStaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture,
-                                                Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG TabBar. */
     virtual TabBar*            NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color,
@@ -177,12 +130,6 @@ public:
     virtual TextControl*       NewTextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
                                               Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                                               Flags<WndFlag> flags = NO_WND_FLAGS) const;
-
-    /** Returns a new GG GroupBox. */
-    virtual GroupBox*          NewGroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font,
-                                           Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                           Flags<WndFlag> flags = NO_WND_FLAGS) const;
-    //@}
 
     /** \name Subcontrols */ ///@{
     /** Returns a new ListBox, to be used in a DropDownList. */
@@ -277,27 +224,7 @@ public:
                                                     Flags<WndFlag> flags = INTERACTIVE) const;
     //@}
 
-    /** \name Wnds */ ///@{
-    /** Returns a new GG TabWnd. */
-    virtual TabWnd*            NewTabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color,
-                                         Clr text_color = CLR_BLACK, TabBarStyle style = TAB_BAR_ATTACHED,
-                                         Flags<WndFlag> flags = INTERACTIVE | DRAGABLE) const;
-    //@}
-
     /** \name Dialogs */ ///@{
-    /** Returns a new GG ColorDlg. */
-    virtual ColorDlg*          NewColorDlg(X x, Y y, const boost::shared_ptr<Font>& font,
-                                           Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK) const;
-
-    /** Returns a new GG ColorDlg that has a starting color specified. */
-    virtual ColorDlg*          NewColorDlg(X x, Y y, Clr original_color, const boost::shared_ptr<Font>& font,
-                                           Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK) const;
-
-    /** Returns a new GG FileDlg. */
-    virtual FileDlg*           NewFileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr border_color,
-                                          Clr text_color = CLR_BLACK) const;
-
     /** Returns a new GG ThreeButtonDlg. */
     virtual ThreeButtonDlg*    NewThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg,
                                                  const boost::shared_ptr<Font>& font, Clr color, Clr border_color,

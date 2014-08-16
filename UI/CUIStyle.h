@@ -21,11 +21,6 @@ public:
     virtual GG::ListBox*           NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr interior = GG::CLR_ZERO,
                                               GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::MultiEdit*         NewMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
-                                                const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
-                                                GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
-                                                GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
-
     virtual GG::Scroll*            NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
@@ -33,17 +28,6 @@ public:
                                                  GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
                                                  GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Slider<double>*    NewDoubleSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, double min, double max, GG::Orientation orientation,
-                                                   GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
-                                                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
-
-    virtual GG::Spin<int>*         NewIntSpin(GG::X x, GG::Y y, GG::X w, int value, int step, int min, int max, bool edits,
-                                              const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                              GG::Clr interior = GG::CLR_ZERO, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
-
-    virtual GG::Spin<double>*      NewDoubleSpin(GG::X x, GG::Y y, GG::X w, double value, double step, double min, double max, bool edits,
-                                                 const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                 GG::Clr interior = GG::CLR_ZERO, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
     virtual GG::TabBar*            NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color,
                                              GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
