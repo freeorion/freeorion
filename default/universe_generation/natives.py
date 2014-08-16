@@ -5,6 +5,9 @@ import fo_universe_generator as fo
 import planets
 import statistics
 
+natives_for_planet_type = {}
+planet_types_for_natives = {}
+
 
 def is_too_close_to_empire_home_systems(system, home_systems):
     """
@@ -52,7 +55,10 @@ def generate_natives(native_freq, systems, empire_home_systems):
     # create a map with a list for each planet type containing the species
     # for which this planet type is a good environment
     # we will need this afterwards when picking natives for a planet
-    natives_for_planet_type = {planet_type: [] for planet_type in planets.planet_types}
+    natives_for_planet_type.clear()  # just to be safe
+    natives_for_planet_type.update( {planet_type: [] for planet_type in planets.planet_types} )
+    planet_types_for_natives.clear()
+    planet_types_for_natives.update( {species: set() for species in native_species} )
     # iterate over all native species we got
     for species in native_species:
         # check the planet environment for all planet types for this species
@@ -60,21 +66,24 @@ def generate_natives(native_freq, systems, empire_home_systems):
             # if this planet type is a good environment for the species, add it to the list for this planet type
             if fo.species_get_planet_environment(species, planet_type) == fo.planetEnvironment.good:
                 natives_for_planet_type[planet_type].append(species)
+                planet_types_for_natives[species].add(planet_type)
 
     # randomly add species to planets
     # iterate over the list of "native safe" planets we compiled earlier
     for candidate in native_safe_planets:
-        # make a "roll" against the chance for natives to determine if we shall place natives on this planet
-        if random.random() > native_chance:
-            # no, continue with next planet
-            continue
-
         # select a native species to put on this planet
         planet_type = fo.planet_get_type(candidate)
         # check if we have any native species that like this planet type
         if not natives_for_planet_type[planet_type]:
             # no, continue with next planet
             continue
+        statistics.potential_native_planet_summary[planet_type] += 1
+        # make a "roll" against the chance for natives to determine if we shall place natives on this planet
+        if random.random() > native_chance:
+            # no, continue with next planet
+            continue
+        statistics.settled_native_planet_summary[planet_type] += 1
+
         # randomly pick one of the native species available for this planet type
         natives = random.choice(natives_for_planet_type[planet_type])
 
