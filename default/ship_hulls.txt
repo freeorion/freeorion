@@ -41,7 +41,7 @@ Hull
     structure = 2
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = 1
-    buildTime = 1
+    buildTime = 3
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
