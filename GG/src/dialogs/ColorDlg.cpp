@@ -399,41 +399,6 @@ void ColorDlg::ColorButtonClickFunctor::operator()()
 std::vector<Clr> ColorDlg::s_custom_colors;
 const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
 
-ColorDlg::ColorDlg(X x, Y y, const boost::shared_ptr<Font>& font,
-                   Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :
-    Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
-    m_original_color(CLR_ZERO),
-    m_original_color_specified(false),
-    m_color_was_picked(false),
-    m_new_str("New"),
-    m_old_str("Old"),
-    m_red_str("R:"),
-    m_green_str("G:"),
-    m_blue_str("B:"),
-    m_hue_str("H:"),
-    m_saturation_str("S:"),
-    m_value_str("V:"),
-    m_alpha_str("A:"),
-    m_ok_str("Ok"),
-    m_cancel_str("Cancel"),
-    m_hue_saturation_picker(0),
-    m_value_picker(0),
-    m_pickers_layout(0),
-    m_new_color_square(0),
-    m_old_color_square(0),
-    m_new_color_square_text(0),
-    m_old_color_square_text(0),
-    m_color_squares_layout(0),
-    m_color_buttons_layout(0),
-    m_current_color_button(INVALID_COLOR_BUTTON),
-    m_ok(0),
-    m_cancel(0),
-    m_sliders_ok_cancel_layout(0),
-    m_color(dialog_color),
-    m_border_color(border_color),
-    m_text_color(text_color)
-{ Init(font); }
-
 ColorDlg::ColorDlg(X x, Y y, Clr original_color, const boost::shared_ptr<Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :
     Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
