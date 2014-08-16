@@ -16,6 +16,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
+#include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -117,6 +118,74 @@ namespace {
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
+    boost::filesystem::path SavedDesignsDir() { return GetUserDir() / "shipdesigns"; }
+
+    class SavedDesignsManager {
+    public:
+        const std::map<std::string, ShipDesign*>& GetDesigns() const
+        { return m_saved_designs; }
+
+        static SavedDesignsManager& GetSavedDesignsManager() {
+            static SavedDesignsManager manager;
+            return manager;
+        }
+
+        void ClearDesigns() {
+            for (std::map<std::string, ShipDesign*>::iterator it = m_saved_designs.begin();
+                 it != m_saved_designs.end(); ++it)
+            { delete it->second; }
+        }
+
+        void RefreshDesigns() {
+            using namespace boost::filesystem;
+            ClearDesigns();
+
+            path saved_designs_dir = SavedDesignsDir();
+            if (!exists(saved_designs_dir))
+                return;
+
+            // scan files, parse for designs, add to this manager's designs
+            std::vector<path> design_files;
+            for (directory_iterator dir_it(saved_designs_dir);
+                 dir_it != directory_iterator(); ++dir_it)
+            {
+                const path& file_path = dir_it->path();
+                if (!is_regular_file(file_path))
+                    continue;
+                if (file_path.extension() != DESIGN_FILENAME_EXTENSION)
+                { continue; }
+                design_files.push_back(file_path);
+            }
+
+            for (std::vector<path>::iterator it = design_files.begin();
+                 it != design_files.end(); ++it)
+            {
+                try {
+                    parse::ship_designs(*it, m_saved_designs);
+                } catch (...) {
+                    Logger().errorStream() << "Failed to parse designs in " << PathString(*it);
+                    continue;
+                }
+            }
+        }
+
+    private:
+        SavedDesignsManager() {
+            if (s_instance)
+                throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
+            s_instance = this;
+        }
+
+        ~SavedDesignsManager()
+        { ClearDesigns(); }
+
+        std::map<std::string, ShipDesign*>  m_saved_designs;
+        static SavedDesignsManager*         s_instance;
+    };
+    SavedDesignsManager* SavedDesignsManager::s_instance = 0;
+
+    SavedDesignsManager& GetSavedDesignsManager()
+    { return SavedDesignsManager::GetSavedDesignsManager(); }
 
     void WriteDesignToFile(int design_id, boost::filesystem::path& file) {
         const ShipDesign* design = GetShipDesign(design_id);
@@ -141,7 +210,7 @@ namespace {
             return;
 
         // ensure directory present
-        boost::filesystem::path designs_dir_path(GetUserDir() / "shipdesigns");
+        boost::filesystem::path designs_dir_path(SavedDesignsDir());
         if (!exists(designs_dir_path))
             boost::filesystem::create_directories(designs_dir_path);
 
@@ -993,6 +1062,7 @@ public:
 
     void                            ShowEmptyHulls(bool refresh_list = true);
     void                            ShowCompletedDesigns(bool refresh_list = true);
+    void                            ShowSavedDesigns(bool refresh_list = true);
 
     void                            ShowAvailability(bool available, bool refresh_list = true);
     void                            HideAvailability(bool available, bool refresh_list = true);
@@ -1057,15 +1127,19 @@ private:
 
     void    PopulateWithEmptyHulls();
     void    PopulateWithCompletedDesigns();
+    void    PopulateWithSavedDesigns();
 
-    int                             m_empire_id_shown;
-    std::pair<bool, bool>           m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
-    bool                            m_showing_empty_hulls, m_showing_completed_designs;
+    int                         m_empire_id_shown;
+    std::pair<bool, bool>       m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    bool                        m_showing_empty_hulls;
+    bool                        m_showing_completed_designs;
+    bool                        m_showing_saved_designs;
 
-    std::set<int>                   m_designs_in_list;
-    std::set<std::string>           m_hulls_in_list;
+    std::set<int>               m_designs_in_list;
+    std::set<std::string>       m_hulls_in_list;
+    std::set<std::string>       m_saved_desgins_in_list;
 
-    boost::signals2::connection     m_empire_designs_changed_signal;
+    boost::signals2::connection m_empire_designs_changed_signal;
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h) :
@@ -1140,7 +1214,8 @@ BasesListBox::BasesListBox(void) :
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
-    m_showing_completed_designs(false)
+    m_showing_completed_designs(false),
+    m_showing_saved_designs(false)
 {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL);
@@ -1233,6 +1308,9 @@ void BasesListBox::Populate() {
 
     if (m_showing_completed_designs)
         PopulateWithCompletedDesigns();
+
+    if (m_showing_saved_designs)
+        PopulateWithSavedDesigns();
 }
 
 GG::Pt BasesListBox::ListRowSize()
@@ -1365,6 +1443,28 @@ void BasesListBox::PopulateWithCompletedDesigns() {
     }
 }
 
+void BasesListBox::PopulateWithSavedDesigns() {
+    ScopedTimer scoped_timer("BasesListBox::PopulateWithSavedDesigns");
+
+    const bool showing_available = m_availabilities_shown.first;
+    const bool showing_unavailable = m_availabilities_shown.second;
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
+
+    //// add all known / existing designs
+    //for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
+    //    int design_id = it->first;
+    //    const ShipDesign* design = it->second;
+    //    if (!design->Producible())
+    //        continue;
+    //    CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+    //    Insert(row);
+    //    row->Resize(row_size);
+    //}
+}
+
 void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
@@ -1470,6 +1570,7 @@ void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it) {
 void BasesListBox::ShowEmptyHulls(bool refresh_list) {
     m_showing_empty_hulls = true;
     m_showing_completed_designs = false;
+    m_showing_saved_designs = false;
     if (refresh_list)
         Populate();
 }
@@ -1477,6 +1578,15 @@ void BasesListBox::ShowEmptyHulls(bool refresh_list) {
 void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_empty_hulls = false;
     m_showing_completed_designs = true;
+    m_showing_saved_designs = false;
+    if (refresh_list)
+        Populate();
+}
+
+void BasesListBox::ShowSavedDesigns(bool refresh_list) {
+    m_showing_empty_hulls = false;
+    m_showing_completed_designs = false;
+    m_showing_saved_designs = true;
     if (refresh_list)
         Populate();
 }
@@ -1552,9 +1662,10 @@ private:
     void            DoLayout();
     void            WndSelected(std::size_t index);
 
-    GG::TabWnd*                         m_tabs;
-    BasesListBox*                       m_hulls_list;           // empty hulls on which a new design can be based
-    BasesListBox*                       m_designs_list;         // designs this empire has created or learned how to make
+    GG::TabWnd*     m_tabs;
+    BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
+    BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
+    BasesListBox*   m_saved_designs_list;   // designs saved to files
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
@@ -1562,7 +1673,8 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
     m_tabs(0),
     m_hulls_list(0),
-    m_designs_list(0)
+    m_designs_list(0),
+    m_saved_designs_list(0)
 {
     m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     AttachChild(m_availability_buttons.first);
@@ -1592,13 +1704,9 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
     GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
 
-    //m_saved_designs_list = new CUIListBox();
-    //m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
-    //m_tabs->AddWnd(new CUILabel(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART")), UserString("DESIGN_WND_SAVED_DESIGNS"));
-
-    //m_templates_list = new CUIListBox();
-    //m_templates_list->Resize(GG::Pt(GG::X(10), GG::X(10)));
-    //m_tabs->AddWnd(new CUILabel(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART")), UserString("DESIGN_WND_TEMPLATES"));
+    m_saved_designs_list = new BasesListBox();
+    m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
+    m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
 
     DoLayout();
     ShowAvailability(true, false);   // default to showing available unavailable bases.

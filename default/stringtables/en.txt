@@ -2950,16 +2950,13 @@ DESIGN_WND_STARTS
 Design Starts
 
 DESIGN_WND_HULLS
-Empty Hulls
+Hulls
 
 DESIGN_WND_FINISHED_DESIGNS
-Finished Designs
+Finished
 
 DESIGN_WND_SAVED_DESIGNS
-Saved Designs
-
-DESIGN_WND_TEMPLATES
-Design Templates
+Saved
 
 DESIGN_WND_PART_PALETTE_TITLE
 Ship Parts
