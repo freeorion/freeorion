@@ -261,8 +261,9 @@ public:
     category_iterator               category_end(const std::string& name) const;
 
     /** Returns names of indicated tech's prerequisites, and all prereqs of
-      * those techs, etc. recursively. */
-    std::vector<std::string>        RecursivePrereqs(const std::string& tech_name, int empire_id) const;
+      * those techs, etc. recursively. If \a min_required is false then prereqs
+      * will be included and recursed into even if already known to the empire. */
+    std::vector<std::string>        RecursivePrereqs(const std::string& tech_name, int empire_id, bool min_required = true) const;
     //@}
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */

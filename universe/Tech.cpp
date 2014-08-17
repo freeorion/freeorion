@@ -530,7 +530,7 @@ TechManager& TechManager::GetTechManager() {
     return manager;
 }
 
-std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_name, int empire_id) const {
+std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_name, int empire_id, bool min_required /*= true*/) const {
     const Tech* tech = this->GetTech(tech_name);
     if (!tech)
         return std::vector<std::string>();
@@ -543,6 +543,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
     // initialize working list with 1st order prereqs
     std::set<std::string> cur_prereqs = tech->Prerequisites();
     std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
+    const Empire* empire = Empires().Lookup(empire_id);
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
     for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
@@ -551,6 +552,10 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
         if (prereqs_set.find(cur_name) != prereqs_set.end()) continue;
+
+        // if this tech is already known and min_required==true, can skip.
+        if (min_required && empire && (empire->GetTechStatus(cur_name) == TS_COMPLETE))
+            continue;
 
         // tech is new, so put it into the set of already-processed prereqs
         prereqs_set.insert(cur_name);
