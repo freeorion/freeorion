@@ -616,7 +616,7 @@ ShipDesign
         "AR_XENTRONIUM_PLATE"
 	"FU_SINGULARITY_ENGINE_CORE"
         "AR_XENTRONIUM_PLATE"
-        "FU_ZERO_FUEL"
+        "FU_ANTIMATTER_TANK"
         "SH_BLACK"
     ]
     model = "mark1"
