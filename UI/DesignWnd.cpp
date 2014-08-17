@@ -35,6 +35,7 @@ namespace {
     const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     const std::string   HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
     const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
+    const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
     const std::string   EMPTY_STRING = "";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
     const GG::X         PART_CONTROL_WIDTH(54);
@@ -169,11 +170,22 @@ namespace {
             }
         }
 
+        const ShipDesign* GetDesign(const std::string& design_name) {
+            std::map<std::string, ShipDesign*>::const_iterator it = m_saved_designs.find(design_name);
+            if (it == m_saved_designs.end())
+                return 0;
+            return it->second;
+        }
+
+        std::map<std::string, ShipDesign*>::iterator begin() { return m_saved_designs.begin(); }
+        std::map<std::string, ShipDesign*>::iterator end()   { return m_saved_designs.end(); }
+
     private:
         SavedDesignsManager() {
             if (s_instance)
                 throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
             s_instance = this;
+            RefreshDesigns();
         }
 
         ~SavedDesignsManager()
@@ -1101,10 +1113,12 @@ public:
             CUILabel*                       m_name;
             CUILabel*                       m_cost_and_build_time;
         };
-        HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts);
+        HullAndPartsListBoxRow(GG::X w, GG::Y h);
+        HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
+                               const std::vector<std::string>& parts);
         const std::string&              Hull() const    { return m_hull; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
-    private:
+    protected:
         std::string                     m_hull;
         std::vector<std::string>        m_parts;
     };
@@ -1115,6 +1129,17 @@ public:
         int                             DesignID() const { return m_design_id; }
     private:
         int                             m_design_id;
+    };
+
+    class SavedDesignListBoxRow : public HullAndPartsListBoxRow {
+    public:
+        SavedDesignListBoxRow(GG::X w, GG::Y h, const std::string& design_name);
+        const std::string&              DesignName() const;
+        const std::string&              Description() const;
+        bool                            LookupInStringtable() const;
+
+    private:
+        std::string                     m_design_name;
     };
 
 private:
@@ -1182,23 +1207,29 @@ void BasesListBox::HullAndPartsListBoxRow::HullPanel::SizeMove(const GG::Pt& ul,
     }
 }
 
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
+    BasesListBoxRow(w, h)
+{}
+
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                                              const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
     m_hull(hull),
     m_parts(parts)
 {
-    if (m_parts.empty()) {
+    if (m_parts.empty() && !m_hull.empty()) {
         // contents are just a hull
         push_back(new HullPanel(w, h, m_hull));
-    } else {
+    } else if (!m_parts.empty() && !m_hull.empty()) {
         // contents are a hull and parts  TODO: make a HullAndPartsPanel
-        push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+        push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(m_hull),
+                                        GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
     }
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
-BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id) :
+BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h,
+                                                                   int design_id) :
     BasesListBoxRow(w, h),
     m_design_id(design_id)
 {
@@ -1209,7 +1240,48 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
-BasesListBox::BasesListBox(void) :
+BasesListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
+                                                           const std::string& design_name) :
+    HullAndPartsListBoxRow(w, h),
+    m_design_name(design_name)
+{
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(m_design_name);
+    if (design) {
+        this->m_hull = design->Hull();
+        this->m_parts = design->Parts();
+
+        if (m_parts.empty() && !m_hull.empty()) {
+            // contents are just a hull
+            push_back(new HullPanel(w, h, m_hull));
+        } else if (!m_parts.empty() && !m_hull.empty()) {
+            // contents are a hull and parts  TODO: make a HullAndPartsPanel
+            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(m_hull),
+                                            GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+        }
+    }
+    SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
+}
+
+const std::string& BasesListBox::SavedDesignListBoxRow::DesignName() const
+{ return m_design_name; }
+
+const std::string& BasesListBox::SavedDesignListBoxRow::Description() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_name);
+    if (!design)
+        return EMPTY_STRING;
+    return design->Description();
+}
+
+bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_name);
+    if (!design)
+        return false;
+    return design->LookupInStringtable();
+}
+
+BasesListBox::BasesListBox() :
     CUIListBox(),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
@@ -1278,6 +1350,18 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         Insert(row);
         row->Resize(row_size);
         m_hulls_in_list.insert(hull_name);  // should be redundant
+
+    } else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
+        // find name of design that was dragged away, and replace
+        const BasesListBox::SavedDesignListBoxRow* design_row =
+            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
+
+        const std::string& design_name = design_row->DesignName();
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y,
+                                                               design_name);
+        Insert(row);
+        row->Resize(row_size);
+        m_saved_desgins_in_list.insert(design_name);
     }
 }
 
@@ -1446,23 +1530,20 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 void BasesListBox::PopulateWithSavedDesigns() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithSavedDesigns");
 
-    const bool showing_available = m_availabilities_shown.first;
-    const bool showing_unavailable = m_availabilities_shown.second;
+    Logger().debugStream() << "BasesListBox::PopulateWithSavedDesigns";
 
     // remove preexisting rows
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    //// add all known / existing designs
-    //for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
-    //    int design_id = it->first;
-    //    const ShipDesign* design = it->second;
-    //    if (!design->Producible())
-    //        continue;
-    //    CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-    //    Insert(row);
-    //    row->Resize(row_size);
-    //}
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    for (std::map<std::string, ShipDesign*>::iterator it = manager.begin();
+         it != manager.end(); ++it)
+    {
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, it->first);
+        Insert(row);
+        row->Resize(row_size);
+    }
 }
 
 void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
@@ -1707,6 +1788,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_saved_designs_list = new BasesListBox();
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
+    m_saved_designs_list->ShowSavedDesigns(true);
 
     DoLayout();
     ShowAvailability(true, false);   // default to showing available unavailable bases.
@@ -2108,7 +2190,13 @@ public:
     void            SetHull(const HullType* hull);
     void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
     void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
-    void            SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts);//!< sets design hull and parts to those specified
+    /** sets design hull and parts to those specified */
+    void            SetDesignComponents(const std::string& hull,
+                                        const std::vector<std::string>& parts);
+    void            SetDesignComponents(const std::string& hull,
+                                        const std::vector<std::string>& parts,
+                                        const std::string& name,
+                                        const std::string& desc);
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
     void            RegisterCompletedDesignDump(std::string design_dump);       
@@ -2466,9 +2554,22 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
 void DesignWnd::MainPanel::SetDesign(int design_id)
 { SetDesign(GetShipDesign(design_id)); }
 
-void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts) {
+void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
+                                               const std::vector<std::string>& parts)
+{
     SetHull(hull);
     SetParts(parts);
+}
+
+void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
+                                               const std::vector<std::string>& parts,
+                                               const std::string& name,
+                                               const std::string& desc)
+{
+    SetHull(hull);
+    SetParts(parts);
+    m_design_name->SetText(name);
+    m_design_description->SetText(desc);
 }
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
@@ -2681,14 +2782,14 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
     bool accepted_something = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (!accepted_something && it->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-            //const BasesListBox::CompletedDesignListBoxRow* design_row =
-            //    boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(it->first);
             accepted_something = true;
             it->second = true;
 
         } else if (!accepted_something && it->first->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
-            //const BasesListBox::HullAndPartsListBoxRow* design_row =
-            //    boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(it->first);
+            accepted_something = true;
+            it->second = true;
+
+        } else if (!accepted_something && it->first->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
             accepted_something = true;
             it->second = true;
 
@@ -2728,12 +2829,21 @@ void DesignWnd::MainPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const 
             const std::string& hull = control->Hull();
             const std::vector<std::string>& parts = control->Parts();
 
-            if (!hull.empty())
-                SetHull(hull);
-            SetParts(parts);
+            SetDesignComponents(hull, parts);
         }
     }
+    else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
+        const BasesListBox::SavedDesignListBoxRow* control =
+            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
+        if (control) {
+            const std::string& name = control->DesignName();
+            const std::string& desc = control->Description();
+            const std::string& hull = control->Hull();
+            const std::vector<std::string>& parts = control->Parts();
 
+            SetDesignComponents(hull, parts, name, desc);
+        }
+    }
     delete wnd;
 }
 
