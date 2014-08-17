@@ -6,6 +6,7 @@ import names
 import starsystems
 import planets
 import util
+import statistics
 
 
 def get_empire_name_generator():
@@ -24,6 +25,40 @@ def get_empire_name_generator():
 
 # generate names for empires, use next(empire_name_generator) to get next name.
 empire_name_generator = get_empire_name_generator()
+
+
+def get_starting_species_pool():
+    """
+    Empire species pool generator, return random empire species and ensure somewhat even distribution
+    """
+    # fill the initial pool with two sets of all playable species
+    # this way we have somewhat, but not absolutely strict even distribution of starting species at least when there
+    # is only a few number of players (some species can occur twice at max while others not at all)
+    pool = fo.get_playable_species() * 2
+
+    # check all players setup data for players that have their starting species already set, and remove one instance
+    # of that species from our initial pool to preserve correct distribution (as it has already been picked once)
+    for psd_entry in fo.get_player_setup_data():
+        species = psd_entry.data().starting_species
+        if species in pool:
+            pool.remove(species)
+
+    # randomize order in initial pool so we don't get the same species all the time
+    random.shuffle(pool)
+    # generator loop
+    while True:
+        # if our pool is exhausted (because we have more players than species instances in our initial pool)
+        # refill the pool with one set of all playable species
+        if not pool:
+            pool = fo.get_playable_species()
+            # again, randomize order in refilled pool so we don't get the same species all the time
+            random.shuffle(pool)
+        # pick and return next species, and remove it from our pool
+        yield pool.pop()
+
+
+# generates starting species for empires, use next(starting_species_pool) to get next species
+starting_species_pool = get_starting_species_pool()
 
 
 def find_systems_with_min_jumps_between(num_systems, systems_pool, min_jumps):
@@ -75,6 +110,8 @@ def compile_home_system_list(num_home_systems, systems):
         if len(home_systems) >= num_home_systems:
             # ...yes, we got what we need, so let's break out of the loop
             break
+        print "Home system min jump conflict: %d systems and %d empires, tried %d min jump and failed"\
+              % (len(systems), num_home_systems, min_jumps)
         # ...no, decrease the min jump distance and try again
         min_jumps -= 1
 
@@ -126,8 +163,9 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # check starting species, if no one is given, pick one randomly
     if not starting_species:
         print "No starting species set for player", player_name, ", picking one randomly"
-        starting_species = random.choice(fo.get_playable_species())
+        starting_species = next(starting_species_pool)
     print "Starting species for player", player_name, "is", starting_species
+    statistics.empire_species[starting_species] += 1
 
     # pick a planet from the specified home system as homeworld
     planet_list = fo.sys_get_planets(home_system)
