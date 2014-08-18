@@ -82,8 +82,8 @@ Button* StyleFactory::NewButton(X x, Y y, X w, Y h, const std::string& str, cons
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new Button(x, y, w, h, str, font, color, text_color, flags); }
 
-RadioButtonGroup* StyleFactory::NewRadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation) const
-{ return new RadioButtonGroup(x, y, w, h, orientation); }
+RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
+{ return new RadioButtonGroup(orientation); }
 
 DropDownList* StyleFactory::NewDropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color,
                                             Flags<WndFlag> flags/* = INTERACTIVE*/) const

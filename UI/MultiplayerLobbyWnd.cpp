@@ -405,7 +405,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y0, GG::X1);
 
-    m_new_load_game_buttons = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
+    m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
         new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(

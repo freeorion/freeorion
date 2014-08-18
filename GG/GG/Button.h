@@ -217,7 +217,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    RadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation); ///< ctor
+    RadioButtonGroup(Orientation orientation); ///< ctor
     //@}
 
     /** \name Accessors */ ///@{

@@ -238,6 +238,7 @@ public:
 
     /** \name Mutators */ ///@{
     virtual void SizeMove(const Pt& ul, const Pt& lr);
+    virtual void DoLayout();
     virtual void Render();
 
     /** Adds a tab called \a name to the sequence of tabs in this TabBar.  \a

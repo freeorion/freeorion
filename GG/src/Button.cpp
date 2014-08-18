@@ -480,8 +480,8 @@ RadioButtonGroup::ButtonSlot::ButtonSlot(StateButton* button_) :
 // static(s)
 const std::size_t RadioButtonGroup::NO_BUTTON = std::numeric_limits<std::size_t>::max();
 
-RadioButtonGroup::RadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation) :
-    Control(x, y, w, h),
+RadioButtonGroup::RadioButtonGroup(Orientation orientation) :
+    Control(X0, Y0, X1, Y1),
     m_orientation(orientation),
     m_checked_button(NO_BUTTON),
     m_expand_buttons(false),

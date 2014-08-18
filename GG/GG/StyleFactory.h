@@ -92,7 +92,7 @@ public:
                                          Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG RadioButtonGroup. */
-    virtual RadioButtonGroup*  NewRadioButtonGroup(X x, Y y, X w, Y h, Orientation orientation) const;
+    virtual RadioButtonGroup*  NewRadioButtonGroup(Orientation orientation) const;
 
     /** Returns a new GG DropDownList. */
     virtual DropDownList*      NewDropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color,

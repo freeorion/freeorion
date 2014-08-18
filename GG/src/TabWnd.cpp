@@ -270,7 +270,7 @@ TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Cl
 
     boost::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
 
-    m_tabs = style_factory->NewRadioButtonGroup(X0, Y0, w, TabHeightFromFont(font), HORIZONTAL);
+    m_tabs = style_factory->NewRadioButtonGroup(HORIZONTAL);
     m_tabs->ExpandButtons(true);
     m_tabs->ExpandButtonsProportionally(true);
 
@@ -295,6 +295,8 @@ TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Cl
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(TabChangedSignal, TabChangedEcho("TabBar::TabChangedSignal"));
+
+    DoLayout();
 }
 
 Pt TabBar::MinUsableSize() const
@@ -322,9 +324,17 @@ Clr TabBar::TextColor() const
 
 void TabBar::SizeMove(const Pt& ul, const Pt& lr)
 {
-    m_tabs->Resize(Pt(m_tabs->Size().x, lr.y -  ul.y));
-    m_left_right_button_layout->SizeMove(Pt(), lr - ul);
+    Pt old_size = Size();
+
     Control::SizeMove(ul, lr);
+    if(old_size != Size())
+        DoLayout();
+}
+
+void TabBar::DoLayout()
+{
+    m_tabs->Resize(Pt(m_tabs->Size().x, LowerRight().y - UpperLeft().y));
+    m_left_right_button_layout->SizeMove(Pt(), LowerRight() - UpperLeft());
 }
 
 void TabBar::Render()
