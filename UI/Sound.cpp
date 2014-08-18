@@ -157,7 +157,19 @@ Sound::Sound() :
 }
 
 Sound::~Sound()
-{ ShutdownOpenAL(); }
+{
+    if (alcGetCurrentContext() != 0)
+    {
+        alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
+
+        alDeleteBuffers(2, m_music_buffers);
+        for( std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr )
+            alDeleteBuffers(1, &itr->second );
+    }
+
+
+    ShutdownOpenAL();
+}
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
