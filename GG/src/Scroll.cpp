@@ -81,11 +81,15 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
         m_incr = style->NewScrollRightButton("", null_font, color);
         m_tab = style->NewHScrollTabButton("", null_font, color);
     }
-    AttachChild(m_decr);
-    AttachChild(m_incr);
+    if(m_decr) {
+        AttachChild(m_decr);
+        Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
+    }
+    if(m_incr) {
+        AttachChild(m_incr);
+        Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
+    }
     AttachChild(m_tab);
-    Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
-    Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     m_tab->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
@@ -102,12 +106,12 @@ Pt Scroll::MinUsableSize() const
     const int MIN_DRAGABLE_SIZE = 2;
     if (m_orientation == VERTICAL) {
         retval.x = X(MIN_DRAGABLE_SIZE);
-        Y decr_y = m_decr->MinUsableSize().y;
-        Y incr_y = m_incr->MinUsableSize().y;
+        Y decr_y = m_decr ? m_decr->MinUsableSize().y : Y0;
+        Y incr_y = m_incr ? m_incr->MinUsableSize().y : Y0;
         retval.y = decr_y + incr_y + 3 * std::min(decr_y, incr_y);
     } else {
-        X decr_x = m_decr->MinUsableSize().x;
-        X incr_x = m_incr->MinUsableSize().x;
+        X decr_x = m_decr ? m_decr->MinUsableSize().x : X0;
+        X incr_x = m_incr ? m_incr->MinUsableSize().x : X0;
         retval.x = decr_x + incr_x + 3 * std::min(decr_x, incr_x);
         retval.y = Y(MIN_DRAGABLE_SIZE);
     }
@@ -152,8 +156,10 @@ void Scroll::SizeMove(const Pt& ul, const Pt& lr)
 void Scroll::DoLayout()
 {
     int bn_width = (m_orientation == VERTICAL) ? Value(Size().x) : Value(Size().y);
-    m_decr->SizeMove(Pt(), Pt(X(bn_width), Y(bn_width)));
-    m_incr->SizeMove(Size() - Pt(X(bn_width), Y(bn_width)), Size());
+    if(m_decr)
+        m_decr->SizeMove(Pt(), Pt(X(bn_width), Y(bn_width)));
+    if(m_incr)
+        m_incr->SizeMove(Size() - Pt(X(bn_width), Y(bn_width)), Size());
     m_tab->SizeMove(m_tab->RelativeUpperLeft(),
                     (m_orientation == VERTICAL) ?
                     Pt(X(bn_width), m_tab->RelativeLowerRight().y) :
@@ -165,16 +171,20 @@ void Scroll::Disable(bool b/* = true*/)
 {
     Control::Disable(b);
     m_tab->Disable(b);
-    m_incr->Disable(b);
-    m_decr->Disable(b);
+    if(m_incr)
+        m_incr->Disable(b);
+    if(m_decr)
+        m_decr->Disable(b);
 }
 
 void Scroll::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_tab->SetColor(c);
-    m_incr->SetColor(c);
-    m_decr->SetColor(c);
+    if(m_incr)
+        m_incr->SetColor(c);
+    if(m_decr)
+        m_decr->SetColor(c);
 }
 
 void Scroll::SetInteriorColor(Clr c)
@@ -252,8 +262,8 @@ unsigned int Scroll::TabSpace() const
 {
     // tab_space is the space the tab has to move about in (the control's width less the width of the incr & decr buttons)
     return (m_orientation == VERTICAL ?
-            Value(Size().y - m_incr->Size().y - m_decr->Size().y) :
-            Value(Size().x - m_incr->Size().x - m_decr->Size().x));
+            Value(Size().y - (m_incr ? m_incr->Size().y : Y0) - (m_decr ? m_decr->Size().y : Y0)) :
+            Value(Size().x - (m_incr ? m_incr->Size().x : X0) - (m_decr ? m_decr->Size().x : X0)));
 }
 
 unsigned int Scroll::TabWidth() const
@@ -317,8 +327,10 @@ void Scroll::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 void Scroll::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_decr->SetState(Button::BN_UNPRESSED);
-        m_incr->SetState(Button::BN_UNPRESSED);
+        if(m_decr)
+            m_decr->SetState(Button::BN_UNPRESSED);
+        if(m_incr)
+            m_incr->SetState(Button::BN_UNPRESSED);
         m_initial_depressed_region = SBR_NONE;
         m_depressed_region = SBR_NONE;
     }
@@ -339,12 +351,12 @@ bool Scroll::EventFilter(Wnd* w, const WndEvent& event)
                 Pt new_ul = m_tab->RelativeUpperLeft() + event.DragMove();
                 if (m_orientation == VERTICAL) {
                     new_ul.x = m_tab->RelativeUpperLeft().x;
-                    new_ul.y = std::max(0 + m_decr->Height(),
-                                        std::min(new_ul.y, ClientHeight() - m_incr->Height() - m_tab->Height()));
+                    new_ul.y = std::max(0 + (m_decr ? m_decr->Height() : Y0),
+                                        std::min(new_ul.y, ClientHeight() - (m_incr ? m_incr->Height() : Y0) - m_tab->Height()));
                     m_tab_dragged |= bool(m_tab->RelativeUpperLeft().y - new_ul.y);
                 } else {
-                    new_ul.x = std::max(0 + m_decr->Width(),
-                                        std::min(new_ul.x, ClientWidth() - m_incr->Width() - m_tab->Width()));
+                    new_ul.x = std::max(0 + (m_decr ? m_decr->Width() : X0),
+                                        std::min(new_ul.x, ClientWidth() - (m_incr ? m_incr->Width() : X0) - m_tab->Width()));
                     new_ul.y = m_tab->RelativeUpperLeft().y;
                     m_tab_dragged |= bool(m_tab->RelativeUpperLeft().x - new_ul.x);
                 }
@@ -376,8 +388,8 @@ void Scroll::UpdatePosn()
 {
     int old_posn = m_posn;
     int before_tab = (m_orientation == VERTICAL ?   // the tabspace before the tab's lower-value side
-                      Value(m_tab->RelativeUpperLeft().y - m_decr->Size().y) :
-                      Value(m_tab->RelativeUpperLeft().x - m_decr->Size().x));
+                      Value(m_tab->RelativeUpperLeft().y - (m_decr ? m_decr->Size().y : Y0)) :
+                      Value(m_tab->RelativeUpperLeft().x - (m_decr ? m_decr->Size().x : X0)));
     int tab_space = TabSpace() - (m_orientation == VERTICAL ? Value(m_tab->Size().y) : Value(m_tab->Size().x));
     int max_posn = static_cast<int>(m_range_max - m_page_sz + 1);
     m_posn = static_cast<int>(m_range_min + static_cast<double>(before_tab) / tab_space * (max_posn - m_range_min) + 0.5);
@@ -388,14 +400,16 @@ void Scroll::UpdatePosn()
 
 void Scroll::MoveTabToPosn()
 {
-    int start_tabspace = (m_orientation == VERTICAL ?    // the tab's lowest posible extent
+    int start_tabspace = 0; // the tab's lowest posible extent
+    if(m_decr)
+        start_tabspace = (m_orientation == VERTICAL ?
                           Value(m_decr->Size().y) :
                           Value(m_decr->Size().x));
     int tab_space = TabSpace() - (m_orientation == VERTICAL ? Value(m_tab->Size().y) : Value(m_tab->Size().x));
     int max_posn = static_cast<int>(m_range_max - m_page_sz + 1);
     double tab_location =
         (m_posn - m_range_min) / static_cast<double>(max_posn - m_range_min) * tab_space + start_tabspace + 0.5;
-    if (m_posn - m_range_min == 0)
+    if (m_decr && m_posn - m_range_min == 0)
         tab_location = m_orientation == VERTICAL ? Value(m_decr->Height()) : Value(m_decr->Width());
 
     m_tab->MoveTo(m_orientation == VERTICAL ?

@@ -50,7 +50,7 @@ GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_p
 GG::Button* CUIStyle::NewScrollUpButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new GG::Button(-GG::X1, -GG::Y1, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO, GG::CLR_ZERO, GG::NO_WND_FLAGS); }
+{ return 0; }
 
 GG::Button* CUIStyle::NewScrollDownButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
