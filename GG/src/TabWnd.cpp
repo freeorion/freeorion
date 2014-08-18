@@ -278,8 +278,10 @@ TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Cl
     m_left_right_button_layout->SetColumnStretch(1, 0);
     m_left_right_button_layout->SetColumnStretch(2, 0);
 
-    m_left_button = style_factory->NewTabBarLeftButton(X0, Y0, BUTTON_WIDTH, Height(), "-", m_font, Color(), m_text_color);
-    m_right_button = style_factory->NewTabBarRightButton(X0, Y0, BUTTON_WIDTH, Height(), "+", m_font, Color(), m_text_color);
+    m_left_button = style_factory->NewTabBarLeftButton("-", m_font, Color(), m_text_color);
+    m_right_button = style_factory->NewTabBarRightButton("+", m_font, Color(), m_text_color);
+    m_left_button->Resize(Pt(BUTTON_WIDTH, Height()));
+    m_right_button->Resize(Pt(BUTTON_WIDTH, Height()));
     m_left_right_button_layout->SetMinimumColumnWidth(1, m_left_button->Width());
     m_left_right_button_layout->SetMinimumColumnWidth(2, m_right_button->Width());
     m_left_right_button_layout->Add(m_left_button, 0, 1);

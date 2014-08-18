@@ -214,12 +214,12 @@ public:
                                             StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB, Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual Button*            NewTabBarLeftButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewTabBarLeftButton(const std::string& str,
                                                    const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual Button*            NewTabBarRightButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewTabBarRightButton(const std::string& str,
                                                     const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                     Flags<WndFlag> flags = INTERACTIVE) const;
     //@}
