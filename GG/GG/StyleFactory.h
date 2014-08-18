@@ -127,7 +127,7 @@ public:
                                               Flags<TextFormat> format = FORMAT_NONE, Flags<WndFlag> flags = NO_WND_FLAGS) const;
 
     /** Returns a new GG TextControl whose size is exactly that required to hold its text. */
-    virtual TextControl*       NewTextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font,
+    virtual TextControl*       NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
                                               Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                                               Flags<WndFlag> flags = NO_WND_FLAGS) const;
 

@@ -351,7 +351,7 @@ void FileDlg::CreateChildren(bool multi)
 
     const Y BUTTON_HEIGHT = m_files_edit->Height(); // use the edit's height for the buttons as well
 
-    m_curr_dir_text = style->NewTextControl(H_SPACING, V_SPACING / 2, "", m_font, m_text_color);
+    m_curr_dir_text = style->NewTextControl("", m_font, m_text_color);
     m_files_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 2, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "File(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
     m_file_types_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 1, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "Type(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
 
@@ -372,6 +372,8 @@ void FileDlg::CreateChildren(bool multi)
 
 void FileDlg::PlaceLabelsAndEdits(X button_width, Y button_height)
 {
+    m_curr_dir_text->MoveTo(GG::Pt(H_SPACING, V_SPACING / 2));
+
     Y file_list_top = m_curr_dir_text->Height() + V_SPACING;
     m_files_list->Resize(Pt(Width() - 2 * H_SPACING,
                             Height() - (button_height + V_SPACING) * 2 - file_list_top - V_SPACING));
@@ -622,7 +624,7 @@ void FileDlg::PopulateFilters()
     } else {
         for (std::size_t i = 0; i < m_file_filters.size(); ++i) {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, m_file_filters[i].first, m_font, m_text_color));
+            row->push_back(GetStyleFactory()->NewTextControl(m_file_filters[i].first, m_font, m_text_color));
             m_filter_list->Insert(row);
         }
         m_filter_list->Select(m_filter_list->begin());
@@ -678,13 +680,13 @@ void FileDlg::UpdateList()
             Win32Paths())
         {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[..]", m_font, m_text_color));
+            row->push_back(GetStyleFactory()->NewTextControl("[..]", m_font, m_text_color));
             m_files_list->Insert(row);
         }
         // current directory selector
         {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[.]", m_font, m_text_color));
+            row->push_back(GetStyleFactory()->NewTextControl("[.]", m_font, m_text_color));
             m_files_list->Insert(row);
         }
         try {
@@ -721,7 +723,7 @@ void FileDlg::UpdateList()
 #else
                     std::string row_text = "[" + it->filename() + "]";
 #endif
-                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, row_text, m_font, m_text_color));
+                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color));
                     sorted_rows.insert(std::make_pair(row_text, row));
                 }
             } catch (const fs::filesystem_error&) {
@@ -756,7 +758,7 @@ void FileDlg::UpdateList()
                         if (meets_filters) {
                             ListBox::Row* row = new ListBox::Row();
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-                            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, it->path().filename().string(), m_font, m_text_color));
+                            row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color));
                             sorted_rows.insert(std::make_pair(it->path().filename().string(), row));
 #else
                             row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, it->filename(), m_font, m_text_color));
@@ -778,7 +780,7 @@ void FileDlg::UpdateList()
                 if (fs::exists(path)) {
                     ListBox::Row* row = new ListBox::Row();
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[" + path.root_name().string() + "]", m_font, m_text_color));
+                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color));
 #else
                     row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[" + path.root_name() + "]", m_font, m_text_color));
 #endif

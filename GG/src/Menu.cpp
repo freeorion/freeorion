@@ -341,7 +341,7 @@ void MenuBar::AdjustLayout(bool reset/* = false*/)
 
     // create any needed labels
     for (std::size_t i = m_menu_labels.size(); i < m_menu_data.next_level.size(); ++i) {
-        m_menu_labels.push_back(GetStyleFactory()->NewTextControl(X0, Y0, m_menu_data.next_level[i].label, m_font, m_text_color));
+        m_menu_labels.push_back(GetStyleFactory()->NewTextControl(m_menu_data.next_level[i].label, m_font, m_text_color));
         m_menu_labels.back()->Resize(Pt(m_menu_labels.back()->Width() + 2 * MENU_SEPARATION, m_font->Lineskip()));
         AttachChild(m_menu_labels.back());
     }
