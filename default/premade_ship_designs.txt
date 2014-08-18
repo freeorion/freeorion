@@ -305,7 +305,7 @@ ShipDesign
 
 ShipDesign
     name = "SD_LARGE_MARK_4"
-    description = "SD_LARGE_MARK3_DESC"
+    description = "SD_LARGE_MARK4_DESC"
     hull = "SH_STANDARD"
     parts = [
         "SR_WEAPON_2_4"
@@ -398,7 +398,7 @@ ShipDesign
 
 ShipDesign
     name = "SD_ORGANIC3"
-    description = "SD_ORGANIC2_DESC"
+    description = "SD_ORGANIC3_DESC"
     hull = "SH_ORGANIC"
     parts = [
         "SR_WEAPON_2_4"
