@@ -598,7 +598,7 @@ namespace {
 }
 
 CUIDropDownList::CUIDropDownList(GG::Y drop_ht) :
-    DropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, drop_ht, ClientUI::CtrlBorderColor()),
+    DropDownList(drop_ht, ClientUI::CtrlBorderColor()),
     m_render_drop_arrow(true),
     m_mouse_here(false)
 {

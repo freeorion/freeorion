@@ -39,7 +39,7 @@ public:
     typedef ListBox::iterator iterator;
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
-    ModalListPicker(X w, Y drop_ht, Clr color, const Wnd* relative_to_wnd);
+    ModalListPicker(Y drop_ht, Clr color, const Wnd* relative_to_wnd);
 
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void ModalInit();
@@ -96,9 +96,9 @@ namespace {
 ////////////////////////////////////////////////
 // ModalListPicker
 ////////////////////////////////////////////////
-ModalListPicker::ModalListPicker(X w, Y drop_ht, Clr color, const Wnd* relative_to_wnd) :
+ModalListPicker::ModalListPicker(Y drop_ht, Clr color, const Wnd* relative_to_wnd) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
-    m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(X0, Y0, w, drop_ht, color, color)),
+    m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(X0, Y0, X1, drop_ht, color, color)),
     m_relative_to_wnd(relative_to_wnd)
 {
     Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
@@ -141,16 +141,11 @@ void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const Pt&)
 ////////////////////////////////////////////////
 // GG::DropDownList
 ////////////////////////////////////////////////
-DropDownList::DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, h, flags),
-    m_modal_picker(new ModalListPicker(w, drop_ht, color, this))
+DropDownList::DropDownList(Y drop_ht, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
+    Control(X0, Y0, X1, Y1, flags),
+    m_modal_picker(new ModalListPicker(drop_ht, color, this))
 {
     SetStyle(LIST_SINGLESEL);
-
-    // adjust size to keep correct height based on row height, etc.
-    Wnd::SizeMove(Pt(x, y),
-                  Pt(x + Size().x,
-                     y + h + 2 * static_cast<int>(LB()->CellMargin()) + 2 * BORDER_THICK));
 
     Connect(m_modal_picker->SelChangedSignal, SelChangedSignal);
 

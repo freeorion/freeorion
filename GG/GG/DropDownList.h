@@ -67,7 +67,7 @@ public:
 
     /** \name Structors */ ///@{
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
-    DropDownList(X x, Y y, X w, Y h, Y drop_ht, Clr color, Flags<WndFlag> flags = INTERACTIVE);
+    DropDownList(Y drop_ht, Clr color, Flags<WndFlag> flags = INTERACTIVE);
 
     ~DropDownList(); ///< dtor
     //@}
