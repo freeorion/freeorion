@@ -73,13 +73,13 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
     boost::shared_ptr<Font> null_font;
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
     if (m_orientation == VERTICAL) {
-        m_decr = style->NewScrollUpButton(X0, Y0, w, Y(Value(w)), "", null_font, color);
-        m_incr = style->NewScrollDownButton(X0, h - Value(w), w, Y(Value(w)), "", null_font, color);
-        m_tab = style->NewVScrollTabButton(X0, Y(Value(w)), w, Y(TabWidth()), "", null_font, color);
+        m_decr = style->NewScrollUpButton("", null_font, color);
+        m_incr = style->NewScrollDownButton("", null_font, color);
+        m_tab = style->NewVScrollTabButton("", null_font, color);
     } else {
-        m_decr = style->NewScrollLeftButton(X0, Y0, X(Value(h)), h, "", null_font, color);
-        m_incr = style->NewScrollRightButton(w - Value(h), Y0, X(Value(h)), h, "", null_font, color);
-        m_tab = style->NewHScrollTabButton(X(Value(h)), Y0, X(TabWidth()), h, "", null_font, color);
+        m_decr = style->NewScrollLeftButton("", null_font, color);
+        m_incr = style->NewScrollRightButton("", null_font, color);
+        m_tab = style->NewHScrollTabButton("", null_font, color);
     }
     AttachChild(m_decr);
     AttachChild(m_incr);
@@ -92,6 +92,8 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
         Connect(ScrolledSignal, ScrolledEcho("Scroll::ScrolledSignal"));
         Connect(ScrolledAndStoppedSignal, ScrolledEcho("Scroll::ScrolledAndStoppedSignal"));
     }
+
+    DoLayout();
 }
 
 Pt Scroll::MinUsableSize() const
@@ -139,7 +141,16 @@ void Scroll::Render()
 
 void Scroll::SizeMove(const Pt& ul, const Pt& lr)
 {
+    Pt old_size = Size();
+
     Wnd::SizeMove(ul, lr);
+
+    if(old_size != Size())
+        DoLayout();
+}
+
+void Scroll::DoLayout()
+{
     int bn_width = (m_orientation == VERTICAL) ? Value(Size().x) : Value(Size().y);
     m_decr->SizeMove(Pt(), Pt(X(bn_width), Y(bn_width)));
     m_incr->SizeMove(Size() - Pt(X(bn_width), Y(bn_width)), Size());

@@ -33,27 +33,27 @@ public:
                                              GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollUpButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewScrollUpButton(const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewScrollDownButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewScrollDownButton(const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewVScrollTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewVScrollTabButton(const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollLeftButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewScrollLeftButton(const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewScrollRightButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewScrollRightButton(const std::string& str,
                                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                         GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewHScrollTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewHScrollTabButton(const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 

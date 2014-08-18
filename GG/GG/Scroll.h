@@ -99,6 +99,7 @@ public:
     virtual void   Render();
 
     virtual void   SizeMove(const Pt& ul, const Pt& lr);
+    virtual void   DoLayout();
 
     virtual void   Disable(bool b = true);
     virtual void   SetColor(Clr c);

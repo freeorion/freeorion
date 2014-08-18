@@ -47,35 +47,35 @@ GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_p
                                 GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUITabBar(x, y, w, font, color, text_color, style, flags); }
 
-GG::Button* CUIStyle::NewScrollUpButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewScrollUpButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return new GG::Button(-GG::X1, -GG::Y1, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO, GG::CLR_ZERO, GG::NO_WND_FLAGS); }
 
-GG::Button* CUIStyle::NewScrollDownButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewScrollDownButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, font, color, text_color, flags); }
 
-GG::Button* CUIStyle::NewVScrollTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewVScrollTabButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIScroll::ScrollTab(GG::VERTICAL, Value(w), (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
+{ return new CUIScroll::ScrollTab(GG::VERTICAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewScrollLeftButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewScrollLeftButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, font, color, text_color, flags); }
 
-GG::Button* CUIStyle::NewScrollRightButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewScrollRightButton(const std::string& str,
                                            const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                            GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, font, color, text_color, flags); }
 
-GG::Button* CUIStyle::NewHScrollTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewHScrollTabButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIScroll::ScrollTab(GG::HORIZONTAL, Value(h), (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
+{ return new CUIScroll::ScrollTab(GG::HORIZONTAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
 GG::Button* CUIStyle::NewVSliderTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
