@@ -10,6 +10,7 @@ Special
         Planet
         Not OwnedBy AnyEmpire
         Species
+        Not HasSpecial "HIGH_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
@@ -34,6 +35,7 @@ Special
         Planet
         Not OwnedBy AnyEmpire
         Species
+        Not HasSpecial "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
@@ -1719,6 +1721,7 @@ CHANCE_OF_GUARD_1
                 Not ContainedBy Contains OR [
                                     Design name = "SM_EXP_OUTPOST"
                                     Building "BLD_EXPERIMENTOR_OUTPOST"
+                                    And [ Planet HasSpecial "HIGH_TECH_NATIVES_SPECIAL" ]
                                     ]
             ]
             effects = CreateShip "SM_GUARD_1"
