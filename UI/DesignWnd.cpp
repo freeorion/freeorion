@@ -2489,7 +2489,8 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
         return result;
 
     const PartType* part_type;
-    std::vector<ShipSlotType>& prev_type = std::vector<ShipSlotType>();
+    std::vector<ShipSlotType> prev_type_instance;
+    std::vector<ShipSlotType>& prev_type = prev_type_instance;
     unsigned int slots_size = m_slots.size();
 
     for (unsigned int i = 0; i < slots_size; ++i) { // scan through slots to find one that can mount part
