@@ -2483,39 +2483,40 @@ void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
     // result.first = swap_slot, result.second = empty_slot
     // if any of the pair == -1, no swap!
-    std::pair<int, int> result = std::make_pair(-1, -1);
 
     if (!part)
-        return result;
+        return std::make_pair(-1, -1);
 
-    const PartType* part_type;
-    std::vector<ShipSlotType> prev_type_instance;
-    std::vector<ShipSlotType>& prev_type = prev_type_instance;
-    unsigned int slots_size = m_slots.size();
+    // first search for an empty compatible slot for the new part
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+            continue;   // skip incompatible slots
 
-    for (unsigned int i = 0; i < slots_size; ++i) { // scan through slots to find one that can mount part
-        // First, find a slot that we are compatible with
-        if (part->CanMountInSlotType(m_slots[i]->SlotType())) {
-            part_type = m_slots[i]->GetPart(); // check this slot
+        if (!m_slots[i]->GetPart())
+            return std::make_pair(-1, -1);  // empty slot that can hold part. no swapping needed.
+    }
 
-            if (!part_type) {
-                // shouldn't be swapping, it's a simple addPart!
-                return result;
-            }
-            else if (prev_type != part_type->MountableSlotTypes()) {
-                // see if we can move the existing part to an empty slot somewhere
-                for (unsigned int j = 0; j < slots_size; ++j) {
-                    if (m_slots[j]->GetPart() == 0 && part_type->CanMountInSlotType(m_slots[j]->SlotType()) ) {       // bingo!
-                        result.first = i;
-                        result.second = j;
-                        return result;
-                    }
-                }
-                prev_type = part_type->MountableSlotTypes();
-            }
+
+    // second, scan for a slot containing a part that can be moved to another
+    // slot to make room for the new part
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+            continue;   // skip incompatible slots
+
+        // can now assume m_slots[i] has a part, as if it didn't, it would have
+        // been found in the first loop
+
+        // see if we can move the part in the candidate slot to an empty slot elsewhere
+        for (unsigned int j = 0; j < m_slots.size(); ++j) {
+            if (m_slots[j]->GetPart())
+                continue;   // only consider moving into empty slots
+
+            if (m_slots[i]->GetPart()->CanMountInSlotType(m_slots[j]->SlotType()))
+                return std::make_pair(i, j);    // other slot can hold current part to make room for new part
         }
     }
-    return result;
+
+    return std::make_pair(-1, -1);
 }
 
 void DesignWnd::MainPanel::ClearParts() {
