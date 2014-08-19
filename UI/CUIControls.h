@@ -97,7 +97,7 @@ private:
 class CUIArrowButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation,
+    CUIArrowButton(ShapeOrientation orientation,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 

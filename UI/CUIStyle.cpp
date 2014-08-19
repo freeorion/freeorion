@@ -90,12 +90,12 @@ GG::Button* CUIStyle::NewHSliderTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, co
 GG::Button* CUIStyle::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_UP, flags); }
+{ return new CUIArrowButton(SHAPE_UP, flags); }
 
 GG::Button* CUIStyle::NewSpinDecrButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_DOWN, flags); }
+{ return new CUIArrowButton(SHAPE_DOWN, flags); }
 
 GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
@@ -111,7 +111,7 @@ GG::Button* CUIStyle::NewTabBarLeftButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 {
-    CUIArrowButton* retval = new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_LEFT, flags);
+    CUIArrowButton* retval = new CUIArrowButton(SHAPE_LEFT, flags);
     retval->FillBackgroundWithWndColor(true);
     return retval;
 }
@@ -120,7 +120,7 @@ GG::Button* CUIStyle::NewTabBarRightButton(const std::string& str,
                                            const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                            GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 {
-    CUIArrowButton* retval = new CUIArrowButton(GG::X0, GG::Y0, GG::X1, GG::Y1, SHAPE_RIGHT, flags);
+    CUIArrowButton* retval = new CUIArrowButton(SHAPE_RIGHT, flags);
     retval->FillBackgroundWithWndColor(true);
     return retval;
 }

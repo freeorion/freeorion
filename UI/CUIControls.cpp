@@ -199,9 +199,9 @@ void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)>
 ///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
-CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation,
+CUIArrowButton::CUIArrowButton(ShapeOrientation orientation,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
