@@ -253,7 +253,7 @@ namespace {
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
 
 PopulationPanel::PopulationPanel(GG::X w, int object_id) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
     m_popcenter_id(object_id),
     m_pop_stat(0),
     m_happiness_stat(0),
@@ -511,7 +511,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 std::map<int, bool> ResourcePanel::s_expanded_map;
 
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
     //m_pop_mod_stat(0),
     m_industry_stat(0),
@@ -790,7 +790,7 @@ void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
 std::map<int, bool> MilitaryPanel::s_expanded_map;
 
 MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_planet_id(planet_id),
     m_fleet_supply_stat(0),
     m_shield_stat(0),
@@ -1605,7 +1605,7 @@ void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
 boost::shared_ptr<ShaderProgram> BuildingIndicator::s_scanline_shader;
 
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
     m_scrap_indicator(0),
     m_progress_bar(0),
@@ -1622,7 +1622,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                      double turns_completed, double total_turns) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
     m_scrap_indicator(0),
     m_progress_bar(0),
@@ -1821,7 +1821,7 @@ void BuildingIndicator::DoLayout() {
 //         SpecialsPanel           //
 /////////////////////////////////////
 SpecialsPanel::SpecialsPanel(GG::X w, int object_id) : 
-    Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
     m_object_id(object_id),
     m_icons()
 {
@@ -2071,7 +2071,7 @@ void TextBrowseWnd::Render() {
 class CensusRowPanel : public GG::Control {
 public:
     CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
-        Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+        GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_icon(0),
         m_name(0),
         m_census_val(0)
