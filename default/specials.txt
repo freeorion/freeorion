@@ -167,7 +167,7 @@ Special
                 CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Species
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_SHIP"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
                         tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
@@ -175,7 +175,7 @@ Special
                     empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_SHIP_RUMORS"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
                     ]
@@ -192,7 +192,7 @@ Special
                 CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_BUILDING"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
                         tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
@@ -200,7 +200,7 @@ Special
                     empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_BUILDING_RUMORS"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
                     ]
@@ -218,7 +218,7 @@ Special
                 GiveEmpireTech "SHP_WEAPON_4_1" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
                         tag = "tech" data = "SHP_WEAPON_4_1"
@@ -226,7 +226,7 @@ Special
                     empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH_RUMORS"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "tech" data = "SHP_WEAPON_4_1"
                     ]
@@ -243,7 +243,7 @@ Special
                 GiveEmpireTech "SHP_MULTISPEC_SHIELD" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
                         tag = "tech" data = "SHP_MULTISPEC_SHIELD"
@@ -251,7 +251,7 @@ Special
                     empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH_RUMORS"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "tech" data = "SHP_MULTISPEC_SHIELD"
                     ]
@@ -268,7 +268,7 @@ Special
                 GiveEmpireTech "SHP_KRILL_SPAWN" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
                         tag = "tech" data = "SHP_KRILL_SPAWN"
@@ -276,7 +276,7 @@ Special
                     empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH_RUMORS"
-                    icon = "icons/specials_large/ancient_ruins.png"
+                    icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "tech" data = "SHP_KRILL_SPAWN"
                     ]
