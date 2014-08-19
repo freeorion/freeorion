@@ -29,10 +29,12 @@ def distribute_specials(specials_freq, universe_objects):
     # attempt to apply a special to each universe object in the list that has been passed to this function
     # by finding a special that can be applied to it and hasn't been added too many times, and then attempt
     # to add that special by testing its spawn rate
+    repeat_rate = {1 : 0.08, 2 : 0.05, 3 : 0.01, 4 : 0.00}
     for univ_obj in universe_objects:
         # for this universe object, find a suitable special
         # start by shuffling our specials list, so each time the specials are considered in a new random order
         random.shuffle(specials)
+        num_here = 0
 
         # then, consider each special until one has been found or we run out of specials
         # (the latter case means that no special is added to this universe object)
@@ -54,7 +56,9 @@ def distribute_specials(specials_freq, universe_objects):
             # the basic probability multiplied by the spawn rate of the special
             if random.random() > basic_chance * fo.special_spawn_rate(special):
                 # no, test failed, break out of the specials loop and continue with the next universe object
+                statistics.specials_repeat_dist[num_here] += 1
                 break
+            num_here += 1
 
             # all prerequisites and the test have been met, now add this special to this universe object
             fo.add_special(univ_obj, special)
@@ -64,6 +68,9 @@ def distribute_specials(specials_freq, universe_objects):
             print "Special", special, "added to", fo.get_name(univ_obj)
 
             # stop attempting to add specials here?  give a small chance to try more than one special
-            if random.random() > 0.08:
+            if random.random() > repeat_rate.get(num_here, 0.0):
                 # sorry, no, break out of the specials loop and continue with the next universe object
+                statistics.specials_repeat_dist[num_here] += 1
                 break
+        else:
+                statistics.specials_repeat_dist[num_here] += 1

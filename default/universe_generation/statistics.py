@@ -8,20 +8,31 @@ empire_species = {species: 0 for species in fo.get_playable_species()}
 potential_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
 settled_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
 monsters_summary = []
+tracked_monsters_summary = {}
+tracked_monsters_location_summary = {}
+tracked_nest_location_sumary = {}
 specials_summary = {special: 0 for special in fo.get_all_specials()}
-
+specials_repeat_dist = {count: 0 for count in [0, 1, 2, 3, 4]}
 
 def log_planet_count_dist(sys_list):
     planet_count_dist = {}
+    planet_size_dist = {size : 0 for size in planets.planet_sizes}
     for system in sys_list:
         planet_count = 0
         for planet in fo.sys_get_planets(system):
-            if fo.planet_get_size(planet) in planets.planet_sizes:
+            this_size = fo.planet_get_size(planet)
+            if this_size in planets.planet_sizes:
                 planet_count += 1
+                planet_size_dist[this_size] += 1
         planet_count_dist.setdefault(planet_count, [0])[0] += 1
-    print "Planet Count Distribution: planets_in_system | num_systems"
+    planet_tally = sum(planet_size_dist.values())
+    print "Planet Count Distribution: planets_in_system | num_systems | % of systems"
     for planet_count, sys_count in planet_count_dist.items():
-        print "\t\t\t%2d  | %5d" % (planet_count, sys_count[0])
+        print "\t\t\t%2d  | %5d | %4.1f%%" % (planet_count, sys_count[0], 100.0 * sys_count[0] / len(sys_list))
+    print
+    print "Planet Size Distribution: size | count | % of planets"
+    for planet_size, planet_count in planet_size_dist.items():
+        print "\t\t%-12s | %5d | %4.1f%%" % (planet_size, planet_count, 100.0 * planet_count / planet_tally)
 
 
 def log_planet_type_summary(sys_list):
@@ -32,7 +43,7 @@ def log_planet_type_summary(sys_list):
     planet_total = sum(planet_type_summary.values())
     print "Planet Type Summary for a total of %d placed planets" % planet_total
     for planet_type, planet_count in planet_type_summary.items():
-        print "%-12s %.1f%%" % (planet_type.name, 100.0 * planet_count / planet_total)
+        print "%-12s %4.1f%%" % (planet_type.name, 100.0 * planet_count / planet_total)
 
 
 def log_species_summary():
@@ -81,10 +92,24 @@ def log_monsters_summary():
     for monster, counter in monsters_summary:
         if counter > 0:
             print "Placed space monster", monster, counter, "times"
-
+    print
+    inverse_monster_chance = fo.monster_frequency(fo.get_galaxy_setup_data().monsterFrequency)
+    monster_chance = 1.0 / (1e-5 + inverse_monster_chance)
+    # the following loop depends on name mapping done in monsters.py
+    print "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance)
+    print "%-18s | %8s | %12s | %s" % ("Monster", "# placed", "# valid sys locs", "# valid nest planet locs")
+    for monster in tracked_monsters_summary:
+        print "%-18s |   %4d   |       %4d       | %4d" % (monster, tracked_monsters_summary[monster], 
+            tracked_monsters_location_summary[monster], tracked_nest_location_sumary[monster])
 
 def log_specials_summary():
     print "Special Placement Summary"
     for special in specials_summary:
         if specials_summary[special] > 0:
             print "Placed special", special, specials_summary[special], "times"
+    print
+    print "Specials Count(Repeat) Distribution:"
+    print "\t count  | tally | % of objects"
+    objects_tally = sum(specials_repeat_dist.values())
+    for number, tally in specials_repeat_dist.items():
+        print "\t\t%3d | %5d | %4.1f%%" % (number, tally, 100.0 * tally / objects_tally)
