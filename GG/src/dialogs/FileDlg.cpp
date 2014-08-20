@@ -355,8 +355,8 @@ void FileDlg::CreateChildren(bool multi)
     m_files_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 2, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "File(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
     m_file_types_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 1, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "Type(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
 
-    m_ok_button = style->NewButton(X0, Y0, X1, Y1, m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
-    m_cancel_button = style->NewButton(X0, Y0, X1, Y1, m_cancel_str, m_font, m_color, m_text_color);
+    m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
+    m_cancel_button = style->NewButton(m_cancel_str, m_font, m_color, m_text_color);
 
     m_ok_button->Resize(Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     m_ok_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING) * 2));

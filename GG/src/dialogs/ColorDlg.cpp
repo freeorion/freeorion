@@ -682,9 +682,9 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_sliders.back()->SlideTo(static_cast<int>(m_current_color.v * 255));
     m_sliders_ok_cancel_layout->Add(m_sliders.back(), 6, 2);
 
-    m_ok = style->NewButton(X0, Y0, X1, Y1, m_ok_str, font, m_color, m_text_color);
+    m_ok = style->NewButton(m_ok_str, font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_ok, 7, 0, 1, 3);
-    m_cancel = style->NewButton(X0, Y0, X1, Y1, m_cancel_str, font, m_color, m_text_color);
+    m_cancel = style->NewButton(m_cancel_str, font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_cancel, 8, 0, 1, 3);
 
     Layout* master_layout = new Layout(X0, Y0, ClientWidth(), ClientHeight(), 3, 2, 5, 5);

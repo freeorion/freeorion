@@ -7,7 +7,7 @@
 class CUIStyle : public GG::StyleFactory
 {
 public:
-    virtual GG::Button*            NewButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+    virtual GG::Button*            NewButton(const std::string& str,
                                              const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 

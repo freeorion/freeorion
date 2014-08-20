@@ -87,7 +87,7 @@ public:
 
     /** \name Controls */ ///@{
     /** Returns a new GG Button. */
-    virtual Button*            NewButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewButton(const std::string& str,
                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                          Flags<WndFlag> flags = INTERACTIVE) const;
 

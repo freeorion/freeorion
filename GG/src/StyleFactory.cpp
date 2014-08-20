@@ -78,9 +78,9 @@ boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
     }
 }
 
-Button* StyleFactory::NewButton(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
+Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Button(x, y, w, h, str, font, color, text_color, flags); }
+{ return new Button(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
 
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return new RadioButtonGroup(orientation); }
@@ -143,52 +143,52 @@ Scroll* StyleFactory::NewMultiEditHScroll(X x, Y y, X w, Y h, Clr color, Clr int
 Button* StyleFactory::NewScrollUpButton(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewScrollDownButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewVScrollTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewScrollLeftButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewScrollRightButton(const std::string& str,
                                            const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                            Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewHScrollTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewVSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewHSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewSpinDecrButton(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
@@ -208,12 +208,12 @@ StateButton* StyleFactory::NewTabBarTab(const std::string& str,
 Button* StyleFactory::NewTabBarLeftButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewTabBarRightButton(const std::string& str,
                                            const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                            Flags<WndFlag> flags /*= INTERACTIVE*/) const
-{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
+{ return NewButton(str, font, color, text_color, flags); }
 
 ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg,
                                                 const boost::shared_ptr<Font>& font, Clr color, Clr border_color,
