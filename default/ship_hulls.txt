@@ -2265,7 +2265,7 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = GasGiant
-                Not WithinStarlaneJumps 2 And [
+                Not WithinStarlaneJumps 3 And [
                     System
                     Contains And [
                         Planet
@@ -2544,7 +2544,7 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = Asteroids
-                Not WithinStarlaneJumps 2 And [
+                Not WithinStarlaneJumps 4 And [
                     System
                     Contains And [
                         Planet

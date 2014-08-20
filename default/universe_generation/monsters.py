@@ -47,6 +47,7 @@ def generate_monsters(monster_freq, systems):
         # collect info for tracked monster nest valid locations
         for planet in fo.sys_get_planets(system):
             for nest in tracked_nest_valid_locations:
+                #print "\t tracked monster check planet: %d size: %s for nest: %20s  | result: %s" % (planet, fo.planet_get_size(planet), nest, fo.special_location(nest, planet))
                 if fo.special_location(nest, planet):
                     tracked_nest_valid_locations[nest] += 1
         # collect info for tracked monster valid locations
@@ -80,7 +81,7 @@ def generate_monsters(monster_freq, systems):
         # if fleet creation fails, report an error and try to continue with next system
         if monster_fleet == fo.invalid_object():
             util.report_error("Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name())
-            continuetracked_monsters_location_summary
+            continue
         # add monsters to fleet
         for design in fleet_plan.ship_designs():
             # create monster, if creation fails, report an error and try to continue with the next design

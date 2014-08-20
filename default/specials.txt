@@ -603,8 +603,8 @@ Special
     location = And [
         ValueTest low = 1 testvalue = GalaxyMonsterFrequency    
         Planet        
-        Not Planet type = [Asteroids GasGiant]
-        Not WithinStarlaneJumps 2 And [
+        Planet type = GasGiant
+        Not WithinStarlaneJumps 3 And [
             System
             Contains And [
                 Planet
@@ -652,7 +652,7 @@ Special
     spawnrate = 0.0
     location = And [
         Planet
-        Not Planet type = [Asteroids GasGiant]
+        Planet size = Small
         Not WithinStarlaneJumps 2 And [
             System
             Contains And [
@@ -702,8 +702,8 @@ Special
     location = And [
         Planet
         ValueTest low = 1 testvalue = GalaxyMonsterFrequency        
-        Not Planet type = [Asteroids GasGiant]
-        Not WithinStarlaneJumps 2 And [
+        Planet type = Asteroids
+        Not WithinStarlaneJumps 4 And [
             System
             Contains And [
                 Planet
