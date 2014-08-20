@@ -452,7 +452,7 @@ const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
+           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE ),
     m_buildable_items(new BuildableItemsListBox()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
@@ -877,7 +877,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     const GG::Y DETAIL_PANEL_HEIGHT =   GG::Y(240);
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
 
     m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, Height());
     m_side_panel->EnableSelection();
