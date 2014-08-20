@@ -761,7 +761,7 @@ void FileDlg::UpdateList()
                             row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color));
                             sorted_rows.insert(std::make_pair(it->path().filename().string(), row));
 #else
-                            row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, it->filename(), m_font, m_text_color));
+                            row->push_back(GetStyleFactory()->NewTextControl(it->filename(), m_font, m_text_color));
                             sorted_rows.insert(std::make_pair(it->filename(), row));
 #endif
                         }
@@ -782,7 +782,7 @@ void FileDlg::UpdateList()
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
                     row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name().string() + "]", m_font, m_text_color));
 #else
-                    row->push_back(GetStyleFactory()->NewTextControl(X0, Y0, "[" + path.root_name() + "]", m_font, m_text_color));
+                    row->push_back(GetStyleFactory()->NewTextControl("[" + path.root_name() + "]", m_font, m_text_color));
 #endif
                     m_files_list->Insert(row);
                 }
