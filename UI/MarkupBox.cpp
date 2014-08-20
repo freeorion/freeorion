@@ -379,9 +379,9 @@ void MarkupBox::MarkupSurface::Refresh() {
             if (!block.params.empty())
                 filename = block.params[0];
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / filename, true);
-            GG::X tex_width = texture->Width();
-            GG::Y tex_height = texture->Height();
-            control = new CUIIcon(tex_width, tex_height, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            control = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            control->MoveTo(GG::Pt(left, top));
+            control->Resize(GG::Pt(texture->Width(), texture->Height()));
         } else {
             std::cout << "unrecognized markup type" << std::endl;
             continue;
