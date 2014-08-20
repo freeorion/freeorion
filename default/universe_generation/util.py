@@ -1,8 +1,17 @@
 import sys
 import math
+import random
 
 
 error_list = []
+
+
+def seed_rng(seed):
+    """
+    Seeds the default RNG with the specified seed and performs a jumpahead
+    """
+    random.seed(seed)
+    random.jumpahead(999999)
 
 
 def distance(x1, y1, x2, y2):

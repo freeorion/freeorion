@@ -9,7 +9,7 @@ from empires import compile_home_system_list, setup_empire
 from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
-from util import report_error, error_list
+from util import seed_rng, report_error, error_list
 import statistics
 
 
@@ -32,7 +32,8 @@ def create_universe():
     total_players = len(psd_list)
 
     # initialize RNG
-    random.seed(gsd.seed)
+    seed_rng(gsd.seed)
+    seed_pool = [random.random() for _ in range(100)]
 
     # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
@@ -43,19 +44,23 @@ def create_universe():
     print "Creating universe with %d systems for %d players" % (size, total_players)
 
     # calculate star system positions
+    seed_rng(seed_pool.pop())
     system_positions = calc_star_system_positions(gsd.shape, size)
     size = len(system_positions)
     print gsd.shape, "Star system positions calculated, final number of systems:", size
 
     # generate and populate systems
+    seed_rng(seed_pool.pop())
     systems = generate_systems(system_positions, gsd)
     print len(systems), "systems generated and populated"
 
     # generate Starlanes
+    seed_rng(seed_pool.pop())
     fo.generate_starlanes(gsd.starlaneFrequency)
     print "Starlanes generated"
 
     print "Compile list of home systems..."
+    seed_rng(seed_pool.pop())
     home_systems = compile_home_system_list(total_players, systems)
     if not home_systems:
         err_msg = "Python create_universe: couldn't get any home systems, ABORTING!"
@@ -64,6 +69,7 @@ def create_universe():
     print "Home systems:", home_systems
 
     # set up empires for each player
+    seed_rng(seed_pool.pop())
     for psd_entry, home_system in zip(psd_list, home_systems):
         empire = psd_entry.key()
         psd = psd_entry.data()
@@ -75,18 +81,22 @@ def create_universe():
     # only after all that is finished star types as well as planet sizes and types are fixed, and the naming
     # process depends on that
     print "Assign star system names"
+    seed_rng(seed_pool.pop())
     name_star_systems(systems)
     print "Set planet names"
     for system in systems:
         name_planets(system)
 
     print "Generating Natives"
+    seed_rng(seed_pool.pop())
     generate_natives(gsd.nativeFrequency, systems, home_systems)
 
     print "Generating Space Monsters"
+    seed_rng(seed_pool.pop())
     generate_monsters(gsd.monsterFrequency, systems)
 
     print "Distributing Starting Specials"
+    seed_rng(seed_pool.pop())
     distribute_specials(gsd.specialsFrequency, fo.get_all_objects())
 
     # finally, write some statistics to the log file
