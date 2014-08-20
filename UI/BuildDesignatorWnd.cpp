@@ -133,8 +133,7 @@ namespace {
                 time_text = boost::lexical_cast<std::string>(cost_time.second);
             }
 
-            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture,
-                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             m_name = new CUILabel(name_text, GG::FORMAT_LEFT);
             m_cost = new CUILabel(cost_text);
             m_time = new CUILabel(time_text);

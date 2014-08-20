@@ -1613,9 +1613,8 @@ void SidePanel::PlanetPanel::Refresh() {
         {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
                 ClientUI::ArtDir() / planet->FocusIcon(*it), true);
-            GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2,
-                                                               MeterIconSize().y*3/2, texture,
-                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
             GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
             row->push_back(dynamic_cast<GG::Control*>(graphic));
             rows.push_back(row);

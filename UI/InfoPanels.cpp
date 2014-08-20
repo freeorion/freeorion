@@ -1638,15 +1638,14 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new IconTextBrowseWnd(texture, UserString(building_type), UserString(desc))));
 
-    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture,
-                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
     m_progress_bar = new MultiTurnProgressBar(total_turns, turns_completed, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                               ClientUI::TechWndProgressBarColor(), GG::LightColor(ClientUI::ResearchableTechFillColor()));
     AttachChild(m_progress_bar);
 
-    DoLayout();
+    Refresh();
 }
 
 void BuildingIndicator::Render() {
@@ -1709,8 +1708,7 @@ void BuildingIndicator::Refresh() {
         return;
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
-    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X0, GG::Y0, texture,
-                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
     std::string desc = UserString(type->Description());
@@ -1723,9 +1721,11 @@ void BuildingIndicator::Refresh() {
 
     if (building->OrderedScrapped()) {
         boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-        m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y0, scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_scrap_indicator = new GG::StaticGraphic(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
+
+    DoLayout();
 }
 
 void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1874,8 +1874,7 @@ void SpecialsPanel::Update() {
     // get specials and use them to create specials icons
     for (std::map<std::string, int>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(it->first);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialIcon(special->Name()),
-                                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::SpecialIcon(special->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
         std::string desc = UserString(special->Description());
@@ -1897,7 +1896,7 @@ void SpecialsPanel::Update() {
 
     for (std::map<std::string, GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
         GG::StaticGraphic* icon = it->second;
-        icon->MoveTo(GG::Pt(x, y));
+        icon->SizeMove(GG::Pt(x, y), GG::Pt(x,y) + GG::Pt(SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT));
         AttachChild(icon);
 
         x += SPECIAL_ICON_WIDTH + EDGE_PAD;
@@ -1957,7 +1956,8 @@ ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     m_name(0)
 {
     if (const ShipDesign* design = GetShipDesign(m_design_id)) {
-        m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::ShipDesignIcon(design_id), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic = new GG::StaticGraphic(ClientUI::ShipDesignIcon(design_id), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic->Resize(GG::Pt(w, h));
         AttachChild(m_graphic);
         m_name = new CUILabel(design->Name(), GG::FORMAT_NOWRAP);
         m_name->SetTextColor(GG::CLR_WHITE);
@@ -1990,7 +1990,8 @@ void ShipDesignPanel::Update() {
 IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text, const std::string& main_text) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1)
 {
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+    m_icon->Resize(GG::Pt(ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT));
     AttachChild(m_icon);
 
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
@@ -2080,9 +2081,7 @@ public:
         SetChildClippingMode(ClipToClient);
 
         if (m_show_icon) {
-            boost::shared_ptr<GG::Texture> texture = ClientUI::SpeciesIcon(name);
-            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                            texture, GG::GRAPHIC_FITGRAPHIC);
+            m_icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
             AttachChild(m_icon);
         }
 

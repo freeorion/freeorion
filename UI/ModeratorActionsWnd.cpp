@@ -69,8 +69,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
         boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             disc_texture, style, GG::NO_WND_FLAGS));
+        GG::StaticGraphic* icon = new GG::StaticGraphic(disc_texture, style);
+        icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
+        row->push_back(icon);
         m_star_type_drop->Insert(row);
     }
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
@@ -93,8 +94,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             texture, style, GG::NO_WND_FLAGS));
+        GG::StaticGraphic* icon = new GG::StaticGraphic(texture, style);
+        icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
+        row->push_back(icon);
         m_planet_type_drop->Insert(row);
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
@@ -105,8 +107,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
-                                             texture, style, GG::NO_WND_FLAGS));
+        GG::StaticGraphic* icon = new GG::StaticGraphic(texture, style);
+        icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));
+        row->push_back(icon);
         m_planet_size_drop->Insert(row);
     }
     GG::DropDownList::iterator it = m_planet_size_drop->begin();

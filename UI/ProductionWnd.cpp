@@ -443,8 +443,11 @@ namespace {
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
 
-        if (graphic)
-            m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE), graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        if (graphic) {
+            m_icon = new GG::StaticGraphic(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon->MoveTo(GG::Pt(left, top));
+            m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
+        }
         else
             m_icon = 0;
 

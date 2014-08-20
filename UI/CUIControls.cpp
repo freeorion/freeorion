@@ -54,7 +54,7 @@ namespace {
 
 
 ///////////////////////////////////////
-// class CUIButton
+// class CUILabel
 ///////////////////////////////////////
 CUILabel::CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
@@ -854,7 +854,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_show_signs(std::vector<bool>(1, showsign)),
     m_icon(0), m_text(0)
 {
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
     m_text = new CUILabel("");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -876,7 +876,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_icon(0), m_text(0)
 {
     SetName("StatisticIcon");
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_FITGRAPHIC);
+    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
     m_text = new CUILabel("");
 
     m_values[0] = value0;
@@ -1025,8 +1025,9 @@ namespace {
             if (!species)
                 return;
             GG::Wnd::SetName(species->Name());
-            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6,
-                                            ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
+            GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC);
+            icon->Resize(GG::Pt(GG::X(Value(h) - 6), h - 6));
+            push_back(icon);
             CUILabel* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
             species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
             push_back(species_name);

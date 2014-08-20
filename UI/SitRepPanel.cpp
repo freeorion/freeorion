@@ -205,11 +205,10 @@ namespace {
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
             boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
                 ClientUI::ArtDir() / icon_texture, true);
-            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(Height())), Height(), icon,
-                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
 
-            m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
+            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1,
                                        m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());

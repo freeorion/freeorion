@@ -303,9 +303,8 @@ PartControl::PartControl(const PartType* part) :
     if (!m_part)
         return;
 
-        m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
-                                             PartBackgroundTexture(m_part),
-                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_background = new GG::StaticGraphic(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
         m_background->Show();
         AttachChild(m_background);
 
@@ -316,9 +315,9 @@ PartControl::PartControl(const PartType* part) :
         GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
 
         //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-        m_icon = new GG::StaticGraphic(part_left, part_top, PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT,
-                                       ClientUI::PartIcon(m_part->Name()),
-                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon->MoveTo(GG::Pt(part_left, part_top));
+        m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
         m_icon->Show();
         AttachChild(m_icon);
 
@@ -1190,7 +1189,8 @@ BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, con
     m_name(0),
     m_cost_and_build_time(0)
 {
-    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    m_graphic->Resize(GG::Pt(w, h));
     AttachChild(m_graphic);
     m_name = new CUILabel(UserString(hull), GG::FORMAT_NOWRAP);
     AttachChild(m_name);
@@ -1222,8 +1222,9 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, c
         push_back(new HullPanel(w, h, m_hull));
     } else if (!m_parts.empty() && !m_hull.empty()) {
         // contents are a hull and parts  TODO: make a HullAndPartsPanel
-        push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(m_hull),
-                                        GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+        GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        icon->Resize(GG::Pt(w, h));
+        push_back(icon);
     }
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
@@ -1255,8 +1256,10 @@ BasesListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
             push_back(new HullPanel(w, h, m_hull));
         } else if (!m_parts.empty() && !m_hull.empty()) {
             // contents are a hull and parts  TODO: make a HullAndPartsPanel
-            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(m_hull),
-                                            GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+            GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::HullTexture(m_hull),
+                                                           GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+            icon->Resize(GG::Pt(w, h));
+            push_back(icon);
         }
     }
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
@@ -1960,9 +1963,8 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_part_control(0),
     m_background(0)
 {
-    m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
-                                         SlotBackgroundTexture(m_slot_type),
-                                         GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background = new GG::StaticGraphic(SlotBackgroundTexture(m_slot_type), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
     AttachChild(m_background);
 
@@ -2534,7 +2536,7 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     m_background_image = 0;
     if (m_hull) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());
-        m_background_image = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_background_image = new GG::StaticGraphic(texture, GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_background_image);
         MoveChildDown(m_background_image);
     }

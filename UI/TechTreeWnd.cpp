@@ -596,9 +596,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_enqueued(false)
 {
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
-                                   ClientUI::TechIcon(m_tech_name),
-                                   GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
     m_name_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
     m_eta_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
 
@@ -1484,9 +1483,8 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     const GG::X DESC_WIDTH =      col_widths[6];
     const GG::Y HEIGHT(Value(GRAPHIC_WIDTH));
 
-    GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GRAPHIC_WIDTH, HEIGHT,
-                                                       ClientUI::TechIcon(m_tech),
-                                                       GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    graphic->Resize(GG::Pt(GRAPHIC_WIDTH, HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 

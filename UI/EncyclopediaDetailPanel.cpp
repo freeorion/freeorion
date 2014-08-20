@@ -2342,7 +2342,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     // Create Icons
     if (texture) {
-        m_icon =        new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), texture,        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         if (color != GG::CLR_ZERO)
             m_icon->SetColor(color);
     }

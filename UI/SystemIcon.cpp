@@ -254,9 +254,8 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
         m_tiny_texture = m_disc_texture;
     }
 
-    if (m_tiny_texture)
-        m_tiny_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, m_tiny_texture->Width(), m_tiny_texture->Height(),
-                                               m_tiny_texture);
+    m_tiny_graphic = new GG::StaticGraphic(m_tiny_texture);
+    m_tiny_graphic->Resize(GG::Pt(m_tiny_texture->Width(), m_tiny_texture->Height()));
     AttachChild(m_tiny_graphic);
     m_tiny_graphic->Hide();
 
@@ -288,16 +287,15 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     texture_width = mouseover_texture->DefaultWidth();
     texture_height = mouseover_texture->DefaultHeight();
-    m_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, texture_width, texture_height,
-                                                  mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_indicator = new GG::StaticGraphic(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny mouseover indicator graphic
     boost::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
     texture_width = tiny_mouseover_texture->DefaultWidth();
     texture_height = tiny_mouseover_texture->DefaultHeight();
-    m_tiny_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, texture_width,
-                                                       texture_height, tiny_mouseover_texture,
-                                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_tiny_mouseover_indicator = new GG::StaticGraphic(tiny_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_tiny_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     Refresh();
 }

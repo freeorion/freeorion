@@ -71,15 +71,15 @@ namespace {
 ////////////////////////////////////////////////
 // GG::StaticGraphic
 ////////////////////////////////////////////////
-StaticGraphic::StaticGraphic(X x, Y y, X w, Y h, const boost::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
+StaticGraphic::StaticGraphic(const boost::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
-    Control(x, y, w, h, flags),
+    Control(X0, Y0, X1, Y1, flags),
     m_style(style)
 { Init(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight())); }
 
-StaticGraphic::StaticGraphic(X x, Y y, X w, Y h, const SubTexture& subtexture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
+StaticGraphic::StaticGraphic(const SubTexture& subtexture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
-    Control(x, y, w, h, flags),
+    Control(X0, Y0, X1, Y1, flags),
     m_style(style)
 { Init(subtexture); }
 

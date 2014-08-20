@@ -1206,9 +1206,7 @@ public:
                 m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "plusmouseover.png", true)));
             }
         } else {
-            m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                          ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true),
-                                          style, GG::NO_WND_FLAGS);
+            m_dot = new GG::StaticGraphic(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true), style);
             AttachChild(m_dot);
         }
 

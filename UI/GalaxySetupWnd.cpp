@@ -551,7 +551,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image =  new GG::StaticGraphic(GG::X0, GG::Y0, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
+    m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
 
     m_ok = new CUIButton(UserString("OK"));
     m_cancel = new CUIButton(UserString("CANCEL"));
@@ -682,8 +682,10 @@ void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_imag
         DeleteChild(m_preview_image);
         m_preview_image = 0;
     }
-    m_preview_image = new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(new_image, GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_preview_image);
+
+    DoLayout();
 }
 
 void GalaxySetupWnd::EmpireNameChanged(const std::string& name)

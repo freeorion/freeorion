@@ -122,9 +122,9 @@ namespace {
         GG::X left(MARGIN);
 
 
-        m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
-                                       ClientUI::TechIcon(m_tech_name),
-                                       GG::GRAPHIC_FITGRAPHIC);
+        m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
+        m_icon->MoveTo(GG::Pt(left, top));
+        m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 

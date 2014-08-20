@@ -340,8 +340,9 @@ namespace {
             if (font)
                 texture = font->GetTexture();
             if (texture) {
-                m_font_graphic = new GG::StaticGraphic(GG::X0, top, texture->Width(),
-                                                       texture->Height(), texture);
+                m_font_graphic = new GG::StaticGraphic(texture);
+                m_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                m_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
                 AttachChild(m_font_graphic);
                 top += m_font_graphic->Height() + 1;
             }
@@ -351,8 +352,9 @@ namespace {
             if (font)
                 texture = font->GetTexture();
             if (texture) {
-                m_title_font_graphic = new GG::StaticGraphic(GG::X0, top, texture->Width(),
-                                                             texture->Height(), texture);
+                m_title_font_graphic = new GG::StaticGraphic(texture);
+                m_title_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                m_title_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
                 AttachChild(m_title_font_graphic);
             }
 

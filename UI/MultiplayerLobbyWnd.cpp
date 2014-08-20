@@ -411,7 +411,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);
 
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image = new GG::StaticGraphic(GG::X0, GG::Y0, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
     m_players_lb_player_type_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_LEFT);
     m_players_lb_player_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_LEFT);
@@ -603,7 +603,7 @@ void MultiPlayerLobbyWnd::DoLayout() {
     m_save_file_text->SizeMove(save_file_text_ul, save_file_text_lr);
 
     g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, GG::Y(CONTROL_MARGIN + PREVIEW_MARGIN));
-    m_preview_image->SizeMove(g_preview_ul, PREVIEW_SZ);
+    m_preview_image->SizeMove(g_preview_ul, g_preview_ul + PREVIEW_SZ);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
     GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 5*CONTROL_MARGIN;
@@ -684,8 +684,10 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
         DeleteChild(m_preview_image);
         m_preview_image = 0;
     }
-    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(new_image, GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_preview_image);
+
+    DoLayout();
 }
 
 void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
