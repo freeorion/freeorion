@@ -38,42 +38,42 @@ GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_p
 { return new CUITabBar(x, y, w, font, color, text_color, style, flags); }
 
 GG::Button* CUIStyle::NewScrollUpButton(const std::string& str,
-                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                        GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
 { return 0; }
 
 GG::Button* CUIStyle::NewScrollDownButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, color, text_color, flags); }
 
 GG::Button* CUIStyle::NewVScrollTabButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::VERTICAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
 GG::Button* CUIStyle::NewScrollLeftButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, color, text_color, flags); }
 
 GG::Button* CUIStyle::NewScrollRightButton(const std::string& str,
-                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                           GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                            GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(str, font, color, text_color, flags); }
+{ return NewScrollUpButton(str, color, text_color, flags); }
 
 GG::Button* CUIStyle::NewHScrollTabButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
 GG::Button* CUIStyle::NewVSliderTabButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::VERTICAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 GG::Button* CUIStyle::NewHSliderTabButton(const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 

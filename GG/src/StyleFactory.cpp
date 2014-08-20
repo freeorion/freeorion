@@ -141,44 +141,44 @@ Scroll* StyleFactory::NewMultiEditHScroll(X x, Y y, X w, Y h, Clr color, Clr int
 { return NewScroll(x, y, w, h, HORIZONTAL, color, interior, flags); }
 
 Button* StyleFactory::NewScrollUpButton(const std::string& str,
-                                        const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                        Clr color, Clr text_color/* = CLR_BLACK*/,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewScrollDownButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewVScrollTabButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewScrollLeftButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewScrollRightButton(const std::string& str,
-                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                           Clr color, Clr text_color/* = CLR_BLACK*/,
                                            Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewHScrollTabButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewVSliderTabButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewHSliderTabButton(const std::string& str,
-                                          const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+                                          Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(str, font, color, text_color, flags); }
+{ return NewButton(str, boost::shared_ptr<Font>(), color, text_color, flags); }
 
 Button* StyleFactory::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,

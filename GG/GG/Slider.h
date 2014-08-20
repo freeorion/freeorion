@@ -174,8 +174,8 @@ Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, Sli
     m_line_style(style),
     m_tab_drag_offset(-1),
     m_tab(m_orientation == VERTICAL ?
-          GetStyleFactory()->NewVSliderTabButton("", boost::shared_ptr<Font>(), color) :
-          GetStyleFactory()->NewHSliderTabButton("", boost::shared_ptr<Font>(), color)),
+          GetStyleFactory()->NewVSliderTabButton("", color) :
+          GetStyleFactory()->NewHSliderTabButton("", color)),
     m_dragging_tab(false)
 {
     Control::SetColor(color);
