@@ -639,7 +639,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_left_horizontal_flare_scroll_offset(0.0),
     m_right_horizontal_flare_scroll_offset(0.0),
     m_stencil_op_frame_listener(new StencilOpQueueListener),
-    m_fps_text(new FPSIndicator(GG::X(5), GG::Y(5))),
+    m_fps_text(new FPSIndicator()),
     m_menu_showing(false),
     m_end_turn_button(new CUIButton(UserString("TURN"))),
     m_time_since_last_turn_update(0.0),
@@ -729,6 +729,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // look at the star initially
     m_camera = new CombatCamera(*camera, m_scene_manager, star_node);
     GG::Connect(m_camera->CameraChangedSignal, &CombatWnd::UpdateStarFromCameraPosition, this);
+
+    m_fps_text->MoveTo(GG::Pt(GG::X(5), GG::Y(5)));
 
     m_end_turn_button->Resize(GG::Pt(GG::X(75), m_end_turn_button->MinUsableSize().y));
     m_end_turn_button->MoveTo(

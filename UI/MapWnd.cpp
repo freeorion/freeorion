@@ -637,7 +637,7 @@ MapWnd::MapWnd() :
 
 
     // FPS indicator
-    m_FPS = new FPSIndicator(GG::X0, GG::Y0);
+    m_FPS = new FPSIndicator();
     m_FPS->Hide();
 
 

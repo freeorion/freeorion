@@ -515,7 +515,7 @@ private:
 /** Displays current rendering frames per second. */
 class FPSIndicator : public GG::TextControl {
 public:
-    FPSIndicator(GG::X x, GG::Y y);
+    FPSIndicator();
     virtual void Render();
 private:
     void UpdateEnabled();
