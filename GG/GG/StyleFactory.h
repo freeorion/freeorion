@@ -183,12 +183,12 @@ public:
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new tab Button, to be used in a vertical Slider. */
-    virtual Button*            NewVSliderTabButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewVSliderTabButton(const std::string& str,
                                                    const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new tab Button, to be used in a horizontal Slider. */
-    virtual Button*            NewHSliderTabButton(X x, Y y, X w, Y h, const std::string& str,
+    virtual Button*            NewHSliderTabButton(const std::string& str,
                                                    const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 

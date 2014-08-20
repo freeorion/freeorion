@@ -170,15 +170,15 @@ Button* StyleFactory::NewHScrollTabButton(const std::string& str,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return NewButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, text_color, flags); }
 
-Button* StyleFactory::NewVSliderTabButton(X x, Y y, X w, Y h, const std::string& str,
+Button* StyleFactory::NewVSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(x, y, w, h, str, font, color, text_color, flags); }
+{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
 
-Button* StyleFactory::NewHSliderTabButton(X x, Y y, X w, Y h, const std::string& str,
+Button* StyleFactory::NewHSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton(x, y, w, h, str, font, color, text_color, flags); }
+{ return NewButton(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
 
 Button* StyleFactory::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,

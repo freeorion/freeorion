@@ -77,15 +77,15 @@ GG::Button* CUIStyle::NewHScrollTabButton(const std::string& str,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewVSliderTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewVSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIScroll::ScrollTab(GG::VERTICAL, Value(w), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
+{ return new CUIScroll::ScrollTab(GG::VERTICAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewHSliderTabButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+GG::Button* CUIStyle::NewHSliderTabButton(const std::string& str,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIScroll::ScrollTab(GG::HORIZONTAL, Value(h), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
+{ return new CUIScroll::ScrollTab(GG::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 GG::Button* CUIStyle::NewSpinIncrButton(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
