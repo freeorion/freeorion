@@ -988,24 +988,6 @@ The sound file played when the mouse moves over a system icon.
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 The sound file played when the system side-panel is opened.
 
-OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-The sound file played when a farming focus button is clicked.
-
-OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-The sound file played when an industry focus button is clicked.
-
-OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-The sound file played when a research focus button is clicked.
-
-OPTIONS_DB_UI_SOUND_MINING_FOCUS
-The sound file played when a mining focus button is clicked.
-
-OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-The sound file played when a trade focus button is clicked.
-
-OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-The sound file played when a balanced focus button is clicked.
-
 OPTIONS_DB_UI_FONT
 Sets UI font resource file.
 
