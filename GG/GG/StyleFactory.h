@@ -95,7 +95,7 @@ public:
     virtual RadioButtonGroup*  NewRadioButtonGroup(Orientation orientation) const;
 
     /** Returns a new GG DropDownList. */
-    virtual DropDownList*      NewDropDownList(Y drop_ht, Clr color,
+    virtual DropDownList*      NewDropDownList(size_t num_shown_elements, Clr color,
                                                Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG Edit. */
@@ -133,7 +133,7 @@ public:
 
     /** \name Subcontrols */ ///@{
     /** Returns a new ListBox, to be used in a DropDownList. */
-    virtual ListBox*           NewDropDownListListBox(X x, Y y, X w, Y h, Clr color, Clr interior = CLR_ZERO,
+    virtual ListBox*           NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO,
                                                       Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new vertical Scroll, to be used in a ListBox. */

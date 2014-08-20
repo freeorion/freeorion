@@ -597,8 +597,8 @@ namespace {
     const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
-CUIDropDownList::CUIDropDownList(GG::Y drop_ht) :
-    DropDownList(drop_ht, ClientUI::CtrlBorderColor()),
+CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
+    DropDownList(num_shown_elements, ClientUI::CtrlBorderColor()),
     m_render_drop_arrow(true),
     m_mouse_here(false)
 {
@@ -1045,7 +1045,7 @@ namespace {
 }
 
 SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
-    CUIDropDownList(6 * h)
+    CUIDropDownList(6)
 {
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
@@ -1057,7 +1057,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
 }
 
 SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names) :
-    CUIDropDownList(6 * h)
+    CUIDropDownList(6)
 {
     Resize(GG::Pt(w, h - 8));
     SetSpecies(species_names);
@@ -1156,7 +1156,7 @@ namespace {
 }
 
 EmpireColorSelector::EmpireColorSelector(GG::Y h) :
-    CUIDropDownList(12 * h)
+    CUIDropDownList(6)
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
     const std::vector<GG::Clr>& colors = EmpireColors();

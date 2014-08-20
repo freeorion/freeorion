@@ -882,7 +882,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 
     // focus-selection droplist
-    m_focus_drop = new CUIDropDownList(MeterIconSize().y*7/2);
+    m_focus_drop = new CUIDropDownList(6);
     AttachChild(m_focus_drop);
     GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
     GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
@@ -2570,8 +2570,6 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_resource_summary(0),
     m_selection_enabled(false)
 {
-    const GG::Y DROP_DISPLAYED_LIST_HEIGHT = GG::Y(10*SystemNameFontSize());
-
     m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
     AttachChild(m_planet_panel_container);
 
@@ -2579,7 +2577,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_button_prev->SetColor(GG::CLR_WHITE);
     m_button_next = new CUIButton("");
     m_button_next->SetColor(GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(DROP_DISPLAYED_LIST_HEIGHT);
+    m_system_name = new CUIDropDownList(6);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
     m_star_type_text = new ShadowedTextControl("", ClientUI::GetFont(), ClientUI::TextColor());

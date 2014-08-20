@@ -81,10 +81,6 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-    const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 5;
-    const int TOTAL_LISTBOX_MARGIN = 4;
-
     // seed
     m_seed_label = new CUILabel(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -110,64 +106,56 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_shapes_label = new CUILabel(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
-    GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_shapes_list = new CUIDropDownList(drop_height);
+    m_galaxy_shapes_list = new CUIDropDownList(5);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
     m_galaxy_ages_label = new CUILabel(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_ages_list = new CUIDropDownList(drop_height);
+    m_galaxy_ages_list = new CUIDropDownList(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
     m_starlane_freq_label = new CUILabel(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_starlane_freq_list = new CUIDropDownList(drop_height);
+    m_starlane_freq_list = new CUIDropDownList(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
     m_planet_density_label = new CUILabel(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_planet_density_list = new CUIDropDownList(drop_height);
+    m_planet_density_list = new CUIDropDownList(5);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
     m_specials_freq_label = new CUILabel(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_specials_freq_list = new CUIDropDownList(drop_height);
+    m_specials_freq_list = new CUIDropDownList(5);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
     m_monster_freq_label = new CUILabel(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_monster_freq_list = new CUIDropDownList(drop_height);
+    m_monster_freq_list = new CUIDropDownList(5);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
     m_native_freq_label = new CUILabel(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_native_freq_list = new CUIDropDownList(drop_height);
+    m_native_freq_list = new CUIDropDownList(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
     m_ai_aggression_label = new CUILabel(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
-    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_AI_AGGRESSION_LEVELS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_ai_aggression_list = new CUIDropDownList(drop_height);
+    m_ai_aggression_list = new CUIDropDownList(5);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_seed_label);

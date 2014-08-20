@@ -342,7 +342,7 @@ void FileDlg::CreateChildren(bool multi)
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     m_files_edit = style->NewEdit("", m_font, m_border_color, m_text_color);
-    m_filter_list = style->NewDropDownList(m_font->Lineskip() * 3, m_border_color);
+    m_filter_list = style->NewDropDownList(3, m_border_color);
     m_filter_list->SetStyle(LIST_NOSORT);
     m_files_edit->Resize(Pt(X(100), m_font->Height() + 2 * 5));
     m_files_edit->MoveTo(Pt());

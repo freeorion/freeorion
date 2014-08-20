@@ -67,7 +67,7 @@ public:
 
     /** \name Structors */ ///@{
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
-    DropDownList(Y drop_ht, Clr color, Flags<WndFlag> flags = INTERACTIVE);
+    DropDownList(size_t num_shown_elements, Clr color, Flags<WndFlag> flags = INTERACTIVE);
 
     ~DropDownList(); ///< dtor
     //@}
@@ -189,6 +189,7 @@ private:
     const ListBox*  LB() const;
 
     ModalListPicker*    m_modal_picker;
+    size_t              m_num_shown_elements;
 };
 
 } // namespace GG

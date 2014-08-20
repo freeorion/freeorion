@@ -210,7 +210,7 @@ public:
 class CUIDropDownList : public GG::DropDownList {
 public:
     /** \name Structors */ //@{
-    CUIDropDownList(GG::Y drop_ht); ///< basic ctor
+    CUIDropDownList(size_t num_shown_elements); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

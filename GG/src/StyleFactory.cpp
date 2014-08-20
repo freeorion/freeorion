@@ -85,9 +85,9 @@ Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return new RadioButtonGroup(orientation); }
 
-DropDownList* StyleFactory::NewDropDownList(Y drop_ht, Clr color,
+DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color,
                                             Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new DropDownList(drop_ht, color, flags); }
+{ return new DropDownList(num_shown_elements, color, flags); }
 
 Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
@@ -120,9 +120,9 @@ TabBar* StyleFactory::NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& fo
                                 TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new TabBar(x, y, w, font, color, text_color, style, flags); }
 
-ListBox* StyleFactory::NewDropDownListListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
+ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/,
                                               Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewListBox(x, y, w, h, color, interior, flags); }
+{ return NewListBox(X0, Y0, X1, Y1, color, interior, flags); }
 
 Scroll* StyleFactory::NewListBoxVScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const

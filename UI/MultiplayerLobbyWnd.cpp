@@ -100,12 +100,8 @@ namespace {
         };
 
     public:
-        TypeSelector() :
-            CUIDropDownList(GG::Y1)
-        {}
-
         TypeSelector(GG::X w, GG::Y h, Networking::ClientType client_type, bool disabled) :
-            CUIDropDownList(h)
+            CUIDropDownList(6)
         {
             Resize(GG::Pt(w, std::max(GG::Y1, h - 8)));
             SetStyle(GG::LIST_NOSORT);
@@ -274,7 +270,7 @@ namespace {
             push_back(new CUILabel(player_data.m_player_name));
 
             // droplist to select empire
-            m_empire_list = new CUIDropDownList(5 * PLAYER_ROW_HEIGHT);
+            m_empire_list = new CUIDropDownList(6);
             m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT));
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();

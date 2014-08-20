@@ -516,8 +516,8 @@ private:
     GG::Y   DropListHeight() const
     { return GG::Y(ClientUI::Pts() + 4); }
 
-    GG::Y   DropListDropHeight() const
-    { return DropListHeight() * 10; }
+    int   DropListDropHeight() const
+    { return 10; }
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row

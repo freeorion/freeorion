@@ -98,7 +98,7 @@ namespace {
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
                          GG::Y h, bool inProgress, GG::X nwidth, bool amBlockType) :
-            CUIDropDownList(h),
+            CUIDropDownList(6),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),

@@ -1013,18 +1013,13 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
     }
 
 
-    // create controls
-    const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
-    const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
-
-
     // drop list and label
     CUILabel* drop_list_label = new CUILabel(UserString("OPTIONS_VIDEO_MODE"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
-    CUIDropDownList* drop_list = new CUIDropDownList(DROPLIST_DROP_HEIGHT);
-    drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, DROPLIST_HEIGHT));
+    CUIDropDownList* drop_list = new CUIDropDownList(6);
+    drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     drop_list->SetStyle(GG::LIST_NOSORT);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));

@@ -39,7 +39,7 @@ public:
     typedef ListBox::iterator iterator;
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
-    ModalListPicker(Y drop_ht, Clr color, const Wnd* relative_to_wnd);
+    ModalListPicker(Clr color, const Wnd* relative_to_wnd);
 
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void ModalInit();
@@ -96,9 +96,9 @@ namespace {
 ////////////////////////////////////////////////
 // ModalListPicker
 ////////////////////////////////////////////////
-ModalListPicker::ModalListPicker(Y drop_ht, Clr color, const Wnd* relative_to_wnd) :
+ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
-    m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(X0, Y0, X1, drop_ht, color, color)),
+    m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_relative_to_wnd(relative_to_wnd)
 {
     Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
@@ -141,9 +141,10 @@ void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const Pt&)
 ////////////////////////////////////////////////
 // GG::DropDownList
 ////////////////////////////////////////////////
-DropDownList::DropDownList(Y drop_ht, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
+DropDownList::DropDownList(size_t num_shown_elements, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, Y1, flags),
-    m_modal_picker(new ModalListPicker(drop_ht, color, this))
+    m_modal_picker(new ModalListPicker(color, this)),
+    m_num_shown_elements(num_shown_elements)
 {
     SetStyle(LIST_SINGLESEL);
 
@@ -258,7 +259,12 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 {
     // adjust size to keep correct height based on row height, etc.
     Wnd::SizeMove(ul, lr);
-    LB()->SizeMove(Pt(X0, Height()), Pt(Width(), Height() + LB()->Height()));
+    Pt drop_down_size(Width(), Height());
+    if(LB()->NumRows() > 0)
+        // lets assume that all rows have the same height. Also add some
+        // magic padding for now to prevent the scroll bars showing up.
+        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 5;
+    LB()->SizeMove(Pt(X0, Height()), Pt(X0, Height()) + drop_down_size);
 }
 
 void DropDownList::SetColor(Clr c)
@@ -267,13 +273,17 @@ void DropDownList::SetColor(Clr c)
 DropDownList::iterator DropDownList::Insert(Row* row, iterator it, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    return LB()->Insert(row, it, signal);
+    DropDownList::iterator ret = LB()->Insert(row, it, signal);
+    Resize(Size());
+    return ret;
 }
 
 DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
 {
     row->SetDragDropDataType("");
-    return LB()->Insert(row, signal);
+    DropDownList::iterator ret = LB()->Insert(row, signal);
+    Resize(Size());
+    return ret;
 }
 
 void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
@@ -282,6 +292,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signa
          rows_it != rows.end(); ++rows_it)
     { (*rows_it)->SetDragDropDataType(""); }
     LB()->Insert(rows, it, signal);
+    Resize(Size());
 }
 
 void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
@@ -290,6 +301,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
          rows_it != rows.end(); ++rows_it)
     { (*rows_it)->SetDragDropDataType(""); }
     LB()->Insert(rows, signal);
+    Resize(Size());
 }
 
 DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)

@@ -10,9 +10,9 @@ GG::Button* CUIStyle::NewButton(const std::string& str,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIButton(str); }
 
-GG::DropDownList* CUIStyle::NewDropDownList(GG::Y drop_ht, GG::Clr color,
+GG::DropDownList* CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr color,
                                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUIDropDownList(drop_ht); }
+{ return new CUIDropDownList(num_shown_elements); }
 
 GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
