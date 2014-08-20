@@ -1923,7 +1923,7 @@ ENC_SYSTEM
 Sistema
 
 ENC_DETAIL_TYPE_STR
-<i>%1% %2%</i>
+%1% %2%
 
 ENC_PP
 PP
