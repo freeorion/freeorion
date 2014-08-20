@@ -5260,9 +5260,6 @@ last turn a battle occurred here
 DESC_VAR_ALLOCATEDFOOD
 allocated food
 
-FoodAllocationForMaxGrowth
-food allocation needed for max growth
-
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%

@@ -2350,7 +2350,7 @@ FW_SPLIT_SHIPS_ALL_DESIGNS
 ORDER_SHIP_SCRAP
 Уничтожить корабль
 
- ORDER_FLEET_SCRAP
+ORDER_FLEET_SCRAP
 Уничтожить корабли
 
 ORDER_CANCEL_SHIP_SCRAP
@@ -3236,7 +3236,7 @@ COLLAPSE_ALL
 EXPAND_ALL
 Развернуть все
 
- ####################
+####################
 ## Filters Dialog ##
 ####################
 
@@ -5525,9 +5525,6 @@ DESC_VAR_LASTTURNBATTLEHERE
 
 DESC_VAR_ALLOCATEDFOOD
 выделенное продовольствие
-
-FoodAllocationForMaxGrowth
-нужно продовольствия для роста населения
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0

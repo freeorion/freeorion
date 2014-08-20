@@ -2995,7 +2995,7 @@ Space ships, buildings, specials, systems and planets have a Stealth meter.'''
 DETECTION_TITLE
 Erkennung Stärke
 DETECTION_TEXT
-'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[Enzyklopädie STEALTH_TITLE]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[Enzyklopädie DETECTION_RANGE_TITLE]] eines Raumschiffes oder Planeten befindet.
+'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[encyclopedia STEALTH_TITLE]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[encyclopedia DETECTION_RANGE_TITLE]] eines Raumschiffes oder Planeten befindet.
 
 Imperien haben eines Erkennungsstärke Mass.'''
 
@@ -5490,9 +5490,6 @@ last turn a battle occurred here
 
 DESC_VAR_ALLOCATEDFOOD
 allocated food
-
-FoodAllocationForMaxGrowth
-food allocation needed for max growth
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
