@@ -707,10 +707,10 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             std::string save_filename = (GetSaveDir() / m_lobby_data->m_save_game).string();
 
             try {
-                LoadGame(save_filename,   *m_server_save_game_data,
-                         m_player_save_game_data,               GetUniverse(),
-                         Empires(),     GetSpeciesManager(),    GetCombatLogManager(),
-                         server.m_galaxy_setup_data);
+                LoadGame(save_filename,             *m_server_save_game_data,
+                         m_player_save_game_data,   GetUniverse(),
+                         Empires(),                 GetSpeciesManager(),
+                         GetCombatLogManager(),     server.m_galaxy_setup_data);
                 int seed = 0;
                 try {
                     Logger().debugStream() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;

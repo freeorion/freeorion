@@ -1098,11 +1098,11 @@ void OptionsWnd::HotkeysPage()
 {
     CUIListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
     std::map<std::string, std::set<std::string> > hotkeys = Hotkey::ClassifyHotkeys();
-    for(std::map<std::string, std::set<std::string> >::iterator i = hotkeys.begin(); 
-        i != hotkeys.end(); i++) {
+    for (std::map<std::string, std::set<std::string> >::iterator i = hotkeys.begin();
+         i != hotkeys.end(); i++)
+    {
         CreateSectionHeader(page, 0, UserString(i->first));
-        for(std::set<std::string>::iterator j = i->second.begin(); 
-            j != i->second.end(); j++)
+        for (std::set<std::string>::iterator j = i->second.begin(); j != i->second.end(); j++)
             HotkeyOption(page, 0, *j);
     }
     m_tabs->SetCurrentWnd(0);

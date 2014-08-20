@@ -506,6 +506,7 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     return count;
 }
 
+
 // HullType:: and PartType::ProductionCost and ProductionTime are almost identical.
 // Chances are, the same is true of buildings and techs as well.
 // TODO: Eliminate duplication
@@ -560,6 +561,7 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         return m_production_time->Eval(context);
     }
 }
+
 
 /////////////////////////////////////
 // HullTypeManager                 //
@@ -1090,6 +1092,7 @@ std::string ShipDesign::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    std::cout << "ShipDesign::Dump: m_name_desc_in_stringtable: " << m_name_desc_in_stringtable << std::endl;
     if (!m_name_desc_in_stringtable)
         retval += DumpIndent() + "NoStringtableLookup\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
@@ -1131,6 +1134,7 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 
     return first_parts == second_parts;
 }
+
 
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
