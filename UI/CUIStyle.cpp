@@ -19,14 +19,9 @@ GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::
                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIEdit(str); }
 
-GG::ListBox* CUIStyle::NewListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
+GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
                                   GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{
-    CUIListBox* retval = new CUIListBox();
-    retval->MoveTo(GG::Pt(x, y));
-    retval->Resize(GG::Pt(w, h));
-    return retval;
-}
+{ return new CUIListBox(); }
 
 GG::Scroll* CUIStyle::NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const

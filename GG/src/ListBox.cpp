@@ -409,9 +409,9 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 // static(s)
 const unsigned int ListBox::BORDER_THICK = 2;
 
-ListBox::ListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
+ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/,
                  Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, h, flags),
+    Control(X0, Y0, X1, Y1, flags),
     m_rows(),
     m_vscroll(0),
     m_hscroll(0),

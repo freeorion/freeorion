@@ -364,7 +364,7 @@ void FileDlg::CreateChildren(bool multi)
     m_cancel_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING)));
 
     // finally, we can create the listbox with the files in it, sized to fill the available space
-    m_files_list = style->NewListBox(X0, Y0, X1, Y1, m_border_color);
+    m_files_list = style->NewListBox(m_border_color);
     m_files_list->SetStyle(LIST_NOSORT | (multi ? LIST_NONE : LIST_SINGLESEL));
 
     PlaceLabelsAndEdits(BUTTON_WIDTH, BUTTON_HEIGHT);

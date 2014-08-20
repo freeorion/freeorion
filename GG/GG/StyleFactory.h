@@ -104,7 +104,7 @@ public:
                                        Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG ListBox. */
-    virtual ListBox*           NewListBox(X x, Y y, X w, Y h, Clr color, Clr interior = CLR_ZERO,
+    virtual ListBox*           NewListBox(Clr color, Clr interior = CLR_ZERO,
                                           Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG Scroll. */
