@@ -1718,8 +1718,18 @@ BuildingType
         Not Contains Building "BLD_EVACUATION"
         Not Contains Building "BLD_CONC_CAMP"
         Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
-        Enqueued type = Building name = "BLD_CONC_CAMP" high = 0
+        Not Enqueued type = Building name = "BLD_CONC_CAMP"
         TargetPopulation low = 1
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Not Contains Building "BLD_EVACUATION"
+        Not Contains Building "BLD_CONC_CAMP"
+        Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+        Not Enqueued type = Building name = "BLD_EVACUATION"
+        Not Enqueued type = Building name = "BLD_CONC_CAMP"
+        TargetPopulation low = 1        
     ]
     effectsgroups = [
         EffectsGroup            // add population to connected plants with room and suitable species
