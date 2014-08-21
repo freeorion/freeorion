@@ -10518,7 +10518,7 @@ Barcia
 Barnard
 Baten
 Bato
-Baxtım
+Baxtim
 Beaivi
 Beaumonde
 Becrux
@@ -11685,7 +11685,7 @@ Yildun
 Yiminga
 Yll
 Yoka
-Yoldız
+Yoldiz
 Yonder
 York
 Yoyo
