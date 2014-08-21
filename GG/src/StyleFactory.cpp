@@ -124,13 +124,13 @@ ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZE
                                               Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return NewListBox(color, interior, flags); }
 
-Scroll* StyleFactory::NewListBoxVScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(x, y, w, h, VERTICAL, color, interior, flags); }
+{ return NewScroll(X0, Y0, X1, Y1, VERTICAL, color, interior, flags); }
 
-Scroll* StyleFactory::NewListBoxHScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+Scroll* StyleFactory::NewListBoxHScroll(Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(x, y, w, h, HORIZONTAL, color, interior, flags); }
+{ return NewScroll(X0, Y0, X1, Y1, HORIZONTAL, color, interior, flags); }
 
 Scroll* StyleFactory::NewMultiEditVScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const

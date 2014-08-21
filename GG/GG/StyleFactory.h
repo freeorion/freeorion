@@ -137,11 +137,11 @@ public:
                                                       Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new vertical Scroll, to be used in a ListBox. */
-    virtual Scroll*            NewListBoxVScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+    virtual Scroll*            NewListBoxVScroll(Clr color, Clr interior,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new horizontal Scroll, to be used in a ListBox. */
-    virtual Scroll*            NewListBoxHScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+    virtual Scroll*            NewListBoxHScroll(Clr color, Clr interior,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new vertical Scroll, to be used in a MultiEdit. */
