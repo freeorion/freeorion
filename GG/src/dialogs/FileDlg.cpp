@@ -365,7 +365,7 @@ void FileDlg::DoLayout()
 
     m_files_list->MoveTo(Pt(H_SPACING, m_curr_dir_text->Height() + V_SPACING));
     m_files_list->Resize(Pt(Width() - 2 * H_SPACING,
-                            Height() - (button_height + V_SPACING) * 2 - m_curr_dir_text->Height()));
+                            Height() - (button_height + V_SPACING) * 2 - m_curr_dir_text->Height() - 2 * V_SPACING));
 
     // determine the space needed to display both text labels in the chosen font; use this to expand the edit as far as
     // possible
