@@ -86,8 +86,9 @@ TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const boost::shared_ptr<Font>& f
     m_border_color(border_color),
     m_border_width(border_width),
     m_preferred_width(w),
-    m_text_control(GetStyleFactory()->NewTextControl(X0, Y0, w, Y1, "", m_font, text_color, format))
+    m_text_control(GetStyleFactory()->NewTextControl("", m_font, text_color, format))
 {
+    m_text_control->Resize(Pt(w, m_text_control->Height()));
     AttachChild(m_text_control);
     GridLayout();
     SetLayoutBorderMargin(text_margin);

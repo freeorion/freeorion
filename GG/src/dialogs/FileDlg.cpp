@@ -336,36 +336,40 @@ void FileDlg::CreateChildren(bool multi)
     if (m_save)
         multi = false;
 
-    const X USABLE_WIDTH = Width() - 4 * H_SPACING;
-    const X BUTTON_WIDTH = USABLE_WIDTH / 4;
-
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     m_files_edit = style->NewEdit("", m_font, m_border_color, m_text_color);
     m_filter_list = style->NewDropDownList(3, m_border_color);
     m_filter_list->SetStyle(LIST_NOSORT);
+
+    m_curr_dir_text = style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
+    m_files_label = style->NewTextControl("File(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+    m_file_types_label = style->NewTextControl("Type(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+
+    m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
+    m_cancel_button = style->NewButton(m_cancel_str, m_font, m_color, m_text_color);
+
+    // finally, we can create the listbox with the files in it, sized to fill the available space
+    m_files_list = style->NewListBox(m_border_color);
+    m_files_list->SetStyle(LIST_NOSORT | (multi ? LIST_NONE : LIST_SINGLESEL));
+
+    const X USABLE_WIDTH = Width() - 4 * H_SPACING;
+    const X BUTTON_WIDTH = USABLE_WIDTH / 4;
+
     m_files_edit->Resize(Pt(X(100), m_font->Height() + 2 * 5));
     m_files_edit->MoveTo(Pt());
     m_filter_list->Resize(Pt(X(100), m_font->Lineskip()));
     m_filter_list->MoveTo(Pt());
 
     const Y BUTTON_HEIGHT = m_files_edit->Height(); // use the edit's height for the buttons as well
-
-    m_curr_dir_text = style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
-    m_files_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 2, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "File(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
-    m_file_types_label = style->NewTextControl(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 1, Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT, "Type(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
-
-    m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
-    m_cancel_button = style->NewButton(m_cancel_str, m_font, m_color, m_text_color);
-
+    m_files_label->MoveTo(Pt(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 2));
+    m_files_label->Resize(Pt(Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT));
+    m_file_types_label->MoveTo(Pt(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 1));
+    m_file_types_label->Resize(Pt(Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT));
     m_ok_button->Resize(Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     m_ok_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING) * 2));
     m_cancel_button->Resize(Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
     m_cancel_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING)));
-
-    // finally, we can create the listbox with the files in it, sized to fill the available space
-    m_files_list = style->NewListBox(m_border_color);
-    m_files_list->SetStyle(LIST_NOSORT | (multi ? LIST_NONE : LIST_SINGLESEL));
 
     PlaceLabelsAndEdits(BUTTON_WIDTH, BUTTON_HEIGHT);
 }

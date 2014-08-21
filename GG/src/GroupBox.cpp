@@ -56,10 +56,13 @@ GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::sh
     m_text_color(text_color),
     m_int_color(interior),
     m_font(font),
-    m_label(label.empty() ? 0 : GUI::GetGUI()->GetStyleFactory()->NewTextControl(X0, -m_font->Lineskip(), X1, m_font->Lineskip(),
-                                                                                 label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
+    m_label(label.empty() ? 0 : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
     m_set_client_corners_equal_to_box_corners(false)
-{ AttachChild(m_label); }
+{
+    m_label->MoveTo(Pt(X0, -m_font->Lineskip()));
+    m_label->MoveTo(Pt(X1, m_font->Lineskip()));
+    AttachChild(m_label);
+}
 
 Pt GroupBox::ClientUpperLeft() const
 {
@@ -159,11 +162,8 @@ void GroupBox::SetText(const std::string& str)
     delete m_label;
 
     if (!str.empty()) {
-        m_label = GUI::GetGUI()->GetStyleFactory()->NewTextControl(X(FRAME_THICK + PIXEL_MARGIN), Y0,
-                                                                   X1, m_font->Lineskip(),
-                                                                   str, m_font, m_text_color);
-    }
-
-    if (m_set_client_corners_equal_to_box_corners && m_label)
+        m_label = GUI::GetGUI()->GetStyleFactory()->NewTextControl(str, m_font, m_text_color);
         m_label->MoveTo(Pt(X(FRAME_THICK + PIXEL_MARGIN), Y0));
+        m_label->Resize(Pt(X1, m_font->Lineskip()));
+    }
 }
