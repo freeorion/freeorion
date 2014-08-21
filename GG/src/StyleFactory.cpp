@@ -132,13 +132,13 @@ Scroll* StyleFactory::NewListBoxHScroll(X x, Y y, X w, Y h, Clr color, Clr inter
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
 { return NewScroll(x, y, w, h, HORIZONTAL, color, interior, flags); }
 
-Scroll* StyleFactory::NewMultiEditVScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+Scroll* StyleFactory::NewMultiEditVScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(x, y, w, h, VERTICAL, color, interior, flags); }
+{ return NewScroll(X0, Y0, X1, Y1, VERTICAL, color, interior, flags); }
 
-Scroll* StyleFactory::NewMultiEditHScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(x, y, w, h, HORIZONTAL, color, interior, flags); }
+{ return NewScroll(X0, Y0, X1, Y1, HORIZONTAL, color, interior, flags); }
 
 Button* StyleFactory::NewScrollUpButton(const std::string& str,
                                         Clr color, Clr text_color/* = CLR_BLACK*/,

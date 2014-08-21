@@ -145,11 +145,11 @@ public:
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new vertical Scroll, to be used in a MultiEdit. */
-    virtual Scroll*            NewMultiEditVScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+    virtual Scroll*            NewMultiEditVScroll(Clr color, Clr interior,
                                                    Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new horizontal Scroll, to be used in a MultiEdit. */
-    virtual Scroll*            NewMultiEditHScroll(X x, Y y, X w, Y h, Clr color, Clr interior,
+    virtual Scroll*            NewMultiEditHScroll(Clr color, Clr interior,
                                                    Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new up (decrease) Button, to be used in a vertical Scroll. */
