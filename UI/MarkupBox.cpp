@@ -294,8 +294,8 @@ MarkupBox::MarkupSurface::MarkupSurface(GG::X x, GG::Y y, GG::X w, GG::Y h, cons
 }
 
 MarkupBox::MarkupSurface::MarkupSurface() :
-    m_text(""),
     GG::Control(),
+    m_text(""),
     m_controls()
 {
     SetChildClippingMode(ClipToClient);
@@ -339,10 +339,6 @@ void MarkupBox::MarkupSurface::Refresh() {
     // put default element position at top left of surface
     GG::Y top = GG::Y0;
     GG::X left = GG::X0;
-
-    // start with full width of surface to put elements in
-    GG::X available_width = Width();
-
 
     std::vector<MarkupTextBlock> markup_text_blocks = ParseMarkupText(m_text);
 
@@ -537,6 +533,8 @@ void MarkupBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
     case GG::GGK_PAGEDOWN:
         m_vscroll->ScrollPageIncr();
         GG::SignalScroll(*m_vscroll, true);
+        break;
+    default:
         break;
     }
 }
