@@ -585,8 +585,9 @@ void MarkupBox::AdjustScrolls() {
             // there is no scrollbar, but one is needed.  Create one
             boost::shared_ptr<GG::StyleFactory> style = GetStyleFactory();
 
-            m_vscroll = style->NewMultiEditVScroll(Width() - SCROLL_WIDTH, GG::Y0, SCROLL_WIDTH, Height(),
-                                                          ClientUI::TextColor(), GG::CLR_ZERO);
+            m_vscroll = style->NewMultiEditVScroll(ClientUI::TextColor(), GG::CLR_ZERO);
+            m_vscroll->MoveTo(GG::Pt(Width() - SCROLL_WIDTH, GG::Y0));
+            m_vscroll->Resize(GG::Pt(SCROLL_WIDTH, Height()));
 
             // adjust size of surface since creating a scrollbar takes up some horizontal space, which affects layout
             m_surface->SizeMove(UpperLeft(), LowerRight() - GG::Pt(SCROLL_WIDTH, GG::Y0));
