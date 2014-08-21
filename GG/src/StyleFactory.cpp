@@ -98,9 +98,9 @@ ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/,
                                   Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new ListBox(color, interior, flags); }
 
-Scroll* StyleFactory::NewScroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior,
+Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior,
                                 Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return new Scroll(x, y, w, h, orientation, color, interior, flags); }
+{ return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, flags); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         SliderLineStyle style, Clr color, int tab_width, int line_width/* = 5*/,
@@ -126,19 +126,19 @@ ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZE
 
 Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(X0, Y0, X1, Y1, VERTICAL, color, interior, flags); }
+{ return NewScroll(VERTICAL, color, interior, flags); }
 
 Scroll* StyleFactory::NewListBoxHScroll(Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(X0, Y0, X1, Y1, HORIZONTAL, color, interior, flags); }
+{ return NewScroll(HORIZONTAL, color, interior, flags); }
 
 Scroll* StyleFactory::NewMultiEditVScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(X0, Y0, X1, Y1, VERTICAL, color, interior, flags); }
+{ return NewScroll(VERTICAL, color, interior, flags); }
 
 Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(X0, Y0, X1, Y1, HORIZONTAL, color, interior, flags); }
+{ return NewScroll(HORIZONTAL, color, interior, flags); }
 
 Button* StyleFactory::NewScrollUpButton(const std::string& str,
                                         Clr color, Clr text_color/* = CLR_BLACK*/,

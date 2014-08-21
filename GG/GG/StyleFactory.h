@@ -108,7 +108,7 @@ public:
                                           Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG Scroll. */
-    virtual Scroll*            NewScroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior,
+    virtual Scroll*            NewScroll(Orientation orientation, Clr color, Clr interior,
                                          Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new GG Slider<int>. */

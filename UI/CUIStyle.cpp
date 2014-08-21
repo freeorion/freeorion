@@ -23,9 +23,9 @@ GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZE
                                   GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIListBox(); }
 
-GG::Scroll* CUIStyle::NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
+GG::Scroll* CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                 GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new CUIScroll(x, y, w, h, orientation); }
+{ return new CUIScroll(GG::X0, GG::Y0, GG::X1, GG::Y1, orientation); }
 
 GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
                                         GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width/* = 5*/,

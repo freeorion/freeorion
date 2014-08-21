@@ -21,7 +21,7 @@ public:
     virtual GG::ListBox*           NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO,
                                               GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Scroll*            NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
+    virtual GG::Scroll*            NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Slider<int>*        NewIntSlider(int min, int max, GG::Orientation orientation,
