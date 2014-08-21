@@ -8,9 +8,11 @@ empire_species = {species: 0 for species in fo.get_playable_species()}
 potential_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
 settled_native_planet_summary = {planet_type: 0 for planet_type in planets.planet_types}
 monsters_summary = []
+tracked_monsters_chance = {}
+tracked_monsters_tries = {}
 tracked_monsters_summary = {}
 tracked_monsters_location_summary = {}
-tracked_nest_location_sumary = {}
+tracked_nest_location_summary = {}
 specials_summary = {special: 0 for special in fo.get_all_specials()}
 specials_repeat_dist = {count: 0 for count in [0, 1, 2, 3, 4]}
 
@@ -97,10 +99,12 @@ def log_monsters_summary():
     monster_chance = 1.0 / (1e-5 + inverse_monster_chance)
     # the following loop depends on name mapping done in monsters.py
     print "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance)
-    print "%-18s | %8s | %12s | %s" % ("Monster", "# placed", "# valid sys locs", "# valid nest planet locs")
+    print "%-18s | %8s | %8s | %8s | %12s | %s" %\
+          ("Monster", "chance", "# tried", "# placed", "# valid sys locs", "# valid nest planet locs")
     for monster in tracked_monsters_summary:
-        print "%-18s |   %4d   |       %4d       | %4d" % (monster, tracked_monsters_summary[monster], 
-            tracked_monsters_location_summary[monster], tracked_nest_location_sumary[monster])
+        print "%-18s |  %5.2f   |   %4d   |   %4d   |       %4d       | %4d" % (monster, tracked_monsters_chance[monster],
+            tracked_monsters_tries[monster], tracked_monsters_summary[monster],
+            tracked_monsters_location_summary[monster], tracked_nest_location_summary[monster])
 
 def log_specials_summary():
     print "Special Placement Summary"
