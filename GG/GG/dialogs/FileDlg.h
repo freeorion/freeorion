@@ -163,7 +163,7 @@ protected:
 
 private:
     void CreateChildren(bool multi);
-    void PlaceLabelsAndEdits(X button_width, Y button_height);
+    void DoLayout();
     void AttachSignalChildren();
     void DetachSignalChildren();
     void Init(const std::string& directory);

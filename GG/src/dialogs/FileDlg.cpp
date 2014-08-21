@@ -273,13 +273,13 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
 void FileDlg::SetFilesString(const std::string& str)
 {
     m_files_label->SetText(str);
-    PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+    DoLayout();
 }
 
 void FileDlg::SetFileTypesString(const std::string& str)
 {
     m_file_types_label->SetText(str);
-    PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+    DoLayout();
 }
 
 void FileDlg::SetSaveString(const std::string& str)
@@ -353,46 +353,42 @@ void FileDlg::CreateChildren(bool multi)
     m_files_list = style->NewListBox(m_border_color);
     m_files_list->SetStyle(LIST_NOSORT | (multi ? LIST_NONE : LIST_SINGLESEL));
 
-    const X USABLE_WIDTH = Width() - 4 * H_SPACING;
-    const X BUTTON_WIDTH = USABLE_WIDTH / 4;
-
-    m_files_edit->Resize(Pt(X(100), m_font->Height() + 2 * 5));
-    m_files_edit->MoveTo(Pt());
-    m_filter_list->Resize(Pt(X(100), m_font->Lineskip()));
-    m_filter_list->MoveTo(Pt());
-
-    const Y BUTTON_HEIGHT = m_files_edit->Height(); // use the edit's height for the buttons as well
-    m_files_label->MoveTo(Pt(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 2));
-    m_files_label->Resize(Pt(Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT));
-    m_file_types_label->MoveTo(Pt(X0, Height() - (BUTTON_HEIGHT + V_SPACING) * 1));
-    m_file_types_label->Resize(Pt(Width() - (3 * BUTTON_WIDTH + 3 * H_SPACING), BUTTON_HEIGHT));
-    m_ok_button->Resize(Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    m_ok_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING) * 2));
-    m_cancel_button->Resize(Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
-    m_cancel_button->MoveTo(Pt(Width() - (BUTTON_WIDTH + H_SPACING), Height() - (BUTTON_HEIGHT + V_SPACING)));
-
-    PlaceLabelsAndEdits(BUTTON_WIDTH, BUTTON_HEIGHT);
+    DoLayout();
 }
 
-void FileDlg::PlaceLabelsAndEdits(X button_width, Y button_height)
+void FileDlg::DoLayout()
 {
+    X button_width = Width() / 4 - H_SPACING;
+    Y button_height = m_font->Height() + 2 * 5;
+
     m_curr_dir_text->MoveTo(GG::Pt(H_SPACING, V_SPACING / 2));
 
-    Y file_list_top = m_curr_dir_text->Height() + V_SPACING;
+    m_files_list->MoveTo(Pt(H_SPACING, m_curr_dir_text->Height() + V_SPACING));
     m_files_list->Resize(Pt(Width() - 2 * H_SPACING,
-                            Height() - (button_height + V_SPACING) * 2 - file_list_top - V_SPACING));
-    m_files_list->MoveTo(Pt(H_SPACING, file_list_top));
+                            Height() - (button_height + V_SPACING) * 2 - m_curr_dir_text->Height()));
 
     // determine the space needed to display both text labels in the chosen font; use this to expand the edit as far as
     // possible
     X labels_width = std::max(m_font->TextExtent(m_files_label->Text()).x, 
                               m_font->TextExtent(m_file_types_label->Text()).x) + H_SPACING;
-    m_files_label->Resize(Pt(labels_width - H_SPACING / 2, m_files_label->Height()));
-    m_file_types_label->Resize(Pt(labels_width - H_SPACING / 2, m_file_types_label->Height()));
+
+    m_files_label->MoveTo(Pt(X0, Height() - (button_height + V_SPACING) * 2));
+    m_files_label->Resize(Pt(labels_width - H_SPACING / 2, button_height));
+
+    m_file_types_label->MoveTo(Pt(X0, Height() - (button_height + V_SPACING) * 1));
+    m_file_types_label->Resize(Pt(labels_width - H_SPACING / 2, button_height));
+
     m_files_edit->SizeMove(Pt(labels_width, Height() - (button_height + V_SPACING) * 2),
                            Pt(Width() - (button_width + 2 * H_SPACING), Height() - (button_height + 2 * V_SPACING)));
+
     m_filter_list->SizeMove(Pt(labels_width, Height() - (button_height + V_SPACING)),
                             Pt(Width() - (button_width + 2 * H_SPACING), Height() - V_SPACING));
+
+    m_ok_button->MoveTo(Pt(Width() - (button_width + H_SPACING), Height() - (button_height + V_SPACING) * 2));
+    m_ok_button->Resize(Pt(button_width, button_height));
+
+    m_cancel_button->MoveTo(Pt(Width() - (button_width + H_SPACING), Height() - (button_height + V_SPACING)));
+    m_cancel_button->Resize(Pt(button_width, button_height));
 }
 
 void FileDlg::Init(const std::string& directory)
@@ -810,7 +806,6 @@ void FileDlg::UpdateDirectoryText()
 #else
     std::string str = s_working_dir.native_directory_string();
 #endif
-    const X H_SPACING(10);
     while (m_font->TextExtent(str).x > Width() - 2 * H_SPACING) {
         std::string::size_type slash_idx = str.find('/', 1);
         std::string::size_type backslash_idx = str.find('\\', 1);
@@ -825,7 +820,7 @@ void FileDlg::UpdateDirectoryText()
         }
     }
     *m_curr_dir_text << str;
-    PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+    DoLayout();
 }
 
 void FileDlg::OpenDirectory()
@@ -862,7 +857,7 @@ void FileDlg::OpenDirectory()
             m_files_edit->Clear();
             FilesEditChanged(m_files_edit->Text());
             m_curr_dir_text->SetText("");
-            PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+            DoLayout();
             UpdateList();
         }
 
@@ -888,7 +883,7 @@ void FileDlg::OpenDirectory()
                     m_files_edit->Clear();
                     FilesEditChanged(m_files_edit->Text());
                     m_curr_dir_text->SetText("");
-                    PlaceLabelsAndEdits(Width() / 4 - H_SPACING, m_files_edit->Height());
+                    DoLayout();
                     UpdateList();
                     boost::shared_ptr<ThreeButtonDlg> dlg(
                         GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
