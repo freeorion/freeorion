@@ -1479,7 +1479,7 @@ void MultiTurnProgressBar::Render() {
 // FPSIndicator
 //////////////////////////////////////////////////
 FPSIndicator::FPSIndicator(void) :
-    GG::TextControl(GG::X0, GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP)
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();

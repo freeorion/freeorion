@@ -62,7 +62,7 @@ LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boos
 
 LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
+    GG::TextControl(x, y, GG::X1, GG::Y1, str, font, color, GG::FORMAT_NOWRAP, flags),
     TextLinker(),
     m_raw_text(str)
 {

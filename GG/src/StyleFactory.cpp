@@ -114,7 +114,7 @@ TextControl* StyleFactory::NewTextControl(X x, Y y, X w, Y h, const std::string&
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
-{ return new TextControl(X0, Y0, str, font, color, format, flags); }
+{ return new TextControl(X0, Y0, X1, Y1, str, font, color, format, flags); }
 
 TabBar* StyleFactory::NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                 TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const

@@ -53,20 +53,6 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     SetText(str);
 }
 
-TextControl::TextControl(X x, Y y, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
-                         Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
-    Control(x, y, X0, Y0, flags),
-    m_format(format | FORMAT_NOWRAP),
-    m_text_color(color),
-    m_clip_text(false),
-    m_set_min_size(false),
-    m_code_points(0),
-    m_font(font)
-{
-    ValidateFormat();
-    SetText(str);
-}
-
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
 
