@@ -841,7 +841,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_layout_surface = new LayoutSurface();
 
     m_vscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
-    m_hscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
+    m_hscroll = new CUIScroll(GG::X1, GG::Y0, GG::X1, GG::Y1, GG::HORIZONTAL);
 
     m_zoom_in_button = new CUIButton("+");
     m_zoom_in_button->SetColor(ClientUI::WndColor());
