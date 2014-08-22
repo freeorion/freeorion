@@ -545,8 +545,8 @@ void CUIScroll::ScrollTab::MouseLeave() {
 ///////////////////////////////////////
 // class CUIScroll
 ///////////////////////////////////////
-CUIScroll::CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation) :
-    Scroll(x, y, w, h, orientation, ClientUI::CtrlColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN),
+CUIScroll::CUIScroll(GG::Orientation orientation) :
+    Scroll(GG::X0, GG::Y0, GG::X1, GG::Y1, orientation, ClientUI::CtrlColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN),
     m_border_color(ClientUI::CtrlBorderColor())
 {}
 

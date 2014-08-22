@@ -2266,15 +2266,12 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     Wnd(x, y, w, h, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(Width() - GG::X(ClientUI::ScrollWidth()),
-                            GG::Y0,
-                            GG::X(ClientUI::ScrollWidth()),
-                            Height(),
-                            GG::VERTICAL))
+    m_vscroll(new CUIScroll(GG::VERTICAL))
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
+    DoLayout();
 }
 
 SidePanel::PlanetPanelContainer::~PlanetPanelContainer()

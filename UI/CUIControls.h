@@ -182,7 +182,7 @@ public:
     };
 
     /** \name Structors */ //@{
-    CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation); ///< basic ctor
+    CUIScroll(GG::Orientation orientation); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

@@ -359,9 +359,7 @@ namespace {
             }
 
 
-            m_hscroll = new CUIScroll(GG::X0, ClientHeight() - ClientUI::ScrollWidth(),
-                            ClientWidth(),    GG::Y(ClientUI::ScrollWidth()),
-                            GG::HORIZONTAL);
+            m_hscroll = new CUIScroll(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
             GG::Connect(m_hscroll->ScrolledSignal, &FontTextureWnd::ScrolledSlot, this);
