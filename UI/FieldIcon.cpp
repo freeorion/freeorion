@@ -15,8 +15,8 @@
 ////////////////////////////////////////////////
 // FieldIcon
 ////////////////////////////////////////////////
-FieldIcon::FieldIcon(GG::X x, GG::Y y, int field_id) :
-    GG::Control(x, y, GG::X1, GG::Y1),
+FieldIcon::FieldIcon(int field_id) :
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1),
     m_field_id(field_id),
     m_selection_indicator(0),
     m_mouseover_indicator(0),

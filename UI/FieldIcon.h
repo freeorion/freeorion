@@ -20,7 +20,7 @@ namespace GG {
 class FieldIcon : public GG::Control {
 public:
     //! \name Structors //!@{
-    FieldIcon(GG::X x, GG::Y y, int field_id);                  //!< basid ctor
+    FieldIcon(int field_id);                                    //!< basid ctor
     ~FieldIcon();                                               //!< dtor
     //!@}
 

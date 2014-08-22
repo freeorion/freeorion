@@ -2296,7 +2296,7 @@ void MapWnd::InitTurnRendering() {
         //    continue;
 
         // create new system icon
-        FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, fld_id);
+        FieldIcon* icon = new FieldIcon(fld_id);
         m_field_icons[fld_id] = icon;
         icon->InstallEventFilter(this);
 
