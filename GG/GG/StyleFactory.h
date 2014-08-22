@@ -117,7 +117,7 @@ public:
                                             Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG TabBar. */
-    virtual TabBar*            NewTabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color,
+    virtual TabBar*            NewTabBar(const boost::shared_ptr<Font>& font, Clr color,
                                          Clr text_color = CLR_BLACK, TabBarStyle style = TAB_BAR_ATTACHED,
                                          Flags<WndFlag> flags = INTERACTIVE) const;
 

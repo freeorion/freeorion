@@ -33,9 +33,9 @@ GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orient
 { return new CUISlider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation); }
 
 
-GG::TabBar* CUIStyle::NewTabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                 GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
-{ return new CUITabBar(x, y, w, font, color, text_color, style, flags); }
+{ return new CUITabBar(GG::X0, GG::Y0, GG::X1, font, color, text_color, style, flags); }
 
 GG::Button* CUIStyle::NewScrollUpButton(const std::string& str,
                                         GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
