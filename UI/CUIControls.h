@@ -152,7 +152,7 @@ class CUITabBar : public GG::TabBar {
 public:
     /** \name Structors */ ///@{
     /** Basic ctor. */
-    CUITabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+    CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
               GG::Clr text_color, GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags);
     //@}
 

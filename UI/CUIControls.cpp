@@ -411,9 +411,9 @@ void CUIStateButton::MouseLeave()
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
+CUITabBar::CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
                      GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags) :
-    GG::TabBar(x, y, w, font, color, text_color, style, flags)
+    GG::TabBar(GG::X0, GG::Y0, GG::X1, font, color, text_color, style, flags)
 {}
 
 void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
