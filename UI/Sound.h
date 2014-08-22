@@ -13,7 +13,6 @@
 #include <boost/filesystem/path.hpp>
 
 #include <map>
-#include <stack>
 
 
 class Sound
@@ -74,9 +73,7 @@ private:
     OggVorbis_File                    m_ogg_file;             ///< the currently open ogg file
     ALenum                            m_ogg_format;           ///< mono or stereo
     ALsizei                           m_ogg_freq;             ///< sampling frequency
-    std::stack<bool>                  m_UI_sounds_temporarily_disabled;
-
-    friend struct TempUISoundDisabler;
+    unsigned int                      m_temporary_disable_count; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
 };
 
 #endif // _Sound_h_

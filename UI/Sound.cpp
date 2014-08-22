@@ -128,10 +128,10 @@ namespace {
 // TempUISoundDisabler
 ////////////////////////////////////////////////////////////
 Sound::TempUISoundDisabler::TempUISoundDisabler()
-{ Sound::GetSound().m_UI_sounds_temporarily_disabled.push(true); }
+{ ++Sound::GetSound().m_temporary_disable_count; }
 
 Sound::TempUISoundDisabler::~TempUISoundDisabler()
-{ Sound::GetSound().m_UI_sounds_temporarily_disabled.pop(); }
+{ --Sound::GetSound().m_temporary_disable_count; }
 
 ////////////////////////////////////////////////////////////
 // Sound
@@ -151,7 +151,7 @@ Sound::Sound() :
     m_ogg_file(),
     m_ogg_format(),
     m_ogg_freq(),
-    m_UI_sounds_temporarily_disabled()
+    m_temporary_disable_count(0)
 {
     InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
 }
@@ -456,4 +456,4 @@ void Sound::DoFrame() {
 } 
 
 bool Sound::UISoundsTemporarilyDisabled() const
-{ return !m_UI_sounds_temporarily_disabled.empty(); }
+{ return m_temporary_disable_count > 0; }
