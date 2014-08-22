@@ -12,6 +12,7 @@
 #include "Planet.h"
 #include "System.h"
 #include "Species.h"
+#include "Special.h"
 #include "Meter.h"
 #include "ValueRef.h"
 #include "../Empire/Empire.h"
@@ -89,6 +90,9 @@ namespace {
                         boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
     }
 
+    /** Attempts to cast \a obj to a Fleet pointer. If that fails, attempts to
+      * cast \a obj to a Ship pointer, and then get the Fleet of the ship. If
+      * both fail then returns a null object Fleet pointer. */
     TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
         TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
@@ -98,6 +102,11 @@ namespace {
         return retval;
     }
 
+    /** Used by 4-parameter ConditionBase::Eval function, and some of its
+      * overrides, to scan through \a matches or \a non_matches set and apply
+      * \a pred to each object, to test if it should remain in its current set
+      * or be transferred from the \a search_domain specified set into the
+      * other. */
     template <class Pred>
     void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                   Condition::SearchDomain search_domain, const Pred& pred)
@@ -106,7 +115,9 @@ namespace {
         Condition::ObjectSet& to_set = search_domain == Condition::MATCHES ? non_matches : matches;
         for (Condition::ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             bool match = pred(*it);
-            if ((search_domain == Condition::MATCHES && !match) || (search_domain == Condition::NON_MATCHES && match)) {
+            if ((search_domain == Condition::MATCHES && !match) ||
+                (search_domain == Condition::NON_MATCHES && match))
+            {
                 to_set.push_back(*it);
                 *it = from_set.back();
                 from_set.pop_back();
@@ -217,10 +228,12 @@ struct Condition::ConditionBase::MatchHelper {
         m_this(this_),
         m_parent_context(parent_context)
     {}
+
     bool operator()(TemporaryPtr<const UniverseObject> candidate) const
     { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
+
     const Condition::ConditionBase* m_this;
-    const ScriptingContext& m_parent_context;
+    const ScriptingContext&         m_parent_context;
 };
 
 Condition::ConditionBase::~ConditionBase()
@@ -6667,6 +6680,194 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
     return low <= value && value <= high;
 }
 
+///////////////////////////////////////////////////////////
+// Location                                              //
+///////////////////////////////////////////////////////////
+namespace {
+    const Condition::ConditionBase* GetLocationCondition(Condition::ContentType content_type,
+                                                   const std::string& name1,
+                                                   const std::string& name2)
+    {
+        if (name1.empty())
+            return 0;
+        switch (content_type) {
+        case Condition::CONTENT_BUILDING: {
+            if (const BuildingType* bt = GetBuildingType(name1))
+                return bt->Location();
+            break;
+        }
+        case Condition::CONTENT_SPECIES: {
+            return 0;   // species have no location conditions (but their foci do...)
+        }
+        case Condition::CONTENT_SHIP_HULL: {
+            if (const HullType* h = GetHullType(name1))
+                return h->Location();
+            break;
+        }
+        case Condition::CONTENT_SHIP_PART: {
+            if (const PartType* p = GetPartType(name1))
+                return p->Location();
+            break;
+        }
+        case Condition::CONTENT_SPECIAL: {
+            if (const Special* s = GetSpecial(name1))
+                return s->Location();
+            break;
+        }
+        case Condition::CONTENT_FOCUS : {
+            if (name2.empty())
+                return 0;
+            // get species, then focus from that species
+            if (const Species* s = GetSpecies(name1)) {
+                const std::vector<FocusType>& foci = s->Foci();
+                for (std::vector<FocusType>::const_iterator it = foci.begin();
+                     it != foci.end(); ++it)
+                {
+                    const FocusType& f = *it;
+                    if (f.Name() == name2)
+                        return f.Location();
+                }
+            }
+            break;
+        }
+        default:
+            return 0;
+        }
+        return 0;
+    }
+}
+
+Condition::Location::~Location() {
+    delete m_name1;
+    delete m_name2;
+}
+
+bool Condition::Location::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Location& rhs_ = static_cast<const Condition::Location&>(rhs);
+
+    if (m_content_type != rhs_.m_content_type)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_name1)
+    CHECK_COND_VREF_MEMBER(m_name2)
+
+    return true;
+}
+
+void Condition::Location::Eval(const ScriptingContext& parent_context,
+                               ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_name1 || m_name1->LocalCandidateInvariant()) &&
+                             (!m_name2 || m_name2->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (simple_eval_safe) {
+        // evaluate value and range limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+
+        std::string name1 = (m_name1 ? m_name1->Eval(local_context) : "");
+        std::string name2 = (m_name2 ? m_name2->Eval(local_context) : "");
+
+        // get condition from content, apply to matches / non_matches
+        const ConditionBase* condition = GetLocationCondition(m_content_type, name1, name2);
+        if (condition && condition != this) {
+            condition->Eval(parent_context, matches, non_matches, search_domain);
+        } else {
+            // if somehow in a cyclical loop because some content's location
+            // was defined as Condition::Location or if there is no location
+            // condition, match nothing
+            if (search_domain == MATCHES) {
+                non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+                matches.clear();
+            }
+        }
+
+    } else {
+        // re-evaluate value and ranges for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::Location::RootCandidateInvariant() const {
+    return (!m_name1    || m_name1->RootCandidateInvariant()) &&
+           (!m_name2    || m_name2->RootCandidateInvariant());
+}
+
+bool Condition::Location::TargetInvariant() const {
+    return (!m_name1    || m_name1->TargetInvariant()) &&
+           (!m_name2    || m_name2->TargetInvariant());
+}
+
+bool Condition::Location::SourceInvariant() const {
+    return (!m_name1    || m_name1->SourceInvariant()) &&
+           (!m_name2    || m_name2->SourceInvariant());
+}
+
+std::string Condition::Location::Description(bool negated/* = false*/) const {
+    std::string name1_str;
+    if (m_name1)
+        name1_str = m_name1->Description();
+
+    std::string name2_str;
+    if (m_name2)
+        name2_str = m_name2->Description();
+
+    std::string content_type_str;
+    // todo: get content type as string
+
+    return str(FlexibleFormat((!negated)
+               ? UserString("DESC_LOCATION")
+               : UserString("DESC_LOCATION_NOT"))
+               % content_type_str
+               % name1_str
+               % name2_str);
+}
+
+std::string Condition::Location::Dump() const {
+    std::string retval = DumpIndent() + "Location content_type = ";
+
+    switch (m_content_type) {
+    case CONTENT_BUILDING:  retval += "Building";   break;
+    case CONTENT_FOCUS:     retval += "Focus";      break;
+    case CONTENT_SHIP_HULL: retval += "Hull";       break;
+    case CONTENT_SHIP_PART: retval += "Part";       break;
+    case CONTENT_SPECIAL:   retval += "Special";    break;
+    case CONTENT_SPECIES:   retval += "Species";    break;
+    default:                retval += "???";
+    }
+
+    if (m_name1)
+        retval += " name1 = " + m_name1->Dump();
+    if (m_name2)
+        retval += " name2 = " + m_name2->Dump();
+    return retval;
+}
+
+bool Condition::Location::Match(const ScriptingContext& local_context) const {
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "Location::Match passed no candidate object";
+        return false;
+    }
+
+    std::string name1 = (m_name1 ? m_name1->Eval(local_context) : "");
+    std::string name2 = (m_name2 ? m_name2->Eval(local_context) : "");
+
+    const ConditionBase* condition = GetLocationCondition(m_content_type, name1, name2);
+    if (!condition || condition == this)
+        return false;
+
+    // other Conditions' Match functions not directly callable, so can't do any
+    // better than just calling Eval for each candidate...
+    return condition->Eval(local_context, candidate);
+}
 
 ///////////////////////////////////////////////////////////
 // And                                                   //

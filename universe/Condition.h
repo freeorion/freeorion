@@ -41,6 +41,15 @@ namespace Condition {
         SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
     };
 
+    enum ContentType {
+        CONTENT_BUILDING,
+        CONTENT_SPECIES,
+        CONTENT_SHIP_HULL,
+        CONTENT_SHIP_PART,
+        CONTENT_SPECIAL,
+        CONTENT_FOCUS
+    };
+
     struct ConditionBase;
     struct All;
     struct EmpireAffiliation;
@@ -99,6 +108,7 @@ namespace Condition {
     struct CanProduceShips;
     struct OrderedBombarded;
     struct ValueTest;
+    struct Location;
 }
 
 /** Returns a single string which describes a vector of Conditions. If multiple
@@ -111,8 +121,8 @@ namespace Condition {
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
 FO_COMMON_API std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
-                                 TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
-                                 TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
+                                               TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
+                                               TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition::ConditionBase {
@@ -295,6 +305,8 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
     virtual bool        SourceInvariant() const;
@@ -331,6 +343,7 @@ struct FO_COMMON_API Condition::All : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
 
+private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -1814,6 +1827,42 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects that match the location condition of the specified
+  * content.  */
+struct FO_COMMON_API Condition::Location : public Condition::ConditionBase {
+public:
+    Location(ContentType content_type, const ValueRef::ValueRefBase<std::string>* name1,
+             const ValueRef::ValueRefBase<std::string>* name2 = 0) :
+        m_name1(name1),
+        m_name2(name2),
+        m_content_type(content_type)
+    {}
+    virtual ~Location();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<std::string>*  GetName1() const { return m_name1; }
+    const ValueRef::ValueRefBase<std::string>*  GetName2() const { return m_name2; }
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<std::string>*  m_name1;
+    const ValueRef::ValueRefBase<std::string>*  m_name2;
+    ContentType                                 m_content_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     And(const std::vector<const ConditionBase*>& operands) :
@@ -2265,6 +2314,15 @@ void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_value_ref)
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high);
+}
+
+template <class Archive>
+void Condition::Location::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name1)
+        & BOOST_SERIALIZATION_NVP(m_name2)
+        & BOOST_SERIALIZATION_NVP(m_content_type);
 }
 
 template <class Archive>
