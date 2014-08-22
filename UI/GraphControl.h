@@ -12,7 +12,7 @@ namespace GG {
 class GraphControl : public GG::Control {
 public:
     //! \name Structors //@{
-    GraphControl(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    GraphControl();
     //@}
 
     //! \name Mutators //@{

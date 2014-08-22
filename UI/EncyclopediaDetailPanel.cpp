@@ -537,7 +537,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
 
-    m_graph = new GraphControl(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_graph = new GraphControl();
     m_graph->ShowPoints(false);
 
     SearchEdit* search_edit = new SearchEdit();
