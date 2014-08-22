@@ -1334,7 +1334,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
 }
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {
-    return GG::Pt(Width(), m_projects_in_queue_label->Bottom() + 5);
+    return GG::Pt(Width(), m_projects_in_queue_label->RelativeLowerRight().y + 5);
 }
 
 void ProductionInfoPanel::Render() {
@@ -1370,7 +1370,6 @@ void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, in
 }
 
 void ProductionInfoPanel::DoLayout() {
-    const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
@@ -1382,34 +1381,45 @@ void ProductionInfoPanel::DoLayout() {
     const GG::Pt LABEL_TEXT_SIZE(LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
+    GG::Y row_offset(4);
 
-    m_title->MoveTo(GG::Pt(GG::X(2), GG::Y(4)));
-    m_title->Resize(GG::Pt(Width() - 4, GG::Y(RESEARCH_TITLE_PTS + 4)));
-    m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_title->MoveTo(GG::Pt(GG::X(2), row_offset));
+    m_title->Resize(GG::Pt(Width() - 4, m_title->MinUsableSize().y));
+
+    row_offset += m_title->MinUsableSize().y + VERTICAL_SECTION_GAP + 4;
+    m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_total_points_label->Resize(LABEL_TEXT_SIZE);
-    m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
     m_total_points->Resize(VALUE_TEXT_SIZE);
-    m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, m_title->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
     m_total_points_P_label->Resize(P_LABEL_SIZE);
-    m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_total_points_label->Bottom()));
+
+    row_offset += m_total_points_label->Height();
+    m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
-    m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, m_total_points_label->Bottom()));
+    m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
     m_wasted_points->Resize(VALUE_TEXT_SIZE);
-    m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, m_total_points_label->Bottom()));
+    m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
     m_wasted_points_P_label->Resize(P_LABEL_SIZE);
-    m_projects_in_progress_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4));
+
+    row_offset += m_wasted_points_label->Height() + VERTICAL_SECTION_GAP + 4;
+    m_projects_in_progress_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_projects_in_progress_label->Resize(LABEL_TEXT_SIZE);
-    m_projects_in_progress->MoveTo(GG::Pt(RIGHT_TEXT_X, m_wasted_points_label->Bottom() + VERTICAL_SECTION_GAP + 4));
+    m_projects_in_progress->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
     m_projects_in_progress->Resize(VALUE_TEXT_SIZE);
-    m_points_to_underfunded_projects_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_projects_in_progress_label->Bottom()));
+
+    row_offset += m_projects_in_progress_label->Height();
+    m_points_to_underfunded_projects_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_points_to_underfunded_projects_label->Resize(LABEL_TEXT_SIZE);
-    m_points_to_underfunded_projects->MoveTo(GG::Pt(RIGHT_TEXT_X, m_projects_in_progress_label->Bottom()));
+    m_points_to_underfunded_projects->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
     m_points_to_underfunded_projects->Resize(VALUE_TEXT_SIZE);
-    m_points_to_underfunded_projects_P_label->MoveTo(GG::Pt(P_LABEL_X, m_projects_in_progress_label->Bottom()));
+    m_points_to_underfunded_projects_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
     m_points_to_underfunded_projects_P_label->Resize(P_LABEL_SIZE);
-    m_projects_in_queue_label->MoveTo(GG::Pt(LEFT_TEXT_X, m_points_to_underfunded_projects_label->Bottom()));
+
+    row_offset += m_points_to_underfunded_projects_label->Height();
+    m_projects_in_queue_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_projects_in_queue_label->Resize(LABEL_TEXT_SIZE);
-    m_projects_in_queue->MoveTo(GG::Pt(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->Bottom()));
+    m_projects_in_queue->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
     m_projects_in_queue->Resize(VALUE_TEXT_SIZE);
 }
 
