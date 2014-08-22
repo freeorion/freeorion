@@ -33,44 +33,34 @@ public:
                                              GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollUpButton(const std::string& str,
-                                                     GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewScrollDownButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewVScrollTabButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollLeftButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewScrollRightButton(const std::string& str,
-                                                        GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                         GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewHScrollTabButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewVSliderTabButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewHSliderTabButton(const std::string& str,
-                                                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewSpinIncrButton(const std::string& str,
-                                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Button*            NewSpinDecrButton(const std::string& str,
-                                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::StateButton*       NewTabBarTab(const std::string& str,
@@ -78,12 +68,10 @@ public:
                                                 GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                                 GG::StateButtonStyle style = GG::SBSTYLE_3D_TOP_ATTACHED_TAB, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewTabBarLeftButton(const std::string& str,
-                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewTabBarRightButton(const std::string& str,
-                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+    virtual GG::Button*            NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                         GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
     virtual void                   DeleteWnd(GG::Wnd* wnd) const;

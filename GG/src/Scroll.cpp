@@ -72,13 +72,13 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
     Control::SetColor(color);
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
     if (m_orientation == VERTICAL) {
-        m_decr = style->NewScrollUpButton("", color);
-        m_incr = style->NewScrollDownButton("", color);
-        m_tab = style->NewVScrollTabButton("", color);
+        m_decr = style->NewScrollUpButton(color);
+        m_incr = style->NewScrollDownButton(color);
+        m_tab = style->NewVScrollTabButton(color);
     } else {
-        m_decr = style->NewScrollLeftButton("", color);
-        m_incr = style->NewScrollRightButton("", color);
-        m_tab = style->NewHScrollTabButton("", color);
+        m_decr = style->NewScrollLeftButton(color);
+        m_incr = style->NewScrollRightButton(color);
+        m_tab = style->NewHScrollTabButton(color);
     }
     if(m_decr) {
         AttachChild(m_decr);

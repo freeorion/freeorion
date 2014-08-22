@@ -148,53 +148,43 @@ public:
                                                    Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new up (decrease) Button, to be used in a vertical Scroll. */
-    virtual Button*            NewScrollUpButton(const std::string& str,
-                                                 Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewScrollUpButton(Clr color, Clr text_color = CLR_BLACK,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new down (increase) Button, to be used in a vertical Scroll. */
-    virtual Button*            NewScrollDownButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewScrollDownButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new tab Button, to be used in a vertical Scroll. */
-    virtual Button*            NewVScrollTabButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewVScrollTabButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new left (decrease) Button, to be used in a horizontal Scroll. */
-    virtual Button*            NewScrollLeftButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewScrollLeftButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new right (increase) Button, to be used in a horizontal Scroll. */
-    virtual Button*            NewScrollRightButton(const std::string& str,
-                                                    Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewScrollRightButton(Clr color, Clr text_color = CLR_BLACK,
                                                     Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new tab Button, to be used in a horizontal Scroll. */
-    virtual Button*            NewHScrollTabButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewHScrollTabButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new tab Button, to be used in a vertical Slider. */
-    virtual Button*            NewVSliderTabButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewVSliderTabButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new tab Button, to be used in a horizontal Slider. */
-    virtual Button*            NewHSliderTabButton(const std::string& str,
-                                                   Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewHSliderTabButton(Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new increase Button, to be used in a Spin. */
-    virtual Button*            NewSpinIncrButton(const std::string& str,
-                                                 const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new decrease Button, to be used in a Spin. */
-    virtual Button*            NewSpinDecrButton(const std::string& str,
-                                                 const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                  Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
 
     /** Returns a new Edit, to be used in an editable Spin. */
@@ -209,13 +199,11 @@ public:
                                             StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB, Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual Button*            NewTabBarLeftButton(const std::string& str,
-                                                   const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                    Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
-    virtual Button*            NewTabBarRightButton(const std::string& str,
-                                                    const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    virtual Button*            NewTabBarRightButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
                                                     Flags<WndFlag> flags = INTERACTIVE) const;
     //@}
 
