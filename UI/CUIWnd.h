@@ -20,7 +20,7 @@ public:
        RESTORE_BUTTON
    };
 
-   CUI_MinRestoreButton(GG::X x, GG::Y y); ///< basic ctor
+   CUI_MinRestoreButton(); ///< basic ctor
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
 
@@ -35,13 +35,13 @@ private:
 /** a basic X-shaped close button. */
 class CUI_CloseButton : public GG::Button {
 public:
-   CUI_CloseButton(GG::X x, GG::Y y);
+   CUI_CloseButton();
 };
 
 /** a basic Pin-shaped pin button. */
 class CUI_PinButton : public GG::Button {
 public:
-    CUI_PinButton(GG::X x, GG::Y y);
+    CUI_PinButton();
 
     void Toggle(bool pinned); // Switches icon from Pin to Pinned and back
 };
