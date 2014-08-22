@@ -2148,7 +2148,7 @@ void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
         return;
     }
     m_slots[slot]->SetPart(part);
-    DesignChangedSignal();
+    // DesignChangedSignal();  // commented to avoid unnecessary signal repetition.
 }
 
 void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
@@ -2177,6 +2177,7 @@ bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_numbe
     if (!part || slot_number < 0)
         return false;
     SetPart(part, slot_number);
+    DesignChangedSignal();
     return true;
 }
 
@@ -2187,6 +2188,7 @@ bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<i
     SetPart(m_slots[swap_and_empty_slot.first]->GetPart(), swap_and_empty_slot.second);
     // Move replacement part into the newly opened slot
     SetPart(part, swap_and_empty_slot.first);
+    DesignChangedSignal();
     return true;
 }
 
@@ -2213,28 +2215,41 @@ void DesignWnd::MainPanel::EditedSignal(const std::string& new_name) {
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part) {
     // result.first = swap_slot, result.second = empty_slot
-    std::pair<int, int> result = std::make_pair(-1, -1);
+    // if any of the pair == -1, no swap!
 
-    // TODO: allow for swapping of core slot parts
-    if (!part || (!part->CanMountInSlotType(SL_EXTERNAL) && !part->CanMountInSlotType(SL_INTERNAL)))
-        return result;
+    if (!part)
+        return std::make_pair(-1, -1);
 
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
-        const ShipSlotType slot_type = m_slots[i]->SlotType();
-        const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
+    // first search for an empty compatible slot for the new part
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+            continue;   // skip incompatible slots
 
-        if (!part_type)                                             // record an empty slot index
-            result.second = i;
-
-        // Find a slot that has a part that can be mounted in both slots
-        // And that we are compatible with
-        if (part_type &&
-            part_type->CanMountInSlotType(SL_EXTERNAL) &&
-            part_type->CanMountInSlotType(SL_INTERNAL) &&
-            part->CanMountInSlotType(slot_type))
-        { result.first = i; }
+        if (!m_slots[i]->GetPart())
+            return std::make_pair(-1, -1);  // empty slot that can hold part. no swapping needed.
     }
-    return result;
+
+
+    // second, scan for a slot containing a part that can be moved to another
+    // slot to make room for the new part
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+            continue;   // skip incompatible slots
+
+        // can now assume m_slots[i] has a part, as if it didn't, it would have
+        // been found in the first loop
+
+        // see if we can move the part in the candidate slot to an empty slot elsewhere
+        for (unsigned int j = 0; j < m_slots.size(); ++j) {
+            if (m_slots[j]->GetPart())
+                continue;   // only consider moving into empty slots
+
+            if (m_slots[i]->GetPart()->CanMountInSlotType(m_slots[j]->SlotType()))
+                return std::make_pair(i, j);    // other slot can hold current part to make room for new part
+        }
+    }
+    
+    return std::make_pair(-1, -1);
 }
 
 void DesignWnd::MainPanel::ClearParts() {
