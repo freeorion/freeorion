@@ -33,7 +33,6 @@ FO_COMMON_API extern const int INVALID_OBJECT_ID;
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
 public:
-
     template <class T = UniverseObject>
     struct iterator : private std::map<int, boost::shared_ptr<T> >::iterator {
         iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base, ObjectMap& owner) :
