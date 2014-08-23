@@ -41,6 +41,8 @@ class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
     CUIButton(const std::string& str); ///< basic ctor
+
+    CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
     //@}
 
     /** \name Accessors */ //@{

@@ -1191,20 +1191,22 @@ public:
         delete m_icon;          m_icon = 0;
 
         if (m_has_contents) {
-            m_expand_button = new CUIButton("");
-            m_expand_button->SetColor(GG::CLR_WHITE);
-            AttachChild(m_expand_button);
-            GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
+            boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
             if (m_expanded) {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "minusnormal.png"     , true)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "minusclicked.png"    , true)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "minusmouseover.png"  , true)));
+                m_expand_button = new CUIButton(
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusnormal.png"     , true)),
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusclicked.png"    , true)),
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "minusmouseover.png"  , true)));
             } else {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "plusnormal.png"   , true)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "plusclicked.png"  , true)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "plusmouseover.png", true)));
+                m_expand_button = new CUIButton(
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusnormal.png"   , true)),
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusclicked.png"  , true)),
+                    GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "plusmouseover.png", true)));
             }
+
+            AttachChild(m_expand_button);
+            GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
         } else {
             m_dot = new GG::StaticGraphic(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true), style);
             AttachChild(m_dot);

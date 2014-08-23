@@ -76,6 +76,19 @@ CUIButton::CUIButton(const std::string& str) :
     m_border_thick(1)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
+
+CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover) :
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
+    m_border_color(ClientUI::CtrlBorderColor()),
+    m_border_thick(1)
+{
+    SetColor(GG::CLR_WHITE);
+    SetUnpressedGraphic(unpressed);
+    SetPressedGraphic  (pressed);
+    SetRolloverGraphic (rollover);
+    GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1);
+}
+
 bool CUIButton::InWindow(const GG::Pt& pt) const {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();

@@ -2569,10 +2569,18 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
     AttachChild(m_planet_panel_container);
 
-    m_button_prev = new CUIButton("");
-    m_button_prev->SetColor(GG::CLR_WHITE);
-    m_button_next = new CUIButton("");
-    m_button_next->SetColor(GG::CLR_WHITE);
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
+    m_button_prev = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowmouseover.png")));
+
+    m_button_next = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));
+
     m_system_name = new CUIDropDownList(6);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
@@ -2591,15 +2599,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     AttachChild(m_system_name);
 
     AttachChild(m_star_type_text);
-
-    m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrownormal.png"   )));
-    m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrowclicked.png"  )));
-    m_button_prev->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "leftarrowmouseover.png")));
     AttachChild(m_button_prev);
-
-    m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrownormal.png"   )));
-    m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrowclicked.png"  )));
-    m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "rightarrowmouseover.png")));
     AttachChild(m_button_next);
 
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);

@@ -861,15 +861,6 @@ MapWnd::MapWnd() :
     m_detection->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_detection->SetName("Detection StatisticIcon");
 
-    m_industry_wasted = new CUIButton("");
-    m_industry_wasted->SetColor(GG::CLR_WHITE);
-    m_industry_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted = new CUIButton("");
-    m_research_wasted->SetColor(GG::CLR_WHITE);
-    m_research_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-    m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
-
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
                                                 "icons" / "buttons" / "wasted_resource.png", false));
     GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
@@ -877,12 +868,20 @@ MapWnd::MapWnd() :
     GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
                                                 "icons" / "buttons" / "wasted_resource_clicked.png", false));
 
-    m_industry_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
-    m_industry_wasted->SetPressedGraphic  (wasted_ressource_clicked_subtexture);
-    m_industry_wasted->SetRolloverGraphic (wasted_ressource_mouseover_subtexture);
-    m_research_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
-    m_research_wasted->SetPressedGraphic  (wasted_ressource_clicked_subtexture);
-    m_research_wasted->SetRolloverGraphic (wasted_ressource_mouseover_subtexture);
+    m_industry_wasted = new CUIButton(
+        wasted_ressource_subtexture,
+        wasted_ressource_clicked_subtexture,
+        wasted_ressource_mouseover_subtexture);
+
+    m_research_wasted = new CUIButton(
+        wasted_ressource_subtexture,
+        wasted_ressource_clicked_subtexture,
+        wasted_ressource_mouseover_subtexture);
+
+    m_industry_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
+    m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
+    m_research_wasted->Resize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
+    m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
 
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));

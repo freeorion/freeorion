@@ -269,13 +269,15 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
-    m_expand_button = new CUIButton("");
-    m_expand_button->SetColor(GG::CLR_WHITE);
-    AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowmouseover.png")));
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
+    m_expand_button = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
+
     GG::Connect(m_expand_button->LeftClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
+    AttachChild(m_expand_button);
 
     m_pop_stat = new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()), 0, 3, false);
     AttachChild(m_pop_stat);
@@ -534,13 +536,15 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     SetChildClippingMode(ClipToClient);
 
     // expand / collapse button at top right
-    m_expand_button = new CUIButton("");
-    m_expand_button->SetColor(GG::CLR_WHITE);
-    AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowmouseover.png")));
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
+    m_expand_button = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
+
     GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
+    AttachChild(m_expand_button);
 
 
     // small resource indicators - for use when panel is collapsed
@@ -805,13 +809,15 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     SetName("MilitaryPanel");
 
     // expand / collapse button at top right    
-    m_expand_button = new CUIButton("");
-    m_expand_button->SetColor(GG::CLR_WHITE);
-    AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowmouseover.png")));
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
+    m_expand_button = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
+
     GG::Connect(m_expand_button->LeftClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
+    AttachChild(m_expand_button);
 
     // small meter indicators - for use when panel is collapsed
     m_fleet_supply_stat = new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false);
@@ -1368,13 +1374,15 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     }
 
     // expand / collapse button at top right
-    m_expand_button = new CUIButton("");
-    m_expand_button->SetColor(GG::CLR_WHITE);
-    AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrownormal.png"   )));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowclicked.png"  )));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "downarrowmouseover.png")));
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
+    m_expand_button = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
+
     GG::Connect(m_expand_button->LeftClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
+    AttachChild(m_expand_button);
 
     // get owner, connect its production queue changed signal to update this panel
     TemporaryPtr<const UniverseObject> planet = GetUniverseObject(m_planet_id);

@@ -87,12 +87,14 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
     m_seed_edit = new CUIEdit(GetOptionsDB().Get<std::string>("GameSetup.seed"));
 
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
     // random seed button
-    m_random = new CUIButton("");
-    m_random->SetColor(GG::CLR_WHITE);
-    m_random->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize.png")));
-    m_random->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_clicked.png"  )));
-    m_random->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "randomize_mouseover.png")));
+    m_random = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
+
     m_random->SetBrowseText(UserString("GSETUP_RANDOM_SEED"));
     m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
