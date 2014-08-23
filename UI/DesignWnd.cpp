@@ -1079,19 +1079,14 @@ public:
     void                            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    /** an existing complete design that is known to this empire
-        was selected (double-clicked) */
-    mutable boost::signals2::signal<void (int)> DesignSelectedSignal;
-    /** a hull and a set of parts (which may be empty) was selected
-        (double-clicked) */
+    mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
-                                    DesignComponentsSelectedSignal;
-    /** a completed design was browsed (clicked once) */
-    mutable boost::signals2::signal<void (const ShipDesign*)> DesignBrowsedSignal;
-    /** a hull was browsed (clicked once) */
-    mutable boost::signals2::signal<void (const HullType*)> HullBrowsedSignal;
-    /** a complete design was right-clicked (once) */
-    mutable boost::signals2::signal<void (const ShipDesign*)> DesignRightClickedSignal;
+                                                                DesignComponentsSelectedSignal;
+    mutable boost::signals2::signal<void (const std::string&)>  SavedDesignSelectedSignal;
+
+    mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
+    mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
+    mutable boost::signals2::signal<void (const ShipDesign*)>   DesignRightClickedSignal;
 
     class BasesListBoxRow : public CUIListBox::Row {
     public:
@@ -1154,7 +1149,7 @@ private:
     void    PopulateWithSavedDesigns();
 
     int                         m_empire_id_shown;
-    std::pair<bool, bool>       m_availabilities_shown;             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    std::pair<bool, bool>       m_availabilities_shown; // .first indicates whether available parts should be shown.  .second indicates whether unavailable parts should be shown
     bool                        m_showing_empty_hulls;
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
@@ -1557,16 +1552,26 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         int id = design_row->DesignID();
         const ShipDesign* design = GetShipDesign(id);
         if (design)
-            DesignBrowsedSignal(design);
+            DesignClickedSignal(design);
+        return;
     }
 
-    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
-    if (box_row) {
-        const std::string& hull_name = box_row->Hull();
+    SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+    if (saved_design_row) {
+        const std::string& design_name = saved_design_row->DesignName();
+        const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_name);
+        if (design)
+            DesignClickedSignal(design);
+        return;
+    }
+
+    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
+    if (hull_parts_row) {
+        const std::string& hull_name = hull_parts_row->Hull();
         const HullType* hull_type = GetHullType(hull_name);
-        const std::vector<std::string>& parts = box_row->Parts();
+        const std::vector<std::string>& parts = hull_parts_row->Parts();
         if (hull_type && parts.empty())
-            HullBrowsedSignal(hull_type);
+            HullClickedSignal(hull_type);
     }
 }
 
@@ -1638,15 +1643,25 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
 void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
-    if (hp_row) {
-        DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
+    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (cd_row) {
+        if (cd_row->DesignID() != ShipDesign::INVALID_DESIGN_ID)
+            DesignSelectedSignal(cd_row->DesignID());
         return;
     }
 
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
-    if (cd_row) {
-        DesignSelectedSignal(cd_row->DesignID());
+    SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+    if (sd_row) {
+        const std::string& design_name = sd_row->DesignName();
+        if (!design_name.empty())
+            SavedDesignSelectedSignal(design_name);
+        return;
+    }
+
+    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
+    if (hp_row) {
+        if (!hp_row->Hull().empty() || !hp_row->Parts().empty())
+            DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
         return;
     }
 }
@@ -1726,25 +1741,20 @@ public:
     void            HideAvailability(bool available, bool refresh_list);
     //@}
 
-    /** an existing complete design that is known to this empire
-        was selected (double-clicked) */
-    mutable boost::signals2::signal<void (int)> DesignSelectedSignal;
-
-    /** a hull and a set of parts (which may be empty) was
-        selected (double-clicked) */
+    mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
-                    DesignComponentsSelectedSignal;
+                                                                DesignComponentsSelectedSignal;
+    mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&,
+                                          const std::string&, const std::string&)>
+                                                                SavedDesignSelectedSignal;
 
-    /** a complete design was browsed (clicked once) */
-    mutable boost::signals2::signal<void (const ShipDesign*)>
-                    DesignBrowsedSignal;
+    mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
+    mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
 
-    /** a hull was browsed (clicked once) */
-    mutable boost::signals2::signal<void (const HullType*)>
-                    HullBrowsedSignal;
 private:
     void            DoLayout();
     void            WndSelected(std::size_t index);
+    void            SavedDesignSelectedSlot(const std::string& design_name);
 
     GG::TabWnd*     m_tabs;
     BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
@@ -1779,19 +1789,21 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
-    GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
+    GG::Connect(m_hulls_list->HullClickedSignal,                DesignWnd::BaseSelector::HullClickedSignal);
 
     m_designs_list = new BasesListBox();
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
-    GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
+    GG::Connect(m_designs_list->DesignClickedSignal,            DesignWnd::BaseSelector::DesignClickedSignal);
 
     m_saved_designs_list = new BasesListBox();
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->ShowSavedDesigns(true);
+    GG::Connect(m_saved_designs_list->SavedDesignSelectedSignal,&DesignWnd::BaseSelector::SavedDesignSelectedSlot,  this);
+    GG::Connect(m_saved_designs_list->DesignClickedSignal,      DesignWnd::BaseSelector::DesignClickedSignal);
 
     DoLayout();
     ShowAvailability(true, false);   // default to showing available unavailable bases.
@@ -1886,6 +1898,22 @@ void DesignWnd::BaseSelector::DoLayout() {
 
 void DesignWnd::BaseSelector::WndSelected(std::size_t index)
 { Reset(); }
+
+void DesignWnd::BaseSelector::SavedDesignSelectedSlot(const std::string& design_name) {
+    if (design_name.empty())
+        return;
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_name);
+    if (!design)
+        return;
+
+    const std::string& name = design->Name();       // should automatically look up name and description in stringtable if design->LookupInStringtable() is true
+    const std::string& desc = design->Description();
+    const std::string& hull = design->Hull();
+    const std::vector<std::string>& parts = design->Parts();
+
+    SavedDesignSelectedSignal(hull, parts, name, desc);
+}
+
 
 //////////////////////////////////////////////////
 // SlotControl                                  //
@@ -2162,10 +2190,10 @@ public:
     const std::string&                  DesignName() const;         //!< returns name currently entered for design
     const std::string&                  DesignDescription() const;  //!< returns description currently entered for design
 
-    boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;                                //!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
-    int                                 GetCompleteDesignID() const;                                //!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
-    static std::string                  dummy;
-    bool                                CurrentDesignIsRegistered(std::string& design_name = dummy);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
+    boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
+    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
+
+    bool                                CurrentDesignIsRegistered(std::string& design_name);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
     //@}
 
     /** \name Mutators */ //@{
@@ -2192,6 +2220,7 @@ public:
     void            SetHull(const HullType* hull);
     void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
     void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
+
     /** sets design hull and parts to those specified */
     void            SetDesignComponents(const std::string& hull,
                                         const std::vector<std::string>& parts);
@@ -2201,17 +2230,16 @@ public:
                                         const std::string& desc);
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
-    void            RegisterCompletedDesignDump(std::string design_dump);       
-    void            ReregisterDesigns();                                        //!< resets m_completed_designs and reregisters all current empire designs.
-                                                                                //!< Is used w/r/t m_confirm_button status
+    void            RegisterCompletedDesignDump(std::string design_dump);
+    void            ReregisterDesigns();                                        //!< resets m_completed_designs and reregisters all current empire designs. is used w/r/t m_confirm_button status
     //@}
 
     /** emitted when the design is changed (by adding or removing parts, not
       * name or description changes) */
-    mutable boost::signals2::signal<void ()> DesignChangedSignal;
+    mutable boost::signals2::signal<void ()>                DesignChangedSignal;
 
     /** emitted when the design name is changed */
-    mutable boost::signals2::signal<void ()> DesignNameChangedSignal;
+    mutable boost::signals2::signal<void ()>                DesignNameChangedSignal;
 
     /** propegates signals from contained SlotControls that signal that a part
       * has been clicked */
@@ -2221,11 +2249,11 @@ public:
 
     /** emitted when the user clicks the m_confirm_button to add the new
       * design to the player's empire */
-    mutable boost::signals2::signal<void ()> DesignConfirmedSignal;
+    mutable boost::signals2::signal<void ()>                DesignConfirmedSignal;
 
     /** emitted when the user clicks on the background of this main panel and
       * a completed design is showing */
-    mutable boost::signals2::signal<void (int)> CompleteDesignClickedSignal;
+    mutable boost::signals2::signal<void (int)>             CompleteDesignClickedSignal;
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
@@ -2263,7 +2291,8 @@ private:
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
     bool                m_disabled_by_name; // if the design confirm button is currently disabled due to empty name
-    boost::signals2::connection      m_empire_designs_changed_signal;
+
+    boost::signals2::connection             m_empire_designs_changed_signal;
 };
 
 // static
@@ -2885,11 +2914,11 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::X part_palette_left = base_selector_width + detail_width;
     GG::X part_palette_width = most_panels_width - detail_width;
     GG::Y detail_top = GG::Y0;
-    GG::Y detail_height = 2*ClientHeight()/5;   //(200);
+    GG::Y detail_height = 2*ClientHeight()/5;
     GG::Y main_top = detail_top + detail_height;
-    GG::Y part_palette_height = detail_height; //(160);
-    GG::Y part_palette_top = detail_top;//ClientHeight() - part_palette_height;
-    GG::Y main_height = ClientHeight() - main_top;//part_palette_top - main_top;
+    GG::Y part_palette_height = detail_height;
+    GG::Y part_palette_top = detail_top;
+    GG::Y main_height = ClientHeight() - main_top;
 
     m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
     AttachChild(m_detail_panel);
@@ -2920,14 +2949,19 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
 
     m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
     AttachChild(m_base_selector);
+
     GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),
                 m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,
                 m_main_panel);
-    GG::Connect(m_base_selector->DesignBrowsedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),
+    GG::Connect(m_base_selector->SavedDesignSelectedSignal,     &MainPanel::SetDesignComponents,
+                m_main_panel);
+
+    GG::Connect(m_base_selector->DesignClickedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),
                 m_detail_panel);
-    GG::Connect(m_base_selector->HullBrowsedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),
+    GG::Connect(m_base_selector->HullClickedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),
                 m_detail_panel);
+
     m_base_selector->MoveTo(GG::Pt());
 }
 
