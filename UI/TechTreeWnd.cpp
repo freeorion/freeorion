@@ -48,6 +48,33 @@ namespace {
 
     const double PI = 3.1415926535897932384626433;
 
+    bool    TechVisible(const std::string& tech_name,
+                        const std::set<std::string>& categories_shown,
+                        const std::set<TechStatus>& statuses_shown)
+    {
+        const Tech* tech = GetTech(tech_name);
+        if (!tech)
+            return false;
+
+        // Unresearchable techs are never to be shown on tree
+        if (!tech->Researchable())
+            return false;
+
+        // check that category is visible
+        if (categories_shown.find(tech->Category()) == categories_shown.end())
+            return false;
+
+        // check tech status
+        const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+        if (!empire)
+            return true;    // if no empire, techs have no status, so just return true
+        if (statuses_shown.find(empire->GetTechStatus(tech_name)) == statuses_shown.end())
+            return false;
+
+        // all tests pass, so tech is visible
+        return true;
+    }
+
     struct ToggleCategoryFunctor {
         ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
         void operator()() {m_tree_wnd->ToggleCategory(m_category);}
@@ -489,7 +516,6 @@ private:
 
     void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
 
-    bool TechVisible(const std::string& tech_name);
     void DrawArc(DependencyArcsMap::const_iterator it, const GG::Clr& color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
 
@@ -1167,7 +1193,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         const Tech* tech = *it;
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name)) continue;
+        if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
         m_techs[tech_name] = new TechPanel(tech_name, this);
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
@@ -1177,11 +1203,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         const Tech* tech = *it;
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name)) continue;
+        if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
         for (std::set<std::string>::const_iterator prereq_it = tech->Prerequisites().begin();
              prereq_it != tech->Prerequisites().end(); ++prereq_it)
         {
-            if (!TechVisible(*prereq_it)) continue;
+            if (!TechVisible(*prereq_it, m_categories_shown, m_tech_statuses_shown)) continue;
             m_graph.AddEdge(*prereq_it, tech_name);
         }
     }
@@ -1200,7 +1226,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         const Tech* tech = *it;
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name)) continue;
+        if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
         //techpanel
         const TechTreeLayout::Node* node = m_graph.GetNode(tech_name);
         //move TechPanel
@@ -1256,7 +1282,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             const Tech* tech = *it;
             const std::string& tech_name = tech->Name();
-            if (TechVisible(tech_name)) {
+            if (TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) {
                 CenterOnTech(tech_name);
                 break;
             }
@@ -1266,30 +1292,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     // ensure that the scrolls stay on top
     MoveChildUp(m_vscroll);
     MoveChildUp(m_hscroll);
-}
-
-bool TechTreeWnd::LayoutPanel::TechVisible(const std::string& tech_name) {
-    const Tech* tech = GetTech(tech_name);
-    if (!tech)
-        return false;
-
-    // Unresearchable techs are never to be shown on tree
-    if (!tech->Researchable())
-        return false;
-
-    // check that category is visible
-    if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
-        return false;
-
-    // check tech status
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return true;    // if no empire, techs have no status, so just return true
-    if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
-        return false;
-
-    // all tests pass, so tech is visible
-    return true;
 }
 
 void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it,
@@ -1408,8 +1410,6 @@ public:
     void    HideAllCategories();
     void    ShowStatus(TechStatus status);
     void    HideStatus(TechStatus status);
-
-    bool    TechVisible(const std::string& tech_name);
     //@}
 
     mutable TechSignalType      TechBrowsedSignal;      ///< emitted when the mouse rolls over a technology
@@ -1600,7 +1600,7 @@ void TechTreeWnd::TechListBox::Populate() {
          it != m_all_tech_rows.end(); ++it)
     {
         TechRow* tech_row = it->second;
-        if (TechVisible(tech_row->GetTech())) {
+        if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
             insertion_timer.restart();
             Insert(tech_row);
             insertion_elapsed += insertion_timer.elapsed();
@@ -1656,30 +1656,6 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
         m_tech_statuses_shown.erase(it);
         Populate();
     }
-}
-
-bool TechTreeWnd::TechListBox::TechVisible(const std::string& tech_name) {
-    const Tech* tech = ::GetTech(tech_name);
-    if (!tech)
-        return false;
-
-    // Unresearchable techs are never to be shown on tree
-    if (!tech->Researchable())
-        return false;
-
-    // check that category and status are visible
-    if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
-        return false;
-
-    // check tech status
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return true;    // if no empire, techs have no status, so just return true
-    if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
-        return false;
-
-    // all tests pass, so tech is visible
-    return true;
 }
 
 void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
