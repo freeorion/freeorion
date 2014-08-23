@@ -1659,17 +1659,22 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
 }
 
 bool TechTreeWnd::TechListBox::TechVisible(const std::string& tech_name) {
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return true;
     const Tech* tech = ::GetTech(tech_name);
     if (!tech)
+        return false;
+
+    // Unresearchable techs are never to be shown on tree
+    if (!tech->Researchable())
         return false;
 
     // check that category and status are visible
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
 
+    // check tech status
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;    // if no empire, techs have no status, so just return true
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
