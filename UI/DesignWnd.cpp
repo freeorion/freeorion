@@ -162,7 +162,19 @@ namespace {
                  it != design_files.end(); ++it)
             {
                 try {
-                    parse::ship_designs(*it, m_saved_designs);
+                    std::map<std::string, ShipDesign*> file_designs;
+                    parse::ship_designs(*it, file_designs);
+
+                    for (std::map<std::string, ShipDesign*>::iterator d_it = file_designs.begin();
+                         d_it != file_designs.end(); ++d_it)
+                    {
+                        if (m_saved_designs.find(d_it->first) == m_saved_designs.end()) {
+                            m_saved_designs[d_it->first] = d_it->second;
+                        } else {
+                            // duplicate design name!
+                            delete d_it->second;
+                        }
+                    }
                 } catch (...) {
                     Logger().errorStream() << "Failed to parse designs in " << PathString(*it);
                     continue;
@@ -1088,6 +1100,26 @@ public:
     mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignRightClickedSignal;
 
+    class HullPanel : public GG::Control {
+    public:
+        HullPanel(GG::X w, GG::Y h, const std::string& hull);
+        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+        virtual void                    Render() {}
+    private:
+        GG::StaticGraphic*              m_graphic;
+        CUILabel*                       m_name;
+    };
+
+    class SavedDesignPanel : public GG::Control {
+    public:
+        SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name);
+        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+        virtual void                    Render() {}
+    private:
+        GG::StaticGraphic*              m_graphic;
+        CUILabel*                       m_name;
+    };
+
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
@@ -1097,16 +1129,6 @@ public:
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
     public:
-        class HullPanel : public GG::Control {
-        public:
-            HullPanel(GG::X w, GG::Y h, const std::string& hull);
-            virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-            virtual void                    Render() {}
-        private:
-            GG::StaticGraphic*              m_graphic;
-            CUILabel*                       m_name;
-            CUILabel*                       m_cost_and_build_time;
-        };
         HullAndPartsListBoxRow(GG::X w, GG::Y h);
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                const std::vector<std::string>& parts);
@@ -1178,28 +1200,50 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         at(0)->Resize(Size());
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
+BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_graphic(0),
-    m_name(0),
-    m_cost_and_build_time(0)
+    m_name(0)
 {
-    m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull),
+                                      GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
     AttachChild(m_graphic);
     m_name = new CUILabel(UserString(hull), GG::FORMAT_NOWRAP);
     AttachChild(m_name);
 }
 
-void BasesListBox::HullAndPartsListBoxRow::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
     if (m_graphic)
         m_graphic->Resize(Size());
     if (m_name)
         m_name->Resize(GG::Pt(Width(), m_name->Height()));
-    if (m_cost_and_build_time) {
-        //m_cost_and_build_time->???
+}
+
+BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+    m_graphic(0),
+    m_name(0)
+{
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_name);
+    if (design) {
+        m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
+                                          GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic->Resize(GG::Pt(w, h));
+        AttachChild(m_graphic);
+
+        m_name = new CUILabel(design->Name(), GG::FORMAT_NOWRAP);
+        AttachChild(m_name);
     }
+}
+
+void BasesListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    if (m_graphic)
+        m_graphic->Resize(Size());
+    if (m_name)
+        m_name->Resize(GG::Pt(Width(), m_name->Height()));
 }
 
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
@@ -1241,22 +1285,7 @@ BasesListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
     HullAndPartsListBoxRow(w, h),
     m_design_name(design_name)
 {
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(m_design_name);
-    if (design) {
-        this->m_hull = design->Hull();
-        this->m_parts = design->Parts();
-
-        if (m_parts.empty() && !m_hull.empty()) {
-            // contents are just a hull
-            push_back(new HullPanel(w, h, m_hull));
-        } else if (!m_parts.empty() && !m_hull.empty()) {
-            // contents are a hull and parts  TODO: make a HullAndPartsPanel
-            GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::HullTexture(m_hull),
-                                                           GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-            icon->Resize(GG::Pt(w, h));
-            push_back(icon);
-        }
-    }
+    push_back(new SavedDesignPanel(w, h, m_design_name));
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
 
@@ -2883,11 +2912,11 @@ void DesignWnd::MainPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const 
             boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
         if (control) {
             const std::string& name = control->DesignName();
-            const std::string& desc = control->Description();
-            const std::string& hull = control->Hull();
-            const std::vector<std::string>& parts = control->Parts();
-
-            SetDesignComponents(hull, parts, name, desc);
+            const ShipDesign* design = GetSavedDesignsManager().GetDesign(name);
+            if (design) {
+                SetDesignComponents(design->Hull(), design->Parts(), 
+                                    design->Name(), design->Description());
+            }
         }
     }
     delete wnd;
