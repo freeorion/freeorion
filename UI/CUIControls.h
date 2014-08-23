@@ -356,7 +356,7 @@ private:
 class CUIToolBar : public GG::Control {
 public:
     /** \name Structors */ //@{
-    CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    CUIToolBar();
     //@}
 
     /** \name Accessors */ //@{

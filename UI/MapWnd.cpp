@@ -603,7 +603,7 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), TOOLBAR_HEIGHT);
+    m_toolbar = new CUIToolBar();
     m_toolbar->SetName("MapWnd Toolbar");
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
