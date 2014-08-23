@@ -879,7 +879,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
 
-    m_side_panel = new SidePanel();
+    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, Height());
     m_side_panel->EnableSelection();
     m_side_panel->Hide();
 
@@ -912,8 +912,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     MoveChildUp(m_build_selector);
 
     Clear();
-
-    DoLayout();
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
@@ -927,22 +925,6 @@ bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
 
 bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
-
-void BuildDesignatorWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = Size();
-
-    GG::Wnd::SizeMove(ul, lr);
-
-    if(old_size != Size())
-        DoLayout();
-}
-
-void BuildDesignatorWnd::DoLayout() {
-    const GG::X SIDEPANEL_WIDTH =       GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-
-    m_side_panel->MoveTo(GG::Pt(Width() - SIDEPANEL_WIDTH, GG::Y0));
-    m_side_panel->Resize(GG::Pt(SIDEPANEL_WIDTH, Height()));
-}
 
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     SetBuild(queue_idx);

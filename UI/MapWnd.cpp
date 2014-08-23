@@ -1010,7 +1010,7 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // system-view side panel
-    m_side_panel = new SidePanel();
+    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->Bottom(), AppHeight() - m_toolbar->Height());
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
@@ -1146,8 +1146,6 @@ MapWnd::~MapWnd() {
 
 void MapWnd::DoLayout() {
     m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
-    m_side_panel->MoveTo(GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->Height()));
-    m_side_panel->Resize(GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height()));
     m_research_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_production_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_design_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));

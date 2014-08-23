@@ -2554,9 +2554,9 @@ boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
-SidePanel::SidePanel() :
-    CUIWnd("SidePanel", GG::X0, GG::Y0, GG::X1, GG::Y1,
-           GG::INTERACTIVE | GG::ONTOP),
+SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
+    CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP),
     m_system_name(0),
     m_star_type_text(0),
     m_button_prev(0),
