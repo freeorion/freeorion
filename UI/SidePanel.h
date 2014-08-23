@@ -29,7 +29,7 @@ public:
     class PlanetPanel;
 
     /** \name Structors */ //@{
-    SidePanel(GG::X x, GG::Y y, GG::Y h);
+    SidePanel();
     ~SidePanel();
     //@}
 

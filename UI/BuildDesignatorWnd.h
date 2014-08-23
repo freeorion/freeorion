@@ -28,6 +28,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            DoLayout();
+
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window. */
     void            CenterOnBuild(int queue_idx);
