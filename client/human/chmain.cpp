@@ -370,8 +370,10 @@ int mainSetupAndRunOgre() {
     }
 
     if (root) {
-        root->uninstallPlugin(ois_input_plugin);
-        delete ois_input_plugin;
+        if (ois_input_plugin) {
+            root->uninstallPlugin(ois_input_plugin);
+            delete ois_input_plugin;
+        }
 
 #ifdef OGRE_STATIC_LIB
         root->uninstallPlugin(octree_plugin);
