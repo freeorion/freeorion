@@ -66,14 +66,14 @@ struct HotkeyManager::ConditionalConnection {
 /////////////////////////////////////////////////////////
 std::map<std::string, Hotkey>* Hotkey::s_hotkeys = 0;
 
-void Hotkey::AddHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
+void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
     if (IsTypingSafe(key, mod)) {
-        s_hotkeys->insert(std::make_pair(name, Hotkey(name, key, mod)));
+        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
     } else {
         Logger().errorStream() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing.";
-        s_hotkeys->insert(std::make_pair(name, Hotkey(name, GG::GGK_UNKNOWN, GG::MOD_KEY_NONE)));
+        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_UNKNOWN, GG::MOD_KEY_NONE)));
     }
 }
 
@@ -149,7 +149,7 @@ void Hotkey::AddOptions(OptionsDB& db) {
         const Hotkey& hotkey = i->second;
         std::string n = "UI.hotkeys.";
         n += hotkey.m_name;
-        db.Add(n, UserStringForHotkey(hotkey.m_name),
+        db.Add(n, hotkey.GetDescription(),
                hotkey.ToString(), Validator<std::string>());
     }
 }
@@ -228,8 +228,9 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
     }
 }
 
-Hotkey::Hotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) :
+Hotkey::Hotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) :
     m_name(name),
+    m_description(description),
     m_key(key),
     m_key_default(key),
     m_mod_keys(mod),
@@ -239,12 +240,8 @@ Hotkey::Hotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) 
 const Hotkey& Hotkey::NamedHotkey(const std::string& name)
 { return PrivateNamedHotkey(name); }
 
-std::string Hotkey::UserStringForHotkey(const std::string& name) {
-    std::string ret = "HOTKEY_" + name;
-    std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
-    ReplaceInString(ret, ".", "_");
-    return ret;
-}
+std::string Hotkey::GetDescription() const
+{ return m_description; }
 
 Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
     std::string error_msg = "Hotkey::PrivateNamedHotkey error: no hotkey named: " + name;
@@ -298,31 +295,29 @@ bool Hotkey::IsTypingSafe() const
 bool Hotkey::IsDefault() const
 { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
 
-void Hotkey::SetHotkey(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
+void Hotkey::SetHotkey(const Hotkey& hotkey, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!IsTypingSafe(key, mod)) {
         Logger().debugStream() << "Hotkey::SetHotkey: Typing-unsafe hotkey requested: "
-                               << mod << " + " << key << " for hotkey " << name;
+                               << mod << " + " << key << " for hotkey " << hotkey.m_name;
         return;
     }
 
-    Hotkey& hk = PrivateNamedHotkey(name);
+    Hotkey& hk = PrivateNamedHotkey(hotkey.m_name);
     hk.m_key = key;
     hk.m_mod_keys = GG::MassagedAccelModKeys(mod);
 
     GetOptionsDB().Set<std::string>("UI.hotkeys." + hk.m_name, hk.ToString());
 }
 
-void Hotkey::ResetHotkey(const std::string& name) {
-    Hotkey& hk = PrivateNamedHotkey(name);
-    std::string n = "UI.hotkeys.";
-    n += hk.m_name;
+void Hotkey::ResetHotkey(const Hotkey& old_hotkey) {
+    Hotkey& hk = PrivateNamedHotkey(old_hotkey.m_name);
     hk.m_key = hk.m_key_default;
     hk.m_mod_keys = hk.m_mod_keys_default;
-    GetOptionsDB().Set<std::string>(n, hk.ToString());
+    GetOptionsDB().Set<std::string>("UI.hotkeys." + hk.m_name, hk.ToString());
 }
 
-void Hotkey::ClearHotkey(const std::string& name)
-{ Hotkey::SetHotkey(name, GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>()); }
+void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
+{ Hotkey::SetHotkey(old_hotkey, GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>()); }
 
 //////////////////////////////////////////////////////////////////////
 // InvisibleWindowCondition

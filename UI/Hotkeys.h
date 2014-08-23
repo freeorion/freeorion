@@ -36,28 +36,27 @@ class Hotkey {
     /// The global hotkey storage
     static std::map<std::string, Hotkey>* s_hotkeys;
 
-    Hotkey(const std::string& name, GG::Key key,
-           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
+    Hotkey(const std::string& name, const std::string& description,
+           GG::Key key, GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Returns a modifiable version of the hotkey. 
     static Hotkey& PrivateNamedHotkey(const std::string& name);
 
 public:
     /// Internal name (code-like).
-    ///
-    /// Use namespaces. This name will be converted to a stringtable
-    /// entry by prepending HOTKEY_, converting to uppercase and
-    /// changing . into _.
     std::string m_name;
+
+    /// The human readable description of what this Hot does.
+    std::string m_description;
 
     /// Returns the name of the user string containing the description
     /// of the shortcut.
-    static std::string UserStringForHotkey(const std::string& name);
+    std::string GetDescription() const;
 
     /// Registers a hotkey name (ie the one used for storing in the
     /// database) along with a description and a default value.
-    static void AddHotkey(const std::string& name, GG::Key key,
-                          GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
+    static void AddHotkey(const std::string& name, const std::string& description,
+                          GG::Key key, GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
 
     /// Returns the name of all defined hotkeys
@@ -74,15 +73,15 @@ public:
 
     /// Sets the value of the given named hotkey, and updates the
     /// corresponding option.
-    static void SetHotkey(const std::string& name, GG::Key key,
+    static void SetHotkey(const Hotkey& hotkey, GG::Key key,
                           GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Sets the value of the given named hotkey to its default,
     /// and updates the corresponding option.
-    static void ResetHotkey(const std::string& name);
+    static void ResetHotkey(const Hotkey& hotkey);
 
     /// Sets the value of the given named hotkey to no key
-    static void ClearHotkey(const std::string& name);
+    static void ClearHotkey(const Hotkey& hotkey);
 
     /// Returns a string that can later be parsed again with
     /// HotkeyFromString()

@@ -127,35 +127,35 @@ namespace {
 
 
         // Register hotkey names/default values for the context "map".
-        Hotkey::AddHotkey("map.return_to_map",          GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("map.open_chat",              GG::GGK_t,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.end_turn",               GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.sit_rep",                GG::GGK_n,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.research",               GG::GGK_r,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.production",             GG::GGK_p,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.design",                 GG::GGK_d,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.menu",                   GG::GGK_F10);
-        Hotkey::AddHotkey("map.zoom_in",                GG::GGK_z,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_in_alt",            GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_out",               GG::GGK_x,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_out_alt",           GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_home_system",       GG::GGK_h,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_system",       GG::GGK_LESS,       GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_next_system",       GG::GGK_GREATER,    GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_fleet",        GG::GGK_f,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_next_fleet",        GG::GGK_g,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_idle_fleet",   GG::GGK_UNKNOWN);
-        Hotkey::AddHotkey("map.zoom_next_idle_fleet",   GG::GGK_UNKNOWN);
+        Hotkey::AddHotkey("map.return_to_map",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
+        Hotkey::AddHotkey("map.open_chat",            UserStringNop("HOTKEY_MAP_OPEN_CHAT"),            GG::GGK_t,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.end_turn",             UserStringNop("HOTKEY_MAP_END_TURN"),             GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.sit_rep",              UserStringNop("HOTKEY_MAP_SIT_REP"),              GG::GGK_n,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
+        Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_out",             UserStringNop("HOTKEY_MAP_ZOOM_OUT"),             GG::GGK_x,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_out_alt",         UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),         GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_home_system",     UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),     GG::GGK_h,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_prev_system",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_LESS,       GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_next_system",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_GREATER,    GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_prev_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),      GG::GGK_f,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_next_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),      GG::GGK_g,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_prev_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_UNKNOWN);
+        Hotkey::AddHotkey("map.zoom_next_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_UNKNOWN);
 
-        Hotkey::AddHotkey("cut",                        GG::GGK_x,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("copy",                       GG::GGK_c,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("paste",                      GG::GGK_v,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("cut",                      UserStringNop("HOTKEY_CUT"),            GG::GGK_x,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("copy",                     UserStringNop("HOTKEY_COPY"),           GG::GGK_c,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("paste",                    UserStringNop("HOTKEY_PASTE"),          GG::GGK_v,  GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("select_all",                 GG::GGK_a,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("deselect",                   GG::GGK_d,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("select_all",               UserStringNop("HOTKEY_SELECT_ALL"),     GG::GGK_a,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("deselect",                 UserStringNop("HOTKEY_DESELECT"),       GG::GGK_d,  GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("focus_prev_wnd",             GG::GGK_TAB,GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("focus_next_wnd",             GG::GGK_TAB);
+        Hotkey::AddHotkey("focus_prev_wnd",           UserStringNop("HOTKEY_FOCUS_PREV_WND"), GG::GGK_TAB,GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("focus_next_wnd",           UserStringNop("HOTKEY_FOCUS_NEXT_WND"), GG::GGK_TAB);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

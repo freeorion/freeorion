@@ -715,7 +715,7 @@ namespace {
 
 
         // set hotkey to new pressed key / modkey combination
-        Hotkey::SetHotkey(hk_name, kp.first, kp.second);
+        Hotkey::SetHotkey(hotkey, kp.first, kp.second);
 
         // indicate new hotkey on button
         button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
@@ -727,9 +727,9 @@ namespace {
     void HandleResetHotkeyOption(const std::string & hk_name, CUIButton * button) {
         const Hotkey& hotkey = Hotkey::NamedHotkey(hk_name);
         if (hotkey.IsDefault())
-            hotkey.ClearHotkey(hk_name);
+            hotkey.ClearHotkey(hotkey);
         else
-            hotkey.ResetHotkey(hk_name);
+            hotkey.ResetHotkey(hotkey);
 
         // indicate new hotkey on button
         button->SetText(Hotkey::NamedHotkey(hk_name).PrettyPrint());
@@ -742,7 +742,7 @@ namespace {
 void OptionsWnd::HotkeyOption(CUIListBox* page, int indentation_level, const std::string& hotkey_name) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
-    std::string text = UserString(Hotkey::UserStringForHotkey(hotkey_name));
+    std::string text = UserString(hk.GetDescription());
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     CUILabel* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     CUIButton* button = new CUIButton(hk.PrettyPrint());
