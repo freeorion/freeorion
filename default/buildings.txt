@@ -1104,6 +1104,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_CONC_CAMP"
         OwnedBy TheEmpire Source.Owner
+        Population low = 3
     ]
     effectsgroups = [
         EffectsGroup
