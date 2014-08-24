@@ -4713,7 +4713,7 @@ Prefer Desert planets.
 
 SP_ETTY_DESC
 '''Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
+Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators, they also have a powerful sense of smell.
 
 The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
 
