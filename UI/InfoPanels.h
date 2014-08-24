@@ -33,8 +33,33 @@ namespace GG {
     class StaticGraphic;
 }
 
+class AccordionPanel : public GG::Wnd {
+public:
+    /** \name Structors */ //@{
+    AccordionPanel(GG::X w);
+    //@}
+
+    /** \name Mutators */ //@{
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    //@}
+
+    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
+
+protected:
+    /** \name Mutators */ //@{
+    void SetCollapsed(bool collapsed);
+    //@}
+
+    GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+
+private:
+    /** \name Mutators */ //@{
+    void DoLayout();
+    //@}
+};
+
 /** Shows population with meter bars */
-class PopulationPanel : public GG::Wnd {
+class PopulationPanel : public AccordionPanel {
 public:
     /** \name Structors */ //@{
     PopulationPanel(GG::X w, int object_id);            ///< basic ctor
@@ -60,8 +85,6 @@ public:
     void                EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
-
 private:
     void                ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
 
@@ -77,13 +100,11 @@ private:
     MultiIconValueIndicator*        m_multi_icon_value_indicator;   ///< textually / numerically indicates population
     MultiMeterStatusBar*            m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
-
     static std::map<int, bool>      s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Shows resource meters with meter-bars */
-class ResourcePanel : public GG::Wnd {
+class ResourcePanel : public AccordionPanel {
 public:
     /** \name Structors */ //@{
     ResourcePanel(GG::X w, int object_id);
@@ -108,8 +129,6 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
-
 private:
     void            ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
     void            DoLayout();                         ///< resizes panel and positions widgets
@@ -124,13 +143,11 @@ private:
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    GG::Button*                 m_expand_button;                ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
-
     static std::map<int, bool>  s_expanded_map;                 ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
-class MilitaryPanel : public GG::Wnd {
+class MilitaryPanel : public AccordionPanel {
 public:
     /** \name Structors */ //@{
     MilitaryPanel(GG::X w, int planet_id);
@@ -155,8 +172,6 @@ public:
     void                    EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
-
 private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
     void                    DoLayout();                     ///< resizes panel and positions widgets
@@ -173,13 +188,11 @@ private:
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    GG::Button*                 m_expand_button;            ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
-
     static std::map<int, bool>  s_expanded_map;             ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Contains various BuildingIndicator to represent buildings on a planet. */
-class BuildingsPanel : public GG::Wnd {
+class BuildingsPanel : public AccordionPanel {
 public:
     /** \name Structors */ //@{
     BuildingsPanel(GG::X w, int columns, int planet_id);    ///< basic ctor
@@ -203,7 +216,6 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signals2::signal<void ()>    ExpandCollapseSignal;
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
@@ -215,7 +227,6 @@ private:
     int                             m_planet_id;            ///< object id for the Planet whose buildings this panel displays
     int                             m_columns;              ///< number of columns in which to display building indicators
     std::vector<BuildingIndicator*> m_building_indicators;
-    GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>      s_expanded_map;         ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
 };
