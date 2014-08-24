@@ -1934,7 +1934,7 @@ Järjestelmä
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
 ENC_DETAIL_TYPE_STR
-<i>%1% %2%</i>
+%1% %2%
 
 ENC_PP
 TUP
