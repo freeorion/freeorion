@@ -40,41 +40,55 @@ namespace {
                 ;
 
             enqueued
-                =  tok.Enqueued_
-                >  (((
-                        parse::label(Type_token) >> tok.Building_
+                =   enqueued1
+                |   enqueued2
+                |   enqueued3
+                |   enqueued4
+                ;
+
+            enqueued1
+                =   (
+                        tok.Enqueued_
+                        >> parse::label(Type_token) >> tok.Building_
                         >> (
-                               parse::label(Name_token) >>       tok.string [ _e = _1 ]
+                                parse::label(Name_token) >>      tok.string [ _e = _1 ]
                             |                                    eps [ _e = "" ]
                            )
                         >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
-                     ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
-                    )
-                   |((
-                        parse::label(Type_token) >> tok.Ship_
-                        >> -(   parse::label(Design_token) >>    int_value_ref [ _d = _1 ] )
-                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
-                     ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
-                    )
-                   |((
-                        parse::label(Type_token) >> tok.Ship_
-                        >>      parse::label(Name_token) >>      tok.string [ _e = _1 ]
-                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
-                        >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
-                        >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
+                    ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
+                ;
+
+            enqueued2
+                =   (
+                        tok.Enqueued_
+                        >>      parse::label(Type_token) >>     tok.Ship_
+                        >> -(   parse::label(Design_token) >>   int_value_ref [ _d = _1 ] )
+                        >> -(   parse::label(Empire_token) >>   int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>      int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>     int_value_ref [ _c = _1 ] )
+                    ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
+                ;
+
+            enqueued3
+                =   (
+                        tok.Enqueued_
+                        >>      parse::label(Type_token) >>     tok.Ship_
+                        >>      parse::label(Name_token) >>     tok.string [ _e = _1 ]
+                        >> -(   parse::label(Empire_token) >>   int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_token) >>      int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_token) >>     int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
-                    )
-                   |((
-                           -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
+                ;
+
+            enqueued4
+                =   (
+                        tok.Enqueued_
+                        >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
                      ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
-                    )
-                   )
                 ;
 
             design_has_part
@@ -139,6 +153,10 @@ namespace {
 
         common_rule                     has_special_since_turn;
         common_rule                     enqueued;
+        common_rule                     enqueued1;
+        common_rule                     enqueued2;
+        common_rule                     enqueued3;
+        common_rule                     enqueued4;
         common_rule                     design_has_part;
         common_rule                     design_has_part_class;
         common_rule                     in_system;
