@@ -434,9 +434,6 @@ Sets UI control border color.
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
 Sets UI state button selected color. 
 
-OPTIONS_DB_UI_STATE_BUTTON_COLOR
-Sets UI state button color.
-
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
 Asettaa käyttöliittymän pudotuslistan nuolen värin.
 
