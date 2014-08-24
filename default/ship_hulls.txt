@@ -447,16 +447,20 @@ Hull
     effectsgroups = [
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
                 Ship
+                InSystem Source.SystemID
+                Turn low = Target.CreationTurn + 1
                 Or [
                     OwnedBy TheEmpire Source.Owner
                     OwnedBy AllyOf Source.Owner
                 ]
             ]
-            activation = Turn low = Source.CreationTurn + 1
+            activation = And [
+                InSystem
+                Turn low = Source.CreationTurn + 1
+            ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
-            effects = SetStructure Target.MaxStructure
+            effects = SetStructure max(Target.Structure, Target.MaxStructure)
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
