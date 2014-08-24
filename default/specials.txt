@@ -440,6 +440,7 @@ Special
             System 
             Contains Capital
         ]
+        Not Species
         Not WithinStarlaneJumps 2 And [
             System
             Contains And [
