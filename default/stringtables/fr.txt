@@ -1218,7 +1218,7 @@ OPTIONS_DB_LOG_LEVEL
 Fixe le niveau d'importance à partir duquel les messages du journal seront affichés (niveaux par ordre décroissant de verbosité: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG).
 
 OPTIONS_DB_STRINGTABLE_FILENAME
-L'adresse du fichier contenant la table de caractères propre à la langue choisie pour l'interface utilisateur.
+L'adresse du fichier contenant la langue choisie pour l'interface utilisateur. Une fois le fichier sélectionné, cliquez sur 'Réinitialiser le fichier langue en mémoire' puis validez.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 Si activé, les parties solo bénéficieront d'une sauvegarde automatique régulière.
@@ -4409,7 +4409,7 @@ Préfèrent les Planètes marécageuses.
 '''
 
 SP_GYSACHE_DESC
-'''Les Gysache sont une espèce herbivore ayant toujours fait office de proie. Ils cherchent à se prémunir contre toute menace potentielle, jusqu'à que chaque recoin de l'Univers soit un lieu sûr pour leur espèce.
+'''Les Gysache sont une espèce herbivore ayant toujours fait office de proie. Ils cherchent à se prémunir contre toute menace potentielle, jusqu'à ce que chaque recoin de l'Univers soit un lieu sûr pour leur espèce.
 
 Description:
 Les Gysache sont bipèdes, chaque jambe ayant deux articulations avant et une arrière située entre les deux. Lorsqu'ils s'accroupissent, leurs jambes dessinent un 'W', ce qui diminue leur taille à seulement un demi-mètre (contre 2.5 mètres d'envergure lorsqu'ils sont totalement redressés).
@@ -4519,7 +4519,7 @@ Préfèrent les Planètes de type terrestre.
 
 SP_EAXAW_DESC
 '''Description:
-Les Eaxaw ont 3 formes différentes. La première est la forme larvaire lors de la naissance, suit celle du jeune mâle et enfin celle de la femelle adulte. Ces 3 formes sont totalement aveugles et utilisent le toucher, l'odorat et l'ouie, ainsi qu'un sens détectant les courants électriques, pour appréhender leur environnement. La femelle est un ver à segments d'environ 8 mètres de long. À l'avant se situe un orifice à 3 becs leur servant à creuser et à étendre un réseau complexe de tunnels. Le système neuronal de la femelle s'étend tout le long du corps, sous forme de chaines neuronales reliées par des noeuds. Tout le reste du corps se compose de muscles, dont le support est une solide carapace externe segmentée. Un petit espace se trouve entre chaque segment externe (à la manière des écailles), dans lequel les larves sont élevées et grandissent. Les formes mâles des Eaxaw sont plus petites, faibles, et bien moins intelligentes. Au bout de leur queue se situe une griffe préhensile à l'anatomie complexe, présente seulement sur certaines variétés spécialisées.
+Les Eaxaw ont 3 formes différentes. La première est la forme larvaire lors de la naissance, suit celle du jeune mâle et enfin celle de la femelle adulte. Ces 3 formes sont totalement aveugles et utilisent le toucher, l'odorat et l'ouïe, ainsi qu'un sens détectant les courants électriques, pour appréhender leur environnement. La femelle est un ver à segments d'environ 8 mètres de long. À l'avant se situe un orifice à 3 becs leur servant à creuser et à étendre un réseau complexe de tunnels. Le système neuronal de la femelle s'étend tout le long du corps, sous forme de chaines neuronales reliées par des noeuds. Tout le reste du corps se compose de muscles, dont le support est une solide carapace externe segmentée. Un petit espace se trouve entre chaque segment externe (à la manière des écailles), dans lequel les larves sont élevées et grandissent. Les formes mâles des Eaxaw sont plus petites, faibles, et bien moins intelligentes. Au bout de leur queue se situe une griffe préhensile à l'anatomie complexe, présente seulement sur certaines variétés spécialisées.
 
 Structure sociale:
 Les Eaxaw sont organisés en groupes matriarcaux de reproduction. Une femelle domine un "harem" d'environ 200 mâles, lesquels la protègent, la nourrissent et servent de reproducteurs. Tout nouveau mâle que la femelle met au monde est ajouté au harem, mais sert généralement de monnaie d'échange avec les autres femelles. Cela assure la diversité génétique et favorise une large variété de mâles spécialisés pour certaines tâches. Les femelles du plus haut rang (celles dominant les harems les plus grands et les plus diversifiés) forment la Grande Chambre Matriarcal, laquelle édicte la marche à suivre pour les Eaxaw.
@@ -4556,8 +4556,8 @@ Les Derthrean ont une organisation sociale très segmentée, se divisant en cast
 SP_LAENFA
 Laenfa
 SP_LAENFA_GAMEPLAY_DESC
-'''Vignes sensibles, sournoises et télépathes.
-Préfére les planètes océaniques.
+'''Vignes sensibles, télépathes, et insidieuses.
+Préfèrent les Planètes océaniques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4573,17 +4573,17 @@ Préfére les planètes océaniques.
 
 SP_LAENFA_DESC
 '''Description:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
+Les Laenfa sont de longs organismes végétaux semblables à des vignes, capables de se combiner ou de se dissocier à volonté en vignes de tailles différentes. Chaque feuille a sa propre conscience, et en étant séparée des autres feuilles, détient le contrôle sur la petite longueur de vigne à laquelle elle est rattachée. Les Laenfa sont doués d'une grande mobilité sous-marine ainsi que d'une mobilité terrestre raisonnable, du fait de leur capacité à nager et à se faufiler comme un serpent. La communication téléphatique des Laenfa, renforcée par leur physiologie commune, leur permet de synchroniser le mouvement global de la vigne, pour des déplacements toujours plus optimaux.
 
-Social Structure:
-The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
+Structure sociale:
+Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu oeuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
 '''
 
 SP_TAEGHIRUS
 Tae Ghirus
 SP_TAEGHIRUS_GAMEPLAY_DESC
-'''Weak, flightless birds, united in total mutual cooperation.
-Préfére les planètes marécageuses.
+'''Oiseaux fragiles et incapables de voler, unis par une coopération totale.
+Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4597,18 +4597,18 @@ Préfére les planètes marécageuses.
 
 SP_TAEGHIRUS_DESC
 '''Description:
-The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
+Les Tae Ghirus sont semblables à des vautours sans plumes, au corps gris et fragile. Leurs ailes sont conçues pour planer, et non pour voler, mais même cette fonction aérodynamique s'est atténuée au cours de l'évolution de l'espèce.
 
-Social Structure:
-The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood which works surprisingly well.
+Structure sociale:
+Les Tae Ghirus sont très sociaux et coopératifs, afin de compenser la faiblesse de leur constitution. Leur système politique et social, nommé "L'Allégeance", est un mélange de démocratie participative et de fraternité fonctionnant particulièrement bien.
 '''
 
 
 SP_MUURSH
 Mu Ursh
 SP_MUURSH_GAMEPLAY_DESC
-'''Herbivores pacifiques militant.
-Préfére les planètes désertiques.
+'''Herbivores pacifiques et activistes.
+Préfèrent les Planètes désertiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4620,15 +4620,15 @@ Préfére les planètes désertiques.
 '''
 
 SP_MUURSH_DESC
-'''Mu Ursh are a peaceful, non-aggressive race of vaguely feline appearance, they became the dominant lifeform on their planet in part due to their excellent reactions and eyesight. They used their abilities to round up and control all threatening predatory life, limiting numbers in order to ensure a peaceful planet.
+'''Les Mu Ursh sont une race pacifique et non-agressive, à l'apparence vaguement féline. Ils sont devenus l'espèce dominante sur leur planète, en partie grâce à leur excellente capacité de réaction et leur vue aiguisée. Usant de ces avantages, ils sont parvenus à contenir et contrôler tous les organismes prédateurs constituant une menace, limitant ainsi leur nombre afin d'assurer la quiétude de leur planète.
 
-To their regret, their natural abilities seem to make them exceptionally gifted pilots, and some amongst their number have decided the best way to ensure galactic peace is to conquer and control all aggressive intelligent species, making the galaxy as peaceful as their homeworld.'''
+Mais à leur grand regret, ces compétences naturelles font d'eux des pilotes extrêmement talentueux, et certains parmi les Mu Ursh ont décrété que le meilleur moyen d'assurer la paix galactique, est d'attaquer et de soumettre toutes les espèces intelligentes et agressives, afin de rendre la galaxie aussi paisible que leur planète.'''
 
 SP_GEORGE
 George
 SP_GEORGE_GAMEPLAY_DESC
-'''A single, childish Telepathic entity consisting of tons of centipedeoids.
-Préfére les planètes avec toundra.
+'''Entité unique émergente, télépathique, constituée de millions de centipèdes.
+Préfèrent les Planètes avec toundra.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4642,18 +4642,18 @@ Préfére les planètes avec toundra.
 '''
 
 SP_GEORGE_DESC
-'''George is a single telepathic entity that consists of multiple mobile telepathic units.
+'''George est une entité unique télépathique, constituée de multiples organismes mobiles télépathiques.
 
 Description:
-The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
+Les organismes constituant George sont des centipèdes de 2.5m de long et 0.5m de hauteur, à la peau très lisse et dotés d'un groupe de 6 tentacules/antennes à l'avant du corps, afin de manipuler des objets. Ces organismes ne peuvent ni penser ni agir de leur propre chef, l'esprit de George résultant de la focalisation de toutes les communications télépathiques (sur toute distance) des unités qui le composent.
 '''
 
 
 SP_CRAY
 Cray
 SP_CRAY_GAMEPLAY_DESC
-'''Joyeux robots enthousiastes.
-Préfére les planètes stériles.
+'''Robots dévoués et enthousiastes.
+Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4668,11 +4668,11 @@ Préfére les planètes stériles.
 
 SP_CRAY_DESC
 '''Description:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
+Les Cray ressemblent à une grande boîte de plastique noir, lisse et brillant, aux coins arrondis, et qui mesure 6 mètres dans toutes les directions. Une longue tentacule métallique se déploie depuis chaque centre de quatre de ses faces (les deux restantes étant le dessus et le dessous), ces tentacules servant principalement pour la locomotion et le transport de lourdes charges. Le langage des Cray est transmis par ondes radio. Leur potentiel de simultanéité est impressionnant et peut ainsi accueillir une moyenne de quatre processus de pensée à la fois, rendant possible plus d'une conversation simultanément, voire même une multitude, pour un même individu.
 
-Social Structure:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
+Structure sociale:
+Les Cray sont organisés en société tribale. Chaque tribu se structure autour d'un Cray unique nommé Maître Forgeron, qui a la capacité de construire et d'entretenir les Cray. Du fait de leur physionomie maladroite, même un Maître Forgeron atteint très rarement la perfection, chaque tribu développant alors ses propres “caractéristiques raciales”, résultantes du travail idiosyncratique de son Maître Forgeron.
+Les décisions quotidiennes fonctionnant selon un système complexe de faveurs, tous Cray aidera avec enthousiasme son semblable si nécessaire et tous deux garderont exactement en mémoire la dette qui les unit. Bien que ce ne soit pas le moyen le plus efficace de gérer une économie, ce système induit qu'à l'intérieur d'une tribu, les Cray sont redevables ou obligés en faveurs par une grande proportion de la communauté. Cela cimente ainsi d'exceptionnels et indéfectibles liens sociaux, tout en contentant l'ensemble des Cray.
 '''
 
 
@@ -4680,7 +4680,7 @@ SP_ETTY
 Etty
 SP_ETTY_GAMEPLAY_DESC
 '''Plantes cybernétiques.
-Préfére les planètes désertiques.
+Préfèrent les Planètes désertiques.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4698,19 +4698,19 @@ Préfére les planètes désertiques.
 
 SP_ETTY_DESC
 '''Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong sent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
+Les Etty sont une race évoluée peu commune de plantes intelligentes. Ils peuvent atteindre une taille d'un demi-mètre et possèdent un cerveau central logé dans un grand bulbe. Les Etty dégagent un très fort parfum, qu'ils peuvent modifier à volonté. Cette adaptation évolutive leur permet de se protéger des herbivores en imitant l'odeur de grands prédateurs. Les Etty sont également dotés d'un sens de l'odorat très performant.
 
-The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
+Les corps robotiques des Etty servent pour la locomotion, la vision, l'ouïe, et la manipulation d'objets. Un port de connexion relie ce corps robotique aux Etty, leur permettant ainsi de migrer d'un corps vers un autre sans nécessiter un déracinement douloureux. La forme du robot lui-même varie grandement selon sa fonction.
 
-Social Structure:
-The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
+Structure sociale:
+Les Etty sont excessivement respectueux et honorent immanquablement tous contrats ou accords passés. Leur culture est très élégante, civilisée et courtoise, mais également très repliée sur elle-même. Le système gouvernemental des Etty est une vraie démocratie dont les acteurs sont rigoureusement surveillés par une presse libre et puissante.
 '''
 
 
 SP_CYNOS
 Cynos
 SP_CYNOS_GAMEPLAY_DESC
-'''Walking plants sustained by a giant non-sentient mother plant.
+'''Végétaux mobiles entretenus par une plante-mère géante non-sensible.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4724,15 +4724,15 @@ SP_CYNOS_GAMEPLAY_DESC
 
 SP_CYNOS_DESC
 '''Description:
-The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
+Les Cynos sont les constituants d'une plante mère semblable à une agave de 90 mètres de haut. Ses énormes feuilles arborent une couleur bleu marine brillante, rayonnant le long d'un bulbe central formant le coeur de la plante. Le sytème racinaire étendu mais peu profond, développe des bourgeons qui grandissent à côté de la plante principale. Une seule de ces plantes peut vivre près de 5000 ans. De nombreuses "chambres d'élevage" se trouvent à l'intérieur des feuilles, dans lesquelles les Cynos "naissent" et se régénèrent.
 
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. Artificial substitutes for this feed are possible, but result in the infertility of the Cyno, thus all Cyno leaving their homeworld become infertile.
+Un Cyno naît comme un petit bulbe à l'intérieur d'une chambre d'élevage, atteint sa taille adulte en quelques jours, puis se détache. Il mesure alors 3.5 mètres de long, et prend sa forme définitive rectangulaire, légèrement arrondie, avec une sorte de vigne effilée à chaque coin. Ces membres sont utilisés pour la locomotion, l'alimentation tout comme le combat. Un Cyno est capable d'évoluer indépendamment durant environ 30 heures, avant de devoir se nourrir auprès de la plante-mère qui l'a vu naître. Les substituts artificiels à la nourriture de la plante-mère sont possibles, mais entraîne l'infertilité d'un Cyno. Par conséquent, tout Cyno quittant son monde natal devient stérile.
 
-Social Structure:
-Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
+Structure sociale:
+Les Cynos sont hautement coopératifs et altruistes quand il s'agit de protéger les plantes-mères. Ils s'organisent autour d'un consensus gouvernemental,  fortement influencé par les plantes-mères, qui même si elles sont dénuées de raison, communiquent avec les Cynos à un niveau chimique, conditionnant ainsi leur comportement.
 
-Reason for Staying:
-Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
+Raison de la sédentarité:
+Les Cynos ne peuvent ni se reproduire sans leur plante-mère d'origine, ni planter une graine de plante-mère ailleurs que dans leur monde natal.
 '''
 
 SP_PHINNERT
@@ -4751,20 +4751,20 @@ SP_PHINNERT_GAMEPLAY_DESC
 
 SP_PHINNERT_DESC
 '''Description:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile fliers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
+Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2 mètres. Leurs longs bras peuvent atteindre une envergure d'environ 2 fois leur taille. Ils sont munis d'une membrane de peau rétractable de chaque côté du corps, s'étendant du poignet à la cheville, et qui permet un vol totalement fonctionnel à faible gravité. Leur vol très agile leur rend possiblee la chasse de créatures insectoïdes, qu'ils attrapent à l'aide d'un appendice nasale préhensile. Tout comme les chauves-souris, les Phinnerts utilisent l'écholocalisation, même si leur sens est bien moins développé.
 
-Social Structure:
-Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
+Structure sociale:
+La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. Pour compenser, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
-Homeworld: 
-Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
+Monde natal: 
+Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent, est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
 SP_EGASSEM
 Egassem
 SP_EGASSEM_GAMEPLAY_DESC
-'''Super massive, nuclear, lava-dwelling, crystalline amoebas.
-Préfére les planètes infernales.
+'''Amibes cristallines massives, radioactives et magmatiques.
+Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[ULTIMATE_INDUSTRY]]
@@ -4790,8 +4790,8 @@ A world wracked with tidal and geological heating, as well as the more conventio
 SP_SSLITH
 Sslith
 SP_SSLITH_GAMEPLAY_DESC
-'''Créatures aquatiques souples mais plates.
-Préfére les planètes avec toundra.
+'''Créatures aquatiques plates et souples.
+Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4815,7 +4815,7 @@ The Sslith are organized into groups called Pnacra which serve as independent go
 SP_FIFTYSEVEN
 Fifty-seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
-'''Math-obsessed sky-serpents, singing planet-wide fractal songs.
+'''Serpents célestes mathématiciens, sifflant des mélopées fractales au sein d'une chorale planétaire.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4844,8 +4844,8 @@ The Fifty-Seven are in constant contact with most of the rest of their species, 
 SP_SETINON
 Setinon
 SP_SETINON_GAMEPLAY_DESC
-'''Cellules microscopiques, sensibles et individualistes.
-Préfére les planètes marécageuses.
+'''Cellules microscopiques sensibles et individualistes.
+Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4873,8 +4873,8 @@ A swamp world with a dense atmosphere and fairly dense biosphere.
 SP_NYMNMN
 Nymnmn
 SP_NYMNMN_GAMEPLAY_DESC
-'''Formes sage d'onde magnétique à l'échelle planétaire
-Préfére les planètes désertiques.
+'''Formes d'ondes magnétiques sensibles, intrication planétaire.
+Préfèrent les Planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4894,8 +4894,8 @@ SP_NYMNMN_DESC
 SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_GAMEPLAY_DESC
-'''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
-Préfére les planètes stériles.
+'''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète avec les courbes et les spirales les plus élaborées.
+Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4912,8 +4912,8 @@ SP_TRENCHERS_DESC
 SP_RAAAGH
 Raaagh
 SP_RAAAGH_GAMEPLAY_DESC
-'''Genre de félidé hautement territorial.
-Préfére les planètes type terrestre.
+'''Félidés hautement territoriaux.
+Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -4941,8 +4941,8 @@ There's not bit of land big enough for an individual Raaagh to live on that hasn
 SP_BEIGEGOO
 Beige Goo
 SP_BEIGEGOO_GAMEPLAY_DESC
-'''Insane, intensely private, planet-engulfing nanite swarm.
-Préfére les planètes irradiées.
+'''Essaim de nanorobots à propagation planétaire, farouche auto-protection.
+Préfèrent les Planètes irradiées.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -4960,8 +4960,8 @@ SP_BEIGEGOO_DESC
 SP_SILEXIAN
 Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
-'''Resplendissants robots jardiniers , abandonnés à leur sort.
-Préfére les planètes terrestres.
+'''Robots écologistes étincelants, abandonnés à leur sort.
+Préfèrent les Planètes de type terrestre.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -4990,8 +4990,8 @@ The Silexians were created by the Caretakers in order to increase the efficiency
 SP_KOBUNTURA
 Kobuntura
 SP_KOBUNTURA_GAMEPLAY_DESC
-'''Sentient magnetic dust formations with a fascination for building and construction.
-Préfére les planètes stériles.
+'''Formes sensibles de poussière magnétique, fascinées par la construction et l'infrastructure.
+Préfèrent les Planètes stériles.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -5013,8 +5013,8 @@ The Kobuntura have a guild system since ancient times, but one of the guilds, th
 SP_UGMORS
 Ugmors
 SP_UGMORS_GAMEPLAY_DESC
-'''Lava-dwelling yeast piles, which form temporary golems.
-Préfére les planètes infernales.
+'''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
+Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -5043,8 +5043,8 @@ The Ugmors homeworld is a rocky planet that rotates very quickly, (once every 3 
 SP_GISGUFGTHRIM
 '''Gis Guf Gthrim'''
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
-'''Shelled herbivores that live off a singular planets-sized colonial gel.
-Préfére les planètes toxiques.
+'''Herbivores à carapace vivant exclusivement à la surface d'une planète unique, recouverte par un organisme gélatineux parasitaire.
+Préfèrent les Planètes toxiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -5062,8 +5062,8 @@ SP_GISGUFGTHRIM_DESC
 SP_HIDDENGARDENER
 Hidden Gardener
 SP_HIDDENGARDENER_GAMEPLAY_DESC
-'''A sapient fungal network that tends its plant food from beneath
-Préfére les planètes type terrestre.
+'''Réseau fongique sensible, implantion et prédation souterraines.
+Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_STEALTH]]
@@ -5087,8 +5087,8 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 SP_ABADDONI
 Abaddoni
 SP_ABADDONI_GAMEPLAY_DESC
-'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
-Préfére les planètes infernales.
+'''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers. 
+Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -5112,8 +5112,8 @@ The entire Abaddonnian species lives in a dictatorship ruled by a sentient artif
 SP_ACIREMA
 Acirema
 SP_ACIREMA_GAMEPLAY_DESC
-'''Une race d'une puissance pratiquement illimité, qui ne peut pas survivre dans cet univers.
-Préfére les planètes irradiées.
+'''Une race d'une puissance quasi-illimitée, mais qui ne peut pas survivre dans cet univers.
+Préfèrent les Planètes irradiées.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
@@ -5145,8 +5145,8 @@ They can't stay here long enough to actually move to another planet and still su
 SP_OURBOOLS
 Ourbools
 SP_OURBOOLS_GAMEPLAY_DESC
-'''Nageurs aveugles geants qui "voit" la gravitation.
-Préfére les planètes océaniques.
+'''Organismes aquatiques géants et aveugles, s'orientant grâce à la perception de la gravitation.
+Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
@@ -5177,8 +5177,8 @@ The Ourbools find their sense of position via the regular movements of the 23 mo
 SP_VOLP
 Volp-Uglush
 SP_VOLP_GAMEPLAY_DESC
-'''Highly bureacratic, overcrowded burrowers.
-Préfére les planètes stériles.
+'''Organismes fouisseurs très organisés, à forte démographie.
+Préfèrent les Planètes stériles.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -5206,8 +5206,8 @@ Volp-Uglush are now too integrated and ingrown. They now totally lack the indepe
 SP_FURTHEST
 Furthest
 SP_FURTHEST_GAMEPLAY_DESC
-'''Paranoid three-headed, tripedal herbivores
-Prefer Tundra planets.
+'''Herbivores paranoïaques, à trois têtes et trois pattes.
+Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -5238,7 +5238,7 @@ The Furthest generally consider space travel far too dangerous for a sane being,
 SP_EXOBOT
 Exobot
 SP_EXOBOT_GAMEPLAY_DESC
-'''Robots semi-autonomes, conçu pour l'industrie sur des planètes stériles, irradiées et infernales.
+'''Robots semi-autonomes, conçus pour la production industrielle sur les planètes stériles, irradiées et infernales.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -5251,13 +5251,13 @@ SP_EXOBOT_GAMEPLAY_DESC
 '''
 
 SP_EXOBOT_DESC
-'''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''Bien que moins efficaces que des citoyens classiques, les Exobots peuvent coloniser les planètes inhospitalières, et y construire d'autres exobots.
 '''
 
 SP_EXPERIMENTOR
-Experimentor
+Expérimentateur
 SP_EXPERIMENTOR_GAMEPLAY_DESC
-'''Precursor mad scientists
+'''Scientifiques fous précurseurs.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[NO_INDUSTRY]]
@@ -5272,13 +5272,13 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''
 
 SP_EXPERIMENTOR_DESC
-'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
+'''Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'existence est dévouée à la recherche du savoir. Leur désir de découverte est sans égal, et ils n'ont aucun scrupule à considérer une galaxie entière comme un laboratoire pour leurs expériences.'''
 
 
 SP_SUPER_TEST
-Super Testers
+Super Testeurs
 SP_SUPER_TEST_GAMEPLAY_DESC
-'''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
+'''Les Super Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de Furtivité ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -6739,7 +6739,7 @@ DESC_VALUE_TEST
  quand la %1% est comprise entre %2% et %3%
 
 DESC_VALUE_TEST_NOT
- quand la %1% n'est pas comrise entre %2% et %3%
+ quand la %1% n'est pas comprise entre %2% et %3%
 
 DESC_CONTAINED_BY
  contenu(s) dans un objet%1%
@@ -10197,94 +10197,94 @@ Invincible'''
 #############################################################
 
 OPTIONS_PAGE_HOTKEYS
-Keyboard shortcuts
+Raccourcis clavier
 
 HOTKEYS_Z_COMBAT
-Combat window
+Fenêtre de combat
 
 HOTKEYS_MAP
-Map window
+Carte galactique
 
 HOTKEYS_GENERAL
-General shortcuts
+Raccourcis généraux
 
 HOTKEY_MAP_OPEN_CHAT
-Open chat window
+Ouvrir Messages
 
 HOTKEY_MAP_END_TURN
-End turn
+Fin de tour
 
 HOTKEY_MAP_RESEARCH
-Toggle research panel
+Menu de Recherche
 
 HOTKEY_MAP_DESIGN
-Toggle design panel
+Menu de Conception
 
 HOTKEY_MAP_PRODUCTION
-Toggle production panel
+Menu de Production
 
 HOTKEY_MAP_SIT_REP
-Toggle situation report
+Rapport de situation
 
 HOTKEY_MAP_MENU
-General menu
+Menu général
 
 HOTKEY_MAP_RETURN_TO_MAP
-Return to map window
+Retour à la carte
 
 HOTKEY_MAP_ZOOM_IN
-Zoom in
+Zoom avant
 
 HOTKEY_MAP_ZOOM_IN_ALT
-Zoom in (other shortcut)
+Zoom avant (autre raccourci)
 
 HOTKEY_MAP_ZOOM_OUT
-Zoom out
+Zoom arrière
 
 HOTKEY_MAP_ZOOM_OUT_ALT
-Zoom out (other shortcut)
+Zoom arrière (autre raccourci)
 
 HOTKEY_MAP_ZOOM_HOME_SYSTEM
-Switch to home system
+Centrer sur système natal
 
 HOTKEY_MAP_ZOOM_PREV_SYSTEM
-Switch to previous system
+Système précédent
 
 HOTKEY_MAP_ZOOM_NEXT_SYSTEM
-Switch to next system
+Système suivant
 
 HOTKEY_MAP_ZOOM_PREV_FLEET
-Switch to previous fleet
+Flotte précédente
 
 HOTKEY_MAP_ZOOM_NEXT_FLEET
-Switch to next fleet
+Flotte suivante
 
 HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET
-Switch to previous idle fleet
+Flotte stationnaire précédente
 
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
-Switch to next idle fleet
+Flotte stationnaire suivante
 
 HOTKEY_CUT
-Cut
+Couper
 
 HOTKEY_COPY
-Copy
+Copier
 
 HOTKEY_PASTE
-Paste
+Coller
 
 HOTKEY_SELECT_ALL
-Select All
+Tout sélectionner
 
 HOTKEY_DESELECT
-Deselect
+Désélectionner
 
 HOTKEY_FOCUS_PREV_WND
-Previous Control
+Champ précédent
 
 HOTKEY_FOCUS_NEXT_WND
-Next Control
+Champ suivant
 
 
 ################
@@ -10593,7 +10593,7 @@ Chiron
 Chort
 Chthon
 Ciryon
-CitlÄlin
+Citlālin
 Coatlicue
 Coccolino
 Collassa
