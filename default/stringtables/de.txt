@@ -182,7 +182,6 @@ Ohne Besitzer
 
 SD_SCOUT
 Kundschafter
-
 SD_SCOUT_DESC
 Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung.
 
@@ -206,141 +205,6 @@ Typ IV
 SD_MARK4_DESC
 Patrouillenfregatte mit verbesserten Laser.
 
-SD_MARK_A1
-Typ I
-
-SD_MARK_A2
-Typ II
-
-SD_MARK_A3
-Typ III
-
-SD_MARK_A3B
-Typ III B
-
-SD_MARK_A4
-Typ IV
-
-SD_MARK_A4B
-Typ IV B
-
-SD_MARK_A5
-Typ V
-SD_MARK5_DESC
-Patrouillenfregatte mit einfachen Laser.
-
-SD_MARK_A5B
-Typ V B
-
-SD_MARK_A6
-Typ VI
-SD_MARK6_DESC
-Patrouillenfregatte mit verbesserten Laser.
-
-SD_MARK_A6B
-Typ VI B
-
-SD_MARK_A7
-Typ VII
-SD_MARK7_DESC
-Patrouillenfregatte mit fortgeschrittenem Laser.
-
-SD_MARK_A7B
-Typ VII B
-
-SD_MARK_A8
-Typ VIII
-SD_MARK8_DESC
-Patrouillenfregatte mit ausgezeichnetem Laser.
-
-SD_MARK_A8B
-Typ VIII B
-
-SD_MARK_B_ROBOTIC1
-Roboter I
-SD_MARK_B_ROBOTIC1_DESC
-Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_B_ROBOTIC2
-Roboter II
-SD_MARK_B_ROBOTIC2_DESC
-Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_B_ROBOTIC3
-Roboter III
-SD_MARK_B_ROBOTIC3_DESC
-Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_B_ROBOTIC4
-Roboter IV
-SD_MARK_B_ROBOTIC4_DESC
-Fortgeschrittener Schlachtkreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_A_ORGANIC1
-Organisch I
-SD_MARK_A_ORGANIC1_DESC
-Organischer Rumpf mit einfacher Laserbewaffnung
-
-SD_MARK_A_ORGANIC2
-Organisch II
-SD_MARK_A_ORGANIC2_DESC
-Organischer Rumpf mit Laserbewaffnung
-
-SD_MARK_A_ORGANIC3
-Organisch III
-SD_MARK_A_ORGANIC3_DESC
-Organischer Rumpf mit Laserbewaffnung
-
-SD_MARK_A_ORGANIC4
-Organisch IV
-SD_MARK_A_ORGANIC4_DESC
-Organischer Rumpf mit Laserbewaffnung
-
-SD_MARK_B_ORGANIC1
-Organisch V
-SD_MARK_B_ORGANIC1_DESC
-Organischer Rumpf mit einfacher Plasmabewaffnung.
-
-SD_MARK_C_ENDO1
-Endomorph I
-SD_MARK_C_ENDO1_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO2
-Endomorph II
-SD_MARK_C_ENDO2_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO3
-Endomorph III
-SD_MARK_C_ENDO3_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO4
-Endomorph IV
-SD_MARK_C_ENDO4_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO5
-Endomorph V
-SD_MARK_C_ENDO5_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO6
-Endomorph VI
-SD_MARK_C_ENDO6_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO7
-Endomorph VII
-SD_MARK_C_ENDO7_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
-SD_MARK_C_ENDO8
-Endomorph VIII
-SD_ENDO8_DESC
-Fortgeschrittener endomorpher Kreuzer mit schwerer Bewaffnung und Panzerung um die Drecksarbeit zu erledigen.
-
 SD_GRAVITATING1
 Gravitierend I
 SD_GRAVITATING1_DESC
@@ -348,39 +212,37 @@ Massives Kriegsschiff bewaffnet und gepanzert mit der neusten Technologie. Preis
 
 SD_COLONY_SHIP
 Siedlungsschiff
-
 SD_COLONY_SHIP_DESC
 Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Siedlung zu bringen.
 
 SD_OUTPOST_SHIP
 Außenpostenschiff
-
 SD_OUTPOST_SHIP_DESC
 Unbewaffnetes Schiff, fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
 
 SD_COLONY_BASE
 Siedlungsbasis
-
 SD_COLONY_BASE_DESC
 Unbewaffnetes Schiff, nur fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_OUTPOST_BASE
 Außenpostenbasis
-
 SD_OUTPOST_BASE_DESC
 Unbewaffnetes Schiff, nur fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_TROOP_SHIP
 Truppentransporter
-
 SD_TROOP_SHIP_DESC
 Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
 
 SD_DRAGON_TOOTH
 Drachenzahn
-
 SD_DRAGON_TOOTH_DESC
 Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
+
+############
+# Monsters #
+############
 
 SM_MONSTER
 Monster
@@ -862,24 +724,6 @@ Die Klangdatei wird abgespielt, wenn die Maus sich über ein Systemsymbol bewegt
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Klangdatei wird abgespielt, wenn ein System Seitenfenster geöffnet wird.
 
-OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Klangdatei wird abgespielt, wenn ein Landwirtschaftsfokusknopf geklickt wird.
-
-OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Klangdatei wird abgespielt, wenn ein Industriefokusknopf geklickt wird.
-
-OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Klangdatei wird abgespielt, wenn ein Forschungsfokusknopf geklickt wird.
-
-OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Klangdatei wird abgespielt, wenn ein Bergbaufokusknopf gedrückt wird.
-
-OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Klangdatei wird abgespielt, wenn ein Handelsfokusknopf geklickt wird.
-
-OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Klangdatei wird abgespielt, wenn ein 'Ausgeglichener Fokus'-Knopf geklickt wird.
-
 OPTIONS_DB_UI_FONT
 Setzt die Schriftartdatei für reguläre Oberflächenschriften.
 
@@ -1154,6 +998,7 @@ Tested die 3D Kampfauflösung.
 OPTIONS_DB_LOAD
 Lädt einen angegebenen Einzelspielerspielstand.
 
+
 #################
 # File Dialog   #
 #################
@@ -1405,8 +1250,6 @@ GSETUP_CLUSTER
 Haufen
 GSETUP_ELLIPTICAL
 Elliptisch
-GSETUP_IRREGULAR
-Unregelmäßig
 GSETUP_RING
 Ring
 GSETUP_RANDOM
@@ -1485,6 +1328,10 @@ Aufgeben
 
 GAME_MENU_SAVE_FILES
 Speicherstände
+
+###########################
+# Save Game Dialog        #
+###########################
 
 ###########################
 # Game Options            #
@@ -1769,24 +1616,6 @@ Seitenfenster öffnen
 OPTIONS_SOUND_PLANET
 Planet anklicken
 
-OPTIONS_SOUND_FOCUS
-Fokus Klänge
-
-OPTIONS_SOUND_BALANCED
-Ausgeglichener Fokus
-
-OPTIONS_SOUND_FARMING
-Landwirtschaftsfokus
-
-OPTIONS_SOUND_INDUSTRY
-Industriefokus
-
-OPTIONS_SOUND_MINING
-Bergbaufokus
-
-OPTIONS_SOUND_RESEARCH
-Forschungsfokus
-
 OPTIONS_SOUND_LIST
 Listenklänge
 
@@ -1933,6 +1762,7 @@ Ausführliche Protokollierung zur Fehlersuche
 
 OPTIONS_VERBOSE_SITREP_DESC
 Statusberichte mit Fehlermeldungen
+
 
 ##################
 # CombatSetupWnd #
@@ -2605,13 +2435,9 @@ Es ist zu beachten, dass Schiffe nur auf einen Planeten mit einer Werft gebaut w
 PRODUCTION_QUEUE_ITEM_LOCATION
 An %1%
 
-
 ###############
 #  DesignWnd  #
 ###############
-
-DESIGN_ADD_TEST
-Testentwurf hinzufügen
 
 DESIGN_NAME_DEFAULT
 Eigener Schiffsentwurf
@@ -2633,9 +2459,6 @@ Fertige Entwürfe
 
 DESIGN_WND_SAVED_DESIGNS
 Gespeicherte Entwürfe
-
-DESIGN_WND_TEMPLATES
-Entwurfsvorlagen
 
 DESIGN_WND_PART_PALETTE_TITLE
 Schiffsteile
@@ -2659,6 +2482,12 @@ DESIGN_DELETE
 Entwurf löschen
 
 
+################
+## Statistics ##
+################
+    
+
+
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
@@ -2680,6 +2509,7 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''
 
 # types of things that can be shown in encyclopedia
+
 ENC_SHIP_PART
 Schiffskomponente
 
@@ -2769,9 +2599,6 @@ Gebäude
 
 ENC_SYSTEM
 System
-
-END_FIELD
-Feld
 
 ENC_INDEX
 Encyclopedia Index
@@ -2867,15 +2694,11 @@ Kampf bei %1% in Runde %2%:
 ENC_COMBAT_ATTACK_STR
 Runde %4%: %1% greift %2% an und verursacht %3% Schaden
 
-ENC_COMBAT_ATTACK_DESTROY_STR
-Runde %4%: %1% greift %2% an und zerstört das Ziel durch %3% Schaden
-
 ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
 
-
 ###########################################
-# ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
@@ -2928,7 +2751,7 @@ MINING_FOCUS_TITLE
 Mining Focus
 MINING_FOCUS_TEXT
 '''Mining Focus is currently disabled.'''
-#The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus
@@ -3108,6 +2931,8 @@ Aggressive:
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
+# Functional list; do not translate. Used for logging during universe creation
+
 ####################
 # Combat Messages  #
 ####################
@@ -3231,6 +3056,11 @@ Zuklappen
 EXPAND_ALL
 Aufklappen
 
+#####################
+## Objects Columns ##
+#####################
+
+
 ####################
 ## Filters Dialog ##
 ####################
@@ -3315,9 +3145,9 @@ FILTERS
 Filter
 
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing these sitreps to be
-## presented in the SitrepPanel in the order set below.  Sitreps not specified below will appear in
-## the SitrepPanel following those below.
+## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
+## these sitreps to be presented in the SitrepPanel in the order set below.
+## Sitreps not specified below will appear in the SitrepPanel following those below.
 
 ## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
 SITREP_PRIORITY_ORDER
@@ -3351,7 +3181,6 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FLEET_ARRIVED_AT_DESTINATION'''
 ## END OF SITREP_PRIORITY_ORDER
-
 
 SITREP_SHIP_BUILT
 %shipdesign% '%ship%' wurde im %system% fertiggestellt.
@@ -3676,7 +3505,7 @@ Besetzte Planeten:
 ENVIRONMENTAL_PREFERENCES
 Umwelt Präferenzen:
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_HUMAN
 Menschen
@@ -4589,6 +4418,7 @@ SP_SUPER_TEST_DESC
 ####                   S P E C I A L S                   ####
 #############################################################
 
+
 GAIA_SPECIAL
 Gaia
 
@@ -4619,54 +4449,6 @@ PANOPTICON_SPECIAL_DESC
 '''Increases empire-wide [[encyclopedia DETECTION_TITLE]] by 10. Also increases [[encyclopedia DETECTION_RANGE_TITLE]] on this planet by 75.
 
 Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
-
-TUNNELS_SPECIAL
-Natürliche Tunnel
-
-TUNNELS_SPECIAL_DESCRIPTION
-'''Increases max Population by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-
-Dieser Planet besitzt ein Netzwerk natürlicher Tunnel; dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.'''
-
-TECTONIC_INSTABILITY_SPECIAL
-Tektonische Instabilität
-
-TECTONIC_INSTABILITY_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Prevents [[tech GRO_SUBTER_HAB]] from increasing population capacity.
-
-Dieser Planet ist tektonisch instabil.  Regelmässige Erdbeben, Tsunamis, Vulkanausbrüche und unvorhersehbare Fundamenteinbrüche erschweren das Errichten von Gebäuden und die Entwicklung der Infrastruktur.'''
-
-SOLID_CORE_SPECIAL
-Erkalteter Kern
-
-SOLID_CORE_SPECIAL_DESC
-'''Reduces max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
-
-Der Kern dieses Planetens ist erkaltet und starr und hat deshalb nur ein sehr schwaches magnetisches Feld. Der Sonnenwind des Sterns erreicht die Oberfläche des Planeten nahezu unabgeschwächt und beeinträchtigt Gesundheit seiner Bevölkerung.'''
-
-HIGH_AXIAL_TILT_SPECIAL
-Starke Achsenauslenkung
-
-HIGH_AXIAL_TILT_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20.
-
-Die Rotationsachse dieses Planeten ist im Verhältnis zu seiner orbitalen Ebene stark ausgelenkt. Die jahreszeitlichen Wetterveränderungen sind besonders ausgeprägt und die Entwicklung der Infrastruktur deutlich eingeschränkt.'''
-
-SLOW_ROTATION_SPECIAL
-Sehr langsame Rotation
-
-SLOW_ROTATION_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Decreases max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
-
-Dieser Planet rotiert sehr langsam um seine Achse, wodurch lange Tage und Nächte entstehen. Der Wachstum der Infrastruktur und die Bevölkerungskapazität sind vermindert.'''
-
-TIDAL_LOCK_SPECIAL
-Zeitlich gekoppelte Rotation
-
-TIDAL_LOCK_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 10, but [[encyclopedia INDUSTRY_TITLE]] is increased by 0.2 per Population when Focus is set to Industry.
-
-Die Rotation des Planetens ist an den Stern gekoppelt, um den er kreist. Ein Tag des Planeten hat die gleiche Dauer wie sein Jahr, und die eine Hälfte des Planeten ist ständig erhellt, die andere Hälfte in ewiger Nacht. Das Wachstum der Infrastruktur ist eingeschränkt, aber sobald sie besteht, geniesst die Industrie die Vorteile der lokal stabilen Oberflächenbedingungen.'''
 
 ECCENTRIC_ORBIT_SPECIAL
 Exzentrischer Orbit
@@ -4879,16 +4661,6 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
-METALOIDS_SPECIAL
-High-Energy Metaloids
-METALOIDS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
-
 STARSPAWN_NEBULA_SPECIAL
 Starspawn Nebula
 STARSPAWN_NEBULA_SPECIAL_DESC
@@ -5041,7 +4813,6 @@ FOCUS_PROTECTION
 Schutz
 FOCUS_PROTECTION_DESC
 Verstärkt Schilder, Verteidigungen und Truppen.
-
 
 # MeterTypes
 
@@ -5285,7 +5056,6 @@ Sonstiges
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
 
-
 # ValueRef
 
 DESC_VAR_PLANET
@@ -5415,17 +5185,9 @@ DESC_VAR_FIGHTERWEAPONRANGE
 
 DESC_VAR_TRADESTOCKPILE
 Handelslager
-DESC_VAR_MINERALSTOCKPILE
-Rohstofflager
-DESC_VAR_FOODSTOCKPILE
-Nahrungslager
 
 DESC_VAR_TRADEOUTPUT
 Handelsproduktion
-DESC_VAR_FOODOUTPUT
-Nahrungsproduktion
-DESC_VAR_MINERALOUTPUT
-Rohstoffproduktion
 DESC_VAR_INDUSTRYOUTPUT
 Industrieproduktion
 DESC_VAR_RESEARCHOUTPUT
@@ -5488,8 +5250,7 @@ Fokus
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
 
-DESC_VAR_ALLOCATEDFOOD
-allocated food
+
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -6446,14 +6207,6 @@ Psychologische Architektur
 CON_ARCH_PSYCH_DESC
 Die Form eines Gebäudes oder Wohnraums sollte sich nicht nur an den physikalischen Einschränkungen der Baumaterialien orientieren; der psychologische Effekt auf einen Bewohner innen oder einen Betracher außen ist das, was einen Entwurf erfolgreich macht, und nicht die Stärke einer Mauer oder die Festigkeit eines Fundaments.
 
-CON_INFRA_ECOL
-Verbesserte Infrastruktur
-
-CON_INFRA_ECOL_DESC
-'''Erhöht die Geschwindigkeit von Schiffen auf Sternstraßen um 20, wenn sie sich in einer Entfernung von 50 uus eines Planeten des Imperiums befinden.
-
-Der grundlegende Aufbau einer neu errichteten planetaren Siedlung scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Siedlung einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Siedlung errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Siedlung unabdingbar.'''
-
 CON_ORGANIC_STRC
 Organische Gebäude
 
@@ -6461,14 +6214,6 @@ CON_ORGANIC_STRC_DESC
 '''Gebäude aus unbelebten Materialien sind funktional und gelegentlich auch elegant, und Gebäude aus organischen, aber toten Materialien sind oft simpel und günstig. Wirklich lebendige Gebäude dagegen können ohne weitere Arbeit in ihre schlussendliche Form aufgezogen werden und sich außerdem im Falle einer Beschädigung zu einem gewissen Grad selbst wieder in Stand setzen. Sie können außerdem die Bedingungen in ihren inneren Räumen regulieren oder sich während ihres Heranwachsens und auch danach an veränderliche Umweltbedingungen nach Bedarf anpassen.
 
 A shutter functions as both a solid wall and open window, according to the desire of its user. A room may be refurnished to serve an entirely new purpose, within the limits of the space available. This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic. Eliminating the need for demolition and rebuilding permits much greater infrastructure flexibility and efficiency. Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.'''
-
-CON_METRO_INFRA
-Metroplex Infrastruktur
-
-CON_METRO_INFRA_DESC
-'''Erhöht die [[encyclopedia INFRASTRUCTURE_TITLE]] eines Planeten um 10. Dies gilt nicht für Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].
-
-Wenn die gesamte Oberfläche einer Welt bebaut ist, muss die weitere Entwicklung über- und unterhalb der bestehenden Gebäude stattfinden. Die Stabilität untergrabener oder überbauter Gebäude muss gewährleistet sein; Versorgungs- und Transportwege müssen hinsichtlich steigender Bevölkerungsdichten überdacht werden. Desweiteren müssen neuartige stilistische und funktionale Aspekte bedacht werden, um sicherzustellen, dass die neuen Ebenen auch mit den alten im Gesamtbild zusammenpassen.'''
 
 CON_ARCH_MONOFILS
 Monofilament Architektur
@@ -6691,6 +6436,7 @@ SHP_ENRG_BOUND_MAN_DESC
 '''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
 
 This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
+
 SHP_SOLAR_CONT
 Solar Containment
 
@@ -6807,14 +6553,6 @@ CON_ORBITAL_CON_DESC
 '''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] in allen Kolonien und Außenposten um 1.
 
 Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mikrogravitation dagegen ist diese beliebig. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen für die errichtbaren Gebäudetypen und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. Außerdem muss die Inneneinrichtung von Räumen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhängiges Innendesign zu entwerfen, werden diese Räume anfänglich hauptsächlich von Personen verwandt, die an die Oberfläche von Planeten gewohnt und angepasst sind. Ein stufenweiser Übergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.'''
-
-CON_SUBTER_CONST
-Unterirdische Konstruktion
-
-CON_SUBTER_CONST_DESC
-'''Erhöht die [[encyclopedia INFRASTRUCTURE_TITLE]] um 10. Dieser Bonus wirkt nicht bei Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].
-
-Wenn der Platz knapp wird, ist die Fähigkeit abwärts oder aufwärts zu bauen ein unschätzbarer Vorteil. So können ganze unterirdische Städte und Anlagen errichtet und gewartet werden, wie es auch möglich wird planetenweite unterirdische Transportwege aufzubauen.'''
 
 CON_CONC_CAMP
 Arbeitslager
@@ -8026,6 +7764,7 @@ Fassungsvermögen: %1%
 
 PART_DESC_STRENGTH
 Stärke: %1%
+# Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
 '''Angriffsschaden: %1%'''
@@ -9025,12 +8764,6 @@ NARROW_EP
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Mittelmässige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
 
-STANDARD_COLONY_SUPPLY_LABEL
-'''%2% Mittelmässige Siedlungversorgung'''
-
-STANDARD_OUTPOST_SUPPLY_LABEL
-'''%2% Mittelmässige Außenpostenversorgung'''
-
 GOOD_ENVIRONMENT_LABEL
 '''%1% Gute Umgebung'''
 
@@ -9048,9 +8781,6 @@ ENV_ENCAPSUL_LABEL
 
 SELF_SUSTAINING_LABEL
 '''Self-Sustaining'''
-
-TUNNELS_LABEL
-'''Unterirdische Tunnel/Wohnanlagen Bonus'''
 
 GAIA_LABEL
 '''Gaia Bonus'''
@@ -9181,14 +8911,15 @@ XENOPHOBIC_LABEL_TRITH_OTHER
 XENOPHOBIC_LABEL_EAXAW_OTHER
 '''Xenophobic Harassment: Eaxaw'''
 
+
 #############################################################
 ####                       T A G S                       ####
 #############################################################
 
 ## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census popup, and specifies order in which they will be displayed.
+## in Census pop-up, and specifies order in which they will be displayed.
 ## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.  
+## since those won't be displayed in the census anyway.
 
 ## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
 CENSUS_TAG_ORDER
@@ -9226,6 +8957,52 @@ Telepathic
 
 ORBITAL
 Orbital
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+AI_CAPITOL_NAMES_BEGINNER
+'''Ivory Tower
+Nunnery
+Monastery
+Orphanage Planet'''
+
+AI_CAPITOL_NAMES_TURTLE
+'''Citadel
+Prison World'''
+
+AI_CAPITOL_NAMES_CAUTIOUS
+'''Bastion of the Brave,
+Stronghold'''
+
+AI_CAPITOL_NAMES_TYPICAL
+'''Haven
+Free Trade Zone'''
+
+AI_CAPITOL_NAMES_AGGRESSIVE
+'''Royal Demesne
+Imperial Court'''
+
+AI_CAPITOL_NAMES_MANIACAL
+'''Throne of Heaven,
+Glorious Revolutionary Planning Center, '''
+
+### End of Capital Names Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+
+################
+## Name Lists ##
+################
 
 STAR_GROUP_WORDS
 '''Alpha
@@ -9278,39 +9055,3 @@ STAR_GROUP_CHARS
 χ
 ψ
 ω'''
-
-
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
-
-
-### Translator Note: the formatting of capitol name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capitol Name list include more or fewer names than are provided below in the EN stringtable
-
-### Beginning of AI Aggression Level Capitol Name Lists
-AI_CAPITOL_NAMES_BEGINNER
-'''Ivory Tower
-Nunnery
-Monastery
-Orphanage Planet'''
-
-AI_CAPITOL_NAMES_TURTLE
-'''Citadel
-Prison World'''
-
-AI_CAPITOL_NAMES_CAUTIOUS
-'''Bastion of the Brave,
-Stronghold'''
-
-AI_CAPITOL_NAMES_TYPICAL
-'''Haven
-Free Trade Zone'''
-AI_CAPITOL_NAMES_AGGRESSIVE
-'''Royal Demesne
-Imperial Court'''
-
-AI_CAPITOL_NAMES_MANIACAL
-'''Throne of Heaven,
-Glorious Revolutionary Planning Center, '''
-### End of Capitol Names Lists
