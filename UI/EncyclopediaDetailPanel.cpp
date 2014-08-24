@@ -1610,13 +1610,13 @@ namespace {
         GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
         // ships of this design
-        std::vector<TemporaryPtr<Ship> > all_ships = Objects().FindObjects<Ship>();
         std::vector<TemporaryPtr<const Ship> > design_ships;
-        for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = all_ships.begin();
-             ship_it != all_ships.end(); ++ship_it)
+        for (std::map<int, TemporaryPtr<UniverseObject> >::iterator
+             ship_it = Objects().ExistingShipsBegin();
+             ship_it != Objects().ExistingShipsEnd(); ++ship_it)
         {
-            TemporaryPtr<const Ship> ship = *ship_it;
-            if (ship->DesignID() == design_id)
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(ship_it->second);
+            if (ship && ship->DesignID() == design_id)
                 design_ships.push_back(ship);
         }
         if (!design_ships.empty()) {
