@@ -1478,7 +1478,7 @@ private:
 };
 
 DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
+    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE | PINABLE ),
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0)
@@ -2600,7 +2600,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Y part_palette_top = detail_top;//ClientHeight() - part_palette_height;
     GG::Y main_height = ClientHeight() - main_top;//part_palette_top - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE);
+    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
     AttachChild(m_detail_panel);
     m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 

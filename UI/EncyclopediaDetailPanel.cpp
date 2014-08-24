@@ -479,6 +479,7 @@ void EncyclopediaDetailPanel::DoLayout() {
         m_other_icon->SizeMove(ul, lr);
     }
 
+    PositionButtons();
     MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
 

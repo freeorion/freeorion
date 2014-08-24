@@ -132,7 +132,8 @@ protected:
 
     //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
-    void            InitButtons();
+    void            InitButtons();                  //!< called to create the buttons, withtout positioning them
+    void            PositionButtons();              //!< called to position the buttons
     //@}
 
     bool                    m_resizable;      //!< true if the window is able to be resized
