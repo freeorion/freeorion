@@ -71,14 +71,16 @@ namespace {
 }
 
 CUIButton::CUIButton(const std::string& str) :
-    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
+    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str,
+           ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
-
-CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover) :
-    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
+CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
+                     const GG::SubTexture& rollover) :
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(),
+           GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1)
 {
@@ -275,8 +277,11 @@ void CUIArrowButton::RenderUnpressed() {
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
-    StateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), format, ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO, style, GG::INTERACTIVE),
+CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
+                               GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
+    StateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), format,
+                ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
+                style, GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_mouse_here(false)
 {
@@ -453,7 +458,7 @@ namespace {
 ///////////////////////////////////////
 // class CUIScroll::ScrollTab
 ///////////////////////////////////////
-CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, 
+CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
                                 GG::Clr border_color) : 
     Button(GG::X(orientation == GG::VERTICAL ? 0 : 2),
            GG::Y(orientation == GG::VERTICAL ? 2 : 0),
@@ -673,6 +678,7 @@ void CUIDropDownList::DisableDropArrow()
 void CUIDropDownList::EnableDropArrow()
 { m_render_drop_arrow = true; }
 
+
 ///////////////////////////////////////
 // class CUIEdit
 ///////////////////////////////////////
@@ -707,6 +713,7 @@ void CUIEdit::Render() {
     Edit::Render();
     SetColor(color);
 }
+
 
 ///////////////////////////////////////
 // class CUIMultiEdit
@@ -1024,6 +1031,7 @@ void CUIToolBar::Render() {
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
+
 ///////////////////////////////////////
 // class SpeciesSelector
 ///////////////////////////////////////
@@ -1143,6 +1151,7 @@ void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
         SpeciesChangedSignal(EMPTY_STRING);
 }
 
+
 ///////////////////////////////////////
 // class EmpireColorSelector
 ///////////////////////////////////////
@@ -1202,6 +1211,7 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
         Logger().errorStream() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
 }
 
+
 ///////////////////////////////////////
 // class ColorSelector
 ///////////////////////////////////////
@@ -1256,6 +1266,7 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
+
 ///////////////////////////////////////
 // class FileDlg
 ///////////////////////////////////////
@@ -1281,6 +1292,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     SetThreeButtonDlgOKString(UserString("OK"));
     SetThreeButtonDlgCancelString(UserString("CANCEL"));
 }
+
 
 //////////////////////////////////////////////////
 // ProductionInfoPanel
@@ -1453,6 +1465,7 @@ void ProductionInfoPanel::Draw(GG::Clr clr, bool fill) {
                       CORNER_RADIUS, false, false, false, true, fill);
 }
 
+
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
@@ -1498,6 +1511,7 @@ void MultiTurnProgressBar::Render() {
     }
 }
 
+
 //////////////////////////////////////////////////
 // FPSIndicator
 //////////////////////////////////////////////////
@@ -1517,6 +1531,7 @@ void FPSIndicator::Render() {
 
 void FPSIndicator::UpdateEnabled()
 { m_enabled = GetOptionsDB().Get<bool>("show-fps"); }
+
 
 //////////////////////////////////////////////////
 // ShadowedTextControl
