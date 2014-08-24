@@ -324,6 +324,18 @@ std::size_t TabBar::CurrentTabIndex() const
 Clr TabBar::TextColor() const
 { return m_text_color; }
 
+void TabBar::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+{
+    if (move < 0 && m_right_button && !m_right_button->Disabled()) {
+        RightClicked();
+        return;
+    }
+    if (move > 0 && m_left_button && !m_left_button->Disabled()) {
+        LeftClicked();
+        return;
+    }
+}
+
 void TabBar::SizeMove(const Pt& ul, const Pt& lr)
 {
     Pt old_size = Size();
@@ -464,7 +476,7 @@ bool TabBar::EventFilter(Wnd* w, const WndEvent& event)
 {
     if (event.Type() == WndEvent::LButtonDown ||
         event.Type() == WndEvent::RButtonDown)
-        MoveChildUp(m_left_right_button_layout);
+    { MoveChildUp(m_left_right_button_layout); }
     return false;
 }
 

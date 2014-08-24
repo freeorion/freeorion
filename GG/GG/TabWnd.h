@@ -130,43 +130,43 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
+    virtual Pt      MinUsableSize() const;
 
     /** Returns true iff NumWnds() == 0. */
-    bool Empty() const;
+    bool            Empty() const;
 
     /** Returns the number of tabs currently in this TabWnd. */
-    std::size_t NumWnds() const;
+    std::size_t     NumWnds() const;
 
     /** Returns the Wnd currently visible in the TabWnd, or 0 if there is none. */
-    Wnd* CurrentWnd() const;
+    Wnd*            CurrentWnd() const;
 
     /** Returns the index into the sequence of Wnds in this TabWnd of the Wnd
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
-    std::size_t  CurrentWndIndex() const;
+    std::size_t     CurrentWndIndex() const;
     //@}
 
     /** \name Mutators */ ///@{
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
         for uniqueness).  Returns the index at which \a wnd is placed. */
-    std::size_t AddWnd(Wnd* wnd, const std::string& name);
+    std::size_t     AddWnd(Wnd* wnd, const std::string& name);
 
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, inserting it at
         the \a index location within the sequence.  \a name can be used later
         to remove the Wnd (\a name is not checked for uniqueness).  Not range
         checked. */
-    void InsertWnd(std::size_t index, Wnd* wnd, const std::string& name);
+    void            InsertWnd(std::size_t index, Wnd* wnd, const std::string& name);
 
     /** Removes and returns the first Wnd previously added witht he name \a
         name from the sequence of Wnds in this TabWnd, or 0 if no such Wnd is
         found. */
-    Wnd* RemoveWnd(const std::string& name);
+    Wnd*            RemoveWnd(const std::string& name);
 
     /** Sets the currently visible Wnd in the sequence to the Wnd in the \a
         index position within the sequence.  Not range checked. */
-    void SetCurrentWnd(std::size_t index);
+    void            SetCurrentWnd(std::size_t index);
     //@}
 
     mutable WndChangedSignalType WndChangedSignal; ///< The Wnd change signal object for this TabWnd
@@ -178,18 +178,18 @@ public:
 protected:
     /** \name Accessors */ ///@{
     /** Returns the TabBar at the top of this TabWnd. */
-    const TabBar* GetTabBar() const;
+    const TabBar*                       GetTabBar() const;
 
     /** Returns the OverlayWnd in this TabWnd. */
-    const OverlayWnd* GetOverlayWnd() const;
+    const OverlayWnd*                   GetOverlayWnd() const;
 
     /** Returns the set of Wnds currently controlled by this TabWnd, indexed
         by name. */
-    const std::map<std::string, Wnd*>& WndNames() const;
+    const std::map<std::string, Wnd*>&  WndNames() const;
     //@}
 
 private:
-    void TabChanged(std::size_t tab_index, bool signal);
+    void    TabChanged(std::size_t tab_index, bool signal);
 
     TabBar*                     m_tab_bar;
     OverlayWnd*                 m_overlay;
@@ -219,46 +219,47 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
+    virtual Pt      MinUsableSize() const;
 
     /** Returns true iff NumWnds() == 0. */
-    bool Empty() const;
+    bool            Empty() const;
 
     /** Returns the number of tabs currently in this TabWnd. */
-    std::size_t NumTabs() const;
+    std::size_t     NumTabs() const;
 
     /** Returns the index into the sequence of tabs in this TabBar of the tab
         currently selected.  NO_TAB is returned if there is no tab currently
         selected. */
-    std::size_t CurrentTabIndex() const;
+    std::size_t     CurrentTabIndex() const;
 
     /** Returns the color used to render the text in this TabBar. */
-    Clr TextColor() const;
+    Clr             TextColor() const;
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
-    virtual void DoLayout();
-    virtual void Render();
+    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
+    virtual void    SizeMove(const Pt& ul, const Pt& lr);
+    virtual void    DoLayout();
+    virtual void    Render();
 
     /** Adds a tab called \a name to the sequence of tabs in this TabBar.  \a
         name can be used later to remove the tab (\a name is not checked for
         uniqueness).  Returns the index at which the tab is placed. */
-    std::size_t AddTab(const std::string& name);
+    std::size_t     AddTab(const std::string& name);
 
     /** Adds tab to the sequence of tabs in this TabBar, inserting it at the
         \a index location within the sequence.  \a name can be used later to
         remove the tab (\a name is not checked for uniqueness).  Not range
         checked. */
-    void InsertTab(std::size_t index, const std::string& name);
+    void            InsertTab(std::size_t index, const std::string& name);
 
     /** Removes the first tab previously added witht he name \a name from the
         sequence of tab in this TabBar. */
-    void RemoveTab(const std::string& name);
+    void            RemoveTab(const std::string& name);
 
     /** Sets the current tab in the sequence to the tab in the \a index
         position within the sequence.  Not range checked. */
-    void SetCurrentTab(std::size_t index);
+    void            SetCurrentTab(std::size_t index);
     //@}
 
     mutable TabChangedSignalType TabChangedSignal; ///< The tab change signal object for this TabBar
@@ -272,16 +273,16 @@ public:
 
 protected:
     /** \name Accessors */ ///@{
-    const Button* LeftButton() const;
-    const Button* RightButton() const;
+    const Button*   LeftButton() const;
+    const Button*   RightButton() const;
     //@}
 
     /** \name Mutators */ ///@{
-    virtual bool EventFilter(Wnd* w, const WndEvent& event);
+    virtual bool    EventFilter(Wnd* w, const WndEvent& event);
 
     /** Brings the currently-selected tab button to the top within the tab
         button group. */
-    void RaiseCurrentTabButton();
+    void            RaiseCurrentTabButton();
     //@}
 
 private:
