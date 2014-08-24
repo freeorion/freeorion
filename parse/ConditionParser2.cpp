@@ -79,7 +79,7 @@ namespace {
                         >> -(   parse::label(Empire_token) >>   int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>      int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_token) >>     int_value_ref [ _c = _1 ] )
-                     ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
+                    ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
                 ;
 
             enqueued4
@@ -88,21 +88,23 @@ namespace {
                         >> -(   parse::label(Empire_token) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_token) >>       int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_token) >>      int_value_ref [ _c = _1 ] )
-                     ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
+                    ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
                 ;
 
             design_has_part
                 =    tok.DesignHasPart_
                 >    parse::label(Low_token)   > int_value_ref [ _a = _1 ]
                 >    parse::label(High_token)  > int_value_ref [ _b = _1 ]
-                >    parse::label(Class_token) > tok.string [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
+                >    parse::label(Class_token) > tok.string
+                [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
                 ;
 
             design_has_part_class
                 =    tok.DesignHasPartClass_
                 >    parse::label(Low_token)   > int_value_ref [ _a = _1 ]
                 >    parse::label(High_token)  > int_value_ref [ _b = _1 ]
-                >    parse::label(Class_token) > parse::enum_parser<ShipPartClass>() [ _val = new_<Condition::DesignHasPartClass>(_a, _b, _1) ]
+                >    parse::label(Class_token) > parse::enum_parser<ShipPartClass>()
+                [ _val = new_<Condition::DesignHasPartClass>(_a, _b, _1) ]
                 ;
 
             in_system
