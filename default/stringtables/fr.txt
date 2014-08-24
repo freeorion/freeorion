@@ -3342,7 +3342,7 @@ COMBAT_SUMMARY_DESTROYED
 Pertes:
 
 ###########################################
-# ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
@@ -4342,7 +4342,7 @@ Adaptabilité environnementale :
 FOCUS_PREFERENCE
 Focus favori : 
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_HUMAN
 Humain
@@ -4843,7 +4843,7 @@ The Fifty-Seven are in constant contact with most of the rest of their species, 
 
 SP_SETINON
 Setinon
-SSP_SETINON_GAMEPLAY_DESC
+SP_SETINON_GAMEPLAY_DESC
 '''Cellules microscopiques, sensibles et individualistes.
 Préfére les planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5628,7 +5628,7 @@ STAR_NEUTRON
 STAR_BLACK
 Trou Noir
 STAR_NONE
- 
+
 INVALID_STAR_TYPE
 Type d'étoile inconnu
 
@@ -6677,7 +6677,7 @@ DESC_SUPPLY_CONNECTED_RESOURCE_NOT
 
 DESC_ORDERED_BOMBARDED
  qui est bombardé par un objet %1%
- 
+
 DESC_ORDERED_BOMBARDED_NOT
  qui n'est pas bombardé par un objet %1%
 
@@ -6740,7 +6740,7 @@ DESC_VALUE_TEST
 
 DESC_VALUE_TEST_NOT
  quand la %1% n'est pas comrise entre %2% et %3%
- 
+
 DESC_CONTAINED_BY
  contenu(s) dans un objet%1%
 
@@ -8752,7 +8752,7 @@ PART_DESC_DIRECT_FIRE_STATS
 '''Dommages à l'attaque : %1%'''
 
 ## TEMPORARILY HIDDEN
-# Rate of Fire : %2% shots/turn
+# Rate of Fire: %2% shots/turn
 # Range: %3%
 
 PART_DESC_LR_STATS
@@ -13598,4 +13598,3 @@ MONSTER_NAMES
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
-
