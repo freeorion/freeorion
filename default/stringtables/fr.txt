@@ -380,7 +380,7 @@ SD_ORG_COLONY_SHIP_DESC
 Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Incubateur Orbital.
 
 SD_CRYONIC_COLONY_SHIP
-Colon Galactique Cryogénic
+Colon Galactique Cryogenic
 SD_CRYONIC_COLONY_SHIP_DESC
 Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Chantier Spatial.
 
@@ -392,67 +392,67 @@ Astronef organique non-armé pouvant transporter plusieurs millions de citoyens 
 SD_AST_CRYOCOL_SHIP
 Colon Galactique Cryo-Astéroïdal
 SD_AST_CRYOCOL_SHIP_DESC
-Vaisseau astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, possédant un Chantier Spatial, et dans un système avec un Processeur Astéroïdal.
+Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, possédant un Chantier Spatial, et dans un système avec un Processeur Astéroïdal.
 
 SD_OUTPOST_SHIP
 Pionnier Galactique
 SD_OUTPOST_SHIP_DESC
-Vaisseau pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable.
+Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable.
 
 SD_ORG_OUTPOST_SHIP
 Pionnier Galactique Organic
 SD_ORG_OUTPOST_SHIP_DESC
-Vaisseau organique pionnier pouvant créer un avant-poste dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un Incubateur Orbital.
+Astronef organique pionnier pouvant créer un avant-poste dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un Incubateur Orbital.
 
 SD_COLONY_BASE
 Colon Stellaire
 SD_COLONY_BASE_DESC
-Vaisseau non-armé pouvant créer une colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
+Astronef non-armé pouvant créer une colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
 
 SD_CRYONIC_COLONY_BASE
-Colon Stellaire Cryogénic
+Colon Stellaire Cryogenic
 SD_CRYONIC_COLONY_BASE_DESC
-Vaisseau non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
+Astronef non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
 
 SD_OUTPOST_BASE
 Pionnier Stellaire
 SD_OUTPOST_BASE_DESC
-Vaisseau pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
+Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_TROOP_DROP
 Troop Drop
 SD_TROOP_DROP_DESC
-Transporte 2 unités de [[encyclopedia TROOP_TITLE]] terrestres et d'équipement pouvant être utilisés pour envahir une planète dans un même système.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
 SD_SMALL_TROOP_SHIP_DESC
-Transporte 2 unités de [[encyclopedia TROOP_TITLE]] terrestres et d'équipement pouvant être utilisés pour envahir une planète.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_TROOP_SHIP
 Troop Ship
 SD_TROOP_SHIP_DESC
-Transporte 6 unités de [[encyclopedia TROOP_TITLE]] terrestres et d'équipement pouvant être utilisés pour envahir une planète.
+Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_ORG_TROOP_SHIP
 Organic Troop Ship
 SD_ORG_TROOP_SHIP_DESC
-Transporte 8 unités de [[encyclopedia TROOP_TITLE]] terrestres et d'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent construits que sur des planètes possédant un Incubateur Orbital.
+Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un Incubateur Orbital.
 
 SD_ENG_TROOP_SHIP
 Energy Troop Ship
 SD_ENG_TROOP_SHIP_DESC
-Transporte 2 unités de [[encyclopedia TROOP_TITLE]] terrestres et d'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_ENG1
 Energy 1
 SD_ENG1_DESC
-Astronef de combat compact et rapide. Ce vaisseau ne peut être construit dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Astronef de combat compact et rapide. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_ENG2
 Energy 2
 SD_ENG2_DESC
-Astronef de combat compact et rapide, avec armement amélioré. Ce vaisseau ne peut être construit dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Astronef de combat compact et rapide, avec armement amélioré. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
@@ -562,30 +562,30 @@ Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroya
 SM_SNOWFLAKE_1
 Petit Flocon de Neige
 SM_SNOWFLAKE_1_DESC
-'''Un petit et inoffensif monstre de l'espace, avec une exceptionnelle vision.
+'''Un petit et inoffensif monstre de l'espace, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
 
 SM_SNOWFLAKE_2
 Flocon de Neige
 SM_SNOWFLAKE_2_DESC
-'''Un monstre de l'espace de poids léger, avec une exceptionnelle vision.
+'''Un monstre de l'espace de poids léger, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
 
 SM_SNOWFLAKE_3
 Grand Flocon de Neige
 SM_SNOWFLAKE_3_DESC
 '''Un formidable monstre de l'espace de poids léger.
 
-Environnement favori: Petites planètes. Les nids de Flocons de neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
 
 SM_PSIONIC_SNOWFLAKE
 Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs ayant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spoatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs ayant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire.'''
 
 SM_JUGGERNAUT_1
 Petit Mastodonte
@@ -987,24 +987,6 @@ Adresse du fichier son à jouer lorsque le curseur survole une icône système.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Adresse du fichier son à jouer à l'ouverture du panneau latéral de détail d'un système stellaire.
-
-OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Agriculture est cliqué.
-
-OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Industrie est cliqué.
-
-OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Recherche est cliqué.
-
-OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Exploitation minière est cliqué.
-
-OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Commerce est cliqué
-
-OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Adresse du fichier son à jouer lorsqu'un bouton focus Général est cliqué.
 
 OPTIONS_DB_UI_FONT
 Adresse du fichier ressource fixant la police de caractères (standard) de l'interface utilisateur.
@@ -1771,6 +1753,9 @@ Texte
 OPTIONS_FONT_TITLE
 Titres des fenêtres
 
+SHOW_FONT_TEXTURES
+Show Font Textures
+
 OPTIONS_TECH_SPACING
 Espacement entre technologies
 
@@ -2031,24 +2016,6 @@ Ouverture du panneau latéral
 
 OPTIONS_SOUND_PLANET
 Sélection de planète
-
-OPTIONS_SOUND_FOCUS
-Sons de focalisation
-
-OPTIONS_SOUND_BALANCED
-Privilégier l'équilibre de l'usage des ressources
-
-OPTIONS_SOUND_FARMING
-Privilégier l'Agriculture
-
-OPTIONS_SOUND_INDUSTRY
-Privilégier l'Industrie
-
-OPTIONS_SOUND_MINING
-Privilégier l'Exploitation minière
-
-OPTIONS_SOUND_RESEARCH
-Privilégier la Recherche
 
 OPTIONS_SOUND_LIST
 Sons des listes
@@ -2616,7 +2583,7 @@ FW_FLEET_SHIELD_SUMMARY
 Bouclier global de la flotte (moyenne des boucliers des astronefs qui la composent)
 
 FW_FLEET_STRUCTURE_SUMMARY
-Résistance globale de la flotte (moyenne des résistances des astronefs qui la composent)
+Résistance globale de la flotte (somme des résistances des astronefs qui la composent)
 
 FW_FLEET_DAMAGE_SUMMARY
 Dommage global de la flotte (somme des dommages des astronefs qui la composent)
@@ -2946,8 +2913,11 @@ Déplacer en bas de la file
 #  DesignWnd  #
 ###############
 
-DESIGN_ADD_TEST
-Ajouter un prototype
+SHIP_DESIGN_FILES
+Design Files
+
+DESIGN_SAVE
+Save Design File
 
 DESIGN_NAME_DEFAULT
 Modèle d'astronef personnalisé
@@ -2962,16 +2932,13 @@ DESIGN_WND_STARTS
 Démarrage de conception
 
 DESIGN_WND_HULLS
-Coques nues
+Coques
 
 DESIGN_WND_FINISHED_DESIGNS
-Modèles enregistrés
+Finalisés
 
 DESIGN_WND_SAVED_DESIGNS
-Modèles sauvegardés
-
-DESIGN_WND_TEMPLATES
-Exemples de modèles
+Enregistrés
 
 DESIGN_WND_PART_PALETTE_TITLE
 Équipements d'astronef
@@ -3082,12 +3049,12 @@ ENC_SPECIES_PLANET_TYPE_SUITABILITY
 %1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
-'''%1% peut être colonisée par l'(les) espèce(s) suivante(s) :  
+'''%1% est propice à la colonisation par les espèces suivantes :  
 
 '''
 
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
-'''%1% ne peut être colonisée par l'(les) espèce(s) suivante(s). Toute tentative de colonisation échouera dès la venue sur la planète ou la colonie finira par y dépérir. 
+'''%1% n'est pas propice à la colonisation par les espèces suivantes. Soit toute tentative échouera dès l'approche de la planète, soit la colonie finira par y dépérir plus ou moins rapidement. 
 
 '''
 
@@ -3223,6 +3190,9 @@ ENC_SHIP
 [Partie - Astronefs]
 
 ENC_MONSTER
+Monstre
+
+ENC_MONSTER_TYPE
 Type de monstres
 
 MONSTER_TYPES
@@ -3423,15 +3393,15 @@ GROWTH_FOCUS_TEXT
 
 Une colonie privilégiant la Croissance augmente le plafond de population des seules colonies qui lui sont reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
 
-Un Monde natal privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci sont peuplées par la même espèce.
+Un Monde Natal privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci sont peuplées par la même espèce.
 
 Lorsqu'elles privilégient la Croissance, les colonies installées sur des planètes présentant une Particularité de Croissance favorable à leur espèce (organique, lithique, robotique), n'aident à croître que les colonies peuplées par des espèces du même genre.'''
 
 MINING_FOCUS_TITLE
-Focus Exploitation minière
+Focus Extraction minière
 MINING_FOCUS_TEXT
-'''Option pour le moment désactivée'''
-#Privilégier l'exploitation minière n'est possible que sur les planètes présentant des Particularités rares. Privilégier l'exploitation minière procure un bonus de production significatif.
+'''Option pour le moment désactivée.'''
+#Privilégier l'extraction minière n'est possible que sur les planètes présentant des Particularités rares. Privilégier l'extraction minière procure un bonus de production significatif.
 
 TRADE_FOCUS_TITLE
 Focus Commerce
@@ -3441,7 +3411,7 @@ TRADE_FOCUS_TEXT
 PROTECTION_FOCUS_TITLE
 Focus Protection
 PROTECTION_FOCUS_TEXT
-'''Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs de [[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la résistance de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.'''
+'''Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la résistance de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.'''
 
 INDUSTRY_TITLE
 Industrie
@@ -3457,7 +3427,7 @@ Les points de production sont alloués aux projets selon leur position dans de l
 RESEARCH_TITLE
 Recherche
 RESEARCH_TEXT
-'''La Recherche, mesurée en points de Recherche, est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). La découverte de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 points de recherche et requiert 5 tours, un maximum de 4 points de recherche seulement par tour peut lui être consacré. 
+'''La Recherche, mesurée en points de Recherche, est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 points de recherche et requiert 5 tours, un maximum de 4 points de recherche seulement par tour peut lui être consacré. 
 Les points de recherche sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les points de recherche restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
 
 À l'inverse de l'Industrie, la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire.'''
@@ -3510,26 +3480,26 @@ DETECTION_RANGE_TEXT
 Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection. Le réglage 'Indicateur d'échelle des distances" permet d'afficher l'échelle des cercles de détection (en uu également). '''
 
 TROOP_TITLE
-Troupes
+Infanterie
 TROOP_TEXT
-'''Le terme 'Troupes' désigne toutes sortes de forces militaires capables d'opérer à la surface d'une planète.
+'''Le terme 'Infanterie' désigne toutes sortes de forces militaires capables d'opérer à la surface d'une planète.
 
-L'indicateur 'Troupes' d'une planète représente la puissance des troupes de défense terrestre. L'empire envahisseur doit envoyer des troupes supérieures en nombre à cet indicateur pour parvenir à conquérir la planète.'''
+L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète.'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 ORGANIC_SPECIES_TEXT
-'''Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.'''
+'''Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.'''
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 LITHIC_SPECIES_TEXT
-'''Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.'''
+'''Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.'''
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 ROBOTIC_SPECIES_TEXT
-'''Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.'''
+'''Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
@@ -3558,57 +3528,57 @@ Xénophobe
 XENOPHOBIC_SPECIES_TEXT
 '''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de Métabolisme Autosuffisant considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
-Les espèces xénophobes débutent avec les [[tech CON_CONC_CAMP]] disponibles.'''
+Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.'''
 
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-'''Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement à son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité). À aucun autre moment de son trajet sur la Voie spatiale parcourue, il n'est consommé de carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, le carburant d'un astronef se régénérera lentement si et seulement si cet astronef se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou l'espace intersidéral).'''
+'''Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité). À aucun autre moment de son trajet sur la Voie spatiale parcourue, il n'est consommé de carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant si et seulement si cet astronef se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).'''
 
 SUPPLY_TITLE
 Approvisionnement
 SUPPLY_TEXT
-'''Les lignes d'approvisionnement sont rendues visibles par la coloration des voies spatiales avec la couleur de l'empire. Les planètes reliées par ces lignes peuvent échanger des ressources matérielles de sorte que la capacité de production d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée par une telle ligne pour y construire astronefs ou structures. Les lignes d'approvisionnement peuvent également servir à remplir les réservoirs de [[encyclopedia FUEL_TITLE]] des astronefs.
+'''Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes peuvent échanger des ressources matérielles de sorte que la capacité de Production d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures. Les lignes d'approvisionnement peuvent également servir à ravitailler les astronefs en [[encyclopedia FUEL_TITLE]].
 
-L'indicateur 'Approvisionnement' d'une planète représente le nombre de voies spatiales que l'approvisionnement peut atteindre.'''
+L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies spatiales que l'approvisionnement peut emprunter.'''
 
 
 FLEET_UPKEEP_TITLE
-Entretient des flottes
+Entretien des flottes
 FLEET_UPKEEP_TEXT
-'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] et [[shippart CO_OUTPOST_POD]] par contre, augmentent de 6% pour chaque planète que l'empire possède.'''
+'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] et [[shippart CO_OUTPOST_POD]] augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
 
 EVACUATION_TITLE
 Évacuation
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disappears into the vastness of space.
-During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
+'''La construction d'un projet d'[[buildingtype BLD_EVACUATION]] retire toute la population d'une planète. À chaque tour, une partie de la population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[encyclopedia SUPPLY_TITLE]], l'une d'entre elles sera choisie au hasard et la population y sera déplacée. Si aucune planète appropriée n'est disponible, la population évacuée disparaîtra dans l'espace infini.
+Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le processus d'[[buildingtype BLD_EVACUATION]] est terminé.'''
 
 AI_LEVELS_TITLE
-AI Aggression Levels
+Niveaux d'Agressivité de l'IA
 
 AI_LEVELS_TEXT
-'''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
+'''Les niveaux d'agressivité de l'IA correspondent plus ou moins aux niveaux de difficulté, mais pas entièrement. Ils varient sur des aspects comme la prise de risque et l'hostilité, avec des seules limitations étant appliquées au niveaux les plus bas. Alors qu'ils peuvent toujours se comporter de manière intelligente, les plus bas niveaux d'agressivité sont plus faciles à gérer, même s'il n'est pas nécessairement plus aisé de les soumettre totalement. Les niveaux les plus agressifs font bien mieux à mesure que la partie progresse.
 
-AIs rename their capital planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
-The current prefixes are:
+L'IA renomme sa capitale d'empire au tour 1, en y ajoutant un préfixe. Une fois que vous avez découvert son système natal, vous pouvez déterminer sa personnalité.
+Liste des préfixes:
 
-Beginner: 
+Balbutiant: 
 [[AI_CAPITOL_NAMES_BEGINNER]]
 
-Turtle: 
+Pusillanime: 
 [[AI_CAPITOL_NAMES_TURTLE]]
 
-Cautious: 
+Prudent: 
 [[AI_CAPITOL_NAMES_CAUTIOUS]]
 
-Moderate: 
+Entreprenant: 
 [[AI_CAPITOL_NAMES_TYPICAL]]
 
-Aggressive: 
+Aggressif: 
 [[AI_CAPITOL_NAMES_AGGRESSIVE]]
 
-Maniacal: 
+Maniaque: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
 AI_ERROR_MSG
@@ -3676,7 +3646,7 @@ TURN_PROGRESS_PHASE_COMBAT
 Résolution des combats
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Production et croissance
+Production et Croissance
 
 TURN_PROGRESS_PHASE_WAITING
 En attente d'autres joueurs
@@ -3685,7 +3655,7 @@ TURN_PROGRESS_PHASE_ORDERS
 Exécution des ordres
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
-Colonisation, invasion et mise au rebut
+Colonisation, Invasion et Démantèlement
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Téléchargment du nouvel état du jeu
@@ -3703,10 +3673,10 @@ TURN_BEGIN
 Début du tour %1%
 
 ERROR_PROCESSING_SERVER_MESSAGE
-Error processing message from server
+Erreur de traitement du message serveur
 
 ERROR_EARLY_TURN_UPDATE
-Received unexpected turn update from server.
+Réception d'un état de tour inattendu de la part du serveur.
 
 ########################
 # Messages Panel       #
@@ -3716,7 +3686,7 @@ MESSAGES_PANEL_TITLE
 Messages
 
 MESSAGES_PANEL_INTRO
-Status et messages du chat
+Statut et messages du chat
 
 ########################
 # Players List         #
@@ -3726,13 +3696,13 @@ PLAYERS_LIST_PANEL_TITLE
 Empires
 
 PLAYING_TURN
-Jouer
+Joue
 
 RESOLVING_COMBAT
 Combat
 
 WAITING
-Attendre
+Attend
 
 ####################
 ## Objects Window ##
@@ -3758,55 +3728,70 @@ COLUMN_SORT_NONE
 %1%
 
 COLUMN_SORT_ASCENDING
-%1% â–³
+%1% △
 
 COLUMN_SORT_DESCENDING
-%1% â–½
+%1% ▽
 
 METERS_SUBMENU
-Meters
+Indicateurs
 
 ID
 ID
 
 NAME
-Name
+Nom
 
 OWNER
-Owner
+Empire
 
 SPECIES
-Species
+Espèce
+
+BUILDING_TYPE
+Type de Structure
+
+FOCUS
+Focus
+
+PREFERRED_FOCUS
+Focus favori
 
 OBJECT_TYPE
 Type
 
 CREATION_TURN
-Creation Turn
+Créé Tour
 
 AGE
-Age
+Âge
 
 TURNS_SINCE_FOCUS_CHANGE
-Turns Since Focus Change
+Tours depuis Focus Modif.
 
 PRODUCED_BY
-Produced By Empire ID
+Produit par Empire ID
+
+SYSTEM_ID
+ID Système
 
 DESIGN_ID
-Design ID
+ID Conception
 
 FINAL_DEST
-Final Destination ID
+ID Destination Finale
 
 NEXT_SYSTEM
-Next System ID
+ID Système Suiv.
 
 PREV_SYSTEM
-Previous System ID
+ID Système Préc.
 
 LAST_TURN_BATTLE_HERE
-Last Turn Battle Here
+Dern. Tour Bataille ici
+
+LAST_TURN_ACTIVE_IN_BATTLE
+Dern. Tour Bataille
 
 SIZE_AS_DOUBLE
 Size As Number
@@ -3815,7 +3800,7 @@ DISTANCE_FROM_ORIGINAL_TYPE
 Distance From Original Planet Type
 
 NEXT_TURN_POP_GROWTH
-Next Turn Population Growth
+Prochain Tour Croiss. Pop.
 
 
 ####################
@@ -3850,19 +3835,19 @@ CONDITION_STATIONARY
 Stationnaire
 
 CONDITION_CANCOLONIZE
-Espèce capable de coloniser
+Espèce pouvant coloniser
 
 CONDITION_CANPRODUCESHIPS
-Espèce capable de produire des astronefs
+Espèce pouvant produire astronefs
 
 CONDITION_HOMEWORLD
-Monde d'origine
+Monde Natal
 
 CONDITION_HASSPECIAL
-Has Special
+Ayant une Particularité
 
 CONDITION_HASTAG
-Has Tag
+Ayant un tag
 
 CONDITION_SPECIES
 Nom de l'espèce
@@ -3874,13 +3859,13 @@ CONDITION_PLANETTYPE
 Type de planète
 
 CONDITION_FOCUSTYPE
-Focus Setting
+Réglage Focus
 
 CONDITION_STARTYPE
 Type d'étoile
 
 CONDITION_METERVALUE
-Object Property Value
+Valeur Indicateur Objet
 
 #############################################################
 ####                    S I T   R E P                    ####
@@ -3953,42 +3938,42 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION'''
 ## END OF SITREP_PRIORITY_ORDER
 
 SITREP_SHIP_BUILT
-Le %shipdesign% '%ship%' a été produit dans %system%.
+Dans %system% : un %shipdesign%, baptisé '%ship%', a été produit.
 SITREP_SHIP_BUILT_LABEL
 Astronef produit
 
 SITREP_SHIP_BATCH_BUILT
-%rawtext% %shipdesign% ont été produits dans %system%.
+Dans %system% : %rawtext% %shipdesign% ont été produits.
 SITREP_SHIP_BATCH_BUILT_LABEL
 Lot d'astronefs produit
 
 SITREP_BUILDING_BUILT
-%building% a été construit sur %planet%.
+Sur %planet% : la structure %building% a été construite.
 SITREP_BUILDING_BUILT_LABEL
 Structure achevée
 
 SITREP_TECH_RESEARCHED
-La technologie %tech% a été découverte.
+La technologie %tech% a été assimilée.
 SITREP_TECH_RESEARCHED_LABEL
-Technologie découverte
+Technologie assimilée
 
 SITREP_TECH_UNLOCKED
-La technologie %tech% a été débloquée et peut désormais être découverte grâce à la recherche
+La technologie %tech% a été débloquée et peut désormais être assimilée grâce à la Recherche.
 SITREP_TECH_UNLOCKED_LABEL
 Technologie débloquée
 
 SITREP_SHIP_PART_UNLOCKED
-L'équipement %shippart% a été débloqué et peut désormais participer à la conception de modèles d'astronef
+L'équipement %shippart% a été débloqué et peut désormais être utilisé lors de la conception de modèles d'astronef.
 SITREP_SHIP_PART_UNLOCKED_LABEL
 Équipement d'astronef débloqué
 
 SITREP_SHIP_HULL_UNLOCKED
-La coque %shiphull% a été débloquée et peut désormais participer à la conception de modèles d'astronef
+La coque %shiphull% a été débloquée et peut désormais être utilisée lors de la conception de modèles d'astronef.
 SITREP_SHIP_HULL_UNLOCKED_LABEL
 Coque d'astronef débloquée
 
 SITREP_BUILDING_TYPE_UNLOCKED
-La structure %buildingtype% a été débloquée et peut désormais être construite
+La structure %buildingtype% a été débloquée et peut désormais être construite.
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Structure débloquée
 
@@ -3997,79 +3982,79 @@ Un %combat% s'est déroulé dans le système %system%.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat dans système
 SITREP_COMBAT_SYSTEM_ENEMY
-At %system%: there was %combat% with %empire%.
+Un %combat% avec %empire% s'est déroulé dans %system%.
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
-Combat at System
+Combat dans système
 COMBAT
 Combat
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
-Un objet a été détruit dans %system%.
+Dans %system% : un objet non-identifié a été détruit.
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
-At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed.
+Dans %system% : un %shipdesign% (l'astronef '%ship%' de %empire%) a été détruit.
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
-Own Ship Destroyed
+Astronef détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Le %shipdesign% '%ship%' de %empire% a été détruit dans %system%.
+Dans %system% : un %shipdesign% (l'astronef '%ship%' de %empire%) a été détruit.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef impérial détruit
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-Un %shipdesign% a été détruit dans %system%.
+Dans %system% : un %shipdesign% a été détruit.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
-Astronef inconnu détruit
+Astronef libre détruit
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
-La %fleet% %empire% a été détruite dans %system%.
+Dans %system% : la flotte '%fleet%' de %empire% a été détruite.
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotte impériale détruite
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
-La flotte %fleet% a été détruite dans %system%.
+Dans %system% : la flotte '%fleet%' a été détruite.
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
-Flotte inconnue détruite
+Flotte libre détruite
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
-La planète %planet% de %system% appartenant à %empire% a été détruite.
+Dans %system% : la planète %planet% (appartenant à %empire%) a été détruite!
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète impériale détruite
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
-La planète %planet% de %system% a été détruite.
+Dans %system% : la planète %planet% a été détruite!
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète libre détruite
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-La structure %building% de la planète %planet% de %system% a été détruite.
+Sur %planet% dans %system% : la structure %building% de %empire% a été détruite.
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Structure impériale détruite
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-La structure %building% sur la planète %planet% du système %system% a été détruite.
+Sur %planet% dans %system% : la structure %building% a été détruite.
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Structure libre détruite
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
-Un objet a été endommagé à %system%.
+Dans %system% : un objet non-identifié a été endommagé.
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Le %shipdesign% '%ship%' de %empire% a été endommagé dans %system%.
+Dans %system% : le %shipdesign% '%ship%' de %empire% a été endommagé.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef impérial endommagé
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-Un %shipdesign% a été endommagé dans %system%.
+Dans %system% : un %shipdesign% a été endommagé.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
-Astronef libre détruit
+Astronef libre endommagé
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
-La planète %planet% de %system%, appartenant à %empire%, a été bombardée.
+Dans %system% : la planète %planet% appartenant à %empire% a été bombardée.
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète impériale bombardée
 
@@ -4079,13 +4064,13 @@ SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète libre bombardée
 
 SITREP_GROUND_BATTLE
-Une bataille s'est déroulée sur la planète %planet%.
+Sur %planet% : une bataille terrestre s'est déroulée.
 SITREP_GROUND_BATTLE_LABEL
 Bataille au sol
 SITREP_GROUND_BATTLE_ENEMY
-On %planet%: there was a ground battle with %empire%.
+Sur %planet% : une bataille terrestre s'est déroulée contre %empire%.
 SITREP_GROUND_BATTLE_ENEMY_LABEL
-Ground Battle
+Bataille au sol
 
 SITREP_PLANET_CAPTURED
 La planète %planet% a été capturée par %empire%.
@@ -4093,7 +4078,7 @@ SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-La colonie établie sur %planet% a été détruite.
+La colonie établie sur %planet% a été détruite!
 SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
 Colonie détruite
 
@@ -4103,47 +4088,47 @@ SITREP_PLANET_COLONIZED_LABEL
 Planète colonisée
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-La flotte %fleet% a atteint le système %system%.
+La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Flotte arrivée à destination
+Flotte inconnue arrivée à destination
 
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-At %system%: a %shipdesign% arrived.
+Un %shipdesign% a atteint le système %system%.
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Monster Arrived
-
-SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-Des %fleet% ont atteint %system%.
-SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monstre arrivé à destination
 
+SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
+Des %fleet% (%rawtext%) ont atteint %system%.
+SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Monstres arrivés à destination
+
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
-At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+Un %shipdesign% (l'astronef '%ship%' de %empire%) a atteint le système %system%.
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Own Ship Arrived
+Astronef arrivé à destination
 
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
-At %system%: the %empire% fleet '%fleet%' (%rawtext%x %shipdesign) has arrived.
+La flotte '%fleet%' de %empire% (%rawtext%x %shipdesign) a atteint le système %system%.
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
-Own Fleet Arrived
+Flotte arrivée à destination
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-La flotte %fleet% de %empire% a atteint %system%.
+La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte impériale arrivée à destination
 
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
-At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+Un %shipdesign% (astronef '%ship%' de %empire%) a atteint le système %system%.
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Foreign Ship Arrived
+Astronef étranger arrivé à destination
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-La flotte %fleet% de %empire% a atteint %system%.
+La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
 
 SITREP_EMPIRE_ELIMINATED
-L'empire %empire% a été détruit.
+L'empire %empire% a été détruit!
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire détruit
 
@@ -4153,79 +4138,79 @@ SITREP_VICTORY_LABEL
 Victoire
 
 SITREP_VICTORY_DESTRUCTION
-Pour finir, le fléau mystérieux qui ravageait violemment la galaxie a été éradiqué. Ce qui mettait en péril la galaxie a été vaincu mais son origine demeurera à jamais inconnue.
+Enfin, le fléau violent et mystérieux qui tourmentait la galaxie a été éradiqué. Cette menace qui mettait en péril la galaxie a été vaincu, mais son origine demeure une énigme, tapie à jamais dans les profondeurs insondables du Cosmos.
 SITREP_VICTORY_DESTRUCTION_LABEL
-Victoire par éradication
+Victoire par Éradication
 
 SITREP_VICTORY_CAPTURE
-Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. 
+Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez. 
 SITREP_VICTORY_CAPTURE_LABEL
-Victoire par capture
+Victoire par Capture
 
 SITREP_VICTORY_TECH
-Votre empire a découvert la Singularité transcendantale. Vous gagnez la partie !
+Votre Empire a découvert la Singularité Transcendantale. Vous gagnez la partie !
 SITREP_VICTORY_TECH_LABEL
-Victoire technologique
+Victoire Technologique
 
 SITREP_VICTORY_BIO
-Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, ont rencontré la fin qu'ils méritaient sous les coups de votre formidable flotte de guerre.
+Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, ont rencontré leur inévitable destin sous la puissance de feu de votre formidable flotte de guerre.
 SITREP_VICTORY_BIO_LABEL
-Victoire biologique
+Victoire Biologique
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %planet%!
+ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-poste %species%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
-Experimentor Monster Spawn
+Apparition de monstre expérimentateur
 
 EFFECT_ANCIENT_SHIP
-%predefinedshipdesign% découvert dans les antiques ruines de %planet%.
+Un %predefinedshipdesign% a été découvert dans les Ruines Ancestrales de la planète %planet%.
 EFFECT_ANCIENT_SHIP_LABEL
-Découverte d'astronef
+Découverte d'astronef ancestral
 
 EFFECT_ANCIENT_SHIP_RUMORS
-Rumors spread through the galaxy that a %predefinedshipdesign% was revealed to a xenoarcheology expedition at Ancient Ruins!
+Une rumeur se propageant dans toute la galaxie prétend qu'un %predefinedshipdesign% a été découvert par une expédition xénoarchéologique au sein de Ruines Ancestrales!
 EFFECT_ANCIENT_SHIP_RUMORS_LABEL
-Ancient Ruins Ship Rumors
+Rumeur d'astronef ancestral
 
 EFFECT_ANCIENT_BUILDING
-%buildingtype% découvert dans les Ruines Antiques de %planet%.
+Un %buildingtype% a été découvert dans les Ruines Ancestrales de la planète %planet%!
 EFFECT_ANCIENT_BUILDING_LABEL
-Découverte d'une structure
+Découverte de structure ancestrale
 
 EFFECT_ANCIENT_BUILDING_RUMORS
-Rumors spread through the galaxy that a %buildingtype% was revealed to a xenoarcheology expedition at Ancient Ruins!
+Une rumeur se propageant dans toute la galaxie prétend qu'un %buildingtype% a été découvert par une expédition xénoarchéologique au sein de Ruines Ancestrales!
 EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
-Ancient Ruins Building Rumors
+Rumeur de structure ancestrale
 
 EFFECT_ANCIENT_TECH
-%tech% découvert dans les Ruines Antiques de %planet%.
+Une Technologie %tech% a été découverte dans les Ruines Ancestrales de la planète %planet%!
 EFFECT_ANCIENT_TECH_LABEL
-Découverte de technologie
+Découverte de technologie ancestrale
 
 EFFECT_ANCIENT_TECH_RUMORS
-Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology expedition at Ancient Ruins!
+Une rumeur se propageant dans toute la galaxie prétend qu'une technologie %tech% a été découverte par une expédition xénoarchéologique au sein de Ruines Ancestrales!
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
-Ancient Ruins Tech Rumors
+Rumeur de technologie ancestrale
 
 EFFECT_CONC_CAMP_COMLETE
-L'épuration ethnique est achevée sur %planet%.
+L'épuration ethnique est achevée sur la planète %planet%.
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Épuration ethnique
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-'%ship%' a été réparé dans %building% sur %planet%.
+L'astronef '%ship%' a été réparé par la structure %building% sur la planète %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Réparation en cale sèche
+Réparation Astroport
 
 EFFECT_MONSTER_SPAWNING
-Un %predefinedshipdesign% a frayé dans %system%!
+Un %predefinedshipdesign% est apparu dans le système %system%!
 EFFECT_MONSTER_SPAWNING_LABEL
-Frai de monstre
+Apparition de monstre
 
 EFFECT_GAIAN_TERRAFORM
-La Gaia %planet% s'est spontanément terraformée pour s'adapter à ses habitants.
+La planète %planet% à Particularité Gaia s'est spontanément terraformée pour s'adapter à ses habitants.
 EFFECT_GAIAN_TERRAFORM_LABEL
-Terraformation spontanée
+Terraformation Gaia
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
@@ -4233,29 +4218,29 @@ EFFECT_TERRAFORM_LABEL
 Terraformation
 
 EFFECT_STARVATION
-La famine sévit sur %planet%.
+La famine sévit sur la planète %planet%.
 EFFECT_STARVATION_LABEL
 Famine
 
 EFFECT_TAME_MONSTER_HATCHED
-Un %predefinedshipdesign% apprivoisé est disponible sur %planet%.
+Un %predefinedshipdesign% apprivoisé est disponible sur la planète %planet%.
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Éclosion de monstre
 
 EFFECT_TAME_MONSTER_MATURED
-Un %predefinedshipdesign% apprivoisé a mûri vers une forme plus puissante dans le système %system%.
+Un %predefinedshipdesign% apprivoisé a évolué vers une forme plus puissante dans le système %system%.
 EFFECT_TAME_MONSTER_MATURED_LABEL
-Monstre grandi
+Mutation de monstre
 
 EFFECT_GATEWAY_VOID_DESTROY
-Flotte %fleet% détruite par %buildingtype% à %planet%.
+La structure %buildingtype% a détruit la flotte %fleet% sur la planète %planet%.
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
 Destruction par Portail du Vide
 
 EFFECT_DERELICT_MINERALS
-Vingt unités de minerai ont été récupérées sur une épave abandonnée dans %system%.
+20 unités de minerai ont été récupérées sur une épave abandonnée dans le système %system%.
 EFFECT_DERELICT_MINERALS_LABEL
-Recupération de minerai
+Découverte de minerai
 
 EFFECT_DERELICT_MAP
 Des informations sur la région de %system% ont été découvertes sur une épave abandonnée.
@@ -4263,50 +4248,50 @@ EFFECT_DERELICT_MAP_LABEL
 Découverte de carte
 
 EFFECT_DERELICT_FUEL
-Les astronefs ont été réapprovisionnés grâce à des résidus de carburant trouvé sur une épave abandonnée dans %system%.
+Les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une épave abandonnée dans le système %system%.
 EFFECT_DERELICT_FUEL_LABEL
-Decouverte de carburant
+Découverte de carburant
 
 EFFECT_BIOWEAPON
-%system% a perdu de sa population suite à une attaque biologique !
+Le système %system% a perdu sa population suite à une attaque biologique.
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
 
 EFFECT_EXOBOT
-Une colonie d'Exobots a été construite à %planet%.
+Un Colon Galactique Exobot a été construit sur la planète %planet%.
 EFFECT_EXOBOT_LABEL
 Astronef Exobot
 
 EFFECT_EVACUEES
-Des évacués se sont établis sur %planet%.
+Des évacués se sont établis sur la planète %planet%.
 EFFECT_EVACUEES_LABEL
 Évacués
 
 EFFECT_STARGATE
-La flotte %fleet% a atteint le système %system% via Postastre.
+La flotte %fleet% a atteint le système %system% via Stargate.
 EFFECT_STARGATE_LABEL
-Arrivée via Portastre
+Utilisation Stargate
 
 EFFECT_PSY_DOM
-L'astronef %empire% '%ship%' est passé sous contrôle psychique !
+L'astronef '%ship%' de %empire% est passé sous contrôle psychique !
 EFFECT_PSY_DOM_LABEL
 Contrôle psychique
 
 EFFECT_MINES
-La flotte %fleet% de %empire% a subi %rawtext% dégâts de mines dans %system%.
+La flotte %fleet% de %empire% a subi %rawtext% dégâts de mines dans le système %system%.
 EFFECT_MINES_LABEL
 Dégâts de mines
 
 EFFECT_MINES_SHIP_DESTROYED
-Le vaiseeau %empire% '%ship%' a été détruit par les mines présentes dans %system% !
+L'astronef '%ship%' de %empire% a été détruit par des mines dans le système %system% !
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 HEAD_ON_A_SPIKE_MESSAGE
-The capital of the %empire% empire has fallen.
+La capital de l'empire %empire% est tombée.
 
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
-Empire Capital Captured
+Capitale d'Empire capturée
 
 
 
@@ -4316,10 +4301,10 @@ Empire Capital Captured
 
 
 TECH_VICTORY
-a réussi une victoire téchnologique.
+%1% a remporté une victoire technologique.
 
 ALL_ENEMIES_ELIMINATED_VICTORY
-a réussi une victoire sur le dernier survivant.
+a remporté une victoire comme dernier survivant.
 
 
 #############################################################
@@ -4328,42 +4313,42 @@ a réussi une victoire sur le dernier survivant.
 
 
 HOMEWORLD
-Monde natal :
+Monde Natal :
 
 NO_HOMEWORLD
-Pas de monde natal connu
+Pas de Monde Natal connu
 
 UNKNOWN_PLANET
 Planète inconnue
 
 CANNOT_PRODUCE_SHIPS
-Ne peut produire des astronefs.
+Ne peuvent pas produire des astronefs.
 
 CAN_PRODUCE_SHIPS
-Peut produire des astronefs.
+Peuvent produire des astronefs.
 
 CANNNOT_COLONIZE
-Ne peut coloniser d'autres mondes.
+Ne peuvent pas coloniser d'autres mondes.
 
 CAN_COLONIZE
-Peut coloniser d'autres mondes.
+Peuvent coloniser d'autres mondes.
 
 OCCUPIED_PLANETS
 Planètes habitées :
 
 ENVIRONMENTAL_PREFERENCES
-Habitat favori :
+Adaptabilité environnementale :
 
 FOCUS_PREFERENCE
-Focalisation favorite : 
+Focus favori : 
 
 ### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
 
 SP_HUMAN
 Humain
 SP_HUMAN_GAMEPLAY_DESC
-'''En général paisibles. Toutes caractéristiques moyennes afin de permettre les tests.
-Préfére les planètes type terrestre.
+'''En général paisibles. Toutes caractéristiques normales afin de permettre les tests.
+Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4380,8 +4365,8 @@ SP_HUMAN_DESC
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Possèdent trois tentacules, nautiloïde aquatique.
-Préfére les planètes océaniques.
+'''Possèdent trois tentacules, nautiloïdes aquatiques.
+Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4394,24 +4379,24 @@ Préfére les planètes océaniques.
 
 SP_SCYLIOR_DESC
 '''Description :
-Les Scyliori sont des céphalopodes à coquille semblables au nautile. Leurs quatre yeux leur procurent une vision excellente et leurs quatre antennes contenant des neuromastes par millions les rendent sensible à toute variation de pression sous-marine ou de champ électrique. Les Scyliori possèdent trois gros tentacules puissants leur permettant de saisir outils et nourriture, laquelle est cependant déchiquetée par leur bec avant d'être ingérée.
+Les Scyliori sont des céphalopodes à coquille, semblables au nautile. Leurs quatre yeux leur procurent une vision excellente, tandis que leurs quatre antennes contenant des millions de neuromastes, les rendent sensibles à toute variation de pression sous-marine ou de champ électrique. Les Scyliori possèdent trois épais et puissants tentacules leur permettant de saisir outils et nourriture, laquelle est broyée par leur appendice buccal avant d'être ingérée.
 
-Ce sont des cellules chromatophores qui fournissent à l'espèce son principal moyen de communication. Lorsque deux Scyliori désirent communiquer entre eux, ils modifient à un rythme soutenu les couleurs et motifs dessiné sur leur peau.
+Des cellules chromatophores fournissent à l'espèce son principal moyen de communication. Lorsque deux Scyliori désirent communiquer, ils modifient à un rythme soutenu les couleurs et motifs dessinés sur leur peau.
 
-Les Scyliori sont hermaphrodites et itéropares. L'espérance de vie d'un Scylior est d'environ trente années au cours desquelles il ne cesse de croître, éclosant munis d'une coquille de seulement 5 cm et grandissant d'environ 10% par an.
+Les Scyliori sont hermaphrodites et itéropares. L'espérance de vie d'un Scylior est d'environ trente années au cours desquelles il ne cesse de croître, leur  coquille mesurant seulement 5cm lors de l'éclosion, mais dont la taille croît annuellement d'environ 10%.
 
 Société :
-Les restes d'un cerveau-ruche télépathe que les Scyliori nomment L'Esprit sont perçus par eux comme un dieu bienveillant. Dans l'espoir de retrouver son ancienne puissance, Il leur a inspiré la mission de de voyager parmi les étoiles . Les Scyliori sont très socialisés et en sont venu à aimer apprrendre et partager leur savoir avec L'Esprit. 
+Les Scyliori considèrent les restes d'un cerveau-ruche télépathe, qu'ils surnomment L'Esprit, comme un dieu bienveillant. Dans l'espoir de retrouver son ancienne puissance, Il leur instille la mission de voyager à travers le Cosmos. Les Scyliori ont construit une société très stable et en sont venus à aimer découvrir, apprendre, et partager la connaissance et le savoir avec L'Esprit. 
 
 Histoire :
-Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença de copier les connaissances des savants présents à bord de l'astronef et de l'équipage de ce dernier. Mais les savants parvinrent à amputer L'Esprit de la majeure partie de son cerveau pour l'emporter comme spécimen. Ce qui demeurait de L'Esprit survécut, cherchant à récupérer les souvenirs qui lui avaient été pris. L'esprit, cependant, était cloué sur sa planète, loin alors de disposer d'être intelligents qui, agissant pour lui, lui auraient tenu lieu de mains. Alors vinrent les Scylori.
+Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait en totalité grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença à aspirer les connaissances des savants et de l'équipage présents à bord de l'astronef. Mais les savants parvinrent à prélever la majeure partie du cerveau de L'Esprit, et l'emportèrent comme spécimen. Ce qui demeura de L'Esprit survécut, cherchant inlassablement à récupérer les souvenirs qui lui avaient été enlevés. L'Esprit restait cependant une entité immobile, et n'avait rencontré jusqu'alors aucun organisme intelligent susceptible de lui prêter 'main forte'. Alors survinrent les Scyliori.
 '''
 
 SP_GYSACHE
 Gysache
 SP_GYSACHE_GAMEPLAY_DESC
-'''Lâches, capricieux comme des moutons, herbivores.
-Préfére les planètes marécageuses.
+'''Herbivores craintifs insolites, organisation en troupeau.
+Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
@@ -4424,24 +4409,24 @@ Préfére les planètes marécageuses.
 '''
 
 SP_GYSACHE_DESC
-'''The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+'''Les Gysache sont une espèce herbivore ayant toujours fait office de proie. Ils cherchent à se prémunir contre toute menace potentielle, jusqu'à que chaque recoin de l'Univers soit un lieu sûr pour leur espèce.
 
 Description:
-The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
-Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
+Les Gysache sont bipèdes, chaque jambe ayant deux articulations avant et une arrière située entre les deux. Lorsqu'ils s'accroupissent, leurs jambes dessinent un 'W', ce qui diminue leur taille à seulement un demi-mètre (contre 2.5 mètres d'envergure lorsqu'ils sont totalement redressés).
+Leurs corps allongés ne présentent aucun trait physique faisant penser à une tête, bien qu'ils aient trois tiges oculaires identiques se trouvant à l'avant du corps. Une petite bouche est située à la base de ces derniers.
 
-Personality:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
+Comportement:
+Les Gysache sont constamment sur leur garde du fait des prédateurs et sont facilement effrayés. Leur réponse naturelle est de fuir tout ce qui bouge. Leur système social est archaïque car chaque individu est indépendant et n'entretient quasiment aucun lien avec ses semblables. Ils ont cependant tendance à se regrouper en troupeau et font face ensemble, par la force des choses, à toute menace potentielle.
 
-Homeworld:
-Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
+Monde d'origine:
+Leur Monde d'origine possède une épaisse atmosphère d'azote, d'ammoniaque et de dioxyde de carbone. Bien que très humide, leur environnement d'origine ne dispose pas d'étendues océaniques, seulement 5% de la surface planétaire étant recouverte d'eau. Ses principales caractéristiques topographiques sont des hauts plateaux balafrés de canyons abyssaux, dont les fonds contiennent le peu d'eau stagnante de la planète.
 '''
 
 SP_CHATO
 Chato
 SP_CHATO_GAMEPLAY_DESC
-'''Entités cristallines sessiles qui chevauchent des animaux dénommés goshk
-Préfére les planètes toxiques.
+'''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
+Préfèrent les Planètes toxiques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4456,17 +4441,17 @@ Préfére les planètes toxiques.
 
 SP_CHATO_DESC
 '''Description:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
+Les Chato'matou'Gormoshk sont en réalité deux espèces reliées, bien qu'on ne puisse pas affirmer si la connexion entre les deux espèces relève de la symbiose ou du parasitisme. Les Chato'matou sont l'espèce maître, des formes de vie cristalline d'environ 30 centimètres de hauteur et 10 de large. Leur spectre de couleur varie d'un bleu lumineux à un rouge très sombre. Ils obtiennent leur énergie vitale de leur étoile ou bien, dans des cas exceptionnels, des Gormoshk auxquels ils sont reliés. Les Gormosh sont des animaux prédateurs vivant à l'origine dans des cavernes souterraines. Leur corps sont plats et arrondis, et reposent sur cinq pattes de type insectoïde. Les Chato'matou se fixent sur la partie plate supérieure du corps des Gormoshk, directement au-dessus du cerveau. À l'aide d'une excroissance cristalline, ils peuvent ainsi contrôler complètement le Gormoshk hôte.
 
-Social Structure:
-In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
+Structure sociale:
+Dans la société Chato'matou, l'âge est le paramètre primordial, étant donné leur quasi-immortalité. Chaque commandement des anciens est respecté à la lettre et désobéir à un ancien est le plus grand des crimes au sein de la société Chato'matou. Ces organismes ont développé un système rendant possible la transmission instantanée de signaux à travers une colonie entière, leur permettant ainsi de communiquer entre eux à une vitesse proche de celle de la lumière. Cela améliore grandement les capacités mentales de l'espèce, puisque toutes nouvelles idées et théories peuvent être propagées instantanément à toute la colonie. Les Gormoshk sont considérés comme des montures de choix et sont la plupart du temps bien traités, mais restent toutefois de simples animaux pour leurs maîtres.
 '''
 
 SP_TRITH
 Trith
 SP_TRITH_GAMEPLAY_DESC
-'''Télépathes xénophobes affligés.
-Préfére les planètes désertiques.
+'''Télépathes xénophobes tourmentés.
+Préfèrent les Planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4484,17 +4469,17 @@ Préfére les planètes désertiques.
 
 SP_TRITH_DESC
 '''Description:
-The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
+Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie est vaguement humanoïde. Tous les Trith sont télépathes, ceci expliquant la raison de leur colère: alors que les Thrith peuvent apprendre à contenir leurs propres pensées, il leur est impossible de réprimer celles des autres. Si pour un Trith adulte, cela est déjà très irritant, l'issue peut s'avérer fatal pour un jeune Trith. En effet, les Thrith développant ce pouvoir avant leur adolescence ne sont parfois pas préparés à endurer les pensées combinées de toutes les espèces intelligentes à travers l'Univers. Cette concentration subite d'influx spirituel peut les mener à la folie ou, dans le pire des cas, à la mort.
 
-Social Structure:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
+Structure sociale:
+La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
 '''
 
 SP_HHHOH
 Hhhoh
 SP_HHHOH_GAMEPLAY_DESC
-'''Énormes mammouths, lents et partagés en multiples troncs
-Préfére les planètes avec toundra.
+'''Mammouths gigantesques et lents, dotés d'une multi-trompe.
+Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4509,18 +4494,18 @@ Préfére les planètes avec toundra.
 
 SP_HHHOH_DESC
 '''Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
+Les Hhhoh sont d'énormes créatures à sang chaud, mesurant dans les 16 mètres de long (patte/queue incluse), 6 mètres de large, 5 mètres et demi de haut, et atteignant un poids de 5 tonnes. Leur corps est recouvert d'une épaisse couche de fourrure blanche.
+Les Hhhoh se déplacent à l'aide de leurs deux puissantes pattes avant, tandis que leur unique patte arrière sert de balancier pour soutenir leur corps trappu et massif. Ils sont également munis de 4 appendices en forme de trompe, mesurant chacun 8 mètres de long, et dotés de 4 griffes préhensiles acérées qu'ils utilisent pour manipuler les objets. Quand ils n'en ont pas l'utilité, les Hhhoh replient ces trompes sous leur abdomen et les enfouissent dans de larges poches de graisse afin de conserver la chaleur. Ces organismes sont omnivores, mais la chasse et l'élevage n'est pas une pratique répandue.
 
-Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
+Comportement:
+Les Hhhoh se considèrent comme des pragmatiques sociables. Les anciens sont vénérés et respectés, et peuvent atteindre un âge de 230 ans. Leur particularité physique et leur physiologie font que cette espèce a une aversion pour les comportements hâtifs et les décisions précipitées.
 '''
 
 SP_EAXAW
 Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
-'''Evil amazonian xenophobic agressive worms.
-Préfére les planètes type terrestre.
+'''Vers amazones agressifs et xénophobes.
+Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4534,20 +4519,20 @@ Préfére les planètes type terrestre.
 
 SP_EAXAW_DESC
 '''Description:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
+Les Eaxaw ont 3 formes différentes. La première est la forme larvaire lors de la naissance, suit celle du jeune mâle et enfin celle de la femelle adulte. Ces 3 formes sont totalement aveugles et utilisent le toucher, l'odorat et l'ouie, ainsi qu'un sens détectant les courants électriques, pour appréhender leur environnement. La femelle est un ver à segments d'environ 8 mètres de long. À l'avant se situe un orifice à 3 becs leur servant à creuser et à étendre un réseau complexe de tunnels. Le système neuronal de la femelle s'étend tout le long du corps, sous forme de chaines neuronales reliées par des noeuds. Tout le reste du corps se compose de muscles, dont le support est une solide carapace externe segmentée. Un petit espace se trouve entre chaque segment externe (à la manière des écailles), dans lequel les larves sont élevées et grandissent. Les formes mâles des Eaxaw sont plus petites, faibles, et bien moins intelligentes. Au bout de leur queue se situe une griffe préhensile à l'anatomie complexe, présente seulement sur certaines variétés spécialisées.
 
-Social Structure:
-Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
+Structure sociale:
+Les Eaxaw sont organisés en groupes matriarcaux de reproduction. Une femelle domine un "harem" d'environ 200 mâles, lesquels la protègent, la nourrissent et servent de reproducteurs. Tout nouveau mâle que la femelle met au monde est ajouté au harem, mais sert généralement de monnaie d'échange avec les autres femelles. Cela assure la diversité génétique et favorise une large variété de mâles spécialisés pour certaines tâches. Les femelles du plus haut rang (celles dominant les harems les plus grands et les plus diversifiés) forment la Grande Chambre Matriarcal, laquelle édicte la marche à suivre pour les Eaxaw.
 
-History:
-A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!".
+Histoire:
+Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la planète d'origine des Eaxaw. Alors qu'ils découvraient certains de ses secrets, ils devinrent conscients que d'autres espèces intelligentes peuplaient l'Univers. La Grande Chambre Matriarcal édicta alors sa plus fameuse proclamation : "Tous doivent périr!".
 '''
 
 SP_DERTHREAN
 Derthrean
 SP_DERTHREAN_GAMEPLAY_DESC
-'''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
-Préfére les planètes toxiques.
+'''Virus végétaux flottants, pacifiques, bio-ingénieurs, souffrant continuellement.
+Préfèrent les Planètes toxiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4562,10 +4547,10 @@ Préfére les planètes toxiques.
 
 SP_DERTHREAN_DESC
 '''Description:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
+L'entité Derthrean est un virus vivant à l'intérieur d'une plante, dans une relation mi-parasitaire, mi-symbiotique. Le virus en lui-même n'est pas doué d'intelligence tandis que sans lui, la plante n'est qu'une coquille vide. Pourtant, des synapses neuronales se développent et s'associent pour créer un organisme doué de raison. Bien que le virus procure une conscience à la plante, il s'avère toxique pour son système nerveux, infligeant des douleurs indicibles à son hôte, l'affaiblissant de plus en plus à mesure qu'elle grandit et finissant par tuer la plante elle-même. Cette physiologie particulière signifie que plus un Derthrean est intelligent, plus grande est la douleur continuelle qu'il endure.
 
-Social Structure:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
+Structure sociale:
+Les Derthrean ont une organisation sociale très segmentée, se divisant en castes créées par leurs ancêtres. Ils naissent dans une caste, ils se reproduisent dans leur caste, et meurent comme membre de cette caste. Du fait du faible brassage ethnique sur des millénaires, les traits physiques ont fini par être propres à chaque caste. Celles-ci sont divisées comme suit : la plus respectée de toutes, la caste des Prêtres, la caste des Ouvriers, la caste des Agriculteurs, la caste des Pourvoyeurs, la caste des Savants, et la plus méprisée de toutes, la caste des Guerriers. La religion joue un rôle fondamental dans leur société. Chaque Derthrean est profondément pacifiste, et vit pour satisfaire leur Déesse, dans l'espoir d'être libéré de ce fardeau de douleur et d'être pardonné pour la brutalité et la fourberie de leurs ancêtres.
 '''
 
 SP_LAENFA
@@ -5609,7 +5594,7 @@ Les systèmes présentant cette Particularité sont en fait positionnés au cœu
 INVALID_UNIVERSE_OBJECT_TYPE
 Objet générique
 OBJ_BUILDING
-Bâti
+Structure
 OBJ_SHIP
 Astronef
 OBJ_FLEET
@@ -5623,25 +5608,25 @@ Centre de production
 OBJ_SYSTEM
 Système
 OBJ_FIELD
-Plage
+Champ
 
 
 # StarTypes
 
 STAR_BLUE
-Bleue
+Étoile Bleue
 STAR_WHITE
-Blanche
+Étoile Blanche
 STAR_YELLOW
-Jaune
+Étoile Jaune
 STAR_ORANGE
-Orange
+Étoile Orange
 STAR_RED
-Rouge
+Étoile Rouge
 STAR_NEUTRON
-Neutre
+Étoile à Neutrons
 STAR_BLACK
-Trou noir
+Trou Noir
 STAR_NONE
  
 INVALID_STAR_TYPE
@@ -5650,27 +5635,27 @@ Type d'étoile inconnu
 # PlanetTypes
 
 PT_SWAMP
-marécageuse
+Marécageuse
 PT_TOXIC
-toxique
+Toxique
 PT_INFERNO
-infernale
+Infernale
 PT_RADIATED
-irradiée
+Irradiée
 PT_BARREN
-stérile
+Stérile
 PT_TUNDRA
-toundra
+Toundra
 PT_DESERT
-désertique
+Désertique
 PT_TERRAN
-terrestre
+Terrestre
 PT_OCEAN
-océanique
+Océanique
 PT_ASTEROIDS
 Astéroïdes
 PT_GASGIANT
-Géante gazeuse
+Géante Gazeuse
 
 
 # Planet Sizes
@@ -5690,7 +5675,7 @@ SZ_HUGE
 SZ_ASTEROIDS
 Astéroïdes
 SZ_GASGIANT
-Géante gazeuse
+Géante Gazeuse
 
 
 # PlanetEnvironments
@@ -5702,7 +5687,7 @@ Hostile
 PE_POOR
 Pauvre
 PE_ADEQUATE
-Adéquate
+Correcte
 PE_GOOD
 Parfaite
 
@@ -5710,15 +5695,15 @@ Parfaite
 # FocusTypes
 
 INVALID_FOCUS_TYPE
-Type de focalisation non valable
+Type de focus invalide
 FOCUS_GROWTH
 Croissance
 FOCUS_INDUSTRY
 Industrie
 FOCUS_MINING
-Exploitation minière
+Extraction minière
 FOCUS_HEAVY_MINING
-Exploitation minière intensive
+Extraction minière intensive
 FOCUS_RESEARCH
 Recherche
 FOCUS_TRADE
@@ -5728,62 +5713,62 @@ Logistique
 FOCUS_STEALTH
 Furtivité
 FOCUS_BIOTERROR
-Terreur biologique
+Terrorisme biologique
 FOCUS_STARGATE_SEND
-Envoi portastral
+Envoi Stargate
 FOCUS_STARGATE_SEND_DESC
-Active le Portastre pour envoi d'astronefs vers le Portastre d'un autre système de l'empire
+Active le Stargate pour envoi d'astronefs vers le Stargate d'un autre système de l'empire
 FOCUS_STARGATE_RECEIVE
-Réception portastrale
+Réception Stargate
 FOCUS_STARGATE_RECEIVE_DESC
-Active le Portastre pour réception d'astronefs envoyés par Portastre depuis un autre système de l'empire
+Active le Stargate pour réception d'astronefs envoyés par Stargate depuis un autre système de l'empire
 FOCUS_PLANET_DRIVE
-Entraînement de planète
+Déplacement de planète
 FOCUS_DISTORTION
 Distortion spatiale
 FOCUS_PROTECTION
 Protection
 FOCUS_PROTECTION_DESC
-Augmente boucliers, défense et troupes.
+Augmente boucliers, défense et infanterie.
 FOCUS_DOMINATION
-Psychic Domination
+Domination psychique
 FOCUS_DOMINATION_DESC
-Psychically controls enemy ships.
+Contrôle psychique des astronefs ennemis.
 
 # MeterTypes
 
 INVALID_METER_TYPE
-Type d'indicateur non valable
+Type d'indicateur invalide
 METER_TARGET_POPULATION
-indicateur Population
+Indicateur Population
 METER_TARGET_HEALTH
-indicateur Santé
+Indicateur Santé
 METER_TARGET_INDUSTRY
-indicateur Industrie
+Indicateur Industrie
 METER_TARGET_RESEARCH
-indicateur Recherche
+Indicateur Recherche
 METER_TARGET_TRADE
-indicateur Commerce
+Indicateur Commerce
 METER_TARGET_MINING
-indicateur Extraction
+Indicateur Extraction
 METER_TARGET_CONSTRUCTION
-indicateur Infrastructure
+Indicateur Infrastructure
 METER_TARGET_HAPPINESS
-indicateur Bonheur
+Indicateur Bonheur
 METER_MAX_FUEL
-Max carburant
+Max Carburant
 METER_MAX_SHIELD
-Max bouclier
+Max Bouclier
 METER_MAX_STRUCTURE
-Max résistance
+Max Résistance
 METER_MAX_DEFENSE
-Max défense
+Max Défense
 METER_MAX_TROOPS
-Max Troupes
+Max Infanterie
 METER_MAX_REBEL_TROOPS
 Max Rebelles
 METER_MAX_SUPPLY
-Max Supply
+Max Approvisionnement
 METER_POPULATION
 Population
 METER_HEALTH
@@ -5797,7 +5782,7 @@ Recherche
 METER_TRADE
 Commerce
 METER_MINING
-Exploitation minière
+Extraction minière
 METER_CONSTRUCTION
 Infrastructure
 METER_HAPPINESS
@@ -5811,7 +5796,7 @@ Résistance
 METER_DEFENSE
 Défense
 METER_TROOPS
-Troupes
+Infanterie
 METER_REBEL_TROOPS
 Rebelles
 METER_SUPPLY
@@ -5835,16 +5820,16 @@ Vitesse
 METER_CAPACITY
 Capacité
 METER_ANTI_SHIP_DAMAGE
-Dommages contre astronefs
+Dommages anti-astronefs
 METER_ANTI_FIGHTER_DAMAGE
-Dommages contre chasseurs
+Dommages anti-chasseurs
 METER_LAUNCH_RATE
 Cadence de lancement
 METER_FIGHTER_WEAPON_RANGE
-Portée des armes des chasseurs
+Portée armement chasseurs
 
 METER_SIZE
-Portée
+Taille
 
 METER_DETECTION_STRENGTH
 [[encyclopedia DETECTION_TITLE]]
@@ -5853,19 +5838,19 @@ ALIGN_MILITARISM
 Militarisme 
 
 ALIGN_MILITARY_STRENGTH_DESC
-Grandeur et puissance des militaires 
+Grandeur et puissance des forces militaires 
 
 ALIGN_SOCIAL_CONTROL
 Contrôle social 
 
 ALIGN_SOCIAL_CONTROL_DESC
-Degré auquel une population est surveillée, contenue et manipulée.
+Degré auquel une population est surveillée, contrôlée et manipulée.
 
 ALIGN_ENVIRONMENT_MODIFICATION
-Changement de l'environnement 
+Modification de l'environnement 
 
 ALIGN_ENVIRONMENT_MODIFICATION_DESC
-Usage de la terraformation ou d'autres actions environnementales à grande-échelle.
+Usage de la terraformation ou autres actions environnementales à grande échelle.
 
 ALIGN_BIOLOGICAL_ALTERATION
 Altération biologique 
@@ -5894,7 +5879,7 @@ chaque
 # UnlockableItemTypes
 
 INVALID_UNLOCKABLE_ITEM_TYPE
-Type d'article non valable à débloquer
+Type invalide d'objet déblocable
 UIT_BUILDING
 Structure
 UIT_SHIP_PART
@@ -5975,7 +5960,7 @@ Bouclier
 PC_ARMOUR
 Blindage
 PC_TROOPS
-Troupes
+Infanterie
 PC_DETECTION
 Détection
 PC_STEALTH
@@ -5989,15 +5974,15 @@ Vitesse au combat
 PC_STARLANE_SPEED
 Vitesse sur Voies spatiales
 PC_GENERAL
-General
+Général
 PC_BOMBARD
-Bombardment
+Bombardement
 PC_INDUSTRY
-Industry
+Industrie
 PC_RESEARCH
-Research
+Recherche
 PC_TRADE
-Trade
+Commerce
 PC_PRODICTION_LOCATION
 Production
 
@@ -6439,10 +6424,10 @@ DESC_TARGET_NOT
  qui n'est pas l'objet cible
 
 DESC_HOMEWORLD
- qui est le monde natal de l'espèce %1%
+ qui est le Monde Natal de l'espèce %1%
 
 DESC_HOMEWORLD_NOT
- qui n'est pas le monde natal de l'espèce %1%
+ qui n'est pas le Monde Natal de l'espèce %1%
 
 DESC_CAPITAL
  qui est capitale d'empire
@@ -7463,7 +7448,7 @@ RESEARCH_SHORT_DESC
 Améliore la Recherche
 
 MINING_SHORT_DESC
-Améliore l'Exploitation minière
+Améliore l'Extraction minière
 
 INDUSTRY_SHORT_DESC
 Améliore l'Industrie
@@ -7481,7 +7466,7 @@ DEFENSE_SHORT_DESC
 Améliore la Défense planétaire
 
 TROOPS_SHORT_DESC
-Améliore les Troupes
+Améliore l'Infanterie
 
 METER_GROWTH_SHORT_DESC
 Améliore la Croissance
@@ -7560,7 +7545,7 @@ CON_PLANET_DRIVE_DESC
 Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a starlane, it would be possible to move such planets to a safer location in times of necessity.
 
 CON_STARGATE
-Portastre
+Stargate
 
 CON_STARGATE_DESC
 Pour les empires les plus étendus en particulier, le déplacement d'astronefs en toute hâte vers un noeud de défense donné se révèle souvent hors de portée. En créant un raccourci entre deux ou plusieurs points de l'espace-temps, on rend possible un tel déplacement, d'un bout à l'autre de l'empire si besoin, et on peut mettre en œuvre de nouvelles stratégies, tant offensives que défensives.
@@ -7820,7 +7805,7 @@ DEF_ROOT_DEFENSE
 Défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente de 2 l'effectif maximal des [[encyclopedia TROOP_TITLE]] présentes sur toutes les planètes de l'empire.
+'''Augmente de 2 l'effectif maximal de l'[[encyclopedia TROOP_TITLE]] présente sur toutes les planètes de l'empire.
 
 Le concept de 'Défense' est à la racine de maints développements technologiques.'''
 
@@ -7828,25 +7813,25 @@ DEF_GARRISON_1
 Bataillon planétaire
 
 DEF_GARRISON_1_DESC
-Augmente de 5 l'effectif maximal des [[encyclopedia TROOP_TITLE]] présentes sur toutes les planètes de l'empire.
+Augmente de 5 l'effectif maximal de l'[[encyclopedia TROOP_TITLE]] présente sur toutes les planètes de l'empire.
 
 DEF_GARRISON_2
 Régiment planétaire
 
 DEF_GARRISON_2_DESC
-Augmente de 10 l'effectif maximal des [[encyclopedia TROOP_TITLE]] présentes sur toutes les planètes de l'empire.
+Augmente de 10 l'effectif maximal de l'[[encyclopedia TROOP_TITLE]] présente sur toutes les planètes de l'empire.
 
 DEF_GARRISON_3
 Brigade planétaire
 
 DEF_GARRISON_3_DESC
-Augmente de 15 l'effectif maximal des [[encyclopedia TROOP_TITLE]] présentes sur toutes les planètes de l'empire.
+Augmente de 15 l'effectif maximal de l'[[encyclopedia TROOP_TITLE]] présente sur toutes les planètes de l'empire.
 
 DEF_GARRISON_4
 Armée planétaire
 
 DEF_GARRISON_4_DESC
-Augmente de 20 l'effectif maximal des [[encyclopedia TROOP_TITLE]] présentes sur toutes les planètes de l'empire.
+Augmente de 20 l'effectif maximal de l'[[encyclopedia TROOP_TITLE]] présente sur toutes les planètes de l'empire.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -7878,13 +7863,13 @@ SHP_ADV_DAM_CONT
 Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
-'''Restaure progressivement la résistance des astronefs au rythme d'un quart de sa valeur par tour, sauf dans le tour suivant immédiatement un combat.
+'''Restaure progressivement la résistance des astronefs au rythme d'un quart de sa valeur par tour, sauf dans le tour suivant immédiatement un combat.'''
 
 SHP_ROOT_AGGRESSION
 Agression
 
 SHP_ROOT_AGGRESSION_DESC
-Allows basic weapons and [[shippart GT_TROOP_POD]]s.
+Autorise l'armement de base et le [[shippart GT_TROOP_POD]].
 
 SHP_WEAPON_1_2
 Canon mitrailleur 2
@@ -8339,7 +8324,7 @@ BLD_IMPERIAL_PALACE
 Palais Impérial 
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5 et les [[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
+'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5 et l'[[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.''' 
 
@@ -8468,7 +8453,7 @@ BLD_HEAVY_MINE_PROCESSOR
 Haute Extraction Minière
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Donne à toutes les colonies de l'empire accès à la focalisation sur l'exploitation minière lourde.
+Donne à toutes les colonies de l'empire accès à la focalisation sur l'extraction minière lourde.
 
 BLD_INDUSTRY_CENTER
 Centre industriel
@@ -8708,12 +8693,12 @@ BLD_SPATIAL_DISTORT_GEN_DESC
 Manipulates the dimensional properties of adjacent starlanes. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the starlane in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
-Portastre
+Stargate
 
 BLD_STARGATE_DESC
-'''Crée un raccourci spatio-temporel vers tout autre Portastre du même empire. La consommation en énergie d'un tel appareil peut, lorsqu'il est activé, annuler la production d'une planète entière, mais il n'a, au repos, aucun effet négatif. Hélas, vu les fluctuations quantiques, il est impossible de prévoir où un astronef envoyé arrivera lorsque plusieurs Portastres sont ouverts pour le recevoir.
+'''Crée un raccourci spatio-temporel vers tout autre Stargate du même empire. La consommation en énergie d'un tel appareil peut, lorsqu'il est activé, annuler la production d'une planète entière, mais il n'a, au repos, aucun effet négatif. Hélas, vu les fluctuations quantiques, il est impossible de prévoir où un astronef envoyé arrivera lorsque plusieurs Stargates sont ouverts pour le recevoir.
 
-Pour activer le Portastre, focaliser la planète sur l'Envoi portastral et une planète a Portastre d'un autre système de l'empire sur la Réception portastrale.'''
+Pour activer le Stargate, focaliser la planète l'Envoi Stargate et une planète à Stargate d'un autre système de l'empire sur la Réception Stargate.'''
 
 BLD_GAS_GIANT_GEN
 Générateur de Géante gazeuse
@@ -9196,7 +9181,7 @@ Robotic species have an inherent ability to network together and thereby substan
 '''
 
 CO_COLONY_POD
-Module de colonisation
+Module de Colonisation
 
 CO_COLONY_POD_DESC
 '''Installation de base pour colons afin de survivre les premiers jours sur une nouvelle planète. Permet aux astronefs de coloniser de nouveaux mondes.
@@ -9204,7 +9189,7 @@ CO_COLONY_POD_DESC
 Toutes les classes d'astronefs colons requièrent de leur planète d'origine une population supérieure à trois.'''
 
 CO_SUSPEND_ANIM_POD
-Module de colonisation cryogénique
+Module de Colonisation Cryogenic
 
 CO_SUSPEND_ANIM_POD_DESC
 '''Les colons sont maintenus en animation suspendue pendant le voyage, en éliminant nécessité de fournir les besoins vitaux, et en augmentant considérablement le nombre de colons qui peuvent être transportées sur un astronef.
@@ -9218,10 +9203,10 @@ CO_OUTPOST_POD_DESC
 '''Les modules avant-poste vous permettent d'établir des stations non habités. Elles peuvent être placées sur des planètes inhabitables. Elles ne sont pas habitées et ne produisent normalement pas de resources, mais elles offrent la visions de lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Des colonies peuvent être fondées sur des planètes déjà pourvues d'un avant-poste.'''
 
 GT_TROOP_POD
-Module de troupes terrestres
+Module d'infanterie
 
 GT_TROOP_POD_DESC
-Transporte une brigade de [[encyclopedia TROOP_TITLE]] terrestres avec équipement pour être déployé sur une planète.
+Transporte une brigade d'[[encyclopedia TROOP_TITLE]] avec équipement pour être déployé sur une planète.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator
@@ -9803,122 +9788,122 @@ NO_INDUSTRY
 '''−−−	Pas d'[[encyclopedia INDUSTRY_TITLE]]'''
 
 BAD_INDUSTRY
-'''−	Pauvre en [[encyclopedia INDUSTRY_TITLE]] : -50%'''
+'''−	Mauvais en [[encyclopedia INDUSTRY_TITLE]] : -50%'''
 
 AVERAGE_INDUSTRY
-'''	[[encyclopedia INDUSTRY_TITLE]] moyenne : 100%'''
+'''	Normal en [[encyclopedia INDUSTRY_TITLE]] : 100%'''
 
 GOOD_INDUSTRY
-'''+	Bonne [[encyclopedia INDUSTRY_TITLE]] : 150%'''
+'''+	Bon en [[encyclopedia INDUSTRY_TITLE]] : 150%'''
 
 GREAT_INDUSTRY
-'''++	Grande [[encyclopedia INDUSTRY_TITLE]] : 200%'''
+'''++	Excellent en [[encyclopedia INDUSTRY_TITLE]] : 200%'''
 
 ULTIMATE_INDUSTRY
-'''+++	Excellente [[encyclopedia INDUSTRY_TITLE]] : 400%'''
+'''+++	Parfait en [[encyclopedia INDUSTRY_TITLE]] : 400%'''
 
 NO_RESEARCH
 '''−−−	Pas de [[encyclopedia RESEARCH_TITLE]]'''
 
 BAD_RESEARCH
-'''−	Pauvre en [[encyclopedia RESEARCH_TITLE]] : -50%'''
+'''−	Mauvais en [[encyclopedia RESEARCH_TITLE]] : -50%'''
 
 AVERAGE_RESEARCH
-'''	[[encyclopedia RESEARCH_TITLE]] moyenne : 100%'''
+'''	Normal en [[encyclopedia RESEARCH_TITLE]] : 100%'''
 
 GOOD_RESEARCH
-'''+	Bonne [[encyclopedia RESEARCH_TITLE]] : 150%'''
+'''+	Bon en [[encyclopedia RESEARCH_TITLE]] : 150%'''
 
 GREAT_RESEARCH
-'''++	Grande [[encyclopedia RESEARCH_TITLE]] : 200%'''
+'''++	Excellent en [[encyclopedia RESEARCH_TITLE]] : 200%'''
 
 ULTIMATE_RESEARCH
-'''+++	Excellente [[encyclopedia RESEARCH_TITLE]] : 400%'''
+'''+++	Parfait en [[encyclopedia RESEARCH_TITLE]] : 400%'''
 
 
 NO_GROUND_TROOPS
-'''−−−	Pas de [[encyclopedia TROOP_TITLE]] terrestres'''
+'''−−−	Pas d'[[encyclopedia TROOP_TITLE]]'''
 
 BAD_GROUND_TROOPS
-'''−	Pauvre en [[encyclopedia TROOP_TITLE]] terrestres : -50%.'''
+'''−	Mauvais en [[encyclopedia TROOP_TITLE]] : -50%'''
 
 AVERAGE_GROUND_TROOPS
-'''	[[encyclopedia TROOP_TITLE]] terrestres moyennes : 100%.'''
+'''	Normal en [[encyclopedia TROOP_TITLE]] : 100%'''
 
 GOOD_GROUND_TROOPS
-'''+	Bonne [[encyclopedia TROOP_TITLE]] terrestres : 150%.'''
+'''+	Bon en [[encyclopedia TROOP_TITLE]] : 150%'''
 
 GREAT_GROUND_TROOPS
-'''++	Grande [[encyclopedia TROOP_TITLE]] terrestres : 200%.'''
+'''++	Excellent en [[encyclopedia TROOP_TITLE]] : 200%'''
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Excellentes [[encyclopedia TROOP_TITLE]] terrestres : 300%.'''
+'''+++	Parfait en [[encyclopedia TROOP_TITLE]] : 300%'''
 
 BAD_DETECTION
-'''−	Faible Rayon de détection : −20 malus.'''
+'''−	Faible [[encyclopedia DETECTION_RANGE_TITLE]] : −20 malus'''
 
 GOOD_DETECTION
-'''+	Bon Rayon de détection : +25 bonus.'''
+'''+	Bon [[encyclopedia DETECTION_RANGE_TITLE]] : +25 bonus'''
 
 GREAT_DETECTION
-'''++	Grand Rayon de détection : +50 bonus.'''
+'''++	Excellent [[encyclopedia DETECTION_RANGE_TITLE]] : +50 bonus'''
 
 ULTIMATE_DETECTION
-'''+++	Rayon de détection maximal : +100 bonus.'''
+'''+++	Parfait [[encyclopedia DETECTION_RANGE_TITLE]] : +100 bonus'''
 
 BAD_STEALTH
-'''−	Pauvre en [[encyclopedia STEALTH_TITLE]] : −15 malus.'''
+'''−	Mauvais en [[encyclopedia STEALTH_TITLE]] : −15 malus'''
 
 AVERAGE_STEALTH
-'''	[[encyclopedia STEALTH_TITLE]] moyenne'''
+'''	Normal en [[encyclopedia STEALTH_TITLE]]'''
 
 GOOD_STEALTH
-'''+	Bonne [[encyclopedia STEALTH_TITLE]] : +15 bonus.'''
+'''+	Bon en [[encyclopedia STEALTH_TITLE]] : +15 bonus'''
 
 GREAT_STEALTH
-'''++	Grande [[encyclopedia STEALTH_TITLE]] : +40 bonus.'''
+'''++	Excellent en [[encyclopedia STEALTH_TITLE]] : +40 bonus'''
 
 ULTIMATE_STEALTH
-'''+++	Ultime [[encyclopedia STEALTH_TITLE]] : +60 bonus.'''
+'''+++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus'''
 
 BAD_WEAPONS
-'''-	Bad Pilots: 25% less damage.'''
+'''-	Mauvais Pilotes : -25% de dommages.'''
 
 GOOD_WEAPONS
-'''+	Commence avec le [[tech SHP_WEAPON_1_3]] & un astronef additionnel.'''
+'''+	Bons Pilotes : +25% de dommages.'''
 
 GREAT_WEAPONS
-'''++	Commence avec le [[tech SHP_WEAPON_2_2]] & deux astronefs additionnels.'''
+'''++	Excellents Pilotes : +50% de dommages.'''
 
 ULTIMATE_WEAPONS
-'''++	Commence avec le [[tech SHP_WEAPON_2_4]] & trois astronefs additionnels.'''
+'''+++	Parfaits Pilotes : +100% de dommages.'''
 
 BAD_POPULATION
-'''−	Pauvre en population : 75%'''
+'''−	Faible Population : 75%'''
 
 AVERAGE_POPULATION
-'''	Population moyenne'''
+'''	Population normale'''
 
 GOOD_POPULATION
-'''+	Bonne population :  125%'''
+'''+	Grande Population : 125%'''
 
 BAD_SUPPLY
-'''-	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus'''
+'''-	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus'''
 
 AVERAGE_SUPPLY
-'''	Average [[encyclopedia SUPPLY_TITLE]]: +1'''
+'''	Normal en [[encyclopedia SUPPLY_TITLE]] : +1'''
 
 GREAT_SUPPLY
-'''+	Great [[encyclopedia SUPPLY_TITLE]]: +2'''
+'''+	Excellent en [[encyclopedia SUPPLY_TITLE]] : +2'''
 
 ULTIMATE_SUPPLY
-'''++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3'''
+'''++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3'''
 
 BROAD_EP
-'''++	Grande adaptabilité : peut habiter maintes planètes.'''
+'''++	Grande adaptabilité : s'acclimate à plus de types planétaires.'''
 
 NARROW_EP
-'''−	Faible adaptabilité : ne peut habiter que de rares planètes.'''
+'''−	Faible adaptabilité : s'acclimate à moins de types planétaires.'''
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
@@ -9926,13 +9911,13 @@ NARROW_EP
 
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% [[encyclopedia INFRASTRUCTURE_TITLE]] moyenne'''
+'''%1% [[encyclopedia INFRASTRUCTURE_TITLE]] normale'''
 
 GOOD_ENVIRONMENT_LABEL
-'''%1% Bon environnement'''
+'''%1% Environnement parfait'''
 
 ADEQUATE_ENVIRONMENT_LABEL
-'''%1% Environnement adéquat'''
+'''%1% Environnement correct'''
 
 POOR_ENVIRONMENT_LABEL
 '''%1% Environnement pauvre'''
@@ -9947,7 +9932,7 @@ SELF_SUSTAINING_LABEL
 '''Autosuffisant'''
 
 SUBTERRANEAN_LABEL
-'''Bonus Habitat Souterrain'''
+'''Bonus Habitat souterrain'''
 
 GAIA_LABEL
 '''Bonus Gaia'''
@@ -9956,100 +9941,100 @@ HOMEWORLD_LABEL
 '''Monde natal'''
 
 BAD_POPULATION_LABEL
-'''%2% Pauvre en population 75%%'''
+'''%2% Faible population 75%%'''
 
 GOOD_POPULATION_LABEL
-'''%2% Bonne population 125%%'''
+'''%2% Grande population 125%%'''
 
 FOCUS_MINING_LABEL
-'''%1% Concentration minière'''
+'''%1% Focus Extraction'''
 
 FOCUS_HEAVY_MINING_LABEL
-'''%1% Concentration minière lourde'''
+'''%1% Focus Extraction intensive'''
 
 BAD_MINING_LABEL
-'''%1% Bad Mining'''
+'''%1% Mauvaise Extraction'''
 
 GOOD_MINING_LABEL
-'''%1% Good Mining'''
+'''%1% Bonne Extraction'''
 
 GREAT_MINING_LABEL
-'''%1% Great Mining'''
+'''%1% Excellente Extraction'''
 
 ULTIMATE_MINING_LABEL
-'''%1% Ultimate Mining'''
+'''%1% Parfaite Extraction'''
 
 FOCUS_INDUSTRY_LABEL
-'''%2% Concentration industrielle'''
+'''%2% Focus Industrie'''
 
 BAD_INDUSTRY_LABEL
-'''%2% Pauvre industrie'''
+'''%2% Mauvais en Industrie'''
 
 GOOD_INDUSTRY_LABEL
-'''%2% Bonne industrie'''
+'''%2% Bon en Industrie'''
 
 GREAT_INDUSTRY_LABEL
-'''%2% Grande industrie'''
+'''%2% Excellent en Industrie'''
 
 ULTIMATE_INDUSTRY_LABEL
-'''%2% Ultime industrie'''
+'''%2% Parfait en Industrie'''
 
 FOCUS_RESEARCH_LABEL
-'''%2% Concentration sur la recherche'''
+'''%2% Focus Recherche'''
 
 BAD_RESEARCH_LABEL
-'''%2% Pauvre recherche'''
+'''%2% Mauvais en Recherche'''
 
 GOOD_RESEARCH_LABEL
-'''%2% Bonne recherche'''
+'''%2% Bon en Recherche'''
 
 GREAT_RESEARCH_LABEL
-'''%2% Grande recherche'''
+'''%2% Excellent en Recherche'''
 
 ULTIMATE_RESEARCH_LABEL
-'''%2% Ultime recherche'''
+'''%2% Parfait en Recherche'''
 
 AVERAGE_SUPPLY_LABEL
-'''%2% Average Supply'''
+'''%2% Approvisionnement normal'''
 
 GREAT_SUPPLY_LABEL
-'''%2% Great Supply'''
+'''%2% Approvisionnement excellent'''
 
 ULTIMATE_SUPPLY_LABEL
-'''%2% Ultimate Supply'''
+'''%2% Approvisionnement parfait'''
 
 BAD_TROOPS_LABEL
-'''%2% Mauvaises troupes terrestres'''
+'''%2% Mauvais en Infanterie'''
 
 AVERAGE_TROOPS_LABEL
-'''%2% Troupes terrestres moyennes'''
+'''%2% Normal en Infanterie'''
 
 GOOD_TROOPS_LABEL
-'''%2% Bonnes troupes terrestres'''
+'''%2% Bon en Infanterie'''
 
 GREAT_TROOPS_LABEL
-'''%2% Excellentes troupes terrestres'''
+'''%2% Excellent en Infanterie'''
 
 ULTIMATE_TROOPS_LABEL
-'''%2% Troupes terrestres ultimes'''
+'''%2% Parfait en Infanterie'''
 
 INDEPENDENT_TROOP_LABEL
-'''Independent Homeworld'''
+'''Monde natal indépendant'''
 
 OUTPOST_TROOP_LABEL
-'''Outpost'''
+'''Avant-poste'''
 
 NATIVE_PLANETARY_DEFENSE_LABEL
-'''%2% Planetary Defense'''
+'''%2% Défense planétaire'''
 
 NATIVE_PLANETARY_SHIELDS_LABEL
-'''%2% Planetary Shields'''
+'''%2% Bouclier planétaire'''
 
 VERY_BRIGHT_STAR
-'''Étoile très brillante'''
+'''Étoile très lumineuse'''
 
 BRIGHT_STAR
-'''Étoile brillante'''
+'''Étoile lumineuse'''
 
 DIM_STAR
 '''Étoile peu lumineuse'''
@@ -10058,67 +10043,67 @@ NO_STAR
 '''Pas d'étoile'''
 
 TINY_PLANET_LABEL
-'''Tiny Planet'''
+'''Minuscule planète'''
 
 SMALL_PLANET_LABEL
-'''Small Planet'''
+'''Petite planète'''
 
 LARGE_PLANET_LABEL
-'''Large Planet'''
+'''Grande planète'''
 
 HUGE_PLANET_LABEL
-'''Huge Planet'''
+'''Énorme planète'''
 
 GAS_GIANT_LABEL
-'''Gas Giant'''
+'''Géante gazeuse'''
 
 HOMEWORLD_SUPPLY
-'''Fournitures du monde d'origine'''
+'''Approvisionnement Monde natal'''
 
 HOMEWORLD_BONUS
-'''Monde d'origine'''
+'''Monde natal'''
 
 ORBITAL_HAB_LABEL
-'''Orbital Habitation'''
+'''Habitation orbitale'''
 
 NDIM_STRC_LABEL
-'''N-Dimensional Structures'''
+'''Structures multidimensionnelles'''
 
 WEAK_VISION_LABEL
-'''Weak Vision'''
+'''Faible Vision'''
 
 MODERATE_VISION_LABEL
-'''Moderate Vision'''
+'''Moyenne Vision'''
 
 GOOD_VISION_LABEL
-'''Good Vision'''
+'''Bonne Vision'''
 
 EXCELLENT_VISION_LABEL
-'''Excellent Vision'''
+'''Excellente Vision'''
 
 FOCUS_PROTECTION_LABEL
-'''Protection Focus'''
+'''Focus Protection'''
 
 XENOPHOBIC_LABEL_SELF
-'''Xenophobic Frenzy (other species nearby)'''
+'''Frénésie xénophobe (autre espèce proche)'''
 
 XENOPHOBIC_LABEL_TRITH_OTHER
-'''Xenophobic Harassment: Trith'''
+'''Harcèlement xénophobe: Trith'''
 
 XENOPHOBIC_LABEL_EAXAW_OTHER
-'''Xenophobic Harassment: Eaxaw'''
+'''Harcèlement xénophobe: Eaxaw'''
 
 ORGANIC_GROWTH
-'''Organic Growth'''
+'''Croissance Organique'''
 
 BASIC_CONTENTEDNESS_LABEL
-General Contentedness
+Satisfaction générale
 
 FOCUS_PREFERENCE_LABEL
-Preferred Focus Selected
+Focus favori activé
 
 ROBOTIC_INTERFACE_EFFECT
-Robotic crew network
+Réseau robotique
 
 
 #############################################################
