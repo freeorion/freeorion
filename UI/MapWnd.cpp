@@ -640,14 +640,14 @@ MapWnd::MapWnd() :
     m_FPS = new FPSIndicator();
     m_FPS->Hide();
 
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // Menu button
-    m_btn_menu = new SettableInWindowCUIButton("");
-    m_btn_menu->SetColor(GG::CLR_WHITE);
+    m_btn_menu = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")));
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
-    m_btn_menu->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_clicked.png"  )));
-    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
@@ -662,12 +662,11 @@ MapWnd::MapWnd() :
 
 
     // Encyclo"pedia" button
-    m_btn_pedia = new SettableInWindowCUIButton("");
-    m_btn_pedia->SetColor(GG::CLR_WHITE);
+    m_btn_pedia = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")));
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
-    m_btn_pedia->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_clicked.png"  )));
-    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
     GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
@@ -679,12 +678,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
     // Graphs button
-    m_btn_graphs = new SettableInWindowCUIButton("");
-    m_btn_graphs->SetColor(GG::CLR_WHITE);
+    m_btn_graphs = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")));
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_graphs->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts.png")));
-    m_btn_graphs->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts_clicked.png"  )));
-    m_btn_graphs->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "charts_mouseover.png")));
     GG::Connect(m_btn_graphs->LeftClickedSignal, &MapWnd::ShowGraphs, this);
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_graphs),   boost::bind(&WndTop, m_toolbar),
@@ -696,12 +694,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
 
     // Design button
-    m_btn_design = new SettableInWindowCUIButton("");
-    m_btn_design->SetColor(GG::CLR_WHITE);
+    m_btn_design = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")));
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
-    m_btn_design->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_clicked.png"  )));
-    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
     GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
@@ -713,12 +710,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
     // Production button
-    m_btn_production = new SettableInWindowCUIButton("");
-    m_btn_production->SetColor(GG::CLR_WHITE);
+    m_btn_production = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")));
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
-    m_btn_production->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_clicked.png"  )));
-    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
     GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
@@ -730,12 +726,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
 
     // Research button
-    m_btn_research = new SettableInWindowCUIButton("");
-    m_btn_research->SetColor(GG::CLR_WHITE);
+    m_btn_research = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")));
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
-    m_btn_research->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_clicked.png"  )));
-    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
     GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
@@ -747,12 +742,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
     // Objects button
-    m_btn_objects = new SettableInWindowCUIButton("");
-    m_btn_objects->SetColor(GG::CLR_WHITE);
+    m_btn_objects = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")));
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
-    m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
-    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
     GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
@@ -764,12 +758,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
 
     // Empires button
-    m_btn_empires = new SettableInWindowCUIButton("");
-    m_btn_empires->SetColor(GG::CLR_WHITE);
+    m_btn_empires = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")));
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
-    m_btn_empires->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_clicked.png"  )));
-    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
     GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_empires),   boost::bind(&WndTop, m_toolbar),
@@ -781,12 +774,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES"))));
 
     // SitRep button
-    m_btn_siterep = new SettableInWindowCUIButton("");
-    m_btn_siterep->SetColor(GG::CLR_WHITE);
+    m_btn_siterep = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")));
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
-    m_btn_siterep->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_clicked.png"  )));
-    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
     GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
@@ -798,12 +790,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
     // Messages button
-    m_btn_messages = new SettableInWindowCUIButton("");
-    m_btn_messages->SetColor(GG::CLR_WHITE);
+    m_btn_messages = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")));
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
-    m_btn_messages->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_clicked.png"  )));
-    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
     GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_messages),   boost::bind(&WndTop, m_toolbar),
@@ -815,12 +806,11 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES"))));
 
     // Moderator button
-    m_btn_moderator = new SettableInWindowCUIButton("");
-    m_btn_moderator->SetColor(GG::CLR_WHITE);
+    m_btn_moderator = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")));
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
-    m_btn_moderator->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_clicked.png"  )));
-    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
     GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
@@ -861,12 +851,12 @@ MapWnd::MapWnd() :
     m_detection->Resize(GG::Pt(ICON_DUAL_WIDTH, m_btn_turn->Height()));
     m_detection->SetName("Detection StatisticIcon");
 
-    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
-                                                "icons" / "buttons" / "wasted_resource.png", false));
-    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
-                                                "icons" / "buttons" / "wasted_resource_mouseover.png", false));
-    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() /
-                                                "icons" / "buttons" / "wasted_resource_clicked.png", false));
+    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+                                                                "wasted_resource.png", false));
+    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+                                                                "wasted_resource_mouseover.png", false));
+    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+                                                                "wasted_resource_clicked.png", false));
 
     m_industry_wasted = new CUIButton(
         wasted_ressource_subtexture,

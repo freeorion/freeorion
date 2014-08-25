@@ -196,8 +196,10 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category) {
 ///////////////////////////////////////
 // class SettableInWindowCUIButton
 ///////////////////////////////////////
-SettableInWindowCUIButton::SettableInWindowCUIButton(const std::string& str) :
-    CUIButton(str)
+SettableInWindowCUIButton::SettableInWindowCUIButton(const GG::SubTexture& unpressed,
+                                                     const GG::SubTexture& pressed,
+                                                     const GG::SubTexture& rollover) :
+    CUIButton(unpressed, pressed, rollover)
 {}
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
