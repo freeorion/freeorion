@@ -148,6 +148,7 @@ Balancing:
 ~ Made derelict specials stealthy (40 stealth)
 ~ Adjusted monster spawning rate dependence on galaxy setup setting
 ~ Damage control techs rebalanced
+~ Made Concentration Camps require a population of 3 to be built
 
 Bugs:
 ~ Fixed production costs at start of queue processing, so that processing the queue doesn't affect the costs of other queue items during the same turn.
@@ -183,6 +184,8 @@ Bugs:
 ~ Adjusted colonization process so colonizing an outpost doesn't cancel scrap orders on buildings on the planet
 ~ Fixed issue with multiplayer chat history display
 ~ Fixed issue with ships with self-repairing hulls starting with 0 structure when produced
+~ Fixed rare situation where if a floater is the only monster outside a system, it could spawn forests at almost every system
+~ Removed design window options for moderators in multiplayer to prevent crashes
 
 
 v0.4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
