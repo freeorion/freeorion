@@ -889,6 +889,8 @@ private:
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
 
+        m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
+
         int col = 1;
         for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();
              uot_it != m_vis_filters.end(); ++uot_it, ++col)
@@ -925,24 +927,22 @@ private:
 
         // TODO: Add multiple condition widgets initialized for input condition
         m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
-        AttachChild(m_condition_widget);
-
         m_cancel_button = new CUIButton(UserString("CANCEL"));
-        AttachChild(m_cancel_button);
-        GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
-
         m_apply_button = new CUIButton(UserString("APPLY"));
+
+        AttachChild(m_condition_widget);
+        AttachChild(m_cancel_button);
         AttachChild(m_apply_button);
+
+        GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
         GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
 
         GG::Pt button_lr = this->ClientSize();
         m_cancel_button->Resize(GG::Pt(button_width, m_cancel_button->MinUsableSize().y));
-        m_cancel_button->MoveTo(GG::Pt(button_lr.x - m_cancel_button->Width(),
-                                       button_lr.y - m_cancel_button->Height()));
-        button_lr = button_lr - GG::Pt(m_apply_button->Width() + GG::X(3), GG::Y0);
+        m_cancel_button->MoveTo(button_lr - m_cancel_button->Size());
+        button_lr = button_lr - GG::Pt(m_cancel_button->Width() + GG::X(3), GG::Y0);
         m_apply_button->Resize(GG::Pt(button_width, m_apply_button->MinUsableSize().y));
-        m_apply_button->MoveTo(GG::Pt(button_lr.x - m_apply_button->Width(),
-                                      button_lr.y - m_apply_button->Height()));
+        m_apply_button->MoveTo(button_lr - m_apply_button->Size());
     }
 
     void    AcceptClicked() {
