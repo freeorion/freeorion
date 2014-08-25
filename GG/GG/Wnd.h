@@ -490,7 +490,7 @@ public:
 
     /** Enables rendering of this window (and possibly its children) during
         render loop. */
-    void Show(bool children = true);
+    virtual void Show(bool children = true);
 
     /** Called during Run(), after a modal window is registered, this is the
         place that subclasses should put specialized modal window

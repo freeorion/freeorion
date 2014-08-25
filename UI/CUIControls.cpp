@@ -129,9 +129,9 @@ void CUIButton::RenderPressed() {
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
         AngledCornerRectangle(ul, lr, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-        OffsetMove(GG::Pt(GG::X1, GG::Y1));
-        TextControl::Render();
-        OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
+        m_label->OffsetMove(GG::Pt(GG::X1, GG::Y1));
+        m_label->Render();
+        m_label->OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
     } else {
         GG::Button::RenderPressed();
     }
@@ -147,7 +147,7 @@ void CUIButton::RenderRollover() {
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
         AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-        TextControl::Render();
+        m_label->Render();
     } else {
         GG::Button::RenderRollover();
     }
@@ -160,7 +160,7 @@ void CUIButton::RenderUnpressed() {
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
         AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-        TextControl::Render();
+        m_label->Render();
     } else {
         GG::Button::RenderUnpressed();
     }

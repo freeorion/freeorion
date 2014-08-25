@@ -53,17 +53,29 @@ namespace {
 ////////////////////////////////////////////////
 Button::Button(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color, 
                Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    TextControl(x, y, w, h, str, font, text_color, FORMAT_NONE, flags),
+    Control(x, y, w, h, flags),
+    m_label(new TextControl(x, y, w, h, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED)
 {
     m_color = color;
+    AttachChild(m_label);
+    m_label->Hide();
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(LeftClickedSignal, &ClickedEcho);
 }
 
+Pt Button::MinUsableSize() const
+{ return m_label->MinUsableSize(); }
+
+void Button::Show(bool children/* = true*/)
+{ Wnd::Show(false); }
+
 Button::ButtonState Button::State() const
 { return m_state; }
+
+const std::string& Button::Text() const
+{ return m_label->Text(); }
 
 const SubTexture& Button::UnpressedGraphic() const
 { return m_unpressed_graphic; }
@@ -83,11 +95,20 @@ void Button::Render()
     }
 }
 
+void Button::SizeMove(const Pt& ul, const Pt& lr)
+{
+    Wnd::SizeMove(ul, lr);
+    m_label->Resize(Size());
+}
+
 void Button::SetColor(Clr c)
 { Control::SetColor(c); }
 
 void Button::SetState(ButtonState state)
 { m_state = state; }
+
+void Button::SetText(const std::string& text)
+{ m_label->SetText(text); }
 
 void Button::SetUnpressedGraphic(const SubTexture& st)
 { m_unpressed_graphic = st; }
@@ -181,14 +202,14 @@ void Button::RenderUnpressed()
         RenderDefault();
     }
     // draw text shadow
-    Clr temp = TextColor();  // save original color
-    SetTextColor(CLR_SHADOW); // shadow color
-    OffsetMove(Pt(X(2), Y(2)));
-    TextControl::Render();
-    OffsetMove(Pt(X(-2), Y(-2)));
-    SetTextColor(temp);    // restore original color
+    Clr temp = m_label->TextColor();  // save original color
+    m_label->SetTextColor(CLR_SHADOW); // shadow color
+    m_label->OffsetMove(Pt(X(2), Y(2)));
+    m_label->Render();
+    m_label->OffsetMove(Pt(X(-2), Y(-2)));
+    m_label->SetTextColor(temp);    // restore original color
     // draw text
-    TextControl::Render();
+    m_label->Render();
 }
 
 void Button::RenderPressed()
@@ -199,9 +220,9 @@ void Button::RenderPressed()
     } else {
         RenderDefault();
     }
-    OffsetMove(Pt(X1, Y1));
-    TextControl::Render();
-    OffsetMove(Pt(-X1, -Y1));
+    m_label->OffsetMove(Pt(X1, Y1));
+    m_label->Render();
+    m_label->OffsetMove(Pt(-X1, -Y1));
 }
 
 void Button::RenderRollover()
@@ -213,14 +234,14 @@ void Button::RenderRollover()
         RenderDefault();
     }
     // draw text shadow
-    Clr temp = TextColor();  // save original color
-    SetTextColor(CLR_SHADOW); // shadow color
-    OffsetMove(Pt(X(2), Y(2)));
-    TextControl::Render();
-    OffsetMove(Pt(X(-2), Y(-2)));
-    SetTextColor(temp);    // restore original color
+    Clr temp = m_label->TextColor();  // save original color
+    m_label->SetTextColor(CLR_SHADOW); // shadow color
+    m_label->OffsetMove(Pt(X(2), Y(2)));
+    m_label->Render();
+    m_label->OffsetMove(Pt(X(-2), Y(-2)));
+    m_label->SetTextColor(temp);    // restore original color
     // draw text
-    TextControl::Render();
+    m_label->Render();
 }
 
 void Button::RenderDefault()

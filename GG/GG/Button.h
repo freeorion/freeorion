@@ -45,7 +45,7 @@ namespace GG {
     allowing rollover effects on the button.  To create a bitmap button,
     simply set the unpressed, pressed, and/or rollover graphics to the desired
     SubTextures. \see GG::SubTexture */
-class GG_API Button : public TextControl
+class GG_API Button : public Control
 {
 public:
     /// the states of being for a GG::Button
@@ -66,9 +66,12 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
+    virtual Pt       MinUsableSize() const;
+
     /** Returns button state \see ButtonState */
     ButtonState       State() const;
 
+    const std::string& Text() const;             ///< Returns the label to be used as the button label
     const SubTexture& UnpressedGraphic() const;  ///< Returns the SubTexture to be used as the image of the button when unpressed
     const SubTexture& PressedGraphic() const;    ///< Returns the SubTexture to be used as the image of the button when pressed
     const SubTexture& RolloverGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
@@ -80,13 +83,16 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
+    virtual void   Show(bool children = true);
     virtual void   Render();
+    virtual void   SizeMove(const Pt& ul, const Pt& lr);
 
     virtual void   SetColor(Clr c); ///< Sets the control's color; does not affect the text color
 
     /** Sets button state programmatically \see ButtonState */
     void           SetState(ButtonState state);
 
+    void           SetText(const std::string& text);          ///< Sets the text to be used as the button label
     void           SetUnpressedGraphic(const SubTexture& st); ///< Sets the SubTexture to be used as the image of the button when unpressed
     void           SetPressedGraphic(const SubTexture& st);   ///< Sets the SubTexture to be used as the image of the button when pressed
     void           SetRolloverGraphic(const SubTexture& st);  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
@@ -110,11 +116,12 @@ protected:
     virtual void   RenderRollover();    ///< Draws the button rolled-over.  If an rollover graphic has been supplied, it is used.
     //@}
 
+    TextControl*   m_label;             ///< Label used to display text
+
 private:
     void           RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button
 
     ButtonState    m_state;             ///< Button is always in exactly one of the ButtonState states above
-
     SubTexture     m_unpressed_graphic; ///< Graphic used to display button when it's unpressed
     SubTexture     m_pressed_graphic;   ///< Graphic used to display button when it's depressed
     SubTexture     m_rollover_graphic;  ///< Graphic used to display button when it's under the mouse and not pressed
