@@ -33,20 +33,16 @@ public:
                                              GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;

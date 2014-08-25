@@ -37,25 +37,21 @@ GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr
                                 GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUITabBar(font, color, text_color, style, flags); }
 
-GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                        GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
+GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return 0; }
 
-GG::Button* CUIStyle::NewScrollDownButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                          GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(color, text_color, flags); }
+GG::Button* CUIStyle::NewScrollDownButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return NewScrollUpButton(color, text_color); }
 
 GG::Button* CUIStyle::NewVScrollTabButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIScroll::ScrollTab(GG::VERTICAL, 1, (color == GG::CLR_ZERO) ? ClientUI::CtrlColor() : color, ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewScrollLeftButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                          GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(color, text_color, flags); }
+GG::Button* CUIStyle::NewScrollLeftButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return NewScrollUpButton(color, text_color); }
 
-GG::Button* CUIStyle::NewScrollRightButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return NewScrollUpButton(color, text_color, flags); }
+GG::Button* CUIStyle::NewScrollRightButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return NewScrollUpButton(color, text_color); }
 
 GG::Button* CUIStyle::NewHScrollTabButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const

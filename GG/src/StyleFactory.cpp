@@ -135,25 +135,21 @@ Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior,
                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
 { return NewScroll(HORIZONTAL, color, interior, flags); }
 
-Button* StyleFactory::NewScrollUpButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                        Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewScrollUpButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewScrollDownButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewScrollDownButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewVScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
 
-Button* StyleFactory::NewScrollLeftButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewScrollLeftButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewScrollRightButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                           Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewScrollRightButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewHScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
                                           Flags<WndFlag> flags/* = INTERACTIVE*/) const
