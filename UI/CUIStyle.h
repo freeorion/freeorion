@@ -68,11 +68,9 @@ public:
                                                 GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                                 GG::StateButtonStyle style = GG::SBSTYLE_3D_TOP_ATTACHED_TAB, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::Button*            NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                        GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual void                   DeleteWnd(GG::Wnd* wnd) const;
 };

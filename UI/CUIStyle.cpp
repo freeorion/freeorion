@@ -87,18 +87,16 @@ GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
     return retval;
 }
 
-GG::Button* CUIStyle::NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                          GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
+GG::Button* CUIStyle::NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 {
-    CUIArrowButton* retval = new CUIArrowButton(SHAPE_LEFT, flags);
+    CUIArrowButton* retval = new CUIArrowButton(SHAPE_LEFT, GG::INTERACTIVE);
     retval->FillBackgroundWithWndColor(true);
     return retval;
 }
 
-GG::Button* CUIStyle::NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                           GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
+GG::Button* CUIStyle::NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 {
-    CUIArrowButton* retval = new CUIArrowButton(SHAPE_RIGHT, flags);
+    CUIArrowButton* retval = new CUIArrowButton(SHAPE_RIGHT, GG::INTERACTIVE);
     retval->FillBackgroundWithWndColor(true);
     return retval;
 }

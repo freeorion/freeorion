@@ -190,13 +190,11 @@ StateButton* StyleFactory::NewTabBarTab(const std::string& str,
     return retval;
 }
 
-Button* StyleFactory::NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton("<", font, color, text_color, flags); }
+Button* StyleFactory::NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("<", font, color, text_color, INTERACTIVE); }
 
-Button* StyleFactory::NewTabBarRightButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                           Flags<WndFlag> flags /*= INTERACTIVE*/) const
-{ return NewButton(">", font, color, text_color, flags); }
+Button* StyleFactory::NewTabBarRightButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton(">", font, color, text_color, INTERACTIVE); }
 
 ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg,
                                                 const boost::shared_ptr<Font>& font, Clr color, Clr border_color,
