@@ -154,8 +154,7 @@ public:
     virtual Button*            NewScrollDownButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new tab Button, to be used in a vertical Scroll. */
-    virtual Button*            NewVScrollTabButton(Clr color, Clr text_color = CLR_BLACK,
-                                                   Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual Button*            NewVScrollTabButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new left (decrease) Button, to be used in a horizontal Scroll. */
     virtual Button*            NewScrollLeftButton(Clr color, Clr text_color = CLR_BLACK) const;
@@ -164,16 +163,13 @@ public:
     virtual Button*            NewScrollRightButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new tab Button, to be used in a horizontal Scroll. */
-    virtual Button*            NewHScrollTabButton(Clr color, Clr text_color = CLR_BLACK,
-                                                   Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual Button*            NewHScrollTabButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new tab Button, to be used in a vertical Slider. */
-    virtual Button*            NewVSliderTabButton(Clr color, Clr text_color = CLR_BLACK,
-                                                   Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual Button*            NewVSliderTabButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new tab Button, to be used in a horizontal Slider. */
-    virtual Button*            NewHSliderTabButton(Clr color, Clr text_color = CLR_BLACK,
-                                                   Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual Button*            NewHSliderTabButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new increase Button, to be used in a Spin. */
     virtual Button*            NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,

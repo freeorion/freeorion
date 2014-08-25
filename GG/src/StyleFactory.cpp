@@ -141,9 +141,8 @@ Button* StyleFactory::NewScrollUpButton(Clr color, Clr text_color/* = CLR_BLACK*
 Button* StyleFactory::NewScrollDownButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewVScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewVScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE); }
 
 Button* StyleFactory::NewScrollLeftButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
@@ -151,17 +150,14 @@ Button* StyleFactory::NewScrollLeftButton(Clr color, Clr text_color/* = CLR_BLAC
 Button* StyleFactory::NewScrollRightButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewHScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewHScrollTabButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE); }
 
-Button* StyleFactory::NewVSliderTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewVSliderTabButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE); }
 
-Button* StyleFactory::NewHSliderTabButton(Clr color, Clr text_color/* = CLR_BLACK*/,
-                                          Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, flags); }
+Button* StyleFactory::NewHSliderTabButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE); }
 
 Button* StyleFactory::NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const

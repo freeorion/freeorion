@@ -37,21 +37,17 @@ public:
 
     virtual GG::Button*            NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Button*            NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
