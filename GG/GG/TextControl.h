@@ -38,6 +38,8 @@
 
 namespace GG {
 
+class StateButton;
+
 /** \brief Displays a piece of text.
 
     TextControl's know how to center, left- or right-justify, etc. themselves
@@ -227,6 +229,8 @@ protected:
     /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
     const std::vector<Font::LineData>& GetLineData() const;
+
+    friend StateButton;
     //@}
 
 private:

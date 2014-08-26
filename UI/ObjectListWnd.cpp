@@ -890,6 +890,9 @@ private:
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
 
         m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
+        m_filters_layout->SetMinimumRowHeight(1, label->MinUsableSize().y);
+        m_filters_layout->SetMinimumRowHeight(2, label->MinUsableSize().y);
+        m_filters_layout->SetMinimumRowHeight(3, label->MinUsableSize().y);
 
         int col = 1;
         for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();

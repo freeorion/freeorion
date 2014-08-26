@@ -260,12 +260,15 @@ void Button::RenderDefault()
 StateButton::StateButton(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format, 
                          Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_CHECKBOX*/,
                          Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    TextControl(x, y, w, h, str, font, text_color, format, flags),
+    Control(x, y, w, h, flags),
+    m_label(new TextControl(x, y, w, h, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
     m_int_color(interior),
     m_style(style)
 {
     m_color = color;
+    AttachChild(m_label);
+    m_label->Hide();
     SetDefaultButtonPosition();
 
     if (INSTRUMENT_ALL_SIGNALS)
@@ -274,10 +277,13 @@ StateButton::StateButton(X x, Y y, X w, Y h, const std::string& str, const boost
 
 Pt StateButton::MinUsableSize() const
 {
-    Pt text_lr = m_text_ul + TextControl::MinUsableSize();
+    Pt text_lr = m_text_ul + m_label->MinUsableSize();
     return Pt(std::max(m_button_lr.x, text_lr.x) - std::min(m_button_ul.x, m_text_ul.x),
               std::max(m_button_lr.y, text_lr.y) - std::min(m_button_ul.y, m_text_ul.y)) + GG::Pt(GG::X(25), GG::Y0);
 }
+
+const std::string& StateButton::Text() const
+{ return m_label->Text(); }
 
 bool StateButton::Checked() const
 { return m_checked; }
@@ -348,10 +354,13 @@ void StateButton::Render()
     }
     }
 
-    OffsetMove(m_text_ul + additional_text_offset);
-    TextControl::Render();
-    OffsetMove(-(m_text_ul + additional_text_offset));
+    m_label->OffsetMove(m_text_ul + additional_text_offset);
+    m_label->Render();
+    m_label->OffsetMove(-(m_text_ul + additional_text_offset));
 }
+
+void StateButton::Show(bool children/* = true*/)
+{ Wnd::Show(false); }
 
 void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -363,8 +372,9 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 
 void StateButton::SizeMove(const Pt& ul, const Pt& lr)
 {
+    Control::SizeMove(ul, lr);
+    m_label->Resize(Size());
     RepositionButton();
-    TextControl::SizeMove(ul, lr);
 }
 
 void StateButton::Reset()
@@ -387,7 +397,7 @@ void StateButton::RepositionButton()
         const Y BN_H = m_button_lr.y - m_button_ul.y;
         X bn_x = m_button_ul.x;
         Y bn_y = m_button_ul.y;
-        Flags<TextFormat> format = GetTextFormat();
+        Flags<TextFormat> format = m_label->GetTextFormat();
         Flags<TextFormat> original_format = format;
         const double SPACING = 0.5; // the space to leave between the button and text, as a factor of the button's size (width or height)
         if (format & FORMAT_VCENTER)       // center button vertically
@@ -398,7 +408,7 @@ void StateButton::RepositionButton()
         }
         if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
             bn_y = (h - BN_H);
-            m_text_ul.y = h - (BN_H * (1 + SPACING)) - (static_cast<int>(GetLineData().size() - 1) * GetFont()->Lineskip() + GetFont()->Height()) + 0.5;
+            m_text_ul.y = h - (BN_H * (1 + SPACING)) - (static_cast<int>(m_label->GetLineData().size() - 1) * m_label->GetFont()->Lineskip() + m_label->GetFont()->Height()) + 0.5;
         }
 
         if (format & FORMAT_CENTER) {      // center button horizontally
@@ -420,7 +430,7 @@ void StateButton::RepositionButton()
                 m_text_ul.x = -BN_W * (1 + SPACING) + 0.5;
         }
         if (format != original_format)
-            SetTextFormat(format);
+            m_label->SetTextFormat(format);
         m_button_ul = Pt(bn_x, bn_y);
         m_button_lr = m_button_ul + Pt(BN_W, BN_H);
     }
@@ -434,8 +444,8 @@ void StateButton::SetButtonPosition(const Pt& ul, const Pt& lr)
     Y bn_h = lr.y - ul.y;
 
     if (bn_w <= 0 || bn_h <= 0) {              // if one of these is invalid,
-        bn_w = X(GetFont()->PointSize()); // set button width and height to text height
-        bn_h = Y(GetFont()->PointSize());
+        bn_w = X(m_label->GetFont()->PointSize()); // set button width and height to text height
+        bn_h = Y(m_label->GetFont()->PointSize());
     }
 
     if (bn_x == -1 || bn_y == -1) {
@@ -457,8 +467,14 @@ void StateButton::SetColor(Clr c)
 void StateButton::SetInteriorColor(Clr c)
 { m_int_color = c; }
 
+void StateButton::SetTextColor(Clr c)
+{ m_label->SetTextColor(c); }
+
 void StateButton::SetStyle(StateButtonStyle bs)
 { m_style = bs; }
+
+TextControl* StateButton::GetLabel() const
+{ return m_label; }
 
 Pt StateButton::ButtonUpperLeft() const
 { return m_button_ul; }

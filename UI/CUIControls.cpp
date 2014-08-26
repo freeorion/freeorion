@@ -289,7 +289,7 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
 {
     if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB) {
         SetColor(ClientUI::WndColor());
-        SetTextColor(DarkColor(ClientUI::TextColor()));
+        GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
     }
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
@@ -302,7 +302,7 @@ GG::Pt CUIStateButton::MinUsableSize() const {
     GG::Pt button_ul = this->ButtonUpperLeft();
     GG::Pt button_lr = this->ButtonLowerRight();
     GG::Pt text_ul = this->TextUpperLeft();
-    GG::Pt text_lr = text_ul + TextControl::MinUsableSize();
+    GG::Pt text_lr = text_ul + GetLabel()->MinUsableSize();
     GG::Pt retval = GG::Pt(std::max(button_lr.x, text_lr.x) - std::min(button_ul.x, text_ul.x),
                            std::max(button_lr.y, text_lr.y) - std::min(button_ul.y, text_ul.y));
     return retval;
@@ -397,9 +397,9 @@ void CUIStateButton::Render() {
             }
         }
         // draw text
-        OffsetMove(TextUpperLeft());
-        TextControl::Render();
-        OffsetMove(-TextUpperLeft());
+        GetLabel()->OffsetMove(TextUpperLeft());
+        GetLabel()->TextControl::Render();
+        GetLabel()->OffsetMove(-TextUpperLeft());
     } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_TOP_DETACHED_TAB) {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
@@ -413,9 +413,9 @@ void CUIStateButton::Render() {
             additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
         }
         AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !Checked());
-        OffsetMove(TextUpperLeft() + additional_text_offset);
-        TextControl::Render();
-        OffsetMove(-(TextUpperLeft() + additional_text_offset));
+        GetLabel()->OffsetMove(TextUpperLeft() + additional_text_offset);
+        GetLabel()->Render();
+        GetLabel()->OffsetMove(-(TextUpperLeft() + additional_text_offset));
     } else {
         StateButton::Render();
     }

@@ -15,7 +15,6 @@
 class CUIButton;
 class SettableInWindowCUIButton;
 class CUIEdit;
-class CUITurnButton;
 class FleetWnd;
 class MapWndPopup;
 class DesignWnd;

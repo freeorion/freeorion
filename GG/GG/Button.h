@@ -139,7 +139,7 @@ private:
     place the button and the text in the proper orientation because the entire
     control's size is too small, the button and text are positioned in their
     default spots (button on left, text on right, centered vertically). */
-class GG_API StateButton : public TextControl
+class GG_API StateButton : public Control
 {
 public:
     /** \name Signal Types */ ///@{
@@ -157,6 +157,8 @@ public:
     /** \name Accessors */ ///@{
     virtual Pt       MinUsableSize() const;
 
+    const std::string& Text() const;        ///< Returns the label to be used as the button label
+
     bool             Checked() const;       ///< Returns true if button is checked
     Clr              InteriorColor() const; ///< Returns the interior color of the box, circle, or other enclosing shape
 
@@ -167,6 +169,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
+    virtual void     Show(bool children = true);
     virtual void     Render();
     virtual void     SizeMove(const Pt& ul, const Pt& lr);
 
@@ -176,6 +179,7 @@ public:
     void             SetDefaultButtonPosition(); ///< Places the button to its default positionwithin the control
     virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
     void             SetInteriorColor(Clr c); ///< Sets the interior color of the box, circle, or other enclosing shape
+    void             SetTextColor(Clr c); ///< Sets the color of the box label text
 
     /** Sets the visual style of the button \see StateButtonStyle */
     void             SetStyle(StateButtonStyle bs);
@@ -183,6 +187,7 @@ public:
 
 protected:
     /** \name Accessors */ ///@{
+    TextControl* GetLabel() const;
     Pt  ButtonUpperLeft() const;  ///< Returns the upper-left of the button part of the control
     Pt  ButtonLowerRight() const; ///< Returns the lower-right of the button part of the control
     Pt  TextUpperLeft() const;    ///< Returns the upper-left of the text part of the control
@@ -195,6 +200,8 @@ protected:
     //@}
 
 private:
+    TextControl*      m_label;       ///< Label used to display text
+
     bool              m_checked;     ///< true when this button in a checked, active state
     Clr               m_int_color;   ///< color inside border
     StateButtonStyle  m_style;       ///< style of appearance to use when rendering button
