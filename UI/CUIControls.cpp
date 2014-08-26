@@ -74,7 +74,16 @@ CUIButton::CUIButton(const std::string& str) :
     Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str,
            ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
-    m_border_thick(1)
+    m_border_thick(1),
+    m_checked(false)
+{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
+
+CUIButton::CUIButton(const std::string& str, GG::Clr background, GG::Clr border) :
+    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str,
+           ClientUI::GetFont(), background, ClientUI::TextColor(), GG::INTERACTIVE),
+    m_border_color(border),
+    m_border_thick(2),
+    m_checked(false)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
@@ -82,7 +91,8 @@ CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pres
     Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(),
            GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
-    m_border_thick(1)
+    m_border_thick(1),
+    m_checked(false)
 {
     SetColor(GG::CLR_WHITE);
     SetUnpressedGraphic(unpressed);
@@ -105,6 +115,9 @@ void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
+void CUIButton::SetCheck(bool b/* = true*/)
+{ m_checked = b; }
+
 GG::Pt CUIButton::MinUsableSize() const {
     GG::Pt result = GG::Button::MinUsableSize();
     const int CUIBUTTON_HPADDING = 10;
@@ -116,19 +129,23 @@ GG::Pt CUIButton::MinUsableSize() const {
     return result;
 }
 
-void CUIButton::SetBorderColor(GG::Clr clr)
-{ m_border_color = clr; }
-
-void CUIButton::SetBorderThick(int thick)
-{ m_border_thick = std::max(thick, 0); }  // don't allow negative thickness borders
-
 void CUIButton::RenderPressed() {
     if (PressedGraphic().Empty()) {
-        GG::Clr color_to_use = Color();
-        AdjustBrightness(color_to_use, 25);
+        GG::Clr background_clr = Color();
+        GG::Clr border_clr     = m_border_color;
+        int     border_thick   = m_border_thick;
+
+        if (!m_checked) {
+            background_clr = ClientUI::CtrlColor();
+            border_clr     = ClientUI::CtrlBorderColor();
+            border_thick   = 1;
+        }
+
+        AdjustBrightness(background_clr, 25);
+
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
-        AngledCornerRectangle(ul, lr, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);
         m_label->OffsetMove(GG::Pt(GG::X1, GG::Y1));
         m_label->Render();
         m_label->OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
@@ -139,14 +156,26 @@ void CUIButton::RenderPressed() {
 
 void CUIButton::RenderRollover() {
     if (RolloverGraphic().Empty()) {
-        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-        GG::Clr border_color_to_use = m_border_color;
-        AdjustBrightness(border_color_to_use, 100);
-        if (Disabled())
-            border_color_to_use = DisabledColor(m_border_color);
+        GG::Clr background_clr = Color();
+        GG::Clr border_clr     = m_border_color;
+        int     border_thick   = m_border_thick;
+
+        if (!m_checked) {
+            background_clr = ClientUI::CtrlColor();
+            border_clr     = ClientUI::CtrlBorderColor();
+            border_thick   = 1;
+        }
+
+        if (Disabled()) {
+            background_clr = DisabledColor(background_clr);
+            border_clr     = DisabledColor(border_clr);
+        }
+        else
+            AdjustBrightness(border_clr, 100);
+
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
-        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);
         m_label->Render();
     } else {
         GG::Button::RenderRollover();
@@ -155,41 +184,28 @@ void CUIButton::RenderRollover() {
 
 void CUIButton::RenderUnpressed() {
     if (UnpressedGraphic().Empty()) {
-        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-        GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+        GG::Clr background_clr = Color();
+        GG::Clr border_clr     = m_border_color;
+        int     border_thick   = m_border_thick;
+
+        if (!m_checked) {
+            background_clr = ClientUI::CtrlColor();
+            border_clr     = ClientUI::CtrlBorderColor();
+            border_thick   = 1;
+        }
+
+        if (Disabled()) {
+            background_clr = DisabledColor(background_clr);
+            border_clr     = DisabledColor(border_clr);
+        }
+
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
-        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);
         m_label->Render();
     } else {
         GG::Button::RenderUnpressed();
     }
-}
-
-void CUIButton::MarkNotSelected() {
-    SetColor(ClientUI::CtrlColor());
-    SetBorderColor(ClientUI::CtrlBorderColor());
-    SetBorderThick(1);
-}
-
-void CUIButton::MarkSelectedGray() {
-    GG::Clr colour = ClientUI::CtrlColor();
-    AdjustBrightness(colour, 50);
-    SetColor(colour);
-
-    colour = ClientUI::CtrlBorderColor();
-    AdjustBrightness(colour, 50);
-    SetBorderColor(colour);
-
-    SetBorderThick(2);
-}
-
-void CUIButton::MarkSelectedTechCategoryColor(std::string category) {
-    GG::Clr cat_colour = ClientUI::CategoryColor(category);
-    SetBorderColor(cat_colour);
-    AdjustBrightness(cat_colour, -50);
-    SetColor(cat_colour);
-    SetBorderThick(2);
 }
 
 

@@ -458,15 +458,15 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
+    m_build_type_buttons[BT_BUILDING] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
+    m_build_type_buttons[BT_SHIP] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor()));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor()));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
@@ -1031,7 +1031,7 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
     Logger().errorStream() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->ShowType(type, refresh_list);
-        m_build_selector->m_build_type_buttons[type]->MarkSelectedGray();
+        m_build_selector->m_build_type_buttons[type]->SetCheck();
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     }
@@ -1039,15 +1039,15 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
 
 void BuildDesignatorWnd::ShowAllTypes(bool refresh_list) {
     m_build_selector->ShowAllTypes(refresh_list);
-    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkSelectedGray();
-    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkSelectedGray();
+    m_build_selector->m_build_type_buttons[BT_BUILDING]->SetCheck();
+    m_build_selector->m_build_type_buttons[BT_SHIP]->SetCheck();
 }
 
 void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
     Logger().debugStream() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
-        m_build_selector->m_build_type_buttons[type]->MarkNotSelected();
+        m_build_selector->m_build_type_buttons[type]->SetCheck(false);
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::HideType was passed an invalid BuildType");
     }
@@ -1055,8 +1055,8 @@ void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
 
 void BuildDesignatorWnd::HideAllTypes(bool refresh_list) {
     m_build_selector->HideAllTypes(refresh_list);
-    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkNotSelected();
-    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
+    m_build_selector->m_build_type_buttons[BT_BUILDING]->SetCheck(false);
+    m_build_selector->m_build_type_buttons[BT_SHIP]->SetCheck(false);
 }
 
 void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list) {
@@ -1082,17 +1082,17 @@ void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list) {
 void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list) {
     m_build_selector->ShowAvailability(available, refresh_list);
     if (available)
-        m_build_selector->m_availability_buttons.at(0)->MarkSelectedGray();
+        m_build_selector->m_availability_buttons.at(0)->SetCheck();
     else
-        m_build_selector->m_availability_buttons.at(1)->MarkSelectedGray();
+        m_build_selector->m_availability_buttons.at(1)->SetCheck();
 }
 
 void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list) {
     m_build_selector->HideAvailability(available, refresh_list);
     if (available)
-        m_build_selector->m_availability_buttons.at(0)->MarkNotSelected();
+        m_build_selector->m_availability_buttons.at(0)->SetCheck(false);
     else
-        m_build_selector->m_availability_buttons.at(1)->MarkNotSelected();
+        m_build_selector->m_availability_buttons.at(1)->SetCheck(false);
 }
 
 void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list) {

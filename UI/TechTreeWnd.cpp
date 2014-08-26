@@ -247,32 +247,29 @@ TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     for (unsigned int i = 0; i < cats.size(); ++i) {
-        m_category_buttons.push_back(new CUIButton(UserString(cats[i])));
+        GG::Clr background_clr = ClientUI::CategoryColor(cats[i]);
+        GG::Clr border_clr     = background_clr;
+        AdjustBrightness(background_clr, -50);
+        m_category_buttons.push_back(new CUIButton(UserString(cats[i]), background_clr, border_clr));
         AttachChild(m_category_buttons.back());
-        m_category_buttons.back()->MarkNotSelected();
     }
     // and one for "ALL"
     m_category_buttons.push_back(new CUIButton(UserString("ALL")));
     AttachChild(m_category_buttons.back());
-    m_category_buttons.back()->MarkNotSelected();
+    m_category_buttons.back()->SetCheck(false);
 
     // create a button for each tech status
-    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"));
+    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
-    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"));
+    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tech_status_buttons[TS_RESEARCHABLE]);
-    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"));
+    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tech_status_buttons[TS_COMPLETE]);
-    // colour
-    for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
-        it->second->MarkNotSelected();
 
     // create buttons to switch between tree and list views
-    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"));
-    m_list_view_button->MarkNotSelected();
+    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_list_view_button);
-    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"));
-    m_tree_view_button->MarkNotSelected();
+    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tree_view_button);
 
     SetChildClippingMode(ClipToClient);
@@ -1809,8 +1806,7 @@ void TechTreeWnd::ShowCategory(const std::string& category) {
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
         if (*cats_it == category) {
-            CUIButton* button = m_tech_tree_controls->m_category_buttons[i];
-            button->MarkSelectedTechCategoryColor(cats[i]);
+            m_tech_tree_controls->m_category_buttons[i]->SetCheck();
             break;
         }
     }
@@ -1823,8 +1819,7 @@ void TechTreeWnd::ShowAllCategories() {
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        CUIButton* button = m_tech_tree_controls->m_category_buttons[i];
-        button->MarkSelectedTechCategoryColor(*cats_it);
+        m_tech_tree_controls->m_category_buttons[i]->SetCheck();
     }
 }
 
@@ -1837,7 +1832,7 @@ void TechTreeWnd::HideCategory(const std::string& category) {
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
         if (*cats_it == category) {
-            m_tech_tree_controls->m_category_buttons[i]->MarkNotSelected();
+            m_tech_tree_controls->m_category_buttons[i]->SetCheck(false);
             break;
         }
     }
@@ -1850,7 +1845,7 @@ void TechTreeWnd::HideAllCategories() {
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_tech_tree_controls->m_category_buttons[i]->MarkNotSelected();
+        m_tech_tree_controls->m_category_buttons[i]->SetCheck(false);
     }
 }
 
@@ -1878,16 +1873,14 @@ void TechTreeWnd::ShowStatus(TechStatus status) {
     m_layout_panel->ShowStatus(status);
     m_tech_list->ShowStatus(status);
 
-    CUIButton* button = m_tech_tree_controls->m_tech_status_buttons[status];
-    button->MarkSelectedGray();
+    m_tech_tree_controls->m_tech_status_buttons[status]->SetCheck();
 }
 
 void TechTreeWnd::HideStatus(TechStatus status) {
     m_layout_panel->HideStatus(status);
     m_tech_list->HideStatus(status);
 
-    CUIButton* button = m_tech_tree_controls->m_tech_status_buttons[status];
-    button->MarkNotSelected();
+    m_tech_tree_controls->m_tech_status_buttons[status]->SetCheck(false);
 }
 
 void TechTreeWnd::ToggleStatus(TechStatus status) {
@@ -1904,8 +1897,8 @@ void TechTreeWnd::ShowTreeView() {
     AttachChild(m_layout_panel);
     MoveChildDown(m_layout_panel);
     DetachChild(m_tech_list);
-    m_tech_tree_controls->m_list_view_button->MarkNotSelected();
-    m_tech_tree_controls->m_tree_view_button->MarkSelectedGray();
+    m_tech_tree_controls->m_list_view_button->SetCheck(false);
+    m_tech_tree_controls->m_tree_view_button->SetCheck();
     MoveChildUp(m_tech_tree_controls);
 }
 
@@ -1914,8 +1907,8 @@ void TechTreeWnd::ShowListView() {
     AttachChild(m_tech_list);
     MoveChildDown(m_tech_list);
     DetachChild(m_layout_panel);
-    m_tech_tree_controls->m_list_view_button->MarkSelectedGray();
-    m_tech_tree_controls->m_tree_view_button->MarkNotSelected();
+    m_tech_tree_controls->m_list_view_button->SetCheck();
+    m_tech_tree_controls->m_tree_view_button->SetCheck(false);
     MoveChildUp(m_tech_tree_controls);
 }
 

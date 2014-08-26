@@ -42,27 +42,20 @@ public:
     /** \name Structors */ //@{
     CUIButton(const std::string& str); ///< basic ctor
 
+    CUIButton(const std::string& str, GG::Clr background, GG::Clr border);
+
     CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
     //@}
 
     /** \name Accessors */ //@{
     virtual GG::Pt MinUsableSize() const;
 
-    GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
-    int          BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
-
     virtual bool InWindow(const GG::Pt& pt) const;
     //@}
 
     /** \name Mutators */ //@{
     virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-
-    void SetBorderColor(GG::Clr clr);   ///< sets the color used to render the border of the button
-    void SetBorderThick(int thick);     ///< sets the thickness of the rendered the border of the button
-
-    void MarkNotSelected();             ///< sets button colours to standard UI colours
-    void MarkSelectedGray();            ///< sets button colours to lighter grey background and border to indicate selection or activation
-    void MarkSelectedTechCategoryColor(std::string category);   ///< sets button background and border colours to variants of the colour of the tech category specified
+    void         SetCheck(bool b = true);
     //@}
 
 protected:
@@ -75,6 +68,7 @@ protected:
 private:
     GG::Clr m_border_color;
     int     m_border_thick;
+    bool    m_checked;     ///< true when this button in a checked, active state
 };
 
 class SettableInWindowCUIButton : public CUIButton {

@@ -70,6 +70,17 @@ GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<Stre
 // controls
 GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr(); }
 GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr(); }
+GG::Clr     ClientUI::ButtonHiliteColor() {
+    GG::Clr colour = CtrlColor();
+    AdjustBrightness(colour, 50);
+    return colour;
+}
+
+GG::Clr     ClientUI::ButtonHiliteBorderColor() {
+    GG::Clr colour = CtrlBorderColor();
+    AdjustBrightness(colour, 50);
+    return colour;
+}
 
 int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
 

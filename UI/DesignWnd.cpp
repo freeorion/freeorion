@@ -800,24 +800,24 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)));
+        m_class_buttons[part_class] = new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
         AttachChild(m_class_buttons[part_class]);
         GG::Connect(m_class_buttons[part_class]->LeftClickedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_availability_buttons.first);
     GG::Connect(m_availability_buttons.first->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_availability_buttons.second);
     GG::Connect(m_availability_buttons.second->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
-    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"));
+    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_superfluous_parts_button);
     GG::Connect(m_superfluous_parts_button->LeftClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
@@ -958,7 +958,7 @@ void DesignWnd::PartPalette::DoLayout() {
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
         m_parts_list->ShowClass(part_class, refresh_list);
-        m_class_buttons[part_class]->MarkSelectedGray();
+        m_class_buttons[part_class]->SetCheck();
     } else {
         throw std::invalid_argument("PartPalette::ShowClass was passed an invalid ShipPartClass");
     }
@@ -967,13 +967,13 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
     for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
-        it->second->MarkSelectedGray();
+        it->second->SetCheck();
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
         m_parts_list->HideClass(part_class, refresh_list);
-        m_class_buttons[part_class]->MarkNotSelected();
+        m_class_buttons[part_class]->SetCheck(false);
     } else {
         throw std::invalid_argument("PartPalette::HideClass was passed an invalid ShipPartClass");
     }
@@ -982,7 +982,7 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
     for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
-        it->second->MarkNotSelected();
+        it->second->SetCheck(false);
 }
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
@@ -1009,17 +1009,17 @@ void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
 void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
     m_parts_list->ShowAvailability(available, refresh_list);
     if (available)
-        m_availability_buttons.first->MarkSelectedGray();
+        m_availability_buttons.first->SetCheck();
     else
-        m_availability_buttons.second->MarkSelectedGray();
+        m_availability_buttons.second->SetCheck();
 }
 
 void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
     m_parts_list->HideAvailability(available, refresh_list);
     if (available)
-        m_availability_buttons.first->MarkNotSelected();
+        m_availability_buttons.first->SetCheck(false);
     else
-        m_availability_buttons.second->MarkNotSelected();
+        m_availability_buttons.second->SetCheck(false);
 }
 
 void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
@@ -1039,12 +1039,12 @@ void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_lis
 
 void DesignWnd::PartPalette::ShowSuperfluous(bool refresh_list) {
     m_parts_list->ShowSuperfluousParts(refresh_list);
-    m_superfluous_parts_button->MarkSelectedGray();
+    m_superfluous_parts_button->SetCheck();
 }
 
 void DesignWnd::PartPalette::HideSuperfluous(bool refresh_list) {
     m_parts_list->HideSuperfluousParts(refresh_list);
-    m_superfluous_parts_button->MarkNotSelected();
+    m_superfluous_parts_button->SetCheck(false);
 }
 
 void DesignWnd::PartPalette::ToggleSuperfluous(bool refresh_list) {
@@ -1844,12 +1844,12 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_saved_designs_list(0),
     m_monsters_list(0)
 {
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_availability_buttons.first);
     GG::Connect(m_availability_buttons.first->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_availability_buttons.second);
     GG::Connect(m_availability_buttons.second->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
@@ -1926,9 +1926,9 @@ void DesignWnd::BaseSelector::ShowAvailability(bool available, bool refresh_list
     if (m_designs_list)
         m_designs_list->ShowAvailability(available, refresh_list);
     if (available)
-        m_availability_buttons.first->MarkSelectedGray();
+        m_availability_buttons.first->SetCheck();
     else
-        m_availability_buttons.second->MarkSelectedGray();
+        m_availability_buttons.second->SetCheck();
 }
 
 void DesignWnd::BaseSelector::HideAvailability(bool available, bool refresh_list) {
@@ -1937,9 +1937,9 @@ void DesignWnd::BaseSelector::HideAvailability(bool available, bool refresh_list
     if (m_designs_list)
         m_designs_list->HideAvailability(available, refresh_list);
     if (available)
-        m_availability_buttons.first->MarkNotSelected();
+        m_availability_buttons.first->SetCheck(false);
     else
-        m_availability_buttons.second->MarkNotSelected();
+        m_availability_buttons.second->SetCheck(false);
 }
 
 void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_list) {

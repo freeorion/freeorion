@@ -150,6 +150,8 @@ public:
     // controls
     static GG::Clr      CtrlColor();            //!< background color of UI controls
     static GG::Clr      CtrlBorderColor();
+    static GG::Clr      ButtonHiliteColor();
+    static GG::Clr      ButtonHiliteBorderColor();
 
     static int          ScrollWidth();
 
