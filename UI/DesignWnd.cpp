@@ -1086,6 +1086,7 @@ public:
     void                            ShowEmptyHulls(bool refresh_list = true);
     void                            ShowCompletedDesigns(bool refresh_list = true);
     void                            ShowSavedDesigns(bool refresh_list = true);
+    void                            ShowMonsters(bool refresh_list = true);
 
     void                            ShowAvailability(bool available, bool refresh_list = true);
     void                            HideAvailability(bool available, bool refresh_list = true);
@@ -1169,12 +1170,14 @@ private:
     void    PopulateWithEmptyHulls();
     void    PopulateWithCompletedDesigns();
     void    PopulateWithSavedDesigns();
+    void    PopulateWithMonsters();
 
     int                         m_empire_id_shown;
     std::pair<bool, bool>       m_availabilities_shown; // .first indicates whether available parts should be shown.  .second indicates whether unavailable parts should be shown
     bool                        m_showing_empty_hulls;
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
+    bool                        m_showing_monsters;
 
     std::set<int>               m_designs_in_list;
     std::set<std::string>       m_hulls_in_list;
@@ -1314,7 +1317,8 @@ BasesListBox::BasesListBox() :
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
-    m_showing_saved_designs(false)
+    m_showing_saved_designs(false),
+    m_showing_monsters(false)
 {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL);
@@ -1422,6 +1426,9 @@ void BasesListBox::Populate() {
 
     if (m_showing_saved_designs)
         PopulateWithSavedDesigns();
+
+    if (m_showing_monsters)
+        PopulateWithMonsters();
 }
 
 GG::Pt BasesListBox::ListRowSize()
@@ -1542,7 +1549,9 @@ void BasesListBox::PopulateWithCompletedDesigns() {
         }
     } else if (showing_available) {
         // add all known / existing designs
-        for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
+        for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+             it != universe.endShipDesigns(); ++it)
+        {
             int design_id = it->first;
             const ShipDesign* design = it->second;
             if (!design->Producible())
@@ -1568,6 +1577,28 @@ void BasesListBox::PopulateWithSavedDesigns() {
          it != manager.end(); ++it)
     {
         SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, it->first);
+        Insert(row);
+        row->Resize(row_size);
+    }
+}
+
+void BasesListBox::PopulateWithMonsters() {
+    ScopedTimer scoped_timer("BasesListBox::PopulateWithMonsters");
+
+    const Universe& universe = GetUniverse();
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
+
+    for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+            it != universe.endShipDesigns(); ++it)
+    {
+        int design_id = it->first;
+        const ShipDesign* design = it->second;
+        if (!design->IsMonster())
+            continue;
+        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
         Insert(row);
         row->Resize(row_size);
     }
@@ -1699,6 +1730,7 @@ void BasesListBox::ShowEmptyHulls(bool refresh_list) {
     m_showing_empty_hulls = true;
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
+    m_showing_monsters = false;
     if (refresh_list)
         Populate();
 }
@@ -1707,6 +1739,7 @@ void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_empty_hulls = false;
     m_showing_completed_designs = true;
     m_showing_saved_designs = false;
+    m_showing_monsters = false;
     if (refresh_list)
         Populate();
 }
@@ -1715,6 +1748,16 @@ void BasesListBox::ShowSavedDesigns(bool refresh_list) {
     m_showing_empty_hulls = false;
     m_showing_completed_designs = false;
     m_showing_saved_designs = true;
+    m_showing_monsters = false;
+    if (refresh_list)
+        Populate();
+}
+
+void BasesListBox::ShowMonsters(bool refresh_list) {
+    m_showing_empty_hulls = false;
+    m_showing_completed_designs = false;
+    m_showing_saved_designs = false;
+    m_showing_monsters = true;
     if (refresh_list)
         Populate();
 }
@@ -1789,6 +1832,7 @@ private:
     BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
     BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
     BasesListBox*   m_saved_designs_list;   // designs saved to files
+    BasesListBox*   m_monsters_list;        // monster designs
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
@@ -1797,7 +1841,8 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0),
-    m_saved_designs_list(0)
+    m_saved_designs_list(0),
+    m_monsters_list(0)
 {
     m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     AttachChild(m_availability_buttons.first);
@@ -1833,6 +1878,14 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_saved_designs_list->ShowSavedDesigns(true);
     GG::Connect(m_saved_designs_list->SavedDesignSelectedSignal,&DesignWnd::BaseSelector::SavedDesignSelectedSlot,  this);
     GG::Connect(m_saved_designs_list->DesignClickedSignal,      DesignWnd::BaseSelector::DesignClickedSignal);
+
+    m_monsters_list = new BasesListBox();
+    m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
+    m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
+    m_monsters_list->ShowMonsters(false);
+    GG::Connect(m_monsters_list->DesignSelectedSignal,          DesignWnd::BaseSelector::DesignSelectedSignal);
+    GG::Connect(m_monsters_list->DesignClickedSignal,           DesignWnd::BaseSelector::DesignClickedSignal);
+
 
     DoLayout();
     ShowAvailability(true, false);   // default to showing available unavailable bases.
