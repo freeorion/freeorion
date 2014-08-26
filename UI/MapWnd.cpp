@@ -3752,7 +3752,7 @@ void MapWnd::RefreshFleetSignals() {
 
 void MapWnd::RefreshSliders() {
     if (m_zoom_slider) {
-        if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
+        if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider") && Visible())
             m_zoom_slider->Show();
         else
             m_zoom_slider->Hide();
