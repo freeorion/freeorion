@@ -2233,7 +2233,7 @@ public:
     void            Sanitize();
 
     void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
-    void            SetPart(const PartType* part, unsigned int slot);
+    void            SetPart(const PartType* part, unsigned int slot, bool emit_signal = false);
     void            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
 
     /** Attempts to add the specified part to the design, if possible.  will
@@ -2286,7 +2286,7 @@ public:
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
-    typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot);
+    typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot, bool emit_signal);
     static SetPartFuncPtrType const s_set_part_func_ptr;
 
     void            Populate();                         //!< creates and places SlotControls for current hull
@@ -2468,14 +2468,15 @@ void DesignWnd::MainPanel::Sanitize() {
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
 { SetPart(GetPartType(part_name), slot); }
 
-void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
+void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */) {
     //Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
         Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }
     m_slots[slot]->SetPart(part);
-    // DesignChangedSignal();  // commented to avoid unnecessary signal repetition.
+    if (emit_signal)  // to avoid unnecessary signal repetition.
+        DesignChangedSignal();  
 }
 
 void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
@@ -2674,7 +2675,7 @@ void DesignWnd::MainPanel::Populate(){
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         boost::function<void (const PartType*)> set_part_func =
-            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i);
+            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i, true);
         GG::Connect(slot_control->SlotContentsAlteredSignal, set_part_func);
         GG::Connect(slot_control->PartTypeClickedSignal, PartTypeClickedSignal);
     }
