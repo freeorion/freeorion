@@ -81,10 +81,10 @@ ServerConnectWnd::ServerConnectWnd() :
     layout->SetMinimumRowHeight(1, m_host_or_join_radio_group->MinUsableSize().y);
     layout->SetMinimumRowHeight(2, m_LAN_game_label->Height() + (2 * CONTROL_MARGIN));
     layout->SetRowStretch(3, 1.0);
-    layout->SetMinimumRowHeight(4, m_find_LAN_servers_bn->Height() + CONTROL_MARGIN);
+    layout->SetMinimumRowHeight(4, m_find_LAN_servers_bn->MinUsableSize().y + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(5, m_internet_game_label->Height() + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(6, m_IP_address_edit->Height() + CONTROL_MARGIN);
-    layout->SetMinimumRowHeight(7, m_ok_bn->Height() + CONTROL_MARGIN);
+    layout->SetMinimumRowHeight(7, m_ok_bn->MinUsableSize().y + CONTROL_MARGIN);
 
     layout->Add(player_name_label, 0, 0, 1, 1, GG::ALIGN_VCENTER);
     layout->Add(m_player_name_edit, 0, 1, 1, 3, GG::ALIGN_VCENTER);

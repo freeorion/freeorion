@@ -873,6 +873,7 @@ private:
 
         label = new CUIButton(UserString("VISIBLE"));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
+        m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
         m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
         GG::Connect(label->LeftClickedSignal,
                     boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
@@ -2140,7 +2141,7 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
 
 void ObjectListWnd::DoLayout() {
     GG::X BUTTON_WIDTH(ClientUI::Pts()*7);
-    GG::Y BUTTON_HEIGHT = m_filter_button->Height();
+    GG::Y BUTTON_HEIGHT = m_filter_button->MinUsableSize().y;
     int PAD(3);
 
     GG::Pt button_ul(GG::X0, ClientHeight() - BUTTON_HEIGHT);

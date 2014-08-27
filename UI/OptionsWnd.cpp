@@ -880,7 +880,7 @@ void OptionsWnd::FileOptionImpl(CUIListBox* page, int indentation_level, const s
     CUIEdit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
     CUIButton* button = new CUIButton("...");
-    button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));
+    button->SetMinSize(button->MinUsableSize());
     button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
     layout->Add(text_control, 0, 0, 1, 2);

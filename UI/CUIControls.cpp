@@ -71,7 +71,7 @@ namespace {
 }
 
 CUIButton::CUIButton(const std::string& str) :
-    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str,
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, str,
            ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1),
@@ -79,7 +79,7 @@ CUIButton::CUIButton(const std::string& str) :
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 CUIButton::CUIButton(const std::string& str, GG::Clr background, GG::Clr border) :
-    Button(GG::X0, GG::Y0, GG::X1, ClientUI::GetFont()->Lineskip() + 6, str,
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, str,
            ClientUI::GetFont(), background, ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(border),
     m_border_thick(2),

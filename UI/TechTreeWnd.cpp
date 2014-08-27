@@ -290,7 +290,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     m_buttons_per_row = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / ROWS));   // number of buttons in a typical row
 
     const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (m_buttons_per_row - 1)*BUTTON_SEPARATION) / m_buttons_per_row;
-    const GG::Y BUTTON_HEIGHT = m_category_buttons.back()->Height();
+    const GG::Y BUTTON_HEIGHT = m_category_buttons.back()->MinUsableSize().y;
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons

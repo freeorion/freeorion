@@ -260,8 +260,11 @@ AccordionPanel::AccordionPanel(GG::X w) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
+    m_expand_button->SetMinSize(GG::Pt(GG::X(16), GG::Y(16)));
 
     AttachChild(m_expand_button);
+
+    DoLayout();
 }
 
 void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

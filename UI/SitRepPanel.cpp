@@ -299,7 +299,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
 
 void SitRepPanel::DoLayout() {
     GG::X BUTTON_WIDTH(ClientUI::Pts()*4);
-    GG::Y BUTTON_HEIGHT = m_last_turn_button->Height();
+    GG::Y BUTTON_HEIGHT = m_last_turn_button->MinUsableSize().y;
     int PAD(3);
 
     GG::Pt button_ul(ClientWidth() - GG::X(INNER_BORDER_ANGLE_OFFSET) - BUTTON_WIDTH,
