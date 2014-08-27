@@ -626,9 +626,14 @@ MapWnd::MapWnd() :
     GG::Connect(m_btn_turn->LeftClickedSignal, boost::bind(&MapWnd::EndTurn, this));
     GG::Connect(m_btn_turn->LeftClickedSignal, &PlayTurnButtonClickSound);
 
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
     // auto turn button
-    m_btn_auto_turn = new CUIButton("");
-    m_btn_auto_turn->SetColor(GG::CLR_WHITE);
+    m_btn_auto_turn = new CUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
+
     GG::Connect(m_btn_auto_turn->LeftClickedSignal, &MapWnd::ToggleAutoEndTurn, this);
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
@@ -639,8 +644,6 @@ MapWnd::MapWnd() :
     // FPS indicator
     m_FPS = new FPSIndicator();
     m_FPS->Hide();
-
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // Menu button
     m_btn_menu = new SettableInWindowCUIButton(

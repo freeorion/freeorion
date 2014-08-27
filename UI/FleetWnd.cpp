@@ -1167,8 +1167,10 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
-            m_aggression_toggle = new CUIButton("");
-            m_aggression_toggle->SetColor(GG::CLR_WHITE);
+            m_aggression_toggle = new CUIButton(
+                GG::SubTexture(FleetAggressiveIcon()),
+                GG::SubTexture(FleetPassiveIcon()),
+                GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
             GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
         }
@@ -1197,8 +1199,10 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     AttachChild(m_fleet_name_text);
     m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
-    m_aggression_toggle = new CUIButton("");
-    m_aggression_toggle->SetColor(GG::CLR_WHITE);
+    m_aggression_toggle = new CUIButton(
+        GG::SubTexture(FleetAggressiveIcon()),
+        GG::SubTexture(FleetPassiveIcon()),
+        GG::SubTexture(FleetAggressiveMouseoverIcon()));
     AttachChild(m_aggression_toggle);
     GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 
