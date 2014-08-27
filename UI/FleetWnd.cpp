@@ -435,6 +435,19 @@ namespace {
 
     void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
     { GetOptionsDB().Set<NewFleetAggression>("ui.fleet-wnd-aggression", aggression); }
+
+    boost::shared_ptr<GG::Texture> FleetAggressiveIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
+    boost::shared_ptr<GG::Texture> FleetAggressiveMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive_mouseover.png"); }
+    boost::shared_ptr<GG::Texture> FleetPassiveIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive.png"); }
+    boost::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive_mouseover.png"); }
+    boost::shared_ptr<GG::Texture> FleetAutoIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto.png"); }
+    boost::shared_ptr<GG::Texture> FleetAutoMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto_mouseover.png"); }
 }
 
 ////////////////////////////////////////////////
@@ -1388,21 +1401,6 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
         SetNewFleetAggressiveOptionSetting(m_new_fleet_aggression);
         UpdateAggressionToggle();
     }
-}
-
-namespace {
-    boost::shared_ptr<GG::Texture> FleetAggressiveIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
-    boost::shared_ptr<GG::Texture> FleetAggressiveMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive_mouseover.png"); }
-    boost::shared_ptr<GG::Texture> FleetPassiveIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive.png"); }
-    boost::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive_mouseover.png"); }
-    boost::shared_ptr<GG::Texture> FleetAutoIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto.png"); }
-    boost::shared_ptr<GG::Texture> FleetAutoMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_auto_mouseover.png"); }
 }
 
 void FleetDataPanel::Refresh() {
