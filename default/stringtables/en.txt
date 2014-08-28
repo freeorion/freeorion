@@ -9341,7 +9341,7 @@ SH_TRANSSPATIAL
 Trans-Spatial Hull
 
 SH_TRANSSPATIAL_DESC
-'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max structure is extremely low. It was designed alongside the [[encyclopedia FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
+'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max structure is extremely low. It was designed alongside the [[shippart FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
 
 [[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
 
