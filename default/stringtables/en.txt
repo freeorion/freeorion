@@ -7148,9 +7148,7 @@ PRO_NDIM_ASSMB
 N-Dimensional Assembly
 
 PRO_NDIM_ASSMB_DESC
-''' Unlocks the Hyperspatial Dam
-
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
+'''Once the greatest fear of N-dimensional physicists, now the noblest goal - to deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
 
 The geometry of physical space has always been a major impediment to the assembly of objects within that space. Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions. Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and contiguous lines may be passed around other masses by going "off-axis". Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.'''
 
