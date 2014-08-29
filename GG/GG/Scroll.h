@@ -76,7 +76,7 @@ public:
 
     /** \name Structors */ ///@{
     /** Ctor. */
-    Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior);
+    Scroll(Orientation orientation, Clr color, Clr interior);
     //@}
 
     /** \name Accessors */ ///@{

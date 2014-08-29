@@ -582,7 +582,7 @@ void CUIScroll::ScrollTab::MouseLeave() {
 // class CUIScroll
 ///////////////////////////////////////
 CUIScroll::CUIScroll(GG::Orientation orientation) :
-    Scroll(GG::X0, GG::Y0, GG::X1, GG::Y1, orientation, ClientUI::CtrlColor(), ClientUI::CtrlColor()),
+    Scroll(orientation, ClientUI::CtrlColor(), ClientUI::CtrlColor()),
     m_border_color(ClientUI::CtrlBorderColor())
 {}
 

@@ -52,8 +52,8 @@ namespace {
 ////////////////////////////////////////////////
 // GG::Scroll
 ////////////////////////////////////////////////
-Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr interior) :
-    Control(x, y, w, h, INTERACTIVE | REPEAT_BUTTON_DOWN),
+Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
+    Control(X0, Y0, X1, Y1, INTERACTIVE | REPEAT_BUTTON_DOWN),
     m_int_color(interior),
     m_orientation(orientation),
     m_posn(0),
