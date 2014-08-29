@@ -3,10 +3,10 @@
 """ The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code"""
 
-import pickle                       # Python object serialization library
+import pickle  # Python object serialization library
 import sys
 import random
-import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client    # pylint: disable=import-error
+import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 #pylint: disable=relative-import
 import AIstate
 import ColonisationAI
@@ -35,10 +35,10 @@ except:
     pass
 
 
-_aggressions = {fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",
-             fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
-_capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""),  fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
-                    fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""),  fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),  fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
+_aggressions = {fo.aggression.beginner:"Beginner", fo.aggression.turtle:"Turtle", fo.aggression.cautious:"Cautious", fo.aggression.typical:"Moderate",
+             fo.aggression.aggressive:"Aggressive", fo.aggression.maniacal:"Maniacal"}
+_capitols = {fo.aggression.beginner:UserString("AI_CAPITOL_NAMES_BEGINNER", ""), fo.aggression.turtle:UserString("AI_CAPITOL_NAMES_TURTLE", ""), fo.aggression.cautious:UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
+                    fo.aggression.typical:UserString("AI_CAPITOL_NAMES_TYPICAL", ""), fo.aggression.aggressive:UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""), fo.aggression.maniacal:UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
 # AIstate
 foAIstate = None
 
@@ -50,7 +50,7 @@ def initFreeOrionAI(): # pylint: disable=invalid-name
     print(sys.path)
 
 
-# called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
+# called when a new game is started (but not when a game is loaded). should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 @chat_on_error
 def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid-name
@@ -68,11 +68,11 @@ def startNewGame(aggression=fo.aggression.aggressive): # pylint: disable=invalid
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
-        new_name = random.choice(_capitols.get(aggression,  "").split('\n')).strip() + " " + planet.name
-        print "Capitol City Names are: ",  _capitols
-        print "This Capitol New name is ",  new_name
-        res = fo.issueRenameOrder(planet_id,  new_name)
-        print "Capitol Rename attempt result: %d; planet now named %s"% (res,  planet.name)
+        new_name = random.choice(_capitols.get(aggression, "").split('\n')).strip() + " " + planet.name
+        print "Capitol City Names are: ", _capitols
+        print "This Capitol New name is ", new_name
+        res = fo.issueRenameOrder(planet_id, new_name)
+        print "Capitol Rename attempt result: %d; planet now named %s"% (res, planet.name)
 
 
 # called when client receives a load game message
@@ -105,11 +105,11 @@ def prepareForSave(): # pylint: disable=invalid-name
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     dumpStr = pickle.dumps(foAIstate)
-    print "foAIstate pickled to string,  about to send to server"
+    print "foAIstate pickled to string, about to send to server"
     fo.setSaveStateString(dumpStr)
 
 
-# called when this player receives a chat message.  senderID is the player who sent the message, and
+# called when this player receives a chat message. senderID is the player who sent the message, and
 # messageText is the text of the sent message
 @chat_on_error
 def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
@@ -128,15 +128,15 @@ def handleDiplomaticMessage(message): # pylint: disable=invalid-name
         replySender = message.recipient
         replyRecipient = message.sender
         proposalSenderPlayer = fo.empirePlayerID(message.sender)
-        fo.sendChatMessage(proposalSenderPlayer,  "So,  the Terran Hairless Plains Ape advising your empire wishes to scratch its belly for a while?")
-        if (  (foAIstate.aggression==fo.aggression.beginner )  or
-                (foAIstate.aggression!=fo.aggression.maniacal ) and (  random.random() < 1.0/ (((foAIstate.aggression +0.01)*fo.currentTurn()/2)**0.5)  )):
-            fo.sendChatMessage(proposalSenderPlayer,  "OK, Peace offer accepted.")
+        fo.sendChatMessage(proposalSenderPlayer, "So, the Terran Hairless Plains Ape advising your empire wishes to scratch its belly for a while?")
+        if ( (foAIstate.aggression==fo.aggression.beginner ) or
+                (foAIstate.aggression!=fo.aggression.maniacal ) and ( random.random() < 1.0/ (((foAIstate.aggression +0.01)*fo.currentTurn()/2)**0.5) )):
+            fo.sendChatMessage(proposalSenderPlayer, "OK, Peace offer accepted.")
             reply = fo.diplomaticMessage(replySender, replyRecipient, fo.diplomaticMessageType.acceptProposal)
             print "Sending diplomatic message to empire " + str(replyRecipient) + " of type " + str(reply.type)
             fo.sendDiplomaticMessage(reply)
         else:
-            fo.sendChatMessage(proposalSenderPlayer,  "Maybe later.  We are currently getting busy  with Experimental Test Subject yo-Ma-ma.")
+            fo.sendChatMessage(proposalSenderPlayer, "Maybe later. We are currently getting busy with Experimental Test Subject yo-Ma-ma.")
 
 
 # called when this player receives and update about the diplomatic status between players, which may
@@ -159,7 +159,7 @@ def generateOrders(): # pylint: disable=invalid-name
     planetID = PlanetUtilsAI.get_capital()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency 
-    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(),  fo.currentTurn())
+    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(), fo.currentTurn())
     random.seed(random_seed)
     planet = None
     if planetID is not None:
@@ -168,13 +168,13 @@ def generateOrders(): # pylint: disable=invalid-name
     print "***************************************************************************"
     print ("Generating Orders")
     res_idx = ResearchAI.get_research_index()
-    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+("RIdx_%d"%res_idx)+"_"+_aggressions.get(foAIstate.aggression,  "?") + " Turn: " + str(fo.currentTurn())
+    print "EmpireID: " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+("RIdx_%d"%res_idx)+"_"+_aggressions.get(foAIstate.aggression, "?") + " Turn: " + str(fo.currentTurn())
     empireColor = empire.colour
-    print "EmpireColors: %d %d %d %d"% (empireColor.r,  empireColor.g,  empireColor.b,  empireColor.a)
+    print "EmpireColors: %d %d %d %d"% (empireColor.r, empireColor.g, empireColor.b, empireColor.a)
     if planet:
         print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName
     else:
-        print "CapitalID: None Currently      Name: None     Species: None "
+        print "CapitalID: None Currently Name: None Species: None "
     print "***************************************************************************"
     print "***************************************************************************"
 

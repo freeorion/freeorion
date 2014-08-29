@@ -20,9 +20,9 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):
     for aiTarget in targets:
         # determine systems required to visit(with possible return to supplied system)
         #print "checking system targets"
-        ensure_return = aiTarget.target_id not in  secure_targets
+        ensure_return = aiTarget.target_id not in secure_targets
         system_targets = can_travel_to_system(fleet_target.target_id, last_system_target, aiTarget, empire_id, ensure_return=ensure_return)
-        #print "making path with %d targets: "%len(system_targets) ,   PlanetUtilsAI.sys_name_ids( [sysTarg.target_id for sysTarg in system_targets])
+        #print "making path with %d targets: "%len(system_targets) , PlanetUtilsAI.sys_name_ids( [sysTarg.target_id for sysTarg in system_targets])
         if len(system_targets) > 0:
             # for every system required to visit create move order
             for systemAITarget in system_targets:
@@ -59,34 +59,34 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, empire_
         short_path= list( pathFunc(start_sys_id, target_sys_id, empire_id) )
     else:
         short_path = []
-    legs = zip( short_path[:-1],  short_path[1:])
-    #suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids  ]
+    legs = zip( short_path[:-1], short_path[1:])
+    #suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids ]
     #unsupplied_stops = [sid for sid in short_path if sid not in suppliedStops ]
     unsupplied_stops = [ sys_b for sys_a, sys_b in legs if ((sys_a not in fleet_supplyable_system_ids) and (sys_b not in fleet_supplyable_system_ids))]
     ret_path=[]
-    #print "getting path from %s to %s "%(PlanetUtilsAI.sys_name_ids([  start_sys_id ]), PlanetUtilsAI.sys_name_ids([  target_sys_id ])  ),
-    #print " ::: found initial path  %s having suppliedStops  %s and  unsupplied_stops  %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sys_name_ids( short_path[:] ),  suppliedStops,  unsupplied_stops,  fuel)
+    #print "getting path from %s to %s "%(PlanetUtilsAI.sys_name_ids([ start_sys_id ]), PlanetUtilsAI.sys_name_ids([ target_sys_id ]) ),
+    #print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sys_name_ids( short_path[:] ), suppliedStops, unsupplied_stops, fuel)
     if False:
-        if  target_sys_id in fleet_supplyable_system_ids:
+        if target_sys_id in fleet_supplyable_system_ids:
             print "target has FleetSupply"
         elif target_sys_id in ColonisationAI.annexableRing1:
             print "target in Ring 1"
-        elif  target_sys_id in ColonisationAI.annexableRing2:
-            print "target in Ring 2,  has enough aggression is ",  foAI.foAIstate.aggression >=fo.aggression.typical
+        elif target_sys_id in ColonisationAI.annexableRing2:
+            print "target in Ring 2, has enough aggression is ", foAI.foAIstate.aggression >=fo.aggression.typical
         elif target_sys_id in ColonisationAI.annexableRing3:
-            print "target in Ring 2,  has enough aggression is ",   foAI.foAIstate.aggression >=fo.aggression.aggressive
-    if  ( len( unsupplied_stops) == 0 or not ensure_return or
+            print "target in Ring 2, has enough aggression is ", foAI.foAIstate.aggression >=fo.aggression.aggressive
+    if ( len( unsupplied_stops) == 0 or not ensure_return or
                 target_sys_id in fleet_supplyable_system_ids and len( unsupplied_stops) <= fuel or
                 target_sys_id in ColonisationAI.annexableRing1 and len( unsupplied_stops) < fuel or
-                foAI.foAIstate.aggression >=fo.aggression.typical  and target_sys_id in ColonisationAI.annexableRing2 and len( unsupplied_stops) < fuel -1 or
-                foAI.foAIstate.aggression >=fo.aggression.aggressive  and target_sys_id in ColonisationAI.annexableRing3 and len( unsupplied_stops) < fuel -2 ):
+                foAI.foAIstate.aggression >=fo.aggression.typical and target_sys_id in ColonisationAI.annexableRing2 and len( unsupplied_stops) < fuel -1 or
+                foAI.foAIstate.aggression >=fo.aggression.aggressive and target_sys_id in ColonisationAI.annexableRing3 and len( unsupplied_stops) < fuel -2 ):
         return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in short_path]
     else:
         #print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
-        return can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target, empire_id,  verbose=True)
+        return can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target, empire_id, verbose=True)
 
 
-def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target, empire_id,  verbose=False):
+def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target, empire_id, verbose=False):
     """check if fleet can travel from starting system to wanted system"""
     system_targets = []
     if not from_system_target.target_id == to_system_target.target_id:
@@ -99,7 +99,7 @@ def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to
         max_fuel = int(fleet.maxFuel)
         fuel = int(fleet.fuel)
         #if verbose:
-        #    print "   fleet ID %d  has  %.1f fuel  to get from %s    to  %s"%(fleetID,  fuel,  fromSystemAITarget,  toSystemAITarget )
+        # print "   fleet ID %d has %.1f fuel to get from %s to %s"%(fleetID, fuel, fromSystemAITarget, toSystemAITarget )
 
         # try to find path without going resupply first
         supply_system_target = get_nearest_supplied_system(to_system_target.target_id, empire_id)
@@ -155,16 +155,16 @@ def get_nearest_drydock_system_id(start_system_id):
         return supply_system_id
 
 
-def get_safe_path_leg_to_dest(fleet_id,  start_id,  dest_id):
+def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     start_targ = AITarget.AITarget(AITargetType.TARGET_SYSTEM, start_id)
     dest_targ = AITarget.AITarget(AITargetType.TARGET_SYSTEM, dest_id)
     #TODO actually get a safe path
-    this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, fo.empireID(),  ensure_return=False)
+    this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, fo.empireID(), ensure_return=False)
     path_ids = [ targ.target_id for targ in this_path if targ.target_id != start_id] + [start_id]
     start_info = PlanetUtilsAI.sys_name_ids([start_id])
     dest_info = PlanetUtilsAI.sys_name_ids([dest_id])
     path_info = [ PlanetUtilsAI.sys_name_ids([sys_id]) for sys_id in path_ids]
-    print "Fleet %d requested safe path leg from %s to %s,  found path %s"%(fleet_id,  start_info, dest_info ,  path_info)
+    print "Fleet %d requested safe path leg from %s to %s, found path %s"%(fleet_id, start_info, dest_info , path_info)
     return path_ids[0]
 
 
@@ -192,7 +192,7 @@ def __find_path_with_fuel_to_system_with_possible_return(fromSystemAITarget, toS
 
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
-                if True or ((not systemID == toSystemAITarget.target_id) and (systemID in fleetSupplyableSystemIDs)):#TODO:   restructure
+                if True or ((not systemID == toSystemAITarget.target_id) and (systemID in fleetSupplyableSystemIDs)):#TODO: restructure
                     newTargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
 
                 if fuel < 0:
@@ -238,7 +238,7 @@ def get_repair_fleet_order(fleetAITarget, current_sys_id):
     empireID = fo.empireID()
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
     drydockSystemAITarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, drydock_sys_id)
-    print "ordering fleet %d to %s for repair"%(fleetAITarget.target_id,  PlanetUtilsAI.sys_name_ids([drydock_sys_id]))
+    print "ordering fleet %d to %s for repair"%(fleetAITarget.target_id, PlanetUtilsAI.sys_name_ids([drydock_sys_id]))
     # create resupply AIFleetOrder
     aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_REPAIR, fleetAITarget, drydockSystemAITarget)
     return aiFleetOrder

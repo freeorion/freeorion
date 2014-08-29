@@ -19,7 +19,7 @@ exts_to_check = [".py", ".py.*", ".txt",".h",".c",".cpp", ".patch"]
 # use "default/buildings.txt", NOT "/default/buildings.txt"
 file_list = "default/AI"
 
-def check_line_endings(filename,  fix=False):
+def check_line_endings(filename, fix=False):
     this_file = open(filename, 'r')
     results={}
     LF=0
@@ -64,14 +64,14 @@ if testAll:
             for ext in exts_to_check:
                 if fname[-len(ext):]==ext:
                     num_files_checked += 1
-                    fullpath=os.path.join(dirpath,  fname)
-                    results=check_line_endings(fullpath,  fix=fixfiles)
+                    fullpath=os.path.join(dirpath, fname)
+                    results=check_line_endings(fullpath, fix=fixfiles)
                     results2 = ""
                     if results.keys() not in [[], ['LF']]:
                         if fixfiles:
-                            results2=", now are %s"%check_line_endings(fullpath,  fix=False)
-                        print fullpath,  ':',  results, results2
-    #print "lastpath",  fullpath,  ':',  results
+                            results2=", now are %s"%check_line_endings(fullpath, fix=False)
+                        print fullpath, ':', results, results2
+    #print "lastpath", fullpath, ':', results
 
 
 if not testAll:
@@ -85,11 +85,11 @@ if not testAll:
                 files_to_check.extend(glob.glob(fname+os.sep+'*'+path_ext))
     for fname in files_to_check:
         num_files_checked += 1
-        results1=check_line_endings(fname,  fix=fixfiles)
+        results1=check_line_endings(fname, fix=fixfiles)
         if fixfiles and results1.keys()!=['LF']:
-            results2=check_line_endings(fname,  fix=False)
-            print fname,  "line endings were",  results1,  "now are",  results2
+            results2=check_line_endings(fname, fix=False)
+            print fname, "line endings were", results1, "now are", results2
         else:
-            print fname,  "line endings are",  results1
+            print fname, "line endings are", results1
 
-print "Done.  Total of %d files checked."%num_files_checked
+print "Done. Total of %d files checked."%num_files_checked

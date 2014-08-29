@@ -30,13 +30,13 @@ doPlotTypes = ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
 
 
 def parse_file(file_name, ai=True):
-        print "processing file ",  file_name
+        print "processing file ", file_name
         sys.stdout.flush()
         got_colors=False
         got_species=False
         got_name=False
-        data={"PP":[],  "RP":[], "RP_Ratio":[], "ShipCount":[],  "turnsP":[],  "turnPP":[]}
-        details={'color':{1, 1, 1, 1},  'name':"",  'species':""}
+        data={"PP":[], "RP":[], "RP_Ratio":[], "ShipCount":[], "turnsP":[], "turnPP":[]}
+        details={'color':{1, 1, 1, 1}, 'name':"", 'species':""}
         with open(file_name, 'r') as lf:
             while True:
                 line=lf.readline()
@@ -57,17 +57,17 @@ def parse_file(file_name, ai=True):
                     got_name=True
                     details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
                 if "Current Output (turn" in line:
-                    info  = line.split("Current Output (turn")[1]
+                    info = line.split("Current Output (turn")[1]
                     parts = info.split(')')
-                    data['turnsP'].append(   ( int( parts[0] )) )
-                    data['turnPP'].append(   ( int( parts[0] ), float( parts[1].split('/')[-1]) ) )
+                    data['turnsP'].append( ( int( parts[0] )) )
+                    data['turnPP'].append( ( int( parts[0] ), float( parts[1].split('/')[-1]) ) )
                     RPPP = parts[1].split('(')[-1].split('/')
                     data['PP'].append( float( RPPP[1]) )
                     data['RP'].append( float( RPPP[0]) )
                     data['RP_Ratio'].append( float( RPPP[0])/(float( RPPP[1]) + 0.001) )
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append( int(line.split("Empire Ship Count:")[1]))
-        return data,  details
+        return data, details
 
 allData={}
 species={}
@@ -81,10 +81,10 @@ A1log = glob(dataDir+os.sep+"AI_1.log")
 
 if not os.path.exists(dataDir+os.sep+"freeorion.log"):
     print "can't find freeorion.log"
-elif  A1log and ( A1log[0] in logfiles ) and  (   os.path.getmtime(dataDir+os.sep+"freeorion.log")   <  os.path.getmtime(A1log[0]) -300 ):
+elif A1log and ( A1log[0] in logfiles ) and (   os.path.getmtime(dataDir+os.sep+"freeorion.log") <  os.path.getmtime(A1log[0]) -300 ):
     print "freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped"
 else:
-    data,  details = parse_file(dataDir+os.sep+"freeorion.log",  False)
+    data, details = parse_file(dataDir+os.sep+"freeorion.log", False)
     if len(data.get('PP', [])) > 0:
         allData[playerName]=data
         empireColors[playerName]=details['color']
@@ -95,19 +95,19 @@ if A1log and A1log[0] in logfiles:
     A1Time = os.path.getmtime(A1log[0])
     for path in logfiles[::-1]:
         logtime = os.path.getmtime(path)
-        #print "path ",  path,  "logtime diff: %.1f"%(A1Time -logtime)
-        if logtime < A1Time  - 300:
+        #print "path ", path, "logtime diff: %.1f"%(A1Time -logtime)
+        if logtime < A1Time - 300:
             del logfiles[ logfiles.index(path)]
-            print "skipping stale logfile ",  path
+            print "skipping stale logfile ", path
 for lfile in logfiles:
     try:
-        data,  details = parse_file(lfile,  True)
+        data, details = parse_file(lfile, True)
         allData[details['name']]=data
         empireColors[details['name']]=details['color']
         species[details['name']]=details['species']
     except:
         print "error processing %s"%lfile
-        print "Error: exception triggered and caught:  ",  traceback.format_exc()
+        print "Error: exception triggered and caught: ", traceback.format_exc()
 
 print
 for plotType in doPlotTypes:
@@ -128,16 +128,16 @@ for plotType in doPlotTypes:
     rankings=[]
     turns=[]
     
-    pdata = allData.get(playerName,  {}).get(plotType,  []) 
+    pdata = allData.get(playerName, {}).get(plotType, [])
     if pdata:
         ymin = min(ymin, min(pdata))
         ymax = max(ymax, max(pdata))
-        turns=allData.get(playerName,  {}).get('turnsP',  [])
+        turns=allData.get(playerName, {}).get('turnsP', [])
         
-    for empireName,  data in allData.items():
+    for empireName, data in allData.items():
         if empireName == playerName:
             continue
-        adata = data.get(plotType,  [])
+        adata = data.get(plotType, [])
         if adata:
             rankings.append( (adata[-1], empireName) )
             thisMin=min(adata)
@@ -145,12 +145,12 @@ for plotType in doPlotTypes:
                 ymin = min(ymin, thisMin)
             ymax = max(ymax, max(adata))
             if not turns:
-                turns = data.get('turnsP',  [])
+                turns = data.get('turnsP', [])
 
     if not turns:
         if len(allData)==0:
             break
-        turns = range(1,len(allData.values()[0].get(plotType,  []))+1)
+        turns = range(1,len(allData.values()[0].get(plotType, []))+1)
     rankings.sort()
     xlabel('Turn')
     ylabel(plotType)
@@ -162,22 +162,22 @@ for plotType in doPlotTypes:
         print "\t\t\tcan't find playerData in allData\n"
     else:
         if playerName in empireColors:
-            turnsP = allData[playerName].get("turnsP",  [])
-            thisData = allData.get(playerName, {}).get(plotType,  [])
-            print "plotting with color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType,  [])), ' | ', max(allData[playerName].get(plotType,  []))
-            plot(turnsP, thisData, 'o-', color=empireColors[playerName],  label="%s - %.1f"%(playerName, sum(thisData)),  linewidth=2.0)
+            turnsP = allData[playerName].get("turnsP", [])
+            thisData = allData.get(playerName, {}).get(plotType, [])
+            print "plotting with color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
+            plot(turnsP, thisData, 'o-', color=empireColors[playerName], label="%s - %.1f"%(playerName, sum(thisData)), linewidth=2.0)
         else:
-            print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType,  [])), ' | ', max(allData[playerName].get(plotType,  []))
-            plot(turnsP, allData[playerName].get(plotType,  []), 'bx-',  label=playerName,  linewidth=2.0)
-    print "Ranked by ",  plotType
+            print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, []))
+            plot(turnsP, allData[playerName].get(plotType, []), 'bx-', label=playerName, linewidth=2.0)
+    print "Ranked by ", plotType
     for rank,name in rankings[::-1]:
         print name
         if name in empireColors:
-            adata = allData[name].get(plotType,  [])
-            plot(range(turns[0], turns[0]+len(adata)), adata, color=empireColors[name],  label="%s: %s - %.1f"%(name,  species[name],  sum(adata)),  linewidth=2.0)
+            adata = allData[name].get(plotType, [])
+            plot(range(turns[0], turns[0]+len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f"%(name, species[name], sum(adata)), linewidth=2.0)
         else:
-            print "can't find empire color for ",  name
-          #plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType,  []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name],  linewidth=2.0)
+            print "can't find empire color for ", name
+          #plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
     #legend(loc='upper left',prop={"size":'medium'})
     legend(loc='upper left', prop={"size":9},labelspacing=0.2)
     xlabel('Turn')
@@ -185,7 +185,7 @@ for plotType in doPlotTypes:
     title(caption+' Progression ')
     x1,x2,y1,y2 = axis()
     newY2=y2
-    if plotType in ["PP",  "RP",  "ShipCount"]:
+    if plotType in ["PP", "RP", "ShipCount"]:
         for yi in range(1, 10):
             if 1.05*ymax < yi*y2/10:
                 newY2= yi*y2/10

@@ -40,24 +40,24 @@ def get_capital(): # if no current capital returns planet with biggest pop
         if homeworld.owner==empire_id:
             return capital_id
         else:
-            print "Nominal Capitol %s does not appear to be owned by empire %d  %s"%(homeworld.name,  empire_id,  empire.name)
+            print "Nominal Capitol %s does not appear to be owned by empire %d %s"%(homeworld.name, empire_id, empire.name)
     #exploredSystemIDs = empire.exploredSystemIDs
     #exploredPlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(exploredSystemIDs)
     empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs, empire_id)
-    peopled_planets = get_populated_planet_ids(  empire_owned_planet_ids)
+    peopled_planets = get_populated_planet_ids( empire_owned_planet_ids)
     if not peopled_planets:
         if empire_owned_planet_ids:
             return empire_owned_planet_ids[0]
         else:
             return -1
     try:
-        for spec_list in [ list(ColonisationAI.empireColonizers),  list(ColonisationAI.empireShipBuilders),  None]:
+        for spec_list in [ list(ColonisationAI.empireColonizers), list(ColonisationAI.empireShipBuilders), None]:
             pop_map = []
             for planetID in peopled_planets:
                 planet = universe.getPlanet(planetID)
                 if (spec_list is not None) and planet.speciesName not in spec_list:
                     continue
-                pop_map.append( ( planet.currentMeterValue(fo.meterType.population) ,  planetID) )
+                pop_map.append( ( planet.currentMeterValue(fo.meterType.population) , planetID) )
             if len(pop_map) > 0:
                 pop_map.sort()
                 return pop_map[-1][-1]
@@ -99,7 +99,7 @@ def get_owned_planets_by_empire(planetIDs, empireID):
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
         #even if our universe says we own it, if we can't see it we must have lost it
-        if planet and (not planet.unowned) and planet.ownedBy(empireID) and (universe.getVisibility(planetID,  empireID) >= fo.visibility.partial):
+        if planet and (not planet.unowned) and planet.ownedBy(empireID) and (universe.getVisibility(planetID, empireID) >= fo.visibility.partial):
             result.append(planetID)
 
     return result

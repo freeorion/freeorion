@@ -7,7 +7,7 @@ DUMP_TO_FILE = os.path.isdir(TIMERS_DIR)
 
 
 def make_header(*args):
-    return ['%-8s  ' % x for x in args]
+    return ['%-8s ' % x for x in args]
 
 
 class Timer(object):
@@ -82,6 +82,6 @@ class Timer(object):
 
             row = []
             for header, val in zip(self.headers, [turn] + [x[1] for x in self.timers]):
-                row.append('%*s  ' % (len(header) - 2, int(val)))
+                row.append('%*s ' % (len(header) - 2, int(val)))
             self._write(''.join(row))
         self.timers = []  # clear times

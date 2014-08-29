@@ -110,20 +110,20 @@ class AIFleetMissionType(EnumsType):
     FLEET_MISSION_SPLIT_FLEET = 3
     FLEET_MISSION_MERGE_FLEET = 4  # not really supported yet
     FLEET_MISSION_HIT_AND_RUN = 5  # currently same as MILITARY
-    FLEET_MISSION_ATTACK = 6       # currently same as MILITARY
-    FLEET_MISSION_DEFEND = 7       # currently same as MILITARY
-    FLEET_MISSION_LAST_STAND = 8   # currently same as MILITARY
+    FLEET_MISSION_ATTACK = 6  # currently same as MILITARY
+    FLEET_MISSION_DEFEND = 7  # currently same as MILITARY
+    FLEET_MISSION_LAST_STAND = 8  # currently same as MILITARY
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
-    FLEET_MISSION_SECURE = 11      # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+    FLEET_MISSION_SECURE = 11  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
     FLEET_MISSION_ORBITAL_DEFENSE = 12
     FLEET_MISSION_ORBITAL_INVASION = 13
     FLEET_MISSION_ORBITAL_OUTPOST = 14
     FLEET_MISSION_ORBITAL_COLONISATION = 15
-    FLEET_MISSION_REPAIR = 16      # though currently, repair will be handled w/o mission, like resupply
+    FLEET_MISSION_REPAIR = 16  # though currently, repair will be handled w/o mission, like resupply
 
-    names = ['explore', 'outpost',  'colonize',  'split_fleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',
-                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation',  'repair', 'invalid']
+    names = ['explore', 'outpost', 'colonize', 'split_fleet', 'mergeFleet', 'hit&Run', 'attack', 'defend', 'last_stand', 'invasion', 'military', 'secure',
+                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']
 
 
 FLEET_MISSION_TYPES = range(0, 17)
@@ -144,8 +144,8 @@ class AIFleetOrderType(object):
     ORDER_MILITARY = 10
     ORDER_STAGING = 11
     ORDER_REPAIR = 12
-    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "split_fleet",  "mergeFleet",  "outpost",  "colonize",  "attack",
-                                          "defend",  "invade",  "military",  "staging", "repair", "invalid"]
+    FleetOrderTypeNames = [ "scrap", "move", "resupply", "split_fleet", "mergeFleet", "outpost", "colonize", "attack",
+                                          "defend", "invade", "military", "staging", "repair", "invalid"]
 
     def name(self, otype):
         try:
@@ -159,30 +159,30 @@ def get_fleet_order_types():
 
 
 class AIShipDesignTypes(object):
-    explorationShip = {"SD_SCOUT":"A",  "Scout":"B",  "Tracker":"C"}
+    explorationShip = {"SD_SCOUT":"A", "Scout":"B", "Tracker":"C"}
     colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}
     outpostShip = {"SD_OUTPOST_SHIP":"A", "Outposter":"B"}
-    troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C",  "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
-    #  [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')), 
-    #   (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
+    troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C", "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
+    # [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')),
+    # (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
     attackShip= {"SD_MARK":"A", 
                         "Lynx":"B",
-                        "Griffon":"C",  
-                        "Comet":"CA", 
+                        "Griffon":"C",
+                        "Comet":"CA",
                         "Wyvern":"D", 
-                        "Manticore":"E",  
-                        "Atlas":"EA",  
-                        "Pele":"EB",  
-                        "Xena":"EC", 
-                        "Devil":"F",  
-                        "Reaver":"G",  
+                        "Manticore":"E",
+                        "Atlas":"EA",
+                        "Pele":"EB",
+                        "Xena":"EC",
+                        "Devil":"F",
+                        "Reaver":"G",
                         "Obliterator":"H",
                                     }
 
-    colonyBase={"SD_COLONY_BASE":"A",  "NestBase":"B"}
-    outpostBase={"SD_OUTPOST_BASE":"A",  "OutpostBase":"B"}
+    colonyBase={"SD_COLONY_BASE":"A", "NestBase":"B"}
+    outpostBase={"SD_OUTPOST_BASE":"A", "OutpostBase":"B"}
     troopBase={"SpaceInvaders":"A"}
-    defenseBase={"Decoy":"A", "OrbitalGrid":"B",  "OrbitalShield":"C",  "OrbitalMultiShield":"D"}
+    defenseBase={"Decoy":"A", "OrbitalGrid":"B", "OrbitalShield":"C", "OrbitalMultiShield":"D"}
 
 
 class AIShipRoleType(EnumsType):  # this is also used in determining fleetRoles
@@ -219,7 +219,7 @@ class AITargetType(object):
     TARGET_FLEET = 5
     TARGET_EMPIRE = 6
     TARGET_ALL_OTHER_EMPIRES = 7
-    TargetTypeNames = ["building",  "technology",  "planet",  "system",  "ship",  "fleet",  "empire",  "Opponents",  "invalid"]
+    TargetTypeNames = ["building", "technology", "planet", "system", "ship", "fleet", "empire", "Opponents", "invalid"]
 
     def name(self, targettype):
         try:
@@ -235,8 +235,8 @@ def get_target_types():
 class AIEmpireProductionTypes(object):
     INVALID_BUILD_TYPE = -1
     BT_NOT_BUILDING = 0  # ///< no building is taking place
-    BT_BUILDING = 1      # ///< a Building object is being built
-    BT_SHIP = 2          # ///< a Ship object is being built
+    BT_BUILDING = 1  # ///< a Building object is being built
+    BT_SHIP = 2  # ///< a Ship object is being built
     NUM_BUILD_TYPES = 3
 
 

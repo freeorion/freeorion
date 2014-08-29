@@ -51,7 +51,7 @@ class AIFleetMission(object):
         self.target_type = self.target.target_type
 
     def __setstate__(self, state_dict):
-        self.__dict__.update(state_dict)   # update attributes
+        self.__dict__.update(state_dict)  # update attributes
         #print "Fleet mission unpickle: passed %s"%state_dict
         for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
                             ('mission_type', EnumsAI.AIMissionType.FLEET_MISSION),
@@ -146,11 +146,11 @@ class AIFleetMission(object):
             print "\tConsidering merging fleets into fleet %d, but it has multiple targets: %s" % (fleet_id, str(targets))
         # TODO (Cjkjvfnby) check why we cant merge fleet with other missions to each other
         # TODO consider establishing an AI strategy & tactics planning document for discussing & planning
-        #      high level considerations for issues like fleet merger
-        compatibileRolesMap = {EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:         [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE],
-                               EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY:                [EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY],
-                               EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:        [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION],
-                               EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION:                [EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION],
+        # high level considerations for issues like fleet merger
+        compatibileRolesMap = {EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE],
+                               EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY: [EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY],
+                               EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: [EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION],
+                               EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION: [EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION],
                                }
 
         main_fleet_role = foAI.foAIstate.get_fleet_role(fleet_id)
@@ -180,7 +180,7 @@ class AIFleetMission(object):
                 if len(fleet_targets) > 1:
                     pass
                 elif not fleet_targets and (main_fleet.speed > 0 or fleet.speed == 0):
-                    #print "\t\t\t ** Considering merging fleetA (id: %4d)  into fleet (id %d) and former has no targets, will take it.  FleetA mission was %s "%(fid, fleetID, fleet_mission)
+                    #print "\t\t\t ** Considering merging fleetA (id: %4d) into fleet (id %d) and former has no targets, will take it. FleetA mission was %s "%(fid, fleetID, fleet_mission)
                     do_merge = True
                 else:
                     target = fleet_targets[0].target_id
