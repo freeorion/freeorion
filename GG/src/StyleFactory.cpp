@@ -90,7 +90,7 @@ DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color
 
 Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
-{ return new Edit(X0, Y0, X1, str, font, color, text_color, interior); }
+{ return new Edit(str, font, color, text_color, interior); }
 
 ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return new ListBox(color, interior); }

@@ -104,7 +104,7 @@ const unsigned int MultiEdit::BORDER_THICK = 2;
 
 MultiEdit::MultiEdit(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
                      Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    Edit(X0, Y0, X1, str, font, color, text_color, interior),
+    Edit(str, font, color, text_color, interior),
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
