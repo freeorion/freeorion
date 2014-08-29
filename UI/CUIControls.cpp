@@ -297,7 +297,7 @@ void CUIArrowButton::RenderUnpressed() {
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
                                GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
-    StateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), format,
+    StateButton(str, ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
                 style),
     m_border_color(ClientUI::CtrlBorderColor()),
