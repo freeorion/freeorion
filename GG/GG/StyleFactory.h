@@ -108,8 +108,7 @@ public:
                                           Flags<WndFlag> flags = INTERACTIVE) const;
 
     /** Returns a new GG Scroll. */
-    virtual Scroll*            NewScroll(Orientation orientation, Clr color, Clr interior,
-                                         Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Scroll*            NewScroll(Orientation orientation, Clr color, Clr interior) const;
 
     /** Returns a new GG Slider<int>. */
     virtual Slider<int>*       NewIntSlider(int min, int max, Orientation orientation,
@@ -129,20 +128,16 @@ public:
     virtual ListBox*           NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO) const;
 
     /** Returns a new vertical Scroll, to be used in a ListBox. */
-    virtual Scroll*            NewListBoxVScroll(Clr color, Clr interior,
-                                                 Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Scroll*            NewListBoxVScroll(Clr color, Clr interior) const;
 
     /** Returns a new horizontal Scroll, to be used in a ListBox. */
-    virtual Scroll*            NewListBoxHScroll(Clr color, Clr interior,
-                                                 Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Scroll*            NewListBoxHScroll(Clr color, Clr interior) const;
 
     /** Returns a new vertical Scroll, to be used in a MultiEdit. */
-    virtual Scroll*            NewMultiEditVScroll(Clr color, Clr interior,
-                                                   Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Scroll*            NewMultiEditVScroll(Clr color, Clr interior) const;
 
     /** Returns a new horizontal Scroll, to be used in a MultiEdit. */
-    virtual Scroll*            NewMultiEditHScroll(Clr color, Clr interior,
-                                                   Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Scroll*            NewMultiEditHScroll(Clr color, Clr interior) const;
 
     /** Returns a new up (decrease) Button, to be used in a vertical Scroll. */
     virtual Button*            NewScrollUpButton(Clr color, Clr text_color = CLR_BLACK) const;

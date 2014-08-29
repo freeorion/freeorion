@@ -98,9 +98,8 @@ ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/,
                                   Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new ListBox(color, interior, flags); }
 
-Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior,
-                                Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, flags); }
+Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
+{ return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         SliderLineStyle style, Clr color, int tab_width, int line_width/* = 5*/) const
@@ -117,21 +116,17 @@ TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return NewListBox(color, interior, INTERACTIVE); }
 
-Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior,
-                                        Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(VERTICAL, color, interior, flags); }
+Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior) const
+{ return NewScroll(VERTICAL, color, interior); }
 
-Scroll* StyleFactory::NewListBoxHScroll(Clr color, Clr interior,
-                                        Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(HORIZONTAL, color, interior, flags); }
+Scroll* StyleFactory::NewListBoxHScroll(Clr color, Clr interior) const
+{ return NewScroll(HORIZONTAL, color, interior); }
 
-Scroll* StyleFactory::NewMultiEditVScroll(Clr color, Clr interior,
-                                          Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(VERTICAL, color, interior, flags); }
+Scroll* StyleFactory::NewMultiEditVScroll(Clr color, Clr interior) const
+{ return NewScroll(VERTICAL, color, interior); }
 
-Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior,
-                                          Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewScroll(HORIZONTAL, color, interior, flags); }
+Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior) const
+{ return NewScroll(HORIZONTAL, color, interior); }
 
 Button* StyleFactory::NewScrollUpButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
