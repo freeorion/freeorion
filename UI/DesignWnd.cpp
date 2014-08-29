@@ -1854,7 +1854,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     GG::Connect(m_availability_buttons.second->LeftClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
-    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::INTERACTIVE);
+    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 

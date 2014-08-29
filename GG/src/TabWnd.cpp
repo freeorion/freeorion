@@ -150,9 +150,8 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 const std::size_t TabWnd::NO_WND = std::numeric_limits<std::size_t>::max();
 
 TabWnd::TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color,
-               Clr text_color/* = CLR_BLACK*/, TabBarStyle style/* = TAB_BAR_ATTACHED*/,
-               Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Wnd(x, y, w, h, flags),
+               Clr text_color/* = CLR_BLACK*/, TabBarStyle style/* = TAB_BAR_ATTACHED*/) :
+    Wnd(x, y, w, h, INTERACTIVE),
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color, style)),
     m_overlay(new OverlayWnd(X0, Y0, X1, Y1))
 {
