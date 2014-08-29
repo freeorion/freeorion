@@ -71,16 +71,14 @@ namespace {
 }
 
 CUIButton::CUIButton(const std::string& str) :
-    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, str,
-           ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
+    Button(str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1),
     m_checked(false)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 CUIButton::CUIButton(const std::string& str, GG::Clr background, GG::Clr border) :
-    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, str,
-           ClientUI::GetFont(), background, ClientUI::TextColor(), GG::INTERACTIVE),
+    Button(str, ClientUI::GetFont(), background, ClientUI::TextColor(), GG::INTERACTIVE),
     m_border_color(border),
     m_border_thick(2),
     m_checked(false)
@@ -88,8 +86,7 @@ CUIButton::CUIButton(const std::string& str, GG::Clr background, GG::Clr border)
 
 CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
                      const GG::SubTexture& rollover) :
-    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(),
-           GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
+    Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_border_thick(1),
     m_checked(false)
@@ -234,7 +231,7 @@ void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)>
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(ShapeOrientation orientation,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
+    Button("", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
@@ -478,15 +475,15 @@ namespace {
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
                                 GG::Clr border_color) : 
-    Button(GG::X(orientation == GG::VERTICAL ? 0 : 2),
-           GG::Y(orientation == GG::VERTICAL ? 2 : 0),
-           GG::X(scroll_width), GG::Y(scroll_width),
-           "", boost::shared_ptr<GG::Font>(), color),
+    Button("", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
     m_mouse_here(false),
     m_being_dragged(false)
 {
+    MoveTo(GG::Pt(GG::X(orientation == GG::VERTICAL ? 0 : 2),
+                  GG::Y(orientation == GG::VERTICAL ? 2 : 0)));
+    Resize(GG::Pt(GG::X(scroll_width), GG::Y(scroll_width)));
     SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : GG::X(10),
                       m_orientation == GG::VERTICAL ? GG::Y(10) : MinSize().y));
 }

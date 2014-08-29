@@ -29,7 +29,7 @@ namespace {
 // CUI_MinRestoreButton
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton() :
-    GG::Button(GG::X0, GG::Y0, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
+    GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
 { GG::Connect(LeftClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
 
@@ -70,7 +70,7 @@ void CUI_MinRestoreButton::Toggle() {
 // CUI_CloseButton
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton() :
-    GG::Button(GG::X0, GG::Y0, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+    GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close.png"   )));
@@ -82,7 +82,7 @@ CUI_CloseButton::CUI_CloseButton() :
 // CUI_PinButton
 ////////////////////////////////////////////////
 CUI_PinButton::CUI_PinButton() :
-GG::Button(GG::X0, GG::Y0, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
@@ -338,6 +338,7 @@ void CUIWnd::InitButtons() {
     // create the close button
     if (m_closable) {
         m_close_button = new CUI_CloseButton();
+        m_close_button->Resize(GG::Pt(GG::X(12), GG::Y(12)));
         GG::Connect(m_close_button->LeftClickedSignal, &CUIWnd::CloseClicked, this);
         AttachChild(m_close_button);
         m_close_button->NonClientChild(true);
@@ -346,6 +347,7 @@ void CUIWnd::InitButtons() {
     // create the minimize button
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton();
+        m_minimize_button->Resize(GG::Pt(GG::X(12), GG::Y(12)));
         GG::Connect(m_minimize_button->LeftClickedSignal, &CUIWnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
@@ -354,6 +356,7 @@ void CUIWnd::InitButtons() {
     // create the pin button
     if (m_pinable) {
         m_pin_button = new CUI_PinButton();
+        m_pin_button->Resize(GG::Pt(GG::X(12), GG::Y(12)));
         GG::Connect(m_pin_button->LeftClickedSignal, &CUIWnd::PinClicked, this);
         AttachChild(m_pin_button);
         m_pin_button->NonClientChild(true);

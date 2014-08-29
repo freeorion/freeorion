@@ -51,10 +51,10 @@ namespace {
 ////////////////////////////////////////////////
 // GG::Button
 ////////////////////////////////////////////////
-Button::Button(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color, 
+Button::Button(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, h, flags),
-    m_label(new TextControl(x, y, w, h, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
+    Control(X0, Y0, X1, Y1, flags),
+    m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, FORMAT_NONE, NO_WND_FLAGS)),
     m_state(BN_UNPRESSED)
 {
     m_color = color;

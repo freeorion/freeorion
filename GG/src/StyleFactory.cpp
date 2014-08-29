@@ -80,7 +80,7 @@ boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
 
 Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Button(X0, Y0, X1, Y1, str, font, color, text_color, flags); }
+{ return new Button(str, font, color, text_color, flags); }
 
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return new RadioButtonGroup(orientation); }

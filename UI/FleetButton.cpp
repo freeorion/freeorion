@@ -131,7 +131,7 @@ namespace {
 // FleetButton           //
 ///////////////////////////
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
-    GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icons(),
     m_size_icon(),
@@ -143,7 +143,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 }
 
 FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icons(),
     m_size_icon(),

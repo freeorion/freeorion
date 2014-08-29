@@ -61,7 +61,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    Button(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
+    Button(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE); ///< ctor
     //@}
 

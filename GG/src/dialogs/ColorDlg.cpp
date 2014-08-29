@@ -310,7 +310,7 @@ void ValuePicker::SetValueFromPt(Pt pt)
 
 // ColorDlg::ColorButton
 ColorDlg::ColorButton::ColorButton(const Clr& color) :
-    Button(X0, Y0, X1, Y1, "", boost::shared_ptr<Font>(), color),
+    Button("", boost::shared_ptr<Font>(), color),
     m_represented_color(CLR_BLACK)
 {}
 
