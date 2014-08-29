@@ -93,7 +93,7 @@ Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font
 { return new Edit(X0, Y0, X1, str, font, color, text_color, interior, INTERACTIVE | REPEAT_KEY_PRESS); }
 
 ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
-{ return new ListBox(color, interior, INTERACTIVE); }
+{ return new ListBox(color, interior); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
 { return new Scroll(X0, Y0, X1, Y1, orientation, color, interior); }

@@ -236,7 +236,7 @@ public:
 
     /** \name Structors */ ///@{
     /** basic ctor */
-    ListBox(Clr color, Clr interior = CLR_ZERO, Flags<WndFlag> flags = INTERACTIVE);
+    ListBox(Clr color, Clr interior = CLR_ZERO);
 
     virtual ~ListBox(); ///< virtual dtor
     //@}
