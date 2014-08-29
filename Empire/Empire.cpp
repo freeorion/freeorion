@@ -3097,3 +3097,14 @@ void Empire::ResetMeters() {
         it->second.ResetCurrent();
     }
 }
+
+int Empire::TotalShipsOwned() const {
+    // sum up counts for each ship design owned by this empire
+    // (not using species ship counts, as an empire could potentially own a
+    //  ship that has no species...)
+    int counter = 0;
+    for (std::map<int, int>::const_iterator it = m_ship_designs_owned.begin();
+         it != m_ship_designs_owned.end(); ++it)
+    { counter += it->second; }
+    return counter;
+}

@@ -331,9 +331,9 @@ public:
 
     float       ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    /** Returns the total cost per item (blocksize 1) and the minimum number of turns
-      * required to produce the indicated item, or (-1.0, -1) if the item is
-      * unknown, unavailable, or invalid. */
+    /** Returns the total cost per item (blocksize 1) and the minimum number of
+      * turns required to produce the indicated item, or (-1.0, -1) if the item
+      * is unknown, unavailable, or invalid. */
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::Element& element) const;
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
@@ -551,6 +551,14 @@ public:
     /** Resets empire meters. */
     void        ResetMeters();
 
+    int                         TotalShipsOwned() const;
+
+    std::map<std::string, int>& SpeciesShipsOwned()     { return m_species_ships_owned; }
+    std::map<int, int>&         ShipDesignsOwned()      { return m_ship_designs_owned; }
+    std::map<std::string, int>& SpeciesColoniesOwned()  { return m_species_colonies_owned; }
+    int&                        OutpostsOwned()         { return m_outposts_owned; }
+    int&                        BuildingsOwned()        { return m_buildings_owned; }
+
     std::map<int, int>&         EmpireShipsDestroyed()  { return m_empire_ships_destroyed; }
     std::map<int, int>&         ShipDesignsDestroyed()  { return m_ship_designs_destroyed; }
     std::map<std::string, int>& SpeciesShipsDestroyed() { return m_species_ships_destroyed; }
@@ -611,20 +619,29 @@ private:
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >    m_resource_pools;
     PopulationPool                                              m_population_pool;
 
-    std::map<std::string, int>      m_ship_names_used;                      ///< map from name to number of times used
+    std::map<std::string, int>      m_ship_names_used;          ///< map from name to number of times used
+
+    std::map<std::string, int>      m_species_ships_owned;      ///< how many ships of each species does this empire currently own?
+    std::map<int, int>              m_ship_designs_owned;       ///< how many ships of each design does this empire currently own?
+    std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
+    int                             m_outposts_owned;           ///< how many uncolonized outposts does this empire currently own?
+    int                             m_buildings_owned;          ///< how many buildings does this empire currently own?
 
     std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
     std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire destroyed?
+
     std::map<std::string, int>      m_species_ships_produced;   ///< how many ships crewed by each species has this empire produced?
     std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
     std::map<std::string, int>      m_species_ships_lost;       ///< how mahy ships crewed by each species has this empire lost in combat?
     std::map<int, int>              m_ship_designs_lost;        ///< how many ships of each design has this empire lost in combat?
     std::map<std::string, int>      m_species_ships_scrapped;   ///< how many ships crewed by each species has this empire scrapped?
     std::map<int, int>              m_ship_designs_scrapped;    ///< how many ships of each design has this empire scrapped?
+
     std::map<std::string, int>      m_species_planets_depoped;  ///< how many planets populated by each species have depopulated while owned by this empire?
     std::map<std::string, int>      m_species_planets_bombed;   ///< how many planets populated by each species has this empire bombarded?
+
     std::map<std::string, int>      m_building_types_produced;  ///< how many buildings of each type has this empire produced?
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
