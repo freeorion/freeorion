@@ -103,9 +103,8 @@ const unsigned int MultiEdit::SCROLL_WIDTH = 14;
 const unsigned int MultiEdit::BORDER_THICK = 2;
 
 MultiEdit::MultiEdit(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color, 
-                     Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, 
-                     Flags<WndFlag> flags/* = INTERACTIVE*/) : 
-    Edit(x, y, w, str, font, color, text_color, interior, flags),
+                     Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+    Edit(x, y, w, str, font, color, text_color, interior, INTERACTIVE | REPEAT_KEY_PRESS),
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
