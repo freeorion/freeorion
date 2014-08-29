@@ -82,7 +82,7 @@ public:
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
     Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color, 
-         Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = INTERACTIVE);
+         Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     ~Spin(); // dtor
     //@}
@@ -155,7 +155,7 @@ protected:
 
 private:
     void ConnectSignals();
-    void Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color, Clr interior, Flags<WndFlag> flags);
+    void Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color, Clr interior);
     void ValueUpdated(const std::string& val_text);
     void IncrImpl(bool signal);
     void DecrImpl(bool signal);
@@ -181,8 +181,8 @@ private:
 // template implementations
 template<class T>
 Spin<T>::Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color, 
-              Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, Flags<WndFlag> flags/* = INTERACTIVE*/) : 
-    Control(x, y, w, font->Height() + 2 * PIXEL_MARGIN, flags),
+              Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+    Control(x, y, w, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
     m_value(value),
     m_step_size(step),
     m_min_value(min),
@@ -193,7 +193,7 @@ Spin<T>::Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const bo
     m_down_button(0),
     m_button_width(15)
 {
-    Init(font, color, text_color, interior, flags);
+    Init(font, color, text_color, interior);
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(ValueChangedSignal, &ValueChangedEcho);
@@ -427,7 +427,7 @@ void Spin<T>::ConnectSignals()
 }
 
 template<class T>
-void Spin<T>::Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color, Clr interior, Flags<WndFlag> flags)
+void Spin<T>::Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color, Clr interior)
 {
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
     Control::SetColor(color);
