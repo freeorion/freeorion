@@ -104,8 +104,8 @@ Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientatio
 { return new Slider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation, style, color, tab_width, line_width, INTERACTIVE); }
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
-                                          Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
-{ return new TextControl(X0, Y0, X1, Y1, str, font, color, format, flags); }
+                                          Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const
+{ return new TextControl(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
 TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                 TabBarStyle style/* = TAB_BAR_ATTACHED*/) const
