@@ -251,14 +251,14 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 const X TabBar::BUTTON_WIDTH(10);
 
-TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, TabHeightFromFont(font), flags),
+    Control(X0, Y0, X1, TabHeightFromFont(font), flags),
     m_tabs(0),
     m_font(font),
     m_left_button(0),
     m_right_button(0),
-    m_left_right_button_layout(new Layout(X0, Y0, w, TabHeightFromFont(font), 1, 3)),
+    m_left_right_button_layout(new Layout(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
     m_text_color(text_color),
     m_style(style),
     m_first_tab_shown(0)

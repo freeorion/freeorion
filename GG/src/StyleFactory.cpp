@@ -108,7 +108,7 @@ TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::s
 
 TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                                 TabBarStyle style/* = TAB_BAR_ATTACHED*/) const
-{ return new TabBar(X0, Y0, X1, font, color, text_color, style, INTERACTIVE); }
+{ return new TabBar(font, color, text_color, style, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return NewListBox(color, interior); }
