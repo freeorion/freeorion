@@ -96,7 +96,7 @@ ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return new ListBox(color, interior, INTERACTIVE); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
-{ return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return new Scroll(X0, Y0, X1, Y1, orientation, color, interior); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
                                         SliderLineStyle style, Clr color, int tab_width, int line_width/* = 5*/) const
