@@ -102,9 +102,9 @@ const std::size_t MultiEdit::ALL_LINES = std::numeric_limits<std::size_t>::max()
 const unsigned int MultiEdit::SCROLL_WIDTH = 14;
 const unsigned int MultiEdit::BORDER_THICK = 2;
 
-MultiEdit::MultiEdit(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color, 
+MultiEdit::MultiEdit(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
                      Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    Edit(x, y, w, str, font, color, text_color, interior),
+    Edit(X0, Y0, X1, str, font, color, text_color, interior),
     m_style(style),
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
@@ -119,7 +119,6 @@ MultiEdit::MultiEdit(X x, Y y, X w, Y h, const std::string& str, const boost::sh
     m_ignore_adjust_scrolls(false)
 {
     SetColor(color);
-    Resize(Pt(w, h));
     SetStyle(m_style);
     SizeMove(UpperLeft(), LowerRight()); // do this to set up the scrolls, and in case MULTI_INTEGRAL_HEIGHT is in effect
 }

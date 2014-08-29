@@ -737,7 +737,7 @@ void CUIEdit::Render() {
 // class CUIMultiEdit
 ///////////////////////////////////////
 CUIMultiEdit::CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/) :
-    MultiEdit(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor())
+    MultiEdit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), style, ClientUI::TextColor(), ClientUI::CtrlColor())
 {
     RecreateScrolls();
     SetHiliteColor(ClientUI::EditHiliteColor());
