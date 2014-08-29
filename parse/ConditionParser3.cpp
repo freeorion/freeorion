@@ -11,20 +11,15 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 
-#if DEBUG_CONDITION_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<const ValueRef::ValueRefBase<StarType>*>&) { return os; }
-}
-#endif
-
 namespace {
     struct condition_parser_rules_3 {
         condition_parser_rules_3() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =              parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule< ::StarType>::type& star_type_value_ref= parse::value_ref_parser< ::StarType>();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =
+                parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =
+                parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -46,12 +41,6 @@ namespace {
                 >    parse::label(Jumps_token)     > int_value_ref [ _a = _1 ]
                 >    parse::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
-                ;
-
-            ordered_bombarded_by
-                =    tok.OrderedBombardedBy_
-                >    parse::label(Condition_token) > parse::detail::condition_parser
-                     [ _val = new_<Condition::OrderedBombarded>(_1) ]
                 ;
 
             number
@@ -129,28 +118,6 @@ namespace {
                 |    number_of2
                 ;
 
-            contains
-                =    tok.Contains_
-                >    parse::label(Condition_token) > parse::detail::condition_parser
-                [ _val = new_<Condition::Contains>(_1) ]
-                ;
-
-            contained_by
-                =    tok.ContainedBy_
-                >    parse::label(Condition_token) > parse::detail::condition_parser
-                [ _val = new_<Condition::ContainedBy>(_1) ]
-                ;
-
-            star_type
-                =    tok.Star_
-                >    parse::label(Type_token)
-                >>   (
-                            '[' > +star_type_value_ref [ push_back(_a, _1) ] > ']'
-                        |   star_type_value_ref [ push_back(_a, _1) ]
-                     )
-                [ _val = new_<Condition::StarType>(_a) ]
-                ;
-
             random
                 =    tok.Random_
                 >    parse::label(Probability_token) > double_value_ref
@@ -174,15 +141,11 @@ namespace {
             start
                 %=   within_distance
                 |    within_starlane_jumps
-                |    ordered_bombarded_by
                 |    number
                 |    value_test
                 |    turn
                 |    created_on_turn
                 |    number_of
-                |    contains
-                |    contained_by
-                |    star_type
                 |    random
                 |    owner_stockpile
                 |    resource_supply_connected
@@ -190,15 +153,11 @@ namespace {
 
             within_distance.name("WithinDistance");
             within_starlane_jumps.name("WithinStarlaneJumps");
-            ordered_bombarded_by.name("OrderedBombardedBy");
             number.name("Number");
             value_test.name("ValueTest");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
-            contains.name("Contains");
-            contained_by.name("ContainedBy");
-            star_type.name("StarType");
             random.name("Random");
             owner_stockpile.name("OwnerStockpile");
             resource_supply_connected.name("ResourceSupplyConnected");
@@ -206,15 +165,11 @@ namespace {
 #if DEBUG_CONDITION_PARSERS
             debug(within_distance);
             debug(within_starlane_jumps);
-            debug(ordered_bombarded_by);
             debug(number);
             debug(value_test);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
-            debug(contains);
-            debug(contained_by);
-            debug(star_type);
             debug(random);
             debug(owner_stockpile);
             debug(resource_supply_connected);
@@ -262,16 +217,8 @@ namespace {
             parse::skipper_type
         > resource_type_double_ref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<StarType>*> >,
-            parse::skipper_type
-        > star_type_vec_rule;
-
         double_ref_double_ref_rule              within_distance;
         int_ref_int_ref_rule                    within_starlane_jumps;
-        parse::condition_parser_rule            ordered_bombarded_by;
         int_ref_int_ref_rule                    number;
         double_ref_double_ref_rule              value_test;
         int_ref_int_ref_rule                    turn;
@@ -279,9 +226,6 @@ namespace {
         int_ref_sorting_method_double_ref_rule  number_of;
         int_ref_sorting_method_double_ref_rule  number_of1;
         int_ref_sorting_method_double_ref_rule  number_of2;
-        parse::condition_parser_rule            contains;
-        parse::condition_parser_rule            contained_by;
-        star_type_vec_rule                      star_type;
         parse::condition_parser_rule            random;
         resource_type_double_ref_rule           owner_stockpile;
         int_ref_int_ref_rule                    resource_supply_connected;

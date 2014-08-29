@@ -36,6 +36,7 @@ set (freeorionparse_SOURCE
     ConditionParser4.cpp
     ConditionParser5.cpp
     ConditionParser6.cpp
+    ConditionParser7.cpp
     ConditionParser.cpp
     Double.cpp
     DoubleValueRefParser.cpp
