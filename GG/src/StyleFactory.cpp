@@ -89,9 +89,8 @@ DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color
 { return new DropDownList(num_shown_elements, color, INTERACTIVE); }
 
 Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
-                            Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                            Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Edit(X0, Y0, X1, str, font, color, text_color, interior, flags); }
+                            Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
+{ return new Edit(X0, Y0, X1, str, font, color, text_color, interior, INTERACTIVE | REPEAT_KEY_PRESS); }
 
 ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return new ListBox(color, interior, INTERACTIVE); }
@@ -158,7 +157,7 @@ Button* StyleFactory::NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr
 
 Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
-{ return NewEdit(str, font, color, text_color, interior, INTERACTIVE | REPEAT_KEY_PRESS); }
+{ return NewEdit(str, font, color, text_color, interior); }
 
 StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,

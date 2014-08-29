@@ -99,8 +99,7 @@ public:
 
     /** Returns a new GG Edit. */
     virtual Edit*              NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
-                                       Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                       Flags<WndFlag> flags = INTERACTIVE) const;
+                                       Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
 
     /** Returns a new GG ListBox. */
     virtual ListBox*           NewListBox(Clr color, Clr interior = CLR_ZERO) const;

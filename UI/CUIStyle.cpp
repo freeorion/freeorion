@@ -14,8 +14,7 @@ GG::DropDownList* CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr c
 { return new CUIDropDownList(num_shown_elements); }
 
 GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
-                            GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                            GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
+                            GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/) const
 { return new CUIEdit(str); }
 
 GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/) const
