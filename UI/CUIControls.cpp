@@ -701,7 +701,7 @@ void CUIDropDownList::EnableDropArrow()
 // class CUIEdit
 ///////////////////////////////////////
 CUIEdit::CUIEdit(const std::string& str) :
-    Edit(GG::X0, GG::Y0, GG::X1, str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::REPEAT_KEY_PRESS)
+    Edit(GG::X0, GG::Y0, GG::X1, str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), ClientUI::CtrlColor())
 {
     GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
     SetHiliteColor(ClientUI::EditHiliteColor());
