@@ -18,8 +18,7 @@ public:
                                            GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
-    virtual GG::ListBox*           NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO,
-                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::ListBox*           NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO) const;
 
     virtual GG::Scroll*            NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const;
 

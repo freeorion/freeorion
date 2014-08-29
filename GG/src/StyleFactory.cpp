@@ -94,9 +94,8 @@ Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font
                             Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new Edit(X0, Y0, X1, str, font, color, text_color, interior, flags); }
 
-ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/,
-                                  Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new ListBox(color, interior, flags); }
+ListBox* StyleFactory::NewListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
+{ return new ListBox(color, interior, INTERACTIVE); }
 
 Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior) const
 { return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, INTERACTIVE | REPEAT_BUTTON_DOWN); }
@@ -114,7 +113,7 @@ TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, 
 { return new TabBar(X0, Y0, X1, font, color, text_color, style, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
-{ return NewListBox(color, interior, INTERACTIVE); }
+{ return NewListBox(color, interior); }
 
 Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior) const
 { return NewScroll(VERTICAL, color, interior); }

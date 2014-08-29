@@ -19,8 +19,7 @@ GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::
                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 { return new CUIEdit(str); }
 
-GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                  GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
+GG::ListBox* CUIStyle::NewListBox(GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/) const
 { return new CUIListBox(); }
 
 GG::Scroll* CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const
