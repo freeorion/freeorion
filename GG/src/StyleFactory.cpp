@@ -86,7 +86,7 @@ RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) con
 { return new RadioButtonGroup(orientation); }
 
 DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color) const
-{ return new DropDownList(num_shown_elements, color, INTERACTIVE); }
+{ return new DropDownList(num_shown_elements, color); }
 
 Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const

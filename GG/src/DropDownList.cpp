@@ -141,8 +141,8 @@ void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const Pt&)
 ////////////////////////////////////////////////
 // GG::DropDownList
 ////////////////////////////////////////////////
-DropDownList::DropDownList(size_t num_shown_elements, Clr color, Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(X0, Y0, X1, Y1, flags),
+DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
+    Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_modal_picker(new ModalListPicker(color, this)),
     m_num_shown_elements(num_shown_elements)
 {
