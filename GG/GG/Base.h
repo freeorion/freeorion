@@ -113,13 +113,6 @@ GG_ENUM(StateButtonStyle,
     SBSTYLE_3D_TOP_DETACHED_TAB
 )
 
-/** The rendering styles of the line the tab slides over in a Slider. */
-GG_ENUM(SliderLineStyle,
-    FLAT,
-    RAISED,
-    GROOVED
-)
-
 /** The styles of display for a TabBar. */
 GG_ENUM(TabBarStyle,
     /** The currently active tab should appear to be connected to the area

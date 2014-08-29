@@ -69,8 +69,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    Slider(X x, Y y, X w, Y h, T min, T max,
-           Orientation orientation, SliderLineStyle style, Clr color,
+    Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE); ///< ctor
     //@}
 
@@ -88,7 +87,6 @@ public:
     Orientation          GetOrientation() const; ///< returns the orientation of the slider (VERTICAL or HORIZONTAL)
     unsigned int         TabWidth() const;       ///< returns the width of the slider's tab, in pixels
     unsigned int         LineWidth() const;      ///< returns the width of the line along which the tab slides, in pixels
-    SliderLineStyle      LineStyle() const;      ///< returns the style of line used to render the control
 
     mutable SlidSignalType           SlidSignal;           ///< returns the slid signal object for this Slider
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
@@ -110,8 +108,6 @@ public:
         this defaults to 10% of the slider's range.  To disable clicks off the
         tab, set the page size to 0. */
     void           SetPageSize(T size);
-
-    void           SetLineStyle(SliderLineStyle style); ///< returns the style of line used to render the control
     //@}
 
     static const T INVALID_PAGE_SIZE;
@@ -149,7 +145,6 @@ private:
     Orientation               m_orientation;
     unsigned int              m_line_width;
     unsigned int              m_tab_width;
-    SliderLineStyle           m_line_style;
     int                       m_tab_drag_offset;
     Button*                   m_tab;
     bool                      m_dragging_tab;
@@ -160,7 +155,7 @@ template <class T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
 template <class T>
-Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, SliderLineStyle style,
+Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation,
                   Clr color, int unsigned tab_width, int unsigned line_width/* = 5*/,
                   Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(x, y, w, h, flags),
@@ -171,7 +166,6 @@ Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, Sli
     m_orientation(orientation),
     m_line_width(line_width),
     m_tab_width(tab_width),
-    m_line_style(style),
     m_tab_drag_offset(-1),
     m_tab(m_orientation == VERTICAL ?
           GetStyleFactory()->NewVSliderTabButton(color) :
@@ -222,10 +216,6 @@ unsigned int Slider<T>::LineWidth() const
 { return m_line_width; }
 
 template <class T>
-SliderLineStyle Slider<T>::LineStyle() const
-{ return m_line_style; }
-
-template <class T>
 void Slider<T>::Render()
 {
     const Pt UL = UpperLeft();
@@ -244,17 +234,7 @@ void Slider<T>::Render()
         ul.y = ((LR.y + UL.y) - static_cast<int>(m_line_width)) / 2;
         lr.y = ul.y + static_cast<int>(m_line_width);
     }
-    switch (m_line_style) {
-    case FLAT:
-        FlatRectangle(ul, lr, color_to_use, CLR_BLACK, 1);
-        break;
-    case RAISED:
-        BeveledRectangle(ul, lr, color_to_use, color_to_use, true, m_line_width / 2);
-        break;
-    case GROOVED:
-        BeveledRectangle(ul, lr, color_to_use, color_to_use, false, m_line_width / 2);
-        break;
-    }
+    FlatRectangle(ul, lr, color_to_use, CLR_BLACK, 1);
 }
 
 template <class T>
@@ -311,10 +291,6 @@ void Slider<T>::SlideTo(T p)
 template <class T>
 void Slider<T>::SetPageSize(T size)
 { m_page_sz = size; }
-
-template <class T>
-void Slider<T>::SetLineStyle(SliderLineStyle style)
-{ m_line_style = style; }
 
 template <class T>
 Button* Slider<T>::Tab() const
