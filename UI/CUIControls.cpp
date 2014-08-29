@@ -299,7 +299,7 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
                                GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
     StateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
-                style, GG::INTERACTIVE),
+                style),
     m_border_color(ClientUI::CtrlBorderColor()),
     m_mouse_here(false)
 {

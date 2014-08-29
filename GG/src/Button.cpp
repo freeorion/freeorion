@@ -258,9 +258,8 @@ void Button::RenderDefault()
 // GG::StateButton
 ////////////////////////////////////////////////
 StateButton::StateButton(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format, 
-                         Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_CHECKBOX*/,
-                         Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, h, flags),
+                         Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_CHECKBOX*/) :
+    Control(x, y, w, h, INTERACTIVE),
     m_label(new TextControl(x, y, w, h, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
     m_int_color(interior),
