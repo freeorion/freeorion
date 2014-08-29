@@ -161,9 +161,8 @@ Button* StyleFactory::NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr
 { return NewButton("-", font, color, text_color, flags); }
 
 Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
-                                Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewEdit(str, font, color, text_color, interior, flags); }
+                                Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
+{ return NewEdit(str, font, color, text_color, interior, INTERACTIVE | REPEAT_KEY_PRESS); }
 
 StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,

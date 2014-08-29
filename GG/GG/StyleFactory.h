@@ -173,8 +173,7 @@ public:
 
     /** Returns a new Edit, to be used in an editable Spin. */
     virtual Edit*              NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
-                                           Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                           Flags<WndFlag> flags = INTERACTIVE | REPEAT_KEY_PRESS) const;
+                                           Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
 
     /** Returns a new StateButton, to be used in a TabBar. */
     virtual StateButton*       NewTabBarTab(const std::string& str,
