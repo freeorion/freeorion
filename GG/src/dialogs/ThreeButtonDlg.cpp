@@ -37,23 +37,6 @@ using namespace GG;
 
 const std::size_t ThreeButtonDlg::NO_BUTTON = std::numeric_limits<std::size_t>::max();
 
-ThreeButtonDlg::ThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,
-                               Clr color, Clr border_color, Clr button_color, Clr text_color, std::size_t buttons,
-                               const std::string& zero/* = ""*/, const std::string& one/* = ""*/,
-                               const std::string& two/* = ""*/) :
-    Wnd(x, y, w, h, INTERACTIVE | DRAGABLE | MODAL),
-    m_color(color),
-    m_border_color(border_color),
-    m_text_color(text_color),
-    m_button_color(button_color),
-    m_default(0),
-    m_escape(buttons - 1),
-    m_result(0),
-    m_button_0(0),
-    m_button_1(0),
-    m_button_2(0)
-{ Init(msg, font, buttons, zero, one, two); }
-
 ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,
                                Clr color, Clr border_color, Clr button_color, Clr text_color, std::size_t buttons,
                                const std::string& zero/* = ""*/, const std::string& one/* = ""*/, const std::string& two/* = ""*/) :

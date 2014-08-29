@@ -183,12 +183,6 @@ public:
     //@}
 
     /** \name Dialogs */ ///@{
-    /** Returns a new GG ThreeButtonDlg. */
-    virtual ThreeButtonDlg*    NewThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg,
-                                                 const boost::shared_ptr<Font>& font, Clr color, Clr border_color,
-                                                 Clr button_color, Clr text_color, int buttons, const std::string& zero = "",
-                                                 const std::string& one = "", const std::string& two = "") const;
-
     /** Returns a new GG ThreeButtonDlg that automatically centers itself in
         the app. */
     virtual ThreeButtonDlg*    NewThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,

@@ -175,16 +175,6 @@ Button* StyleFactory::NewTabBarLeftButton(const boost::shared_ptr<Font>& font, C
 Button* StyleFactory::NewTabBarRightButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton(">", font, color, text_color, INTERACTIVE); }
 
-ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X x, Y y, X w, Y h, const std::string& msg,
-                                                const boost::shared_ptr<Font>& font, Clr color, Clr border_color,
-                                                Clr button_color, Clr text_color, int buttons,
-                                                const std::string& zero/* = ""*/, const std::string& one/* = ""*/,
-                                                const std::string& two/* = ""*/) const
-{
-    return new ThreeButtonDlg(x, y, w, h, msg, font, color, border_color, button_color, text_color,
-                              buttons, zero, one, two);
-}
-
 ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,
                                                 Clr color, Clr border_color, Clr button_color, Clr text_color,
                                                 int buttons, const std::string& zero/* = ""*/,
