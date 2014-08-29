@@ -13,3 +13,10 @@ def UserString(label, default=None):  # this name left with C naming style for c
         return default or table_string
     else:
         return table_string
+
+
+def tech_is_complete(tech):
+    """
+    Return if tech is complete.
+    """
+    return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete

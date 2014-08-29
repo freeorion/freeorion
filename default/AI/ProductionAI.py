@@ -13,15 +13,15 @@ import MilitaryAI
 from tools import dict_from_map
 
 bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
-design_cost_cache = { 0: { (-1, -1):0 } } #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
-shipTypeMap = { EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST: EnumsAI.AIShipDesignTypes.outpostBase,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION: EnumsAI.AIShipDesignTypes.colonyShip,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION: EnumsAI.AIShipDesignTypes.troopShip,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY: EnumsAI.AIShipDesignTypes.attackShip,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE: EnumsAI.AIShipDesignTypes.defenseBase,
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION: EnumsAI.AIShipDesignTypes.troopBase,
+design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
+shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST: EnumsAI.AIShipDesignTypes.outpostBase,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION: EnumsAI.AIShipDesignTypes.colonyShip,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION: EnumsAI.AIShipDesignTypes.troopShip,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY: EnumsAI.AIShipDesignTypes.attackShip,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE: EnumsAI.AIShipDesignTypes.defenseBase,
+               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION: EnumsAI.AIShipDesignTypes.troopBase,
                                         }
 
 #TODO: dynamic lookup of hull stats
@@ -43,7 +43,7 @@ def get_design_cost(cur_turn, design, pid):
         loc = -1
     else:
         loc = pid
-    return float( cost_cache.setdefault( (design.id, loc), design.productionCost(fo.empireID(), pid) ) )# float() so as to not return actual reference
+    return float(cost_cache.setdefault( (design.id, loc), design.productionCost(fo.empireID(), pid) ) )# float() so as to not return actual reference
 
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
@@ -53,7 +53,7 @@ def curBestMilShipRating():
     if fo.currentTurn() not in bestMilRatingsHistory:
         milBuildChoices = getBestShipRatings()
         if not milBuildChoices:
-            bestMilRatingsHistory[ fo.currentTurn() ] = (0.00001, 1)
+            bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
             return 0.00001
         top = milBuildChoices[0]
         bestDesignID, bestDesign, buildChoices = top[2], top[3], [top[1]]
@@ -97,7 +97,7 @@ def getBestShipInfo(priority, loc=None):
     theseDesignIDs = []
     designNameBases= shipTypeMap.get(priority, ["nomatch"])
     for baseName in designNameBases:
-        theseDesignIDs.extend( [(designNameBases[baseName]+fo.getShipDesign(shipDesign).name(False) , shipDesign ) for shipDesign in empire.availableShipDesigns if baseName in fo.getShipDesign(shipDesign).name(False) ] )
+        theseDesignIDs.extend([(designNameBases[baseName]+fo.getShipDesign(shipDesign).name(False) , shipDesign ) for shipDesign in empire.availableShipDesigns if baseName in fo.getShipDesign(shipDesign).name(False) ] )
     if not theseDesignIDs:
         return None, None, None #must be missing a Shipyard (or checking for outpost ship but missing tech)
     #ships = [ ( fo.getShipDesign(shipDesign).name(False), shipDesign) for shipDesign in theseDesignIDs ]
@@ -112,7 +112,7 @@ def getBestShipInfo(priority, loc=None):
                 validLocs.append(pid)
         if validLocs:
             return shipDesignID, shipDesign, validLocs
-    return None, None, None #must be missing a Shipyard or other orbital (or missing tech)
+    return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
 def getBestShipRatings(loc=None, verbose = False):
@@ -1525,28 +1525,28 @@ def generateProductionOrders():
     dequeueList=[]
     fo.updateProductionQueue()
     can_prioritize_troops = False
-    for queue_index in range(len(productionQueue)):
+    for queue_index in range( len(productionQueue)):
         element=productionQueue[queue_index]
-        blockStr =  "%d x "%element.blocksize #["a single ",  "in blocks of %d "%element.blocksize][element.blocksize>1]
-        print "    " + blockStr + element.name+" requiring " + str(element.turnsLeft) + " more turns;  alloc: %.2f PP"%element.allocation + " with cum. progress of  %.1f"%element.progress + " being built at " + universe.getObject(element.locationID).name
+        blockStr = "%d x "%element.blocksize  #["a single ", "in blocks of %d "%element.blocksize][element.blocksize>1]
+        print "    " + blockStr + element.name+" requiring " + str(element.turnsLeft) + " more turns; alloc: %.2f PP"%element.allocation + " with cum. progress of %.1f"%element.progress + " being built at " + universe.getObject(element.locationID).name
         if element.turnsLeft == -1:
             if element.locationID not in AIstate.popCtrIDs+AIstate.outpostIDs:
                 #dequeueList.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
-                #print "element %s will never be completed as stands and location %d no longer owned; deleting from queue "%(element.name,  element.locationID)
-                print "element %s will never be completed as stands and location %d no longer owned; could consider deleting from queue "%(element.name,  element.locationID) #TODO:
+                #print "element %s will never be completed as stands and location %d no longer owned; deleting from queue "%(element.name, element.locationID)
+                print "element %s will never be completed as stands and location %d no longer owned; could consider deleting from queue "%(element.name, element.locationID) #TODO:
             else:
-                print "element %s is projected to never be completed as currently stands, but will remain on queue  "%element.name
+                print "element %s is projected to never be completed as currently stands, but will remain on queue "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
             this_role = foAI.foAIstate.get_ship_role(element.designID)
             if this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
                 thisSpec=universe.getPlanet(element.locationID).speciesName
-                queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
+                queuedColonyShips[thisSpec] = queuedColonyShips.get(thisSpec, 0) + element.remaining*element.blocksize
             elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
-                queuedOutpostShips+=  element.remaining*element.blocksize
+                queuedOutpostShips+= element.remaining*element.blocksize
             elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
-                queuedOutpostShips+=  element.remaining*element.blocksize
+                queuedOutpostShips+= element.remaining*element.blocksize
             elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
-                queuedTroopShips+=  element.remaining*element.blocksize
+                queuedTroopShips+= element.remaining*element.blocksize
             elif (this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION) and (queue_index <= 1):
                 if len(AIstate.opponentPlanetIDs) > 0:
                     can_prioritize_troops = True
@@ -1559,31 +1559,31 @@ def generateProductionOrders():
         fo.issueDequeueProductionOrder(queue_index)
 
     allMilitaryFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY )
-    nMilitaryTot = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in allMilitaryFleetIDs])
-    allTroopFleetIDs =  FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
-    nTroopTot = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in allTroopFleetIDs])
+    nMilitaryTot = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in allMilitaryFleetIDs ] )
+    allTroopFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION )
+    nTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in allTroopFleetIDs ] )
     availTroopFleetIDs = list( FleetUtilsAI.extract_fleet_ids_without_mission_types(allTroopFleetIDs))
-    nAvailTroopTot = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in availTroopFleetIDs])
-    print "Trooper Status turn %d: %d total, with %d unassigned.  %d queued, compared to %d total Military Attack Ships"%(currentTurn, nTroopTot,
+    nAvailTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in availTroopFleetIDs ] )
+    print "Trooper Status turn %d: %d total, with %d unassigned. %d queued, compared to %d total Military Attack Ships"%(currentTurn, nTroopTot,
                                                                                                                    nAvailTroopTot, queuedTroopShips, nMilitaryTot)
-    if (capitolID is not None and ((currentTurn>=40) or can_prioritize_troops) and foAI.foAIstate.systemStatus.get(capitolSysID, {}).get('fleetThreat', 0)==0  and
-                    foAI.foAIstate.systemStatus.get(capitolSysID, {}).get('neighborThreat', 0) == 0):
+    if ( capitolID is not None and ((currentTurn>=40) or can_prioritize_troops) and foAI.foAIstate.systemStatus.get(capitolSysID, {}).get('fleetThreat', 0)==0 and
+                                                                                           foAI.foAIstate.systemStatus.get(capitolSysID, {}).get('neighborThreat', 0)==0):
         bestDesignID, bestDesign, buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
-        if  buildChoices is not None and len(buildChoices)>0:
+        if buildChoices is not None and len(buildChoices)>0:
             loc = random.choice(buildChoices)
             prodTime = bestDesign.productionTime(empire.empireID, loc)
             prodCost=bestDesign.productionCost(empire.empireID, loc)
-            troopersNeededForcing = max(0, int(min(0.99 + (currentTurn / 20.0 - nAvailTroopTot) / max(2, prodTime-1), nMilitaryTot / 3 - nTroopTot)))
+            troopersNeededForcing = max(0, int( min(0.99+ (currentTurn/20.0 - nAvailTroopTot)/max(2, prodTime-1), nMilitaryTot/3 -nTroopTot)))
             numShips=troopersNeededForcing
             perTurnCost = (float(prodCost) / prodTime)
             if troopersNeededForcing>0 and totalPP > 3*perTurnCost*queuedTroopShips and foAI.foAIstate.aggression >= fo.aggression.typical:
                 retval = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
                 if retval !=0:
-                    print "forcing %d new ship(s) to production queue:  %s; per turn production cost %.1f"%(numShips, bestDesign.name(True), numShips*perTurnCost)
+                    print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f"%(numShips, bestDesign.name(True), numShips*perTurnCost)
                     print
                     if numShips>1:
                         fo.issueChangeProductionQuantityOrder(productionQueue.size -1, 1, numShips)
-                    availPP -=  numShips*perTurnCost
+                    availPP -= numShips*perTurnCost
                     res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
                     fo.updateProductionQueue()
         print

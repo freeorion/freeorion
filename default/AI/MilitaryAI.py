@@ -209,7 +209,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
 
     #================================
     #--------Empire Occupied Systems ----------
-    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
+    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     empireOccupiedSystemIDs = list(set(PlanetUtilsAI.get_systems(empirePlanetIDs)) - {capitalSysID})
     if "Main" in thisround:
         if verboseMilReporting:

@@ -11,7 +11,9 @@ import PlanetUtilsAI
 import EnumsAI
 import ProductionAI
 import ResearchAI
+from AIDependencies import OUTPOSTING_TECH
 from timing import Timer
+from tools import tech_is_complete
 
 prioritiees_timer = Timer('calculate_priorities()')
 
@@ -74,10 +76,9 @@ def calculateIndustryPriority(): #currently only used to print status
     """calculates the demand for industry"""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empireID = empire.empireID
     # get current industry production & Target
     industryProduction = empire.resourceProduction(fo.resourceType.industry)
-    ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
+    ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, ownedPlanetIDs)
     targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry), planets) )
 
@@ -102,26 +103,26 @@ def calculateResearchPriority():
 
     industryPriority = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
-    gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
-    got_quant = empire.getTechStatus("LRN_QUANT_NET") == fo.techStatus.complete
+    gotAlgo = tech_is_complete("LRN_ALGO_ELEGANCE")
+    got_quant = tech_is_complete("LRN_QUANT_NET")
     researchQueueList = ResearchAI.get_research_queue_techs()
     orbGenTech = "PRO_ORBITAL_GEN"
-    got_orb_gen = (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete)
-    got_solar_gen = (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete)
+    got_orb_gen = tech_is_complete("PRO_ORBITAL_GEN")
+    got_solar_gen = tech_is_complete("PRO_SOL_ORB_GEN")
     
     milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"  ]
-    milestones_done = [mstone for mstone in milestone_techs if (empire.getTechStatus(mstone) == fo.techStatus.complete)]
+    milestones_done = [mstone for mstone in milestone_techs if tech_is_complete(mstone)]
     print "Research Milestones accomplished at turn %d: %s"%(current_turn, milestones_done)
 
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
                               ( (totalPP + 1.6 * totalRP) <(60* foAI.foAIstate.aggression) )  and
-                              ((orbGenTech in researchQueueList[:3] or empire.getTechStatus(orbGenTech) == fo.techStatus.complete) and ColonisationAI.gotGG ) and
+                              ((orbGenTech in researchQueueList[:3] or tech_is_complete(orbGenTech)) and ColonisationAI.gotGG) and
                               ( not (
-                                            (len(AIstate.popCtrIDs) >= 8 )))) # previously (empire.getTechStatus(AIDependencies.prod_auto_name) == fo.techStatus.complete) and
+                                            (len(AIstate.popCtrIDs) >= 8 )))) # previously (tech_is_complete(AIDependencies.PROD_AUTO_NAME)) and
     # get current industry production & Target
-    ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
+    ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, ownedPlanetIDs)
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch), planets) )
 
@@ -155,9 +156,9 @@ def calculateResearchPriority():
     if industrySurge:
         researchPriority *= 0.6
                 
-    if ( ((empire.getTechStatus("SHP_WEAPON_2_4") == fo.techStatus.complete) or
-            (empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)) and
-            (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete) ):
+    if ((tech_is_complete("SHP_WEAPON_2_4") or
+         tech_is_complete("SHP_WEAPON_4_1")) and
+            tech_is_complete("PRO_SENTIENT_AUTOMATION")):
         #industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][styleIndex ]
         #researchPriority = min(researchPriority, industry_factor[got_solar_gen]*industryPriority)
         #researchPriority *= 0.8
@@ -253,7 +254,7 @@ def calculateOutpostPriority():
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
     numOutpostPlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs if score > 1.0*baseOutpostCost/3.0 ][:allottedColonyTargets] )
     completedTechs = ResearchAI.get_completed_techs()
-    if numOutpostPlanetIDs == 0 or not 'CON_ENV_ENCAPSUL' in completedTechs:
+    if numOutpostPlanetIDs == 0 or not OUTPOSTING_TECH in completedTechs:
         return 0
 
     outpostShipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -359,11 +360,11 @@ def calculateMilitaryPriority():
     else:
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
         
-    have_l1_weaps = (empire.getTechStatus("SHP_WEAPON_1_4") == fo.techStatus.complete or
-                      empire.getTechStatus("SHP_WEAPON_2_1") == fo.techStatus.complete or
-                      empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete)
-    have_l2_weaps = (empire.getTechStatus("SHP_WEAPON_2_3") == fo.techStatus.complete or
-                      empire.getTechStatus("SHP_WEAPON_4_1") == fo.techStatus.complete )
+    have_l1_weaps = (tech_is_complete("SHP_WEAPON_1_4") or
+                     tech_is_complete("SHP_WEAPON_2_1") or
+                     tech_is_complete("SHP_WEAPON_4_1"))
+    have_l2_weaps = (tech_is_complete("SHP_WEAPON_2_3") or
+                     tech_is_complete("SHP_WEAPON_4_1"))
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
         
     allottedInvasionTargets = 1+ int(fo.currentTurn()/25)

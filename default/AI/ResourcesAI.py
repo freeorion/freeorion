@@ -6,6 +6,7 @@ import random
 import ColonisationAI
 import AIDependencies
 from timing import Timer
+from tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
 
@@ -78,8 +79,7 @@ def print_resources_priority():
     """calculate top resource priority"""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empireID = empire.empireID
-    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
+    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     print "Resource Management:"
     print
     print "Resource Priorities:"
@@ -125,7 +125,6 @@ def set_planet_resource_foci(): #+
     print "Collecting info to assess Planet Focus Changes\n"
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empireID = empire.empireID
     currentTurn = fo.currentTurn()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency 
@@ -136,7 +135,7 @@ def set_planet_resource_foci(): #+
     if not (limitAssessments and (abs(currentTurn - lastFociCheck[0]) < 1.5*freq) and (random.random() < 1.0/freq)):
         lastFociCheck[0]=currentTurn
         resource_timer.start("getPlanets")
-        empirePlanetIDs = list( PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID) )
+        empirePlanetIDs = list( PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs) )
         resource_timer.start("Filter")
         resource_timer.start("Priority")
         #TODO: take into acct splintering of resource groups
@@ -154,7 +153,7 @@ def set_planet_resource_foci(): #+
         planetMap.update( zip( empirePlanetIDs, planets))
         if useGrowth:
             for metab, metabIncPop in ColonisationAI.empireMetabolisms.items():
-                for special in [aspec for aspec in AIDependencies.metabolimBoostMap.get(metab, []) if aspec in ColonisationAI.availableGrowthSpecials]:
+                for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.availableGrowthSpecials]:
                     rankedPlanets=[]
                     for pid in ColonisationAI.availableGrowthSpecials[special]:
                         planet = planetMap[pid]
@@ -237,7 +236,7 @@ def set_planet_resource_foci(): #+
         curTargetPP = 0.001
         curTargetRP = 0.001
         resource_timer.start("Loop") #loop
-        has_force = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
+        has_force = tech_is_complete("CON_FRC_ENRG_STRC")
         preset_ids = set(planetMap.keys()) - set(empirePlanetIDs)
         ctPP0, ctRP0 = 0, 0
         for pid in preset_ids:
@@ -294,7 +293,7 @@ def set_planet_resource_foci(): #+
         ratios.sort()
         printedHeader=False
         fociMap={IFocus:"Industry", RFocus:"Research", MFocus:"Mining", GFocus:"Growth"}
-        gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
+        gotAlgo = tech_is_complete("LRN_ALGO_ELEGANCE")
         for ratio, pid in ratios:
             do_research = False#(newFoci[pid]==RFocus)
             if (priorityRatio < ( curTargetRP/ (curTargetPP + 0.0001))) and not do_research: #we have enough RP

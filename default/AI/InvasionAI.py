@@ -10,9 +10,7 @@ import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
-from tools import dict_from_map
-
-
+from tools import dict_from_map, tech_is_complete
 from timing import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
@@ -59,30 +57,30 @@ def get_invasion_fleets():
     # print "All Owned and Populated PlanetIDs: " + str(all_owned_planet_ids)
 
     all_populated_planets = PlanetUtilsAI.get_populated_planet_ids(acessible_planet_ids)#need this for natives
-    print "All Visible and accessible Populated PlanetIDs (including this empire's): ",  ",  ".join(PlanetUtilsAI.planet_name_ids(all_populated_planets ))
+    print "All Visible and accessible Populated PlanetIDs (including this empire's): ", ", ".join(PlanetUtilsAI.planet_name_ids(all_populated_planets ))
     print
-    print "Prime Invadable Target Systems: ",  ",  ".join(PlanetUtilsAI.sys_name_ids(prime_invadable_system_ids))
+    print "Prime Invadable Target Systems: ", ", ".join(PlanetUtilsAI.sys_name_ids(prime_invadable_system_ids))
     print
 
-    empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empire_id)
-    # print "Empire Owned PlanetIDs:            " + str(empire_owned_planet_ids)
+    empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+    # print "Empire Owned PlanetIDs: " + str(empire_owned_planet_ids)
 
     invadable_planet_ids = set(prime_invadable_planet_ids).intersection(set(all_owned_planet_ids).union(all_populated_planets ) - set(empire_owned_planet_ids))
-    print "Prime Invadable PlanetIDs:              ",  ", ".join(PlanetUtilsAI.planet_name_ids(invadable_planet_ids))
+    print "Prime Invadable PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(invadable_planet_ids))
 
     print
-    print "Current Invasion Targeted SystemIDs:       ",  ", ".join(PlanetUtilsAI.sys_name_ids(AIstate.invasionTargetedSystemIDs))
+    print "Current Invasion Targeted SystemIDs: ", ", ".join(PlanetUtilsAI.sys_name_ids(AIstate.invasionTargetedSystemIDs))
     invasion_targeted_planet_ids = get_invasion_targeted_planet_ids(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, empire_id)
     invasion_targeted_planet_ids.extend( get_invasion_targeted_planet_ids(universe.planetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, empire_id))
     all_invasion_targeted_system_ids = set(PlanetUtilsAI.get_systems(invasion_targeted_planet_ids))
 
-    print "Current Invasion Targeted PlanetIDs:       ",  ", ".join(PlanetUtilsAI.planet_name_ids(invasion_targeted_planet_ids))
+    print "Current Invasion Targeted PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(invasion_targeted_planet_ids))
 
     invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
     if not invasion_fleet_ids:
-        print "Available Invasion Fleets:           0"
+        print "Available Invasion Fleets: 0"
     else:
-        print "Invasion FleetIDs:                 " + str(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION))
+        print "Invasion FleetIDs: " + str(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION))
 
     num_invasion_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(invasion_fleet_ids))
     print "Invasion Fleets Without Missions:    " + str(num_invasion_fleets)
@@ -92,7 +90,7 @@ def get_invasion_fleets():
     reserved_troop_base_targets = []
     if foAI.foAIstate.aggression > fo.aggression.typical:
         available_pp = {}
-        for el in empire.planetsWithAvailablePP:  # keys are sets of ints; data is doubles
+        for el in  empire.planetsWithAvailablePP:  #keys are sets of ints; data is doubles
             avail_pp = el.data()
             for pid in el.key():
                 available_pp[pid] = avail_pp
@@ -109,16 +107,16 @@ def get_invasion_fleets():
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 #print "rejecting %s due to stealth"%planet.name
                 continue
-            for pid2 in ColonisationAI.empireSpeciesSystems.get(sys_id, {}).get('pids', []):
+            for pid2 in ColonisationAI.empireSpeciesSystems.get(sys_id,  {}).get('pids', []):
                 if available_pp.get(pid2,  0) < 2: #TODO: improve troop base PP sufficiency determination
                     #print "rejecting %s due to insufficient avail PP"%planet.name
                     break
                 planet2 = universe.getPlanet(pid2)
                 if not planet2: 
                     continue
-                if (pid not in foAI.foAIstate.qualifyingTroopBaseTargets) and (planet2.speciesName in ColonisationAI.empireShipBuilders):
+                if (pid not in  foAI.foAIstate.qualifyingTroopBaseTargets) and (planet2.speciesName  in ColonisationAI.empireShipBuilders):
                     #print "Adding %s to Troop Bases (SpaceInvaders) potential target list, from %s"%(planet.name, planet2.name) 
-                    foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, -1])
+                    foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid,  [pid2,  -1])
                     break
 
         for pid in list(foAI.foAIstate.qualifyingTroopBaseTargets):
@@ -130,53 +128,53 @@ def get_invasion_fleets():
         #print "considering possible troop bases at %s" % (foAI.foAIstate.qualifyingTroopBaseTargets.keys())
         for pid in (set(foAI.foAIstate.qualifyingTroopBaseTargets.keys()) - set(invasion_targeted_planet_ids)): #TODO: consider overriding standard invasion mission
             planet = universe.getPlanet(pid)
-            if foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1: 
+            if  foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1: 
                 reserved_troop_base_targets.append(pid)
                 if planet:
                     all_invasion_targeted_system_ids.add( planet.systemID )
                 continue  #already building for here
             sys_id = planet.systemID
-            this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
-            if ((planet.currentMeterValue(fo.meterType.shield) > 0) and 
+            this_sys_status = foAI.foAIstate.systemStatus.get( sys_id,  {} )
+            if  ((planet.currentMeterValue(fo.meterType.shield) > 0) and 
                         (this_sys_status.get('myFleetRating', 0) < (0.8 * this_sys_status.get('totalThreat', 0)))):
                 continue
             loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
-            this_score, p_troops = evaluate_invasion_planet(pid, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleet_supplyable_planet_ids, empire, secureAIFleetMissions, False)
-            bestShip, colDesign, buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION, loc)
+            this_score,  p_troops = evaluate_invasion_planet(pid, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleet_supplyable_planet_ids, empire,  secureAIFleetMissions,  False)
+            bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION,  loc)
             if not bestShip:
                 #print "Error: no troop base can be built at ",  PlanetUtilsAI.planet_name_ids([loc])
                 continue
             #print "selecting  ",  PlanetUtilsAI.planet_name_ids([loc]),  " to build Orbital troop bases"
             n_bases = math.ceil((p_troops+1) / 2)#TODO: reconsider this +1 safety factor
-            retval = fo.issueEnqueueShipProductionOrder(bestShip, loc)
+            retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
             print "Enqueueing %d Troop Bases at %s for %s"%( n_bases,  PlanetUtilsAI.planet_name_ids([loc]),  PlanetUtilsAI.planet_name_ids([pid]))
             if retval !=0:
                 all_invasion_targeted_system_ids.add( planet.systemID )
                 reserved_troop_base_targets.append(pid)
                 foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] = loc
-                fo.issueChangeProductionQuantityOrder(empire.productionQueue.size -1, 1, int(n_bases))
-                res=fo.issueRequeueProductionOrder(empire.productionQueue.size -1, 0)
+                fo.issueChangeProductionQuantityOrder(empire.productionQueue.size -1,  1,  int(n_bases))
+                res=fo.issueRequeueProductionOrder(empire.productionQueue.size -1,  0)
 
     invasion_timer.start("evaluating target planets")
     #TODO: check if any invasion_targeted_planet_ids need more troops assigned
-    evaluatedPlanetIDs = list(set(invadable_planet_ids) - set(invasion_targeted_planet_ids) - set(reserved_troop_base_targets))
-    print "Evaluating potential invasions, PlanetIDs:               " + str(evaluatedPlanetIDs)
+    evaluatedPlanetIDs = list(set(invadable_planet_ids) - set(invasion_targeted_planet_ids) - set(reserved_troop_base_targets) )
+    print "Evaluating potential invasions, PlanetIDs: " + str(evaluatedPlanetIDs)
 
     evaluatedPlanets = assign_invasion_values(evaluatedPlanetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleet_supplyable_planet_ids, empire)
 
-    sortedPlanets = [(pid, pscore, ptroops) for (pid, (pscore, ptroops)) in evaluatedPlanets.items()]
+    sortedPlanets = [(pid, pscore, ptroops) for (pid, (pscore, ptroops)) in evaluatedPlanets.items() ]
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
-    sortedPlanets = [(pid, pscore%10000, ptroops) for (pid, pscore, ptroops) in sortedPlanets]
+    sortedPlanets = [(pid, pscore%10000, ptroops) for (pid, pscore, ptroops) in sortedPlanets ]
 
     print
     if sortedPlanets:
-        print "Invadable planets\nIDs,    ID | Score | Name           | Race             | Troops"
+        print "Invadable planets\nIDs, ID | Score | Name | Race | Troops"
         for pid, pscore, ptroops in sortedPlanets:
             planet = universe.getPlanet(pid)
             if planet:
-                print "%6d | %6d | %16s | %16s | %d"%(pid,  pscore,  planet.name,  planet.speciesName,  ptroops)
+                print "%6d | %6d | %16s | %16s | %d"%(pid, pscore, planet.name, planet.speciesName, ptroops)
             else:
-                print "%6d | %6d | Error: invalid planet ID"%(pid,  pscore)
+                print "%6d | %6d | Error: invalid planet ID"%(pid, pscore)
     else:
         print "No Invadable planets identified"
 
@@ -382,10 +380,10 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
         plannedTroops = troops
     else:
         plannedTroops = min(troops+maxJumps+buildTime, maxTroops)
-    if empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete:
-        troopCost = math.ceil( plannedTroops/6.0) * ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
+    if not tech_is_complete("SHP_ORG_HULL"):
+        troopCost = math.ceil(plannedTroops/6.0) * (40*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
     else:
-        troopCost = math.ceil( plannedTroops/6.0) * ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
+        troopCost = math.ceil(plannedTroops/6.0) * (20*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
     planet_score = retaliation_risk_factor(planet.owner) * threatFactor * max(0, popVal+supplyVal+bldTally+enemyVal-0.8*troopCost)
     if clear_path:
         planet_score *= 1.5

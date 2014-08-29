@@ -244,7 +244,7 @@ class AIFleetOrder(object):
         #
         # outpost
         #
-        if AIFleetOrderType.ORDER_OUTPOST == self.get_fleet_order_type():  # TODO: check for separate fleet holding outpost ships
+        if AIFleetOrderType.ORDER_OUTPOST == self.get_fleet_order_type():#TODO: check for separate fleet holding outpost ships
             if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
                 shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
                 if shipID is None:

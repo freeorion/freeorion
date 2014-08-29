@@ -48,7 +48,7 @@ class AITarget(object):
             target_name
         )
 
-    @property #TODO consider may not want a fully functional property here, perhaps only a getter
+    @property  # TODO consider may not want a fully functional property here, perhaps only a getter
     def my_target_id(self):
         return self.target_id
 
@@ -95,7 +95,6 @@ class AITarget(object):
             universe = fo.getUniverse()
             planet = universe.getPlanet(self.target_id)
             ai_target = AITarget(AITargetType.TARGET_SYSTEM, planet.systemID)
-
             result.append(ai_target)
 
         elif AITargetType.TARGET_FLEET == self.target_type:
@@ -109,5 +108,4 @@ class AITarget(object):
             ai_target = AITarget(AITargetType.TARGET_SYSTEM, system_id)
 
             result.append(ai_target)
-
         return result
