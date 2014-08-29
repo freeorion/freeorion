@@ -95,8 +95,7 @@ public:
     virtual RadioButtonGroup*  NewRadioButtonGroup(Orientation orientation) const;
 
     /** Returns a new GG DropDownList. */
-    virtual DropDownList*      NewDropDownList(size_t num_shown_elements, Clr color,
-                                               Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual DropDownList*      NewDropDownList(size_t num_shown_elements, Clr color) const;
 
     /** Returns a new GG Edit. */
     virtual Edit*              NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,

@@ -85,9 +85,8 @@ Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<
 RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) const
 { return new RadioButtonGroup(orientation); }
 
-DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color,
-                                            Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new DropDownList(num_shown_elements, color, flags); }
+DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color) const
+{ return new DropDownList(num_shown_elements, color, INTERACTIVE); }
 
 Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
