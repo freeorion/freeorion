@@ -113,8 +113,7 @@ public:
 
     /** Returns a new GG Slider<int>. */
     virtual Slider<int>*       NewIntSlider(int min, int max, Orientation orientation,
-                                            SliderLineStyle style, Clr color, int tab_width, int line_width = 5,
-                                            Flags<WndFlag> flags = INTERACTIVE) const;
+                                            SliderLineStyle style, Clr color, int tab_width, int line_width = 5) const;
 
     /** Returns a new GG TabBar. */
     virtual TabBar*            NewTabBar(const boost::shared_ptr<Font>& font, Clr color,

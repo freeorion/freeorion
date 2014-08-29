@@ -25,8 +25,7 @@ public:
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Slider<int>*        NewIntSlider(int min, int max, GG::Orientation orientation,
-                                                 GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
-                                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+                                                 GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5) const;
 
 
     virtual GG::TabBar*            NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,

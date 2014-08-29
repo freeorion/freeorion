@@ -103,9 +103,8 @@ Scroll* StyleFactory::NewScroll(Orientation orientation, Clr color, Clr interior
 { return new Scroll(X0, Y0, X1, Y1, orientation, color, interior, flags); }
 
 Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientation,
-                                        SliderLineStyle style, Clr color, int tab_width, int line_width/* = 5*/,
-                                        Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new Slider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation, style, color, tab_width, line_width, flags); }
+                                        SliderLineStyle style, Clr color, int tab_width, int line_width/* = 5*/) const
+{ return new Slider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation, style, color, tab_width, line_width, INTERACTIVE); }
 
 TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) const
