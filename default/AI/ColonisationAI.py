@@ -1095,14 +1095,9 @@ def evaluate_planet(planetID, missionType, fleetSupplyablePlanetIDs, specName, e
         if "PHOTOTROPHIC" in tagList:
             popSizeMod += starPopMod
             detail.append("Phototropic Star Bonus_PSM(%0.1f)"%starPopMod)
-        if (empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete) or "TUNNELS_SPECIAL" in planetSpecials:
-            if "TECTONIC_INSTABILITY_SPECIAL" not in planetSpecials:
-                conditionalPopSizeMod += popSizeModMap["subHab"][planetEnv]
-                if "TUNNELS_SPECIAL" in planetSpecials:
-                    T_reason="Tunnels_PSM(%d)"
-                else:
-                    T_reason="Sub_Hab_PSM(%d)"
-                detail.append(T_reason%popSizeModMap["subHab"][planetEnv])
+        if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:
+            conditionalPopSizeMod += popSizeModMap["subHab"][planetEnv]
+            detail.append("Sub_Hab_PSM(%d)" % popSizeModMap["subHab"][planetEnv])
         for gTech, gKey in [ ("GRO_SYMBIOTIC_BIO", "symBio"),
                                                         ("GRO_XENO_GENETICS", "xenoGen"),
                                                         ("GRO_XENO_HYBRID", "xenoHyb"),
