@@ -29,8 +29,7 @@ public:
 
 
     virtual GG::TabBar*            NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
-                                             GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
-                                             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+                                             GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED) const;
 
     virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 

@@ -111,8 +111,8 @@ TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::s
 { return new TextControl(X0, Y0, X1, Y1, str, font, color, format, flags); }
 
 TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return new TabBar(X0, Y0, X1, font, color, text_color, style, flags); }
+                                TabBarStyle style/* = TAB_BAR_ATTACHED*/) const
+{ return new TabBar(X0, Y0, X1, font, color, text_color, style, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 { return NewListBox(color, interior, INTERACTIVE); }
