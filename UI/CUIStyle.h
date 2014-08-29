@@ -44,11 +44,9 @@ public:
 
     virtual GG::Button*            NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
-    virtual GG::Button*            NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
+    virtual GG::Button*            NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::StateButton*       NewTabBarTab(const std::string& str,
                                                 const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,

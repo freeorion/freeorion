@@ -57,13 +57,11 @@ GG::Button* CUIStyle::NewVSliderTabButton(GG::Clr color, GG::Clr text_color/* = 
 GG::Button* CUIStyle::NewHSliderTabButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                        GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new CUIArrowButton(SHAPE_UP, flags); }
+GG::Button* CUIStyle::NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return new CUIArrowButton(SHAPE_UP, GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN); }
 
-GG::Button* CUIStyle::NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                        GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN*/) const
-{ return new CUIArrowButton(SHAPE_DOWN, flags); }
+GG::Button* CUIStyle::NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return new CUIArrowButton(SHAPE_DOWN, GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN); }
 
 GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,

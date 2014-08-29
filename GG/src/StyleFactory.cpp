@@ -150,13 +150,11 @@ Button* StyleFactory::NewVSliderTabButton(Clr color, Clr text_color/* = CLR_BLAC
 Button* StyleFactory::NewHSliderTabButton(Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("", boost::shared_ptr<Font>(), color, text_color, INTERACTIVE); }
 
-Button* StyleFactory::NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                        Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("+", font, color, text_color, flags); }
+Button* StyleFactory::NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("+", font, color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                        Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
-{ return NewButton("-", font, color, text_color, flags); }
+Button* StyleFactory::NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return NewButton("-", font, color, text_color, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const

@@ -161,12 +161,10 @@ public:
     virtual Button*            NewHSliderTabButton(Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new increase Button, to be used in a Spin. */
-    virtual Button*            NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-                                                 Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Button*            NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new decrease Button, to be used in a Spin. */
-    virtual Button*            NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-                                                 Flags<WndFlag> flags = INTERACTIVE | REPEAT_BUTTON_DOWN) const;
+    virtual Button*            NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
 
     /** Returns a new Edit, to be used in an editable Spin. */
     virtual Edit*              NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
