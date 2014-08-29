@@ -179,7 +179,7 @@ public:
     virtual StateButton*       NewTabBarTab(const std::string& str,
                                             const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                             Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                            StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB, Flags<WndFlag> flags = INTERACTIVE) const;
+                                            StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
     virtual Button*            NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;

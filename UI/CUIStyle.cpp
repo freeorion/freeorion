@@ -70,7 +70,7 @@ GG::Button* CUIStyle::NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font,
 GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                         GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                        GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
+                                        GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/) const
 {
     GG::StateButton* retval = new CUIStateButton(str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
