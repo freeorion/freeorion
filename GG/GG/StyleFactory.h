@@ -128,8 +128,7 @@ public:
 
     /** \name Subcontrols */ ///@{
     /** Returns a new ListBox, to be used in a DropDownList. */
-    virtual ListBox*           NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO,
-                                                      Flags<WndFlag> flags = INTERACTIVE) const;
+    virtual ListBox*           NewDropDownListListBox(Clr color, Clr interior = CLR_ZERO) const;
 
     /** Returns a new vertical Scroll, to be used in a ListBox. */
     virtual Scroll*            NewListBoxVScroll(Clr color, Clr interior,

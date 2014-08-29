@@ -115,9 +115,8 @@ TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, 
                                 TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new TabBar(X0, Y0, X1, font, color, text_color, style, flags); }
 
-ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/,
-                                              Flags<WndFlag> flags/* = INTERACTIVE*/) const
-{ return NewListBox(color, interior, flags); }
+ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
+{ return NewListBox(color, interior, INTERACTIVE); }
 
 Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior,
                                         Flags<WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) const
