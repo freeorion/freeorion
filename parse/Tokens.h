@@ -37,6 +37,7 @@
     (Bomber)                                    \
     (BuildCost)                                 \
     (Building)                                  \
+    (BuildingsOwned)                            \
     (BuildingType)                              \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
@@ -217,6 +218,7 @@
     (Orbit)                                     \
     (OrderedBombardedBy)                        \
     (OriginalType)                              \
+    (OutpostsOwned)                             \
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \
@@ -337,6 +339,7 @@
     (ShipDesign)                                \
     (ShipDesignsDestroyed)                      \
     (ShipDesignsLost)                           \
+    (ShipDesignsOwned)                          \
     (ShipDesignsProduced)                       \
     (ShipDesignsScrapped)                       \
     (Ship)                                      \
@@ -364,10 +367,12 @@
     (Special)                                   \
     (Species)                                   \
     (SpeciesPlanetsBombed)                      \
+    (SpeciesColoniesOwned)                      \
     (SpeciesPlanetsDepoped)                     \
     (SpeciesPlanetsInvaded)                     \
     (SpeciesShipsDestroyed)                     \
     (SpeciesShipsLost)                          \
+    (SpeciesShipsOwned)                         \
     (SpeciesShipsProduced)                      \
     (SpeciesShipsScrapped)                      \
     (Speed)                                     \
