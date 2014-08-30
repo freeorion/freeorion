@@ -25,7 +25,7 @@ GG::Scroll* CUIStyle::NewScroll(GG::Orientation orientation, GG::Clr color, GG::
 
 GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orientation,
                                         GG::Clr color, int tab_width, int line_width/* = 5*/) const
-{ return new CUISlider<int>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation); }
+{ return new CUISlider<int>(min, max, orientation); }
 
 
 GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,

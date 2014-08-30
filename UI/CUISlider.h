@@ -12,10 +12,9 @@ class CUISlider : public GG::Slider<T>
 {
 public:
     /** \name Structors */ //@{
-    CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, T min, T max,
+    CUISlider(T min, T max,
               GG::Orientation orientation, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) :
-        GG::Slider<T>(x, y, w, h, min, max, orientation, ClientUI::CtrlColor(),
-                      orientation == GG::VERTICAL ? Value(w) : Value(h), 5, flags)
+        GG::Slider<T>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation, ClientUI::CtrlColor(), ClientUI::ScrollWidth(), 5, flags)
     {}
     //@}
 
