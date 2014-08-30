@@ -3108,3 +3108,12 @@ int Empire::TotalShipsOwned() const {
     { counter += it->second; }
     return counter;
 }
+
+int Empire::TotalBuildingsOwned() const {
+    // sum up counts for each building type owned by this empire
+    int counter = 0;
+    for (std::map<std::string, int>::const_iterator it = m_building_types_owned.begin();
+         it != m_building_types_owned.end(); ++it)
+    { counter += it->second; }
+    return counter;
+}

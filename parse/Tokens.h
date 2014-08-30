@@ -37,7 +37,7 @@
     (Bomber)                                    \
     (BuildCost)                                 \
     (Building)                                  \
-    (BuildingsOwned)                            \
+    (BuildingTypesOwned)                        \
     (BuildingType)                              \
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \

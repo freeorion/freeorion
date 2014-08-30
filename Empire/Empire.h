@@ -552,12 +552,13 @@ public:
     void        ResetMeters();
 
     int                         TotalShipsOwned() const;
+    int                         TotalBuildingsOwned() const;
 
     std::map<std::string, int>& SpeciesShipsOwned()     { return m_species_ships_owned; }
     std::map<int, int>&         ShipDesignsOwned()      { return m_ship_designs_owned; }
     std::map<std::string, int>& SpeciesColoniesOwned()  { return m_species_colonies_owned; }
     int&                        OutpostsOwned()         { return m_outposts_owned; }
-    int&                        BuildingsOwned()        { return m_buildings_owned; }
+    std::map<std::string, int>& BuildingTypesOwned()    { return m_building_types_owned; }
 
     std::map<int, int>&         EmpireShipsDestroyed()  { return m_empire_ships_destroyed; }
     std::map<int, int>&         ShipDesignsDestroyed()  { return m_ship_designs_destroyed; }
@@ -625,7 +626,7 @@ private:
     std::map<int, int>              m_ship_designs_owned;       ///< how many ships of each design does this empire currently own?
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
     int                             m_outposts_owned;           ///< how many uncolonized outposts does this empire currently own?
-    int                             m_buildings_owned;          ///< how many buildings does this empire currently own?
+    std::map<std::string, int>      m_building_types_owned;     ///< how many buildings does this empire currently own?
 
     std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?

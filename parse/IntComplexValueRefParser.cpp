@@ -20,6 +20,14 @@ namespace parse {
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
                 parse::value_ref_parser<std::string>();
 
+            building_types_owned
+                =   (
+                            tok.BuildingTypesOwned_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
+                        >-( parse::label(Name_token) >>     string_value_ref [ _d = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
             building_types_produced
                 =   (
                             tok.BuildingTypesProduced_ [ _a = construct<std::string>(_1) ]
@@ -44,6 +52,13 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
                 ;
 
+            outposts_owned
+                =   (
+                            tok.OutpostsOwned_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
             ship_designs_destroyed
                 =   (
                             tok.ShipDesignsDestroyed_ [ _a = construct<std::string>(_1) ]
@@ -55,6 +70,14 @@ namespace parse {
             ship_designs_lost
                 =   (
                             tok.ShipDesignsLost_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
+                        >-( parse::label(Design_token) >>   string_value_ref [ _d = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
+            ship_designs_owned
+                =   (
+                            tok.ShipDesignsOwned_ [ _a = construct<std::string>(_1) ]
                         >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
                         >-( parse::label(Design_token) >>   string_value_ref [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
@@ -73,6 +96,14 @@ namespace parse {
                             tok.ShipDesignsScrapped_ [ _a = construct<std::string>(_1) ]
                         >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
                         >-( parse::label(Design_token) >>   string_value_ref [ _d = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
+            species_colonies_owned
+                =  (
+                            tok.SpeciesPlanetsBombed_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
+                        >-( parse::label(Name_token) >>     string_value_ref [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
                 ;
 
@@ -116,6 +147,14 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
                 ;
 
+            species_ships_owned
+                =   (
+                            tok.SpeciesShipsLost_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
+                        >-( parse::label(Name_token) >>     string_value_ref [ _d = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
             species_ships_produced
                 =   (
                             tok.SpeciesShipsProduced_ [ _a = construct<std::string>(_1) ]
@@ -133,68 +172,88 @@ namespace parse {
                 ;
 
             start
-                %=   building_types_produced
+                %=   building_types_owned
+                |    building_types_produced
                 |    building_types_scrapped
                 |    empire_ships_destroyed
+                |    outposts_owned
                 |    ship_designs_destroyed
                 |    ship_designs_lost
+                |    ship_designs_owned
                 |    ship_designs_produced
                 |    ship_designs_scrapped
+                |    species_colonies_owned
                 |    species_planets_bombed
                 |    species_planets_depoped
                 |    species_planets_invaded
                 |    species_ships_destroyed
                 |    species_ships_lost
+                |    species_ships_owned
                 |    species_ships_produced
                 |    species_ships_scrapped
                 ;
 
+            building_types_owned.name("BuildingTypesOwned");
             building_types_produced.name("BuildingTypesProduced");
             building_types_scrapped.name("BuildingTypesScrapped");
             empire_ships_destroyed.name("EmpireShipsDestroyed");
+            outposts_owned.name("OutpostsOwned");
             ship_designs_destroyed.name("ShipDesignsDestroyed");
             ship_designs_lost.name("ShipDesignsLost");
+            ship_designs_owned.name("ShipDesignsOwned");
             ship_designs_produced.name("ShipDesignsProduced");
             ship_designs_scrapped.name("ShipDesignsScrapped");
+            species_colonies_owned.name("SpeciesColoniesOwned");
             species_planets_bombed.name("SpeciesPlanetsBombed");
             species_planets_depoped.name("SpeciesPlanetsDepoped");
             species_planets_invaded.name("SpeciesPlanetsInvaded");
             species_ships_destroyed.name("SpeciesShipsDestroyed");
             species_ships_lost.name("SpeciesShipsLost");
+            species_ships_owned.name("SpeciesShipsOwned");
             species_ships_produced.name("SpeciesShipsProduced");
             species_ships_scrapped.name("SpeciesShipsScrapped");
 
 #if DEBUG_INT_COMPLEX_PARSERS
+            debug(building_types_owned);
             debug(building_types_produced);
             debug(building_types_scrapped);
             debug(empire_ships_destroyed);
+            debug(outposts_owned);
             debug(ship_designs_destroyed);
             debug(ship_designs_lost);
+            debug(ship_designs_owned);
             debug(ship_designs_produced);
             debug(ship_designs_scrapped);
+            debug(species_colonies_owned);
             debug(species_planets_bombed);
             debug(species_planets_depoped);
             debug(species_planets_invaded);
             debug(species_ships_destroyed);
             debug(species_ships_lost);
+            debug(species_ships_owned);
             debug(species_ships_produced);
             debug(species_ships_scrapped);
 
 #endif
         }
 
+        complex_variable_rule<int>::type    building_types_owned;
         complex_variable_rule<int>::type    building_types_produced;
         complex_variable_rule<int>::type    building_types_scrapped;
         complex_variable_rule<int>::type    empire_ships_destroyed;
+        complex_variable_rule<int>::type    outposts_owned;
         complex_variable_rule<int>::type    ship_designs_destroyed;
         complex_variable_rule<int>::type    ship_designs_lost;
+        complex_variable_rule<int>::type    ship_designs_owned;
         complex_variable_rule<int>::type    ship_designs_produced;
         complex_variable_rule<int>::type    ship_designs_scrapped;
+        complex_variable_rule<int>::type    species_colonies_owned;
         complex_variable_rule<int>::type    species_planets_bombed;
         complex_variable_rule<int>::type    species_planets_depoped;
         complex_variable_rule<int>::type    species_planets_invaded;
         complex_variable_rule<int>::type    species_ships_destroyed;
         complex_variable_rule<int>::type    species_ships_lost;
+        complex_variable_rule<int>::type    species_ships_owned;
         complex_variable_rule<int>::type    species_ships_produced;
         complex_variable_rule<int>::type    species_ships_scrapped;
         complex_variable_rule<int>::type    start;

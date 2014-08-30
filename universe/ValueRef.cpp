@@ -973,12 +973,14 @@ namespace ValueRef {
             if (!empire)
                 return EMPTY_STRING_INT_MAP;
 
+            if (parsed_map_name == "BuildingTypesOwned")
+                return empire->BuildingTypesOwned();
             if (parsed_map_name == "BuildingTypesProduced")
                 return empire->BuildingTypesProduced();
             if (parsed_map_name == "BuildingTypesScrapped")
                 return empire->BuildingTypesScrapped();
-            if (parsed_map_name == "SpeciesShipsDestroyed")
-                return empire->SpeciesShipsDestroyed();
+            if (parsed_map_name == "SpeciesColoniesOwned")
+                return empire->SpeciesColoniesOwned();
             if (parsed_map_name == "SpeciesPlanetsBombed")
                 return empire->SpeciesPlanetsBombed();
             if (parsed_map_name == "SpeciesPlanetsDepoped")
@@ -989,6 +991,8 @@ namespace ValueRef {
                 return empire->SpeciesShipsDestroyed();
             if (parsed_map_name == "SpeciesShipsLost")
                 return empire->SpeciesShipsLost();
+            if (parsed_map_name == "SpeciesShipsOwned")
+                return empire->SpeciesShipsOwned();
             if (parsed_map_name == "SpeciesShipsProduced")
                 return empire->SpeciesShipsProduced();
             if (parsed_map_name == "SpeciesShipsScrapped")
@@ -1008,6 +1012,8 @@ namespace ValueRef {
                 return empire->ShipDesignsDestroyed();
             if (parsed_map_name == "ShipDesignsLost")
                 return empire->ShipDesignsLost();
+            if (parsed_map_name == "ShipDesignsOwned")
+                return empire->ShipDesignsOwned();
             if (parsed_map_name == "ShipDesignsProduced")
                 return empire->ShipDesignsProduced();
             if (parsed_map_name == "ShipDesignsScrapped")
@@ -1016,8 +1022,22 @@ namespace ValueRef {
             return EMPTY_INT_INT_MAP;
         }
 
+        int GetEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
+            Empire* empire = Empires().Lookup(empire_id);
+            if (!empire)
+                return 0;
+
+            if (parsed_property_name == "OutpostsOwned")
+                return empire->OutpostsOwned();
+            // todo: add all the various OwnerWhatever ValueRef stuff here
+
+            return 0;
+        }
+
         // gets property for a particular map key string for one or all empires
-        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name, const std::string& map_key) {
+        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
+                                       const std::string& map_key)
+        {
             int sum = 0;
             if (map_key.empty())
                 return sum;
@@ -1064,7 +1084,9 @@ namespace ValueRef {
         }
 
         // gets property for a particular map key int for one or all empires
-        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name, int map_key) {
+        int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
+                                       int map_key)
+        {
             int sum = 0;
 
             // single empire
@@ -1108,9 +1130,12 @@ namespace ValueRef {
             return sum;
         }
 
-        // gets map index int for content specified by a string. eg. look up predefined ship design id by name.
+        // gets map index int for content specified by a string. eg. look up
+        // predefined ship design id by name.
         // how to look up such strings depends on the parsed property name.
-        int GetIntKeyFromContentStringKey(const std::string& parsed_property_name, const std::string& key_string) {
+        int GetIntKeyFromContentStringKey(const std::string& parsed_property_name,
+                                          const std::string& key_string)
+        {
             if (boost::istarts_with(parsed_property_name, "ShipDesign")) {
                 // look up ship design id corresponding to specified predefined ship design name
                 const ShipDesign* design = GetPredefinedShipDesign(key_string);
@@ -1118,6 +1143,21 @@ namespace ValueRef {
                     return design->ID();
             }
             return -1;
+        }
+
+        // gets unkeyed property for one or all empires
+        int GetEmpirePropertyNoKey(int empire_id, const std::string& parsed_property_name) {
+            int sum = 0;
+
+            if (empire_id != ALL_EMPIRES) {
+                // single empire
+                return GetEmpirePropertyNoKeyImpl(empire_id, parsed_property_name);
+            }
+
+            // all empires summed
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
+                sum += GetEmpirePropertyNoKeyImpl(it->first, parsed_property_name);
+            return sum;
         }
     }
 
@@ -1127,14 +1167,18 @@ namespace ValueRef {
         const std::string& variable_name = m_property_name.back();
 
         // empire properties indexed by strings
-        if (variable_name == "BuildingTypesProduced" ||
+        if (variable_name == "BuildingTypesOwned" ||
+            variable_name == "BuildingTypesProduced" ||
             variable_name == "BuildingTypesScrapped" ||
             variable_name == "SpeciesShipsDestroyed" ||
+            variable_name == "SpeciesColoniesOwned" ||
             variable_name == "SpeciesPlanetsBombed" ||
             variable_name == "SpeciesPlanetsDepoped" ||
+            variable_name == "SpeciesPlanetsOwned" ||
             variable_name == "SpeciesPlanetsInvaded" ||
             variable_name == "SpeciesShipsDestroyed" ||
             variable_name == "SpeciesShipsLost" ||
+            variable_name == "SpeciesShipsOwned" ||
             variable_name == "SpeciesShipsProduced" ||
             variable_name == "SpeciesShipsScrapped")
         {
@@ -1151,11 +1195,13 @@ namespace ValueRef {
                     return 0;
             }
 
-            // if a string specified, get just that entry (for single empire, or summed for all empires)
+            // if a string specified, get just that entry (for single empire, or
+            // summed for all empires)
             if (m_string_ref1)
                 return GetEmpirePropertySingleKey(empire_id, variable_name, key_string);
 
-            // if no string specified, get sum of all entries (for single empire, or summed for all empires)
+            // if no string specified, get sum of all entries (for single empire
+            // or summed for all empires)
             return GetEmpirePropertySumAllStringKeys(empire_id, variable_name);
         }
 
@@ -1163,6 +1209,7 @@ namespace ValueRef {
         if (variable_name == "EmpireShipsDestroyed" ||
             variable_name == "ShipDesignsDestroyed" ||
             variable_name == "ShipDesignsLost" ||
+            variable_name == "ShipDesignsOwned" ||
             variable_name == "ShipDesignsProduced" ||
             variable_name == "ShipDesignsScrapped")
         {
@@ -1179,8 +1226,9 @@ namespace ValueRef {
                 return GetEmpirePropertySingleKey(empire_id, variable_name, key_int);
             }
 
-            // although indexed by integers, some of these may be specified by a string that needs to be looked up.
-            // if a key string specified, get just that entry (for single empire or sum of all empires)
+            // although indexed by integers, some of these may be specified by a
+            // string that needs to be looked up. if a key string specified, get
+            // just that entry (for single empire or sum of all empires)
             if (m_string_ref1) {
                 std::string key_string = m_string_ref1->Eval(context);
                 if (key_string.empty())
@@ -1191,6 +1239,18 @@ namespace ValueRef {
 
             // if no key specified, get sum of all entries (for single empire or sum of all empires)
             return GetEmpirePropertySumAllIntKeys(empire_id, variable_name);
+        }
+
+        // unindexed empire proprties
+        if (variable_name == "OutpostsOwned") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return 0;
+            }
+
+            return GetEmpirePropertyNoKey(empire_id, variable_name);
         }
 
         return 0;
