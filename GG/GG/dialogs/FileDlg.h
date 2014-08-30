@@ -83,21 +83,6 @@ public:
         satisfied, any filename the user selects that does not end in "foo"
         will have "foo" appended to it. */
     bool AppendMissingSaveExtension() const;
-
-    const std::string& FilesString() const;                ///< returns the text label next to the files edit box to \a str Default: "File(s):"
-    const std::string& FileTypesString() const;            ///< returns the text label next to the file types dropdown list to \a str Default: "Type(s):"
-    const std::string& SaveString() const;                 ///< returns the text of the ok button in its "save" state to \a str Default: "Save"
-    const std::string& OpenString() const;                 ///< returns the text of the ok button in its "open" state to \a str Default: "Open"
-    const std::string& CancelString() const;               ///< returns the text of the cancel button to \a str Default: "Cancel"
-
-    const std::string& MalformedFilenameString() const;    ///< returns the error message when a malformed filename is encountered to \a str Default: "Invalid file name."
-    const std::string& OverwritePromptString() const;      ///< returns the prompt message when a malformed file-overwrite is requested to \a str Default: "%1% exists.\nOk to overwrite it?"
-    const std::string& InvalidFilenameString() const;      ///< returns the error message when an invalid filename is encountered to \a str Default: "\"%1%\"\nis an invalid file name."
-    const std::string& FilenameIsADirectoryString() const; ///< returns the error message when a directory instead of a filename is specified to \a str Default: "\"%1%\"\nis a directory."
-    const std::string& FileDoesNotExistString() const;     ///< returns the error message when a nonexistent filename is encountered to \a str Default: "File \"%1%\"\ndoes not exist."
-    const std::string& DeviceIsNotReadyString() const;     ///< returns the error message when an unmounted drive is encountered to \a str Default: "The device is not ready."
-    const std::string& ThreeButtonDlgOKString() const;     ///< returns the text of the 3-button dialog's ok button to \a str Default: "Ok"
-    const std::string& ThreeButtonDlgCancelString() const; ///< returns the text of the 3-button dialog's cancel button to \a str Default: "Cancel"
     //@}
 
     /** \name Mutators */ ///@{
@@ -128,21 +113,6 @@ public:
         considered to match all files, so ("All Files", "") is perfectly
         correct. */
     void SetFileFilters(const std::vector<std::pair<std::string, std::string> >& filters);
-
-    void SetFilesString(const std::string& str);                ///< sets the text label next to the files edit box to \a str Default: "File(s):"
-    void SetFileTypesString(const std::string& str);            ///< sets the text label next to the file types dropdown list to \a str Default: "Type(s):"
-    void SetSaveString(const std::string& str);                 ///< sets the text of the ok button in its "save" state to \a str Default: "Save"
-    void SetOpenString(const std::string& str);                 ///< sets the text of the ok button in its "open" state to \a str Default: "Open"
-    void SetCancelString(const std::string& str);               ///< sets the text of the cancel button to \a str Default: "Cancel"
-
-    void SetMalformedFilenameString(const std::string& str);    ///< sets the error message when a malformed filename is encountered to \a str Default: "Invalid file name."
-    void SetOverwritePromptString(const std::string& str);      ///< sets the prompt message when a malformed file-overwrite is requested to \a str Default: "%1% exists.\nOk to overwrite it?"
-    void SetInvalidFilenameString(const std::string& str);      ///< sets the error message when an invalid filename is encountered to \a str Default: "\"%1%\"\nis an invalid file name."
-    void SetFilenameIsADirectoryString(const std::string& str); ///< sets the error message when a directory instead of a filename is specified to \a str Default: "\"%1%\"\nis a directory."
-    void SetFileDoesNotExistString(const std::string& str);     ///< sets the error message when a nonexistent filename is encountered to \a str Default: "File \"%1%\"\ndoes not exist."
-    void SetDeviceIsNotReadyString(const std::string& str);     ///< sets the error message when an unmounted drive is encountered to \a str Default: "The device is not ready."
-    void SetThreeButtonDlgOKString(const std::string& str);     ///< sets the text of the 3-button dialog's ok button to \a str Default: "Ok"
-    void SetThreeButtonDlgCancelString(const std::string& str); ///< sets the text of the 3-button dialog's cancel button to \a str Default: "Cancel"
     //@}
 
     /** Returns the current directory (the one that will be used by default on
@@ -198,16 +168,6 @@ private:
 
     std::string      m_save_str;
     std::string      m_open_str;
-    std::string      m_cancel_str;
-
-    std::string      m_malformed_filename_str;
-    std::string      m_overwrite_prompt_str;
-    std::string      m_invalid_filename_str;
-    std::string      m_filename_is_a_directory_str;
-    std::string      m_file_does_not_exist_str;
-    std::string      m_device_is_not_ready_str;
-    std::string      m_three_button_dlg_ok_str;
-    std::string      m_three_button_dlg_cancel_str;
 
     TextControl*     m_curr_dir_text;
     ListBox*         m_files_list;

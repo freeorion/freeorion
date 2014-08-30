@@ -3,7 +3,52 @@
 #include "CUIControls.h"
 #include "CUISpin.h"
 #include "CUISlider.h"
+#include "../util/i18n.h"
 
+
+std::string CUIStyle::Translate(const std::string& text) const
+{
+    if (text == "New")
+        return UserString("COLOR_DLG_NEW");
+    else if (text == "Old")
+        return UserString("COLOR_DLG_OLD");
+    else if (text == "R:")
+        return UserString("COLOR_DLG_RED");
+    else if (text == "G:")
+        return UserString("COLOR_DLG_GREEN");
+    else if (text == "B:")
+        return UserString("COLOR_DLG_BLUE");
+    else if (text == "H:")
+        return UserString("COLOR_DLG_HUE");
+    else if (text == "S:")
+        return UserString("COLOR_DLG_SATURATION");
+    else if (text == "V:")
+        return UserString("COLOR_DLG_VALUE");
+    else if (text == "A:")
+        return UserString("COLOR_DLG_ALPHA");
+    else if (text == "Ok")
+        return UserString("OK");
+    else if (text == "Cancel")
+        return UserString("CANCEL");
+    else if (text == "File(s):")
+        return UserString("FILE_DLG_FILES");
+    else if (text == "Type(s):")
+        return UserString("FILE_DLG_FILE_TYPES");
+    else if (text == "%1% exists.\nOk to overwrite it?")
+        return UserString("FILE_DLG_OVERWRITE_PROMPT");
+    else if (text == "\"%1%\"\nis a directory.")
+        return UserString("FILE_DLG_FILENAME_IS_A_DIRECTORY");
+    else if (text == "File \"%1%\"\ndoes not exist.")
+        return UserString("FILE_DLG_FILE_DOES_NOT_EXIST");
+    else if (text == "Device is not ready.")
+        return UserString("FILE_DLG_DEVICE_IS_NOT_READY");
+    else if (text == "Save")
+        return UserString("SAVE");
+    else if (text == "Open")
+        return UserString("OPEN");
+
+    return UserString("ERROR");
+}
 
 GG::Button* CUIStyle::NewButton(const std::string& str,
                                 const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,

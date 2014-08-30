@@ -78,6 +78,10 @@ boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
     }
 }
 
+// Don't translate, just pass the key.
+std::string StyleFactory::Translate(const std::string& key) const
+{ return key; }
+
 Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new Button(str, font, color, text_color, flags); }

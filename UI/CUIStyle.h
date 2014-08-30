@@ -7,6 +7,8 @@
 class CUIStyle : public GG::StyleFactory
 {
 public:
+    virtual std::string            Translate(const std::string& text) const;
+
     virtual GG::Button*            NewButton(const std::string& str,
                                              const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;

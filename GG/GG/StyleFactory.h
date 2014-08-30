@@ -85,6 +85,10 @@ public:
                                                 const UnicodeCharset* first,
                                                 const UnicodeCharset* last) const;
 
+    /** Returns translations for common phrases used in the different
+        dialoges provided by GiGi. */
+    virtual std::string Translate(const std::string& key) const;
+
     /** \name Controls */ ///@{
     /** Returns a new GG Button. */
     virtual Button*            NewButton(const std::string& str,

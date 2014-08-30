@@ -1244,17 +1244,6 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     GG::X x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
     GG::Y y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
     GG::ColorDlg dlg(x, y, Color(), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
-    dlg.SetNewString(UserString("COLOR_DLG_NEW"));
-    dlg.SetOldString(UserString("COLOR_DLG_OLD"));
-    dlg.SetRedString(UserString("COLOR_DLG_RED"));
-    dlg.SetGreenString(UserString("COLOR_DLG_GREEN"));
-    dlg.SetBlueString(UserString("COLOR_DLG_BLUE"));
-    dlg.SetHueString(UserString("COLOR_DLG_HUE"));
-    dlg.SetSaturationString(UserString("COLOR_DLG_SATURATION"));
-    dlg.SetValueString(UserString("COLOR_DLG_VALUE"));
-    dlg.SetAlphaString(UserString("COLOR_DLG_ALPHA"));
-    dlg.SetOkString(UserString("OK"));
-    dlg.SetCancelString(UserString("CANCEL"));
     dlg.Run();
     if (dlg.ColorWasSelected()) {
         GG::Clr clr = dlg.Result();
@@ -1292,20 +1281,6 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 {
     SetFileFilters(types);
     AppendMissingSaveExtension(true);
-
-    SetFilesString(UserString("FILE_DLG_FILES"));
-    SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));
-    SetSaveString(UserString("SAVE"));
-    SetOpenString(UserString("OPEN"));
-    SetCancelString(UserString("CANCEL"));
-    SetMalformedFilenameString(UserString("FILE_DLG_MALFORMED_FILENAME"));
-    SetOverwritePromptString(UserString("FILE_DLG_OVERWRITE_PROMPT"));
-    SetInvalidFilenameString(UserString("FILE_DLG_INVALID_FILENAME"));
-    SetFilenameIsADirectoryString(UserString("FILE_DLG_FILENAME_IS_A_DIRECTORY"));
-    SetFileDoesNotExistString(UserString("FILE_DLG_FILE_DOES_NOT_EXIST"));
-    SetDeviceIsNotReadyString(UserString("FILE_DLG_DEVICE_IS_NOT_READY"));
-    SetThreeButtonDlgOKString(UserString("OK"));
-    SetThreeButtonDlgCancelString(UserString("CANCEL"));
 }
 
 

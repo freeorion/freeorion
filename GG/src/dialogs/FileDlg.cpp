@@ -148,17 +148,8 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_select_directories(false),
     m_append_missing_save_extension(false),
     m_in_win32_drive_selection(false),
-    m_save_str("Save"),
-    m_open_str("Open"),
-    m_cancel_str("Cancel"),
-    m_malformed_filename_str("Invalid file name."),
-    m_overwrite_prompt_str("%1% exists.\nOk to overwrite it?"),
-    m_invalid_filename_str("\"%1%\"\nis an invalid file name."),
-    m_filename_is_a_directory_str("\"%1%\"\nis a directory."),
-    m_file_does_not_exist_str("File \"%1%\"\ndoes not exist."),
-    m_device_is_not_ready_str("Device is not ready."),
-    m_three_button_dlg_ok_str("Ok"),
-    m_three_button_dlg_cancel_str("Cancel"),
+    m_save_str(GetStyleFactory()->Translate("Save")),
+    m_open_str(GetStyleFactory()->Translate("Open")),
     m_curr_dir_text(0),
     m_files_list(0),
     m_files_edit(0),
@@ -190,45 +181,6 @@ bool FileDlg::SelectDirectories() const
 
 bool FileDlg::AppendMissingSaveExtension() const
 { return m_append_missing_save_extension; }
-
-const std::string& FileDlg::FilesString() const
-{ return m_files_label->Text(); }
-
-const std::string& FileDlg::FileTypesString() const
-{ return m_file_types_label->Text(); }
-
-const std::string& FileDlg::SaveString() const
-{ return m_save_str; }
-
-const std::string& FileDlg::OpenString() const
-{ return m_open_str; }
-
-const std::string& FileDlg::CancelString() const
-{ return m_cancel_str; }
-
-const std::string& FileDlg::MalformedFilenameString() const
-{ return m_malformed_filename_str; }
-
-const std::string& FileDlg::OverwritePromptString() const
-{ return m_overwrite_prompt_str; }
-
-const std::string& FileDlg::InvalidFilenameString() const
-{ return m_invalid_filename_str; }
-
-const std::string& FileDlg::FilenameIsADirectoryString() const
-{ return m_filename_is_a_directory_str; }
-
-const std::string& FileDlg::FileDoesNotExistString() const
-{ return m_file_does_not_exist_str; }
-
-const std::string& FileDlg::DeviceIsNotReadyString() const
-{ return m_device_is_not_ready_str; }
-
-const std::string& FileDlg::ThreeButtonDlgOKString() const
-{ return m_three_button_dlg_ok_str; }
-
-const std::string& FileDlg::ThreeButtonDlgCancelString() const
-{ return m_three_button_dlg_cancel_str; }
 
 void FileDlg::Render()
 {
@@ -270,64 +222,6 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
     UpdateList();
 }
 
-void FileDlg::SetFilesString(const std::string& str)
-{
-    m_files_label->SetText(str);
-    DoLayout();
-}
-
-void FileDlg::SetFileTypesString(const std::string& str)
-{
-    m_file_types_label->SetText(str);
-    DoLayout();
-}
-
-void FileDlg::SetSaveString(const std::string& str)
-{
-    bool set_button_text = m_ok_button->Text() == m_save_str;
-    m_save_str = str;
-    if (set_button_text)
-        m_ok_button->SetText(m_save_str);
-}
-
-void FileDlg::SetOpenString(const std::string& str)
-{
-    bool set_button_text = m_ok_button->Text() == m_open_str;
-    m_open_str = str;
-    if (set_button_text)
-        m_ok_button->SetText(m_open_str);
-}
-
-void FileDlg::SetCancelString(const std::string& str)
-{
-    m_cancel_str = str;
-    m_cancel_button->SetText(m_cancel_str);
-}
-
-void FileDlg::SetMalformedFilenameString(const std::string& str)
-{ m_malformed_filename_str = str; }
-
-void FileDlg::SetOverwritePromptString(const std::string& str)
-{ m_overwrite_prompt_str = str; }
-
-void FileDlg::SetInvalidFilenameString(const std::string& str)
-{ m_invalid_filename_str = str; }
-
-void FileDlg::SetFilenameIsADirectoryString(const std::string& str)
-{ m_filename_is_a_directory_str = str; }
-
-void FileDlg::SetFileDoesNotExistString(const std::string& str)
-{ m_file_does_not_exist_str = str; }
-
-void FileDlg::SetDeviceIsNotReadyString(const std::string& str)
-{ m_device_is_not_ready_str = str; }
-
-void FileDlg::SetThreeButtonDlgOKString(const std::string& str)
-{ m_three_button_dlg_ok_str = str; }
-
-void FileDlg::SetThreeButtonDlgCancelString(const std::string& str)
-{ m_three_button_dlg_cancel_str = str; }
-
 const fs::path& FileDlg::WorkingDirectory()
 { return s_working_dir; }
 
@@ -343,11 +237,11 @@ void FileDlg::CreateChildren(bool multi)
     m_filter_list->SetStyle(LIST_NOSORT);
 
     m_curr_dir_text = style->NewTextControl("", m_font, m_text_color, FORMAT_NOWRAP);
-    m_files_label = style->NewTextControl("File(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
-    m_file_types_label = style->NewTextControl("Type(s):", m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+    m_files_label = style->NewTextControl(style->Translate("File(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
+    m_file_types_label = style->NewTextControl(style->Translate("Type(s):"), m_font, m_text_color, FORMAT_RIGHT | FORMAT_VCENTER);
 
     m_ok_button = style->NewButton(m_save ? m_save_str : m_open_str, m_font, m_color, m_text_color);
-    m_cancel_button = style->NewButton(m_cancel_str, m_font, m_color, m_text_color);
+    m_cancel_button = style->NewButton(style->Translate("Cancel"), m_font, m_color, m_text_color);
 
     // finally, we can create the listbox with the files in it, sized to fill the available space
     m_files_list = style->NewListBox(m_border_color);
@@ -494,10 +388,10 @@ void FileDlg::OkHandler(bool double_click)
 #endif
             // check to see if file already exists; if so, ask if it's ok to overwrite
             if (fs::exists(p)) {
-                std::string msg_str = boost::str(boost::format(m_overwrite_prompt_str) % save_file);
+                std::string msg_str = boost::str(boost::format(style->Translate("%1% exists.\nOk to overwrite it?")) % save_file);
                 boost::shared_ptr<ThreeButtonDlg> dlg(
                     style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color, m_text_color,
-                                             2, m_three_button_dlg_ok_str, m_three_button_dlg_cancel_str));
+                                             2, style->Translate("Ok"), style->Translate("Cancel")));
                 dlg->Run();
                 results_valid = (dlg->Result() == 0);
             }
@@ -519,10 +413,10 @@ void FileDlg::OkHandler(bool double_click)
                 if (fs::exists(p)) {
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
-                        std::string msg_str = boost::str(boost::format(m_filename_is_a_directory_str) % (*it));
+                        std::string msg_str = boost::str(boost::format(style->Translate("\"%1%\"\nis a directory.")) % (*it));
                         boost::shared_ptr<ThreeButtonDlg> dlg(
                             style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                     m_text_color, 1, m_three_button_dlg_ok_str));
+                                                     m_text_color, 1, style->Translate("Ok")));
                         dlg->Run();
                         results_valid = false;
                         break;
@@ -542,10 +436,10 @@ void FileDlg::OkHandler(bool double_click)
 #endif
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
-                    std::string msg_str = boost::str(boost::format(m_file_does_not_exist_str) % (*it));
+                    std::string msg_str = boost::str(boost::format(style->Translate("File \"%1%\"\ndoes not exist.")) % (*it));
                     boost::shared_ptr<ThreeButtonDlg> dlg(
                         style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                 m_text_color, 1, m_three_button_dlg_ok_str));
+                                                 m_text_color, 1, style->Translate("Ok")));
                     dlg->Run();
                     results_valid = false;
                     break;
@@ -825,6 +719,8 @@ void FileDlg::UpdateDirectoryText()
 
 void FileDlg::OpenDirectory()
 {
+    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+
     // see if there is a directory selected; if so open the directory.
     // if more than one is selected, take the first one
     const ListBox::SelectionSet& sels = m_files_list->Selections();
@@ -887,7 +783,7 @@ void FileDlg::OpenDirectory()
                     UpdateList();
                     boost::shared_ptr<ThreeButtonDlg> dlg(
                         GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
-                                                             m_device_is_not_ready_str,
+                                                             style->Translate("Device is not ready."),
                                                              m_font, m_color,
                                                              m_border_color, m_color,
                                                              m_text_color, 1));
