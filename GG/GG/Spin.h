@@ -81,7 +81,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
-    Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color, 
+    Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     ~Spin(); // dtor
@@ -180,9 +180,9 @@ private:
 
 // template implementations
 template<class T>
-Spin<T>::Spin(X x, Y y, X w, T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color, 
+Spin<T>::Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color,
               Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
-    Control(x, y, w, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
+    Control(X0, Y0, X1, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
     m_value(value),
     m_step_size(step),
     m_min_value(min),
