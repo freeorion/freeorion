@@ -69,7 +69,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation, Clr color,
+    Slider(T min, T max, Orientation orientation, Clr color,
            unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE); ///< ctor
     //@}
 
@@ -155,10 +155,10 @@ template <class T>
 const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
 template <class T>
-Slider<T>::Slider(X x, Y y, X w, Y h, T min, T max, Orientation orientation,
+Slider<T>::Slider(T min, T max, Orientation orientation,
                   Clr color, int unsigned tab_width, int unsigned line_width/* = 5*/,
                   Flags<WndFlag> flags/* = INTERACTIVE*/) :
-    Control(x, y, w, h, flags),
+    Control(X0, Y0, X1, Y1, flags),
     m_posn(min),
     m_range_min(min),
     m_range_max(max),

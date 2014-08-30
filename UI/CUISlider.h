@@ -14,7 +14,7 @@ public:
     /** \name Structors */ //@{
     CUISlider(T min, T max,
               GG::Orientation orientation, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) :
-        GG::Slider<T>(GG::X0, GG::Y0, GG::X1, GG::Y1, min, max, orientation, ClientUI::CtrlColor(), ClientUI::ScrollWidth(), 5, flags)
+        GG::Slider<T>(min, max, orientation, ClientUI::CtrlColor(), ClientUI::ScrollWidth(), 5, flags)
     {}
     //@}
 
