@@ -2849,8 +2849,9 @@ void ServerApp::PostCombatProcessTurns() {
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
+
+    // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
-    // now update travel restrictions for empire fleets
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
         if (!empires.Eliminated(it->first)) {
             Empire* empire = it->second;
@@ -2957,10 +2958,11 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
-
+    // misc. other updates and records
     CheckForEmpireEliminationOrVictory();
-
     m_universe.UpdateStatRecords();
+    for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
+        empire_it->second->UpdateOwnedObjectCounters();
 
 
     // indicate that the clients are waiting for their new gamestate

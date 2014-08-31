@@ -551,6 +551,8 @@ public:
     /** Resets empire meters. */
     void        ResetMeters();
 
+    void                        UpdateOwnedObjectCounters();
+
     int                         TotalShipsOwned() const;
     int                         TotalBuildingsOwned() const;
 

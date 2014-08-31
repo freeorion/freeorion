@@ -3098,6 +3098,54 @@ void Empire::ResetMeters() {
     }
 }
 
+void Empire::UpdateOwnedObjectCounters() {
+    // ships of each species and design
+    m_species_ships_owned.clear();
+    m_ship_designs_owned.clear();
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator ship_it = Objects().ExistingShipsBegin();
+         ship_it != Objects().ExistingShipsEnd(); ++ship_it)
+    {
+        if (!ship_it->second->OwnedBy(this->EmpireID()))
+            continue;
+        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(ship_it->second);
+        if (!ship)
+            continue;
+        if (!ship->SpeciesName().empty())
+            m_species_ships_owned[ship->SpeciesName()]++;
+        m_ship_designs_owned[ship->DesignID()]++;
+    }
+
+    // colonies of each species, and unspecified outposts
+    m_species_colonies_owned.clear();
+    m_outposts_owned = 0;
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator planet_it = Objects().ExistingPlanetsBegin();
+         planet_it != Objects().ExistingPlanetsEnd(); ++planet_it)
+    {
+        if (!planet_it->second->OwnedBy(this->EmpireID()))
+            continue;
+        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(planet_it->second);
+        if (!planet)
+            continue;
+        if (planet->SpeciesName().empty())
+            m_outposts_owned++;
+        else
+            m_species_colonies_owned[planet->SpeciesName()]++;
+    }
+
+    // buildings of each type
+    m_building_types_owned.clear();
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator building_it = Objects().ExistingBuildingsBegin();
+         building_it != Objects().ExistingBuildingsEnd(); ++building_it)
+    {
+        if (!building_it->second->OwnedBy(this->EmpireID()))
+            continue;
+        TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(building_it->second);
+        if (!building)
+            continue;
+        m_building_types_owned[building->BuildingTypeName()]++;
+    }
+}
+
 int Empire::TotalShipsOwned() const {
     // sum up counts for each ship design owned by this empire
     // (not using species ship counts, as an empire could potentially own a

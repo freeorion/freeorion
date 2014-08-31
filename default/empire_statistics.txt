@@ -23,12 +23,8 @@ Statistic name = "COLONIES_COUNT" value =
         OwnedBy TheEmpire Source.Owner
     ]
 
-
 Statistic name = "SHIP_COUNT" value =
-    Count condition = And [
-        Ship
-        OwnedBy TheEmpire Source.Owner
-    ]
+    ShipDesignsOwned empire = Source.Owner    
 
 Statistic name = "BATTLESHIP_COUNT" value =
     Count condition = And [
