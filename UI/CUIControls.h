@@ -93,18 +93,16 @@ private:
 class CUIArrowButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIArrowButton(ShapeOrientation orientation,
+    CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
     virtual bool    InWindow(const GG::Pt& pt) const;
-    bool            FillBackgroundWithWndColor() const;
     //@}
 
     /** \name Mutators */ //@{
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void            FillBackgroundWithWndColor(bool fill);
     //@}
 
 protected:

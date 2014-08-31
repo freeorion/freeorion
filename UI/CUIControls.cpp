@@ -229,11 +229,11 @@ void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)>
 ///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
-CUIArrowButton::CUIArrowButton(ShapeOrientation orientation,
+CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button("", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
-    m_fill_background_with_wnd_color (false)
+    m_fill_background_with_wnd_color(fill_background)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
@@ -245,9 +245,6 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
     }
 }
 
-bool CUIArrowButton::FillBackgroundWithWndColor() const
-{ return m_fill_background_with_wnd_color; }
-
 void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
@@ -255,9 +252,6 @@ void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         SetState(BN_ROLLOVER);
     }
 }
-
-void CUIArrowButton::FillBackgroundWithWndColor(bool fill)
-{ m_fill_background_with_wnd_color = fill; }
 
 void CUIArrowButton::RenderPressed() {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
