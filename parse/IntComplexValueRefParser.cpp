@@ -101,7 +101,7 @@ namespace parse {
 
             species_colonies_owned
                 =  (
-                            tok.SpeciesPlanetsBombed_ [ _a = construct<std::string>(_1) ]
+                            tok.SpeciesColoniesOwned_ [ _a = construct<std::string>(_1) ]
                         >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
                         >-( parse::label(Name_token) >>     string_value_ref [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
@@ -149,7 +149,7 @@ namespace parse {
 
             species_ships_owned
                 =   (
-                            tok.SpeciesShipsLost_ [ _a = construct<std::string>(_1) ]
+                            tok.SpeciesShipsOwned_ [ _a = construct<std::string>(_1) ]
                         >-( parse::label(Empire_token) >>   int_value_ref [ _b = _1 ] )
                         >-( parse::label(Name_token) >>     string_value_ref [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]

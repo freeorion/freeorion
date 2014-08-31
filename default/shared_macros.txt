@@ -18,114 +18,114 @@ TECH_COST_MULTIPLIER
 
 STEALTH_BOOST_LOW
 '''EffectsGroup
-        scope = Or [
-            Source
-            ContainedBy Source
-        ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[LOW_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM
 '''EffectsGroup
-        scope = Or [
-            Source
-            ContainedBy Source
-        ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[MEDIUM_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH
 '''EffectsGroup
-        scope = Or [
-            Source
-            ContainedBy Source
-        ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[HIGH_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE
 '''EffectsGroup
-        scope = Or [
-            Source
-            ContainedBy Source
-        ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_LOW_NO_ORBITAL
 '''EffectsGroup
-        scope = Or [
-            Source
-            And [
-                ContainedBy Source
-                Not HasTag "ORBITAL"
-            ]
+    scope = Or [
+        Source
+        And [
+            ContainedBy Source
+            Not HasTag "ORBITAL"
         ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[LOW_STEALTH]]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM_NO_ORBITAL
 '''EffectsGroup
-        scope = Or [
-            Source
-            And [
-                ContainedBy Source
-                Not HasTag "ORBITAL"
-            ]
+    scope = Or [
+        Source
+        And [
+            ContainedBy Source
+            Not HasTag "ORBITAL"
         ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[MEDIUM_STEALTH]]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH_NO_ORBITAL
 '''EffectsGroup
-        scope = Or [
-            Source
-            And [
-                ContainedBy Source
-                Not HasTag "ORBITAL"
-            ]
+    scope = Or [
+        Source
+        And [
+            ContainedBy Source
+            Not HasTag "ORBITAL"
         ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[HIGH_STEALTH]]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE_NO_ORBITAL
 '''EffectsGroup
-        scope = Or [
-            Source
-            And [
-                ContainedBy Source
-                Not HasTag "ORBITAL"
-            ]
+    scope = Or [
+        Source
+        And [
+            ContainedBy Source
+            Not HasTag "ORBITAL"
         ]
-        stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
+    ]
+    stackinggroup = "TECH_STEALTH_STACK"
+    effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_PLUS_PLUS
 '''EffectsGroup
-        scope = Or [
-            Source
-            ContainedBy Source
-        ]
-        stackinggroup = "SPECIES_STEALTH_STACK"
-        effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "SPECIES_STEALTH_STACK"
+    effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
 '''
 
 SYSTEM_STEALTH_PLUS_PLUS
 '''EffectsGroup
-            scope = Or [
-                Source
-                ContainedBy Source
-            ]
-            stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+    scope = Or [
+        Source
+        ContainedBy Source
+    ]
+    stackinggroup = "SPECIES_STEALTH_STACK"
+    effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
 '''
 
 LOW_STEALTH
@@ -150,19 +150,7 @@ PLUS_PLUS_STEALTH
 /*   M U L T I P L I C A T O R S   */
 
 COLONY_UPKEEP_MULTIPLICATOR
-'''(1 + 0.06 *
-        Count condition = And [
-            Planet
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-            Not Population high = 0
-        ])'''
+'''(1 + 0.06 * SpeciesColoniesOwned empire = Source.Owner)'''
 
 FLEET_UPKEEP_MULTIPLICATOR
-'''(1 + 0.01 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])'''
-		
+'''(1 + 0.01 * ShipDesignsOwned empire = Source.Owner)'''
