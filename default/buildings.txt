@@ -1448,7 +1448,7 @@ BuildingType
             activation = Not Planet type = GasGiant
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/building/gas-giant-generator.png"
 
 BuildingType
     name = "BLD_COLONY_BASE"
