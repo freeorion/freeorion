@@ -4,6 +4,8 @@
 #include "Logger.h"
 #include "OptionValidators.h"
 
+#include "util/Directories.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -11,6 +13,7 @@
 #include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 namespace {
     std::vector<OptionsDBFn>& OptionsRegistry() {
@@ -121,6 +124,19 @@ OptionsDB::OptionsDB() {
         throw std::runtime_error("Attempted to create a duplicate instance of singleton class OptionsDB.");
 
     s_options_db = this;
+}
+
+void OptionsDB::Commit()
+{
+    boost::filesystem::ofstream ofs(GetConfigPath());
+    if (ofs) {
+        GetOptionsDB().GetXML().WriteDoc(ofs);
+    } else {
+        std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+        std::cerr << PathString(GetConfigPath()) << std::endl;
+        Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+        Logger().errorStream() << PathString(GetConfigPath());
+    }
 }
 
 void OptionsDB::Validate(const std::string& name, const std::string& value) const {

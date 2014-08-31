@@ -177,20 +177,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // did the player request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             try {
-                boost::filesystem::ofstream ofs(GetConfigPath());
-                if (ofs) {
-                    GetOptionsDB().GetXML().WriteDoc(ofs);
-                } else {
-                    std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-#if defined(FREEORION_WIN32)
-                    boost::filesystem::path::string_type path_string_native = GetConfigPath().native();
-                    std::string path_string;
-                    utf8::utf16to8(path_string_native.begin(), path_string_native.end(), std::back_inserter(path_string));
-                    std::cerr << path_string << std::endl;
-#else
-                    std::cerr << GetConfigPath().string() << std::endl;
-#endif
-                }
+                GetOptionsDB().Commit();
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }

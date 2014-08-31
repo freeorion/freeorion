@@ -909,19 +909,7 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 #ifndef FREEORION_LINUX
     GetOptionsDB().Set<int>("app-left-windowed", Value(w));
     GetOptionsDB().Set<int>("app-top-windowed", Value(h));
-
-    // Save the changes:
-    {
-        boost::filesystem::ofstream ofs(GetConfigPath());
-        if (ofs) {
-            GetOptionsDB().GetXML().WriteDoc(ofs);
-        } else {
-            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-            std::cerr << PathString(GetConfigPath()) << std::endl;
-            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-            Logger().errorStream() << PathString(GetConfigPath());
-        }
-    }
+    GetOptionsDB().Commit();
 #endif
 }
 
@@ -949,19 +937,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     GetOptionsDB().Set<int>("app-width-windowed", Value(w));
     GetOptionsDB().Set<int>("app-height-windowed", Value(h));
-
-    // Save the changes:
-    {
-        boost::filesystem::ofstream ofs(GetConfigPath());
-        if (ofs) {
-            GetOptionsDB().GetXML().WriteDoc(ofs);
-        } else {
-            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-            std::cerr << PathString(GetConfigPath()) << std::endl;
-            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-            Logger().errorStream() << PathString(GetConfigPath());
-        }
-    }
+    GetOptionsDB().Commit();
 }
 
 void HumanClientApp::HandleWindowClosing()

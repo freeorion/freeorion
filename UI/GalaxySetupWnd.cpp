@@ -713,19 +713,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
     GetOptionsDB().Set("GameSetup.starting-species",    m_starting_secies_selector->CurrentSpeciesName());
     GetOptionsDB().Set("GameSetup.ai-players",          m_number_ais_spin->Value());
-
-    // Save the changes:
-    {
-        boost::filesystem::ofstream ofs(GetConfigPath());
-        if (ofs) {
-            GetOptionsDB().GetXML().WriteDoc(ofs);
-        } else {
-            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-            std::cerr << GetConfigPath().string() << std::endl;
-            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-            Logger().errorStream() << GetConfigPath().string();
-        }
-    }
+    GetOptionsDB().Commit();
 
     m_ended_with_ok = true;
     m_done = true;
