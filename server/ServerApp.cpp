@@ -692,10 +692,14 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     // update visibility information to ensure data sent out is up-to-date
     Logger().debugStream() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+    
+    // initialize empire owned object counters
+    EmpireManager& empires = Empires();
+    for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
+        empire_it->second->UpdateOwnedObjectCounters();
 
 
     // Determine initial supply distribution and exchanging and resource pools for empires
-    EmpireManager& empires = Empires();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
         if (empires.Eliminated(it->first))
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
