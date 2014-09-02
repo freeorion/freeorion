@@ -364,6 +364,7 @@
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
 		82AB1D13194D97A1009C8220 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		82B3265319B603C1005082AC /* ConditionParser7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B3265219B603C1005082AC /* ConditionParser7.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */; };
 		82B743DF184E127A001A5803 /* PythonUniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */; };
 		82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9D445180C53FE0032F86D /* GraphControl.cpp */; };
@@ -1370,6 +1371,7 @@
 		8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveFileDialog.h; sourceTree = "<group>"; };
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
 		829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireStatsParser.cpp; sourceTree = "<group>"; };
+		82B3265219B603C1005082AC /* ConditionParser7.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser7.cpp; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseGenerator.cpp; sourceTree = "<group>"; };
 		82B743DD184E127A001A5803 /* PythonUniverseGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonUniverseGenerator.h; sourceTree = "<group>"; };
 		82B743DE184E127A001A5803 /* PythonUniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseGenerator.cpp; sourceTree = "<group>"; };
@@ -2659,6 +2661,7 @@
 				8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */,
 				82D2D9A11838C8340011C212 /* ConditionParser5.cpp */,
 				82D2D9A21838C8340011C212 /* ConditionParser6.cpp */,
+				82B3265219B603C1005082AC /* ConditionParser7.cpp */,
 				825936DE147E3B1B00B840A5 /* ConditionParserImpl.h */,
 				825936DF147E3B1B00B840A5 /* Double.cpp */,
 				825936E0147E3B1B00B840A5 /* Double.h */,
@@ -3416,6 +3419,7 @@
 				3A76049C1749A09400363653 /* StringValueRefParser.cpp in Sources */,
 				3A76049E1749A0A300363653 /* TechsParser.cpp in Sources */,
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
+				82B3265319B603C1005082AC /* ConditionParser7.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
