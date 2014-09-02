@@ -496,7 +496,7 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_t);
 
-    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, image);
+    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, 0);
     GLint checked_format;
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &checked_format);
     if (!checked_format)
