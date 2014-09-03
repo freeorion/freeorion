@@ -132,13 +132,13 @@ class AIFleetOrder(object):
                     else:#try to get order cancelled out
                         self.__set_executed()
                         self.__set_execution_completed()
-                # military
-                elif AIFleetOrderType.ORDER_MILITARY == self.get_fleet_order_type():
-                    # with ship
-                    if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                        ship = universe.getShip(self.get_source_target().target_id)
-                        if ship.isArmed:
-                            sourceAITargetTypeValid = True
+            # military
+            elif AIFleetOrderType.ORDER_MILITARY == self.get_fleet_order_type():
+                # with ship
+                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
+                    ship = universe.getShip(self.get_source_target().target_id)
+                    if ship.isArmed:
+                        sourceAITargetTypeValid = True
                 # with fleet
                 elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
                     fleet = universe.getFleet(self.get_source_target().target_id)
