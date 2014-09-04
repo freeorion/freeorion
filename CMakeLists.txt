@@ -150,6 +150,7 @@ set (freeorioncommon_HEADER
     python/PythonSetWrapper.h
     python/PythonWrappers.h
     universe/Building.h
+    universe/CombatData.h
     universe/Condition.h
     universe/EffectAccounting.h
     universe/Effect.h
@@ -224,6 +225,7 @@ set (freeorioncommon_SOURCE
     OpenSteer/src/Vec3.cpp
     OpenSteer/src/Vec3Utilities.cpp
     universe/Building.cpp
+    universe/CombatData.cpp
     universe/Condition.cpp
     universe/EffectAccounting.cpp
     universe/Effect.cpp

@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Tech.h"
 #include "../Empire/Empire.h"

@@ -9,6 +9,7 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
+#include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 

@@ -2,6 +2,7 @@
 
 #include "HumanClientApp.h"
 #include "../../Empire/Empire.h"
+#include "../../universe/CombatData.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
 #include "../../network/Networking.h"

@@ -22,6 +22,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"

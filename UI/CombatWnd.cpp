@@ -14,6 +14,7 @@
 #include "../combat/Missile.h"
 #include "../combat/PathingEngine.h"
 #include "../Empire/Empire.h"
+#include "../universe/CombatData.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"

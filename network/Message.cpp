@@ -9,6 +9,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
 #include "../util/SaveGamePreviewUtils.h"
+#include "../universe/CombatData.h"
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"

@@ -9,6 +9,7 @@
 #include "../../network/Message.h"
 #include "../util/Random.h"
 
+#include "../../universe/CombatData.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
 #include "../../universe/Universe.h"

@@ -7,6 +7,8 @@
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
 #include "../universe/Universe.h"
+#include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"

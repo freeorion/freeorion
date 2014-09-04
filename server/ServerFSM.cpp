@@ -4,6 +4,7 @@
 #include "ServerApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../universe/CombatData.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../network/ServerNetworking.h"

@@ -4,6 +4,7 @@
 #include "InfoPanels.h"
 #include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../universe/CombatData.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"

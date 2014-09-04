@@ -2,6 +2,7 @@
 
 #include "MultiplayerCommon.h"
 #include "../universe/System.h"
+#include "../universe/CombatData.h"
 
 #include "Serialize.ipp"
 
