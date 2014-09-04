@@ -55,8 +55,8 @@ namespace {
 ////////////////////////////////////////////////
 const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
 
-GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/) :
-    GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::NO_WND_FLAGS),
+GalaxySetupPanel::GalaxySetupPanel() :
+    GG::Control(GG::X0, GG::Y0, GalaxySetupPanel::DEFAULT_WIDTH, GAL_SETUP_PANEL_HT, GG::NO_WND_FLAGS),
     m_seed_label(0),
     m_seed_edit(0),
     m_random(0),
@@ -490,7 +490,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y(4));
+    m_galaxy_setup_panel = new GalaxySetupPanel();
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
 

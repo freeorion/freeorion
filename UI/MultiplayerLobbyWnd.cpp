@@ -399,7 +399,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_chat_box = new CUIMultiEdit("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
-    m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y0, GG::X1);
+    m_galaxy_setup_panel = new GalaxySetupPanel();
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
