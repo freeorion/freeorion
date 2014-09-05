@@ -531,7 +531,7 @@ private:
 class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    PlanetPanelContainer();
     ~PlanetPanelContainer();
     //@}
 
@@ -2262,8 +2262,8 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
-SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    Wnd(x, y, w, h, GG::INTERACTIVE),
+SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
+    Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
     m_vscroll(new CUIScroll(GG::VERTICAL))
@@ -2566,7 +2566,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_resource_summary(0),
     m_selection_enabled(false)
 {
-    m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    m_planet_panel_container = new PlanetPanelContainer();
     AttachChild(m_planet_panel_container);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
