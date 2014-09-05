@@ -353,6 +353,7 @@
 		825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */; };
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
+		8277E22619BA19540007F2D9 /* CombatData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8277E22419BA19540007F2D9 /* CombatData.cpp */; };
 		827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */; };
 		8288432E1850A1770023C4D7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
@@ -1349,6 +1350,8 @@
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
+		8277E22419BA19540007F2D9 /* CombatData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatData.cpp; sourceTree = "<group>"; };
+		8277E22519BA19540007F2D9 /* CombatData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatData.h; sourceTree = "<group>"; };
 		827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorActionsWnd.cpp; sourceTree = "<group>"; };
 		827902371737C6EA008AF126 /* ModeratorActionsWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorActionsWnd.h; sourceTree = "<group>"; };
 		827ABF9418A78361008F94DA /* AbstractVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractVehicle.h; sourceTree = "<group>"; };
@@ -2256,6 +2259,8 @@
 			children = (
 				471D5CE50A98A3F900DA9C21 /* Building.cpp */,
 				471D5CE60A98A3F900DA9C21 /* Building.h */,
+				8277E22419BA19540007F2D9 /* CombatData.cpp */,
+				8277E22519BA19540007F2D9 /* CombatData.h */,
 				471D5CE70A98A3F900DA9C21 /* Condition.cpp */,
 				471D5CE80A98A3F900DA9C21 /* Condition.h */,
 				471D5CEC0A98A3F900DA9C21 /* doc */,
@@ -3155,6 +3160,7 @@
 				346D88150FC6196D0095593E /* CombatObject.cpp in Sources */,
 				346D88160FC6196D0095593E /* Missile.cpp in Sources */,
 				34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */,
+				8277E22619BA19540007F2D9 /* CombatData.cpp in Sources */,
 				34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */,
 				34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */,
 				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
