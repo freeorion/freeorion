@@ -67,11 +67,8 @@ struct MPLobby;
 struct WaitingForGameStart;
 struct WaitingForTurnData;
 struct PlayingTurn;
-struct ResolvingCombat;
-
 
 class HumanClientApp;
-class CombatWnd;
 class IntroScreen;
 class MultiPlayerLobbyWnd;
 
@@ -272,7 +269,6 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
-        boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<TurnUpdate>
     > reactions;
 
@@ -280,7 +276,6 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     ~WaitingForTurnData();
 
     boost::statechart::result react(const SaveGame& d);
-    boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const TurnUpdate& msg);
 
     CLIENT_ACCESSOR
@@ -311,31 +306,6 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     CLIENT_ACCESSOR
 };
 
-
-/** The substate of WaitingForTurnData in which the player is resolving a combat. */
-struct ResolvingCombat : boost::statechart::state<ResolvingCombat, PlayingGame> {
-    typedef boost::statechart::state<ResolvingCombat, PlayingGame> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<CombatStart>,
-        boost::statechart::custom_reaction<CombatRoundUpdate>,
-        boost::statechart::custom_reaction<CombatEnd>,
-        boost::statechart::deferral<Diplomacy>
-    > reactions;
-
-    ResolvingCombat(my_context ctx);
-    ~ResolvingCombat();
-
-    boost::statechart::result react(const CombatStart& msg);
-    boost::statechart::result react(const CombatRoundUpdate& msg);
-    boost::statechart::result react(const CombatEnd& msg);
-
-    std::auto_ptr<CombatData>   m_previous_combat_data;
-    std::auto_ptr<CombatData>   m_combat_data;
-    std::auto_ptr<CombatWnd>    m_combat_wnd;
-
-    CLIENT_ACCESSOR
-};
 
 #undef CLIENT_ACCESSOR
 

@@ -27,7 +27,6 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
-#include "../../universe/CombatData.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
@@ -738,9 +737,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));       break;
     case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));            break;
     case Message::PLAYER_STATUS:        m_fsm->process_event(::PlayerStatus(msg));          break;
-    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));             break;
-    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));       break;
-    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));               break;
     case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));              break;
     case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));               break;
     case Message::DIPLOMATIC_STATUS:    m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
@@ -764,9 +760,9 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
-    // for some reason on Linux, the value returned by window->getMetrics(...)
-    // in OgreGUI::windowMoved and eventually passed here is incorrect, so needs
-    // to be ignored...
+    // for some reason on Linux, the value passed here is incorrect, so needs
+    // to be ignored...  (Or at least this was the case with Ogre, and might not
+    // be anymore...
 #ifndef FREEORION_LINUX
     GetOptionsDB().Set<int>("app-left-windowed", Value(w));
     GetOptionsDB().Set<int>("app-top-windowed", Value(h));
@@ -987,7 +983,6 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     m_universe.Clear();
     m_empires.Clear();
     m_orders.Reset();
-    m_combat_orders.clear();
     GetCombatLogManager().Clear();
 
     if (!suppress_FSM_reset)

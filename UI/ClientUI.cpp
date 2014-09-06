@@ -3,7 +3,6 @@
 #include "CUIControls.h"
 #include "FleetWnd.h"
 #include "IntroScreen.h"
-#include "CombatWnd.h"
 #include "MapWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
@@ -521,7 +520,6 @@ ClientUI::ClientUI() :
     m_message_wnd(0),
     m_player_list_wnd(0),
     m_intro_screen(0),
-    m_combat_wnd(0),
     m_multiplayer_lobby_wnd(0)
 {
     s_the_UI = this;
@@ -532,15 +530,6 @@ ClientUI::ClientUI() :
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
-
-
-    if (GetOptionsDB().Get<bool>("tech-demo")) {
-        if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            //m_combat_wnd =  new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
-            // Just makes this compile. The gui no longer uses ogre so all this has to be rewired when 3d combat returns
-            m_combat_wnd = new CombatWnd(NULL, NULL, NULL);
-        }
-    }
 }
 
 ClientUI::~ClientUI() {
@@ -549,7 +538,6 @@ ClientUI::~ClientUI() {
     delete m_player_list_wnd;
     delete m_intro_screen;
     delete m_multiplayer_lobby_wnd;
-    delete m_combat_wnd;
     s_the_UI = 0;
 }
 
@@ -567,9 +555,6 @@ IntroScreen* ClientUI::GetIntroScreen()
 
 MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
-
-CombatWnd* ClientUI::GetCombatWnd()
-{ return m_combat_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { m_map_wnd->GetSaveGameUIData(data); }

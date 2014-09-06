@@ -8,7 +8,6 @@
 #include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
 #include "../../util/i18n.h"
-#include "../../UI/EntityRenderer.h"
 #include "../../UI/Hotkeys.h"
 
 #include <GG/utf8/checked.h>
@@ -19,8 +18,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <iostream>
-
-#include "chmain.h"
 
 
 // The STORE_FULLSCREEN_FLAG parameter below controls whether the fullscreen
@@ -37,6 +34,7 @@ const bool  STORE_FULLSCREEN_FLAG = true;
 const bool FAKE_MODE_CHANGE_FLAG = true;
 
 int mainSetupAndRun();
+int mainConfigOptionsSetup(const std::vector<std::string>& args);
 
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
@@ -204,7 +202,6 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
 
 int mainSetupAndRun() {
-
     try {
         int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
@@ -227,19 +224,6 @@ int mainSetupAndRun() {
 #  endif
 #endif
 
-        /*
-
-        camera->setPosition(Vector3(0, 0, 500));    // Position it at 500 in Z direction
-        camera->lookAt(Vector3(0, 0, -300));        // Look back along -Z
-        camera->setNearClipDistance(5);
-
-        Viewport* viewport = window->addViewport(camera);
-        viewport->setBackgroundColour(ColourValue(0, 0, 0));
-
-        */
-
-        //EntityRenderer entity_renderer(scene_manager);
-
         parse::init();
         HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(), left, top, fullscreen, fake_mode_change);
 
@@ -260,7 +244,7 @@ int mainSetupAndRun() {
         }
 
         // run rendering loop
-        app();  // calls GUI::operator() which calls OgreGUI::Run() which starts rendering loop
+        app();  // calls GUI::operator() which calls SDLGUI::Run() which starts rendering loop
 
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
@@ -284,9 +268,6 @@ int mainSetupAndRun() {
         Logger().errorStream() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
     }
-
-    if (log_manager)
-        delete log_manager;
 
     return 0;
 }

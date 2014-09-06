@@ -41,15 +41,6 @@ struct CheckStartConditions : sc::event<CheckStartConditions>           {};
 struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 
-struct ResolveCombat : sc::event<ResolveCombat> {
-    ResolveCombat(TemporaryPtr<System> system, std::set<int>& empire_ids);
-
-    TemporaryPtr<System> const m_system;
-    std::set<int> m_empire_ids;
-};
-
-// TODO: For prototyping only.
-struct CombatComplete : sc::event<CombatComplete>                       {};
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -108,10 +99,6 @@ struct ProcessingTurn;
 // Substates of WaitingForTurnEnd
 struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
-
-// Substates of ProcessingTurn
-struct ProcessingTurnIdle;
-struct ResolvingCombat;
 
 
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
@@ -330,7 +317,7 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd> {
   * executing orders, resolving combat, various steps in determining what
   * happens before and after combats occur, and updating players on changes in
   * the Universe. */
-struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdle> {
+struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
     typedef boost::mpl::list<
         sc::custom_reaction<ProcessTurn>,
         sc::deferral<SaveGameRequest>,
@@ -344,41 +331,6 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdl
 
     sc::result react(const ProcessTurn& u);
     sc::result react(const CheckTurnEndConditions& c);
-
-    TemporaryPtr<System> m_combat_system;
-    std::set<int> m_combat_empire_ids;
-
-    SERVER_ACCESSOR
-};
-
-
-/** The default substate of ProcessingTurn. */
-struct ProcessingTurnIdle : sc::state<ProcessingTurnIdle, ProcessingTurn> {
-    typedef boost::mpl::list<
-        sc::custom_reaction<ResolveCombat>
-    > reactions;
-
-    ProcessingTurnIdle(my_context c);
-    ~ProcessingTurnIdle();
-
-    sc::result react(const ResolveCombat& u);
-
-    SERVER_ACCESSOR
-};
-
-
-/** The substate of ProcessingTurn in which a single combat is resolved. */
-struct ResolvingCombat : sc::state<ResolvingCombat, ProcessingTurn> {
-    typedef boost::mpl::list<
-        sc::custom_reaction<CombatComplete>,
-        sc::custom_reaction<CombatTurnOrders>
-    > reactions;
-
-    ResolvingCombat(my_context c);
-    ~ResolvingCombat();
-
-    sc::result react(const CombatComplete& msg);
-    sc::result react(const CombatTurnOrders& msg);
 
     SERVER_ACCESSOR
 };

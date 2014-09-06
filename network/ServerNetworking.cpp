@@ -167,10 +167,6 @@ namespace {
         case Message::TURN_PROGRESS:        return "Turn Progress";
         case Message::PLAYER_STATUS:        return "Player Status";
         case Message::CLIENT_SAVE_DATA:     return "Client Save Data";
-        case Message::COMBAT_START:         return "Combat Start";
-        case Message::COMBAT_TURN_UPDATE:   return "Combat Turn Update";
-        case Message::COMBAT_TURN_ORDERS:   return "Combat Turn Orders";
-        case Message::COMBAT_END:           return "Combat End";
         case Message::PLAYER_CHAT:          return "Player Chat";
         case Message::DIPLOMACY:            return "Diplomacy";
         case Message::DIPLOMATIC_STATUS:    return "Diplomatic Status";

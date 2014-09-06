@@ -2,7 +2,6 @@
 
 #include "HumanClientApp.h"
 #include "../../Empire/Empire.h"
-#include "../../universe/CombatData.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
 #include "../../network/Networking.h"
@@ -10,7 +9,6 @@
 #include "../../util/MultiplayerCommon.h"
 #include "../../UI/ChatWnd.h"
 #include "../../UI/PlayerListWnd.h"
-#include "../../UI/CombatWnd.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/MapWnd.h"
@@ -65,13 +63,9 @@ IntroMenu::IntroMenu(my_context ctx) :
     Client().Remove(Client().GetClientUI()->GetMapWnd());
     Client().GetClientUI()->GetMapWnd()->Hide();
 
-    if (GetOptionsDB().Get<bool>("tech-demo"))
-        Client().Register(Client().GetClientUI()->GetCombatWnd());
-    else {
-        Client().Register(Client().GetClientUI()->GetIntroScreen());
-        Client().GetClientUI()->GetMapWnd()->HideMessages();
-        Client().GetClientUI()->GetMapWnd()->HideEmpires();
-    }
+    Client().Register(Client().GetClientUI()->GetIntroScreen());
+    Client().GetClientUI()->GetMapWnd()->HideMessages();
+    Client().GetClientUI()->GetMapWnd()->HideEmpires();
 }
 
 IntroMenu::~IntroMenu() {
@@ -584,12 +578,6 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
 WaitingForTurnData::~WaitingForTurnData()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData"; }
 
-boost::statechart::result WaitingForTurnData::react(const CombatStart& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.CombatStart";
-    post_event(msg); // Re-post this event, so that it is the first thing the ResolvingCombat state sees.
-    return transit<ResolvingCombat>();
-}
-
 boost::statechart::result WaitingForTurnData::react(const SaveGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.SaveGame";
     Client().HandleSaveGameDataRequest();
@@ -738,52 +726,3 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     return discard_event();
 }
 
-////////////////////////////////////////////////////////////
-// ResolvingCombat
-////////////////////////////////////////////////////////////
-ResolvingCombat::ResolvingCombat(my_context ctx) :
-    Base(ctx),
-    m_previous_combat_data(),
-    m_combat_data(new CombatData),
-    //m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
-    // Just make this compile. The gui no longer uses ogre, so all this has to be rewired when 3d combat returns
-    m_combat_wnd(new CombatWnd(NULL, NULL, NULL))
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
-    Client().Register(m_combat_wnd.get());
-    Client().GetClientUI()->GetMapWnd()->Hide();
-}
-
-ResolvingCombat::~ResolvingCombat() {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
-}
-
-boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    std::vector<CombatSetupGroup> setup_groups;
-    Universe::ShipDesignMap foreign_designs;
-    ExtractMessageData(msg.m_message, *m_combat_data, setup_groups, foreign_designs);
-    for (Universe::ShipDesignMap::const_iterator it = foreign_designs.begin();
-         it != foreign_designs.end(); ++it)
-    { GetUniverse().InsertShipDesignID(it->second, it->first); }
-    m_combat_wnd->InitCombat(*m_combat_data, setup_groups);
-    return discard_event();
-}
-
-boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
-    if (m_previous_combat_data.get()) {
-        m_previous_combat_data.release();
-    }
-    m_previous_combat_data = m_combat_data;
-    m_combat_data.reset(new CombatData);
-    ExtractMessageData(msg.m_message, *m_combat_data);
-    m_combat_wnd->CombatTurnUpdate(*m_combat_data);
-    return discard_event();
-}
-
-boost::statechart::result ResolvingCombat::react(const CombatEnd& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
-    Client().GetClientUI()->GetMapWnd()->Show();
-    return transit<WaitingForTurnData>();
-}

@@ -74,10 +74,6 @@ public:
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
         PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
         CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
-        COMBAT_START,           ///< sent to clients when a combat is about to start
-        COMBAT_TURN_UPDATE,     ///< sent to clients when a combat round has been resolved
-        COMBAT_TURN_ORDERS,     ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
-        COMBAT_END,             ///< sent to clients when a combat is concluded
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
         DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes

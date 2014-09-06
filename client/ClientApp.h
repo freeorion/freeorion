@@ -36,7 +36,6 @@ public:
     const Universe&                 GetUniverse() const;        ///< returns client's local copy of Universe
     const GalaxySetupData&          GetGalaxySetupData() const; ///< returns the settings used in creating the current Universe
     const OrderSet&                 Orders() const;             ///< returns Order set for this client's player
-    const CombatOrderSet&           CombatOrders() const;       ///< returns CombatOrder set for this client's player
     const ClientNetworking&         Networking() const;         ///< returns the networking object for this client's player
     const Networking::ClientType    GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
     const Networking::ClientType    GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
@@ -47,8 +46,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void                StartTurn();        ///< encodes order sets and sends turn orders message
-    virtual void                SendCombatSetup();  ///< encodes and sends combat setup orders message
-    virtual void                StartCombatTurn();  ///< encodes combat order sets and sends combat turn orders message
 
     Universe&                   GetUniverse();  ///< returns client's local copy of Universe
     GalaxySetupData&            GetGalaxySetupData();
@@ -57,7 +54,6 @@ public:
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
     OrderSet&                   Orders();       ///< returns Order set for this client's player
-    CombatOrderSet&             CombatOrders(); ///< returns CombatOrder set for this client's player
     ClientNetworking&           Networking();   ///< returns the networking object for this client's player
     std::map<int, PlayerInfo>&  Players();      ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
     std::map<int, Message::PlayerStatus>&
@@ -88,7 +84,6 @@ protected:
     GalaxySetupData             m_galaxy_setup_data;
     EmpireManager               m_empires;
     OrderSet                    m_orders;
-    CombatOrderSet              m_combat_orders;
     ClientNetworking            m_networking;
     int                         m_empire_id;
     int                         m_current_turn;
