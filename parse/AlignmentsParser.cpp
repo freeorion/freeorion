@@ -4,7 +4,7 @@
 
 #include "../Empire/Empire.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/phoenix/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

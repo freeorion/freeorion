@@ -74,9 +74,11 @@ namespace {
 #endif
 }
 
-OgreGUI::OgreGUI(Ogre::RenderWindow* window, const boost::filesystem::path& config_file_path) :
+OgreGUI::OgreGUI(Ogre::RenderWindow* window, Ogre::Root* root,
+                 const boost::filesystem::path& config_file_path) :
     GUI(""),
     m_window(window),
+    m_root(root),
     m_timer(),
     m_config_file_data()
 {
@@ -139,6 +141,25 @@ void OgreGUI::Run() {
         pump();
     } catch (const CleanQuit&) {}
 }
+
+std::vector< std::string > OgreGUI::GetSupportedResolutions() const {
+    std::vector<std::string> resolutions;
+    Ogre::ConfigOptionMap& renderer_options = m_root->getRenderSystem()->getConfigOptions();
+
+    for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
+        // only concerned with video mode options
+        if (it->first != "Video Mode")
+            continue;
+
+        for (unsigned int i = 0; i < it->second.possibleValues.size(); ++i) {
+            resolutions.push_back(it->second.possibleValues[i]);
+            if (resolutions.back().find_first_of("@") == std::string::npos)
+                resolutions.back() += " @ 32";
+        }
+    }
+    return resolutions;
+}
+
 
 void OgreGUI::HandleSystemEvents()
 { HandleSystemEventsSignal(); }

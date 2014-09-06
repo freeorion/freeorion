@@ -99,7 +99,6 @@ endif ()
 ########################################
 # Build common code library            #
 ########################################
-set(BUILD_SDL_DRIVER OFF CACHE INTERNAL "Disable building of SDL driver." FORCE)
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 set(OLD_LIB_SUFFIX ${LIB_SUFFIX})
 set(LIB_SUFFIX "${LIB_SUFFIX}/freeorion")

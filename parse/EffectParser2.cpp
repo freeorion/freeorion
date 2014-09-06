@@ -5,9 +5,8 @@
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
-//#include "../universe/ValueRef.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/phoenix/phoenix.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
@@ -19,7 +18,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
-            qi::_d_type _d;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;

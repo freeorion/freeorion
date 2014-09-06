@@ -4,7 +4,6 @@ namespace {
     struct int_parser_rules {
         int_parser_rules() {
             qi::_1_type _1;
-            qi::_a_type _a;
             qi::_val_type _val;
             using phoenix::construct;
             using phoenix::new_;

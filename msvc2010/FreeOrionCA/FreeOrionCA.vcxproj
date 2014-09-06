@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT=0x0501;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;LOG4CPP_STLPORT_AND_BOOST_BUILD</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../../../include/Python27/;../../../include/zlib/;../../OpenSteer/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/;../../GG/;../../../include/python2.7/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -85,7 +85,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../FreeOrionCA.exe</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;python27.lib;boost_python-vc100-mt-1_51.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;zlib.lib</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>

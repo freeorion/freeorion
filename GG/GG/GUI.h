@@ -135,6 +135,7 @@ public:
         IDLE,        ///< nothing has changed since the last message, but the GUI might want to update some things anyway
         KEYPRESS,    ///< a down key press or key repeat, with or without modifiers like Alt, Ctrl, Meta, etc.
         KEYRELEASE,  ///< a key release, with or without modifiers like Alt, Ctrl, Meta, etc.
+        TEXTINPUT,   ///< user inputted unicode text using some method
         LPRESS,      ///< a left mouse button press
         MPRESS,      ///< a middle mouse button press
         RPRESS,      ///< a right mouse button press
@@ -224,7 +225,7 @@ public:
         function should only be called from custom EventPump event
         handlers. */
     virtual void    HandleSystemEvents() = 0;
-    void            HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel); ///< event handler for GG events
+    void            HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = NULL); ///< event handler for GG events
     void            ClearEventState();
 
     void            SetFocusWnd(Wnd* wnd);          ///< sets the input focus window to \a wnd
@@ -349,6 +350,14 @@ public:
     static void  RenderWindow(Wnd* wnd);    ///< renders a window (if it is visible) and all its visible descendents recursively
     virtual void RenderDragDropWnds();      ///< renders Wnds currently being drag-dropped
 
+
+    /** Emitted whenever the GUI's AppWidth() and/or AppHeight() change. */
+    boost::signals2::signal<void (X, Y)> WindowResizedSignal;
+
+    /** Emitted when the Window in which the GUI is operating
+     gains or loses focus. */
+     boost::signals2::signal<void ()> FocusChangedSignal;
+
     /** \name Exceptions */ ///@{
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -357,6 +366,14 @@ public:
         load-window functions before they have been set. */
     GG_CONCRETE_EXCEPTION(BadFunctionPointer, GG::GUI, Exception);
     //@}
+
+    /** Returns a list of resolutions that are supported for full-screen.
+     * The format is [width]x[height] @ [bits per pixel].
+     * This is not a conceptually ideal place for this function, but it needs to be
+     * implemented using the underlying graphics system,
+     * and deriving GUI is the way to connect GiGi to a graphics system, so here it is.
+     */
+    virtual std::vector<std::string> GetSupportedResolutions() const = 0;
 
 protected:
     /** \name Structors */ ///@{

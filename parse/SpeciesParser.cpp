@@ -5,7 +5,7 @@
 #include "ParseImpl.h"
 #include "../universe/Species.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/phoenix/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -24,9 +24,13 @@ namespace std {
 
 namespace {
     struct insert_species_ {
-        template <typename Arg1, typename Arg2>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
+#else
+        typedef void result_type;
+#endif
 
         void operator()(std::map<std::string, Species*>& species, Species* specie) const {
             if (!species.insert(std::make_pair(specie->Name(), specie)).second) {

@@ -745,7 +745,9 @@ ResolvingCombat::ResolvingCombat(my_context ctx) :
     Base(ctx),
     m_previous_combat_data(),
     m_combat_data(new CombatData),
-    m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
+    //m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
+    // Just make this compile. The gui no longer uses ogre, so all this has to be rewired when 3d combat returns
+    m_combat_wnd(new CombatWnd(NULL, NULL, NULL))
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
     Client().Register(m_combat_wnd.get());

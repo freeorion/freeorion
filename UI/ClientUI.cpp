@@ -536,7 +536,9 @@ ClientUI::ClientUI() :
 
     if (GetOptionsDB().Get<bool>("tech-demo")) {
         if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            m_combat_wnd =  new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
+            //m_combat_wnd =  new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
+            // Just makes this compile. The gui no longer uses ogre so all this has to be rewired when 3d combat returns
+            m_combat_wnd = new CombatWnd(NULL, NULL, NULL);
         }
     }
 }

@@ -13,6 +13,10 @@ endif ()
 
 find_package(OpenAL REQUIRED)
 find_package(OGRE REQUIRED)
+# Use pkg config to find sdl2 details,
+# since there is no official FindSDL2.cmake
+INCLUDE(FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Bullet REQUIRED)
@@ -25,6 +29,7 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${OPENAL_INCLUDE_DIR}
     ${OGRE_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
     ${BULLET_INCLUDE_DIRS}
@@ -161,13 +166,13 @@ set(freeorion_LINK_LIBS
     freeorionparse
     pagedgeometry
     GiGi
-    GiGiOgre
-    GiGiOgrePlugin_OIS
+    GiGiSDL
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
     ${OGRE_LIBRARIES}
+    ${SDL2_LIBRARIES}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}

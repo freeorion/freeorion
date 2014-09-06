@@ -834,6 +834,11 @@ protected:
         Unicode support is unavailable. */
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
+    /** Respond to text input regardless of the method. Focus window only.
+        A window may receive TextInput() messages passed up to it from its
+        children. */
+    virtual void TextInput (const std::string* text);
+
     /** Respond to this window gaining the input focus. */
     virtual void GainingFocus();
 

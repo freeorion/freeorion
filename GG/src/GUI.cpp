@@ -152,6 +152,7 @@ struct GG::GUIImpl
     void HandleIdle(             Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
     void HandleKeyPress(         Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
     void HandleKeyRelease(       Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleTextInput (       const std::string* text);
     void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseEnter(       Flags<ModKey> mod_keys, const GG::Pt& pos, Wnd* w);
@@ -648,6 +649,16 @@ void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<Mo
             WndEvent::KeyRelease, key, key_code_point, mod_keys));
 }
 
+void GUIImpl::HandleTextInput (const std::string* text) {
+    m_browse_info_wnd.reset();
+    m_browse_info_mode = -1;
+    m_browse_target = 0;
+    if (GUI::s_gui->FocusWnd())
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
+            WndEvent::TextInput, text));
+}
+
+
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
 {
     m_curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys);
@@ -969,7 +980,7 @@ void GUI::operator()()
 { Run(); }
 
 void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point,
-                        Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel)
+                        Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text)
 {
     s_impl->m_mod_keys = mod_keys;
 
@@ -998,6 +1009,10 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
 
     case KEYRELEASE:
         s_impl->HandleKeyRelease(key, key_code_point, mod_keys, curr_ticks);
+        break;
+
+    case TEXTINPUT:
+        s_impl->HandleTextInput(text);
         break;
 
     case MOUSEMOVE:

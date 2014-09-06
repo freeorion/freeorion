@@ -1,9 +1,4 @@
-#ifdef OGRE_STATIC_LIB
-#include "OgrePlugins/OgreOctreePlugin.h"
-#include "OgrePlugins/OgreParticleFXPlugin.h"
-#include "OgrePlugins/OgreGLPlugin.h"
-#endif
-#include <GG/Ogre/Plugins/OISInput.h>
+
 
 #include "HumanClientApp.h"
 #include "../../parse/Parse.h"
@@ -15,14 +10,6 @@
 #include "../../util/i18n.h"
 #include "../../UI/EntityRenderer.h"
 #include "../../UI/Hotkeys.h"
-
-#include <OgreCamera.h>
-#include <OgreLogManager.h>
-#include <OgreRenderSystem.h>
-#include <OgreRenderWindow.h>
-#include <OgreRoot.h>
-#include <OgreSceneManager.h>
-#include <OgreViewport.h>
 
 #include <GG/utf8/checked.h>
 
@@ -45,6 +32,11 @@ const bool  STORE_FULLSCREEN_FLAG = false;
 #else
 const bool  STORE_FULLSCREEN_FLAG = true;
 #endif
+// We may want to set the default of this on a per-platform basis,
+// defepnding on the merits and disadvantages of faking fullscreen on each platform.
+const bool FAKE_MODE_CHANGE_FLAG = true;
+
+int mainSetupAndRun();
 
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
@@ -85,7 +77,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     }
 
     // set up rendering and run game
-    if (mainSetupAndRunOgre() != 0) {
+    if (mainSetupAndRun() != 0) {
         std::cerr << "main() failed to setup or run ogre." << std::endl;
         return 1;
     }
@@ -104,6 +96,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
         GetOptionsDB().AddFlag('f', "fullscreen",           UserStringNop("OPTIONS_DB_FULLSCREEN"),            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
+        GetOptionsDB().Add<bool>("fake-mode-change",        UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),     FAKE_MODE_CHANGE_FLAG);
         GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   UserStringNop("OPTIONS_DB_AUTO_FIRST_TURN"),       false);
@@ -210,76 +203,18 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 }
 
 
-int mainSetupAndRunOgre() {
-    Ogre::LogManager*       log_manager = 0;
-    Ogre::Root*             root = 0;
-    OISInput*               ois_input_plugin = 0;
-#ifdef OGRE_STATIC_LIB
-    Ogre::OctreePlugin*     octree_plugin = 0;
-    Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
-    Ogre::GLPlugin*         gl_plugin = 0;
-#endif
+int mainSetupAndRun() {
 
     try {
-        using namespace Ogre;
-        log_manager = new LogManager();
-
-#ifndef FREEORION_WIN32
-        log_manager->createLog((GetUserDir() / "ogre.log").string(), true, false);
-        root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
-        // this line is needed on some Linux systems which otherwise will crash with
-        // errors about GLX_icon.png being missing.
-        Ogre::ResourceGroupManager::getSingleton().addResourceLocation((ClientUI::ArtDir() / ".").string(),
-                                                                       "FileSystem", "General");
-#else
-        boost::filesystem::path::string_type file_native = (GetUserDir() / "ogre.log").native();
-        std::string ogre_log_file;
-        utf8::utf16to8(file_native.begin(), file_native.end(), std::back_inserter(ogre_log_file));
-        log_manager->createLog(ogre_log_file, true, false);
-
-        // for some reason, for this file, the built-in path conversion seems to work properly
-        std::string plugins_cfg_file = (GetRootDataDir() / "ogre_plugins.cfg").string();
-        root = new Root(plugins_cfg_file);
-#endif
-
-#if defined(OGRE_STATIC_LIB)
-        octree_plugin = new Ogre::OctreePlugin;
-        particle_fx_plugin = new Ogre::ParticleFXPlugin;
-        gl_plugin = new Ogre::GLPlugin;
-        root->installPlugin(octree_plugin);
-        root->installPlugin(particle_fx_plugin);
-        root->installPlugin(gl_plugin);
-#endif
-
-
-        RenderSystem* selected_render_system = root->getRenderSystemByName("OpenGL Rendering Subsystem");
-        if (!selected_render_system)
-            throw std::runtime_error("Failed to find an Ogre GL render system.");
-
-        root->setRenderSystem(selected_render_system);
-
         int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-        std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight(selected_render_system);
+        bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+        std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);
         std::pair<int, int> left_top = HumanClientApp::GetWindowLeftTop();
         int left(left_top.first), top(left_top.second);
 
-        root->initialise(false);
-
-        Ogre::NameValuePairList misc_window_params;
-        misc_window_params["title"] = "FreeOrion " + FreeOrionVersionString();
-        misc_window_params["colourDepth"] = boost::lexical_cast<std::string>(colour_depth);
-        misc_window_params["left"] = boost::lexical_cast<std::string>(left);
-        misc_window_params["top"] = boost::lexical_cast<std::string>(top);
-        misc_window_params["macAPI"] = "carbon";
-        misc_window_params["border"] = "resize";
-        if (fullscreen)
-            misc_window_params["monitorIndex"] = boost::lexical_cast<std::string>(
-                GetOptionsDB().Get<int>("fullscreen-monitor-id"));
-
-        RenderWindow* window = root->createRenderWindow("FreeOrion " + FreeOrionVersionString(),
-                                                        width, height, fullscreen, &misc_window_params);
+        int fullscreen_monitor_id = GetOptionsDB().Get<int>("fullscreen-monitor-id");
 
 #ifdef FREEORION_WIN32
 #  ifdef IDI_ICON1
@@ -292,9 +227,7 @@ int mainSetupAndRunOgre() {
 #  endif
 #endif
 
-        SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
-
-        Camera* camera = scene_manager->createCamera("Camera");
+        /*
 
         camera->setPosition(Vector3(0, 0, 500));    // Position it at 500 in Z direction
         camera->lookAt(Vector3(0, 0, -300));        // Look back along -Z
@@ -303,16 +236,12 @@ int mainSetupAndRunOgre() {
         Viewport* viewport = window->addViewport(camera);
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
+        */
+
         //EntityRenderer entity_renderer(scene_manager);
 
         parse::init();
-        HumanClientApp app(root, window, scene_manager, camera, viewport, GetRootDataDir() / "OISInput.cfg");
-
-
-        ois_input_plugin = new OISInput;
-        ois_input_plugin->SetRenderWindow(window);
-        root->installPlugin(ois_input_plugin);
-
+        HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(), left, top, fullscreen, fake_mode_change);
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and
@@ -335,7 +264,7 @@ int mainSetupAndRunOgre() {
 
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
-        std::cout << "mainSetupAndRunOgre caught CleanQuit" << std::endl;
+        std::cout << "mainSetupAndRun caught CleanQuit" << std::endl;
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_argument): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
@@ -354,24 +283,6 @@ int mainSetupAndRunOgre() {
     } catch (...) {
         Logger().errorStream() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
-    }
-
-    if (root) {
-        if (ois_input_plugin) {
-            root->uninstallPlugin(ois_input_plugin);
-            delete ois_input_plugin;
-        }
-
-#ifdef OGRE_STATIC_LIB
-        root->uninstallPlugin(octree_plugin);
-        root->uninstallPlugin(particle_fx_plugin);
-        root->uninstallPlugin(gl_plugin);
-        delete octree_plugin;
-        delete particle_fx_plugin;
-        delete gl_plugin;
-#endif
-
-        delete root;
     }
 
     if (log_manager)

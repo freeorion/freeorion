@@ -819,6 +819,10 @@ Sets the background track to play.
 OPTIONS_DB_FULLSCREEN
 Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
 
+OPTIONS_DB_FAKE_MODE_CHANGE
+'''Do not really change the resolution of the screen. Render the game to an offscreen buffer of the desired resolution and scale that buffer to fill the screen instead.
+Avoids the issues with real screen mode changes, which are especially common on linux.'''
+
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Select which monitor to use in fullscreen mode. Primary monitor should be index 0. May require a restart to take effect.
 
@@ -1815,6 +1819,9 @@ Window Top Position
 
 OPTIONS_FULLSCREEN
 Fullscreen
+
+OPTIONS_FAKE_MODE_CHANGE
+Fake resolution change
 
 OPTIONS_FULLSCREEN_MONITOR_ID
 Fullscreen Monitor ID

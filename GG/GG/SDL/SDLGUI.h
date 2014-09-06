@@ -31,7 +31,8 @@
 
 #include <GG/GUI.h>
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keyboard.h>
 
 
 #ifdef _MSC_VER
@@ -45,6 +46,9 @@
 #endif
 
 namespace GG {
+
+class Framebuffer;
+class OpenGLExtensions;
 
 /** \brief This is an abstract singleton class that represents the GUI
     framework of an SDL OpenGL application.
@@ -83,7 +87,9 @@ class GG_SDL_API SDLGUI : public GG::GUI
 {
 public:
     /** \name Structors */ ///@{
-    explicit SDLGUI(int w = 1024, int h = 768, bool calc_FPS = false, const std::string& app_name = "GG"); ///< ctor
+    explicit SDLGUI(int w = 1024, int h = 768, bool calc_FPS = false, const std::string& app_name = "GG",
+                    int x = SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, bool fullscreen = false,
+                    bool fake_mode_change = false); ///< ctor
     virtual ~SDLGUI();
     //@}
 
@@ -91,19 +97,27 @@ public:
     virtual X AppWidth() const;
     virtual Y AppHeight() const;
     virtual unsigned int Ticks() const;
+    virtual bool Fullscreen() const;
+    virtual bool FakeModeChange() const;
     //@}
 
     /** \name Mutators */ ///@{
     void           operator()();      ///< external interface to Run()
     virtual void   Exit(int code);
 
-    virtual void   Enter2DMode() = 0;
-    virtual void   Exit2DMode() = 0;
+    void SetWindowTitle(const std::string& title);
+    void SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
     //@}
 
     static SDLGUI* GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
-    static GG::Key GGKeyFromSDLKey(const SDL_keysym& key); ///< gives the GGKey equivalent of key
+    static GG::Key GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
 
+    virtual void        Enter2DMode();
+    virtual void        Exit2DMode();
+
+    // \override
+    virtual std::vector<std::string> GetSupportedResolutions() const;
+    bool FramebuffersAvailable() const;
 protected:
     void SetAppSize(const GG::Pt& size);
 
@@ -124,9 +138,23 @@ protected:
 
     virtual void   Run();
 
+    void ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
+
 private:
+    void RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
+
     X         m_app_width;      ///< application width and height (defaults to 1024 x 768)
     Y         m_app_height;
+    X         m_initial_x; ///< The initial position of the application window
+    Y         m_initial_y;
+    bool      m_fullscreen;
+    bool      m_fake_mode_change;
+    int       m_display_id;
+    SDL_Window* m_window; ///< The sdl window
+    SDL_GLContext m_gl_context; //< The OpenGL context
+    bool m_done; //< Set true true when we should exit.
+    boost::scoped_ptr<Framebuffer> m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
+    boost::scoped_ptr<OpenGLExtensions> m_glext; //< a class that manages loading of opengl extensions
 };
 
 } // namespace GG

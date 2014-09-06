@@ -31,17 +31,10 @@
 
 #include <GG/Export.h>
 
-// include OpenGL headers
-#if defined(__APPLE__) && defined(__MACH__)
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
-#else
-# include <GL/gl.h>
-# include <GL/glu.h>
-#endif
-#include <GG/glext.h>
+// GL headers
+#include <GL/glew.h>
 
-// include useful boost headers
+// useful boost headers
 #include <boost/cstdint.hpp>
 #include <boost/signals2/signal.hpp>
 

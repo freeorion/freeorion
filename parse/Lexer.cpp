@@ -5,14 +5,18 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/phoenix/phoenix.hpp>
 
 
 namespace {
     struct strip_quotes_ {
-        template <typename Arg1, typename Arg2>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef std::string type; };
+#else
+        typedef std::string result_type;
+#endif
 
         std::string operator()(const parse::text_iterator& start, const parse::text_iterator& end) const {
             std::string::const_iterator start_ = start;

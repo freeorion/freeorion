@@ -465,21 +465,7 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
             m_recently_edited = false;
             break;
         default:
-            std::string translated_code_point;
-            GetTranslatedCodePoint(key, key_code_point, mod_keys, translated_code_point);
-            if (!translated_code_point.empty() &&
-                !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META)))
-            {
-                if (MultiSelected())
-                    ClearSelected();
-                Insert(0, m_cursor_pos.first, translated_code_point);
-                m_cursor_pos.second = ++m_cursor_pos.first;
-                emit_signal = true;
-                if (LastVisibleChar() <= m_cursor_pos.first)
-                    AdjustView();
-            } else {
-                TextControl::KeyPress(key, key_code_point, mod_keys);
-            }
+            // Do actual text input in TextInput.
             break;
         }
         if (emit_signal)
@@ -488,6 +474,22 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
         TextControl::KeyPress(key, key_code_point, mod_keys);
     }
 }
+
+void Edit::TextInput (const std::string* text) {
+    if (text == NULL) {
+        return;
+    }
+    if (MultiSelected()) {
+        ClearSelected();
+    }
+    Insert (0, m_cursor_pos.first, *text);
+    m_cursor_pos.second = ++m_cursor_pos.first;
+    if (LastVisibleChar() <= m_cursor_pos.first) {
+        AdjustView();
+    }
+    EditedSignal(Text());
+}
+
 
 void Edit::GainingFocus()
 { m_recently_edited = false; }

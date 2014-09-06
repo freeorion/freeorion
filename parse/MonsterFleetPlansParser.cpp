@@ -8,7 +8,7 @@
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/phoenix/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -21,9 +21,13 @@ namespace std {
 
 namespace {
     struct new_monster_fleet_plan_ {
-        template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> // Phoenix v2
         struct result
         { typedef MonsterFleetPlan* type; };
+#else
+        typedef MonsterFleetPlan* result_type;
+#endif
 
         MonsterFleetPlan* operator()(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                                      double spawn_rate, int spawn_limit, const Condition::ConditionBase* location) const

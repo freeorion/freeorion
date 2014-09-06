@@ -36,7 +36,7 @@ std::string parse::detail::info_visitor::prepare(const string& s) const {
 void parse::detail::info_visitor::print(const string& str) const
 { m_os << prepare(str); }
 
-void parse::detail::info_visitor::operator()(boost::spirit::info::nil) const {
+void parse::detail::info_visitor::operator()(boost::spirit::info::nil_) const {
     indent();
     print(m_tag);
 }
