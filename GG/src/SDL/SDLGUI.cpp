@@ -137,10 +137,10 @@ namespace GG {
         }
     private:
         void checkExtensions(){
-            bool framebuffer = SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object");
+            SDL_bool framebuffer = SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object");
             // To fully render on a framebuffer, we need it to support
             // the stencil format we use. NB. We may be able to use some other format to avoid this.
-            bool with_stencil = SDL_GL_ExtensionSupported("GL_EXT_packed_depth_stencil");
+            SDL_bool with_stencil = SDL_GL_ExtensionSupported("GL_EXT_packed_depth_stencil");
             m_have_framebuffer = framebuffer && with_stencil;
         }
 
@@ -319,8 +319,8 @@ SDLGUI* SDLGUI::GetGUI()
 Key SDLGUI::GGKeyFromSDLKey(const SDL_Keysym& key)
 {
     Key retval = Key(key.sym);
-    bool shift = key.mod & KMOD_SHIFT;
-    bool caps_lock = key.mod & KMOD_CAPS;
+    int shift = key.mod & KMOD_SHIFT;
+    int caps_lock = key.mod & KMOD_CAPS;
 
     // this code works because both SDLKey and Key map (at least
     // partially) to the printable ASCII characters
@@ -583,7 +583,7 @@ void SDLGUI::Run()
         Initialize();
         ModalEventPump pump(m_done);
         pump();
-    } catch (QuitSignal& signale) {
+    } catch (QuitSignal&) {
         // Normal exit
         return;
     } catch (const std::invalid_argument& e) {
