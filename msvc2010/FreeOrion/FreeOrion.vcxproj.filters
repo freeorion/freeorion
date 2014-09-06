@@ -19,9 +19,6 @@
     <Filter Include="Header Files\client\human">
       <UniqueIdentifier>{d2ae9498-3cb1-4223-b055-39f924d909ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\combat">
-      <UniqueIdentifier>{e1903fa4-66a8-4377-9d91-eb60de6ced9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Empire">
       <UniqueIdentifier>{3cc43ce0-b6b4-416a-80a0-949870380ee1}</UniqueIdentifier>
     </Filter>
@@ -52,9 +49,6 @@
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{4fba4d8e-44f9-4cb3-8914-7aff0a18b6da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\PagedGeometry">
-      <UniqueIdentifier>{69c0d51a-2b2c-434a-9440-48242f0e5e58}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\ClientApp.h">
@@ -71,9 +65,6 @@
     </ClInclude>
     <ClInclude Include="..\..\client\human\HumanClientApp.h">
       <Filter>Header Files\client\human</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatOrder.h">
-      <Filter>Header Files\combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\EmpireManager.h">
       <Filter>Header Files\Empire</Filter>
@@ -108,21 +99,6 @@
     <ClInclude Include="..\..\UI\ClientUI.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\CollisionMeshConverter.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\CombatCamera.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\CombatSetupWnd.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\CombatWnd.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\CombatWndFwd.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\CUIControls.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -142,9 +118,6 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\EntityRenderer.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\FleetButton.h">
@@ -427,18 +400,6 @@
     <ClCompile Include="..\..\UI\ClientUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\CollisionMeshConverter.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\CombatCamera.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\CombatSetupWnd.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\CombatWnd.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\CUIControls.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -455,9 +416,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\EntityRenderer.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\FleetButton.cpp">
@@ -523,27 +481,6 @@
     <ClCompile Include="..\..\UI\FieldIcon.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\PagedGeometry.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\StaticBillboardSet.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\ImpostorPage.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\BatchPage.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\BatchedGeometry.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\TreeLoader3D.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PagedGeometry\source\PropertyMaps.cpp">
-      <Filter>Source Files\PagedGeometry</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\ModeratorActionsWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -561,10 +498,5 @@
     <ResourceCompile Include="FreeOrion.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>

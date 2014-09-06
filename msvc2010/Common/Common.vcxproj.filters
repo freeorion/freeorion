@@ -39,9 +39,6 @@
     <Filter Include="Source Files\universe">
       <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\OpenSteer">
-      <UniqueIdentifier>{7a608bd5-e5d6-4505-97fa-c108824ad463}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\cmake">
       <UniqueIdentifier>{6ffe6d1e-98f6-4958-9efb-3ceb8ff2c1c0}</UniqueIdentifier>
     </Filter>
@@ -76,13 +73,7 @@
     <ClInclude Include="..\..\Empire\ResourcePool.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\combat\CombatOrder.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\CombatData.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Condition.h">
@@ -220,38 +211,11 @@
     <ClInclude Include="..\..\combat\CombatSystem.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\combat\CombatLogManager.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\ScopedTimer.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\TemporaryPtr.h">
       <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatObject.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\AsteroidBeltObstacle.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatFighter.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatShip.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\Missile.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\PathingEngine.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\PathingEngineFwd.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\ProximityDatabase.h">
-      <Filter>Header Files\combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\EnableTemporaryFromThis.h">
       <Filter>Header Files\universe</Filter>
@@ -260,6 +224,9 @@
       <Filter>Header Files\combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\combat\CombatEvents.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatLogManager.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
   </ItemGroup>
@@ -309,9 +276,6 @@
     <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\SerializePathingEngine.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\util\SerializeUniverse.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
@@ -340,9 +304,6 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\ValueRef.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\CombatData.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Condition.cpp">
@@ -417,41 +378,8 @@
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\src\SimpleVehicle.cpp">
-      <Filter>Source Files\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\src\Vec3.cpp">
-      <Filter>Source Files\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\AsteroidBeltObstacle.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\CombatFighter.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\combat\CombatLogManager.cpp">
       <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\CombatObject.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\CombatOrder.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\CombatShip.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\Missile.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\PathingEngine.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\src\Obstacle.cpp">
-      <Filter>Source Files\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\OpenSteer\src\Vec3Utilities.cpp">
-      <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Version.cpp">
       <Filter>Source Files\util</Filter>

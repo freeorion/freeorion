@@ -100,7 +100,6 @@
     <ClInclude Include="..\..\client\human\chmain.h" />
     <ClInclude Include="..\..\client\human\HumanClientApp.h" />
     <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
-    <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
@@ -112,11 +111,6 @@
     <ClInclude Include="..\..\UI\BuildDesignatorWnd.h" />
     <ClInclude Include="..\..\UI\ChatWnd.h" />
     <ClInclude Include="..\..\UI\ClientUI.h" />
-    <ClInclude Include="..\..\UI\CollisionMeshConverter.h" />
-    <ClInclude Include="..\..\UI\CombatCamera.h" />
-    <ClInclude Include="..\..\UI\CombatSetupWnd.h" />
-    <ClInclude Include="..\..\UI\CombatWnd.h" />
-    <ClInclude Include="..\..\UI\CombatWndFwd.h" />
     <ClInclude Include="..\..\UI\CUIControls.h" />
     <ClInclude Include="..\..\UI\CUIDrawUtil.h" />
     <ClInclude Include="..\..\UI\CUISlider.h" />
@@ -126,7 +120,6 @@
     <ClInclude Include="..\..\UI\DesignWnd.h" />
     <ClInclude Include="..\..\UI\Encyclopedia.h" />
     <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h" />
-    <ClInclude Include="..\..\UI\EntityRenderer.h" />
     <ClInclude Include="..\..\UI\FieldIcon.h" />
     <ClInclude Include="..\..\UI\FleetButton.h" />
     <ClInclude Include="..\..\UI\FleetWnd.h" />
@@ -203,15 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico" />
-    <CustomBuild Include="..\..\ogre_plugins.cfg.in">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_ogre_plugins.py" "$(SolutionDir).."</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Configuring ogre_plugins.cfg</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Configuring ogre_plugins.cfg</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\ogre_plugins.cfg;%(Outputs)</Outputs>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />
@@ -220,28 +204,16 @@
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\BatchedGeometry.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\BatchPage.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\ImpostorPage.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\PagedGeometry.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\PropertyMaps.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\StaticBillboardSet.cpp" />
-    <ClCompile Include="..\..\PagedGeometry\source\TreeLoader3D.cpp" />
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
     <ClCompile Include="..\..\UI\ChatWnd.cpp" />
     <ClCompile Include="..\..\UI\ClientUI.cpp" />
-    <ClCompile Include="..\..\UI\CollisionMeshConverter.cpp" />
-    <ClCompile Include="..\..\UI\CombatCamera.cpp" />
-    <ClCompile Include="..\..\UI\CombatSetupWnd.cpp" />
-    <ClCompile Include="..\..\UI\CombatWnd.cpp" />
     <ClCompile Include="..\..\UI\CUIControls.cpp" />
     <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
     <ClCompile Include="..\..\UI\CUIStyle.cpp" />
     <ClCompile Include="..\..\UI\CUIWnd.cpp" />
     <ClCompile Include="..\..\UI\DesignWnd.cpp" />
     <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp" />
-    <ClCompile Include="..\..\UI\EntityRenderer.cpp" />
     <ClCompile Include="..\..\UI\FieldIcon.cpp" />
     <ClCompile Include="..\..\UI\FleetButton.cpp" />
     <ClCompile Include="..\..\UI\FleetWnd.cpp" />

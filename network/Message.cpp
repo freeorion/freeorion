@@ -1,7 +1,5 @@
 #include "Message.h"
 
-#include "../combat/CombatOrder.h"
-#include "../combat/CombatObject.h"
 #include "../combat/CombatLogManager.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
@@ -9,7 +7,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/ModeratorAction.h"
 #include "../util/SaveGamePreviewUtils.h"
-#include "../universe/CombatData.h"
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
@@ -549,43 +546,6 @@ Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data
 Message StartMPGameMessage(int player_id)
 { return Message(Message::START_MP_GAME, player_id, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
 
-Message ServerCombatStartMessage(int receiver, int empire_id,
-                                 const CombatData& combat_data,
-                                 const std::vector<CombatSetupGroup>& setup_groups,
-                                 const ShipDesignMap& foreign_designs)
-{
-    std::ostringstream os;
-    {
-        freeorion_oarchive oa(os);
-        GetUniverse().EncodingEmpire() = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(combat_data)
-           << BOOST_SERIALIZATION_NVP(setup_groups)
-           << BOOST_SERIALIZATION_NVP(foreign_designs);
-    }
-    return Message(Message::COMBAT_START, Networking::INVALID_PLAYER_ID, receiver, os.str());
-}
-
-Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data) {
-    std::ostringstream os;
-    {
-        freeorion_oarchive oa(os);
-        GetUniverse().EncodingEmpire() = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(combat_data);
-    }
-    return Message(Message::COMBAT_TURN_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
-}
-
-Message ServerCombatEndMessage(int receiver)
-{ return Message(Message::COMBAT_END, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE); }
-
-Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders) {
-    std::ostringstream os;
-    {
-        freeorion_oarchive oa(os);
-        oa << BOOST_SERIALIZATION_NVP(combat_orders);
-    }
-    return Message(Message::COMBAT_TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
-}
 
 ////////////////////////////////////////////////
 // Message data extractors
@@ -909,72 +869,6 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
                                << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
-                               << "Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractMessageData(const Message& msg, CombatData& combat_data,
-                        std::vector<CombatSetupGroup>& setup_groups,
-                        ShipDesignMap& foreign_designs)
-{
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(combat_data)
-           >> BOOST_SERIALIZATION_NVP(setup_groups)
-           >> BOOST_SERIALIZATION_NVP(foreign_designs);
-    } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
-                               << "combat_data, std::vector<CombatSetupGroup>& setup_groups, "
-                               << "ShipDesignMap& foreign_designs) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractMessageData(const Message& msg, CombatOrderSet& order_set) {
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(order_set);
-    } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatOrderSet& "
-                               << "combat_data) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractMessageData(const Message& msg, CombatData& combat_data) {
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(combat_data);
-    } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
-                               << "combat_data) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractMessageData(const Message& msg, TemporaryPtr<System> system,
-                        std::map<int, TemporaryPtr<UniverseObject> >& combat_universe)
-{
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(system);
-        Deserialize(ia, combat_universe);
-    } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, System*& "
-                               << "system, std::map<int, UniverseObject*>& combat_universe) failed!  "
                                << "Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();

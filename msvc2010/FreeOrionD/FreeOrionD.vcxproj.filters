@@ -53,13 +53,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\combat\CombatOrder.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\combat\CombatSystem.h">
-      <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatEventListener.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">

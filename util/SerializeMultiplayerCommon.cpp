@@ -2,7 +2,6 @@
 
 #include "MultiplayerCommon.h"
 #include "../universe/System.h"
-#include "../universe/CombatData.h"
 
 #include "Serialize.ipp"
 
@@ -100,52 +99,3 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
 template void PlayerInfo::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
 template void PlayerInfo::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
 
-template <class Archive>
-void CombatData::save(Archive & ar, const unsigned int version) const
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_combat_turn_number)
-        & BOOST_SERIALIZATION_NVP(m_system);
-    Serialize(ar, m_combat_universe);
-    Serialize(ar, m_pathing_engine);
-}
-
-template <class Archive>
-void CombatData::load(Archive & ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_combat_turn_number)
-        & BOOST_SERIALIZATION_NVP(m_system);
-    Deserialize(ar, m_combat_universe);
-    PathingEngine::s_combat_universe = &m_combat_universe;
-    Deserialize(ar, m_pathing_engine);
-    PathingEngine::s_combat_universe = 0;
-}
-
-template void CombatData::save<freeorion_oarchive>(freeorion_oarchive&, const unsigned int) const;
-template void CombatData::load<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
-
-template <class Archive>
-void CombatSetupRegion::serialize(Archive & ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_radius_begin)
-        & BOOST_SERIALIZATION_NVP(m_radius_end)
-        & BOOST_SERIALIZATION_NVP(m_centroid)
-        & BOOST_SERIALIZATION_NVP(m_radial_axis)
-        & BOOST_SERIALIZATION_NVP(m_tangent_axis)
-        & BOOST_SERIALIZATION_NVP(m_theta_begin)
-        & BOOST_SERIALIZATION_NVP(m_theta_end);
-}
-
-template void CombatSetupRegion::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void CombatSetupRegion::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
-
-template <class Archive>
-void CombatSetupGroup::serialize(Archive & ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_ships)
-        & BOOST_SERIALIZATION_NVP(m_regions)
-        & BOOST_SERIALIZATION_NVP(m_allow);
-}
-
-template void CombatSetupGroup::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void CombatSetupGroup::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);

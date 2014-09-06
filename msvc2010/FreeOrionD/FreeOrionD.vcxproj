@@ -92,8 +92,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\combat\CombatEventListener.h" />
-    <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\combat\CombatSystem.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />

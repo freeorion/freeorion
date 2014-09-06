@@ -3,9 +3,6 @@
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 
-#include "../combat/CombatOrder.h"
-#include "../combat/CombatObject.h"
-
 #include "Serialize.ipp"
 #include <boost/serialization/version.hpp>
 
@@ -195,48 +192,3 @@ void Serialize(freeorion_oarchive& oa, const OrderSet& order_set)
 void Deserialize(freeorion_iarchive& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
 
-
-////////////////////////////////////////////////////////////
-// Combat orders
-////////////////////////////////////////////////////////////
-
-template <class Archive>
-void ShipMission::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_destination)
-        & BOOST_SERIALIZATION_NVP(m_target);
-}
-
-template void ShipMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void ShipMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
-
-template <class Archive>
-void FighterMission::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_destination)
-        & BOOST_SERIALIZATION_NVP(m_target);
-}
-
-template void FighterMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void FighterMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
-
-template <class Archive>
-void CombatOrder::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_order_type)
-        & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_append);
-    switch (m_order_type) {
-    case SHIP_ORDER:
-        ar & BOOST_SERIALIZATION_NVP(m_ship_mission); break;
-    case FIGHTER_ORDER:
-        ar & BOOST_SERIALIZATION_NVP(m_fighter_mission); break;
-    case SETUP_PLACEMENT_ORDER:
-        ar & BOOST_SERIALIZATION_NVP(m_position_and_direction); break;
-    }
-}
-
-template void CombatOrder::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void CombatOrder::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
