@@ -6,7 +6,7 @@
 #include "Label.h"
 #include "../universe/ValueRef.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 
 namespace qi = boost::spirit::qi;

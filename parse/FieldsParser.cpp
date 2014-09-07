@@ -6,7 +6,7 @@
 #include "../universe/Condition.h"
 #include "../universe/Field.h"
 
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

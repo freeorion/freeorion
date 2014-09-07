@@ -5,7 +5,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 
 namespace {

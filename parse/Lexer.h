@@ -5,7 +5,7 @@
 #define BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
 
 #include <boost/spirit/include/lex_lexertl.hpp>
-#include <boost/spirit/home/lex/lexer/lexertl/position_token.hpp>
+#include <boost/spirit/include/lex_lexertl_position_token.hpp>
 
 #include "Tokens.h"
 
