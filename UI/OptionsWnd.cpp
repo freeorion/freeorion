@@ -610,14 +610,6 @@ OptionsWnd::OptionsWnd():
     ColorOption(current_page, 1, "UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
-    // combat settings tab
-    current_page = CreatePage(UserString("OPTIONS_PAGE_COMBAT"));
-    BoolOption(current_page, 0, "combat.enable-glow",       UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
-    BoolOption(current_page, 0, "combat.enable-skybox",     UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
-    BoolOption(current_page, 0, "combat.enable-lens-flare", UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
-    BoolOption(current_page, 0, "combat.filled-selection",  UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
-    m_tabs->SetCurrentWnd(0);
-
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
     BoolOption(current_page, 0, "autosave.single-player", UserString("OPTIONS_SINGLEPLAYER"));
