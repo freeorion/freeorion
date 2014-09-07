@@ -44,8 +44,10 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =
+                parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =
+                parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -57,20 +59,24 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
-            qi::_g_type _g;
-            qi::_h_type _h;
-            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
             using phoenix::construct;
 
-            building_prefix
+            building_type_params
                 =    tok.BuildingType_
-                >    parse::label(Name_token)        > tok.string [ _a = _1 ]
-                >    parse::label(Description_token) > tok.string
-                [ _val = construct<std::pair<std::string, std::string> >(_a, _1) ]
+                >    parse::label(Name_token)                   > tok.string [ _a = _1 ]
+                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
+                >    parse::label(BuildCost_token)              > double_value_ref [ _c = _1 ]
+                >    parse::label(BuildTime_token)              > int_value_ref [ _d = _1 ]
+                >    producible [ _e = _1 ]
+                >    (
+                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
+                        |   eps [ _f = CR_CAPTURE ]
+                     )
+                [ _val = construct<BuildingTypeParams>(_a, _b, _c, _d, _e, _f) ]
                 ;
 
             producible
@@ -80,32 +86,26 @@ namespace {
                 ;
 
             building_type
-                =    building_prefix [ _a = _1 ]
-                >    parse::label(BuildCost_token)               > double_value_ref [ _b = _1 ]
-                >    parse::label(BuildTime_token)               > int_value_ref [ _c = _1 ]
-                >    producible [ _d = _1 ]
-                >    (
-                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _e = _1 ]
-                        |   eps [ _e = CR_CAPTURE ]
-                     )
-                >    parse::detail::tags_parser()(_f)
-                >  -(parse::label(Location_token)               >> parse::detail::condition_parser [ _g = _1 ] )
-                >  -(parse::label(EnqueueLocation_token)        >> parse::detail::condition_parser [ _h = _1 ] )
-                >  -(parse::label(EffectsGroups_token)          >> parse::detail::effects_group_parser() [ _i = _1 ] )
-                >    parse::label(Icon_token)                    > tok.string
-                    [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
+                =    tok.BuildingType_
+                >    building_type_params [ _1 = _a ]
+                >    parse::detail::tags_parser()(_b)
+                >  -(parse::label(Location_token)           >> parse::detail::condition_parser [ _c = _1 ] )
+                >  -(parse::label(EnqueueLocation_token)    >> parse::detail::condition_parser [ _d = _1 ] )
+                >  -(parse::label(EffectsGroups_token)      >> parse::detail::effects_group_parser() [ _e = _1 ] )
+                >    parse::label(Icon_token)               > tok.string
+                    [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
                 =   +building_type(_r1)
                 ;
 
-            building_prefix.name("BuildingType");
+            building_type_params.name("BuildingType Params");
             producible.name("Producible or Unproducible");
             building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
-            debug(building_prefix);
+            debug(building_type_params);
             debug(producible);
             debug(building_type);
 #endif
@@ -115,10 +115,17 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            std::pair<std::string, std::string> (),
-            qi::locals<std::string, std::string>,
+            BuildingTypeParams (),
+            qi::locals<
+                std::string,
+                std::string,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<int>*,
+                bool,
+                CaptureResult
+            >,
             parse::skipper_type
-        > building_prefix_rule;
+        > building_type_params_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -130,11 +137,7 @@ namespace {
             parse::token_iterator,
             void (std::map<std::string, BuildingType*>&),
             qi::locals<
-                std::pair<std::string, std::string>,
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<int>*,
-                bool,
-                CaptureResult,
+                BuildingTypeParams,
                 std::set<std::string>,
                 Condition::ConditionBase*,
                 Condition::ConditionBase*,
@@ -149,14 +152,15 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        building_prefix_rule    building_prefix;
-        producible_rule         producible;
-        building_type_rule      building_type;
-        start_rule              start;
+        building_type_params_rule   building_type_params;
+        producible_rule             producible;
+        building_type_rule          building_type;
+        start_rule                  start;
     };
 }
 
 namespace parse {
-    bool buildings(const boost::filesystem::path& path, std::map<std::string, BuildingType*>& building_types)
+    bool buildings(const boost::filesystem::path& path,
+                   std::map<std::string, BuildingType*>& building_types)
     { return detail::parse_file<rules, std::map<std::string, BuildingType*> >(path, building_types); }
 }

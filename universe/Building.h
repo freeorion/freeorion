@@ -82,6 +82,35 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Used by parser to reduce number of parameters when constructing a BuildingType */
+struct BuildingTypeParams {
+    BuildingTypeParams() :
+        name(),
+        desc(),
+        prod_cost(0),
+        prod_time(0),
+        producible(false),
+        capture_result(CR_DESTROY)
+    {}
+    BuildingTypeParams(const std::string& name_, const std::string& desc_,
+                       const ValueRef::ValueRefBase<double>* prod_cost_,
+                       const ValueRef::ValueRefBase<int>* prod_time_,
+                       bool producible_, CaptureResult capture_result_) :
+        name(name_),
+        desc(desc_),
+        prod_cost(prod_cost_),
+        prod_time(prod_time_),
+        producible(producible_),
+        capture_result(capture_result_)
+    {}
+    std::string                             name;
+    std::string                             desc;
+    const ValueRef::ValueRefBase<double>*   prod_cost;
+    const ValueRef::ValueRefBase<int>*      prod_time;
+    bool                                    producible;
+    CaptureResult                           capture_result;
+};
+
 /** A specification for a building of a certain type.  Each building type must
   * have a \a unique name string, by which it can be looked up using
   * GetBuildingType(...). */
@@ -103,22 +132,18 @@ public:
     {};
 
     /** basic ctor */
-    BuildingType(const std::pair<std::string, std::string>& name_and_description,
-                 const ValueRef::ValueRefBase<double>* production_cost,
-                 const ValueRef::ValueRefBase<int>* production_time,
-                 bool producible,
-                 CaptureResult capture_result,
+    BuildingType(const BuildingTypeParams& params,
                  const std::set<std::string>& tags,
                  const Condition::ConditionBase* location,
                  const Condition::ConditionBase* enqueue_location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& icon) :
-        m_name(name_and_description.first),
-        m_description(name_and_description.second),
-        m_production_cost(production_cost),
-        m_production_time(production_time),
-        m_producible(producible),
-        m_capture_result(capture_result),
+        m_name(params.name),
+        m_description(params.desc),
+        m_production_cost(params.prod_cost),
+        m_production_time(params.prod_time),
+        m_producible(params.producible),
+        m_capture_result(params.capture_result),
         m_tags(tags),
         m_location(location),
         m_enqueue_location(enqueue_location),

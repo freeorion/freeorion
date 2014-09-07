@@ -77,6 +77,24 @@ struct SpeciesParams {
     bool    can_produce_ships;
 };
 
+/** Used by parser due to limits on number of sub-items per parsed main item. */
+struct SpeciesStrings {
+    SpeciesStrings() :
+        name(),
+        desc(),
+        gameplay_desc()
+    {}
+    SpeciesStrings(const std::string& name_, const std::string& desc_,
+                   const std::string& gameplay_desc_) :
+        name(name_),
+        desc(desc_),
+        gameplay_desc(gameplay_desc_)
+    {}
+    std::string             name;
+    std::string             desc;
+    std::string             gameplay_desc;
+};
+
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -86,7 +104,7 @@ class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
     /** basic ctor */
-    Species(const std::string& name, const std::string& description, const std::string& gameplay_description,
+    Species(const SpeciesStrings& strings,
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
@@ -94,9 +112,9 @@ public:
             const SpeciesParams& params,
             const std::set<std::string>& tags,
             const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_gameplay_description(gameplay_description),
+        m_name(strings.name),
+        m_description(strings.desc),
+        m_gameplay_description(strings.gameplay_desc),
         m_foci(foci),
         m_preferred_focus(preferred_focus),
         m_planet_environments(planet_environments),
@@ -111,27 +129,27 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const            { return m_name; }                      ///< returns the unique name for this type of species
-    const std::string&              Description() const     { return m_description; }               ///< returns a text description of this type of species
-    const std::string&              GameplayDescription() const { return m_gameplay_description; }  ///< returns a text description of this type of species
+    const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
+    const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
+    const std::string&              GameplayDescription() const         { return m_gameplay_description; }  ///< returns a text description of this type of species
 
     const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
     const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
 
-    std::string                     Dump() const;                                           ///< returns a data file format representation of this object
-    const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
-    const std::string&              PreferredFocus() const  { return m_preferred_focus; }   ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
-    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    std::string                     Dump() const;                                                           ///< returns a data file format representation of this object
+    const std::vector<FocusType>&   Foci() const                        { return m_foci; }                  ///< returns the focus types this species can use
+    const std::string&              PreferredFocus() const              { return m_preferred_focus; }       ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
+    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const   { return m_planet_environments; }   ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const { return m_effects; }///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
-    bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
-    bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
-    bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const  { return m_effects; }   ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    bool                            Playable() const        { return m_playable; }              ///< returns whether this species is a suitable starting species for players
+    bool                            Native() const          { return m_native; }                ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    bool                            CanColonize() const     { return m_can_colonize; }          ///< returns whether this species can colonize planets
+    bool                            CanProduceShips() const { return m_can_produce_ships; }     ///< returns whether this species can produce ships
     const std::set<std::string>& Tags() const               { return m_tags; }
-    const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
+    const std::string&              Graphic() const         { return m_graphic; }               ///< returns the name of the grapic file for this species
     //@}
 
     /** \name Mutators */ //@{

@@ -56,8 +56,6 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
-            qi::_h_type _h;
-            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -71,7 +69,8 @@ namespace {
                 >    parse::label(Name_token)        > tok.string [ _a = _1 ]
                 >    parse::label(Description_token) > tok.string [ _b = _1 ]
                 >    parse::label(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
-                >    parse::label(Graphic_token)     > tok.string [ _val = construct<FocusType>(_a, _b, _c, _1) ]
+                >    parse::label(Graphic_token)     > tok.string
+                     [ _val = construct<FocusType>(_a, _b, _c, _1) ]
                 ;
 
             foci
@@ -83,13 +82,14 @@ namespace {
                 ;
 
             effects
-                =    parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _r1 = _1 ]
+                =    parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser()
+                     [ _r1 = _1 ]
                 ;
 
             environment_map_element
                 =    parse::label(Type_token)        >> parse::enum_parser<PlanetType>() [ _a = _1 ]
                 >    parse::label(Environment_token) >  parse::enum_parser<PlanetEnvironment>()
-                        [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
+                     [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
 
             environment_map
@@ -98,7 +98,7 @@ namespace {
                 ;
 
             environments
-                =    parse::label(Environments_token) >> environment_map [ _r1 = _1 ]
+                =    parse::label(Environments_token)           >> environment_map [ _r1 = _1 ]
                 ;
 
             species_params
@@ -109,19 +109,24 @@ namespace {
                     [ _val = construct<SpeciesParams>(_a, _b, _d, _c) ]
                 ;
 
+            species_strings
+                =    parse::label(Name_token)                   > tok.string [ _a = _1 ]
+                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
+                >    parse::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
+                    [ _val = construct<SpeciesStrings>(_a, _b, _c) ]
+                ;
+
             species
                 =    tok.Species_
-                >    parse::label(Name_token)                   > tok.string [ _a = _1 ]
-                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
-                >    parse::label(Gameplay_Description_token)   > tok.string [ _h = _1 ]
-                >    species_params [ _c = _1]
-                >    parse::detail::tags_parser()(_d)
-                >   -foci(_e)
-                >   -(parse::label(PreferredFocus_token)       >> tok.string [ _i = _1 ])
-                >   -effects(_f)
-                >   -environments(_g)
+                >    species_strings [ _a = _1 ]
+                >    species_params [ _b = _1]
+                >    parse::detail::tags_parser()(_c)
+                >   -foci(_d)
+                >   -(parse::label(PreferredFocus_token)        >> tok.string [ _g = _1 ])
+                >   -effects(_e)
+                >   -environments(_f)
                 >    parse::label(Graphic_token) > tok.string
-                     [ insert_species(_r1, new_<Species>(_a, _b, _h, _e, _i, _g, _f, _c, _d, _1)) ]
+                     [ insert_species(_r1, new_<Species>(_a, _d, _g, _f, _e, _b, _c, _1)) ]
                 ;
 
             start
@@ -135,6 +140,7 @@ namespace {
             environment_map.name("Environments");
             environments.name("Environments");
             species_params.name("Species Flags");
+            species_strings.name("Species Strings");
             species.name("Species");
             start.name("start");
 
@@ -146,6 +152,7 @@ namespace {
             debug(environment_map);
             debug(environments);
             debug(species_params);
+            debug(species_strings);
             debug(species);
             debug(start);
 #endif
@@ -209,17 +216,26 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::map<std::string, Species*>&),
+            SpeciesStrings (),
             qi::locals<
                 std::string,
                 std::string,
+                std::string
+            >,
+            parse::skipper_type
+        > species_strings_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::map<std::string, Species*>&),
+            qi::locals<
+                SpeciesStrings,
                 SpeciesParams,
-                std::set<std::string>,
+                std::set<std::string>,  // tags
                 std::vector<FocusType>,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                 std::map<PlanetType, PlanetEnvironment>,
-                std::string,
-                std::string
+                std::string             // graphic
             >,
             parse::skipper_type
         > species_rule;
@@ -237,6 +253,7 @@ namespace {
         environment_map_rule            environment_map;
         environments_rule               environments;
         species_params_rule             species_params;
+        species_strings_rule            species_strings;
         species_rule                    species;
         start_rule                      start;
     };
