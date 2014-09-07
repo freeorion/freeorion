@@ -26,7 +26,7 @@ def show_only_some(x, pos):
   else:
     return ''
 
-doPlotTypes = ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
+doPlotTypes = ["PP + 2RP"] + ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
 
 
 def parse_file(file_name, ai=True):
@@ -35,7 +35,7 @@ def parse_file(file_name, ai=True):
         got_colors=False
         got_species=False
         got_name=False
-        data={"PP":[], "RP":[], "RP_Ratio":[], "ShipCount":[], "turnsP":[], "turnPP":[]}
+        data={"PP":[], "RP":[], "RP_Ratio":[], "ShipCount":[], "turnsP":[], "turnPP":[], "PP + 2RP":[]}
         details={'color':{1, 1, 1, 1}, 'name':"", 'species':""}
         with open(file_name, 'r') as lf:
             while True:
@@ -64,6 +64,7 @@ def parse_file(file_name, ai=True):
                     RPPP = parts[1].split('(')[-1].split('/')
                     data['PP'].append( float( RPPP[1]) )
                     data['RP'].append( float( RPPP[0]) )
+                    data['PP + 2RP'].append( float( RPPP[1]) + 2 * float( RPPP[0]) )
                     data['RP_Ratio'].append( float( RPPP[0])/(float( RPPP[1]) + 0.001) )
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append( int(line.split("Empire Ship Count:")[1]))
@@ -119,8 +120,10 @@ for plotType in doPlotTypes:
         caption="Research"
     elif plotType=="RP_Ratio":
         caption="Res:Prod Ratio"
+    elif plotType=="RP_Ratio":
+        caption="Res:Prod Ratio"
     else:
-        caption="Ships"
+        caption=plotType
     figure(figsize=(10, 6))
     ax=gca()
     ymin = 9999

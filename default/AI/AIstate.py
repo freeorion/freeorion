@@ -62,6 +62,7 @@ class AIstate(object):
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
         self.designStats = {}
+        self.design_rating_adjustments = {}
         self.__priorityByType = {}
 
         #self.__explorableSystemByType = {}
@@ -686,11 +687,10 @@ class AIstate(object):
         """rate a design, including species pilot effects
             returns dict of attacks {dmg1:count1}, attack, shields, structure"""
         weapons_grade, shields_grade = self.get_piloting_grades(species_name)
-        design_stats = dict( self.get_design_id_stats(design_id) ) #new dict so we don't modify our original data
+        design_stats = dict( self.get_design_id_stats(design_id) )  # new dict so we don't modify our original data
         myattacks = self.weight_attacks(design_stats.get('attacks', {}), weapons_grade)
         design_stats['attacks'] = myattacks
-        #mystructure = design_stats.get('structure', 1)
-        myshields = self.weight_shields(design_stats.get('shields', 0), shields_grade) #designs currently return zero shield value
+        myshields = self.weight_shields(design_stats.get('shields', 0), shields_grade)
         design_stats['attack'] = sum([a * b for a, b in myattacks.items()])
         design_stats['shields'] = myshields
         return design_stats
@@ -761,9 +761,15 @@ class AIstate(object):
         # pass
         return ship_stats
 
+    def calc_tactical_rating_adjustment(self, partslist):
+        adjust_dict = {"FU_IMPROVED_ENGINE_COUPLINGS": 0.1,
+                       "FU_N_DIMENSIONAL_ENGINE_MATRIX": 0.21
+                       }
+        return sum([adjust_dict.get(partname, 0.0) for partname in partslist])
+
     def get_design_id_stats(self, designID):
         if designID is None:
-            return {'attack':0, 'structure':0, 'shields':0, 'attacks':{}}
+            return {'attack':0, 'structure':0, 'shields':0, 'attacks':{}, 'tact_adj':0}
         elif designID in self.designStats:
             return self.designStats[designID]
         design = fo.getShipDesign(designID)
@@ -793,9 +799,10 @@ class AIstate(object):
             elif "DT_DETECTOR_1" in parts:
                 detect_bonus = 1
             #stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields, 'attacks':attacks}
-            stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 'attacks': attacks}
+            stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 
+                     'attacks': attacks, 'tact_adj': self.calc_tactical_rating_adjustment(parts)}
         else:
-            stats = {'attack':0, 'structure':0, 'shields':0, 'attacks':{}}
+            stats = {'attack':0, 'structure':0, 'shields':0, 'attacks':{}, 'tact_adj': 0}
         self.designStats[designID] = stats
         return stats
 

@@ -116,7 +116,7 @@ def getBestShipInfo(priority, loc=None):
 
 
 def getBestShipRatings(loc=None, verbose = False):
-    """returns list of [partition, pid, designID, design] sublists"""
+    """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -162,14 +162,15 @@ def getBestShipRatings(loc=None, verbose = False):
                 continue
             cost = get_design_cost(cur_turn, shipDesign, pid)
             nattacks = sum( designStats.get('attacks', {1:1}).keys() )
-            old_design_rating = (designStats['attack'] * (designStats['structure'] + nattacks*designStats['shields']))
-            new_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1, shipDesignID, species_name)] ).get('overall', 0)
+            old_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1, shipDesignID, species_name)] ).get('overall', 0)
+            # TODO: determine better tactical rating adjustment for speed
+            new_design_rating = old_design_rating * (1.0 + designStats.get('tact_adj', 0.0))
             design_rating = [old_design_rating, new_design_rating][ style_index]
             costRating = design_rating/(max( 0.1, cost))
             if verbose and ( int(old_design_rating/10) != int(new_design_rating/10) ):
                 print "design %s (for species %s) has cost %.1f, old rating %.1f and new rating %.1f"%(
                                     shipDesign.name(False), species_name, cost, old_design_rating, new_design_rating)
-            if (try_counter > 30) and (costRating < 0.1* bestCostRating): # disabled until find better way to organize
+            if (try_counter > 100) and (costRating < 0.1* bestCostRating):
                 break
             if costRating > localBestCostRating:
                 try_counter = 0
@@ -181,6 +182,8 @@ def getBestShipRatings(loc=None, verbose = False):
                                 PlanetUtilsAI.planet_name_ids([pid]), shipDesign.name(False), design_rating, costRating, shipDesign.hull, list(shipDesign.parts))
                 if costRating > bestCostRating:
                     bestCostRating = costRating
+            else:
+                try_counter += 1
         if localBestCostRating > 0.0:
             if verbose:
                 print "\t\t adding design id %d (%s) (species %s) with costRating %.4f at pid %d" % (
@@ -334,6 +337,9 @@ def addMarkDesigns():
     clk = "ST_CLOAK_%1d"
     db = "DT_DETECTOR_%1d"
     if1 = "FU_BASIC_TANK"
+    if2 = "FU_DEUTERIUM_TANK"
+    eng1 = "FU_IMPROVED_ENGINE_COUPLINGS"
+    eng2 = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
     is1, is2, is3, is4, is5 = "SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_PLASMA", "SH_MULTISPEC", "SH_BLACK"
     isList=["", is1, is2, is3, is4, is5]
     ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
@@ -393,18 +399,21 @@ def addMarkDesigns():
     newMarkDesigns += [ (nb%iw, desc, hull, 3*[ srb%iw]+[is4], "", model) for iw in [4] ]
     newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[ srb2%iw]+[is4], "", model) for iw in [1, 2, 3, 4] ]
 
-    nb, hull = designNameBases[3]+"-%1x-%1x", "SH_ASTEROID"  #11 = "Comet":"CA"
-    newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, [srb%iw] +2*[""] +[db%1] + [if1, if1], "", model) for iw in [2, 3, 4] ]
-    newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, [srb2%iw]+2*[""] +[db%1] + [if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, [srb%iw] +2*[ar2]+[db%2]+ [if1, if1], "", model) for iw in [3, 4] ]
-    newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, [srb2%iw] +2*[ar2]+[db%1]+ [if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(5, iw) ,  desc, hull, [srb2%iw] +2*[ar2]+[db%2]+ [if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(6, isp ) ,  desc, hull, [srb2%4] +2*[ar2]+[db%2]+ [isList[isp], if1], "", model) for isp in [0, 1, 2] ]
-    newMarkDesigns += [ (nb%(7, isp ) ,  desc, hull, 2*[srb2%4] +[ar2] +[db%2]+ [isList[isp], if1], "", model) for isp in [0, 1, 2, 3] ]
-    for iar in [1, 2]:
-        newMarkDesigns += [ (nb%(8, 2*iar+idb-2 ) ,  desc, hull, 2*[srb%4] +[arList[iar]] +[db%idb]+ [is4, if1], "", model) for idb in [1, 2] ]
-    newMarkDesigns += [ (nb%(9, iw ) ,  desc, hull, 2*[srb2%iw] +[ar2] +[db%2]+ [is4, if1], "", model) for iw in [1, 2, 3, 4] ]
-
+    # Asteroids
+    eng_packs = [[if1, if1], [eng1, eng1]]
+    shield_packs = []
+    for isp in [0, 1, 3]:
+        shield_packs.extend([[isList[isp], if1], [isList[isp], eng1]])
+    packs = eng_packs + shield_packs
+    
+    nb, hull = designNameBases[3]+"-%1x-%1x-%1x", "SH_ASTEROID"  #11 = "Comet":"CA"
+    newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 3*[""] + packs[0], "", model) for iw in [2, 3, 4] ]
+    newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 2*[""] + [ar2] + packs[0], "", model) for iw in [1, 2, 3, 4] ]
+    for ieng in range(4):
+        newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 2*[srb2%iw] + 2*[ar2] + packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [3, 4] ]
+    for ieng in [4, 5]:
+        newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [4] ]
 
     #nb, hull = designNameBases[2]+"-3-%1d", "SH_STATIC_MULTICELLULAR"
     #newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is2, if1], "", model) for iw in [2, 3, 4] ]
@@ -483,40 +492,58 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(4, iw+8), desc, hull, 2*[srb4%iw]+[ar5] + [ is5, if1, if1], "", model) for iw in [2, 3, 4] ]
 
         nb_idx=6
-        nb, hull = designNameBases[nb_idx]+"-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, [srb%iw] +4*[""] +[db%1] + [if1, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, [srb2%iw]+4*[""] +[db%1] + [if1, if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, [srb%iw] +2*[""] +2*[ar2]+[db%2]+ [if1, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, [srb2%iw]+2*[""] +2*[ar2]+[db%1]+ [if1, if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw) ,  desc, hull, [srb2%iw]+2*[""] +2*[ar2]+[db%2]+ [if1, if1, if1], "", model) for iw in [1, 2, 3, 4] ]
-        newMarkDesigns += [ (nb%(6, isp ) ,  desc, hull, [srb2%4] +2*[""] +2*[ar2]+[db%2]+ [isList[isp], if1, if1], "", model) for isp in [0, 1, 2] ]
-        newMarkDesigns += [ (nb%(7, isp ) ,  desc, hull, 3*[srb2%4] +2*[ar2] +[db%2]+ [isList[isp], if1, if1], "", model) for isp in [0, 1, 2, 3] ]
-        for iar in [1, 2]:
-            newMarkDesigns += [ (nb%(8, 2*iar+idb-2 ) ,  desc, hull, 3*[srb%4] +2*[arList[iar]] +[db%idb]+ [is4, if1, if1], "", model) for idb in [1, 2] ]
-        newMarkDesigns += [ (nb%(9, iw ) ,  desc, hull, 3*[srb2%iw] +2*[ar2] +[db%2]+ [is4, if1, if1], "", model) for iw in [1, 2, 3, 4] ]
+        # Heavy Asteroids
+        eng_packs = [[if1, if1, if1], [if2, eng1, eng1], [if2, eng2, eng2]]
+        shield_packs = []
+        for isp in [0, 1, 2, 3]:
+            shield_packs.extend([[isList[isp], if1, if1], [isList[isp], eng1, eng1], [isList[isp], eng2, eng2]])
+        packs = eng_packs + shield_packs
+        black_packs = [[if2, if2, if2], [if2, eng1, eng1], [if2, eng2, eng2]]
+        
+        # MD and Laser weaps
+        nb, hull = designNameBases[nb_idx]+"-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
+        # - no armor
+        newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 5*[""] + eng_packs[0], "", model) for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 5*[""] + eng_packs[0], "", model) for iw in [1, 2, 3, 4] ]
+        # - zort armor 
+        for ieng in [0, 1, 2]:
+            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, [srb%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
+            newMarkDesigns += [ (nb%(4, 4, ieng), desc, hull, 3*[srb%4] + 3*[ar2] + eng_packs[ieng], "", model) ]
+            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, [srb2%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
+            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb2%iw] + 3*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
+        # - shields
+        newMarkDesigns += [ (nb%(7, 4, isp), desc, hull, 3*[srb2%4] + 3*[ar2] + shield_packs[isp], "", model) for isp in range(len(shield_packs)) ]
+        
+        #TODO: add support for ast reformation construction so AI can really have rock
         
         nb_idx=7
-        nb, hull = designNameBases[nb_idx]+"-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, 2*[srb4%iw]+3*[ar2]+ [db%2]+ [is2, if1, if1], "", model) for iw in [1] ]
-        newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, 3*[srb4%iw]+2*[ar3]+ [db%2]+ [is3, if1, if1], "", model) for iw in [1] ]
-        newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, 2*[srb4%iw]+3*[ar2]+ [db%2]+ [is4, if1, if1], "", model) for iw in [1] ]
-        newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, 3*[srb4%iw]+2*[ar3]+ [db%2]+ [is4, if1, if1], "", model) for iw in [1] ]
-        newMarkDesigns += [ (nb%(5, iw) ,  desc, hull, [srb3%iw]+3*[""] +[ar2] + [db%2] + [if1, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(6, iw) ,  desc, hull, [srb3%iw]+2*[""] +2*[ar3]+ [db%2]+ [if1, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(7, iw) ,  desc, hull, 3*[srb3%iw]+2*[ar3]+ [db%2]+ [is3, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(8, iw) ,  desc, hull, 4*[srb3%iw]+1*[ar3]+ [db%2]+ [is4, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(9, iw) ,  desc, hull, 4*[srb3%iw]+1*[ar3]+ [db%3]+ [is4, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(10, iw) ,  desc, hull, 4*[srb3%iw]+1*[ar4]+ [db%2]+ [is4, if1, if1], "", model) for iw in [3, 4] ]
-        newMarkDesigns += [ (nb%(11, iw) ,  desc, hull, 4*[srb3%iw]+1*[ar4]+ [db%3]+ [is4, if1, if1], "", model) for iw in [3, 4] ]
+        # Heavy Asteroids
+        # DR1 (in case of early gift from Ruins)
+        nb, hull = designNameBases[nb_idx]+"-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
+        newMarkDesigns += [ (nb%(1, 1, 0), desc, hull, [srb4%1] + 4*[""] + [ar2] + packs[0], "", model) ]
+        newMarkDesigns += [ (nb%(1, 2, 0), desc, hull, [srb4%1] + 5*[ar2] + packs[0], "", model) ]
+        newMarkDesigns += [ (nb%(2, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar2] + packs[ieng], "", model) for ieng in range(1, 6) ]
+        newMarkDesigns += [ (nb%(3, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
+        newMarkDesigns += [ (nb%(3, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
+        newMarkDesigns += [ (nb%(4, 1, ieng), desc, hull, 3*[srb4%1] + 3*[ar2] + packs[ieng], "", model) for ieng in range(7, 12) ]
+        newMarkDesigns += [ (nb%(4, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(7, 12) ]
+        # Plasma weaps
+        for iw in [3, 4]:
+            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(len(packs)) ]
+            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
+            newMarkDesigns += [ (nb%(7, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
         
         nb_idx=8
-        nb, hull = designNameBases[nb_idx]+"-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar3]+ [db%3]+ [is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar4]+ [db%3]+ [is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar3]+ [db%3]+ [is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar4]+ [db%3]+ [is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(5, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar3]+ [db%3]+ [is5, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(6, iw) ,  desc, hull, 4*[srb4%iw]+1*[ar4]+ [db%3]+ [is5, if1, if1], "", model) for iw in [2, 3, 4] ]
+        # Heavy Asteroids
+        # DR2-4 weaps
+        nb, hull = designNameBases[nb_idx]+"-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
+        for iw in [2, 3, 4]:
+            newMarkDesigns += [ (nb%(1, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(12) ]
+            newMarkDesigns += [ (nb%(2, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
+            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + packs[ieng], "", model) for ieng in range(len(packs)) ]
+            newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + packs[ieng], "", model) for ieng in range(len(packs)) ]
+            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
+            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
 
         if False and foAI.foAIstate.aggression >fo.aggression.typical:
             hull = "SH_SENTIENT"

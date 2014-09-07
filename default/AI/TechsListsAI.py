@@ -82,12 +82,12 @@ def tech_group_2a():  # prioritizes growth & defense over weapons
             "PRO_FUSION_GEN",
             "GRO_SYMBIOTIC_BIO",
             "SPY_DETECT_2",
-            "PRO_INDUSTRY_CENTER_I",
             "LRN_FORCE_FIELD",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
             "SHP_WEAPON_2_4",
+            "PRO_INDUSTRY_CENTER_I",
     ]
     return result
 
@@ -132,11 +132,15 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "PRO_ORBITAL_GEN",
             "PRO_SOL_ORB_GEN",
             "DEF_GARRISON_2",
-            "SPY_DETECT_3",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
+            "SHP_DEUTERIUM_TANK",
+            "SHP_IMPROVED_ENGINE_COUPLINGS",
             "LRN_QUANT_NET",
             "DEF_PLAN_BARRIER_SHLD_1",
+            "SHP_DEFLECTOR_SHIELD",
+            "SPY_DETECT_3",
+            "SHP_DIAMOND_PLATE",
             "DEF_DEFENSE_NET_3",
             "CON_CONTGRAV_ARCH",
             "CON_ORBITAL_HAB",
@@ -150,7 +154,6 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SHP_MULTICELL_CAST",
             "SHP_ENDOCRINE_SYSTEMS",
             "SHP_CONT_BIOADAPT",
-            "SHP_DEFLECTOR_SHIELD",
             "SPY_STEALTH_1",
     ]
     return result
@@ -164,7 +167,6 @@ def tech_group_3b():  # with SHP_ASTEROID_REFORM
 
 def tech_group_4a():  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
     result = [
-            "SHP_DIAMOND_PLATE",
             "CON_NDIM_STRC", 
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
