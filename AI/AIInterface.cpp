@@ -34,12 +34,6 @@ AIBase::~AIBase()
 void AIBase::GenerateOrders()
 { AIInterface::DoneTurn(); }
 
-void AIBase::GenerateCombatSetupOrders(const CombatData& combat_data)
-{ AIInterface::CombatSetup(); }
-
-void AIBase::GenerateCombatOrders(const CombatData& combat_data)
-{ AIInterface::DoneCombatTurn(); }
-
 void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 {}
 
