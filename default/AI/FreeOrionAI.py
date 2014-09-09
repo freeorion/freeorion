@@ -19,9 +19,9 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from tools import UserString
+from freeorion_tools import UserString
 from debug_tools import chat_on_error, print_error
-from timing import Timer
+from freeorion_timing import Timer
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)

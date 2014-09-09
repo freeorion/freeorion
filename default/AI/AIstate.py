@@ -11,7 +11,7 @@ import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 
 
 ## moving ALL or NEARLY ALL 'global' variables into AIState object rather than module

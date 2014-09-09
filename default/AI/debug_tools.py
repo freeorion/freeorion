@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from traceback import format_exc
-from tools import UserString
+from freeorion_tools import UserString
 from functools import wraps
 
 

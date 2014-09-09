@@ -11,7 +11,7 @@ import MilitaryAI
 import InvasionAI
 import PlanetUtilsAI
 import math
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 from AITarget import AITarget
 from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType, AIFleetOrderType
 

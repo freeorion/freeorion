@@ -5,8 +5,8 @@ import PlanetUtilsAI
 import random
 import ColonisationAI
 import AIDependencies
-from timing import Timer
-from tools import tech_is_complete
+from freeorion_timing import Timer
+from freeorion_tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
 

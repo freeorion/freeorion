@@ -5,7 +5,7 @@ from EnumsAI import AIFleetMissionType, AITargetType
 import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 
 
 TARGET_POP = 'targetPop'

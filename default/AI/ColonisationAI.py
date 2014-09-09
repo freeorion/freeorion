@@ -11,8 +11,8 @@ import ProductionAI
 import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AIFocusType
 import EnumsAI
-from tools import dict_from_map, tech_is_complete
-from timing import Timer
+from freeorion_tools import dict_from_map, tech_is_complete
+from freeorion_timing import Timer
 
 colonization_timer = Timer('getColonyFleets()')
 

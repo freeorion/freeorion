@@ -4,7 +4,7 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import MoveUtilsAI
 import PlanetUtilsAI
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()

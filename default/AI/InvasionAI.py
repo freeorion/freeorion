@@ -10,8 +10,8 @@ import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
-from tools import dict_from_map, tech_is_complete
-from timing import Timer
+from freeorion_tools import dict_from_map, tech_is_complete
+from freeorion_timing import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 

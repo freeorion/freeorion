@@ -5,7 +5,7 @@ import AIDependencies
 import AIstate
 import traceback
 import ColonisationAI
-from tools import tech_is_complete
+from freeorion_tools import tech_is_complete
 
 inProgressTechs={}
 

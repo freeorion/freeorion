@@ -12,8 +12,8 @@ import EnumsAI
 import ProductionAI
 import ResearchAI
 import AIDependencies
-from timing import Timer
-from tools import tech_is_complete
+from freeorion_timing import Timer
+from freeorion_tools import tech_is_complete
 
 prioritiees_timer = Timer('calculate_priorities()')
 

@@ -10,7 +10,7 @@ import PriorityAI
 import ColonisationAI
 import EnumsAI
 import MilitaryAI
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 
 bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
