@@ -926,9 +926,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"));
     GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);
 
-    if (m_planet_graphic)
-        MoveChildDown(m_planet_graphic);
-
     SetChildClippingMode(ClipToWindow);
 
     Refresh();
@@ -1028,10 +1025,14 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
-    delete m_planet_graphic;
-    m_planet_graphic = 0;
-    delete m_rotating_planet_graphic;
-    m_rotating_planet_graphic = 0;
+    if (m_planet_graphic) {
+        delete m_planet_graphic;
+        m_planet_graphic = 0;
+    }
+    if (m_rotating_planet_graphic) {
+        delete m_rotating_planet_graphic;
+        m_rotating_planet_graphic = 0;
+    }
 
     if (planet->Type() == PT_ASTEROIDS) {
         const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetAsteroidTextures();
