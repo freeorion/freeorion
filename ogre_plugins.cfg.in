@@ -1,9 +1,0 @@
-# Ogre 3D engine plugins to load
-
-# Plugin folder
-PluginFolder=${OGRE_PLUGIN_DIR_REL}
-
-# Plugins
-Plugin=RenderSystem_GL
-Plugin=Plugin_ParticleFX
-Plugin=Plugin_OctreeSceneManager
