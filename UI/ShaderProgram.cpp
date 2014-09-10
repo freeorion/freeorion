@@ -9,7 +9,7 @@
 #include <fstream>
 
 #include "../client/human/HumanClientApp.h"
-#include "../../util/Logger.h"
+#include "../util/Logger.h"
 
 #include <GG/utf8/checked.h>
 
