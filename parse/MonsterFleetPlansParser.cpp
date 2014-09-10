@@ -21,7 +21,7 @@ namespace std {
 
 namespace {
     struct new_monster_fleet_plan_ {
-#if BOOST_VERSION < 105600
+#if BOOST_VERSION < 105500
         template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> // Phoenix v2
         struct result
         { typedef MonsterFleetPlan* type; };

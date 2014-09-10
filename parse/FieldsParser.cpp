@@ -20,7 +20,7 @@ namespace std {
 
 namespace {
     struct insert_ {
-#if BOOST_VERSION < 105600
+#if BOOST_VERSION < 105500
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
