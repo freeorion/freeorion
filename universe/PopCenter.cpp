@@ -87,11 +87,6 @@ float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
             return std::max(target_meter_value, current_meter_value - 1.0f);
         else
             return current_meter_value;
-
-    } else if (meter_type == METER_TARGET_POPULATION) {
-        Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
-        return meter->Current();
-
     } else {
         Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0f;
