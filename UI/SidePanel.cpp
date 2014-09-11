@@ -1877,6 +1877,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         case 2:
         {   // colonizable/suitability report
             ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id);
+            break;
         }
 
         case 12: { // cancel give away order for this fleet
@@ -1891,6 +1892,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                     }
                 }
             }
+            break;
         }
 
         default: { // check for menu item indicating give to other empire order
