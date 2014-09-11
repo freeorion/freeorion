@@ -1964,6 +1964,16 @@ namespace {
         std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
 
         // Collect species colonizing/environment hospitality information
+        // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
+        // represented in this empire's PopCenters
+        const SpeciesManager& species_manager = GetSpeciesManager();
+        for (SpeciesManager::iterator it = species_manager.begin();
+                it != species_manager.end(); ++it)
+        {
+            if (it->second && (it->second->Tags().find("CTRL_ALWAYS_REPORT") != it->second->Tags().end()))
+                    species_names.insert(it->first);
+        }
+
         for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
             TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);

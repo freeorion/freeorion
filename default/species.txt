@@ -450,7 +450,7 @@ Species
     CanProduceShips
     CanColonize
     
-    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" ]
+    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
