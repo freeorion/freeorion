@@ -1,6 +1,4 @@
-#ifdef FREEORION_WIN32
 #include <GL/glew.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -217,10 +215,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     */
 
 
-#ifdef FREEORION_WIN32
     GLenum error = glewInit();
     assert(error == GLEW_OK);
-#endif
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();

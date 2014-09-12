@@ -1,6 +1,4 @@
-#ifdef FREEORION_WIN32
 #include <GL/glew.h>
-#endif
 
 #include "SidePanel.h"
 
