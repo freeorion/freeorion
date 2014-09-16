@@ -2105,7 +2105,11 @@ NO_SUPPLY
 '''
 
 BAD_SUPPLY
-'''
+'''     EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_SUPPLY_LABEL"
+            effects = SetMaxSupply Value + 0
 '''
 
 AVERAGE_SUPPLY

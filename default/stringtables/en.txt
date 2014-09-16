@@ -9995,6 +9995,9 @@ GREAT_RESEARCH_LABEL
 ULTIMATE_RESEARCH_LABEL
 '''%2% Ultimate Research'''
 
+BAD_SUPPLY_LABEL
+'''%2% Bad Supply'''
+
 AVERAGE_SUPPLY_LABEL
 '''%2% Average Supply'''
 
