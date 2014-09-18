@@ -110,7 +110,7 @@ public:
     //@}
 
     static SDLGUI* GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
-    static GG::Key GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
+    GG::Key GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
 
     virtual void        Enter2DMode();
     virtual void        Exit2DMode();
@@ -155,6 +155,7 @@ private:
     bool m_done; //< Set true true when we should exit.
     boost::scoped_ptr<Framebuffer> m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
     boost::scoped_ptr<OpenGLExtensions> m_glext; //< a class that manages loading of opengl extensions
+    std::map<SDL_Keycode, Key> m_key_map; //< a mapping from sdl keycodes to GiGi keys
 };
 
 } // namespace GG

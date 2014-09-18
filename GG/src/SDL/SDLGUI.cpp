@@ -55,6 +55,269 @@ namespace {
         return retval;
     }
 
+    // Constructs the map from SDL keycodes to GiGi keys.
+    // The map is partial, not all sdl keys have corresponding gigi representations.
+    void InitializeKeyMap(std::map<SDL_Keycode, GG::Key>& keys) {
+        // These are, at least at the tim eof writing in the same order as
+        // in the definition at SDL_keycode.h
+        // All values there are present, the ones that don't have
+        // a GiGi mapping are simply commented out.
+        // This should make it easy to find the right place
+        // to add keys should the GiGi key set be enriched.
+
+        keys[SDLK_UNKNOWN] = GGK_UNKNOWN;
+
+        keys[SDLK_RETURN] = GGK_RETURN;
+        keys[SDLK_ESCAPE] = GGK_ESCAPE;
+        keys[SDLK_BACKSPACE] = GGK_BACKSPACE;
+        keys[SDLK_TAB] = GGK_TAB;
+        keys[SDLK_SPACE] = GGK_SPACE;
+        keys[SDLK_EXCLAIM] = GGK_EXCLAIM;
+        keys[SDLK_QUOTEDBL] = GGK_QUOTEDBL;
+        keys[SDLK_HASH] = GGK_HASH;
+        // keys[SDLK_PERCENT] = GGK_PERCENT;
+        keys[SDLK_DOLLAR] = GGK_DOLLAR;
+        keys[SDLK_AMPERSAND] = GGK_AMPERSAND;
+        keys[SDLK_QUOTE] = GGK_QUOTE;
+        keys[SDLK_LEFTPAREN] = GGK_LEFTPAREN;
+        keys[SDLK_RIGHTPAREN] = GGK_RIGHTPAREN;
+        keys[SDLK_ASTERISK] = GGK_ASTERISK;
+        keys[SDLK_PLUS] = GGK_PLUS;
+        keys[SDLK_COMMA] = GGK_COMMA;
+        keys[SDLK_MINUS] = GGK_MINUS;
+        keys[SDLK_PERIOD] = GGK_PERIOD;
+        keys[SDLK_SLASH] = GGK_SLASH;
+        keys[SDLK_0] = GGK_0;
+        keys[SDLK_1] = GGK_1;
+        keys[SDLK_2] = GGK_2;
+        keys[SDLK_3] = GGK_3;
+        keys[SDLK_4] = GGK_4;
+        keys[SDLK_5] = GGK_5;
+        keys[SDLK_6] = GGK_6;
+        keys[SDLK_7] = GGK_7;
+        keys[SDLK_8] = GGK_8;
+        keys[SDLK_9] = GGK_9;
+        keys[SDLK_COLON] = GGK_COLON;
+        keys[SDLK_SEMICOLON] = GGK_SEMICOLON;
+        keys[SDLK_LESS] = GGK_LESS;
+        keys[SDLK_EQUALS] = GGK_EQUALS;
+        keys[SDLK_GREATER] = GGK_GREATER;
+        keys[SDLK_QUESTION] = GGK_QUESTION;
+        keys[SDLK_AT] = GGK_AT;
+        /*
+         S kip uppercase letters                               *
+         */
+        keys[SDLK_LEFTBRACKET] = GGK_LEFTBRACKET;
+        keys[SDLK_BACKSLASH] = GGK_BACKSLASH;
+        keys[SDLK_RIGHTBRACKET] = GGK_RIGHTBRACKET;
+        keys[SDLK_CARET] = GGK_CARET;
+        keys[SDLK_UNDERSCORE] = GGK_UNDERSCORE;
+        keys[SDLK_BACKQUOTE] = GGK_BACKQUOTE;
+        keys[SDLK_a] = GGK_a;
+        keys[SDLK_b] = GGK_b;
+        keys[SDLK_c] = GGK_c;
+        keys[SDLK_d] = GGK_d;
+        keys[SDLK_e] = GGK_e;
+        keys[SDLK_f] = GGK_f;
+        keys[SDLK_g] = GGK_g;
+        keys[SDLK_h] = GGK_h;
+        keys[SDLK_i] = GGK_i;
+        keys[SDLK_j] = GGK_j;
+        keys[SDLK_k] = GGK_k;
+        keys[SDLK_l] = GGK_l;
+        keys[SDLK_m] = GGK_m;
+        keys[SDLK_n] = GGK_n;
+        keys[SDLK_o] = GGK_o;
+        keys[SDLK_p] = GGK_p;
+        keys[SDLK_q] = GGK_q;
+        keys[SDLK_r] = GGK_r;
+        keys[SDLK_s] = GGK_s;
+        keys[SDLK_t] = GGK_t;
+        keys[SDLK_u] = GGK_u;
+        keys[SDLK_v] = GGK_v;
+        keys[SDLK_w] = GGK_w;
+        keys[SDLK_x] = GGK_x;
+        keys[SDLK_y] = GGK_y;
+        keys[SDLK_z] = GGK_z;
+
+        keys[SDLK_CAPSLOCK] = GGK_CAPSLOCK;
+
+        keys[SDLK_F1] = GGK_F1;
+        keys[SDLK_F2] = GGK_F2;
+        keys[SDLK_F3] = GGK_F3;
+        keys[SDLK_F4] = GGK_F4;
+        keys[SDLK_F5] = GGK_F5;
+        keys[SDLK_F6] = GGK_F6;
+        keys[SDLK_F7] = GGK_F7;
+        keys[SDLK_F8] = GGK_F8;
+        keys[SDLK_F9] = GGK_F9;
+        keys[SDLK_F10] = GGK_F10;
+        keys[SDLK_F11] = GGK_F11;
+        keys[SDLK_F12] = GGK_F12;
+
+        // keys[SDLK_PRINTSCREEN] = GGK_PRINTSCREEN;
+        // keys[SDLK_SCROLLLOCK] = GGK_SCROLLLOCK;
+        keys[SDLK_PAUSE] = GGK_PAUSE;
+        keys[SDLK_INSERT] = GGK_INSERT;
+        keys[SDLK_HOME] = GGK_HOME;
+        keys[SDLK_PAGEUP] = GGK_PAGEUP;
+        keys[SDLK_DELETE] = GGK_DELETE;
+        keys[SDLK_END] = GGK_END;
+        keys[SDLK_PAGEDOWN] = GGK_PAGEDOWN;
+        keys[SDLK_RIGHT] = GGK_RIGHT;
+        keys[SDLK_LEFT] = GGK_LEFT;
+        keys[SDLK_DOWN] = GGK_DOWN;
+        keys[SDLK_UP] = GGK_UP;
+
+        // keys[SDLK_NUMLOCKCLEAR] = GGK_NUMLOCKCLEAR;
+        keys[SDLK_KP_DIVIDE] = GGK_KP_DIVIDE;
+        keys[SDLK_KP_MULTIPLY] = GGK_KP_MULTIPLY;
+        keys[SDLK_KP_MINUS] = GGK_KP_MINUS;
+        keys[SDLK_KP_PLUS] = GGK_KP_PLUS;
+        keys[SDLK_KP_ENTER] = GGK_KP_ENTER;
+        keys[SDLK_KP_1] = GGK_KP1;
+        keys[SDLK_KP_2] = GGK_KP2;
+        keys[SDLK_KP_3] = GGK_KP3;
+        keys[SDLK_KP_4] = GGK_KP4;
+        keys[SDLK_KP_5] = GGK_KP5;
+        keys[SDLK_KP_6] = GGK_KP6;
+        keys[SDLK_KP_7] = GGK_KP7;
+        keys[SDLK_KP_8] = GGK_KP8;
+        keys[SDLK_KP_9] = GGK_KP9;
+        keys[SDLK_KP_0] = GGK_KP0;
+        keys[SDLK_KP_PERIOD] = GGK_KP_PERIOD;
+
+        // keys[SDLK_APPLICATION] = GGK_APPLICATION;
+        keys[SDLK_POWER] = GGK_POWER;
+        keys[SDLK_KP_EQUALS] = GGK_KP_EQUALS;
+        keys[SDLK_F13] = GGK_F13;
+        keys[SDLK_F14] = GGK_F14;
+        keys[SDLK_F15] = GGK_F15;
+        // keys[SDLK_F16] = GGK_F16;
+        // keys[SDLK_F17] = GGK_F17;
+        // keys[SDLK_F18] = GGK_F18;
+        // keys[SDLK_F19] = GGK_F19;
+        // keys[SDLK_F20] = GGK_F20;
+        // keys[SDLK_F21] = GGK_F21;
+        // keys[SDLK_F22] = GGK_F22;
+        // keys[SDLK_F23] = GGK_F23;
+        // keys[SDLK_F24] = GGK_F24;
+        // keys[SDLK_EXECUTE] = GGK_EXECUTE;
+        keys[SDLK_HELP] = GGK_HELP;
+        keys[SDLK_MENU] = GGK_MENU;
+        // keys[SDLK_SELECT] = GGK_SELECT;
+        // keys[SDLK_STOP] = GGK_STOP;
+        // keys[SDLK_AGAIN] = GGK_AGAIN;
+        keys[SDLK_UNDO] = GGK_UNDO;
+        // keys[SDLK_CUT] = GGK_CUT;
+        // keys[SDLK_COPY] = GGK_COPY;
+        // keys[SDLK_PASTE] = GGK_PASTE;
+        // keys[SDLK_FIND] = GGK_FIND;
+        // keys[SDLK_MUTE] = GGK_MUTE;
+        // keys[SDLK_VOLUMEUP] = GGK_VOLUMEUP;
+        // keys[SDLK_VOLUMEDOWN] = GGK_VOLUMEDOWN;
+        // keys[SDLK_KP_COMMA] = GGK_KP_COMMA;
+        //keys[SDLK_KP_EQUALSAS400] = ?
+
+        // keys[SDLK_ALTERASE] = GGK_ALTERASE;
+        keys[SDLK_SYSREQ] = GGK_SYSREQ;
+        // keys[SDLK_CANCEL] = GGK_CANCEL;
+        keys[SDLK_CLEAR] = GGK_CLEAR;
+        // keys[SDLK_PRIOR] = GGK_PRIOR;
+        // keys[SDLK_RETURN2] = GGK_RETURN2;
+        // keys[SDLK_SEPARATOR] = GGK_SEPARATOR;
+        // keys[SDLK_OUT] = GGK_OUT;
+        // keys[SDLK_OPER] = GGK_OPER;
+        // keys[SDLK_CLEARAGAIN] = GGK_CLEARAGAIN;
+        // keys[SDLK_CRSEL] = GGK_CRSEL;
+        // keys[SDLK_EXSEL] = GGK_EXSEL;
+
+        // keys[SDLK_KP_00] = GGK_KP_00;
+        // keys[SDLK_KP_000] = GGK_KP_000;
+        // SDLK_THOUSANDSSEPARATOR = ?
+        // SDLK_DECIMALSEPARATOR = ?
+        // keys[SDLK_CURRENCYUNIT] = GGK_CURRENCYUNIT;
+        // SDLK_CURRENCYSUBUNIT = ?
+        // keys[SDLK_KP_LEFTPAREN] = GGK_KP_LEFTPAREN;
+        // keys[SDLK_KP_RIGHTPAREN] = GGK_KP_RIGHTPAREN;
+        // keys[SDLK_KP_LEFTBRACE] = GGK_KP_LEFTBRACE;
+        // keys[SDLK_KP_RIGHTBRACE] = GGK_KP_RIGHTBRACE;
+        // keys[SDLK_KP_TAB] = GGK_KP_TAB;
+        keys[SDLK_KP_BACKSPACE] = GGK_BACKSPACE; // Decreases fidelity
+        keys[SDLK_KP_A] = GGK_A;// Decreases fidelity
+        keys[SDLK_KP_B] = GGK_B;// Decreases fidelity
+        keys[SDLK_KP_C] = GGK_C;// Decreases fidelity
+        keys[SDLK_KP_D] = GGK_D;// Decreases fidelity
+        keys[SDLK_KP_E] = GGK_E;// Decreases fidelity
+        keys[SDLK_KP_F] = GGK_F;// Decreases fidelity
+        // keys[SDLK_KP_XOR] = GGK_KP_XOR;
+        // keys[SDLK_KP_POWER] = GGK_KP_POWER;
+        // keys[SDLK_KP_PERCENT] = GGK_KP_PERCENT;
+        // keys[SDLK_KP_LESS] = GGK_KP_LESS;
+        // keys[SDLK_KP_GREATER] = GGK_KP_GREATER;
+        // keys[SDLK_KP_AMPERSAND] = GGK_KP_AMPERSAND;
+        // SDLK_KP_DBLAMPERSAND = ?
+        // SDLK_KP_VERTICALBAR =
+        // SDLK_KP_DBLVERTICALBAR =
+        // keys[SDLK_KP_COLON] = GGK_KP_COLON;
+        // keys[SDLK_KP_HASH] = GGK_KP_HASH;
+        // keys[SDLK_KP_SPACE] = GGK_KP_SPACE;
+        // keys[SDLK_KP_AT] = GGK_KP_AT;
+        // keys[SDLK_KP_EXCLAM] = GGK_KP_EXCLAM;
+        // keys[SDLK_KP_MEMSTORE] = GGK_KP_MEMSTORE;
+        // keys[SDLK_KP_MEMRECALL] = GGK_KP_MEMRECALL;
+        // keys[SDLK_KP_MEMCLEAR] = GGK_KP_MEMCLEAR;
+        // keys[SDLK_KP_MEMADD] = GGK_KP_MEMADD;
+        // SDLK_KP_MEMSUBTRACT = ?
+        // SDLK_KP_MEMMULTIPLY = ?
+        // keys[SDLK_KP_MEMDIVIDE] = GGK_KP_MEMDIVIDE;
+        // keys[SDLK_KP_PLUSMINUS] = GGK_KP_PLUSMINUS;
+        // keys[SDLK_KP_CLEAR] = GGK_KP_CLEAR;
+        // keys[SDLK_KP_CLEARENTRY] = GGK_KP_CLEARENTRY;
+        // keys[SDLK_KP_BINARY] = GGK_KP_BINARY;
+        // keys[SDLK_KP_OCTAL] = GGK_KP_OCTAL;
+        // keys[SDLK_KP_DECIMAL] = GGK_KP_DECIMAL;
+        // SDLK_KP_HEXADECIMAL = ?
+
+        keys[SDLK_LCTRL] = GGK_LCTRL;
+        keys[SDLK_LSHIFT] = GGK_LSHIFT;
+        keys[SDLK_LALT] = GGK_LALT;
+        keys[SDLK_LGUI] = GGK_LSUPER;
+        keys[SDLK_RCTRL] = GGK_RCTRL;
+        keys[SDLK_RSHIFT] = GGK_RSHIFT;
+        keys[SDLK_RALT] = GGK_RALT;
+        keys[SDLK_RGUI] = GGK_RSUPER;
+
+        keys[SDLK_MODE] = GGK_MODE;
+
+        // keys[SDLK_AUDIONEXT] = GGK_AUDIONEXT;
+        // keys[SDLK_AUDIOPREV] = GGK_AUDIOPREV;
+        // keys[SDLK_AUDIOSTOP] = GGK_AUDIOSTOP;
+        // keys[SDLK_AUDIOPLAY] = GGK_AUDIOPLAY;
+        // keys[SDLK_AUDIOMUTE] = GGK_AUDIOMUTE;
+        // keys[SDLK_MEDIASELECT] = GGK_MEDIASELECT;
+        // keys[SDLK_WWW] = GGK_WWW;
+        // keys[SDLK_MAIL] = GGK_MAIL;
+        // keys[SDLK_CALCULATOR] = GGK_CALCULATOR;
+        // keys[SDLK_COMPUTER] = GGK_COMPUTER;
+        // keys[SDLK_AC_SEARCH] = GGK_AC_SEARCH;
+        // keys[SDLK_AC_HOME] = GGK_AC_HOME;
+        // keys[SDLK_AC_BACK] = GGK_AC_BACK;
+        // keys[SDLK_AC_FORWARD] = GGK_AC_FORWARD;
+        // keys[SDLK_AC_STOP] = GGK_AC_STOP;
+        // keys[SDLK_AC_REFRESH] = GGK_AC_REFRESH;
+        // keys[SDLK_AC_BOOKMARKS] = GGK_AC_BOOKMARKS;
+
+        // keys[SDLK_BRIGHTNESSDOWN] = GGK_BRIGHTNESSDOWN;
+        // keys[SDLK_BRIGHTNESSUP] = GGK_BRIGHTNESSUP;
+        // keys[SDLK_DISPLAYSWITCH] = GGK_DISPLAYSWITCH;
+        // SDLK_KBDILLUMTOGGLE = ?
+        // keys[SDLK_KBDILLUMDOWN] = GGK_KBDILLUMDOWN;
+        // keys[SDLK_KBDILLUMUP] = GGK_KBDILLUMUP;
+        // keys[SDLK_EJECT] = GGK_EJECT;
+        // keys[SDLK_SLEEP] = GGK_SLEEP;
+    }
+
     void SetSDLFullscreenSize(SDL_Window* window, int display_id, int width, int height) {
         SDL_DisplayMode target;
         target.w = width;
@@ -259,7 +522,8 @@ SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, con
     m_window(NULL),
     m_done(false),
     m_framebuffer(NULL),
-    m_glext(NULL)
+    m_glext(NULL),
+    m_key_map()
 {
     SDLInit();
 }
@@ -318,7 +582,10 @@ SDLGUI* SDLGUI::GetGUI()
 
 Key SDLGUI::GGKeyFromSDLKey(const SDL_Keysym& key)
 {
-    Key retval = Key(key.sym);
+    Key retval;
+    if (m_key_map.find(key.sym) != m_key_map.end()) {
+        retval = m_key_map[key.sym];
+    }
     int shift = key.mod & KMOD_SHIFT;
     int caps_lock = key.mod & KMOD_CAPS;
 
@@ -366,6 +633,7 @@ void SDLGUI::SetAppSize(const Pt& size)
 
 void SDLGUI::SDLInit()
 {
+    InitializeKeyMap(m_key_map);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "SDL initialization failed: " << SDL_GetError();
