@@ -95,6 +95,13 @@ namespace {
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
+
+        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 1600));
+        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
+        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     SDL_WINDOWPOS_CENTERED,      RangedValidator<int>(-10240, 10240));
+        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,                          RangedValidator<int>(-10240, 10240));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -208,15 +215,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
     GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
-    /* TODO: Figure out how to get these signals with SDL
     GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
+    /* TODO: Wire these signals if theyare needed
     GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleWindowClosing,   this);
     GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
     */
-
-
-    GLenum error = glewInit();
-    assert(error == GLEW_OK);
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -756,14 +759,9 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
-    // for some reason on Linux, the value passed here is incorrect, so needs
-    // to be ignored...  (Or at least this was the case with Ogre, and might not
-    // be anymore...
-#ifndef FREEORION_LINUX
     GetOptionsDB().Set<int>("app-left-windowed", Value(w));
     GetOptionsDB().Set<int>("app-top-windowed", Value(h));
     GetOptionsDB().Commit();
-#endif
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {

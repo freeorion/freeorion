@@ -426,13 +426,6 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 1600));
-        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
-        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     0,      RangedValidator<int>(-10240, 10240));
-        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      0,      RangedValidator<int>(-10240, 10240));
-
         db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           32,     RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
         db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);

@@ -153,9 +153,6 @@ public:
         keyboard, mouse, etc. */
     boost::signals2::signal<void ()> HandleSystemEventsSignal;
 
-    /** Emitted whenever the OgreGUI's window's left and top positions change. */
-    boost::signals2::signal<void (X, Y)> WindowMovedSignal;
-
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         is about to close. */
     boost::signals2::signal<void ()> WindowClosingSignal;

@@ -354,6 +354,9 @@ public:
     /** Emitted whenever the GUI's AppWidth() and/or AppHeight() change. */
     boost::signals2::signal<void (X, Y)> WindowResizedSignal;
 
+    /** Emitted whenever the GUI's window's left and top positions change. */
+    boost::signals2::signal<void (X, Y)> WindowMovedSignal;
+
     /** Emitted when the Window in which the GUI is operating
      gains or loses focus. */
      boost::signals2::signal<void ()> FocusChangedSignal;

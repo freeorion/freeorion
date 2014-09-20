@@ -648,7 +648,7 @@ void SDLGUI::SDLInit()
     // Use the same code for the real size initialization that is used for resizing the window
     // to avoid duplicated effort.
     m_window = SDL_CreateWindow(AppName().c_str(), Value(m_initial_x), Value(m_initial_y),
-                                100, 100, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                Value(m_app_width), Value(m_app_height), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if (m_window == 0) {
         std::cerr << "Video mode set failed: " << SDL_GetError();
@@ -656,6 +656,12 @@ void SDLGUI::SDLInit()
     }
     m_gl_context = SDL_GL_CreateContext(m_window);
     m_glext.reset(new OpenGLExtensions(m_gl_context));
+
+    GLenum error = glewInit();
+    if(error != GLEW_OK){
+        std::cerr << "Glew initialization failed: " << error << " = " << glewGetErrorString(error);
+        Exit(1);
+    }
 
     SDL_ShowCursor(false);
 
@@ -768,6 +774,9 @@ void SDLGUI::HandleSystemEvents()
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
                 case SDL_WINDOWEVENT_FOCUS_LOST:
                     FocusChangedSignal();
+                    break;
+                case SDL_WINDOWEVENT_MOVED:
+                    WindowMovedSignal ( X(event.window.data1), Y(event.window.data2) );
                     break;
             }
             break;
