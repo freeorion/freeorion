@@ -2919,6 +2919,12 @@ Design Files
 DESIGN_SAVE
 Save Design File
 
+DESIGN_ADD
+Add Design to Empire Designs
+
+DESIGN_ADD_ALL
+Add All Saved Designs to Empire
+
 DESIGN_NAME_DEFAULT
 Custom Ship Design
 

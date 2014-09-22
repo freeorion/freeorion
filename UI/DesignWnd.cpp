@@ -192,6 +192,38 @@ namespace {
         std::map<std::string, ShipDesign*>::iterator begin() { return m_saved_designs.begin(); }
         std::map<std::string, ShipDesign*>::iterator end()   { return m_saved_designs.end(); }
 
+        /* Causes the human client Empire to add all saved designs. */
+        void LoadAllSavedDesigns() {
+            int empire_id = HumanClientApp::GetApp()->EmpireID();
+            if (const Empire* empire = Empires().Lookup(empire_id)) {
+                Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns";
+                for (std::map<std::string, ShipDesign*>::iterator savedit = begin();
+                    savedit != end(); ++savedit)
+                {
+                    bool already_got = false;
+                    for (Empire::ShipDesignItr it = empire->ShipDesignBegin();
+                        it != empire->ShipDesignEnd(); ++it)
+                    {
+                        const ShipDesign& ship_design = *GetShipDesign(*it);
+                        if (ship_design == *(savedit->second)) {
+                            already_got = true;
+                            break;
+                        }
+                    }
+                    if (!already_got) {
+                        Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << savedit->second->Name();
+                        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+                        HumanClientApp::GetApp()->Orders().IssueOrder(
+                            OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *(savedit->second))));
+                    } else {
+                        Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << savedit->second->Name();
+                    }
+                }
+            } else {
+                Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
+            }
+        }
+
     private:
         SavedDesignsManager() {
             if (s_instance)
@@ -1638,65 +1670,109 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
 void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
-    if (!design_row)
-        return;
+    if (CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it)) {
+        int design_id = design_row->DesignID();
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
 
-    int design_id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(design_id);
-    if (!design)
-         return;
+        DesignRightClickedSignal(design);
+        // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
 
-    DesignRightClickedSignal(design);
-    // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
-    Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
+        // create popup menu with a commands in it
+        GG::MenuItem menu_contents;
+        if (client_empire_id != ALL_EMPIRES)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
 
-    // create popup menu with a commands in it
-    GG::MenuItem menu_contents;
-    if (client_empire_id != ALL_EMPIRES)
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+        if (design->DesignedByEmpire() == client_empire_id)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
 
-    if (design->DesignedByEmpire() == client_empire_id)
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_SAVE"),       3, false, false));
 
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_SAVE"),       3, false, false));
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
 
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-
-        case 1: {   // delete design
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
-            break;
-        }
-
-        case 2: {   // rename design
-            CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
-            edit_wnd.Run();
-            const std::string& result = edit_wnd.Result();
-            if (result != "" && result != design->Name()) {
+            case 1: {   // delete design
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
-                ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
-                design_panel->Update();
+                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
+                break;
             }
-            break;
+
+            case 2: {   // rename design
+                CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+                edit_wnd.Run();
+                const std::string& result = edit_wnd.Result();
+                if (result != "" && result != design->Name()) {
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
+                    ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
+                    design_panel->Update();
+                }
+                break;
+            }
+
+            case 3: {   // save design
+                ShowSaveDesignDialog(design_id);
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    } else if (SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
+        std::string design_name = design_row->DesignName();
+        SavedDesignsManager& manager = GetSavedDesignsManager();
+        const ShipDesign* design = manager.GetDesign(design_name);
+        if (!design)
+            return;
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire)
+            return;
+
+        DesignRightClickedSignal(design);
+
+        Logger().debugStream() << "BasesListBox::BaseRightClicked on design name : " << design_name;
+
+        // create popup menu with a commands in it
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD"),       1, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   2, false, false));
+
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+
+            case 1: {   // add design
+                Logger().debugStream() << "BasesListBox::BaseRightClicked Add Saved Design" << design_name;
+                int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+                break;
+            }
+
+            case 2: {   // add all saved designs
+                Logger().debugStream() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
+                manager.LoadAllSavedDesigns();
+                break;
+            }
+
+            default:
+                break;
+            }
         }
 
-        case 3: {   // save design
-            ShowSaveDesignDialog(design_id);
-            break;
-        }
-
-        default:
-            break;
-        }
     }
 }
 
@@ -2505,6 +2581,7 @@ void DesignWnd::MainPanel::ReregisterDesigns() {
     }
 }
 
+
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(0);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
@@ -2513,8 +2590,13 @@ void DesignWnd::MainPanel::Sanitize() {
     m_empire_designs_changed_signal.disconnect();
     // connect signal to update this list if the empire's designs change
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (const Empire* empire = Empires().Lookup(empire_id))
+    if (const Empire* empire = Empires().Lookup(empire_id)) {
+        Logger().debugStream() << "DesignWnd::MainPanel::Sanitize";
+        if (CurrentTurn() == 1) {
+            //GetSavedDesignsManager().LoadAllSavedDesigns(); // currently handled instead by right click context menu
+        }
         m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &MainPanel::ReregisterDesigns,    this); // not apparent if this is working, but in typical use is unnecessary
+    }
     ReregisterDesigns();
 }
 
