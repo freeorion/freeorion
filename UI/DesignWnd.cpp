@@ -1453,8 +1453,15 @@ void BasesListBox::Populate() {
     if (m_showing_empty_hulls)
         PopulateWithEmptyHulls();
 
-    if (m_showing_completed_designs)
+    if (m_showing_completed_designs) {
+        // make note of first visible row to preserve state
+        std::size_t first_visible_row = std::distance(begin(), FirstRowShown());
         PopulateWithCompletedDesigns();
+        if (!Empty())
+            BringRowIntoView(--end());
+        if (first_visible_row < NumRows())
+            BringRowIntoView(boost::next(begin(), first_visible_row));
+    }
 
     if (m_showing_saved_designs)
         PopulateWithSavedDesigns();
