@@ -504,6 +504,9 @@ namespace {
         db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              100,        RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",     UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),     false);
         db.Add("UI.window-quickclose",          UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          false);
+
+        // Other
+        db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

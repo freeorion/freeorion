@@ -2592,9 +2592,9 @@ void DesignWnd::MainPanel::Sanitize() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (const Empire* empire = Empires().Lookup(empire_id)) {
         Logger().debugStream() << "DesignWnd::MainPanel::Sanitize";
-        //if (CurrentTurn() == 1) { // uncomment this and the following two lines to autoload all saved designs at game start
-            //GetSavedDesignsManager().LoadAllSavedDesigns(); // currently handled instead by right click context menu
-        //}
+        if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
+            GetSavedDesignsManager().LoadAllSavedDesigns(); 
+        }
         m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &MainPanel::ReregisterDesigns,    this); // not apparent if this is working, but in typical use is unnecessary
     }
     ReregisterDesigns();

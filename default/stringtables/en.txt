@@ -1135,6 +1135,9 @@ If true, clicks on multiple fleet buttons will open multiple fleet windows at th
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
+OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
+At game start automatically add all user-saved ship designs to the player-empire known designs.
+
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Sets size of system side-panel.
 
@@ -2170,6 +2173,8 @@ Situation reports with errors
 OPTIONS_EFFECTS_THREADS
 Effects processing threads
 
+OPTIONS_ADD_SAVED_DESIGNS
+Add All Saved Ship Designs at Game Start
 
 ##################
 # CombatSetupWnd #
