@@ -48,7 +48,6 @@
 namespace GG {
 
 class Framebuffer;
-class OpenGLExtensions;
 
 /** \brief This is an abstract singleton class that represents the GUI
     framework of an SDL OpenGL application.
@@ -154,7 +153,6 @@ private:
     SDL_GLContext m_gl_context; //< The OpenGL context
     bool m_done; //< Set true true when we should exit.
     boost::scoped_ptr<Framebuffer> m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
-    boost::scoped_ptr<OpenGLExtensions> m_glext; //< a class that manages loading of opengl extensions
     std::map<SDL_Keycode, Key> m_key_map; //< a mapping from sdl keycodes to GiGi keys
 };
 

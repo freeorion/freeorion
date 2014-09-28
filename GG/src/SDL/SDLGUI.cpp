@@ -369,69 +369,36 @@ namespace {
 
         int exit_code;
     };
+
+    class FramebufferFailedException : public std::exception{
+    public:
+        FramebufferFailedException(GLenum status):
+            m_status(status) {}
+
+        virtual const char * what(){
+            switch (m_status) {
+                case GL_FRAMEBUFFER_UNSUPPORTED:
+                    return "The requested framebuffer format was unsupported";
+                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+                    return "One of the framebuffer attachments is incomplete.";
+                default:
+                    std::stringstream ss;
+                    ss << "Framebuffer creation failed. Status: " << m_status;
+                    return ss.str().c_str();
+            }
+        }
+    private:
+        GLenum m_status;
+    };
 }
 
 namespace GG {
-    // We collect functions that are opengl extensions and therefore may need to be loaded
-    // and/or not present on all systems, here
-    class OpenGLExtensions {
-    public:
-        // We take an opengl context as a parameter to ensure that it exists.
-        // It may be wise to add a MakeCurrent here, but we only ever use one,
-        // so that shouldn't be necessary.
-        OpenGLExtensions(SDL_GLContext& context): m_context(context){
-            loadExtensions();
-        }
-
-        PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers;
-        PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
-        PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
-        PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage;
-
-        PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
-        PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
-        PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
-        PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus;
-        PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
-        PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer;
-
-        bool FramebuffersAvailable() const{
-            return m_have_framebuffer;
-        }
-    private:
-        void checkExtensions(){
-            SDL_bool framebuffer = SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object");
-            // To fully render on a framebuffer, we need it to support
-            // the stencil format we use. NB. We may be able to use some other format to avoid this.
-            SDL_bool with_stencil = SDL_GL_ExtensionSupported("GL_EXT_packed_depth_stencil");
-            m_have_framebuffer = framebuffer && with_stencil;
-        }
-
-        void loadExtensions(){
-            checkExtensions();
-
-            if(m_have_framebuffer) {
-                glGenRenderbuffers = (PFNGLGENRENDERBUFFERSPROC)SDL_GL_GetProcAddress("glGenRenderbuffersEXT");
-                glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC)SDL_GL_GetProcAddress("glBindRenderbufferEXT");
-                glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSPROC) SDL_GL_GetProcAddress("glDeleteRenderbuffersEXT");
-                glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEPROC) SDL_GL_GetProcAddress("glRenderbufferStorageEXT");
-
-                glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC) SDL_GL_GetProcAddress("glGenFramebuffersEXT");
-                glBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC) SDL_GL_GetProcAddress("glBindFramebufferEXT");
-                glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC) SDL_GL_GetProcAddress("glDeleteFramebuffersEXT");
-                glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC) SDL_GL_GetProcAddress("glCheckFramebufferStatusEXT");
-                glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC) SDL_GL_GetProcAddress("glFramebufferTexture2DEXT");
-                glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFERPROC) SDL_GL_GetProcAddress("glFramebufferRenderbufferEXT");
-            }
-        }
-        SDL_GLContext& m_context;
-        bool m_have_framebuffer;
-    };
-
     class Framebuffer{
     public:
-        Framebuffer(GG::Pt size, OpenGLExtensions& extensions):
-        m_id(0), m_texture(0), m_depth_rbo(0), m_glext(extensions)
+        /// Construct a framebuffer of dimensions \a size.
+        /// \throws FramebufferFailedException if using framebuffers is not going to work.
+        Framebuffer(GG::Pt size):
+        m_id(0), m_texture(0), m_depth_rbo(0)
         {
             int width = Value(size.x);
             int height = Value(size.y);
@@ -449,42 +416,42 @@ namespace GG {
             glBindTexture(GL_TEXTURE_2D, 0);
 
             // create a renderbuffer object to store depth and stencil info
-            m_glext.glGenRenderbuffers(1, &m_depth_rbo);
-            m_glext.glBindRenderbuffer(GL_RENDERBUFFER_EXT, m_depth_rbo);
-            m_glext.glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, width, height);
-            m_glext.glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+            glGenRenderbuffersEXT(1, &m_depth_rbo);
+            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depth_rbo);
+            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, width, height);
+            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 
-            m_glext.glGenFramebuffers(1, &m_id);
-            m_glext.glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_id);
+            glGenFramebuffersEXT(1, &m_id);
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_id);
 
             // attach the texture to FBO color attachment point
-            m_glext.glFramebufferTexture2D(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER
-                                           GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
-                                           GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
-                                           m_texture,             // 4. tex ID
-                                           0);                    // 5. mipmap level: 0(base)
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER
+                                      GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
+                                      GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
+                                      m_texture,             // 4. tex ID
+                                      0);                    // 5. mipmap level: 0(base)
 
             // attach the renderbuffer to depth attachment point
-            m_glext.glFramebufferRenderbuffer (GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER
-                                               GL_DEPTH_ATTACHMENT_EXT,
-                                               GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER
-                                               m_depth_rbo);              // 4. rbo ID
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER
+                                         GL_DEPTH_ATTACHMENT_EXT,
+                                         GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER
+                                         m_depth_rbo);              // 4. rbo ID
 
             // the same render buffer has the stencil data in other bits
-            m_glext.glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT,
-                                              GL_STENCIL_ATTACHMENT_EXT,
-                                              GL_RENDERBUFFER_EXT,
-                                              m_depth_rbo);
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+                                      GL_STENCIL_ATTACHMENT_EXT,
+                                      GL_RENDERBUFFER_EXT,
+                                      m_depth_rbo);
 
             // check FBO status
-            GLenum status = m_glext.glCheckFramebufferStatus (GL_FRAMEBUFFER_EXT);
+            GLenum status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
             if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
-                    throw std::runtime_error ("Failed to create framebuffer");
-                }
-
-                // switch back to window-system-provided framebuffer
-                m_glext.glBindFramebuffer (GL_FRAMEBUFFER_EXT, 0);
+                throw FramebufferFailedException (status);
             }
+
+            // switch back to window-system-provided framebuffer
+            glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+        }
 
         GLuint OpenGLId(){
             return m_id;
@@ -495,15 +462,14 @@ namespace GG {
         }
 
         ~Framebuffer(){
-            m_glext.glDeleteFramebuffers(1, &m_id);
-            m_glext.glDeleteRenderbuffers(1, &m_depth_rbo);
+            glDeleteFramebuffersEXT(1, &m_id);
+            glDeleteRenderbuffersEXT(1, &m_depth_rbo);
             glDeleteTextures(1, &m_texture);
         }
     private:
         GLuint m_id;
         GLuint m_texture;
         GLuint m_depth_rbo;
-        OpenGLExtensions& m_glext;
     };
 }
 
@@ -522,7 +488,6 @@ SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, con
     m_window(NULL),
     m_done(false),
     m_framebuffer(NULL),
-    m_glext(NULL),
     m_key_map()
 {
     SDLInit();
@@ -560,7 +525,8 @@ void SDLGUI::SetWindowTitle (const std::string& title) {
 
 void SDLGUI::SetVideoMode (X width, Y height, bool fullscreen, bool fake_mode_change) {
     m_fullscreen = fullscreen;
-    m_fake_mode_change = fake_mode_change && m_glext->FramebuffersAvailable();
+    // Only allow fake mode change if the necessary extensions are supported
+    m_fake_mode_change = fake_mode_change && FramebuffersAvailable();
     m_app_width = width;
     m_app_height = height;
     if (fullscreen) {
@@ -655,7 +621,6 @@ void SDLGUI::SDLInit()
         Exit(1);
     }
     m_gl_context = SDL_GL_CreateContext(m_window);
-    m_glext.reset(new OpenGLExtensions(m_gl_context));
 
     GLenum error = glewInit();
     if(error != GLEW_OK){
@@ -801,7 +766,7 @@ void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
 void SDLGUI::RenderBegin()
 {
     if(m_fake_mode_change && m_fullscreen) {
-        m_glext->glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_framebuffer->OpenGLId());
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_framebuffer->OpenGLId());
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -810,7 +775,7 @@ void SDLGUI::RenderEnd()
 {
     if(m_fake_mode_change && m_fullscreen) {
         // Return to rendering on the real screen
-        m_glext->glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         // Clear the real screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         int width, height;
@@ -913,7 +878,12 @@ void SDLGUI::RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
 void SDLGUI::ResetFramebuffer() {
     m_framebuffer.reset(NULL);
     if (m_fake_mode_change && m_fullscreen) {
-        m_framebuffer.reset(new Framebuffer(Pt(m_app_width, m_app_height), *m_glext));
+        try {
+            m_framebuffer.reset(new Framebuffer(Pt(m_app_width, m_app_height)));
+        } catch (FramebufferFailedException ex) {
+            std::cerr << "Fake resolution change failed. Reason: \"" << ex.what() << "\". Reverting to real resolution change.";
+            m_fake_mode_change = false;
+        }
     }
 }
 
@@ -932,5 +902,5 @@ void SDLGUI::Exit2DMode() {
 }
 
 bool SDLGUI::FramebuffersAvailable() const {
-    return m_glext->FramebuffersAvailable();
+    return GLEW_EXT_framebuffer_object && GLEW_EXT_packed_depth_stencil;
 }

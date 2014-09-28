@@ -6,6 +6,7 @@ project(freeorion)
 message("-- Configuring freeorion")
 
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
 if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
@@ -27,6 +28,7 @@ endif()
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
     ${OGRE_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIR}
@@ -41,7 +43,7 @@ if(WIN32)
     include_directories(${GLEW_INCLUDE_DIRS})
 endif()
 
-add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
+add_definitions(-DFREEORION_BUILD_HUMAN)
 
 link_directories(${BULLET_LIB_DIR})
 
@@ -169,6 +171,7 @@ set(freeorion_LINK_LIBS
     GiGiSDL
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
+    ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
     ${OGRE_LIBRARIES}
@@ -182,10 +185,6 @@ set(freeorion_LINK_LIBS
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
-    list(APPEND
-        freeorion_LINK_LIBS
-        ${GLEW_LIBRARIES}
-    )
     list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
 endif ()
 

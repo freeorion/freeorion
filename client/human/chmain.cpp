@@ -26,12 +26,16 @@
 // appropriate.
 #ifdef FREEORION_WIN32
 const bool  STORE_FULLSCREEN_FLAG = false;
+// Windows keeps good care of the resolution state itself,
+// so there is no reason to default to not touching it.
+const bool FAKE_MODE_CHANGE_FLAG = false;
 #else
 const bool  STORE_FULLSCREEN_FLAG = true;
-#endif
-// We may want to set the default of this on a per-platform basis,
-// defepnding on the merits and disadvantages of faking fullscreen on each platform.
+// The X window system does not always work
+// well with resolution changes, so we avoid them
+// by default
 const bool FAKE_MODE_CHANGE_FLAG = true;
+#endif
 
 int mainSetupAndRun();
 int mainConfigOptionsSetup(const std::vector<std::string>& args);
